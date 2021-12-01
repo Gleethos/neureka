@@ -719,10 +719,8 @@ public class DataConverter
         public static float[] objectsToFloats( Object[] objects, int targetSize ) {
             float[] data = new float[ targetSize ];
             for ( int i = 0; i < data.length; i++ ) {
-                if ( objects[ i % objects.length ] instanceof BigDecimal )
-                    data[ i ] = ( (BigDecimal) objects[ i % objects.length ] ).floatValue();
-                else if ( objects[ i % objects.length ] instanceof Integer )
-                    data[ i ] = (Integer) objects[ i % objects.length ];
+                if ( objects[ i % objects.length ] instanceof Number )
+                    data[ i ] = ( (Number) objects[ i % objects.length ] ).floatValue();
             }
             return data;
         }
@@ -731,10 +729,8 @@ public class DataConverter
         public static short[] objectsToShorts( Object[] objects, int targetSize ) {
             short[] data = new short[ targetSize ];
             for ( int i = 0; i < data.length; i++ ) {
-                if ( objects[ i % objects.length ] instanceof BigDecimal )
-                    data[ i ] = ( (BigDecimal) objects[ i % objects.length ] ).shortValue();
-                else if ( objects[ i % objects.length ] instanceof Integer )
-                    data[ i ] = ( (Integer) objects[ i % objects.length ] ).shortValue();
+                if ( objects[ i % objects.length ] instanceof Number )
+                    data[ i ] = ( (Number) objects[ i % objects.length ] ).shortValue();
             }
             return data;
         }
@@ -743,10 +739,8 @@ public class DataConverter
         public static byte[] objectsToBytes( Object[] objects, int targetSize ) {
             byte[] data = new byte[ targetSize ];
             for ( int i = 0; i < data.length; i++ ) {
-                if ( objects[ i % objects.length ] instanceof BigDecimal )
-                    data[ i ] = ( (BigDecimal) objects[ i % objects.length ] ).byteValue();
-                else if ( objects[ i % objects.length ] instanceof Integer )
-                    data[ i ] = ( (Integer) objects[ i % objects.length ] ).byteValue();
+                if ( objects[ i % objects.length ] instanceof Number )
+                    data[ i ] = ( (Number) objects[ i % objects.length ] ).byteValue();
             }
             return data;
         }
@@ -755,10 +749,8 @@ public class DataConverter
         public static long[] objectsToLongs( Object[] objects, int targetSize ) {
             long[] data = new long[ targetSize ];
             for ( int i = 0; i < data.length; i++ ) {
-                if ( objects[ i % objects.length ] instanceof BigDecimal )
-                    data[ i ] = ( (BigDecimal) objects[ i % objects.length ] ).longValue();
-                else if ( objects[ i % objects.length ] instanceof Integer )
-                    data[ i ] = ( (Integer) objects[ i % objects.length ] ).longValue();
+                if ( objects[ i % objects.length ] instanceof Number )
+                    data[ i ] = ( (Number) objects[ i % objects.length ] ).longValue();
             }
             return data;
         }
@@ -767,10 +759,8 @@ public class DataConverter
         public static int[] objectsToInts( Object[] objects, int targetSize ) {
             int[] data = new int[ targetSize ];
             for ( int i = 0; i < data.length; i++ ) {
-                if ( objects[ i % objects.length ] instanceof BigDecimal )
-                    data[ i ] = ( (BigDecimal) objects[ i % objects.length ] ).shortValueExact();
-                else if ( objects[ i % objects.length ] instanceof Integer )
-                    data[ i ] = ( (Integer) objects[ i % objects.length ] );
+                if ( objects[ i % objects.length ] instanceof Number )
+                    data[ i ] = ( (Number) objects[ i % objects.length ] ).intValue();
             }
             return data;
         }

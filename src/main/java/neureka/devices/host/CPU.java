@@ -61,7 +61,7 @@ public class CPU extends AbstractDevice<Number>
     protected boolean _approveExecutionOf( Tsr<?>[] tensors, int d, Operation operation ) { return true; }
 
     /**
-     *  This method will shutdown the internal thread-pool used by this
+     *  This method will shut down the internal thread-pool used by this
      *  class to execute JVM/CPU based operations in parallel.
      */
     @Override
@@ -69,7 +69,7 @@ public class CPU extends AbstractDevice<Number>
         _executor.getPool().shutdown();
         _tensors.clear();
         _LOG.warn(
-                "Main thread pool in '"+this.getClass()+"' shutdown! " +
+                "Main thread pool in '"+this.getClass()+"' shutting down! " +
                 "Newly incoming operations will not be executed in parallel."
         );
     }
