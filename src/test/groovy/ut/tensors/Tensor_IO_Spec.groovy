@@ -386,6 +386,15 @@ class Tensor_IO_Spec extends Specification
         and :
             t.data == expected
 
+        when :
+            t = Tsr.of(type).withShape(shape).andFill(data)
+        and :
+            t.setValueAt( 1, element )
+        then :
+            t.getValueAt( 1 ) == element
+        and :
+            t.data == expected
+
         where :
             type   | shape | data                            | element        || expected
             Float  | [2,2] | [-42, 24, 9, 3, -34] as float[] | 0.032 as float || [-42.0, 0.032, 9.0, 3.0] as float[]

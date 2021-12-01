@@ -2525,7 +2525,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     /**
      *  A tensor ought to have some way to selectively modify its underlying data array.
-     *  This method simply returns an element within this data array sitting at position "i".
+     *  This method simply overrides an element within this data array sitting at position "i".
      * @param i The index of the data array entry which ought to be addressed.
      * @param o The object which ought to be placed at the requested position.
      * @return This very tensor in order to enable method chaining.
@@ -2533,6 +2533,27 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     @Override
     public Tsr<V> setDataAt( int i, V o ) {
         _guardMod("data object");
+        _setDataAt( i, o );
+        return this;
+    }
+
+
+    /**
+     *  A tensor ought to have some way to selectively modify its underlying value array.
+     *  This method simply overrides an element within this value array sitting at position "i".
+     * @param i The index of the value array entry which ought to be addressed.
+     * @param o The object which ought to be placed at the requested position.
+     * @return This very tensor in order to enable method chaining.
+     */
+    @Override
+    public Tsr<V> setValueAt( int i, V o ) {
+        _guardMod("data object");
+        NDConfiguration ndc = this.getNDConf();
+        _setDataAt( ndc.indexOfIndex( i ), o );
+        return this;
+    }
+
+    private void _setDataAt( int i, V o ) {
         if ( getData() instanceof Object[] ) ( (Object[]) getData() )[ i ] = o;
         else if ( getData() instanceof float[]  ) ( (float[])  getData() )[ i ] = (float)  o;
         else if ( getData() instanceof double[] ) ( (double[]) getData() )[ i ] = (double) o;
@@ -2540,7 +2561,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         else if ( getData() instanceof long[]   ) ( (long[])   getData() )[ i ] = (long)   o;
         else if ( getData() instanceof short[]  ) ( (short[])  getData() )[ i ] = (short)  o;
         else if ( getData() instanceof byte[]   ) ( (byte[])   getData() )[ i ] = (byte)   o;
-        return this;
     }
 
     /**

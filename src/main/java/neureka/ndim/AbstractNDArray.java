@@ -320,12 +320,21 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
 
     /**
      *  An NDArray implementation ought to have some way to selectively modify its underlying data array.
-     *  This method simply returns an element within this data array sitting at position "i".
+     *  This method simply overrides an element within this data array sitting at position "i".
      * @param i The index of the data array entry which ought to be addressed.
      * @param o The object which ought to be placed at the requested position.
      * @return This very tensor in order to enable method chaining.
      */
     public abstract C setDataAt( int i, V o );
+
+    /**
+     *  An NDArray implementation ought to have some way to selectively modify its underlying value.
+     *  This method simply overrides an element within this data array sitting at position "i".
+     * @param i The index of the value array entry which ought to be addressed.
+     * @param o The object which ought to be placed at the requested position.
+     * @return This very tensor in order to enable method chaining.
+     */
+    public abstract C setValueAt( int i, V o );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
