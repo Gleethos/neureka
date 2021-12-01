@@ -371,7 +371,29 @@ class Tensor_IO_Spec extends Specification
 
         when : Tsr.IO.subInto(t, Tsr.of([2, 2], [1, 2, 3, 4]))
         then : t.toString().contains("[2x2]:(1.0, 1.0, -3.0, -4.0)")
+    }
 
+    def 'The tensor data array can be modified by targeting them with an index.'(
+            Class<Object> type, int[] shape, Object data, Object element, Object expected
+    ) {
+        given :
+            def t = Tsr.of(type).withShape(shape).andFill(data)
+
+        when :
+            t.setDataAt( 1, element )
+        then :
+            t.getDataAt( 1 ) == element
+        and :
+            t.data == expected
+
+        where :
+            type   | shape | data                            | element        || expected
+            Float  | [2,2] | [-42, 24, 9, 3, -34] as float[] | 0.032 as float || [-42.0, 0.032, 9.0, 3.0] as float[]
+            Double | [2,2] | [-42, 24, 9, 3, -34] as double[]| 0.032 as double|| [-42.0, 0.032, 9.0, 3.0] as double[]
+            Byte   | [2,2] | [-42, 24, 9, 3, -34] as byte[]  | 1 as byte      || [-42, 1, 9, 3] as byte[]
+            Short  | [2,2] | [-42, 24, 9, 3, -34] as short[] | 1 as short     || [-42, 1, 9, 3] as short[]
+            Long   | [2,2] | [-42, 24, 9, 3, -34] as long[]  | 1 as long      || [-42, 1, 9, 3] as long[]
+            Integer| [2,2] | [-42, 24, 9, 3, -34] as int[]   | 1 as int       || [-42, 1, 9, 3] as int[]
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!

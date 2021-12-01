@@ -77,7 +77,7 @@ class Tensor_Delete_Exception_Spec extends Specification
         expect : 'This tensor should then know that it is deleted.'
             t.isDeleted()
 
-        when : 'Trying to access the data object...'
+        when : 'Trying to modify the data object...'
             t.setDataAt(0, 7)
 
         then : 'This should lead to a descriptive exception.'

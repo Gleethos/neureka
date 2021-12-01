@@ -2531,7 +2531,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return This very tensor in order to enable method chaining.
      */
     @Override
-    public Tsr<V> setDataAt(int i, V o ) {
+    public Tsr<V> setDataAt( int i, V o ) {
         _guardMod("data object");
         if ( getData() instanceof Object[] ) ( (Object[]) getData() )[ i ] = o;
         else if ( getData() instanceof float[]  ) ( (float[])  getData() )[ i ] = (float)  o;
