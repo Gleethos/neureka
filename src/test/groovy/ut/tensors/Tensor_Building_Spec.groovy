@@ -9,7 +9,7 @@ class Tensor_Building_Spec extends Specification
 {
 
     def 'Tensors can be created fluently.'(
-            Class<Object> type, Number value, Object data
+            Class<Object> type, Object value, Object data
     ) {
 
         given : 'We create a new homogeneously filled Tsr instance using the fluent builder API.'
@@ -37,12 +37,13 @@ class Tensor_Building_Spec extends Specification
             t.isVirtual()
 
         where : 'The following data is being used to populate the builder API:'
-            type          | value          || data
-            Integer.class |  4   as int    || new int[]   { 4   }
-            Double.class  |  4.0 as double || new double[]{ 4.0 }
-            Float.class   |  4f  as float  || new float[] { 4f  }
-            Long.class    |  42L as Long   || new long[]  { 42L }
-
+            type      | value          || data
+            Integer   |  4   as int    || new int[]   { 4   }
+            Double    |  4.0 as double || new double[]{ 4.0 }
+            Float     |  4f  as float  || new float[] { 4f  }
+            Long      |  42L as Long   || new long[]  { 42L }
+            Boolean   |  false         || new boolean[] { false }
+            Character | '°' as char    || new char[] { '°' as char }
     }
 
 
@@ -122,13 +123,15 @@ class Tensor_Building_Spec extends Specification
             !t.isVirtual()
 
         where : 'The following data is being used to populate the builder API:'
-            type          | data                         || expected
-            Integer.class | [2, 3, 4]       as Integer[] || [2, 3, 4, 2, 3, 4]                   as int[]
-            Double.class  | [-5, 6.5, 7]    as Double[]  || [-5, 6.5, 7, -5, 6.5, 7]             as double[]
-            Short.class   | [6,  -1, -2]    as Short[]   || [6,  -1, -2, 6,  -1, -2]             as short[]
-            Float.class   | [22.4, 26.4]    as Float[]   || [22.4, 26.4, 22.4, 26.4, 22.4, 26.4] as float[]
-            Byte.class    | [-20, 3, 4, -3] as Byte[]    || [-20, 3, 4, -3, -20, 3]              as byte[]
-            Long.class    | [23, 199]       as Long[]    || [23, 199, 23, 199, 23, 199]          as long[]
+            type            | data                           || expected
+            Integer.class   | [2, 3, 4]       as Integer[]   || [2, 3, 4, 2, 3, 4]                      as int[]
+            Double.class    | [-5, 6.5, 7]    as Double[]    || [-5, 6.5, 7, -5, 6.5, 7]                as double[]
+            Short.class     | [6,  -1, -2]    as Short[]     || [6,  -1, -2, 6,  -1, -2]                as short[]
+            Float.class     | [22.4, 26.4]    as Float[]     || [22.4, 26.4, 22.4, 26.4, 22.4, 26.4]    as float[]
+            Byte.class      | [-20, 3, 4, -3] as Byte[]      || [-20, 3, 4, -3, -20, 3]                 as byte[]
+            Long.class      | [23, 199]       as Long[]      || [23, 199, 23, 199, 23, 199]             as long[]
+            Boolean.class   | [true, false]   as Boolean[]   || [true, false, true, false, true, false] as boolean[]
+            Character.class | ['x', 'y']      as Character[] || ['x', 'y', 'x', 'y', 'x', 'y']          as char[]
     }
 
 
@@ -161,13 +164,15 @@ class Tensor_Building_Spec extends Specification
             !t.isVirtual()
 
         where : 'The following data is being used to populate the builder API:'
-            type          | initializer                                    || expected
-            Integer.class | { i, indices ->          (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as int[]
-            Double.class  | { i, indices -> (double) (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as double[]
-            Short.class   | { i, indices -> (short)  (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as short[]
-            Float.class   | { i, indices -> (float)  (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as float[]
-            Byte.class    | { i, indices -> (byte)   (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as byte[]
-            Long.class    | { i, indices -> (long)   (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as long[]
+            type           | initializer                                    || expected
+            Integer.class  | { i, indices ->          (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as int[]
+            Double.class   | { i, indices -> (double) (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as double[]
+            Short.class    | { i, indices -> (short)  (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as short[]
+            Float.class    | { i, indices -> (float)  (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as float[]
+            Byte.class     | { i, indices -> (byte)   (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as byte[]
+            Long.class     | { i, indices -> (long)   (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as long[]
+            Character.class| { i, indices -> (char)   (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as char[]
+            Boolean.class  | { i, indices -> (boolean)(i % 2 == 0) }        || [true, false, true, false, true, false] as boolean[]
     }
 
 

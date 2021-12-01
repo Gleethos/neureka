@@ -156,12 +156,14 @@ public class DataConverter
         _set( Integer.class, Short.class, Integer::shortValue );
         _set( Integer.class, Byte.class, Integer::byteValue );
 
-        _set( Float[].class, float[].class,   Utility::objFloatsToPrimFloats );
-        _set( Integer[].class, int[].class,   Utility::objIntsToPrimInts );
-        _set( Long[].class, long[].class,     Utility::objLongsToPrimLongs );
-        _set( Double[].class, double[].class, Utility::objDoublesToPrimDoubles );
-        _set( Short[].class, short[].class,   Utility::objShortsToPrimShorts );
-        _set( Byte[].class, byte[].class,     Utility::objBytesToPrimBytes );
+        _set( Float[].class, float[].class,     Utility::objFloatsToPrimFloats );
+        _set( Integer[].class, int[].class,     Utility::objIntsToPrimInts );
+        _set( Long[].class, long[].class,       Utility::objLongsToPrimLongs );
+        _set( Double[].class, double[].class,   Utility::objDoublesToPrimDoubles );
+        _set( Short[].class, short[].class,     Utility::objShortsToPrimShorts );
+        _set( Byte[].class, byte[].class,       Utility::objBytesToPrimBytes );
+        _set( Boolean[].class, boolean[].class, Utility::objBooleansToPrimBooleans );
+        _set( Character[].class, char[].class,  Utility::objCharsToPrimChars );
     }
 
     /**
@@ -234,7 +236,7 @@ public class DataConverter
 
 
 
-    public <F extends Number, T> T convert( F[] from, Class<T> to, int size ) {
+    public <F, T> T convert( F[] from, Class<T> to, int size ) {
         if ( from.length == size )
             return convert( from, to );
         else {
@@ -263,6 +265,14 @@ public class DataConverter
             } else if ( from instanceof Byte[] ) {
                 Byte[] array = new Byte[size];
                 for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Byte) it.next(); index++; }
+                return convert( array, to );
+            } else if ( from instanceof Boolean[] ) {
+                Boolean[] array = new Boolean[size];
+                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Boolean) it.next(); index++; }
+                return convert( array, to );
+            } else if ( from instanceof Character[] ) {
+                Character[] array = new Character[size];
+                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Character) it.next(); index++; }
                 return convert( array, to );
             }
             Object[] array = new Object[ size ];
@@ -394,6 +404,22 @@ public class DataConverter
 
         public static byte[] objBytesToPrimBytes( Byte[] objects ) {
             byte[] array = new byte[objects.length];
+            for ( int i = 0; i < array.length; i++ ) {
+                array[i] = objects[i];
+            }
+            return array;
+        }
+
+        public static boolean[] objBooleansToPrimBooleans( Boolean[] objects ) {
+            boolean[] array = new boolean[objects.length];
+            for ( int i = 0; i < array.length; i++ ) {
+                array[i] = objects[i];
+            }
+            return array;
+        }
+
+        public static char[] objCharsToPrimChars( Character[] objects ) {
+            char[] array = new char[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
                 array[i] = objects[i];
             }

@@ -189,6 +189,14 @@ public final class DataType<Type>
             if ( ( (long[]) value ).length == size ) return value;
             newValue = new long[ size ];
             Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );
+        } else if ( getTypeClass() == Boolean.class ) {
+            if ( ( (boolean[]) value ).length == size ) return value;
+            newValue = new boolean[ size ];
+            Arrays.fill( (boolean[]) newValue, ( (boolean[]) value )[ 0 ] );
+        } else if ( getTypeClass() == Character.class ) {
+            if ( ( (char[]) value ).length == size ) return value;
+            newValue = new char[ size ];
+            Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );
         } else {
             if ( ( (Object[]) value ).length == size ) return value;
             newValue = new Object[ size ];
@@ -211,6 +219,10 @@ public final class DataType<Type>
             return new byte[ size ];
         else if ( getTypeClass() == I64.class || getTypeClass() == UI64.class )
             return new long[ size ];
+        else if ( getJVMTypeClass() == Boolean.class )
+            return new boolean[ size ];
+        else if ( getJVMTypeClass() == Character.class )
+            return new char[ size ];
         else
             return new Object[ size ];
     }

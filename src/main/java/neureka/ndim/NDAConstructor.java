@@ -106,12 +106,14 @@ public class NDAConstructor {
     }
 
     public boolean _constructAllFromOne(int[] shape, Object data) {
-        if ( data instanceof Double  ) { _constructAllF64( shape, (Double)  data ); return true; }
-        if ( data instanceof Float   ) { _constructAllF32( shape, (Float)   data ); return true; }
-        if ( data instanceof Integer ) { _constructAllI32( shape, (Integer) data ); return true; }
-        if ( data instanceof Short   ) { _constructAllI16( shape, (Short)   data ); return true; }
-        if ( data instanceof Byte    ) { _constructAllI8(  shape, (Byte)    data ); return true; }
-        if ( data instanceof Long    ) { _constructAllI64( shape, (Long)    data ); return true; }
+        if ( data instanceof Double    ) { _constructAllF64( shape, (Double)    data ); return true; }
+        if ( data instanceof Float     ) { _constructAllF32( shape, (Float)     data ); return true; }
+        if ( data instanceof Integer   ) { _constructAllI32( shape, (Integer)   data ); return true; }
+        if ( data instanceof Short     ) { _constructAllI16( shape, (Short)     data ); return true; }
+        if ( data instanceof Byte      ) { _constructAllI8(  shape, (Byte)      data ); return true; }
+        if ( data instanceof Long      ) { _constructAllI64( shape, (Long)      data ); return true; }
+        if ( data instanceof Boolean   ) { _constructAllBool( shape, (Boolean)  data ); return true; }
+        if ( data instanceof Character ) { _constructAllChar( shape, (Character)data ); return true; }
         return false;
     }
 
@@ -143,6 +145,16 @@ public class NDAConstructor {
     private void _constructAllI64( int[] shape, long value ) {
         _constructAll( shape, I64.class );
         ( (long[]) _API.getData())[ 0 ] = value;
+    }
+
+    private void _constructAllBool( int[] shape, boolean value ) {
+        _constructAll( shape, Boolean.class );
+        ( (boolean[]) _API.getData())[ 0 ] = value;
+    }
+
+    private void _constructAllChar( int[] shape, char value ) {
+        _constructAll( shape, Character.class );
+        ( (char[]) _API.getData())[ 0 ] = value;
     }
 
     private void _constructAll( int[] shape, Class<?> typeClass ) {
@@ -331,12 +343,14 @@ public class NDAConstructor {
     }
 
     public static Object optimizeArray( DataType<?> dataType, Object data, int size ) {
-        if      ( data instanceof Integer[] ) return DataConverter.instance().convert( (Integer[]) data, int[].class,    size );
-        else if ( data instanceof Double[]  ) return DataConverter.instance().convert( (Double[])  data, double[].class, size );
-        else if ( data instanceof Float[]   ) return DataConverter.instance().convert( (Float[])   data, float[].class,  size );
-        else if ( data instanceof Long[]    ) return DataConverter.instance().convert( (Long[])    data, long[].class,   size );
-        else if ( data instanceof Short[]   ) return DataConverter.instance().convert( (Short[])   data, short[].class,  size );
-        else if ( data instanceof Byte[]    ) return DataConverter.instance().convert( (Byte[])    data, byte[].class,   size );
+        if      ( data instanceof Integer[]   ) return DataConverter.instance().convert( (Integer[])   data, int[].class,    size );
+        else if ( data instanceof Double[]    ) return DataConverter.instance().convert( (Double[])    data, double[].class, size );
+        else if ( data instanceof Float[]     ) return DataConverter.instance().convert( (Float[])     data, float[].class,  size );
+        else if ( data instanceof Long[]      ) return DataConverter.instance().convert( (Long[])      data, long[].class,   size );
+        else if ( data instanceof Short[]     ) return DataConverter.instance().convert( (Short[])     data, short[].class,  size );
+        else if ( data instanceof Byte[]      ) return DataConverter.instance().convert( (Byte[])      data, byte[].class,   size );
+        else if ( data instanceof Boolean[]   ) return DataConverter.instance().convert( (Boolean[])   data, boolean[].class,size );
+        else if ( data instanceof Character[] ) return DataConverter.instance().convert( (Character[]) data, char[].class,   size );
         else if ( data instanceof Object[] )
             return NDAConstructor.optimizeObjectArray(dataType, (Object[]) data, size);
         else

@@ -216,6 +216,12 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         else if ( data instanceof long[] )
             for ( int i = 0; i < ( (long[]) data ).length; i++ )
                 ( (long[]) data )[ i ] = (long) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+        else if ( data instanceof boolean[] )
+            for ( int i = 0; i < ( (boolean[]) data ).length; i++ )
+                ( (boolean[]) data )[ i ] = (boolean) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+        else if ( data instanceof char[] )
+            for ( int i = 0; i < ( (char[]) data ).length; i++ )
+                ( (char[]) data )[ i ] = (char) initializer.init( i, _NDConf.indicesOfIndex( i )  );
         else
             for ( int i = 0; i < ( (Object[]) data ).length; i++ )
                 ( (Object[]) data )[ i ] = initializer.init( i, _NDConf.indicesOfIndex( i )  );

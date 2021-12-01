@@ -378,7 +378,6 @@ class Tensor_IO_Spec extends Specification
     ) {
         given :
             def t = Tsr.of(type).withShape(shape).andFill(data)
-
         when :
             t.setDataAt( 1, element )
         then :
@@ -396,13 +395,15 @@ class Tensor_IO_Spec extends Specification
             t.data == expected
 
         where :
-            type   | shape | data                            | element        || expected
-            Float  | [2,2] | [-42, 24, 9, 3, -34] as float[] | 0.032 as float || [-42.0, 0.032, 9.0, 3.0] as float[]
-            Double | [2,2] | [-42, 24, 9, 3, -34] as double[]| 0.032 as double|| [-42.0, 0.032, 9.0, 3.0] as double[]
-            Byte   | [2,2] | [-42, 24, 9, 3, -34] as byte[]  | 1 as byte      || [-42, 1, 9, 3] as byte[]
-            Short  | [2,2] | [-42, 24, 9, 3, -34] as short[] | 1 as short     || [-42, 1, 9, 3] as short[]
-            Long   | [2,2] | [-42, 24, 9, 3, -34] as long[]  | 1 as long      || [-42, 1, 9, 3] as long[]
-            Integer| [2,2] | [-42, 24, 9, 3, -34] as int[]   | 1 as int       || [-42, 1, 9, 3] as int[]
+            type     | shape | data                             | element        || expected
+            Float    | [2,2] | [-42, 24, 9, 3, -34] as float[]  | 0.032 as float || [-42.0, 0.032, 9.0, 3.0] as float[]
+            Double   | [2,2] | [-42, 24, 9, 3, -34] as double[] | 0.032 as double|| [-42.0, 0.032, 9.0, 3.0] as double[]
+            Byte     | [2,2] | [-42, 24, 9, 3, -34] as byte[]   | 1 as byte      || [-42, 1, 9, 3] as byte[]
+            Short    | [2,2] | [-42, 24, 9, 3, -34] as short[]  | 1 as short     || [-42, 1, 9, 3] as short[]
+            Long     | [2,2] | [-42, 24, 9, 3, -34] as long[]   | 1 as long      || [-42, 1, 9, 3] as long[]
+            Integer  | [2,2] | [-42, 24, 9, 3, -34] as int[]    | 1 as int       || [-42, 1, 9, 3] as int[]
+            Boolean  | [2,1] | [false, true, false] as boolean[]| false          || [false, false] as boolean[]
+            Character| [2,1] | ['a', 'b', 'c'] as char[]        | 'x' as char    || ['a', 'x'] as char[]
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!

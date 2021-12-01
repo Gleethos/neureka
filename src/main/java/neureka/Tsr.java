@@ -2519,6 +2519,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         else if ( getData() instanceof int[] )    return (V)(Integer)( (int[]) getData())[ i ];
         else if ( getData() instanceof byte[] )   return (V)(Byte)   ( (byte[]) getData())[ i ];
         else if ( getData() instanceof long[] )   return (V)(Long)   ( (long[]) getData())[ i ];
+        else if ( getData() instanceof boolean[] )return (V)(Boolean)( (boolean[]) getData())[ i ];
+        else if ( getData() instanceof char[] )   return (V)(Character)( (char[]) getData())[ i ];
         else return ( (V[]) getData())[ i ];
         return null;
     }
@@ -2561,6 +2563,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         else if ( getData() instanceof long[]   ) ( (long[])   getData() )[ i ] = (long)   o;
         else if ( getData() instanceof short[]  ) ( (short[])  getData() )[ i ] = (short)  o;
         else if ( getData() instanceof byte[]   ) ( (byte[])   getData() )[ i ] = (byte)   o;
+        else if ( getData() instanceof boolean[]) ( (boolean[])getData() )[ i ] = (boolean)o;
+        else if ( getData() instanceof char[])    ( (char[])   getData() )[ i ] = (char)o;
     }
 
     /**
