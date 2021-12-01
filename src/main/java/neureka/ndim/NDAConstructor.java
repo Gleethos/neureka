@@ -163,17 +163,6 @@ public class NDAConstructor {
         configureFromNewShape( shape, size > 1, true );
     }
 
-    private int _dataLength()
-    {
-        if ( !(_API.getData() instanceof float[]) && !(_API.getData() instanceof double[]) ) {
-            if ( _API.getData() instanceof Object[] ) return ((Object[]) _API.getData()).length;
-            else return -1;
-        }
-        else if ( _API.getData() instanceof double[] ) return ( (double[]) _API.getData()).length;
-        else return ( (float[]) _API.getData()).length;
-    }
-
-
     /**
      *  This method receives a list of lists which represent a matrix of objects.
      *  It parses this matrix into a 2D shape array and a double array.<br>
