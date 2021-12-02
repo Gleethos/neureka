@@ -347,16 +347,20 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public static <V> Tsr<V> of( List<? extends Number> shape, List<V> range ) {
+        Class<V> typeClass = (Class<V>) Object.class;
+        if ( range.size() > 0 ) typeClass = (Class<V>) range.get(0).getClass();
         return Tsr.of(
-                        DataType.of(Object.class),
+                        DataType.of(typeClass),
                         shape.stream().mapToInt(Number::intValue).toArray(),
                         range
                 );
     }
 
     public static <V> Tsr<V> of( int[] shape, List<V> range ) {
+        Class<V> typeClass = (Class<V>) Object.class;
+        if ( range.size() > 0 ) typeClass = (Class<V>) range.get(0).getClass();
         return Tsr.of(
-                        DataType.of(Object.class),
+                        DataType.of(typeClass),
                         shape,
                         range
                 );
@@ -966,7 +970,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         assert getNDConf() != null;
 
         if ( isVirtual() != isVirtual ) {
-            // Currently we avoid offloading the virtualization by restoring outsourced tensors into RAM...
+            // Currently, we avoid offloading the virtualization by restoring outsourced tensors into RAM...
             Device<V> device = this.get( Device.class );
             try {
                 if ( device != null ) device.restore( this );
@@ -982,7 +986,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             }
             else _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
-            // Therefore we need to re-initialize the NDConfiguration object:
+            // Therefore, we need to re-initialize the NDConfiguration object:
             createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, getData() == null );
             if ( isVirtual ) {
                 Relation<V> relation = get( Relation.class );

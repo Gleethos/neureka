@@ -288,8 +288,8 @@ class Autograd_NN_Spec extends Specification
     def 'Autograd work for simple matrix multiplications.'() {
 
         given :
-            def a = Tsr.of([2, 3], -1..4).setRqsGradient(true)
-            def b = Tsr.of([3, 1], [-4, -2, 0]).setRqsGradient(true)
+            def a = Tsr.of([2, 3], -1d..4d).setRqsGradient(true)
+            def b = Tsr.of([3, 1], [-4d, -2d, 0d]).setRqsGradient(true)
 
         when :
             def c = a.matMul(b)
@@ -312,7 +312,7 @@ class Autograd_NN_Spec extends Specification
             cStr.contains "->d(1x3):[-4.0, -2.0, 0.0]"
 
         when :
-            c.backward(Tsr.of(c.shape(), [-1, 1])) // (2x1):[-1, 1]
+            c.backward(Tsr.of(c.shape(), [-1d, 1d])) // (2x1):[-1, 1]
 
         then :
             a.toString() == "(2x3):[-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]:g:[4.0, 2.0, 0.0, -4.0, -2.0, 0.0]"
@@ -324,9 +324,9 @@ class Autograd_NN_Spec extends Specification
     def 'Autograd work for 2 matrix multiplications in a row.'(Device<?> device) {
 
         given :
-            def a = Tsr.of([2, 3], -1..4).setRqsGradient(true).to(device)
-            def b = Tsr.of([3, 1], [-4, -2, 0]).setRqsGradient(true).to(device)
-            def x = Tsr.of([[0.5, 0.5]]).to(device)
+            def a = Tsr.of([2, 3], -1d..4d).setRqsGradient(true).to(device)
+            def b = Tsr.of([3, 1], [-4d, -2d, 0d]).setRqsGradient(true).to(device)
+            def x = Tsr.of([[0.5d, 0.5d]]).to(device)
 
         when :
             def c = a.matMul(b)

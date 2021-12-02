@@ -135,11 +135,11 @@ class Tensor_State_Spec extends Specification
                             .setHasSlimNumbers(  false )
 
         and : 'Four tensors of various data types:'
-            Tsr t1 = Tsr.of( Float.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
-            Tsr t2 = Tsr.of( shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
+            Tsr t1 = Tsr.of( Float.class, shape, -4f..5f ).set( Tsr.of( shape, -7f..3f ) )
+            Tsr t2 = Tsr.of( shape, -4d..5d ).set( Tsr.of( shape, -7d..3d ) )
             Tsr t3 = Tsr.of( Integer.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
-            Tsr t4 = Tsr.of( Short.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
-            Tsr t5 = Tsr.of( Byte.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
+            Tsr t4 = Tsr.of( Short.class, shape, (-4 as short)..(5 as short) ).set( Tsr.of( shape, (-7 as short)..(3 as short) ) )
+            Tsr t5 = Tsr.of( Byte.class, shape, (-4 as byte)..(5 as byte) ).set( Tsr.of( shape, (-7 as byte)..(3 as byte) ) )
 
         expect: 'The first tensor has the expected internals and produces the correct String representation.'
             t1.toString(settings) == expected

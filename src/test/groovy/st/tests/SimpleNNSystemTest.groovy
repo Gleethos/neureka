@@ -49,22 +49,22 @@ class SimpleNNSystemTest
         Tsr X = Tsr.of( // input data: 5 vectors in binary form
                             inputShape, // (5x3)
                             [
-                                    0, 0, 1,
-                                    1, 1, 0,
-                                    1, 0, 1,
-                                    0, 1, 1,
-                                    1, 1, 1
+                                    0d, 0d, 1d,
+                                    1d, 1d, 0d,
+                                    1d, 0d, 1d,
+                                    0d, 1d, 1d,
+                                    1d, 1d, 1d
                             ]
                         ).to(device)
 
         // output values (labels)
-        Tsr y = Tsr.of(outputShape,[0,1,1,1,0]).to(device)
+        Tsr y = Tsr.of(outputShape,[0d,1d,1d,1d,0d]).to(device)
 
         Tsr input = X
         Tsr weights1 = Tsr.of(w1Shape,
-                                [4.17022005e-01, 7.20324493e-01, 1.14374817e-04, 3.02332573e-01,
-                                 1.46755891e-01, 9.23385948e-02, 1.86260211e-01, 3.45560727e-01,
-                                 3.96767474e-01, 5.38816734e-01, 4.19194514e-01, 6.85219500e-01]
+                                [4.17022005e-01d, 7.20324493e-01d, 1.14374817e-04d, 3.02332573e-01d,
+                                 1.46755891e-01d, 9.23385948e-02d, 1.86260211e-01d, 3.45560727e-01d,
+                                 3.96767474e-01d, 5.38816734e-01d, 4.19194514e-01d, 6.85219500e-01d]
                             ).to(device)
         /*
             [1x5x4]:(...)
@@ -73,7 +73,7 @@ class SimpleNNSystemTest
              [1.46755891e-01 9.23385948e-02 1.86260211e-01 3.45560727e-01]
              [3.96767474e-01 5.38816734e-01 4.19194514e-01 6.85219500e-01]]
         */
-        Tsr weights2 = Tsr.of(w2Shape, [0.20445225, 0.87811744, 0.02738759, 0.67046751]).to(device)
+        Tsr weights2 = Tsr.of(w2Shape, [0.20445225d, 0.87811744d, 0.02738759d, 0.67046751d]).to(device)
         /*
             [1x1x4]:...
             w2 (4, 1) :
@@ -82,7 +82,7 @@ class SimpleNNSystemTest
              [0.02738759]
              [0.67046751]]
          */
-        Tsr output = Tsr.of(outputShape, [0.0, 0.0, 0.0, 0.0, 0.0]).to(device)
+        Tsr output = Tsr.of(outputShape, [0d, 0d, 0d, 0d, 0d]).to(device)
         /*
             [5x1x1]...
             out (5, 1) :

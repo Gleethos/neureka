@@ -321,13 +321,13 @@ class Tensor_IO_Spec extends Specification
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
         and : 'Two tensors which will be used for testing IO.'
-            Tsr t = Tsr.of([2, 2], [
-                    1.0, 4.0,
-                    2.0, 7.0,
+            def t = Tsr.of([2, 2], [
+                    1.0d, 4.0d,
+                    2.0d, 7.0d,
             ])
-            Tsr v = Tsr.of([2, 2], [
-                    1.0, -1.0,
-                    1.0, -1.0
+            def v = Tsr.of([2, 2], [
+                    1.0d, -1.0d,
+                    1.0d, -1.0d
             ])
 
         when : Tsr.IO.addInto(t, v)
@@ -346,30 +346,30 @@ class Tensor_IO_Spec extends Specification
 
         when :
             indices[0] = 1
-            Tsr.IO.mulInto(t, indices, -1)
+            Tsr.IO.mulInto(t, indices, -1d)
 
         then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, -6.0)")
 
-        when : Tsr.IO.mulInto(t, 3, -2)
+        when : Tsr.IO.mulInto(t, 3, -2d)
         then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 12.0)")
 
-        when : Tsr.IO.setInto(t, indices, 0.0)
+        when : Tsr.IO.setInto(t, indices, 0d)
         then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 0.0)")
 
-        when : Tsr.IO.setInto(t, 2, 99.0)
+        when : Tsr.IO.setInto(t, 2, 99d)
         then : t.toString().contains("[2x2]:(2.0, -6.0, 99.0, 0.0)")
 
-        when : Tsr.IO.subInto(t, 2, 99.0)
+        when : Tsr.IO.subInto(t, 2, 99d)
         then : t.toString().contains("[2x2]:(2.0, -6.0, 0.0, 0.0)")
 
         when : 'Modifying the first index of the indices array...'
             indices[0] = 0
         and : 'Using this new indices array for IO...'
-            Tsr.IO.subInto(t, indices, -9.0)
+            Tsr.IO.subInto(t, indices, -9d)
         then : 'The underlying data will have changed.'
             t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
 
-        when : Tsr.IO.subInto(t, Tsr.of([2, 2], [1, 2, 3, 4]))
+        when : Tsr.IO.subInto(t, Tsr.of([2, 2], [1d, 2d, 3d, 4d]))
         then : t.toString().contains("[2x2]:(1.0, 1.0, -3.0, -4.0)")
     }
 

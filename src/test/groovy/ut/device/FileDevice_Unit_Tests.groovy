@@ -81,7 +81,7 @@ class FileDevice_Unit_Tests extends Specification
             String path, String filename, int[] shape, Class<FileHead<?,Number>> fileHeadClass, Class<?> dataTypeClass
     ) {
         given : 'A new tensor is being created for testing.'
-            Tsr a = Tsr.of( shape, -8..8 )
+            Tsr a = Tsr.of( shape, -8d..8d )
         and : 'A String representation of the shape.'
             def shapeStr = String.join('x',(shape as List<Integer>).collect {String.valueOf(it)})
         and : 'A file device instance is being accessed for a given path.'

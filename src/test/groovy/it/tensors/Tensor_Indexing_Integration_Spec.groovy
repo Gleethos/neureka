@@ -35,26 +35,26 @@ class Tensor_Indexing_Integration_Spec extends Specification
 
         when : 'The following calculations are being executed...'
             Tsr i_a = Tsr.of([2, 1], [
-                    1,
-                    2
+                    1d,
+                    2d
             ])
             Tsr w_a = Tsr.of([2, 2], [
-                    1, 3,
-                    4, -1
+                    1d, 3d,
+                    4d, -1d
             ]).setRqsGradient(true)
             Tsr o_a = Tsr.of(i_a, "x", w_a)
             //[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0),
             //---
             Tsr w_b = Tsr.of([2, 2], [
-                    -2, 1,  // 9, 1 -> -17
-                    2, -1   // ... -> 17
+                    -2d, 1d,  // 9, 1 -> -17
+                    2d, -1d   // ... -> 17
             ]).setRqsGradient(true)
             Tsr o_b = Tsr.of(o_a, "x", w_b)
             //[2x1]:(-10.0, 5.0); ->d[2x2]:(-2.0, 1.0, 2.0, -1.0):g:(null), ->d[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0), ,
             //---
             Tsr w_c = Tsr.of([2, 2], [
-                    0.5, 3,
-                    -2, -0.5
+                    0.5d, 3d,
+                    -2d, -0.5d
             ]).setRqsGradient(true)
             Tsr o_c = Tsr.of(o_a, "x", w_c)
             //[2x1]:(-0.5, 20.0); ->d[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0), , ->d[2x2]:(0.5, 3.0, -2.0, -0.5):g:(null),
@@ -99,16 +99,16 @@ class Tensor_Indexing_Integration_Spec extends Specification
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
 
         when :
-            Tsr i_a = Tsr.of([2, 1], [1, 2])
-            Tsr w_a = Tsr.of([2, 2], [1, 3, 4, -1]).setRqsGradient(true)
+            Tsr i_a = Tsr.of([2, 1], [1d, 2d])
+            Tsr w_a = Tsr.of([2, 2], [1d, 3d, 4d, -1d]).setRqsGradient(true)
             Tsr o_a = Tsr.of(i_a,"x", w_a)
             //[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0),
             //---
-            Tsr w_b = Tsr.of([2, 2], [-2, 1, 2, -1]).setRqsGradient(true)
+            Tsr w_b = Tsr.of([2, 2], [-2d, 1d, 2d, -1d]).setRqsGradient(true)
             Tsr o_b = Tsr.of(o_a,"x", w_b)
             //[2x1]:(-10.0, 5.0); ->d[2x2]:(-2.0, 1.0, 2.0, -1.0):g:(null), ->d[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0), ,
             //---
-            Tsr w_c = Tsr.of([2, 2], [0.5, 3, -2, -0.5]).setRqsGradient(true)
+            Tsr w_c = Tsr.of([2, 2], [0.5d, 3d, -2d, -0.5d]).setRqsGradient(true)
             Tsr o_c = Tsr.of(o_a, "x", w_c)
             //[2x1]:(-0.5, 20.0); ->d[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0), , ->d[2x2]:(0.5, 3.0, -2.0, -0.5):g:(null),
             //---

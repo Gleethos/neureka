@@ -88,21 +88,27 @@ public class NDAConstructor {
             else
                 data = range.toArray();
         }
-        if ( data instanceof Object[] && DataType.of(((Object[])data)[0].getClass()) != dataType ) {
-            for ( int i = 0; i < ( (Object[]) data ).length; i++ ) {
-                ( (Object[]) data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
-            }
-            data = NDAConstructor.optimizeObjectArray(dataType, (Object[]) data, size);
-        }
-        if ( dataType == DataType.of( data.getClass() ) ) { // This means that "data" is a single value!
+        if ( data instanceof Object[] )
+            data = _autoConvertAndOptimizeObjectArray( (Object[]) data, dataType, size );
+
+        if ( dataType == DataType.of( data.getClass() ) ) // This means that "data" is a single value!
             if ( _constructAllFromOne( shape, data ) ) return;
-        }
         else
             data = NDAConstructor.optimizeArray( dataType, data, size );
 
         _API.setType( dataType );
         configureFromNewShape( shape, false, false );
         _API.setData( data );
+    }
+
+    private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {
+        if ( Arrays.stream( data ).anyMatch( e -> DataType.of(e.getClass()) != dataType ) ) {
+            for ( int i = 0; i < ( data ).length; i++ ) {
+                ( data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
+            }
+            return NDAConstructor.optimizeObjectArray(dataType,data, size);
+        }
+        return data;
     }
 
     public boolean _constructAllFromOne(int[] shape, Object data) {

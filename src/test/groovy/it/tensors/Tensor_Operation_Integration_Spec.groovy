@@ -88,8 +88,8 @@ class Tensor_Operation_Integration_Spec extends Specification
     def 'The "dot" operation reshapes and produces valid "x" operation result.'()
     {
         given : 'Two multi-dimensional tensors.'
-            Tsr a = Tsr.of([1, 4, 4, 1], [4..12])
-            Tsr b = Tsr.of([1, 3, 5, 2, 1], [-5..3])
+            def a = Tsr.of([1, 4, 4, 1   ], 4d..12d)
+            def b = Tsr.of([1, 3, 5, 2, 1], -5d..3d)
 
         when : 'The "dot" method is being called on "a" receiving "b"...'
             Tsr c = a.convDot(b)

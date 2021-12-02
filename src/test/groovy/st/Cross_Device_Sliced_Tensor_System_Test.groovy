@@ -59,10 +59,10 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
     and: 'A tensor which ought to be sliced:'
 
             Tsr a = Tsr.of([4, 6], [
-                    1, 2, 3, 4, 5, 6,
-                    7, 8, 9, 1, 2, 3,
-                    4, 5, 6, 7, 8, 9,
-                    1, 2, 3, 4, 5, 6
+                    1d, 2d, 3d, 4d, 5d, 6d,
+                    7d, 8d, 9d, 1d, 2d, 3d,
+                    4d, 5d, 6d, 7d, 8d, 9d,
+                    1d, 2d, 3d, 4d, 5d, 6d
             ])
             /*
                 1, 2, 3, 4, 5, 6,
@@ -117,9 +117,9 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         when :
-            Tsr x = Tsr.of([1], 3).setRqsGradient(true)
-            Tsr b = Tsr.of([1], -4)
-            Tsr w = Tsr.of([1], 2)
+            Tsr x = Tsr.of([1],  3d).setRqsGradient(true)
+            Tsr b = Tsr.of([1], -4d)
+            Tsr w = Tsr.of([1],  2d)
             device.store(x).store(b).store(w)
             /**
              *      ((3-4)*2)^2 = 4
@@ -146,10 +146,10 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              *  Subset:
              */
             Tsr a = Tsr.of([4, 6], [
-                    1, 2, 3, 4, 5, 6,
-                    7, 8, 9, 1, 2, 3,
-                    4, 5, 6, 7, 8, 9,
-                    1, 2, 3, 4, 5, 6
+                    1d, 2d, 3d, 4d, 5d, 6d,
+                    7d, 8d, 9d, 1d, 2d, 3d,
+                    4d, 5d, 6d, 7d, 8d, 9d,
+                    1d, 2d, 3d, 4d, 5d, 6d
             ])
             /*
                 1, 2, 3, 4, 5, 6,
@@ -196,12 +196,12 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                 a.value64()[7] = a.value64()[7] * 2
             } else {
                 Tsr k = Tsr.of([4, 6], [
-                        1, 6, 1, 1,
-                        1, 1, 1, 2,
-                        1, 1, 1, 1,
-                        1, 1, 1, 1,
-                        1, 1, 1, 1,
-                        1, 1, 1, 1
+                        1d, 6d, 1d, 1d,
+                        1d, 1d, 1d, 2d,
+                        1d, 1d, 1d, 1d,
+                        1d, 1d, 1d, 1d,
+                        1d, 1d, 1d, 1d,
+                        1d, 1d, 1d, 1d
                 ])
                 device.store( k )
                 a[] = a * k
@@ -217,10 +217,10 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
 
         when:
             Tsr c = Tsr.of([3, 4], [
-                    -3, 2, 3,
-                    5, 6, 2,
-                    -1, 1, 2,
-                    3, 4, 2,
+                    -3d, 2d, 3d,
+                     5d, 6d, 2d,
+                    -1d, 1d, 2d,
+                     3d, 4d, 2d,
             ])
             /* //NON LEGACY INDEXED:
                 -3, 2, 3, 5,
@@ -279,8 +279,8 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              */
             //---
         when:
-            Tsr p = Tsr.of([2,2], [2, 55, 4, 7]).to((device instanceof DummyDevice)?null:device)
-            Tsr u = Tsr.of([2,2], [5, 2, 7, 34]).to((device instanceof DummyDevice)?null:device)
+            Tsr p = Tsr.of([2,2], [2d, 55d, 4d, 7d]).to((device instanceof DummyDevice)?null:device)
+            Tsr u = Tsr.of([2,2], [5d, 2d, 7d, 34d]).to((device instanceof DummyDevice)?null:device)
 
             p[] = u
             //tester.testContains(p.toString(), ["5.0, 2.0, 7.0, 34.0"], "Testing slicing")
@@ -289,7 +289,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
 
         //---
         when:
-            a[[[0..3]:2, [1..4]:2]] = Tsr.of([2, 2], [1, 2, 3, 4])
+            a[[[0..3]:2, [1..4]:2]] = Tsr.of([2, 2], [1d, 2d, 3d, 4d])
         then:
             b.toString().contains("1.0, 2.0, 3.0, 4.0")
             a.toString().contains(

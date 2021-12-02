@@ -132,9 +132,9 @@ class Tensor_Framing_Integration_Spec extends Specification
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
         and: 'And a labeled tensor of rank 2 is being created.'
             Tsr t = Tsr.of([3, 4], [
-                    1, 2, 3, 4,
-                    9, 8, 6, 5,
-                    4, 5, 6, 7
+                    1d, 2d, 3d, 4d,
+                    9d, 8d, 6d, 5d,
+                    4d, 5d, 6d, 7d
             ])
             t.label([
                     ["1", "2", "3"],
@@ -209,7 +209,7 @@ class Tensor_Framing_Integration_Spec extends Specification
         given: 'Tensor printing is set to "legacy" for this test.'
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
         and: 'And a labeled tensor of rank 3 is being created.'
-            Tsr t = Tsr.of([2, 3, 4], -7..7)
+            Tsr t = Tsr.of([2, 3, 4], -7d..7d)
             t.label( 'My Tensor', [
                 ["1", "2"],
                 ["a", "b", "y"],

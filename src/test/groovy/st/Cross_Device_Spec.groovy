@@ -142,7 +142,7 @@ class Cross_Device_Spec extends Specification
         given : 'We use the legacy representation of tensors for this little test!'
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
         and : 'We create a small matrix of 4 fours which requires a gradient and is stored on the provided device!'
-            Tsr t = Tsr.of([2, 2], 4).setRqsGradient(true).to(device)
+            Tsr t = Tsr.of([2, 2], 4d).setRqsGradient(true).to(device)
         when : 'We now call the backward method on the tensor directly without having done any operations...'
             t.backward(1)
         and : 'Then we take the gradient to see what happened.'
