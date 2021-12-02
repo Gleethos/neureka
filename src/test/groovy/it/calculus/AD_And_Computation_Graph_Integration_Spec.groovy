@@ -33,10 +33,11 @@ class AD_And_Computation_Graph_Integration_Spec extends Specification{
 
         given :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
-            Tsr a = Tsr.of([2, 3], [
-                    1, 2, 3,
-                    4, 5, 6
-            ]).setRqsGradient(true)
+            Tsr<Double> a = Tsr.of([2, 3], [
+                                1d, 2d, 3d,
+                                4d, 5d, 6d
+                            ]).setRqsGradient(true)
+        and :
             Function rs = Function.of("[1, 0]:(I[0])")
 
         when :
@@ -48,10 +49,10 @@ class AD_And_Computation_Graph_Integration_Spec extends Specification{
             assert na.getChildren().size()==1
             assert b.toString().contains("")//Todo!
             b.backward(Tsr.of([3, 2],[
-                    -1, 2,
-                    4, 7,
-                    -9, 8
-            ]))
+                                -1d, 2d,
+                                 4d, 7d,
+                                -9d, 8d
+                        ]))
             assert a.toString().contains("[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)")
             assert b.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
             assert na.isLeave()
@@ -72,11 +73,11 @@ class AD_And_Computation_Graph_Integration_Spec extends Specification{
     def "Payloads and derivatives are null after garbage collection."()
     {
         given :
-            Tsr a = Tsr.of(2).setRqsGradient(true)
-            Tsr b = a * 3 / 5
-            Tsr c = Tsr.of(3)
-            Tsr d = b ^ c
-            Tsr e = d * c
+            Tsr<Double> a = Tsr.of(2d).setRqsGradient(true)
+            Tsr<Double> b = a * 3 / 5
+            Tsr<Double> c = Tsr.of(3d)
+            Tsr<Double> d = b ^ c
+            Tsr<Double> e = d * c
             GraphNode n = e.get( GraphNode.class )
 
         when : System.gc()

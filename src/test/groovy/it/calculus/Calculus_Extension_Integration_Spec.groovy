@@ -42,8 +42,8 @@ class Calculus_Extension_Integration_Spec extends Specification
             run { testContext == Neureka.get().backend() }
 
         when:
-            Tsr t1 = Tsr.of([row_sze, com_sze], -3..8)
-            Tsr t2 = Tsr.of([com_sze, col_sze], -7..4)
+            Tsr t1 = Tsr.of([row_sze, com_sze], -3d..8d)
+            Tsr t2 = Tsr.of([com_sze, col_sze], -7d..4d)
             run {
                 Neureka.get().backend()
                     .addOperation(

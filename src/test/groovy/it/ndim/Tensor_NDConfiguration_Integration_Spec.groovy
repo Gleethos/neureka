@@ -63,9 +63,9 @@ class Tensor_NDConfiguration_Integration_Spec extends Specification
     def 'NDConfiguration instances of tensors have expected state and behaviour.'()
     {
         given: 'Three vector tensors containing different numeric values.'
-            Tsr x = Tsr.of([1.0, 2.0, 3.1])
-            Tsr y = Tsr.of([3, 4.5, 2])
-            Tsr z = Tsr.of([1.4, 2, 4])
+            Tsr<Object> x = Tsr.of([1.0, 2.0, 3.1])
+            Tsr<Object> y = Tsr.of([3, 4.5, 2])
+            Tsr<Object> z = Tsr.of([1.4, 2, 4])
 
         expect : 'All of them possess "SimpleD1Configuration" NDConfiguration implementations.'
             x.NDConf instanceof SimpleD1Configuration

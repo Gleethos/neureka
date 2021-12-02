@@ -86,7 +86,7 @@ class Calculus_Stress_Test extends Specification
             Neureka.get().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
 
         and :
-            Tsr t = Tsr.of( shape, -4..2 )
+            Tsr<Double> t = Tsr.of( shape, -4d..2d )
 
         when :
             t = t.convDot( t.T() )
@@ -113,8 +113,8 @@ class Calculus_Stress_Test extends Specification
             Neureka.get().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
 
         and :
-            Tsr t1 = Tsr.of( shape1, -4..2 ).to( device )
-            Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )
+            Tsr<Double> t1 = Tsr.of( shape1, -4d..2d ).to( device )
+            Tsr<Double> t2 = Tsr.of( shape2, -3d..5d ).to( device )
 
         when :
             Tsr t = Tsr.of( operation, [t1,t2] )
@@ -124,10 +124,10 @@ class Calculus_Stress_Test extends Specification
 
         where :
             device             | arrayIndexing | shape1    | shape2    | operation || expected
-            CPU.get()          | true  | [2, 1]    | [2, 2]    | 'i0%i1' || "(2x2):[-1.0, -0.0, -0.0, NaN]"
-            CPU.get()          | true  | [2, 3, 1] | [1, 3, 2] | 'i0%i1' || "(2x3x2):[-1.0, -0.0, -0.0, NaN, -0.0, -0.0, -1.0, -1.0, 0.0, NaN, 0.0, 1.0]"
-            CPU.get()          | false | [2, 1]    | [2, 2]    | 'i0%i1' || "(2x2):[-1.0, -0.0, -0.0, NaN]"
-            CPU.get()          | false | [2, 3, 1] | [1, 3, 2] | 'i0%i1' || "(2x3x2):[-1.0, -0.0, -0.0, NaN, -0.0, -0.0, -1.0, -1.0, 0.0, NaN, 0.0, 1.0]"
+            CPU.get()          | true          | [2, 1]    | [2, 2]    | 'i0%i1' || "(2x2):[-1.0, -0.0, -0.0, NaN]"
+            CPU.get()          | true          | [2, 3, 1] | [1, 3, 2] | 'i0%i1' || "(2x3x2):[-1.0, -0.0, -0.0, NaN, -0.0, -0.0, -1.0, -1.0, 0.0, NaN, 0.0, 1.0]"
+            CPU.get()          | false         | [2, 1]    | [2, 2]    | 'i0%i1' || "(2x2):[-1.0, -0.0, -0.0, NaN]"
+            CPU.get()          | false         | [2, 3, 1] | [1, 3, 2] | 'i0%i1' || "(2x3x2):[-1.0, -0.0, -0.0, NaN, -0.0, -0.0, -1.0, -1.0, 0.0, NaN, 0.0, 1.0]"
 
             //Device.find('gpu') | true          | [2, 1]    | [2, 2]    | 'i0%i1'   || "(2x2):[-1.0, -0.0, -0.0, NaN]"
             //Device.find('gpu') | true          | [2, 3, 1] | [1, 3, 2] | 'i0%i1'   || "(2x3x2):[-1.0, -0.0, -0.0, NaN, -0.0, -0.0, -1.0, -1.0, 0.0, NaN, 0.0, 1.0]"

@@ -46,7 +46,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
-            Tsr t = Tsr.of([2, 4, 3], -3..7)
+            Tsr<Double> t = Tsr.of([2, 4, 3], -3d..7d)
 
         and : 'Which will be placed on a given device:'
             t.to(device)
@@ -90,7 +90,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
-            Tsr t = Tsr.of([3, 3, 4], -11..3)
+            Tsr<Double> t = Tsr.of([3, 3, 4], -11d..3d)
 
         and : 'Which will be placed on a given device:'
             t.to(device)
@@ -220,7 +220,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
-            Tsr t = Tsr.of([3, 3, 4], -11..3)
+            Tsr<Double> t = Tsr.of([3, 3, 4], -11d..3d)
 
         and : 'Which will be placed on a given device:'
             t.to(device)

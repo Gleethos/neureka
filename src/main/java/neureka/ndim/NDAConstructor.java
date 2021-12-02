@@ -69,8 +69,7 @@ public class NDAConstructor {
         }
     }
 
-
-    public void _tryConstructing(int[] shape, DataType<?> dataType, Object data) {
+    public void _tryConstructing( int[] shape, DataType<?> dataType, Object data ) {
         int size = NDConfiguration.Utility.szeOfShp(shape);
         if ( data instanceof List<?> ) {
             List<?> range = (List<?>) data;
@@ -106,9 +105,8 @@ public class NDAConstructor {
             for ( int i = 0; i < ( data ).length; i++ ) {
                 ( data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
             }
-            return NDAConstructor.optimizeObjectArray(dataType,data, size);
         }
-        return data;
+        return NDAConstructor.optimizeObjectArray(dataType, data, size);
     }
 
     public boolean _constructAllFromOne(int[] shape, Object data) {

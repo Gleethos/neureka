@@ -56,7 +56,7 @@ class Tensor_State_Spec extends Specification
         given : 'A new tensor of rank 2 storing Strings:'
             Tsr t = Tsr.of(DataType.of(String.class), [2, 3], (i, indices) -> {
                 return ["sweet", "salty", "blue", "spinning", "confused", "shining"].get( (i + 17**i)%6 ) + ' ' +
-                       ["Saitan", "Apple", "Tofu",  "Strawberry", "Almond", "Salad"].get( (i + 7**i)%6 )
+                       ["Saitan", "Apple", "Tofu",  "Strawberry", "Almond", "Salad"].get( (i + 7**i)%6  )
             })
 
         expect: 'When we convert the tensor to a String via the flags "b" (cell bound) and "f" (formatted).'
@@ -135,11 +135,11 @@ class Tensor_State_Spec extends Specification
                             .setHasSlimNumbers(  false )
 
         and : 'Four tensors of various data types:'
-            Tsr t1 = Tsr.of( Float.class, shape, -4f..5f ).set( Tsr.of( shape, -7f..3f ) )
-            Tsr t2 = Tsr.of( shape, -4d..5d ).set( Tsr.of( shape, -7d..3d ) )
-            Tsr t3 = Tsr.of( Integer.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
-            Tsr t4 = Tsr.of( Short.class, shape, (-4 as short)..(5 as short) ).set( Tsr.of( shape, (-7 as short)..(3 as short) ) )
-            Tsr t5 = Tsr.of( Byte.class, shape, (-4 as byte)..(5 as byte) ).set( Tsr.of( shape, (-7 as byte)..(3 as byte) ) )
+            Tsr<Float>   t1 = Tsr.of( Float.class,   shape, -4f..5f ).set( Tsr.of( shape, -7f..3f ) )
+            Tsr<Double>  t2 = Tsr.of( Double.class,  shape, -4d..5d ).set( Tsr.of( shape, -7d..3d ) )
+            Tsr<Integer> t3 = Tsr.of( Integer.class, shape, -4..5   ).set( Tsr.of( shape, -7..3   ) )
+            Tsr<Short>   t4 = Tsr.of( Short.class,   shape, (-4 as short)..(5 as short) ).set( Tsr.of( shape, (-7 as short)..(3 as short) ) )
+            Tsr<Byte>    t5 = Tsr.of( Byte.class,    shape, (-4 as byte )..(5 as byte ) ).set( Tsr.of( shape, (-7 as byte)..(3 as byte) ) )
 
         expect: 'The first tensor has the expected internals and produces the correct String representation.'
             t1.toString(settings) == expected

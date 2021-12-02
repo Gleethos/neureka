@@ -102,7 +102,7 @@ class Calculus_Integration_Spec extends Specification
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
             Function f = Function.of("[2, 0, 1]:(I[0])")
 
-        when : Tsr t = Tsr.of([3, 4, 2], 1..5)
+        when : Tsr t = Tsr.of([3, 4, 2], 1d..5d)
         then : t.toString().contains("[3x4x2]:(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0)")
 
         when : Tsr r = f(t)
@@ -115,7 +115,7 @@ class Calculus_Integration_Spec extends Specification
     def 'The "DimTrim" operation works forward as well as backward!'(){
 
         given :
-            Tsr t = Tsr.of([1, 1, 3, 2, 1], 8).setRqsGradient(true)
+            Tsr t = Tsr.of([1, 1, 3, 2, 1], 8d).setRqsGradient(true)
 
         when :
             Tsr trimmed = Function.of("dimtrim(I[0])")(t)
