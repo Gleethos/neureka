@@ -11,6 +11,8 @@ import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
@@ -25,6 +27,11 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                                         .first( Objects::isNull )
                                         .tensors( tensors -> tensors.length == 3 )
                                         .tensors( tensors -> tensors[2].size() == 1 || tensors[2].isVirtual() )
+                                        .tensors( tensors ->
+                                                tensors[2].shape().stream().allMatch( d -> d == 1 )
+                                                ||
+                                                tensors[1].shape().equals(tensors[2].shape())
+                                        )
                                         .suitabilityIfValid( SuitabilityPredicate.VERY_GOOD )
         );
         setCallPreparation(
