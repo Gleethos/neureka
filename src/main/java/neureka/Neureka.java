@@ -617,9 +617,8 @@ public final class Neureka
                 }
                 return sb.toString();
             } catch ( IOException e ) {
-                e.printStackTrace();
-                System.exit( 1 );
-                return null;
+                _LOG.error("Failed loading library resource at '"+path+"'!");
+                return "";
             }
         }
 
