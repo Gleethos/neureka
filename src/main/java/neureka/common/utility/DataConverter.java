@@ -487,6 +487,28 @@ public class DataConverter
             return array;
         }
 
+        public static byte[] seededByteArray(byte[] array, String seed) {
+            return seededByteArray(array, _longStringHash(seed));
+        }
+
+        public static byte[] seededByteArray( byte[] array, long seed ) {
+            Random dice = new Random();
+            dice.setSeed(seed);
+            for ( int i = 0; i < array.length; i++ ) array[ i ] = (byte) dice.nextInt();
+            return array;
+        }
+
+        public static long[] seededLongArray( long[] array, String seed) {
+            return seededLongArray(array, _longStringHash(seed));
+        }
+
+        public static long[] seededLongArray( long[] array, long seed ) {
+            Random dice = new Random();
+            dice.setSeed(seed);
+            for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextLong();
+            return array;
+        }
+
         private static long _longStringHash(String string)
         {
             long h = 1125899906842597L; // prime
