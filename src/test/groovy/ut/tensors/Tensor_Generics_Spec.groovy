@@ -69,6 +69,28 @@ class Tensor_Generics_Spec extends Specification
 
     }
 
+    def '1D tensors can be created from primitive arrays.'(
+            int size, Object data, Class<?> expected
+    ){
+
+        given :
+            def t = Tsr.of(data)
+
+        expect :
+            t.size() == size
+        and :
+            t.getValueClass() == expected
+
+
+        where :
+            size | data                      | expected
+              3  | new float[]{-1f, 3f, 6f}  | Float
+              4  | new int[]{1, -2 , 9, 12}  | Integer
+              2  | new byte[]{42 , 73}       | Byte
+              3  | new long[]{-16 , 54, 12}  | Long
+
+    }
+
 
 
 }

@@ -413,7 +413,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  See {@link #of(List)}.
      */
     private Tsr( List<Object> conf ) {
-        createConstructionAPI().construct( conf.stream().map( e -> (List<Object>) e ).collect( Collectors.toList() ) );
+        createConstructionAPI().constructFor( conf.stream().map(e -> (List<Object>) e ).collect( Collectors.toList() ) );
     }
 
     /*
@@ -492,13 +492,60 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar double tensor.
      */
-    public static Tsr<Double> of( double value ) { return new Tsr<Double>(value); }
+    public static Tsr<Double> of( double value ) { return new Tsr<>(value); }
 
     private Tsr( double value ) { createConstructionAPI()._constructAllF64( new int[]{ 1 }, value ); }
 
-    public static Tsr<Float> of( float[] value ) { return new Tsr<>( value ); }
+    /**
+     *  Constructs a vector of floats based on the provided array.
+     *
+     * @param value The array of floats from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of floats.
+     */
+    public static Tsr<Float> of( float... value ) { return new Tsr<>( value ); }
 
     private Tsr( float[] value ) { createConstructionAPI().constructForFloats( new int[]{ value.length }, value ); }
+
+    /**
+     *  Constructs a vector of doubles based on the provided array.
+     *
+     * @param value The array of doubles from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of doubles.
+     */
+    public static Tsr<Double> of( double... value ) { return new Tsr<>( value ); }
+
+    private Tsr( double[] value ) { createConstructionAPI().constructForDoubles( new int[]{ value.length }, value ); }
+
+    /**
+     *  Constructs a vector of bytes based on the provided array.
+     *
+     * @param value The array of bytes from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of bytes.
+     */
+    public static Tsr<Byte> of( byte... value ) { return new Tsr<>( value ); }
+
+    private Tsr( byte[] value ) { createConstructionAPI().constructForBytes( new int[]{ value.length }, value ); }
+
+    /**
+     *  Constructs a vector of ints based on the provided array.
+     *
+     * @param value The array of ints from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of ints.
+     */
+    public static Tsr<Integer> of( int... value ) { return new Tsr<>( new int[]{ value.length }, value ); }
+
+    private Tsr( int[] shape, int[] value ) { createConstructionAPI().constructForInts( shape, value ); }
+
+    /**
+     *  Constructs a vector of longs based on the provided array.
+     *
+     * @param value The array of ints from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of longs.
+     */
+    public static Tsr<Long> of( long... value ) { return new Tsr<>( new int[]{ value.length }, value ); }
+
+    private Tsr( int[] shape, long[] value ) { createConstructionAPI().constructForLongs( shape, value ); }
+
 
     public static Tsr<Double> of( int[] shape, String seed ) { return new Tsr<>( shape, seed ); }
 
@@ -564,7 +611,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param <V>
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
-    public static <V> Tsr of( DataType<V> dataType, int[] shape, Object data ) { return new Tsr<>( shape, dataType, data ); }
+    public static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new Tsr<>( shape, dataType, data ); }
 
     private Tsr( int[] shape, DataType<?> dataType, Object data ) { createConstructionAPI()._tryConstructing( shape, dataType, data ); }
 

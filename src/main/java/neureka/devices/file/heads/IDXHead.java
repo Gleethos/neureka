@@ -174,10 +174,10 @@ public class IDXHead extends AbstractFileHead<IDXHead, Number>
     public Tsr<Number> load() throws IOException
     {
         Object value = _loadData();
-        DataType<?> type = ( Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )
-                ? DataType.of( _dataType.getTypeClassInstance().getNumericTypeTarget() )
-                : _dataType;
-        return Tsr.of( type, _shape, value );
+        DataType<?> type = Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes()
+                            ? DataType.of( _dataType.getTypeClassInstance().getNumericTypeTarget() )
+                            : _dataType;
+        return (Tsr<Number>) Tsr.of( type, _shape, value );
     }
 
     @Override

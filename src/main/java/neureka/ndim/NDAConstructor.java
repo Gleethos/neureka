@@ -73,19 +73,7 @@ public class NDAConstructor {
         int size = NDConfiguration.Utility.szeOfShp(shape);
         if ( data instanceof List<?> ) {
             List<?> range = (List<?>) data;
-            if ( dataType == DataType.of(Object.class) ) {
-                // Nested Groovy list should be unpacked:
-                if ( range.size() == 1 && range.get( 0 ).getClass().getSimpleName().equals("IntRange") )
-                    range = (List<?>) range.get( 0 );
-                constructForRange(
-                        shape,
-                        DataType.of( F64.class ),
-                        range.toArray()
-                );
-                return;
-            }
-            else
-                data = range.toArray();
+            data = range.toArray();// TODO: This is probably wrong!
         }
         if ( data instanceof Object[] )
             data = _autoConvertAndOptimizeObjectArray( (Object[]) data, dataType, size );
@@ -174,7 +162,7 @@ public class NDAConstructor {
      *
      * @param matrix A list of lists which ought to resemble a matrix.
      */
-    public void construct( List<List<Object>> matrix ) {
+    public void constructFor(List<List<Object>> matrix ) {
         boolean isNumeric = matrix.stream().allMatch( e -> e.stream().allMatch( ie -> ie instanceof Number ) );
         if ( isNumeric ) {
             int n = matrix.get( 0 ).size();
@@ -199,54 +187,6 @@ public class NDAConstructor {
         }
     }
 
-    public <V> void constructForRange( int[] shape, DataType<?> dataType, V[] range )
-    {
-        if ( range.length != 0 && !( range[ 0 ] instanceof Number ) ) {
-            Class<?> givenClass = range[ 0 ].getClass();
-            @SuppressWarnings("unchecked")
-            final V[] value = (V[]) Array.newInstance(
-                    givenClass,
-                    NDConfiguration.Utility.szeOfShp( shape )
-            );
-            for ( int i = 0; i < value.length; i++ ) value[ i ] = range[ i % range.length ];
-            _API.setType( DataType.of( givenClass ) );
-            _API.setData( value );
-            construct( shape, value );
-        } else {
-            _API.setType( dataType );
-            if ( dataType.getTypeClass() == F64.class )
-                constructForDoubles(
-                        shape,
-                        DataConverter.Utility.objectsToDoubles( range, NDConfiguration.Utility.szeOfShp( shape ) )
-                );
-            else if ( dataType.getTypeClass() == F32.class  )
-                constructForFloats(
-                        shape,
-                        DataConverter.Utility.objectsToFloats( range, NDConfiguration.Utility.szeOfShp( shape ) )
-                );
-            else if ( dataType.getTypeClass() == I32.class )
-                _constructForInts(
-                        shape,
-                        DataConverter.Utility.objectsToInts( range, NDConfiguration.Utility.szeOfShp( shape ) )
-                );
-            else if ( dataType.getTypeClass() == I16.class )
-                _constructForShorts(
-                        shape,
-                        DataConverter.Utility.objectsToShorts( range, NDConfiguration.Utility.szeOfShp( shape ) )
-                );
-            else if ( dataType.getTypeClass() == I8.class )
-                _constructForBytes(
-                        shape,
-                        DataConverter.Utility.objectsToBytes( range, NDConfiguration.Utility.szeOfShp( shape ) )
-                );
-            else if ( dataType.getTypeClass() == I64.class )
-                _constructForLongs(
-                        shape,
-                        DataConverter.Utility.objectsToLongs( range, NDConfiguration.Utility.szeOfShp( shape ) )
-                );
-        }
-    }
-
     public void constructForDoubles( int[] shape, double[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
@@ -259,7 +199,7 @@ public class NDAConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    public void constructForFloats(int[] shape, float[] value)
+    public void constructForFloats( int[] shape, float[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         _API.setType( DataType.of( F32.class ) );
@@ -270,7 +210,7 @@ public class NDAConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    private void _constructForInts( int[] shape, int[] value )
+    public void constructForInts( int[] shape, int[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         _API.setType( DataType.of( I32.class ) );
@@ -281,7 +221,7 @@ public class NDAConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    public void _constructForShorts( int[] shape, short[] value )
+    public void constructForShorts( int[] shape, short[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         _API.setType( DataType.of( I16.class ) );
@@ -292,7 +232,7 @@ public class NDAConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    public void _constructForBytes( int[] shape, byte[] value )
+    public void constructForBytes( int[] shape, byte[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         _API.setType( DataType.of( I8.class ) );
@@ -303,7 +243,7 @@ public class NDAConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    public void _constructForLongs( int[] shape, long[] value )
+    public void constructForLongs( int[] shape, long[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         _API.setType( DataType.of( I64.class ) );
@@ -314,7 +254,7 @@ public class NDAConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    public  <V> void construct( int[] shape, V[] value ) {
+    public <V> void constructFor( int[] shape, V[] value ) {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         if ( size != value.length ) {
             _fromRange( shape, value );
