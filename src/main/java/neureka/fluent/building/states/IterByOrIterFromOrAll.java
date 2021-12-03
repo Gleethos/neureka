@@ -61,6 +61,6 @@ public interface IterByOrIterFromOrAll<V>
      * @param seed The seed based on which the value for populating the entire {@link Tsr} will be generated.
      * @return The pseudo randomly populated {@link Tsr} instance.
      */
-    Tsr<V> seed( Object seed );
+    Tsr<V> andSeed( Object seed );
 
 }

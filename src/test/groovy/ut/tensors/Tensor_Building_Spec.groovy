@@ -91,8 +91,6 @@ class Tensor_Building_Spec extends Specification
 
     }
 
-
-
     def 'Value based tensors can be created fluently.'(
             Class<Object> type, Object data, Object expected
     ) {
@@ -133,6 +131,45 @@ class Tensor_Building_Spec extends Specification
             Boolean.class   | [true, false]   as Boolean[]   || [true, false, true, false, true, false] as boolean[]
             Character.class | ['x', 'y']      as Character[] || ['x', 'y', 'x', 'y', 'x', 'y']          as char[]
     }
+
+
+    def 'Seed based tensors can be created fluently.'(
+            Class<Object> type, Object seed, Object expected
+    ) {
+
+        given : 'We create a Tsr instance by passing an array of arguments which ought to be populated based on a seed.'
+            Tsr<?> t = Tsr.of( type )
+                            .withShape( 3, 2 )
+                            .andSeed( seed )
+
+        expect : 'This new instance will have the expected data type...'
+            t.dataType == DataType.of(type)
+
+        and : '...also it will contain the expected data.'
+            t.data == expected
+
+        and : 'The tensor will have the shape we passed to the builder.'
+            t.shape() == [3, 2]
+
+        and : 'The size of the tensor will be the product of all shape entries!'
+            t.size() == 6
+
+        and : """
+                Based on the fact that the tensor is not homogeneously filled it will be an "actual tensor".
+                The opposite of that, a "virtual tensor", would mean that a tensor does not have allocated 
+                memory proportional to the size of the tensor! 
+                In this case however the tensor should be actual which means that it is not virtual.
+            """
+            !t.isVirtual()
+
+        where : 'The following data is being used to populate the builder API:'
+            type            | seed  || expected
+            Integer.class   | "a"   || [1339394550, -1833393546, -856828099, -757072988, 2102900152, 1199451677] as int[]
+            Double.class    | "b"   || [-0.7129147576473633, -0.021739959992013475, 0.0688712696353899, -0.06398972167241564, 0.8226821091309379, 2.530713285361827] as double[]
+            Short           | "c"   || [18384, 2870, 20818, -5635, -20565, -25424] as short[]
+            Float.class     | "d"   || [-1.4496698, 1.0095189, -0.22373904, 0.18774746, -1.1156114, 1.4588006] as float[]
+    }
+
 
 
     def 'Initialization lambda based tensors can be created fluently.'(
