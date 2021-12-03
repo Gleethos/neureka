@@ -52,4 +52,15 @@ public interface IterByOrIterFromOrAll<V>
      */
     Tsr<V> all( V value );
 
+    /**
+     *  This method creates and return a {@link Tsr} instance which
+     *  will be filled based on the provided seed object.
+     *  The seed can be any object whose hash will serve as a basis for
+     *  supplying the tensor with random data..
+     *
+     * @param seed The seed based on which the value for populating the entire {@link Tsr} will be generated.
+     * @return The pseudo randomly populated {@link Tsr} instance.
+     */
+    Tsr<V> seed( Object seed );
+
 }

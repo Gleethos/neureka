@@ -89,6 +89,11 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
     public Tsr<V> all( V value ) { return Tsr.of( _dataType, _shape, value ); }
 
     @Override
+    public Tsr<V> seed(Object seed) {
+        return Tsr.of( _dataType, _shape, seed );
+    }
+
+    @Override
     public IterByOrIterFromOrAll<V> withShape( int... shape ) { _shape = shape; return this; }
 
     @Override

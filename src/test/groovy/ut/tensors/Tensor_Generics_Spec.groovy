@@ -77,6 +77,8 @@ class Tensor_Generics_Spec extends Specification
             def t = Tsr.of(data)
 
         expect :
+            t.rank() == 1
+        and :
             t.size() == size
         and :
             t.getValueClass() == expected
@@ -88,6 +90,7 @@ class Tensor_Generics_Spec extends Specification
               4  | new int[]{1, -2 , 9, 12}  | Integer
               2  | new byte[]{42 , 73}       | Byte
               3  | new long[]{-16 , 54, 12}  | Long
+              1  | new short[]{26}           | Short
 
     }
 

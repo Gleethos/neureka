@@ -343,7 +343,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public static Tsr<Double> of( List<? extends Number> shape, String seed ) {
         int[] shp = new int[ shape.size() ];
         for ( int i = 0; i < shp.length; i++ ) shp[ i ] = shape.get( i ).intValue();
-        return new Tsr<>( shp, seed );
+        return of( Double.class, shp, seed );
     }
 
     public static <V> Tsr<V> of( List<? extends Number> shape, List<V> range ) {
@@ -539,23 +539,31 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      *  Constructs a vector of longs based on the provided array.
      *
-     * @param value The array of ints from which a 1D tensor ought to be constructed.
+     * @param value The array of longs from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of longs.
      */
     public static Tsr<Long> of( long... value ) { return new Tsr<>( new int[]{ value.length }, value ); }
 
     private Tsr( int[] shape, long[] value ) { createConstructionAPI().constructForLongs( shape, value ); }
 
+    /**
+     *  Constructs a vector of shorts based on the provided array.
+     *
+     * @param value The array of shorts from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of shorts.
+     */
+    public static Tsr<Short> of( short... value ) { return new Tsr<>( new int[]{ value.length }, value ); }
 
-    public static Tsr<Double> of( int[] shape, String seed ) { return new Tsr<>( shape, seed ); }
+    private Tsr( int[] shape, short[] value ) { createConstructionAPI().constructForShorts( shape, value ); }
+
+    public static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new Tsr<>( valueType, shape, seed ); }
 
     /**
-     *  See {@link #of(int[], String)}
+     *  See {@link #of(Class, int[], String)}
      *  ...and {@link #of(List, String)}
      */
-    private Tsr( int[] shape, String seed ) {
-        _construct( shape, false, false );
-        _setData( DataConverter.Utility.seededDoubleArray( (double[]) getData(), seed ) );
+    private Tsr( Class<V> valueType, int[] shape, String seed ) {
+        createConstructionAPI().constructSeeded( valueType, shape, seed );
     }
 
     public static Tsr<Number> ofShape( int[] shape ) { return new Tsr<>( shape ); }
@@ -583,7 +591,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, Object data ) { return new Tsr<>( shape.stream().mapToInt(i -> i).toArray(), typeClass, data ); }
 
-    private Tsr( int[] shape, Class<?> typeClass, Object data )
+    private Tsr( int[] shape, Class<V> typeClass, Object data )
     {
         setDataType( DataType.of( typeClass ) );
         createConstructionAPI().configureFromNewShape( shape, false, false );
@@ -613,7 +621,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new Tsr<>( shape, dataType, data ); }
 
-    private Tsr( int[] shape, DataType<?> dataType, Object data ) { createConstructionAPI()._tryConstructing( shape, dataType, data ); }
+    private Tsr( int[] shape, DataType<?> dataType, Object data ) { createConstructionAPI().tryConstructing( shape, dataType, data ); }
 
     public static <V> Tsr<V> of( DataType<V> dataType, List<Integer> shape,  List<V> data ) {
         return Tsr.of(

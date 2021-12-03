@@ -60,8 +60,8 @@ class Tensor_IO_Spec extends Specification
     {
         given : 'Three seeded 2D tensors are being instantiated.'
             Tsr t1 = Tsr.of([2, 3], "I am a seed! :)")
-            Tsr t2 = Tsr.of(new int[]{2, 3}, "I am a seed! :)")
-            Tsr t3 = Tsr.of(new int[]{2, 3}, "I am also a seed! But different. :)")
+            Tsr t2 = Tsr.of([2, 3], "I am a seed! :)")
+            Tsr t3 = Tsr.of([2, 3], "I am also a seed! But different. :)")
 
         expect : 'Equal seeds produce equal values.'
             t1.toString() == t2.toString()

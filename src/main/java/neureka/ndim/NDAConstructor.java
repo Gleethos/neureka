@@ -69,7 +69,7 @@ public class NDAConstructor {
         }
     }
 
-    public void _tryConstructing( int[] shape, DataType<?> dataType, Object data ) {
+    public void tryConstructing(int[] shape, DataType<?> dataType, Object data ) {
         int size = NDConfiguration.Utility.szeOfShp(shape);
         if ( data instanceof List<?> ) {
             List<?> range = (List<?>) data;
@@ -162,7 +162,7 @@ public class NDAConstructor {
      *
      * @param matrix A list of lists which ought to resemble a matrix.
      */
-    public void constructFor(List<List<Object>> matrix ) {
+    public void constructFor( List<List<Object>> matrix ) {
         boolean isNumeric = matrix.stream().allMatch( e -> e.stream().allMatch( ie -> ie instanceof Number ) );
         if ( isNumeric ) {
             int n = matrix.get( 0 ).size();
@@ -262,6 +262,19 @@ public class NDAConstructor {
         else _API.setData( value );
         configureFromNewShape( shape, false, false  );
     }
+
+    public <V> void constructSeeded( Class<V> valueType, int[] shape, Object seed ) {
+        _API.setType( DataType.of(valueType) );
+        int size = NDConfiguration.Utility.szeOfShp( shape );
+
+        if ( valueType == Double.class )
+            _API.setData( DataConverter.Utility.seededDoubleArray( new double[size], seed.toString() ) );
+        else if ( valueType == Float.class )
+            _API.setData( DataConverter.Utility.seededFloatArray( new float[size], seed.toString() ) );
+
+        configureFromNewShape( shape, false, false  );
+    }
+
 
     private <V> void _fromRange(int[] shape, V[] value ) {
         Class<?> givenClass = value[ 0 ].getClass();
