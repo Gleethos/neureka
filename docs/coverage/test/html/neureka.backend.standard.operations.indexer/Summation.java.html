@@ -288,7 +288,7 @@ public final class Summation extends AbstractOperation
     @Override
     public String stringify( String[] children ) {
 <span class="fc" id="L290">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L291" title="1 of 4 branches missed.">        if (expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')') {</span>
+<span class="pc bpc" id="L291" title="1 of 4 branches missed.">        if ( expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')' ) {</span>
 <span class="fc" id="L292">            return &quot;sumJs&quot; + expression;</span>
         }
 <span class="fc" id="L294">        return &quot;sumJs&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>

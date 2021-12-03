@@ -78,7 +78,7 @@ import neureka.devices.Device;
 <span class="fc" id="L78">                                CalcUtil.recursiveExecution( call.withTensors(tsrs), JunctionUtil::forConvolution );</span>
 <span class="fc" id="L79">                                return tsrs[ 0 ];</span>
                             } else {
-<span class="pc bpc" id="L81" title="1 of 2 branches missed.">                                if (call.getValOf( Arg.DerivIdx.class ) &lt; 0) {</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">                                if ( call.getValOf( Arg.DerivIdx.class ) &lt; 0 ) {</span>
 <span class="fc" id="L82">                                    Tsr&lt;?&gt;[] tsrs = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));</span>
 <span class="fc" id="L83">                                    Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)</span>
 <span class="fc bfc" id="L84" title="All 2 branches covered.">                                    for ( Tsr&lt;?&gt; t : tsrs ) t.setIsVirtual( false );</span>

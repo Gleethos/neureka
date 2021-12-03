@@ -49,7 +49,7 @@ public final class Product extends AbstractOperation {
 <span class="nc" id="L49">                        return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];</span>
                     } else {
 <span class="nc" id="L51">                        return ( t0Idx, t1Idx, t2Idx ) -&gt; {</span>
-<span class="nc bnc" id="L52" title="All 2 branches missed.">                            if (d == 0) return t2_val[t2Idx.i()];</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">                            if ( d == 0 ) return t2_val[t2Idx.i()];</span>
 <span class="nc" id="L53">                            else return t1_val[ t1Idx.i() ];</span>
                         };
                     }
@@ -64,7 +64,7 @@ public final class Product extends AbstractOperation {
 <span class="fc" id="L64">                        return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] * t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];</span>
                     } else {
 <span class="nc" id="L66">                        return ( t0Idx, t1Idx, t2Idx ) -&gt; {</span>
-<span class="nc bnc" id="L67" title="All 2 branches missed.">                            if (d == 0) return t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">                            if ( d == 0 ) return t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];</span>
 <span class="nc" id="L68">                            else return t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];</span>
                         };
                     }
@@ -302,7 +302,7 @@ public final class Product extends AbstractOperation {
     @Override
     public String stringify( String[] children ) {
 <span class="fc" id="L304">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L305" title="1 of 4 branches missed.">        if (expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')') {</span>
+<span class="pc bpc" id="L305" title="1 of 4 branches missed.">        if ( expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')' ) {</span>
 <span class="fc" id="L306">            return &quot;prodJs&quot; + expression;</span>
         }
 <span class="fc" id="L308">        return &quot;prodJs&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>

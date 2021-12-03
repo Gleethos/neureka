@@ -101,36 +101,41 @@ import java.util.List;
 
     @Override
     public double call( final double[] inputs, int j ) {
-<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        if ( j &lt; 0 ) {</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if ( j &lt; 0 ) {</span>
 <span class="pc bpc" id="L105" title="1 of 2 branches missed.">            return inputs[ ( _index &gt;= 0 ) ? _index : ( Math.abs( _index ) - 1 ) ];</span>
         }
-<span class="nc" id="L107">        return inputs[index()];</span>
+<span class="fc" id="L107">        return inputs[index()];</span>
     }
 
     @Override
 <span class="fc bfc" id="L111" title="All 2 branches covered.">    public double derive( final double[] inputs, final int index ) { return ( index == index() ) ? 1 : 0; }</span>
 
     @Override
-<span class="fc" id="L114">    public double derive( double[] inputs, int index, int j ) { return derive( inputs, index ); }</span>
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    @Override
-    public Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... tensors ) {
-<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );</span>
-<span class="fc bfc" id="L121" title="All 2 branches covered.">        if ( d &gt;= 0 )</span>
-<span class="fc bfc" id="L122" title="All 2 branches covered.">            return ( d == index() )</span>
-<span class="fc" id="L123">                ? Tsr.of( tensors[ 0 ].shape(), 1.0 )</span>
-<span class="fc" id="L124">                : Tsr.of( tensors[ 0 ].shape(), 0.0 );</span>
-<span class="fc" id="L125">        return _extract( tensors[ index() ] );</span>
+    public double derive( double[] inputs, int index, int j ) {
+<span class="fc bfc" id="L115" title="All 4 branches covered.">        if ( j &lt; 0 || j == index() )</span>
+<span class="fc" id="L116">            return derive( inputs, index );</span>
+        else
+<span class="fc" id="L118">            return 0;</span>
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-<span class="fc bfc" id="L131" title="All 2 branches covered.">    public String toString() { return &quot;I&quot; + ( this.providesGradient() ? &quot;g&quot; : &quot;&quot; ) + &quot;[&quot; + index() + &quot;]&quot;; }</span>
+    public Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... tensors ) {
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        if ( d &gt;= 0 )</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            return ( d == index() )</span>
+<span class="fc" id="L128">                ? Tsr.of( tensors[ 0 ].shape(), 1.0 )</span>
+<span class="fc" id="L129">                : Tsr.of( tensors[ 0 ].shape(), 0.0 );</span>
+<span class="fc" id="L130">        return _extract( tensors[ index() ] );</span>
+    }
 
-<span class="fc bfc" id="L133" title="All 2 branches covered.">    public int index() { return ( this.providesGradient() ? ( Math.abs(_index) - 1 ) : _index ); }</span>
+    //------------------------------------------------------------------------------------------------------------------
+
+    @Override
+<span class="fc bfc" id="L136" title="All 2 branches covered.">    public String toString() { return &quot;I&quot; + ( this.providesGradient() ? &quot;g&quot; : &quot;&quot; ) + &quot;[&quot; + index() + &quot;]&quot;; }</span>
+
+<span class="fc bfc" id="L138" title="All 2 branches covered.">    public int index() { return ( this.providesGradient() ? ( Math.abs(_index) - 1 ) : _index ); }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

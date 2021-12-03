@@ -52,7 +52,7 @@ import java.util.WeakHashMap;
 <span class="nc" id="L52">            return;</span>
         }
 <span class="fc" id="L54">        boolean doAD = function.isDoingAD();</span>
-<span class="fc" id="L55">        this._functionCache.put(</span>
+<span class="fc" id="L55">        _functionCache.put(</span>
 <span class="fc bfc" id="L56" title="All 2 branches covered.">                ( ( (doAD) ? &quot;d&quot; : &quot;&quot; ) + &quot;(&quot; + function + &quot;)&quot; ).intern(), // Make the String unique!</span>
                 function
         );
@@ -60,16 +60,16 @@ import java.util.WeakHashMap;
 
     public Function get( String expression, boolean doesAD ) {
 <span class="fc bfc" id="L62" title="All 2 branches covered.">        String k = ( doesAD ? &quot;d&quot; + expression : expression );</span>
-<span class="fc" id="L63">        return this._functionCache.get( k );</span>
+<span class="fc" id="L63">        return _functionCache.get( k );</span>
     }
 
     public boolean has( String expression, boolean doesAD ) {
 <span class="fc bfc" id="L67" title="All 2 branches covered.">        String k = ( doesAD ? &quot;d&quot; + expression : expression );</span>
-<span class="fc" id="L68">        return this._functionCache.containsKey( k );</span>
+<span class="fc" id="L68">        return _functionCache.containsKey( k );</span>
     }
 
     public String toString() {
-<span class="fc" id="L72">        return this.getClass().getSimpleName()+&quot;[size=&quot;+this._functionCache.size()+&quot;]&quot;;</span>
+<span class="fc" id="L72">        return this.getClass().getSimpleName()+&quot;[size=&quot;+_functionCache.size()+&quot;]&quot;;</span>
     }
 
 }

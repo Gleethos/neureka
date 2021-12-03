@@ -68,12 +68,7 @@ import java.util.function.IntFunction;
 <span class="nc" id="L68">    public Iterator&lt;Tsr&lt;V&gt;&gt; iterator() { return this.getTensors().iterator(); }</span>
 
     @Override
-    public &lt;T&gt; T[] toArray( IntFunction&lt;T[]&gt; generator ) {
-<span class="nc" id="L72">        return null; // this.getTensors().toArray( generator );</span>
-    }
-
-    @Override
-<span class="nc" id="L76">    public Spliterator&lt;Tsr&lt;V&gt;&gt; spliterator() { return getTensors().spliterator(); }</span>
+<span class="nc" id="L71">    public Spliterator&lt;Tsr&lt;V&gt;&gt; spliterator() { return getTensors().spliterator(); }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

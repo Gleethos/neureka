@@ -68,7 +68,7 @@ import java.util.stream.Collectors;
 <span class="fc" id="L68">                                                                                             .runAndGetFirstTensor(</span>
 <span class="fc" id="L69">                                                                                                     ExecutionCall.of(</span>
 <span class="fc" id="L70">                                                                                                             Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),</span>
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">                                                                                                             Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">                                                                                                             Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),</span>
                                                                                                              backwardError
                                                                                                      )
 <span class="fc" id="L74">                                                                                                     .andArgs(Arg.DerivIdx.of(d))</span>

@@ -88,7 +88,7 @@ import java.util.function.Supplier;
      *
      * @return An unmodifiable mapping of {@link Operation} properties to the {@link Operation} instances to which they belong.
      */
-<span class="fc" id="L91">    public Map&lt;String, Operation&gt; getOperationLookupMap() { return Collections.unmodifiableMap( this._lookup ); }</span>
+<span class="fc" id="L91">    public Map&lt;String, Operation&gt; getOperationLookupMap() { return Collections.unmodifiableMap( _lookup ); }</span>
 
     /**
      * This method returns an unmodifiable view of the
@@ -99,17 +99,17 @@ import java.util.function.Supplier;
      *
      * @return An unmodifiable view of the list of {@link Operation} implementation instances managed by this context
      */
-<span class="fc" id="L102">    public List&lt;Operation&gt; getOperations() { return Collections.unmodifiableList( this._operations); }</span>
+<span class="fc" id="L102">    public List&lt;Operation&gt; getOperations() { return Collections.unmodifiableList( _operations); }</span>
 
     /**
      * @return The number of {@link Operation} instances stored on this {@link BackendContext}.
      */
-<span class="fc" id="L107">    public int size() { return this._size; }</span>
+<span class="fc" id="L107">    public int size() { return _size; }</span>
 
     /**
      * @return The {@link Function} and {@link neureka.Tsr} cache of this {@link BackendContext}
      */
-<span class="fc" id="L112">    public FunctionCache getFunctionCache() { return this._functionCache; }</span>
+<span class="fc" id="L112">    public FunctionCache getFunctionCache() { return _functionCache; }</span>
 
     /**
      *  This method returns a {@link Functions} instance which wraps pre-instantiated
@@ -168,10 +168,10 @@ import java.util.function.Supplier;
 <span class="fc bfc" id="L168" title="All 2 branches covered.">                        .matches(&quot;[a-z]&quot;)</span>
         ) {
 <span class="fc bfc" id="L170" title="All 2 branches covered.">            if ( operator.contains( &quot;&quot;+((char)171) ) )</span>
-<span class="fc" id="L171">                this._lookup.put(operator.replace((&quot;&quot;+((char)171)), &quot;&lt;&lt;&quot;), operation);</span>
+<span class="fc" id="L171">                _lookup.put(operator.replace((&quot;&quot;+((char)171)), &quot;&lt;&lt;&quot;), operation);</span>
 
 <span class="fc bfc" id="L173" title="All 2 branches covered.">            if ( operator.contains( &quot;&quot;+((char)187) ) )</span>
-<span class="fc" id="L174">                this._lookup.put(operator.replace((&quot;&quot;+((char)187)),&quot;&gt;&gt;&quot;), operation);</span>
+<span class="fc" id="L174">                _lookup.put(operator.replace((&quot;&quot;+((char)187)),&quot;&gt;&gt;&quot;), operation);</span>
         }
 <span class="fc" id="L176">        _size++;</span>
 <span class="fc" id="L177">        return this;</span>
@@ -182,7 +182,7 @@ import java.util.function.Supplier;
      * @return The truth value determining if the provided {@link Operation} is part of this {@link BackendContext}.
      */
     public boolean hasOperation( Operation operation ) {
-<span class="fc" id="L185">        return this._lookup.containsKey( operation.getFunction() );</span>
+<span class="fc" id="L185">        return _lookup.containsKey( operation.getFunction() );</span>
     }
 
     /**
@@ -190,7 +190,7 @@ import java.util.function.Supplier;
      * @return The truth value determining if the provided {@link Operation} is part of this {@link BackendContext}.
      */
     public boolean hasOperation( String operationIdentifier ) {
-<span class="nc" id="L193">        return this._lookup.containsKey( operationIdentifier );</span>
+<span class="nc" id="L193">        return _lookup.containsKey( operationIdentifier );</span>
     }
 
     /**
@@ -249,12 +249,19 @@ import java.util.function.Supplier;
     }
 
     /**
+     *  Returns all {@link BackendExtension} instances.
+     */
+    public List&lt;BackendExtension&gt; getExtensions() {
+<span class="fc" id="L255">        return extensions.getAll( BackendExtension.class );</span>
+    }
+
+    /**
      *  Registers the provided {@link BackendExtension} instance
      *  which can then be accessed via {@link #get(Class)}.
      */
     public BackendContext set( BackendExtension extension ) {
-<span class="fc" id="L256">        extensions.set( extension );</span>
-<span class="fc" id="L257">        return this;</span>
+<span class="fc" id="L263">        extensions.set( extension );</span>
+<span class="fc" id="L264">        return this;</span>
     }
 
     /**
@@ -275,11 +282,11 @@ import java.util.function.Supplier;
         private final BackendContext originalContext;
         private final BackendContext visitedContext;
 
-<span class="fc" id="L278">        private Runner(BackendContext visited, BackendContext originalContext ) {</span>
-<span class="pc bpc" id="L279" title="1 of 2 branches missed.">            if ( visited == originalContext ) log.warn(&quot;Context runner encountered two identical contexts!&quot;);</span>
-<span class="fc" id="L280">            this.originalContext = originalContext;</span>
-<span class="fc" id="L281">            this.visitedContext = visited;</span>
-<span class="fc" id="L282">        }</span>
+<span class="fc" id="L285">        private Runner(BackendContext visited, BackendContext originalContext ) {</span>
+<span class="pc bpc" id="L286" title="1 of 2 branches missed.">            if ( visited == originalContext ) log.warn(&quot;Context runner encountered two identical contexts!&quot;);</span>
+<span class="fc" id="L287">            this.originalContext = originalContext;</span>
+<span class="fc" id="L288">            this.visitedContext = visited;</span>
+<span class="fc" id="L289">        }</span>
 
         /**
          *  Use this method to supply a lambda which will be executed in the {@link BackendContext}
@@ -291,10 +298,10 @@ import java.util.function.Supplier;
          * @return This very {@link Runner} instance to enable method chaining.
          */
         public Runner run( Runnable contextSpecificAction ) {
-<span class="fc" id="L294">            Neureka.get().setBackend( visitedContext );</span>
-<span class="fc" id="L295">            contextSpecificAction.run();</span>
-<span class="fc" id="L296">            Neureka.get().setBackend( originalContext );</span>
-<span class="fc" id="L297">            return this;</span>
+<span class="fc" id="L301">            Neureka.get().setBackend( visitedContext );</span>
+<span class="fc" id="L302">            contextSpecificAction.run();</span>
+<span class="fc" id="L303">            Neureka.get().setBackend( originalContext );</span>
+<span class="fc" id="L304">            return this;</span>
         }
 
         /**
@@ -311,10 +318,10 @@ import java.util.function.Supplier;
          * @return The result of the supplied context action.
          */
         public &lt;T&gt; T runAndGet( Supplier&lt;T&gt; contextSpecificAction ) {
-<span class="fc" id="L314">            Neureka.get().setBackend( visitedContext );</span>
-<span class="fc" id="L315">            T result = contextSpecificAction.get();</span>
-<span class="fc" id="L316">            Neureka.get().setBackend( originalContext );</span>
-<span class="fc" id="L317">            return result;</span>
+<span class="fc" id="L321">            Neureka.get().setBackend( visitedContext );</span>
+<span class="fc" id="L322">            T result = contextSpecificAction.get();</span>
+<span class="fc" id="L323">            Neureka.get().setBackend( originalContext );</span>
+<span class="fc" id="L324">            return result;</span>
         }
 
         /**
@@ -333,7 +340,7 @@ import java.util.function.Supplier;
          * @return The result of the supplied context action.
          */
         public &lt;T&gt; T call( Supplier&lt;T&gt; contextSpecificAction ) {
-<span class="fc" id="L336">            return runAndGet( contextSpecificAction );</span>
+<span class="fc" id="L343">            return runAndGet( contextSpecificAction );</span>
         }
 
         /**
@@ -352,7 +359,7 @@ import java.util.function.Supplier;
          * @return The result of the supplied context action.
          */
         public &lt;T&gt; T invoke( Supplier&lt;T&gt; contextSpecificAction ) {
-<span class="fc" id="L355">            return call( contextSpecificAction );</span>
+<span class="fc" id="L362">            return call( contextSpecificAction );</span>
         }
     }
 

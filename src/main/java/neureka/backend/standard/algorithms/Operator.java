@@ -25,7 +25,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
                     return call.validate()
                             .allNotNull( t -> t.size() == size && shape.equals( t.shape() ) )
                             .allNotNull( t -> t.getDataType().typeClassImplements( NumericType.class ) )
-                            .estimation();
+                            .basicSuitability();
                 }
         );
         setCanPerformBackwardADFor( call -> true );

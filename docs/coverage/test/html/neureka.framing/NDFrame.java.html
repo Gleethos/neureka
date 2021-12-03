@@ -2,7 +2,7 @@
 
 import neureka.Tsr;
 import neureka.common.composition.Component;
-import neureka.framing.states.AxisFrame;
+import neureka.framing.fluent.AxisFrame;
 
 import java.util.*;
 import java.util.function.Function;
@@ -279,11 +279,11 @@ public final class NDFrame&lt;ValType&gt; implements Component&lt;Tsr&lt;ValType
     }
 
     public Map&lt;Object, Object&gt; getMapping() {
-<span class="nc" id="L282">        return this._mapping;</span>
+<span class="nc" id="L282">        return _mapping;</span>
     }
 
     public String getTensorName() {
-<span class="fc" id="L286">        return this._tensorName;</span>
+<span class="fc" id="L286">        return _tensorName;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

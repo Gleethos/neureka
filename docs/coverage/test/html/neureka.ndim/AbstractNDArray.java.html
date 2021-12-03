@@ -41,7 +41,7 @@ import neureka.Tsr;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
-import neureka.utility.DataConverter;
+import neureka.common.utility.DataConverter;
 import neureka.common.composition.AbstractComponentOwner;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -108,7 +108,7 @@ import java.util.function.Consumer;
     /**
      * @return The {@link NDConfiguration} implementation instance of this {@link Tsr} storing dimensionality information.
      */
-<span class="fc" id="L111">    public NDConfiguration getNDConf() { _guardGet(&quot;ND-Configuration&quot;); return this._NDConf; }</span>
+<span class="fc" id="L111">    public NDConfiguration getNDConf() { _guardGet(&quot;ND-Configuration&quot;); return _NDConf; }</span>
 
     /**
      *  This method returns the {@link DataType} instance of this {@link Tsr}, which is
@@ -117,7 +117,7 @@ import java.util.function.Consumer;
      *
      * @return The {@link DataType} instance of this {@link Tsr} storing important type information.
      */
-<span class="fc" id="L120">    public DataType&lt;?&gt; getDataType() { _guardGet(&quot;data type&quot;); return this._dataType; }</span>
+<span class="fc" id="L120">    public DataType&lt;?&gt; getDataType() { _guardGet(&quot;data type&quot;); return _dataType; }</span>
 
     /**
      *  This returns the underlying raw data object of this tensor.
@@ -126,7 +126,7 @@ import java.util.function.Consumer;
      *
      * @return The raw data object underlying this tensor.
      */
-<span class="fc" id="L129">    public Object getData() { _guardGet(&quot;data object&quot;); return this._data; }</span>
+<span class="fc" id="L129">    public Object getData() { _guardGet(&quot;data object&quot;); return _data; }</span>
 
     /**
      * @return The type class of individual value items within this {@link Tsr} instance.
@@ -216,10 +216,16 @@ import java.util.function.Consumer;
 <span class="fc bfc" id="L216" title="All 2 branches covered.">        else if ( data instanceof long[] )</span>
 <span class="fc bfc" id="L217" title="All 2 branches covered.">            for ( int i = 0; i &lt; ( (long[]) data ).length; i++ )</span>
 <span class="fc" id="L218">                ( (long[]) data )[ i ] = (long) initializer.init( i, _NDConf.indicesOfIndex( i )  );</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">        else if ( data instanceof boolean[] )</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">            for ( int i = 0; i &lt; ( (boolean[]) data ).length; i++ )</span>
+<span class="fc" id="L221">                ( (boolean[]) data )[ i ] = (boolean) initializer.init( i, _NDConf.indicesOfIndex( i )  );</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        else if ( data instanceof char[] )</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">            for ( int i = 0; i &lt; ( (char[]) data ).length; i++ )</span>
+<span class="fc" id="L224">                ( (char[]) data )[ i ] = (char) initializer.init( i, _NDConf.indicesOfIndex( i )  );</span>
         else
-<span class="fc bfc" id="L220" title="All 2 branches covered.">            for ( int i = 0; i &lt; ( (Object[]) data ).length; i++ )</span>
-<span class="fc" id="L221">                ( (Object[]) data )[ i ] = initializer.init( i, _NDConf.indicesOfIndex( i )  );</span>
-<span class="fc" id="L222">    }</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">            for ( int i = 0; i &lt; ( (Object[]) data ).length; i++ )</span>
+<span class="fc" id="L227">                ( (Object[]) data )[ i ] = initializer.init( i, _NDConf.indicesOfIndex( i )  );</span>
+<span class="fc" id="L228">    }</span>
 
     /**
      *  This method is responsible for allocating the data of this nd-array.
@@ -231,7 +237,7 @@ import java.util.function.Consumer;
      *
      * @param size The size of the data array which ought to be allocated.
      */
-<span class="fc" id="L234">    protected void _allocate( int size ) { _data = _dataType.allocate( size ); }</span>
+<span class="fc" id="L240">    protected void _allocate( int size ) { _data = _dataType.allocate( size ); }</span>
 
     public abstract C setIsVirtual(boolean isVirtual );
 
@@ -241,15 +247,15 @@ import java.util.function.Consumer;
 
     protected NDAConstructor createConstructionAPI()
     {
-<span class="fc" id="L244">        AbstractNDArray&lt;C, ?&gt; nda = this;</span>
-<span class="fc" id="L245">        return new NDAConstructor(</span>
-<span class="fc" id="L246">                    new NDAConstructor.API() {</span>
-<span class="fc" id="L247">                        @Override public void setType( DataType&lt;?&gt; type        ) { nda.setDataType( type ); }</span>
-<span class="fc" id="L248">                        @Override public void setConf( NDConfiguration conf    ) { nda.setNDConf(   conf ); }</span>
-<span class="fc" id="L249">                        @Override public void setData( Object o                ) { nda._setData(      o  ); }</span>
-<span class="fc" id="L250">                        @Override public void allocate( int size               ) { nda._allocate(   size ); }</span>
-<span class="fc" id="L251">                        @Override public Object getData()                        { return nda.getData();    }</span>
-<span class="fc" id="L252">                        @Override public void setIsVirtual(  boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }</span>
+<span class="fc" id="L250">        AbstractNDArray&lt;C, ?&gt; nda = this;</span>
+<span class="fc" id="L251">        return new NDAConstructor(</span>
+<span class="fc" id="L252">                    new NDAConstructor.API() {</span>
+<span class="fc" id="L253">                        @Override public void setType( DataType&lt;?&gt; type        ) { nda.setDataType( type ); }</span>
+<span class="fc" id="L254">                        @Override public void setConf( NDConfiguration conf    ) { nda.setNDConf(   conf ); }</span>
+<span class="fc" id="L255">                        @Override public void setData( Object o                ) { nda._setData(      o  ); }</span>
+<span class="fc" id="L256">                        @Override public void allocate( int size               ) { nda._allocate(   size ); }</span>
+<span class="fc" id="L257">                        @Override public Object getData()                        { return nda.getData();    }</span>
+<span class="fc" id="L258">                        @Override public void setIsVirtual(  boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }</span>
                     }
                 );
     }
@@ -263,7 +269,7 @@ import java.util.function.Consumer;
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  &lt;br&gt;
      */
-<span class="fc" id="L266">    protected void _virtualize() { _data = _dataType.virtualize(_data); }</span>
+<span class="fc" id="L272">    protected void _virtualize() { _data = _dataType.virtualize(_data); }</span>
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. &lt;br&gt;
@@ -275,38 +281,38 @@ import java.util.function.Consumer;
      *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
      *  size of the nd-array type... &lt;br&gt;
      */
-<span class="fc" id="L278">    protected void _actualize() { _data = _dataType.actualize(_data, this.size() ); }</span>
+<span class="fc" id="L284">    protected void _actualize() { _data = _dataType.actualize(_data, this.size() ); }</span>
 
     protected Object _convertedDataOfType( Class&lt;?&gt; typeClass )
     {
-<span class="fc" id="L282">        DataType&lt;?&gt; newDT = DataType.of( typeClass );</span>
-<span class="fc" id="L283">        if (</span>
-<span class="pc bpc" id="L284" title="1 of 2 branches missed.">                newDT.typeClassImplements( NumericType.class ) &amp;&amp;</span>
-<span class="pc bpc" id="L285" title="1 of 2 branches missed.">                        getDataType().typeClassImplements( NumericType.class )</span>
+<span class="fc" id="L288">        DataType&lt;?&gt; newDT = DataType.of( typeClass );</span>
+<span class="fc" id="L289">        if (</span>
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">                newDT.typeClassImplements( NumericType.class ) &amp;&amp;</span>
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">                        getDataType().typeClassImplements( NumericType.class )</span>
         ) {
-<span class="fc" id="L287">            NumericType&lt;?,Object, ?, Object&gt; targetType  = (NumericType&lt;?, Object,?, Object&gt;) newDT.getTypeClassInstance();</span>
-<span class="fc" id="L288">            return targetType.readForeignDataFrom( iterator(), this.size() );</span>
+<span class="fc" id="L293">            NumericType&lt;?,Object, ?, Object&gt; targetType  = (NumericType&lt;?, Object,?, Object&gt;) newDT.getTypeClassInstance();</span>
+<span class="fc" id="L294">            return targetType.readForeignDataFrom( iterator(), this.size() );</span>
         }
         else
-<span class="nc" id="L291">            return DataConverter.instance().convert( getData(), newDT.getTypeClass() );</span>
+<span class="nc" id="L297">            return DataConverter.instance().convert( getData(), newDT.getTypeClass() );</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public void forEach( Consumer&lt;? super V&gt; action ) {
-<span class="fc bfc" id="L298" title="All 2 branches covered.">        for ( V v : this ) action.accept( v );</span>
-<span class="fc" id="L299">    }</span>
+<span class="fc bfc" id="L304" title="All 2 branches covered.">        for ( V v : this ) action.accept( v );</span>
+<span class="fc" id="L305">    }</span>
 
     @Override
     public Spliterator&lt;V&gt; spliterator()
     {
-<span class="nc" id="L304">        return new Spliterator&lt;V&gt;()</span>
-<span class="nc" id="L305">        {</span>
-<span class="nc" id="L306">            @Override public boolean tryAdvance( Consumer&lt;? super V&gt; action ) { return false; }</span>
-<span class="nc" id="L307">            @Override public Spliterator&lt;V&gt; trySplit() { return null; }</span>
-<span class="nc" id="L308">            @Override public long estimateSize() { return 0; }</span>
-<span class="nc" id="L309">            @Override public int characteristics() { return 0; }</span>
+<span class="nc" id="L310">        return new Spliterator&lt;V&gt;()</span>
+<span class="nc" id="L311">        {</span>
+<span class="nc" id="L312">            @Override public boolean tryAdvance( Consumer&lt;? super V&gt; action ) { return false; }</span>
+<span class="nc" id="L313">            @Override public Spliterator&lt;V&gt; trySplit() { return null; }</span>
+<span class="nc" id="L314">            @Override public long estimateSize() { return 0; }</span>
+<span class="nc" id="L315">            @Override public int characteristics() { return 0; }</span>
         };
     }
 
@@ -320,12 +326,21 @@ import java.util.function.Consumer;
 
     /**
      *  An NDArray implementation ought to have some way to selectively modify its underlying data array.
-     *  This method simply returns an element within this data array sitting at position &quot;i&quot;.
+     *  This method simply overrides an element within this data array sitting at position &quot;i&quot;.
      * @param i The index of the data array entry which ought to be addressed.
      * @param o The object which ought to be placed at the requested position.
      * @return This very tensor in order to enable method chaining.
      */
     public abstract C setDataAt( int i, V o );
+
+    /**
+     *  An NDArray implementation ought to have some way to selectively modify its underlying value.
+     *  This method simply overrides an element within this data array sitting at position &quot;i&quot;.
+     * @param i The index of the value array entry which ought to be addressed.
+     * @param o The object which ought to be placed at the requested position.
+     * @return This very tensor in order to enable method chaining.
+     */
+    public abstract C setValueAt( int i, V o );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -338,17 +353,17 @@ import java.util.function.Consumer;
      * @return The truth value of the question: Does this NDArray implementation hold the data of the passed type?
      */
     public boolean is( Class&lt;?&gt; typeClass ) {
-<span class="fc" id="L341">        DataType&lt;?&gt; type = DataType.of( typeClass );</span>
-<span class="fc bfc" id="L342" title="All 2 branches covered.">        return type == _dataType;</span>
+<span class="fc" id="L356">        DataType&lt;?&gt; type = DataType.of( typeClass );</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">        return type == _dataType;</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-<span class="fc" id="L347">    public int indexOfIndex( int i ) { return _NDConf.indexOfIndex( i ); }</span>
+<span class="fc" id="L362">    public int indexOfIndex( int i ) { return _NDConf.indexOfIndex( i ); }</span>
 
-<span class="fc" id="L349">    public int[] IndicesOfIndex( int index ) { return _NDConf.indicesOfIndex( index ); }</span>
+<span class="fc" id="L364">    public int[] IndicesOfIndex( int index ) { return _NDConf.indicesOfIndex( index ); }</span>
 
-<span class="fc" id="L351">    public int indexOfIndices( int[] indices ) { return _NDConf.indexOfIndices(indices); }</span>
+<span class="fc" id="L366">    public int indexOfIndices( int[] indices ) { return _NDConf.indexOfIndices(indices); }</span>
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -361,118 +376,118 @@ import java.util.function.Consumer;
      */
     public C setNDConf( NDConfiguration ndConfiguration )
     {
-<span class="fc" id="L364">        _guardSet( &quot;ND-Configuration&quot; );</span>
-<span class="fc bfc" id="L365" title="All 4 branches covered.">        if ( _NDConf != null &amp;&amp; ndConfiguration != null ) {</span>
-<span class="fc" id="L366">            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a*b );</span>
-<span class="fc" id="L367">            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a*b );</span>
-<span class="pc bpc" id="L368" title="2 of 4 branches missed.">            assert s1 == s2;</span>
+<span class="fc" id="L379">        _guardSet( &quot;ND-Configuration&quot; );</span>
+<span class="fc bfc" id="L380" title="All 4 branches covered.">        if ( _NDConf != null &amp;&amp; ndConfiguration != null ) {</span>
+<span class="fc" id="L381">            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a*b );</span>
+<span class="fc" id="L382">            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a*b );</span>
+<span class="pc bpc" id="L383" title="2 of 4 branches missed.">            assert s1 == s2;</span>
         }
-<span class="fc" id="L370">        _NDConf = ndConfiguration;</span>
-<span class="fc" id="L371">        return (C) this;</span>
+<span class="fc" id="L385">        _NDConf = ndConfiguration;</span>
+<span class="fc" id="L386">        return (C) this;</span>
     }
 
     //---
 
-<span class="fc" id="L376">    public int rank() { return _NDConf.rank(); }</span>
+<span class="fc" id="L391">    public int rank() { return _NDConf.rank(); }</span>
 
-<span class="fc" id="L378">    public List&lt;Integer&gt; shape() { return _asList(_NDConf.shape()); }</span>
+<span class="fc" id="L393">    public List&lt;Integer&gt; shape() { return _asList(_NDConf.shape()); }</span>
 
-<span class="fc" id="L380">    public int shape( int i ) { return _NDConf.shape()[ i ]; }</span>
+<span class="fc" id="L395">    public int shape( int i ) { return _NDConf.shape()[ i ]; }</span>
 
-<span class="fc" id="L382">    public List&lt;Integer&gt; indicesMap() { return _asList(_NDConf.indicesMap()); }</span>
+<span class="fc" id="L397">    public List&lt;Integer&gt; indicesMap() { return _asList(_NDConf.indicesMap()); }</span>
 
-<span class="fc" id="L384">    public List&lt;Integer&gt; translation() { return _asList(_NDConf.translation()); }</span>
+<span class="fc" id="L399">    public List&lt;Integer&gt; translation() { return _asList(_NDConf.translation()); }</span>
 
-<span class="fc" id="L386">    public List&lt;Integer&gt; spread() { return _asList(_NDConf.spread()); }</span>
+<span class="fc" id="L401">    public List&lt;Integer&gt; spread() { return _asList(_NDConf.spread()); }</span>
 
-<span class="fc" id="L388">    public List&lt;Integer&gt; offset() { return _asList(_NDConf.offset()); }</span>
+<span class="fc" id="L403">    public List&lt;Integer&gt; offset() { return _asList(_NDConf.offset()); }</span>
 
-<span class="fc" id="L390">    public int size() { return NDConfiguration.Utility.szeOfShp(_NDConf.shape()); }</span>
+<span class="fc" id="L405">    public int size() { return NDConfiguration.Utility.szeOfShp(_NDConf.shape()); }</span>
 
     private static List&lt;Integer&gt; _asList( int[] array ) {
-<span class="fc" id="L393">        List&lt;Integer&gt; intList = new ArrayList&lt;&gt;( array.length );</span>
-<span class="fc bfc" id="L394" title="All 2 branches covered.">        for ( int i : array ) intList.add( i );</span>
-<span class="fc" id="L395">        return intList;</span>
+<span class="fc" id="L408">        List&lt;Integer&gt; intList = new ArrayList&lt;&gt;( array.length );</span>
+<span class="fc bfc" id="L409" title="All 2 branches covered.">        for ( int i : array ) intList.add( i );</span>
+<span class="fc" id="L410">        return intList;</span>
     }
 
     /**
      *  Static utility methods for the NDArray.
      */
-<span class="nc" id="L401">    public static class Utility</span>
+<span class="nc" id="L416">    public static class Utility</span>
     {
-<span class="nc" id="L403">        public static class Stringify</span>
+<span class="nc" id="L418">        public static class Stringify</span>
         {
             @Contract( pure = true )
             public static String strConf( int[] conf ) {
-<span class="fc" id="L407">                StringBuilder str = new StringBuilder();</span>
-<span class="fc bfc" id="L408" title="All 2 branches covered.">                for ( int i = 0; i &lt; conf.length; i++ )</span>
-<span class="fc bfc" id="L409" title="All 2 branches covered.">                    str.append(conf[ i ]).append((i != conf.length - 1) ? &quot;, &quot; : &quot;&quot;);</span>
-<span class="fc" id="L410">                return &quot;[&quot; + str + &quot;]&quot;;</span>
+<span class="fc" id="L422">                StringBuilder str = new StringBuilder();</span>
+<span class="fc bfc" id="L423" title="All 2 branches covered.">                for ( int i = 0; i &lt; conf.length; i++ )</span>
+<span class="fc bfc" id="L424" title="All 2 branches covered.">                    str.append(conf[ i ]).append((i != conf.length - 1) ? &quot;, &quot; : &quot;&quot;);</span>
+<span class="fc" id="L425">                return &quot;[&quot; + str + &quot;]&quot;;</span>
             }
         }
 
         /**
          * Indexing methods.
          */
-<span class="nc" id="L417">        public static class Indexing</span>
+<span class="nc" id="L432">        public static class Indexing</span>
         {
             @Contract(pure = true)
             public static void shpCheck( int[] newShp, Tsr&lt;?&gt; t ) {
-<span class="pc bpc" id="L421" title="1 of 2 branches missed.">                if ( NDConfiguration.Utility.szeOfShp(newShp) != t.size() ) {</span>
-<span class="nc" id="L422">                    throw new IllegalArgumentException(</span>
+<span class="pc bpc" id="L436" title="1 of 2 branches missed.">                if ( NDConfiguration.Utility.szeOfShp(newShp) != t.size() ) {</span>
+<span class="nc" id="L437">                    throw new IllegalArgumentException(</span>
                             &quot;New shape does not match tensor size!&quot; +
                                     &quot; (&quot; +
-<span class="nc" id="L425">                                        Utility.Stringify.strConf(newShp) +</span>
-<span class="nc bnc" id="L426" title="All 2 branches missed.">                                        ((NDConfiguration.Utility.szeOfShp(newShp) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) +</span>
-<span class="nc" id="L427">                                        Utility.Stringify.strConf(t.getNDConf().shape()) + &quot;&quot; +</span>
+<span class="nc" id="L440">                                        Utility.Stringify.strConf(newShp) +</span>
+<span class="nc bnc" id="L441" title="All 2 branches missed.">                                        ((NDConfiguration.Utility.szeOfShp(newShp) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) +</span>
+<span class="nc" id="L442">                                        Utility.Stringify.strConf(t.getNDConf().shape()) + &quot;&quot; +</span>
                                     &quot;)&quot;
                     );
                 }
-<span class="fc" id="L431">            }</span>
+<span class="fc" id="L446">            }</span>
 
             @Contract(pure = true)
             public static int[][] makeFit( int[] sA, int[] sB ) {
-<span class="fc" id="L435">                int lastIndexOfA = 0;</span>
-<span class="fc bfc" id="L436" title="All 2 branches covered.">                for ( int i = sA.length-1; i &gt;= 0; i-- ) {</span>
-<span class="fc bfc" id="L437" title="All 2 branches covered.">                    if ( sA[ i ] != 1 ) {</span>
-<span class="fc" id="L438">                        lastIndexOfA = i;</span>
-<span class="fc" id="L439">                        break;</span>
+<span class="fc" id="L450">                int lastIndexOfA = 0;</span>
+<span class="fc bfc" id="L451" title="All 2 branches covered.">                for ( int i = sA.length-1; i &gt;= 0; i-- ) {</span>
+<span class="fc bfc" id="L452" title="All 2 branches covered.">                    if ( sA[ i ] != 1 ) {</span>
+<span class="fc" id="L453">                        lastIndexOfA = i;</span>
+<span class="fc" id="L454">                        break;</span>
                     }
                 }
-<span class="fc" id="L442">                int firstIndexOfB = 0;</span>
-<span class="fc bfc" id="L443" title="All 2 branches covered.">                for ( int i = 0; i &lt; sB.length; i++ ) {</span>
-<span class="fc bfc" id="L444" title="All 2 branches covered.">                    if ( sB[ i ] != 1 ) {</span>
-<span class="fc" id="L445">                        firstIndexOfB = i;</span>
-<span class="fc" id="L446">                        break;</span>
+<span class="fc" id="L457">                int firstIndexOfB = 0;</span>
+<span class="fc bfc" id="L458" title="All 2 branches covered.">                for ( int i = 0; i &lt; sB.length; i++ ) {</span>
+<span class="fc bfc" id="L459" title="All 2 branches covered.">                    if ( sB[ i ] != 1 ) {</span>
+<span class="fc" id="L460">                        firstIndexOfB = i;</span>
+<span class="fc" id="L461">                        break;</span>
                     }
                 }
-<span class="fc" id="L449">                int newSize = lastIndexOfA + sB.length - firstIndexOfB;</span>
-<span class="fc" id="L450">                int[] rsA = new int[ newSize ];</span>
-<span class="fc" id="L451">                int[] rsB = new int[ newSize ];</span>
-<span class="fc bfc" id="L452" title="All 2 branches covered.">                for(int i=0; i&lt;newSize; i++ ) {</span>
-<span class="fc bfc" id="L453" title="All 2 branches covered.">                    if (i&lt;=lastIndexOfA) rsA[ i ] = i; else rsA[ i ] = -1;</span>
-<span class="fc bfc" id="L454" title="All 2 branches covered.">                    if (i&gt;=lastIndexOfA) rsB[ i ] = i-lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;</span>
+<span class="fc" id="L464">                int newSize = lastIndexOfA + sB.length - firstIndexOfB;</span>
+<span class="fc" id="L465">                int[] rsA = new int[ newSize ];</span>
+<span class="fc" id="L466">                int[] rsB = new int[ newSize ];</span>
+<span class="fc bfc" id="L467" title="All 2 branches covered.">                for(int i=0; i&lt;newSize; i++ ) {</span>
+<span class="fc bfc" id="L468" title="All 2 branches covered.">                    if (i&lt;=lastIndexOfA) rsA[ i ] = i; else rsA[ i ] = -1;</span>
+<span class="fc bfc" id="L469" title="All 2 branches covered.">                    if (i&gt;=lastIndexOfA) rsB[ i ] = i-lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;</span>
                 }
-<span class="fc" id="L456">                return new int[][]{ rsA, rsB };</span>
+<span class="fc" id="L471">                return new int[][]{ rsA, rsB };</span>
             }
 
             @Contract(pure = true)
             public static int[] shpOfCon( int[] shp1, int[] shp2 ) {
-<span class="fc" id="L461">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
-<span class="pc bpc" id="L462" title="1 of 4 branches missed.">                for ( int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++) shape[ i ] = Math.abs(shp1[ i ] - shp2[ i ]) + 1;</span>
-<span class="fc" id="L463">                return shape;</span>
+<span class="fc" id="L476">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
+<span class="pc bpc" id="L477" title="1 of 4 branches missed.">                for ( int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++) shape[ i ] = Math.abs(shp1[ i ] - shp2[ i ]) + 1;</span>
+<span class="fc" id="L478">                return shape;</span>
             }
 
             @Contract(pure = true)
             public static int[] shpOfBrc( int[] shp1, int[] shp2 ) {
-<span class="fc" id="L468">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
-<span class="pc bpc" id="L469" title="1 of 4 branches missed.">                for ( int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++ ) {</span>
-<span class="fc" id="L470">                    shape[ i ] = Math.max(shp1[ i ], shp2[ i ]);</span>
-<span class="pc bpc" id="L471" title="3 of 4 branches missed.">                    if (Math.min(shp1[ i ], shp2[ i ])!=1&amp;&amp;Math.max(shp1[ i ], shp2[ i ])!=shape[ i ]) {</span>
-<span class="nc" id="L472">                        throw new IllegalStateException(&quot;Broadcast not possible. Shapes do not match!&quot;);</span>
+<span class="fc" id="L483">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
+<span class="pc bpc" id="L484" title="1 of 4 branches missed.">                for ( int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++ ) {</span>
+<span class="fc" id="L485">                    shape[ i ] = Math.max(shp1[ i ], shp2[ i ]);</span>
+<span class="pc bpc" id="L486" title="3 of 4 branches missed.">                    if (Math.min(shp1[ i ], shp2[ i ])!=1&amp;&amp;Math.max(shp1[ i ], shp2[ i ])!=shape[ i ]) {</span>
+<span class="nc" id="L487">                        throw new IllegalStateException(&quot;Broadcast not possible. Shapes do not match!&quot;);</span>
                     }
                 }
-<span class="fc" id="L475">                return shape;</span>
+<span class="fc" id="L490">                return shape;</span>
             }
         }
 

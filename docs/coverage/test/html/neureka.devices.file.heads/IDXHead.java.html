@@ -174,10 +174,10 @@ import java.util.stream.Collectors;
     public Tsr&lt;Number&gt; load() throws IOException
     {
 <span class="fc" id="L176">        Object value = _loadData();</span>
-<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        DataType&lt;?&gt; type = ( Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )</span>
-<span class="fc" id="L178">                ? DataType.of( _dataType.getTypeClassInstance().getNumericTypeTarget() )</span>
-<span class="pc" id="L179">                : _dataType;</span>
-<span class="fc" id="L180">        return Tsr.of( type, _shape, value );</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        DataType&lt;?&gt; type = Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes()</span>
+<span class="fc" id="L178">                            ? DataType.of( _dataType.getTypeClassInstance().getNumericTypeTarget() )</span>
+<span class="pc" id="L179">                            : _dataType;</span>
+<span class="fc" id="L180">        return (Tsr&lt;Number&gt;) Tsr.of( type, _shape, value );</span>
     }
 
     @Override
@@ -200,15 +200,15 @@ import java.util.stream.Collectors;
 
 
     public DataType&lt;NumericType&lt;?, ?, ?, ?&gt;&gt; getDataType() {
-<span class="fc" id="L203">        return this._dataType;</span>
+<span class="fc" id="L203">        return _dataType;</span>
     }
 
     public int getValueSize() {
-<span class="fc" id="L207">        return this._valueSize;</span>
+<span class="fc" id="L207">        return _valueSize;</span>
     }
 
     public int[] getShape() {
-<span class="nc" id="L211">        return this._shape;</span>
+<span class="nc" id="L211">        return _shape;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

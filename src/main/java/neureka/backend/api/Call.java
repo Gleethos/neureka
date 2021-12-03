@@ -8,7 +8,6 @@ import neureka.devices.Device;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -158,8 +157,12 @@ public class Call<D> {
          *
          * @return The current validity of this Validator as float value.
          */
-        public float estimation() {
-            return ( _isValid ? SuitabilityPredicate.GOOD : SuitabilityPredicate.UNSUITABLE );
+        public float basicSuitability() {
+            return suitabilityIfValid( SuitabilityPredicate.GOOD );
+        }
+
+        public float suitabilityIfValid(float estimationIfValid ) {
+            return ( _isValid ? estimationIfValid : SuitabilityPredicate.UNSUITABLE );
         }
 
         public Estimator getEstimator() { return new Estimator( _isValid ); }

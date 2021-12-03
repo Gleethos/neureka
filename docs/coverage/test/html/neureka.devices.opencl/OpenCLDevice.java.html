@@ -63,7 +63,7 @@ import neureka.devices.Device;
 import neureka.devices.opencl.utility.CLFunctionCompiler;
 import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
-import neureka.utility.DataConverter;
+import neureka.common.utility.DataConverter;
 import org.jocl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,15 +90,15 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     }
 
     public String toString() {
-<span class="fc" id="L93">        return &quot;OpenCLDevice[deviceId=&quot; + this._deviceId + &quot;,platform=&quot; + this._platform + &quot;]&quot;;</span>
+<span class="fc" id="L93">        return &quot;OpenCLDevice[deviceId=&quot; + _deviceId + &quot;,platform=&quot; + _platform + &quot;]&quot;;</span>
     }
 
     public cl_device_id getDeviceId() {
-<span class="nc" id="L97">        return this._deviceId;</span>
+<span class="nc" id="L97">        return _deviceId;</span>
     }
 
     public OpenCLPlatform getPlatform() {
-<span class="fc" id="L101">        return this._platform;</span>
+<span class="fc" id="L101">        return _platform;</span>
     }
 
     /*==================================================================================================================

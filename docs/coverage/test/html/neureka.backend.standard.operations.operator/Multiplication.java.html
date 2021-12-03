@@ -32,8 +32,8 @@ public class Multiplication extends AbstractOperation
             ( inputs, d ) -&gt; {
 <span class="fc" id="L33">                double[] t1_val = inputs[ 1 ].value64();</span>
 <span class="fc" id="L34">                double[] t2_val = inputs[ 2 ].value64();</span>
-<span class="pc bpc" id="L35" title="1 of 2 branches missed.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];</span>
-<span class="nc bnc" id="L36" title="All 2 branches missed.">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; (d == 0) ? t2_val[t2Idx.i()] : t1_val[ t1Idx.i() ];</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; (d == 0) ? t2_val[t2Idx.i()] : t1_val[ t1Idx.i() ];</span>
             };
 
 <span class="fc" id="L39">    private static final DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorX =</span>
@@ -42,11 +42,11 @@ public class Multiplication extends AbstractOperation
 <span class="fc" id="L42">                double[] t2_val = inputs[ 2 ].value64();</span>
 <span class="fc" id="L43">                NDConfiguration ndc1 = inputs[ 1 ].getNDConf();</span>
 <span class="fc" id="L44">                NDConfiguration ndc2 = inputs[ 2 ].getNDConf();</span>
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">                if ( d &lt; 0 ) {</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">                if ( d &lt; 0 ) {</span>
 <span class="fc" id="L46">                    return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ndc1.indexOfIndices( t1Idx )] * t2_val[ndc2.indexOfIndices(t2Idx)];</span>
                 } else {
-<span class="nc" id="L48">                    return ( t0Idx, t1Idx, t2Idx ) -&gt; {</span>
-<span class="nc bnc" id="L49" title="All 2 branches missed.">                        if (d == 0) return t2_val[ndc2.indexOfIndices(t2Idx)];</span>
+<span class="fc" id="L48">                    return ( t0Idx, t1Idx, t2Idx ) -&gt; {</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">                        if ( d == 0 ) return t2_val[ndc2.indexOfIndices(t2Idx)];</span>
 <span class="nc" id="L50">                        else return t1_val[ndc1.indexOfIndices( t1Idx )];</span>
                     };
                 }
@@ -165,7 +165,7 @@ public class Multiplication extends AbstractOperation
 <span class="fc" id="L165">                                .arity( 3 )</span>
 <span class="fc" id="L166">                                .kernelSource( operator.getKernelSource() )</span>
 <span class="fc" id="L167">                                .activationSource( &quot;output = input1 * input2;\n&quot; )</span>
-<span class="fc" id="L168">                                .differentiationSource( &quot;if (d==0) {output = input2;}else{output = input1;}\n&quot; )</span>
+<span class="fc" id="L168">                                .differentiationSource( &quot;if ( d==0 ) {output = input2;}else{output = input1;}\n&quot; )</span>
 <span class="fc" id="L169">                                .kernelPostfix( this.getFunction() )</span>
 <span class="fc" id="L170">                                .execution(</span>
                                         call -&gt; {
@@ -190,7 +190,7 @@ public class Multiplication extends AbstractOperation
 
 <span class="fc" id="L191">        Broadcast broadcast = new Broadcast( JunctionUtil::forMultiplications )</span>
 <span class="fc" id="L192">                .setCanPerformBackwardADFor( call -&gt; true )</span>
-<span class="fc" id="L193">                .setCanPerformForwardADFor( call -&gt; true )</span>
+<span class="fc" id="L193">                .setCanPerformForwardADFor( call -&gt; false )</span>
 <span class="fc" id="L194">                .setSupplyADAgentFor(</span>
                     ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
                     {
@@ -209,7 +209,7 @@ public class Multiplication extends AbstractOperation
 <span class="fc" id="L209">                            Tsr&lt;?&gt; derivative = f.executeDerive( inputs, d );</span>
 <span class="fc" id="L210">                            return ADAgent.of( derivative )</span>
 <span class="pc" id="L211">                                    .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, derivative ) )</span>
-<span class="pc" id="L212">                                    .setBackward( (node, backwardError ) -&gt; mul.execute( backwardError, derivative ) );</span>
+<span class="fc" id="L212">                                    .setBackward( (node, backwardError ) -&gt; mul.execute( backwardError, derivative ) );</span>
                         }
                     }
                 )
@@ -364,7 +364,7 @@ public class Multiplication extends AbstractOperation
 <span class="fc" id="L364">                                .arity( 3 )</span>
 <span class="fc" id="L365">                                .kernelSource( scalarization.getKernelSource() )</span>
 <span class="fc" id="L366">                                .activationSource( &quot;output = input1 * value;\n&quot; )</span>
-<span class="fc" id="L367">                                .differentiationSource( &quot;if (d==0) {output = value;}else{output = input1;}\n&quot; )</span>
+<span class="fc" id="L367">                                .differentiationSource( &quot;if ( d == 0 ) {output = value;}else{output = input1;}\n&quot; )</span>
 <span class="fc" id="L368">                                .kernelPostfix( this.getFunction() )</span>
 <span class="fc" id="L369">                                .execution(</span>
                                         call -&gt; {

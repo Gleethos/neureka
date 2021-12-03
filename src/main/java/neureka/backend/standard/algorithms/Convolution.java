@@ -17,7 +17,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         setIsSuitableFor( call ->
                 call.validate()
                 .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                .estimation()
+                .basicSuitability()
         );
     }
 

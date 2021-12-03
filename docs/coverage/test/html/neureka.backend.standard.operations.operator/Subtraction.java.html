@@ -373,24 +373,24 @@ import java.util.stream.Collectors;
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="pc bpc" id="L376" title="1 of 2 branches missed.">        if ( j &lt; 0 ) return calculate( inputs, d, src );</span>
-<span class="nc bnc" id="L377" title="All 2 branches missed.">        if ( d &lt; 0 ) {</span>
-<span class="nc" id="L378">            double result = src[ 0 ].call( inputs, j );</span>
-<span class="nc bnc" id="L379" title="All 2 branches missed.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
-<span class="nc" id="L380">                final double current = src[ i ].call( inputs, j );</span>
-<span class="nc" id="L381">                result -= current;</span>
+<span class="fc bfc" id="L376" title="All 2 branches covered.">        if ( j &lt; 0 ) return calculate( inputs, d, src );</span>
+<span class="fc bfc" id="L377" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
+<span class="fc" id="L378">            double result = src[ 0 ].call( inputs, j );</span>
+<span class="fc bfc" id="L379" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
+<span class="fc" id="L380">                final double current = src[ i ].call( inputs, j );</span>
+<span class="fc" id="L381">                result -= current;</span>
             }
-<span class="nc" id="L383">            return result;</span>
+<span class="fc" id="L383">            return result;</span>
         } else {
-<span class="nc" id="L385">            double derivative = 0;</span>
-<span class="nc bnc" id="L386" title="All 2 branches missed.">            for ( int i = 0; i &lt; src.length; i++ ) {</span>
-<span class="nc bnc" id="L387" title="All 2 branches missed.">                if (i == 0) {</span>
-<span class="nc" id="L388">                    derivative += src[ i ].derive( inputs, d, j );</span>
+<span class="fc" id="L385">            double derivative = 0;</span>
+<span class="fc bfc" id="L386" title="All 2 branches covered.">            for ( int i = 0; i &lt; src.length; i++ ) {</span>
+<span class="fc bfc" id="L387" title="All 2 branches covered.">                if (i == 0) {</span>
+<span class="fc" id="L388">                    derivative += src[ i ].derive( inputs, d, j );</span>
                 } else {
-<span class="nc" id="L390">                    derivative -= src[ i ].derive( inputs, d, j );</span>
+<span class="fc" id="L390">                    derivative -= src[ i ].derive( inputs, d, j );</span>
                 }
             }
-<span class="nc" id="L393">            return derivative;</span>
+<span class="fc" id="L393">            return derivative;</span>
         }
     }
 

@@ -43,6 +43,8 @@ import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -60,8 +62,10 @@ import java.util.stream.Stream;
  *
  * @param &lt;D&gt; The Device implementation targeted by an instance of this ExecutionCall!
 */
-<span class="pc bpc" id="L63" title="1 of 2 branches missed.">public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt;</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt;</span>
 {
+<span class="fc" id="L67">    private final static Logger _LOG = LoggerFactory.getLogger(ExecutionCall.class);</span>
+
     /**
      *  This is the operation type which will be applied to this execution call.
      *  It contains multiple implementations, one of which might be applicable to this call...
@@ -76,7 +80,7 @@ import java.util.stream.Stream;
      *  Choosing an algorithm occurs through the {@link ExecutionCall#_operation} variable,
      *  which is of type {@link Operation} and contains multiple algorithms for different execution call scenarios...
      */
-<span class="fc" id="L79">    private Algorithm&lt;?&gt; _algorithm = null;</span>
+<span class="fc" id="L83">    private Algorithm&lt;?&gt; _algorithm = null;</span>
 
     private ExecutionCall(
             D device,
@@ -85,24 +89,24 @@ import java.util.stream.Stream;
             Algorithm&lt;?&gt; algorithm,
             List&lt;Arg&gt; arguments
     ) {
-<span class="fc" id="L88">        super(tensors, device, arguments);</span>
-<span class="fc" id="L89">        this._operation = operation;</span>
-<span class="fc" id="L90">        this._tensors = tensors;</span>
-<span class="fc" id="L91">        this._algorithm = algorithm;</span>
-<span class="fc" id="L92">        int thisArity = _tensors.length;</span>
-<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if ( thisArity &lt; Math.abs(_operation.getArity()) ) {</span>
-<span class="nc" id="L94">            throw new IllegalArgumentException(</span>
-<span class="nc" id="L95">                    &quot;Trying to instantiate an &quot;+this.getClass().getSimpleName()+&quot; with an arity &quot; +</span>
+<span class="fc" id="L92">        super(tensors, device, arguments);</span>
+<span class="fc" id="L93">        _operation = operation;</span>
+<span class="fc" id="L94">        _tensors   = tensors;</span>
+<span class="fc" id="L95">        _algorithm = algorithm;</span>
+<span class="fc" id="L96">        int thisArity = _tensors.length;</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        if ( thisArity &lt; Math.abs(_operation.getArity()) ) {</span>
+<span class="nc" id="L98">            throw new IllegalArgumentException(</span>
+<span class="nc" id="L99">                    &quot;Trying to instantiate an &quot;+this.getClass().getSimpleName()+&quot; with an arity &quot; +</span>
                             &quot;of &quot;+thisArity+&quot;, which is not suitable to the targeted operation &quot; +
-<span class="nc" id="L97">                            _operation.getClass().getSimpleName()+&quot; with &quot; +</span>
-<span class="nc bnc" id="L98" title="All 2 branches missed.">                            ( _operation.getArity() &lt; 0 ? &quot; a minimum &quot; : &quot; the expected &quot; ) +</span>
-<span class="nc" id="L99">                            &quot;arity of &quot;+Math.abs(_operation.getArity())</span>
+<span class="nc" id="L101">                            _operation.getClass().getSimpleName()+&quot; with &quot; +</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">                            ( _operation.getArity() &lt; 0 ? &quot; a minimum &quot; : &quot; the expected &quot; ) +</span>
+<span class="nc" id="L103">                            &quot;arity of &quot;+Math.abs(_operation.getArity())</span>
             );
         }
-<span class="fc" id="L102">    }</span>
+<span class="fc" id="L106">    }</span>
 
     public static &lt;D extends Device&lt;?&gt;&gt; Builder&lt;D&gt; of( Tsr&lt;?&gt;... tensors ) {
-<span class="fc" id="L105">        return new Builder&lt;D&gt;(tensors);</span>
+<span class="fc" id="L109">        return new Builder&lt;D&gt;(tensors);</span>
     }
 
     /**
@@ -114,50 +118,87 @@ import java.util.stream.Stream;
      * @param arg The meta argument which ought to be stored on this {@link ExecutionCall}.
      * @return This very instance to allow for method chaining.
      */
-<span class="fc" id="L117">    public ExecutionCall&lt;D&gt; setMetaArg( Arg&lt;?&gt; arg ) { _arguments.set(arg); return this; }</span>
+<span class="fc" id="L121">    public ExecutionCall&lt;D&gt; setMetaArg( Arg&lt;?&gt; arg ) { _arguments.set(arg); return this; }</span>
     
     public String toString() {
-<span class="fc" id="L120">        return this.getClass().getSimpleName()+&quot;[&quot; +</span>
-                    &quot;device=&quot; + this._device + &quot;,&quot; +
-<span class="fc" id="L122">                    &quot;derivativeIndex=&quot; + this.getValOf( Arg.DerivIdx.class ) + &quot;,&quot; +</span>
-                    &quot;operation=&quot; + this._operation + &quot;,&quot; +
-                    &quot;tensors=[..&quot;+_tensors.length+&quot;..],&quot; +
-<span class="fc" id="L125">                    &quot;j=&quot; + this.getJ() + &quot;, &quot; +</span>
-                    &quot;algorithm=?,&quot; +
-<span class="fc" id="L127">                    &quot;context=&quot; + _arguments.getAll(Arg.class) +</span>
+<span class="fc" id="L124">        String algorithmString = &quot;?&quot;;</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if ( _algorithm != null ) {</span>
+<span class="nc" id="L126">            algorithmString = _algorithm.toString();</span>
+        }
+<span class="fc" id="L128">        return this.getClass().getSimpleName()+&quot;[&quot; +</span>
+                    &quot;device=&quot;          + _device + &quot;,&quot; +
+<span class="fc" id="L130">                    &quot;derivativeIndex=&quot; + getValOf( Arg.DerivIdx.class ) + &quot;,&quot; +</span>
+                    &quot;operation=&quot;       + _operation + &quot;,&quot; +
+                    &quot;tensors=&quot;         + &quot;[..&quot; + _tensors.length + &quot;..],&quot; +
+<span class="fc" id="L133">                    &quot;j=&quot;               + getJ() + &quot;, &quot; +</span>
+                    &quot;algorithm=&quot;       + algorithmString + &quot;,&quot; +
+<span class="fc" id="L135">                    &quot;context=&quot;         + _arguments.getAll(Arg.class) +</span>
                 &quot;]&quot;;
     }
 
-<span class="fc" id="L131">    public Operation getOperation() { return this._operation; }</span>
+<span class="fc" id="L139">    public Operation getOperation() { return _operation; }</span>
 
-<span class="fc" id="L133">    public int getJ() { return this.getValOf( Arg.VarIdx.class ); }</span>
+<span class="fc" id="L141">    public int getJ() { return this.getValOf( Arg.VarIdx.class ); }</span>
 
     public ExecutionCall&lt;D&gt; withTensors(Tsr&lt;?&gt;[] tensors ) {
-<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        return this._tensors == tensors</span>
-<span class="nc" id="L137">                ? this</span>
-<span class="fc" id="L138">                : new ExecutionCall&lt;&gt;(</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        return _tensors == tensors</span>
+<span class="nc" id="L145">                ? this</span>
+<span class="fc" id="L146">                : new ExecutionCall&lt;&gt;(</span>
                         _device, _operation,
-<span class="fc" id="L140">                        tensors, _algorithm, _arguments.getAll(Arg.class)</span>
+<span class="fc" id="L148">                        tensors, _algorithm, _arguments.getAll(Arg.class)</span>
                     );
     }
 
     public &lt;T extends Device&lt;?&gt;&gt; ExecutionCall&lt;T&gt; forDeviceType( Class&lt;T&gt; type ) {
-<span class="pc bpc" id="L145" title="2 of 4 branches missed.">        assert _device.getClass() == type;</span>
-<span class="fc" id="L146">        return (ExecutionCall&lt;T&gt;) this;</span>
+<span class="pc bpc" id="L153" title="2 of 4 branches missed.">        assert _device.getClass() == type;</span>
+<span class="fc" id="L154">        return (ExecutionCall&lt;T&gt;) this;</span>
     }
 
+    /**
+     *  An {@link ExecutionCall} will either already have a targeted {@link Algorithm} defined
+     *  at instantiation or otherwise it will query the associated {@link Operation}
+     *  for an {@link Algorithm} best suitable for the state of this {@link ExecutionCall}.
+     *  Generally speaking, this method should only very rarely return null, however, if it
+     *  does, then this most definitely means that there is nor backend support
+     *  for this call for execution...
+     *
+     * @return The {@link Algorithm} suitable for this {@link ExecutionCall}.
+     */
     public Algorithm&lt;?&gt; getAlgorithm() {
-<span class="fc bfc" id="L150" title="All 2 branches covered.">        if ( _algorithm != null ) return _algorithm;</span>
-<span class="fc" id="L151">        else _algorithm = _operation.getAlgorithmFor( this );</span>
-<span class="fc" id="L152">        return _algorithm;</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        if ( _algorithm != null ) return _algorithm;</span>
+<span class="fc" id="L169">        else _algorithm = _operation.getAlgorithmFor( this );</span>
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        if ( _algorithm == null ) {</span>
+<span class="nc" id="L171">            _LOG.error(</span>
+<span class="nc" id="L172">                &quot;No suitable '&quot;+Algorithm.class.getSimpleName()+&quot;' implementation found for this '&quot;+this+&quot;'!&quot;</span>
+            );
+        }
+<span class="fc" id="L175">        return _algorithm;</span>
     }
 
+    /**
+     *  This method queries the underlying {@link Operation} of this {@link ExecutionCall} to see
+     *  if forward mode auto differentiation can be performed.
+     *
+     * @return The truth value determining if forward mode auto differentiation can be performed for this.
+     */
     public boolean allowsForward() {
-<span class="fc" id="L156">        return getAlgorithm().canPerformForwardADFor( this );</span>
+<span class="fc" id="L185">        Algorithm&lt;?&gt; algorithm = getAlgorithm();</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if ( algorithm != null )</span>
+<span class="fc" id="L187">            return algorithm.canPerformForwardADFor( this );</span>
+<span class="nc" id="L188">        return false;</span>
     }
 
+    /**
+     *  This method queries the underlying {@link Operation} of this {@link ExecutionCall} to see
+     *  if backward mode auto differentiation can be performed.
+     *
+     * @return The truth value determining if backward mode auto differentiation can be performed for this.
+     */
     public boolean allowsBackward() {
-<span class="fc" id="L160">        return getAlgorithm().canPerformBackwardADFor( this );</span>
+<span class="fc" id="L198">        Algorithm&lt;?&gt; algorithm = getAlgorithm();</span>
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">        if ( algorithm != null )</span>
+<span class="fc" id="L200">            return algorithm.canPerformBackwardADFor( this );</span>
+<span class="nc" id="L201">        return false;</span>
     }
 
     public ADAgent getADAgentFrom(
@@ -165,29 +206,29 @@ import java.util.stream.Stream;
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
             boolean forward
     ) {
-<span class="fc bfc" id="L168" title="All 2 branches covered.">        for ( Arg&lt;?&gt; arg : _arguments.getAll(Arg.class) ) {</span>
-<span class="fc bfc" id="L169" title="All 2 branches covered.">            if ( !call._arguments.has(arg.getClass()) )</span>
-<span class="fc" id="L170">                call._arguments.set(arg);</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">        for ( Arg&lt;?&gt; arg : _arguments.getAll(Arg.class) ) {</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">            if ( !call._arguments.has(arg.getClass()) )</span>
+<span class="fc" id="L211">                call._arguments.set(arg);</span>
             // else: This should not happen.
-<span class="fc" id="L172">        }</span>
-<span class="fc" id="L173">        return getAlgorithm().supplyADAgentFor( function, call, forward );</span>
+<span class="fc" id="L213">        }</span>
+<span class="fc" id="L214">        return getAlgorithm().supplyADAgentFor( function, call, forward );</span>
     }
 
     public static class Builder&lt;D extends Device&lt;?&gt;&gt;
     {
         private Operation _operation;
-        private Tsr&lt;?&gt;[] _tensors;
+        private final Tsr&lt;?&gt;[] _tensors;
         private Algorithm&lt;?&gt; _algorithm;
-<span class="fc" id="L181">        private final List&lt;Arg&gt; _arguments = Stream.of(</span>
-<span class="fc" id="L182">                                                Arg.DerivIdx.of(-1),</span>
-<span class="fc" id="L183">                                                Arg.VarIdx.of(-1)</span>
+<span class="fc" id="L222">        private final List&lt;Arg&gt; _arguments = Stream.of(</span>
+<span class="fc" id="L223">                                                Arg.DerivIdx.of(-1),</span>
+<span class="fc" id="L224">                                                Arg.VarIdx.of(-1)</span>
                                             )
-<span class="fc" id="L185">                                            .collect(Collectors.toList());</span>
+<span class="fc" id="L226">                                            .collect(Collectors.toList());</span>
 
-<span class="fc" id="L187">        private Builder(Tsr&lt;?&gt;[] tensors) { _tensors = tensors; }</span>
+<span class="fc" id="L228">        private Builder(Tsr&lt;?&gt;[] tensors) { _tensors = tensors; }</span>
 
         public &lt;V, D extends Device&lt;V&gt;&gt; ExecutionCall&lt;D&gt; on(D device) {
-<span class="fc" id="L190">            return new ExecutionCall&lt;&gt;(</span>
+<span class="fc" id="L231">            return new ExecutionCall&lt;&gt;(</span>
                                     device,
                                     _operation,
                                     _tensors,
@@ -197,22 +238,22 @@ import java.util.stream.Stream;
         }
 
         public Builder&lt;D&gt; running(Operation operation) {
-<span class="fc" id="L200">            _operation = operation;</span>
-<span class="fc" id="L201">            return this;</span>
+<span class="fc" id="L241">            _operation = operation;</span>
+<span class="fc" id="L242">            return this;</span>
         }
 
         public Builder&lt;D&gt; algorithm(Algorithm&lt;?&gt; algorithm) {
-<span class="fc" id="L205">            _algorithm = algorithm;</span>
-<span class="fc" id="L206">            return this;</span>
+<span class="fc" id="L246">            _algorithm = algorithm;</span>
+<span class="fc" id="L247">            return this;</span>
         }
 
         public Builder&lt;D&gt; andArgs( List&lt;Arg&gt; context ) {
-<span class="fc" id="L210">            _arguments.addAll(context);</span>
-<span class="fc" id="L211">            return this;</span>
+<span class="fc" id="L251">            _arguments.addAll(context);</span>
+<span class="fc" id="L252">            return this;</span>
         }
 
         public Builder&lt;D&gt; andArgs( Arg&lt;?&gt;... context ) {
-<span class="fc" id="L215">            return andArgs(Arrays.stream(context).collect(Collectors.toList()));</span>
+<span class="fc" id="L256">            return andArgs(Arrays.stream(context).collect(Collectors.toList()));</span>
         }
 
     }

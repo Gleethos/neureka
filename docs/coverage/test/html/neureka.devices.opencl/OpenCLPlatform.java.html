@@ -218,18 +218,18 @@ public class OpenCLPlatform {
     }
 
     public cl_platform_id getPid() {
-<span class="nc" id="L221">        return this._pid;</span>
+<span class="nc" id="L221">        return _pid;</span>
     }
 
     public cl_context getContext() {
-<span class="fc" id="L225">        return this._context;</span>
+<span class="fc" id="L225">        return _context;</span>
     }
 
     @Override
     public String toString() {
 <span class="fc" id="L230">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
-                    &quot;pid=&quot; + this._pid + &quot;,&quot; +
-                    &quot;context=&quot;+this._context +
+                    &quot;pid=&quot; + _pid + &quot;,&quot; +
+                    &quot;context=&quot;+_context +
 <span class="fc" id="L233">                    &quot;kernels=[..&quot;+_kernels.size()+&quot;..]&quot; +</span>
                 &quot;]&quot;;
     }

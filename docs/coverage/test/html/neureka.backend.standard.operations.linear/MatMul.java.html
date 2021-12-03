@@ -208,30 +208,35 @@ public class MatMul extends AbstractOperation
 <span class="fc bfc" id="L208" title="All 2 branches covered.">            if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {</span>
 <span class="fc" id="L209">                _LOG.warn(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
 <span class="fc" id="L210">                tensors[i] = tensors[i].clone();</span>
+                /*
+                    The user should do cloning explicitly because using slices
+                    will cause the backend to perform aut cloning every time the
+                    slice is being used for operations like this one...
+                 */
             }
         }
-<span class="fc" id="L213">    }</span>
+<span class="fc" id="L218">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L217">        StringBuilder reconstructed = new StringBuilder();</span>
-<span class="fc bfc" id="L218" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
-<span class="fc" id="L219">            reconstructed.append( children[ i ] );</span>
-<span class="fc bfc" id="L220" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
-<span class="fc" id="L221">                reconstructed.append(&quot; @ &quot;);</span>
+<span class="fc" id="L222">        StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
+<span class="fc" id="L224">            reconstructed.append( children[ i ] );</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
+<span class="fc" id="L226">                reconstructed.append(&quot; @ &quot;);</span>
             }
         }
-<span class="fc" id="L224">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+<span class="fc" id="L229">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L229">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L234">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L234">        return src[ 0 ].call( inputs, j );</span>
+<span class="nc" id="L239">        return src[ 0 ].call( inputs, j );</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

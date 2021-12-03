@@ -91,7 +91,7 @@ public class FunctionNode implements Function
 <span class="fc" id="L91">    public Function getDerivative( int index ) { return Function.of( _operation.asDerivative( _src, index ) ); }</span>
 
     @Override
-<span class="fc" id="L94">    public List&lt;Function&gt; getSubFunctions() { return Arrays.asList(this._src); }</span>
+<span class="fc" id="L94">    public List&lt;Function&gt; getSubFunctions() { return Arrays.asList(_src); }</span>
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -185,11 +185,11 @@ public class FunctionNode implements Function
 <span class="fc" id="L185">        return this.getOperation().calculate( inputs, -1, d, _src );</span>
     }
 
-<span class="fc" id="L188">    public Operation getOperation() { return this._operation; }</span>
+<span class="fc" id="L188">    public Operation getOperation() { return _operation; }</span>
 
-<span class="fc" id="L190">    public boolean isFlat() { return this._isFlat; }</span>
+<span class="fc" id="L190">    public boolean isFlat() { return _isFlat; }</span>
 
-<span class="fc" id="L192">    public boolean isDoingAD() { return this._isDoingAD; }</span>
+<span class="fc" id="L192">    public boolean isDoingAD() { return _isDoingAD; }</span>
 
 
     private Tsr&lt;?&gt; preprocess(

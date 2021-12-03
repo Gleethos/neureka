@@ -12,7 +12,7 @@ import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionConstant;
 import neureka.devices.Device;
-import neureka.utility.Messages;
+import neureka.common.utility.Messages;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,8 +96,8 @@ import java.util.stream.IntStream;
 <span class="fc" id="L96">                        .on( device ),</span>
                 executor
         );
-<span class="fc bfc" id="L99" title="All 2 branches covered.">        if ( tensors[ 0 ] == null )</span>
-<span class="fc" id="L100">            _LOG.warn(&quot;Executing operation '&quot;+operation.getFunction()+&quot;' did not yield a proper return value.&quot;);</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if ( tensors[ 0 ] == null ) // TODO: Fix this for 'left_inline'!!!</span>
+<span class="fc" id="L100">            _LOG.debug(&quot;Executing operation '&quot;+operation.getFunction()+&quot;' did not yield a proper return value.&quot;);</span>
 
 <span class="fc bfc" id="L102" title="All 2 branches covered.">        return ( tensors[ 0 ] == null ? tensors[ 1 ] : tensors[ 0 ] );</span>
     }
