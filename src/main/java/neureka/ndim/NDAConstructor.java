@@ -254,15 +254,6 @@ public class NDAConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    public <V> void constructFor( int[] shape, V[] value ) {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
-        if ( size != value.length ) {
-            _fromRange( shape, value );
-        }
-        else _API.setData( value );
-        configureFromNewShape( shape, false, false  );
-    }
-
     public <V> void constructSeeded( Class<V> valueType, int[] shape, Object seed ) {
         _API.setType( DataType.of(valueType) );
         int size = NDConfiguration.Utility.szeOfShp( shape );
@@ -287,19 +278,6 @@ public class NDAConstructor {
             throw new IllegalArgumentException("Seeding not supported for value type '"+valueType.getSimpleName()+"'!");
 
         configureFromNewShape( shape, false, false  );
-    }
-
-
-    private <V> void _fromRange(int[] shape, V[] value ) {
-        Class<?> givenClass = value[ 0 ].getClass();
-        @SuppressWarnings("unchecked")
-        final V[] newValue = (V[]) Array.newInstance(
-                givenClass,
-                NDConfiguration.Utility.szeOfShp( shape )
-        );
-        for ( int i = 0; i < newValue.length; i++ ) newValue[ i ] = value[ i % value.length ];
-        _API.setType( DataType.of( givenClass ) );
-        _API.setData( newValue );
     }
 
     public static Object optimizeArray( DataType<?> dataType, Object data, int size ) {
