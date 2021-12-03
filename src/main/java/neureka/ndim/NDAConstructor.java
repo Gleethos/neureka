@@ -279,6 +279,10 @@ public class NDAConstructor {
             _API.setData( DataConverter.Utility.seededByteArray( new byte[size], seed.toString() ) );
         else if ( valueType == Long.class )
             _API.setData( DataConverter.Utility.seededLongArray( new long[size], seed.toString() ) );
+        else if ( valueType == Boolean.class )
+            _API.setData( DataConverter.Utility.seededBooleanArray( new boolean[size], seed.toString() ) );
+        else if ( valueType == Character.class )
+            _API.setData( DataConverter.Utility.seededCharacterArray( new char[size], seed.toString() ) );
         else
             throw new IllegalArgumentException("Seeding not supported for value type '"+valueType.getSimpleName()+"'!");
 

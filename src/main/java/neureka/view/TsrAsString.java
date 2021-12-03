@@ -173,7 +173,7 @@ public final class TsrAsString
     private ValStringifier _createValStringifierAndFormatter( Object data )
     {
         final ValStringifier function = _createBasicStringifierFor( data, _isCompact );
-        int cellSize = _typeAdjustedCellSize();
+        int cellSize = _cellSize;
         final ValStringifier postProcessing;
         if ( cellSize >= 3 ) postProcessing = i -> {
             String s = function.stringify( i );
@@ -236,22 +236,16 @@ public final class TsrAsString
             return i -> ( isCompact )
                     ? formatFP( ( (long[]) data )[ i ] )
                     : String.valueOf( ( (long[]) data )[ i ] );
+        else if ( data instanceof boolean[] )
+            return i -> String.valueOf( ( (boolean[]) data )[ i ] );
+        else if ( data instanceof char[] )
+            return i -> String.valueOf( ( (char[]) data )[ i ] );
         else if ( data == null )
             return i -> ( isCompact )
                     ? formatFP( _tensor.value64( i ) )
                     : String.valueOf( _tensor.value64( i ) );
         else
             return i -> String.valueOf( ( (Object[]) data )[ i ] );
-    }
-
-    /**
-     * @return A potentially modified version of the configured padding to better suite certain types.
-     */
-    private int _typeAdjustedCellSize() {
-        //if ( _tensor.getDataType().getTypeClass() == String.class )
-        //    return  (int) ( _cellSize * 2.5 );
-        //else
-            return _cellSize;
     }
 
     public String toString() {
