@@ -197,33 +197,33 @@ public class JunctionUtil
             CallExecutor goDeeperWith,
             boolean thisIsForAddition
     ) {
-        Tsr<?>[] tsrs = call.getTensors();
+        Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation operation = call.getOperation();
 
         Tsr<?> alternative = null;
-        if ( tsrs.length > 3 ) {
+        if ( tensors.length > 3 ) {
             if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
+                Tsr<?>[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};
                 alternative = goDeeperWith.execute(
                                     ExecutionCall.of(reduction)
                                                     .andArgs(Arg.DerivIdx.of(d))
                                                     .running(operation)
                                                     .on(device)
                             );
-                tsrs[ 0 ] = reduction[ 0 ];
+                tensors[ 0 ] = reduction[ 0 ];
 
-                reduction = Operation.Utility.offsetted(tsrs, 1);
+                reduction = Operation.Utility.offsetted(tensors, 1);
                 alternative = goDeeperWith.execute(
                                         ExecutionCall.of(reduction)
                                                         .andArgs(Arg.DerivIdx.of(d))
                                                         .running(operation)
                                                         .on(device)
                                 );
-                tsrs[ 0 ] = reduction[ 0 ];
+                tensors[ 0 ] = reduction[ 0 ];
             } else {
-                tsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[ 1 ]).setValue((d==0||thisIsForAddition)?1.0f:-1.0f);
+                tensors[ 0 ] = Tsr.Create.newTsrLike(tensors[ 1 ]).setValue((d==0||thisIsForAddition)?1.0f:-1.0f);
             }
             return alternative;
         }

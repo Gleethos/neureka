@@ -268,30 +268,31 @@ public class Addition extends AbstractOperation {
         setAlgorithm(
                 scalarization.setImplementationFor(
                         CPU.class,
-                                CPUImplementation
-                                    .withArity(3)
-                                    .andImplementation(
-                                        call -> {
-                                            double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
-                                            call.getDevice().getExecutor()
-                                                    .threaded (
-                                                            call.getTsrOfType( Number.class, 0 ).size(),
-                                                            (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                            ? ( start, end ) ->
-                                                                    Scalarization.scalarize (
-                                                                            call.getTsrOfType( Number.class, 0 ),
-                                                                            start, end,
-                                                                            scalarXCreator.create(call.getTensors(), value, -1)
-                                                                    )
-                                                            : ( start, end ) ->
-                                                                    Scalarization.scalarize (
-                                                                            call.getTsrOfType( Number.class, 0 ),
-                                                                            start, end,
-                                                                            scalarCreator.create(call.getTensors(), value, -1)
-                                                                    )
-                                                    );
-                                            }
-                                    )
+                        CPUImplementation
+                            .withArity(3)
+                            .andImplementation(
+                                call -> {
+                                    double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
+                                    call.getDevice()
+                                        .getExecutor()
+                                        .threaded (
+                                            call.getTsrOfType( Number.class, 0 ).size(),
+                                            (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
+                                            ? ( start, end ) ->
+                                                    Scalarization.scalarize (
+                                                            call.getTsrOfType( Number.class, 0 ),
+                                                            start, end,
+                                                            scalarXCreator.create(call.getTensors(), value, -1)
+                                                    )
+                                            : ( start, end ) ->
+                                                    Scalarization.scalarize (
+                                                            call.getTsrOfType( Number.class, 0 ),
+                                                            start, end,
+                                                            scalarCreator.create(call.getTensors(), value, -1)
+                                                    )
+                                        );
+                                    }
+                                )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
