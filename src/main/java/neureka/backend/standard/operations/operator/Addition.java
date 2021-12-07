@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -241,12 +242,10 @@ public class Addition extends AbstractOperation {
         // TENSOR SCALAR OPERATION :
 
         Scalarization scalarization = new Scalarization()
-                .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                            getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                )
-                .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
-                .buildFunAlgorithm();
+                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
+                                            .setSupplyADAgentFor( getDefaultAlgorithm() )
+                                            .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
+                                            .buildFunAlgorithm();
 
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {
@@ -272,25 +271,31 @@ public class Addition extends AbstractOperation {
                             .withArity(3)
                             .andImplementation(
                                 call -> {
-                                    double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
-                                    call.getDevice()
-                                        .getExecutor()
-                                        .threaded (
-                                            call.getTsrOfType( Number.class, 0 ).size(),
-                                            (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                            ? ( start, end ) ->
-                                                    Scalarization.scalarize (
-                                                            call.getTsrOfType( Number.class, 0 ),
-                                                            start, end,
-                                                            scalarXCreator.create(call.getTensors(), value, -1)
-                                                    )
-                                            : ( start, end ) ->
-                                                    Scalarization.scalarize (
-                                                            call.getTsrOfType( Number.class, 0 ),
-                                                            start, end,
-                                                            scalarCreator.create(call.getTensors(), value, -1)
-                                                    )
-                                        );
+                                    if ( call.getDerivativeIndex() == 0 )
+                                        call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 0.0d );
+                                    else if ( call.getDerivativeIndex() == 1 )
+                                        call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 0.0d );
+                                    else {
+                                        double value = call.getTsrOfType(Number.class, 2).value64(0);
+                                        call.getDevice()
+                                                .getExecutor()
+                                                .threaded(
+                                                        call.getTsrOfType(Number.class, 0).size(),
+                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
+                                                                ? (start, end) ->
+                                                                Scalarization.scalarize(
+                                                                        call.getTsrOfType(Number.class, 0),
+                                                                        start, end,
+                                                                        scalarXCreator.create(call.getTensors(), value, -1)
+                                                                )
+                                                                : (start, end) ->
+                                                                Scalarization.scalarize(
+                                                                        call.getTsrOfType(Number.class, 0),
+                                                                        start, end,
+                                                                        scalarCreator.create(call.getTensors(), value, -1)
+                                                                )
+                                                );
+                                        }
                                     }
                                 )
                 )

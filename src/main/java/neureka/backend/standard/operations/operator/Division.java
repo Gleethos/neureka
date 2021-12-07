@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -300,6 +301,7 @@ public class Division extends AbstractOperation
                 };
 
         Scalarization scalarization = new Scalarization()
+                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
                 .setSupplyADAgentFor(
@@ -317,7 +319,7 @@ public class Division extends AbstractOperation
                             .withArity(3)
                             .andImplementation(
                                 call -> {
-                                    double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
+                                    double value = call.getTsrOfType( Number.class, 2 ).value64( 0 );
                                     call.getDevice().getExecutor()
                                             .threaded (
                                                     call.getTsrOfType( Number.class, 0 ).size(),

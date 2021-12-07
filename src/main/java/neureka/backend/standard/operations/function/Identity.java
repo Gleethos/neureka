@@ -180,7 +180,8 @@ public final class Identity extends AbstractOperation
                             .withArity(2)
                             .andImplementation(
                                 call  -> {
-                                    double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
+                                    int offset = ( call.getTensors().length > 2 ) ? 1 : 0;
+                                    double value = call.getTsrOfType( Number.class, 1 + offset ).value64( 0 );
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTsrOfType( Number.class, 0 ).size(),

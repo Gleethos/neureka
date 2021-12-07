@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -396,12 +397,10 @@ public class Power extends AbstractOperation
                 };
 
         Scalarization scalarization = new Scalarization()
+                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
-                .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                        getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                )
+                .setSupplyADAgentFor( getDefaultAlgorithm() )
                 .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, rja ) )
                 .buildFunAlgorithm();
 
@@ -413,7 +412,7 @@ public class Power extends AbstractOperation
                             .withArity(3)
                             .andImplementation(
                                 call -> {
-                                    double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
+                                    double value = call.getTsrOfType( Number.class, 2 ).value64( 0 );
                                     call.getDevice().getExecutor()
                                             .threaded (
                                                     call.getTsrOfType( Number.class, 0 ).size(),

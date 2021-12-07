@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -296,36 +297,10 @@ public class Multiplication extends AbstractOperation
                 };
 
         Scalarization scalarization = new Scalarization()
+                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
-                .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                    {
-                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                        Function mul = Neureka.get().backend().getFunction().mul();
-                        if ( ctxDerivative != null ) {
-                            return ADAgent.of( ctxDerivative )
-                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
-                                    .setBackward( null );
-                        }
-                        Tsr<?>[] inputs = call.getTensors();
-                        int d = call.getValOf( Arg.DerivIdx.class );
-                        if ( forward )
-                        {
-                            Tsr<?> derivative = f.executeDerive( inputs, d );
-                            return ADAgent.of( derivative )
-                                    .setForward( (t, graphDerivative ) -> mul.execute( graphDerivative, derivative ) )
-                                    .setBackward( null );
-                        }
-                        else
-                        {
-                            Tsr<?> derivative = f.executeDerive( inputs, d );
-                            return ADAgent.of( derivative )
-                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
-                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
-                        }
-                    }
-                )
+                .setSupplyADAgentFor( getDefaultAlgorithm() )
                 .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications ) )
                 .buildFunAlgorithm();
 
@@ -337,24 +312,30 @@ public class Multiplication extends AbstractOperation
                             .withArity(3)
                             .andImplementation(
                                 call -> {
-                                    double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
-                                    call.getDevice().getExecutor()
-                                            .threaded (
-                                                    call.getTsrOfType( Number.class, 0 ).size(),
-                                                    (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                    ? ( start, end ) ->
-                                                            Scalarization.scalarize (
-                                                                    call.getTsrOfType( Number.class, 0 ),
-                                                                    start, end,
-                                                                    scalarOperatorXCreator.create(call.getTensors(), value, -1)
-                                                            )
-                                                    : ( start, end ) ->
-                                                            Scalarization.scalarize (
-                                                                    call.getTsrOfType( Number.class, 0 ),
-                                                                    start, end,
-                                                                    scalarOperatorCreator.create(call.getTensors(), value, -1)
-                                                            )
-                                            );
+                                    if ( call.getDerivativeIndex() == 0 )
+                                        call.getTensors()[0] = call.getTensors()[2];
+                                    else if ( call.getDerivativeIndex() == 1 )
+                                        call.getTensors()[0] = call.getTensors()[1];
+                                    else {
+                                        double value = call.getTsrOfType(Number.class, 2).value64(0);
+                                        call.getDevice().getExecutor()
+                                                .threaded(
+                                                        call.getTsrOfType(Number.class, 0).size(),
+                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
+                                                                ? (start, end) ->
+                                                                Scalarization.scalarize(
+                                                                        call.getTsrOfType(Number.class, 0),
+                                                                        start, end,
+                                                                        scalarOperatorXCreator.create(call.getTensors(), value, -1)
+                                                                )
+                                                                : (start, end) ->
+                                                                Scalarization.scalarize(
+                                                                        call.getTsrOfType(Number.class, 0),
+                                                                        start, end,
+                                                                        scalarOperatorCreator.create(call.getTensors(), value, -1)
+                                                                )
+                                                );
+                                    }
                                 }
                             )
                 )

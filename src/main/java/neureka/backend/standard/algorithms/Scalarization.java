@@ -24,14 +24,16 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
         setIsSuitableFor( call ->
                                 call.validate()
                                         .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                                        .first( Objects::isNull )
-                                        .tensors( tensors -> tensors.length == 3 )
-                                        .tensors( tensors -> tensors[2].size() == 1 || tensors[2].isVirtual() )
-                                        .tensors( tensors ->
-                                                tensors[2].shape().stream().allMatch( d -> d == 1 )
+                                        //.first( Objects::isNull )
+                                        .tensors( tensors ->  {
+                                            if ( tensors.length != 2 && tensors.length != 3 ) return false;
+                                            int offset = ( tensors.length == 2 ? 0 : 1 );
+                                            if ( tensors[1+offset].size() > 1 && !tensors[1+offset].isVirtual() ) return false;
+                                            return
+                                                tensors[1+offset].shape().stream().allMatch( d -> d == 1 )
                                                 ||
-                                                tensors[1].shape().equals(tensors[2].shape())
-                                        )
+                                                tensors[offset].shape().equals(tensors[1+offset].shape());
+                                        })
                                         .suitabilityIfValid( SuitabilityPredicate.VERY_GOOD )
         );
         setCallPreparation(

@@ -112,7 +112,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     public boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) { return true; }
 
     @Override
-    public ADAgent supplyADAgentFor(Function function, ExecutionCall<? extends Device<?>> call, boolean forward)
+    public ADAgent supplyADAgentFor( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
     {
         Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
         Function mul = Neureka.get().backend().getFunction().mul();

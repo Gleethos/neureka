@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -186,6 +187,7 @@ public class Subtraction extends AbstractOperation
                 };
 
         Scalarization scalarization = new Scalarization()
+                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
@@ -201,25 +203,31 @@ public class Subtraction extends AbstractOperation
                             .withArity(3)
                             .andImplementation(
                                 call -> {
-                                    int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1) ? 1 : 0;
-                                    double value = call.getTsrOfType( Number.class, 1+offset).value64( 0 );
-                                    call.getDevice().getExecutor()
-                                            .threaded (
-                                                    call.getTsrOfType( Number.class, 0 ).size(),
-                                                    (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                    ? ( start, end ) ->
-                                                            Scalarization.scalarize (
-                                                                    call.getTsrOfType( Number.class, 0 ),
-                                                                    start, end,
-                                                                    scalarOperatorXCreator.create(call.getTensors(), value, -1)
-                                                            )
-                                                    : ( start, end ) ->
-                                                            Scalarization.scalarize (
-                                                                    call.getTsrOfType( Number.class, 0 ),
-                                                                    start, end,
-                                                                    scalarOperatorCreator.create(call.getTensors(), value, -1)
-                                                            )
-                                            );
+                                    if ( call.getDerivativeIndex() == 0 )
+                                        call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 0.0d );
+                                    else if ( call.getDerivativeIndex() == 1 )
+                                        call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 0.0d );
+                                    else {
+                                        int offset = (call.getTsrOfType(Number.class, 2).isVirtual() || call.getTsrOfType(Number.class, 2).size() == 1) ? 1 : 0;
+                                        double value = call.getTsrOfType(Number.class, 1 + offset).value64(0);
+                                        call.getDevice().getExecutor()
+                                                .threaded(
+                                                        call.getTsrOfType(Number.class, 0).size(),
+                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
+                                                                ? (start, end) ->
+                                                                Scalarization.scalarize(
+                                                                        call.getTsrOfType(Number.class, 0),
+                                                                        start, end,
+                                                                        scalarOperatorXCreator.create(call.getTensors(), value, -1)
+                                                                )
+                                                                : (start, end) ->
+                                                                Scalarization.scalarize(
+                                                                        call.getTsrOfType(Number.class, 0),
+                                                                        start, end,
+                                                                        scalarOperatorCreator.create(call.getTensors(), value, -1)
+                                                                )
+                                                );
+                                    }
                                 }
                             )
                 )
