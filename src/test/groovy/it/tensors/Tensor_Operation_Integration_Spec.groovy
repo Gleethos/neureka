@@ -352,24 +352,24 @@ class Tensor_Operation_Integration_Spec extends Specification
 
 
     def 'Auto reshaping and broadcasting works and the result can be back propagated.'(// TODO: Cover more broadcasting operations!
-            boolean indexing, boolean gradRequire, List<Integer> bShape,
-            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String cValue, String wGradient
+            boolean idx, boolean whichGrad, List<Integer> bShape,
+            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String cValue, String wGradient, String device
     ) {
         given :
-            Neureka.get().settings().indexing().setIsUsingArrayBasedIndexing(indexing)
+            Neureka.get().settings().indexing().setIsUsingArrayBasedIndexing(idx)
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
         and :
-            String wValue = gradRequire
+            String wValue = whichGrad
                                 ? "8.0" + ( bShape.inject(1, {x,y->x*y}) > 1 ? ", 9.0" : "" )
                                 : "1.0, 2.0, 3.0, 4.0"
         and :
             def aShape = [2, 2]
         and :
-            Tsr a = Tsr.of(aShape, 1..5).setRqsGradient(!gradRequire)
-            Tsr b = Tsr.of(bShape, 8..9).setRqsGradient(gradRequire)
+            Tsr<Double> a = Tsr.of(aShape, 1d..5d).setRqsGradient(!whichGrad).to(Device.find(device))
+            Tsr<Double> b = Tsr.of(bShape, 8d..9d).setRqsGradient(whichGrad).to(Device.find(device))
         and :
-            String wShape = ( gradRequire ? bShape : aShape ).join("x")
-            Tsr    w      = ( gradRequire ? b      : a      )
+            String wShape = ( whichGrad ? bShape : aShape ).join("x")
+            Tsr    w      = ( whichGrad ? b      : a      )
 
         when :
             Tsr c = operation.apply(a, b)
@@ -388,33 +388,37 @@ class Tensor_Operation_Integration_Spec extends Specification
             c.toString() == "(2x2):[$cValue]"
 
         where:
-            indexing | gradRequire |   bShape   |    operation      ||     cValue              | wGradient
+            idx  | whichGrad | bShape |    operation      ||     cValue              | wGradient                 | device
 
-             true    |    false    |    [1]     | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"
-             false   |    false    |    [1]     | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"
+            true |  false    | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"     | 'CPU'
+            false|  false    | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"     | 'CPU'
 
-             true    |    false    |    [1]     | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0"
-             false   |    false    |    [1]     | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0"
+            true |  false    | [1]    | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0" | 'CPU'
+            false|  false    | [1]    | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0" | 'CPU'
 
-             true    |    true     |    [2,1]   | { x, y -> x + y } || "9.0, 10.0, 12.0, 13.0" | "3.0, 10.0"
-             true    |    true     |    [1]     | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "13.0"
-             false   |    true     |    [2,1]   | { x, y -> x + y } || "9.0, 10.0, 12.0, 13.0" | "3.0, 10.0"
-             false   |    true     |    [1]     | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "13.0"
+            true |  true     | [2,1]  | { x, y -> x + y } || "9.0, 10.0, 12.0, 13.0" | "3.0, 10.0"               | 'CPU'
+            true |  true     | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "13.0"                    | 'CPU'
+            false|  true     | [2,1]  | { x, y -> x + y } || "9.0, 10.0, 12.0, 13.0" | "3.0, 10.0"               | 'CPU'
+            false|  true     | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "13.0"                    | 'CPU'
 
-             true    |    true     |    [1,2]   | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-             true    |    true     |    [2]     | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-             false   |    true     |    [1,2]   | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-             false   |    true     |    [2]     | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
+            true |  true     | [1,2]  | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"               | 'CPU'
+            true |  true     | [2]    | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"               | 'CPU'
+            false|  true     | [1,2]  | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"               | 'CPU'
+            false|  true     | [2]    | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"               | 'CPU'
 
-             false   |    true     |    [1,2]   | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-             false   |    true     |    [2]     | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-             true    |    true     |    [1,2]   | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-             true    |    true     |    [2]     | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
+            false|  true     | [1,2]  | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"             | 'CPU'
+            false|  true     | [2]    | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"             | 'CPU'
+            true |  true     | [1,2]  | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"             | 'CPU'
+            true |  true     | [2]    | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"             | 'CPU'
 
-             false   |    true     |    [1,2]   | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-             false   |    true     |    [2]     | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-             true    |    true     |    [1,2]   | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-             true    |    true     |    [2]     | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
+            false|  true     | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'CPU'
+            false|  true     | [2]    | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'CPU'
+            true |  true     | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'CPU'
+            true |  true     | [2]    | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'CPU'
+            //false|  true     | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'GPU'
+            //false|  true     | [2]    | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'GPU'
+            //true |  true     | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'GPU'
+            //true |  true     | [2]    | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'GPU'
     }
 
 

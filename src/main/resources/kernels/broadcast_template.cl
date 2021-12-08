@@ -70,6 +70,8 @@ __kernel void broadcast_template(
                 if (prv_drn_cfg[p_shp+ri] == prv_src1_cfg[p_shp+ri]) {
                     prv_src1_cfg[p_idx+ri] = prv_drn_cfg[p_idx+ri];
                     prv_src2_cfg[p_idx+ri] = prv_drn_cfg[p_idx+ri];
+                    if ( prv_src2_cfg[p_shp+ri] == 1 ) prv_src2_cfg[p_idx+ri] = 0;
+                    else prv_src2_cfg[p_idx+ri] = prv_drn_cfg[p_idx+ri];
                 } else if (prv_drn_cfg[p_shp+ri] > prv_src1_cfg[p_shp+ri]) {
                     prv_src1_cfg[p_idx+ri] = 0;
                     prv_src2_cfg[p_idx+ri] = prv_drn_cfg[p_idx+ri];

@@ -85,7 +85,7 @@ public class Subtraction extends AbstractOperation
                     double[] t2_val = inputs[ 2 ].value64();
                     if ( d < 0 ) {
                         return ( t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] - t2_val[t2Idx.i()];
-                    } else return ( t1Idx, t2Idx ) -> ( d == 0 ) ? 1.0 : -1.0;
+                    } else return ( t1Idx, t2Idx ) -> ( d == 0 ? 1.0 : -1.0 );
                 };
         DefaultOperatorCreator<PrimaryNDAConsumer> operationXCreator =
                 ( inputs, d ) -> {
@@ -95,7 +95,7 @@ public class Subtraction extends AbstractOperation
                     NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
                     if ( d < 0 ) {
                         return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] - t2_val[ndc2.indexOfIndices( t1Idx )];
-                    } else return t1Idx -> ( d == 0 ) ? 1.0 : -1.0;
+                    } else return t1Idx -> ( d == 0 ? 1.0 : -1.0 );
                 };
 
         Operator operator = new Operator(JunctionUtil::forSubtractions)
@@ -335,7 +335,7 @@ public class Subtraction extends AbstractOperation
                                 .arity( 3 )
                                 .kernelSource( broadcast.getKernelSource() )
                                 .activationSource( "value = src1 - src2;\n" )
-                                .differentiationSource( "value += handle - drain;\n" )
+                                .differentiationSource( "value = handle - drain;\n" )
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
                                         call -> {
