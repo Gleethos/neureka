@@ -218,6 +218,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         int[] t1Idx = new int[ rank ];
         int[] t2Idx = new int[ rank ];
         double[] t0_value = (double[]) t0_drn.getData();
+
         if ( d < 0 ) {
             while ( i < end ) {//increment on drain accordingly:
                 int ri = 0;
@@ -258,17 +259,17 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     ri++;
                 }
                 //----------
-                // multiplication:
+                // actual broadcasting:
                 double value = 0;
                 boolean running = true;
                 boolean incrementing = false;
                 while ( running ) {
-                    ri = ( ri == rank ) ? 0 : ri;
+                    ri = ( ri == rank ? 0 : ri );
                     if ( !incrementing ) {
                         value += operation.execute( t0Idx, t1Idx, t2Idx );
                         incrementing = true;
                         ri = 0;
-                    } else {//incrementing:
+                    } else { // incrementing:
                         if ( t0Shp[ri] < t1Shp[ri] ) {//Only if origin shape is smaller than handle and drain!
                             t1Idx[ri]++;
                             t2Idx[ri]++;
@@ -277,9 +278,8 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                                 t2Idx[ri] = 0;
                                 running = (ri != rank - 1);
                                 ri++;
-                            } else {
-                                incrementing = false;//return to calculation!
-                            }
+                            } else
+                                incrementing = false; // return to calculation!
                         } else {
                             running = ( ri != rank - 1 );
                             ri++;

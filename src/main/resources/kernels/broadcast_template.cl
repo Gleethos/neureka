@@ -38,8 +38,8 @@ __kernel void broadcast_template(
         int di = _i_of_i(get_global_id( 0 ), prv_drn_cfg, rank);
 
         //increment src accordingly:
-        int ri = 0;
         if(d < 0){
+            int ri = 0;
             while (ri < rank) {
                 if (prv_src1_cfg[p_shp+ri] == prv_src2_cfg[p_shp+ri]) {
                     prv_src1_cfg[p_idx+ri] = prv_drn_cfg[p_idx+ri];
@@ -65,7 +65,7 @@ __kernel void broadcast_template(
             drn[di] = value;
 
         } else {// conv
-
+            int ri = 0;
             while (ri < rank) {
                 if (prv_drn_cfg[p_shp+ri] == prv_src1_cfg[p_shp+ri]) {
                     prv_src1_cfg[p_idx+ri] = prv_drn_cfg[p_idx+ri];
@@ -79,32 +79,31 @@ __kernel void broadcast_template(
                 ri++;
             }
             //----------
-            // multiplication:
+            // actual broadcasting:
             float value = 0;
             bool running = true;
             bool incrementing = false;
-            while (running) {
-                ri = (ri==rank)?0:ri;
-                if (!incrementing) {
+            while ( running ) {
+                ri = ( ri == rank ? 0 : ri );
+                if ( !incrementing ) {
 //-=<OPERATION>=-//
                     value += src1[_i_of_idx_on_tln(prv_src1_cfg, rank)] * src2[_i_of_idx_on_tln(prv_src2_cfg, rank)];
 //-=<OPERATION>=-//
                     incrementing = true;
                     ri=0;
-                } else {//incrementing:
-                    if (prv_drn_cfg[p_shp+ri] < prv_src1_cfg[p_shp+ri]) {
+                } else { // incrementing:
+                    if ( prv_drn_cfg[p_shp+ri] < prv_src1_cfg[p_shp+ri] ) {
                         prv_src1_cfg[p_idx+ri]++;
                         prv_src2_cfg[p_idx+ri]++;
-                        if (prv_src1_cfg[p_idx+ri] == prv_src1_cfg[p_shp+ri]) {
+                        if ( prv_src1_cfg[p_idx+ri] == prv_src1_cfg[p_shp+ri] ) {
                             prv_src1_cfg[p_idx+ri] = 0;
                             prv_src2_cfg[p_idx+ri] = 0;
-                            running = running && !(ri == (rank - 1));
+                            running = (ri != rank - 1);
                             ri++;
-                        } else {
-                            incrementing = false;//return to calculation!
-                        }
+                        } else
+                            incrementing = false; // return to calculation!
                     } else {
-                        running = running && !(ri == (rank - 1));
+                        running = ( ri != rank - 1 );
                         ri++;
                     }
                 }
