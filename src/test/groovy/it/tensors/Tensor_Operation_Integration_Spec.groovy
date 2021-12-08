@@ -415,9 +415,9 @@ class Tensor_Operation_Integration_Spec extends Specification
             false|  true     | [2]    | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'CPU'
             true |  true     | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'CPU'
             true |  true     | [2]    | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'CPU'
-            //false|  true     | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'GPU'
+            false|  true     | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'GPU'
             //false|  true     | [2]    | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'GPU'
-            //true |  true     | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'GPU'
+            true |  true     | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'GPU'
             //true |  true     | [2]    | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"               | 'GPU'
     }
 

@@ -335,7 +335,7 @@ public class Subtraction extends AbstractOperation
                                 .arity( 3 )
                                 .kernelSource( broadcast.getKernelSource() )
                                 .activationSource( "value = src1 - src2;\n" )
-                                .differentiationSource( "value = src1 + src2 * -((d * 2) -1);\n" )
+                                .differentiationSource( "value += src1 + src2 * -((d * 2) -1);\n" )
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
                                         call -> {
