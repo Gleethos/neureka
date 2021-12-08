@@ -276,7 +276,7 @@ public class Addition extends AbstractOperation {
                                     else if ( call.getDerivativeIndex() == 1 )
                                         call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 0.0d );
                                     else {
-                                        double value = call.getTsrOfType(Number.class, 2).value64(0);
+                                        double value = call.getTsrOfType(Number.class, 2).getValueAt(0).doubleValue();
                                         call.getDevice()
                                                 .getExecutor()
                                                 .threaded(

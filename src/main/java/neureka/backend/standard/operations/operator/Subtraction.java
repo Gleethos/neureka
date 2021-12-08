@@ -209,7 +209,7 @@ public class Subtraction extends AbstractOperation
                                         call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 0.0d );
                                     else {
                                         int offset = (call.getTsrOfType(Number.class, 2).isVirtual() || call.getTsrOfType(Number.class, 2).size() == 1) ? 1 : 0;
-                                        double value = call.getTsrOfType(Number.class, 1 + offset).value64(0);
+                                        double value = call.getTsrOfType(Number.class, 1 + offset).getValueAt(0).doubleValue();
                                         call.getDevice().getExecutor()
                                                 .threaded(
                                                         call.getTsrOfType(Number.class, 0).size(),

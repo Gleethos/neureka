@@ -297,7 +297,6 @@ public class Multiplication extends AbstractOperation
                 };
 
         Scalarization scalarization = new Scalarization()
-                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
                 .setSupplyADAgentFor( getDefaultAlgorithm() )
@@ -313,11 +312,11 @@ public class Multiplication extends AbstractOperation
                             .andImplementation(
                                 call -> {
                                     if ( call.getDerivativeIndex() == 0 )
-                                        call.getTensors()[0] = call.getTensors()[2];
+                                        call.getTensors()[0] = call.getTensors()[2].shallowCopy();
                                     else if ( call.getDerivativeIndex() == 1 )
-                                        call.getTensors()[0] = call.getTensors()[1];
+                                        call.getTensors()[0] = call.getTensors()[1].shallowCopy();
                                     else {
-                                        double value = call.getTsrOfType(Number.class, 2).value64(0);
+                                        double value = call.getTsrOfType(Number.class, 2).getValueAt(0).doubleValue();
                                         call.getDevice().getExecutor()
                                                 .threaded(
                                                         call.getTsrOfType(Number.class, 0).size(),
@@ -349,15 +348,21 @@ public class Multiplication extends AbstractOperation
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
                                         call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
-                                            int gwz = call.getTsrOfType( Number.class, 0 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
-                                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
-                                                    .pass((float)call.getTsrOfType( Number.class, 1+offset).value64( 0 ))
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
+                                            if ( call.getDerivativeIndex() == 0 )
+                                                call.getTensors()[0] = call.getTensors()[2].shallowCopy();
+                                            else if ( call.getDerivativeIndex() == 1 )
+                                                call.getTensors()[0] = call.getTensors()[1].shallowCopy();
+                                            else {
+                                                int offset = (call.getTsrOfType(Number.class, 2).isVirtual() || call.getTsrOfType(Number.class, 2).size() == 1) ? 1 : 0;
+                                                int gwz = call.getTsrOfType(Number.class, 0).size();
+                                                call.getDevice().getKernel(call)
+                                                        .passAllOf(call.getTsrOfType(Number.class, 0))
+                                                        .passAllOf(call.getTsrOfType(Number.class, 0 + offset))
+                                                        .pass((float) call.getTsrOfType(Number.class, 1 + offset).value64(0))
+                                                        .pass(call.getTsrOfType(Number.class, 0).rank())
+                                                        .pass(call.getValOf(Arg.DerivIdx.class))
+                                                        .call(gwz);
+                                            }
                                         }
                                 )
                                 .build()
