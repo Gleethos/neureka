@@ -242,7 +242,6 @@ public class Addition extends AbstractOperation {
         // TENSOR SCALAR OPERATION :
 
         Scalarization scalarization = new Scalarization()
-                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                                             .setSupplyADAgentFor( getDefaultAlgorithm() )
                                             .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
                                             .buildFunAlgorithm();
@@ -271,10 +270,11 @@ public class Addition extends AbstractOperation {
                             .withArity(3)
                             .andImplementation(
                                 call -> {
+                                    assert call.getTensors().length == 3;
                                     if ( call.getDerivativeIndex() == 0 )
-                                        call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 0.0d );
+                                        call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d );
                                     else if ( call.getDerivativeIndex() == 1 )
-                                        call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 0.0d );
+                                        call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d );
                                     else {
                                         double value = call.getTsrOfType(Number.class, 2).getValueAt(0).doubleValue();
                                         call.getDevice()
@@ -309,15 +309,22 @@ public class Addition extends AbstractOperation {
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
                                         call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
-                                            int gwz = call.getTsrOfType( Number.class, 0 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
-                                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
-                                                    .pass((float)call.getTsrOfType( Number.class, 1+offset).value64( 0 ))
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
+                                            assert call.getTensors().length == 3;
+                                            if ( call.getDerivativeIndex() == 0 )
+                                                call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d );
+                                            else if ( call.getDerivativeIndex() == 1 )
+                                                call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d );
+                                            else {
+                                                int gwz = call.getTsrOfType(Number.class, 0).size();
+                                                float value = call.getTsrOfType(Number.class, 2).getValueAt(0).floatValue();
+                                                call.getDevice().getKernel(call)
+                                                        .passAllOf(call.getTsrOfType(Number.class, 0))
+                                                        .passAllOf(call.getTsrOfType(Number.class, 1))
+                                                        .pass(value)
+                                                        .pass(call.getTsrOfType(Number.class, 0).rank())
+                                                        .pass(call.getValOf(Arg.DerivIdx.class))
+                                                        .call(gwz);
+                                            }
                                         }
                                 )
                                 .build()

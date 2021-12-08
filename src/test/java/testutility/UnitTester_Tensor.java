@@ -57,7 +57,7 @@ public class UnitTester_Tensor extends UnitTester
         String result = tensor.toString();
         println(BAR +"  Tensor: "+result);
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-        for(String element : expected){
+        for ( String element : expected ) {
             this.assertStringContains("result", result, element);
         }
         return (printSessionEnd()>0)?1:0;

@@ -19,7 +19,7 @@ public class CrossDeviceSystemTest
         UnitTester_Tensor tester = new UnitTester_Tensor("");
 
         List<Tsr> listOfTensors = new ArrayList<>();
-        Tsr tensor1, tensor2;
+        Tsr<Double> tensor1, tensor2;
         //=====================================================================
         tensor1 = Tsr.of(new int[]{2, 2}, new double[]{
                 -1, 7,
@@ -137,9 +137,9 @@ public class CrossDeviceSystemTest
         );
 
         // ---
-        Tsr x = Tsr.of(new int[]{1}, 3).setRqsGradient(true);
-        Tsr b = Tsr.of(new int[]{1}, -4);
-        Tsr w = Tsr.of(new int[]{1}, 2);
+        Tsr<Double> x = Tsr.of(new int[]{1}, 3d).setRqsGradient(true);
+        Tsr<Double> b = Tsr.of(new int[]{1}, -4d);
+        Tsr<Double> w = Tsr.of(new int[]{1}, 2d);
         gpu.store(x).store(b).store(w);
         listOfTensors.add(x);
         listOfTensors.add(b);
@@ -148,7 +148,7 @@ public class CrossDeviceSystemTest
          *      ((3-4)*2)^2 = 4
          *  dx:   8*3 - 32  = -8
          */
-        Tsr y = Tsr.of("((i0+i1)*i2)^2", x, b, w);
+        Tsr<Double> y = Tsr.of("((i0+i1)*i2)^2", x, b, w);
         tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0)"});
         y.backward(Tsr.of(2));
         tester.testTensor(x, new String[]{"-16.0"});
