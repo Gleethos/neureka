@@ -7,6 +7,7 @@ import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.common.utility.SettingsLoader
 import neureka.view.TsrStringSettings
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 import java.util.function.BiFunction
@@ -350,7 +351,7 @@ class Tensor_Operation_Integration_Spec extends Specification
             ]
     }
 
-
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && device == 'GPU' })
     def 'Auto reshaping and broadcasting works and the result can be back propagated.'(// TODO: Cover more broadcasting operations!
             boolean idx, boolean whichGrad, List<Integer> bShape,
             BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String cValue, String wGradient, String device
