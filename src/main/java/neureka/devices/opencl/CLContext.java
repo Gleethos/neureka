@@ -81,7 +81,7 @@ public class CLContext implements BackendExtension
     {
         // Obtain the number of platforms
         int[] numPlatforms = new int[ 1 ];
-        clGetPlatformIDs(0, null, numPlatforms);
+        clGetPlatformIDs( 0, null, numPlatforms );
 
         // Obtain the platform IDs
         cl_platform_id[] platforms = new cl_platform_id[ numPlatforms[ 0 ] ];
@@ -89,15 +89,15 @@ public class CLContext implements BackendExtension
 
         List<OpenCLPlatform> loadedPlatforms = new ArrayList<>();
         for ( cl_platform_id id : platforms ) {
-            OpenCLPlatform newPlarform;
+            OpenCLPlatform newPlatform;
             try {
-                newPlarform = new OpenCLPlatform(id);
-                loadedPlatforms.add(newPlarform);
+                newPlatform = new OpenCLPlatform( id );
+                loadedPlatforms.add( newPlatform );
             } catch ( Exception e ) {
                 String message =
                         "Failed to instantiate '"+OpenCLPlatform.class.getSimpleName()+"' " +
                         "with id '0x"+Long.toHexString(id.getNativePointer())+"'!";
-                _LOG.error(message, e);
+                _LOG.error( message, e );
             }
         }
         if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -> p.getDevices().isEmpty() ) ) {
@@ -120,11 +120,11 @@ public class CLContext implements BackendExtension
                     result = d;
                     score = similarity;
                     if ( score == 1 )
-                        return new DeviceOption(result, score);
+                        return new DeviceOption( result, score );
                 }
             }
         }
-        return new DeviceOption(result, score);
+        return new DeviceOption( result, score );
     }
 
     @Override
