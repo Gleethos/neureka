@@ -4,7 +4,7 @@ import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.composition.Component;
 
 /**
- *  This is an internal class for managin gthe extension of any given {@link BackendContext} class.
+ *  This is an internal class for managing the extension of any given {@link BackendContext} class.
  */
 public class Extensions extends AbstractComponentOwner<Extensions> {
 
