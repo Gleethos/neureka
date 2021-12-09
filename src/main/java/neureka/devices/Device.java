@@ -54,16 +54,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * This is the interface for implementations representing
- * devices primarily store tensors, namely instances of the Tsr&lt;ValType&gt; class.
- * Optionally they might also be capable of executing operations on tensors.
+ * Implementations of this represent computational
+ * devices for storing tensors (instances of the Tsr&lt;V&gt; class), which may
+ * also expose a useful API for executing operations on tensors.
  * Such instances are also components of tensors, which is why
- * this interface extends the Component &lt; Tsr &lt; ValType&gt; &gt; interface.
+ * this interface extends the Component&lt;Tsr&lt;V&gt;&gt; interface.
  *
- * The device interface extends the "Storage" interface because devices
- * are also capable of storing tensors on them.
+ * The device interface extends the "{@link Storage}" interface because devices
+ * are capable of storing tensors on them.
  * A tensor stored on a device holds a reference to that device,
- * as well as the device itself which also knows about the tensors it holds.
+ * as well as the device itself which may also know about the tensors it holds.
  * A tensor stored on a device will have its "isOutsourced" property set to true!
  *
  * @param <V> The value type of super type of the values stored on a {@link Device} implementation...
