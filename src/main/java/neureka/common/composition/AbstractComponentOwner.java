@@ -42,14 +42,11 @@ import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.backend.api.BackendContext;
 import neureka.devices.Device;
-import neureka.devices.opencl.OpenCLDevice;
 import neureka.framing.Relation;
 import neureka.optimization.Optimizer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -76,29 +73,6 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractComponentOwner<C>
 {
-    /**
-     *  The following static map enables fast access to properties which describe
-     *  the "importance" of an implementation of the {@link Component} interface.
-     *  This is relevant only for performance reasons because
-     *  the component owner referencing this component among
-     *  others can store them according to their order to
-     *  make component access as fast as possible! <br>
-     *  There is not much more to this then that.
-     *  New component implementations will default to a class order of 0
-     *  and otherwise one should consider profiling the access patterns
-     *  of the component system and update this mapping...
-     */
-    private static final Map<Class<? extends Component>, Integer> _CLASS_ORDER = new HashMap<>();
-    static {
-            _CLASS_ORDER.put( Optimizer.class,	    1   );
-            _CLASS_ORDER.put( JITProp.class,	    2   );
-            _CLASS_ORDER.put( OpenCLDevice.class,	3   );
-            _CLASS_ORDER.put( Tsr.class,	        4   );
-            _CLASS_ORDER.put( Relation.class,	    5   );
-            _CLASS_ORDER.put( Device.class,	        6   );
-            _CLASS_ORDER.put( GraphNode.class,	    7   );
-    }
-
     /**
      *  An array of (type) unique components.
      */
@@ -175,14 +149,37 @@ public abstract class AbstractComponentOwner<C>
             for ( int i = 1; i < _components.length; i++ ) {
                 Component<C> a = _components[ i-1 ];
                 Component<C> b = _components[ i ];
-                int orderA = _CLASS_ORDER.getOrDefault( a, 0 );
-                int orderB = _CLASS_ORDER.getOrDefault( b, 0 );
+                int orderA = _orderOf( a );
+                int orderB = _orderOf( b );
                 if ( orderB > orderA ) {
                     _components[ i - 1 ] = b;
                     _components[ i ] = a;
                 }
             }
         }
+    }
+
+    /**
+     *  The following method enables fast access to properties which describe
+     *  the "importance" of an implementation of the {@link Component} interface.
+     *  This is relevant only for performance reasons because
+     *  the component owner referencing this component among
+     *  others can store them according to their order to
+     *  make component access as fast as possible! <br>
+     *  There is not much more to this then that.
+     *  New component implementations will default to a class order of 0
+     *  and otherwise one should consider profiling the access patterns
+     *  of the component system and update this mapping...
+     */
+    private static <T extends Component> int _orderOf( T component ) {
+        Class<?> typeClass = component.getClass();
+        if ( GraphNode.class          .equals( typeClass ) ) return 6;
+        if ( Device.class   .isAssignableFrom( typeClass ) ) return 5;
+        if ( Relation.class           .equals( typeClass ) ) return 4;
+        if ( Tsr.class                .equals( typeClass ) ) return 3;
+        if ( JITProp.class            .equals( typeClass ) ) return 2;
+        if ( Optimizer.class.isAssignableFrom( typeClass ) ) return 1;
+        return 0;
     }
 
     /**
