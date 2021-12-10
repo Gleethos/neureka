@@ -78,7 +78,6 @@ public class Reshape extends AbstractOperation
 
     }
 
-
     public static Tsr<?> reshaped( Tsr<?> tensor, int[] newForm, boolean newTsr )
     {
         Tsr<?> parent = tensor;
@@ -92,6 +91,41 @@ public class Reshape extends AbstractOperation
         }
         return tensor;
     }
+
+
+    public static void makeFit( Tsr<?>[] tensors, boolean doesAD )
+    {
+        int largest = -1;
+        int[] shape = null;
+        for ( Tsr<?> t : tensors ) if ( t.rank() > largest ) {
+            largest = t.rank();
+            shape = t.getNDConf().shape();
+        }
+        int prefix = 0;
+        assert shape != null;
+        for ( int s : shape ) if ( s == 1 ) prefix++; else break;
+        int postfix = 0;
+        for ( int i = shape.length-1; i>=0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;
+        for ( int i = 0; i < tensors.length; i++ ) {
+            if ( tensors[ i ].rank() != largest ) {
+                int[] oldShape = tensors[ i ].getNDConf().shape();
+                int[] newReshape = new int[ largest ];
+                int padding = largest - oldShape.length;
+
+                int handle = ( postfix <= prefix ) ? padding : largest - padding;
+                for ( int ii = 0; ii < handle; ii++ ) newReshape[ ii ] = ( postfix <= prefix ) ? -1 : ii;
+                for ( int ii = handle; ii < largest; ii++ ) newReshape[ ii ] = ( postfix <= prefix ) ? ii - padding : -1;
+
+                Function f = Function.of(
+                        AbstractNDArray.Utility.Stringify.strConf( newReshape ) + ":(I[ 0 ])",
+                        doesAD
+                );
+                tensors[ i ] = f.call( tensors[ i ] );
+            }
+        }
+
+    }
+
 
     public static int[] invert( int[] reshape )
     {

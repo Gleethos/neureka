@@ -7,6 +7,7 @@ import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.ExecutionDispatcher;
+import neureka.backend.standard.operations.other.Reshape;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
@@ -221,7 +222,7 @@ public class FunctionNode implements Function
     private static Tsr<?> commit(
             Tsr<?>[] inputs, Function function, Supplier<Tsr<?>> activation
     ) {
-        Tsr.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
+        Reshape.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
 
         GraphLock newLock = new GraphLock( function );
         attachGraph( inputs, function, newLock );

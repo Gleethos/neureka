@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.algorithms.Convolution;
+import neureka.backend.standard.operations.other.Reshape;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -80,7 +81,7 @@ public class ConvUtil {
                             } else {
                                 if ( call.getValOf( Arg.DerivIdx.class ) < 0 ) {
                                     Tsr<?>[] tsrs = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
-                                    Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
+                                    Reshape.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                     for ( Tsr<?> t : tsrs ) t.setIsVirtual( false );
                                     CalcUtil.recursiveExecution(
                                                     ExecutionCall.of(tsrs)

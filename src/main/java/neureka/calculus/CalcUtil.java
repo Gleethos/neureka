@@ -13,6 +13,7 @@ import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionConstant;
 import neureka.devices.Device;
 import neureka.common.utility.Messages;
+import neureka.ndim.AbstractNDArray;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -412,5 +413,6 @@ public class CalcUtil
         }
         return tensors;
     }
+
 
 }

@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
+import neureka.backend.standard.operations.other.Reshape;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.RecursiveExecutor;
 import neureka.devices.Device;
@@ -59,7 +60,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     ) // Creating a new tensor:
                     {
                         Tsr<?>[] tsrs = {call.getTsrOfType( Number.class, offset), call.getTsrOfType( Number.class, 1+offset) };
-                        Tsr.makeFit(tsrs, caller.isDoingAD() );
+                        Reshape.makeFit(tsrs, caller.isDoingAD() );
                         tsrs = new Tsr[]{null, tsrs[0], tsrs[1]};
                         CalcUtil.recursiveExecution( call.withTensors( tsrs ), (executionCall, executor) -> null );
                         return tsrs[0];

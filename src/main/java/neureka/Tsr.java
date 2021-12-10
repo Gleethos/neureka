@@ -2992,43 +2992,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return TsrAsString.representing( this ).byDefaults().toString();
     }
 
-    public static void makeFit( Tsr<?>[] tensors, boolean doesAD )
-    {
-        int largest = -1;
-        int[] shape = null;
-        for ( Tsr<?> t : tensors ) if ( t.rank() > largest ) {
-            largest = t.rank();
-            shape = t.getNDConf().shape();
-        }
-        int prefix = 0;
-        assert shape != null;
-        for ( int s : shape ) if ( s == 1 ) prefix++; else break;
-        int postfix = 0;
-        for ( int i = shape.length-1; i>=0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;
-        for ( int i = 0; i < tensors.length; i++ ) {
-            if ( tensors[ i ].rank() != largest ) {
-                int[] oldShape = tensors[ i ].getNDConf().shape();
-                int[] newReshape = new int[ largest ];
-                int padding = largest - oldShape.length;
-
-                int handle = ( postfix <= prefix ) ? padding : largest - padding;
-                for ( int ii = 0; ii < handle; ii++ ) newReshape[ ii ] = ( postfix <= prefix ) ? -1 : ii;
-                for ( int ii = handle; ii < largest; ii++ ) newReshape[ ii ] = ( postfix <= prefix ) ? ii - padding : -1;
-
-                Function f = Function.of(
-                    AbstractNDArray.Utility.Stringify.strConf( newReshape ) + ":(I[ 0 ])",
-                        doesAD
-                );
-                tensors[ i ] = f.call( tensors[ i ] );
-            }
-        }
-
-    }
-
     public int getVersion() { return _version; }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
     /**
      *  This is a static nested utility class
@@ -3122,19 +3088,19 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     {
         public Create() { }
 
-        public  static Tsr<?> E( List<Integer> shape ) { return E( shape.stream().mapToInt( e -> e ).toArray() ); }
+        public  static Tsr<Double> E( List<Integer> shape ) { return E( shape.stream().mapToInt( e -> e ).toArray() ); }
 
         public  static Tsr<Double> E( int... shape ) { return new Tsr<>( shape, 2.7182818284590452353602874713527 ); }
 
-        public static Tsr<?> newRandom( int... shape ) { return newRandom( shape, 8701252152903546L ); }
+        public static Tsr<Double> newRandom( int... shape ) { return newRandom( shape, 8701252152903546L ); }
 
-        public static Tsr<?> newRandom( int[] shape, long seed ) {
+        public static Tsr<Double> newRandom( int[] shape, long seed ) {
             int size = NDConfiguration.Utility.szeOfShp( shape );
             return Tsr.of( shape, DataConverter.Utility.newSeededDoubleArray( seed, size ) );
         }
 
-        public static Tsr<?> newTsrLike( Tsr<?> template, double value ) {
-            Tsr<Object> t = (Tsr<Object>) _newEmptyLike( template );
+        public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
+            Tsr<V> t = _newEmptyLike( template );
             if ( template.getData() instanceof float[] ) t.setValue( (float) value ); //TODO remove instanceof
             else t.setValue( value );
             try {
@@ -3159,8 +3125,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             return t;
         }
 
-        private static Tsr<?> _newEmptyLike( Tsr<?> template ) {
-            Tsr<?> t = Tsr.newInstance();
+        private static <V> Tsr<V> _newEmptyLike( Tsr<V> template ) {
+            Tsr<V> t = (Tsr<V>) Tsr.newInstance();
             t.createConstructionAPI().configureFromNewShape( template.getNDConf().shape(), false, true );
             return t;
         }
