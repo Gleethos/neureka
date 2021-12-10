@@ -238,8 +238,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     ri++;
                 }
                 //----------
-                //setInto _value in drn:
-                System.out.println(Arrays.toString(t1Shp)+"|"+Arrays.toString(t1Idx));
+                //set into value in drn:
                 t0_value[ndc0.indexOfIndices(t0Idx)] = operation.execute( t0Idx, t1Idx, t2Idx );
                 //increment on drain:
                 NDConfiguration.Utility.increment(t0Idx, t0Shp);
