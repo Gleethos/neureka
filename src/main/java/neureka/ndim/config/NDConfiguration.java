@@ -132,8 +132,18 @@ public interface NDConfiguration
      *
      * @return An array of flattened arrays which define this nd-configuration in a compact manner.
      */
-    int[] asInlineArray();
-
+    default int[] asInlineArray()
+    {
+        //CONFIG TRANSFER: <[ shape | translation | indicesMap | indices | strides ]>
+        int rank = rank();
+        int[] inline = new int[ rank * 5 ];
+        System.arraycopy( shape(),       0, inline, rank * 0, rank ); // -=> SHAPE COPY
+        System.arraycopy( translation(), 0, inline, rank * 1, rank ); // -=> TRANSLATION
+        System.arraycopy( indicesMap(),  0, inline, rank * 2, rank ); // -=> INDICES MAP (translates scalarization to dimension index)
+        System.arraycopy( offset(),      0, inline, rank * 3, rank ); // -=> SPREAD / STRIDES
+        System.arraycopy( spread(),      0, inline, rank * 4, rank ); // -=> OFFSET
+        return inline;
+    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     long keyCode();

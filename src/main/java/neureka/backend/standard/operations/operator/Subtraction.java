@@ -309,24 +309,26 @@ public class Subtraction extends AbstractOperation
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                    call ->
-                                        call.getDevice().getExecutor()
-                                                .threaded (
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
+                                    call -> {
+                                        call.getDevice()
+                                                .getExecutor()
+                                                .threaded(
+                                                        call.getTsrOfType(Number.class, 0).size(),
                                                         (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                        ? ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                        _creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
+                                                                ? (start, end) ->
+                                                                    Broadcast.broadcast(
+                                                                        call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1), call.getTsrOfType(Number.class, 2),
+                                                                        call.getValOf(Arg.DerivIdx.class), start, end,
+                                                                        _creatorX.create(call.getTensors(), call.getValOf(Arg.DerivIdx.class))
                                                                 )
-                                                        : ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                        _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
+                                                                : (start, end) ->
+                                                                    Broadcast.broadcast(
+                                                                        call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1), call.getTsrOfType(Number.class, 2),
+                                                                        call.getValOf(Arg.DerivIdx.class), start, end,
+                                                                        _creator.create(call.getTensors(), call.getValOf(Arg.DerivIdx.class))
                                                                 )
-                                                )
+                                                );
+                                    }
                             )
                     )
                     .setImplementationFor(
@@ -334,7 +336,7 @@ public class Subtraction extends AbstractOperation
                             CLImplementation.compiler()
                                 .arity( 3 )
                                 .kernelSource( broadcast.getKernelSource() )
-                                .activationSource( "value = src1 - src2;\n" )
+                                .activationSource( "value += src1 - src2;\n" )
                                 .differentiationSource( "value += src1 + src2 * -((d * 2) -1);\n" )
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
@@ -342,7 +344,7 @@ public class Subtraction extends AbstractOperation
                                             assert call.getTensors().length == 3;
                                             int gwz = call.getTsrOfType( Number.class, 0 ).size();
                                             call.getDevice().getKernel(call)
-                                                    .passAllOf( call.getTsrOfType( Number.class, 0 ) )
+                                                    .passAllOf( call.getTsrOfType( Number.class,  0 ) )
                                                     .passAllOf( call.getTsrOfType( Number.class,  1 ) )
                                                     .passAllOf( call.getTsrOfType( Number.class,  2 ) )
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )

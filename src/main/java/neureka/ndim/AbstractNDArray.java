@@ -38,6 +38,7 @@ package neureka.ndim;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.devices.Device;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
@@ -383,6 +384,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
             assert s1 == s2;
         }
         _NDConf = ndConfiguration;
+        if ( this.has( Device.class ) ) this.get( Device.class ).updateNDConf( this );
         return (C) this;
     }
 

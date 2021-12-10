@@ -7,6 +7,7 @@ import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
+import neureka.ndim.AbstractNDArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -224,6 +225,11 @@ public class FileDevice extends AbstractBaseDevice<Object>
     @Override
     public Device<Object> approve(ExecutionCall<? extends Device<?>> call ) {
         throw new IllegalAccessError("FileDevice instances do not support executions.");
+    }
+
+    @Override
+    public <T> Device<Object> updateNDConf(AbstractNDArray<?, T> tensor) {
+        return this;
     }
 
     @Override

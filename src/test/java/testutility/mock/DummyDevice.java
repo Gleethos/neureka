@@ -6,6 +6,7 @@ import neureka.calculus.Function;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import neureka.backend.api.ExecutionCall;
+import neureka.ndim.AbstractNDArray;
 
 import java.util.Collection;
 
@@ -42,6 +43,11 @@ public class DummyDevice extends AbstractBaseDevice<Object>
 
     @Override
     public Device<Object> approve(ExecutionCall<? extends Device<?>> call ) { return this; }
+
+    @Override
+    public <T> Device<Object> updateNDConf(AbstractNDArray<?, T> tensor) {
+        return this;
+    }
 
     @Override
     public <T extends Object> Object valueFor( Tsr<T> tensor ) { return null; }

@@ -47,6 +47,7 @@ import neureka.backend.api.BackendContext;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.host.CPU;
+import neureka.ndim.AbstractNDArray;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -154,6 +155,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     <T extends V> Device<V> swap( Tsr<T> former, Tsr<T> replacement );
 
     Device<V> approve( ExecutionCall<? extends Device<?>> call );
+
+    <T extends V> Device<V> updateNDConf( AbstractNDArray<?, T> tensor );
 
     <T extends V> Object valueFor( Tsr<T> tensor );
 

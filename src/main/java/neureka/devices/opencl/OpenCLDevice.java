@@ -64,6 +64,8 @@ import neureka.devices.opencl.utility.CLFunctionCompiler;
 import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
 import neureka.common.utility.DataConverter;
+import neureka.ndim.AbstractNDArray;
+import neureka.ndim.config.NDConfiguration;
 import org.jocl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -415,31 +417,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
             newClt.fp = parent.fp;
             newClt.value = parent.value;
         }
-        //CONFIG TRANSFER: <[ shape | translation | indicesMap | indices | scale ]>
-        int[] config = tensor.getNDConf().asInlineArray();
 
-        //SHAPE/TRANSLATION/IDXMAP/OFFSET/SPREAD TRANSFER:
-        newClt.config.data = clCreateBuffer(
-                _platform.getContext(),
-                CL_MEM_READ_WRITE,
-                (long) config.length * Sizeof.cl_int,
-                null, null
-        );
-        clEnqueueWriteBuffer(
-                _queue,
-                newClt.config.data,
-                CL_TRUE,
-                0,
-                (long) config.length * Sizeof.cl_int,
-                Pointer.to(config),
-                0,
-                null,
-                null
-        );
-        {
-            final cl_mem clConfMem = newClt.config.data;
-            _cleaning( newClt.config, () -> clReleaseMemObject( clConfMem ) );
-        }
+        _writeNDConfig( newClt, tensor.getNDConf() );
+
         cl_mem[] memos;
         memos = new cl_mem[]{ newClt.value.data, newClt.config.data };
 
@@ -472,6 +452,32 @@ public class OpenCLDevice extends AbstractDevice<Number>
         else tensor.setIsOutsourced( true );
 
         tensor.toType( F32.class );
+    }
+
+    private void _writeNDConfig( cl_tsr newClt, NDConfiguration ndc ) {
+        //CONFIG TRANSFER: <[ shape | translation | indicesMap | indices | scale ]>
+        int[] config = ndc.asInlineArray();
+
+        //SHAPE/TRANSLATION/IDXMAP/OFFSET/SPREAD TRANSFER:
+        newClt.config.data = clCreateBuffer(
+                _platform.getContext(),
+                CL_MEM_READ_WRITE,
+                (long) config.length * Sizeof.cl_int,
+                null, null
+        );
+        clEnqueueWriteBuffer(
+                _queue,
+                newClt.config.data,
+                CL_TRUE,
+                0,
+                (long) config.length * Sizeof.cl_int,
+                Pointer.to(config),
+                0,
+                null,
+                null
+        );
+        final cl_mem clConfMem = newClt.config.data;
+        _cleaning( newClt.config, () -> clReleaseMemObject( clConfMem ) );
     }
 
     /**
@@ -605,6 +611,15 @@ public class OpenCLDevice extends AbstractDevice<Number>
         _tensors.remove( former );
         _tensors.add( (Tsr<Number>) replacement );
         return this;
+    }
+
+    @Override
+    public <T extends Number> Device<Number> updateNDConf(AbstractNDArray<?, T> tensor) {
+         cl_tsr<?,?> clt = tensor.get(cl_tsr.class);
+         if ( clt != null ) {
+             _writeNDConfig( clt, tensor.getNDConf() );
+         }
+         return this;
     }
 
     @Override

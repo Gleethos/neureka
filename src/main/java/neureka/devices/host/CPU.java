@@ -6,6 +6,7 @@ import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
+import neureka.ndim.AbstractNDArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,6 +112,11 @@ public class CPU extends AbstractDevice<Number>
 
     @Override
     public <T extends Number> CPU swap( Tsr<T> former, Tsr<T> replacement ) { return this; }
+
+    @Override
+    public <T extends Number> Device<Number> updateNDConf(AbstractNDArray<?, T> tensor) {
+        return this;
+    }
 
     @Override
     public Collection<Tsr<Number>> getTensors() { return _tensors; }
