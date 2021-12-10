@@ -215,7 +215,7 @@ class Tensor_IO_Spec extends Specification
         then : '...the tensor will change as expected.'
             !(x.getValue() instanceof float[])
             !(x.data instanceof float[])
-            x.value32(0)==5.0f
+            x.getDataAs( float[].class )[ 0 ]==5.0f
             x.getDataAs( double[].class )[0]==5.0d
 
         when : 'Doing the same with double array...'
@@ -226,7 +226,7 @@ class Tensor_IO_Spec extends Specification
         then : '...once again the tensor changes as expected.'
             x.getValue() instanceof double[]
             x.data instanceof double[]
-            x.value32(0)==4.0f
+            x.getDataAs( float[].class )[ 0 ]==4.0f
             x.getDataAs( double[].class )[0]==4.0d
 
             x.isLeave()
@@ -253,7 +253,7 @@ class Tensor_IO_Spec extends Specification
         then :
             !(x.getValue() instanceof double[])
             !(x.data instanceof double[])
-            x.value32(0)==7.0f
+            x.getDataAs( float[].class )[ 0 ]==7.0f
             x.getDataAs( double[].class )[0]==7.0d
 
     }
@@ -269,13 +269,13 @@ class Tensor_IO_Spec extends Specification
         then :
             x.getValue() instanceof float[]
             x.data instanceof float[]
-            x.value32(0)==3.0f
+            x.getDataAs( float[].class )[ 0 ]==3.0f
 
         when : x.toType( Double.class )
         then :
             x.getValue() instanceof double[]
             x.data instanceof double[]
-            x.value32(0)==3.0f
+            x.getDataAs( float[].class )[ 0 ]==3.0f
     }
 
 

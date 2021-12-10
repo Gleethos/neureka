@@ -2927,7 +2927,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     
     public <A> A getDataAs( Class<A> arrayTypeClass ) {
         if ( arrayTypeClass == double[].class ) return (A) _value64();
-        if ( arrayTypeClass == float[].class ) return (A) value32();
+        if ( arrayTypeClass == float[].class ) return (A) _value32();
         return (A) getData();
     }
 
@@ -2949,22 +2949,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return newValue;
     }
 
-    public float value32( int i ) {
-        if ( this.isOutsourced() ) {
-            if ( get( Device.class ) instanceof OpenCLDevice )
-                return get( OpenCLDevice.class ).value32f( (Tsr<Number>) this, i );
-            else return 0.0f;
-        }
-        if ( this.isVirtual() ) {
-            if ( getData() instanceof double[] ) return (float) ( (double[]) getData() )[ 0 ];
-            else return ( (float[]) getData())[ 0 ];
-        } else {
-            if ( getData() instanceof double[] ) return (float) ( (double[]) getData() )[ i ];
-            else return ( (float[]) getData() )[ i ];
-        }
-    }
-
-    public float[] value32() {
+    private float[] _value32() {
         Device<V> found = this.get( Device.class );
         if ( getData() == null && this.isOutsourced() && found != null ) {
             if ( found instanceof OpenCLDevice )

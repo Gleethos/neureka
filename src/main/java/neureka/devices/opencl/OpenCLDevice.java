@@ -502,7 +502,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         int size;
         //if ( !tensor.isVirtual() ) {
             if ( fp == 1 ) {
-                float[] data = tensor.value32();
+                float[] data = tensor.getDataAs( float[].class );
                 data = ( data == null ) ? new float[ tensor.size() ] : data;
                 p = Pointer.to(data);
                 size = data.length;

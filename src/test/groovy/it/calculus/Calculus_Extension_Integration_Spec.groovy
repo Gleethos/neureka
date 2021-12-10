@@ -108,11 +108,11 @@ class Calculus_Extension_Integration_Spec extends Specification
 
                                                                     //for ( int i=0; i<clContext.getGws(); i++ ) {
                                                                     //    kernel.gemm_template(
-                                                                    //            drn.value32(),                     //__global float[] drain,
+                                                                    //            drn.getDataAs( float[].class ),                     //__global float[] drain,
                                                                     //            drn.getNDConf().asInlineArray(),   //__global int[] drn_conf,
-                                                                    //            src1.value32(),                    //const __global float[] src1,
+                                                                    //            src1.getDataAs( float[].class ),                    //const __global float[] src1,
                                                                     //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,
-                                                                    //            src2.value32(),                    //const __global float[] src2,
+                                                                    //            src2.getDataAs( float[].class ),                    //const __global float[] src2,
                                                                     //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,
                                                                     //            //call.getTsrOfType( Number.class, 0).rank(),//int rank, == 2
                                                                     //            //-1, //const int d,

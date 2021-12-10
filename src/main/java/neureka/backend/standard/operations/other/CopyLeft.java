@@ -123,7 +123,7 @@ public class CopyLeft extends AbstractOperation {
                                             call.getDevice().getKernel(call)
                                                     .passAllOf( t )
                                                     .passAllOf( t )
-                                                    .pass( call.getTsrOfType( Number.class, 1 ).value32( 0 ) )
+                                                    .pass( call.getTsrOfType( Number.class, 1 ).getDataAs( float[].class )[ 0 ] )
                                                     .pass( t.rank() )
                                                     .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                     .call( gwz );
