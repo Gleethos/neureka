@@ -391,11 +391,13 @@ class Tensor_Operation_Integration_Spec extends Specification
         where:
             idx  | whichGrad | bShape |    operation      ||     cValue              | wGradient                 | device
 
-            true |  false    | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"     | 'CPU'
             false|  false    | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"     | 'CPU'
+            true |  false    | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"     | 'CPU'
+            true |  false    | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"     | 'GPU'
 
-            true |  false    | [1]    | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0" | 'CPU'
             false|  false    | [1]    | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0" | 'CPU'
+            true |  false    | [1]    | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0" | 'CPU'
+            //true |  false    | [1]    | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0" | 'GPU'
 
             false|  true     | [2,1]  | { x, y -> x + y } || "9.0, 10.0, 12.0, 13.0" | "3.0, 10.0"               | 'CPU'
             false|  true     | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "13.0"                    | 'CPU'
