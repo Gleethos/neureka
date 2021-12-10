@@ -148,7 +148,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
 
         public int fp = 1;
-        public cl_config config = new cl_config();// Tensor configurations are always unique!
+        public cl_config config;
         public cl_value value;
 
         @Override
@@ -418,7 +418,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             newClt.value = parent.value;
         }
 
-        _writeNDConfig( newClt, tensor.getNDConf() );
+        newClt.config = _writeNDConfig( tensor.getNDConf() );
 
         cl_mem[] memos;
         memos = new cl_mem[]{ newClt.value.data, newClt.config.data };
@@ -454,12 +454,15 @@ public class OpenCLDevice extends AbstractDevice<Number>
         tensor.toType( F32.class );
     }
 
-    private void _writeNDConfig( cl_tsr newClt, NDConfiguration ndc ) {
+    private cl_tsr.cl_config _writeNDConfig( NDConfiguration ndc ) {
+
+         cl_tsr.cl_config clf = new cl_tsr.cl_config();
+
         //CONFIG TRANSFER: <[ shape | translation | indicesMap | indices | scale ]>
         int[] config = ndc.asInlineArray();
 
         //SHAPE/TRANSLATION/IDXMAP/OFFSET/SPREAD TRANSFER:
-        newClt.config.data = clCreateBuffer(
+        clf.data = clCreateBuffer(
                 _platform.getContext(),
                 CL_MEM_READ_WRITE,
                 (long) config.length * Sizeof.cl_int,
@@ -467,7 +470,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         );
         clEnqueueWriteBuffer(
                 _queue,
-                newClt.config.data,
+                clf.data,
                 CL_TRUE,
                 0,
                 (long) config.length * Sizeof.cl_int,
@@ -476,8 +479,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null,
                 null
         );
-        final cl_mem clConfMem = newClt.config.data;
-        _cleaning( newClt.config, () -> clReleaseMemObject( clConfMem ) );
+        final cl_mem clConfMem = clf.data;
+        _cleaning( clf, () -> clReleaseMemObject( clConfMem ) );
+        return clf;
     }
 
     /**
@@ -617,7 +621,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public <T extends Number> Device<Number> updateNDConf(AbstractNDArray<?, T> tensor) {
          cl_tsr<?,?> clt = tensor.get(cl_tsr.class);
          if ( clt != null ) {
-             _writeNDConfig( clt, tensor.getNDConf() );
+             clt.config = _writeNDConfig( tensor.getNDConf() );
          }
          return this;
     }

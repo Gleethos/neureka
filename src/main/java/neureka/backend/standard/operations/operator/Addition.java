@@ -117,10 +117,7 @@ public class Addition extends AbstractOperation {
                 };
 
         Operator operator = new Operator(JunctionUtil::forAdditions)
-                                    .setSupplyADAgentFor(
-                                            ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                                                    getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                                    )
+                                    .setSupplyADAgentFor( getDefaultAlgorithm() )
                                     .buildFunAlgorithm();
 
         setAlgorithm(
@@ -193,24 +190,26 @@ public class Addition extends AbstractOperation {
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call ->
-                                        call.getDevice().getExecutor()
-                                                .threaded (
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                            ? ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                        _broadcastCreatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                            : ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                        _broadcastCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                )
+                                call -> {
+                                    call.getDevice()
+                                            .getExecutor()
+                                            .threaded(
+                                                    call.getTsrOfType(Number.class, 0).size(),
+                                                    (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
+                                                            ? (start, end) ->
+                                                            Broadcast.broadcast(
+                                                                    call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1), call.getTsrOfType(Number.class, 2),
+                                                                    call.getValOf(Arg.DerivIdx.class), start, end,
+                                                                    _broadcastCreatorX.create(call.getTensors(), call.getValOf(Arg.DerivIdx.class))
+                                                            )
+                                                            : (start, end) ->
+                                                            Broadcast.broadcast(
+                                                                    call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1), call.getTsrOfType(Number.class, 2),
+                                                                    call.getValOf(Arg.DerivIdx.class), start, end,
+                                                                    _broadcastCreator.create(call.getTensors(), call.getValOf(Arg.DerivIdx.class))
+                                                            )
+                                            );
+                                }
                             )
                 )
                 .setImplementationFor(
@@ -218,8 +217,8 @@ public class Addition extends AbstractOperation {
                         CLImplementation.compiler()
                                 .arity( 3 )
                                 .kernelSource( _broadcast.getKernelSource() )
-                                .activationSource( "value = src1 + src2;\n" )
-                                .differentiationSource( "value += 1 * drain;\n" )
+                                .activationSource( "value += src1 + src2;\n" )
+                                .differentiationSource( "value += src1 + src2;\n" )
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
                                         call -> {
