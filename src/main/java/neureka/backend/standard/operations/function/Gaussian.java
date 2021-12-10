@@ -35,7 +35,7 @@ public final class Gaussian extends AbstractOperation
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) ->
                 {
-                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) {
                         return ( t0Idx, t1Idx, t2Idx ) -> Math.pow(Math.E, -Math.pow(t1_val[ t1Idx.i() ], 2));
                     } else {
@@ -50,7 +50,7 @@ public final class Gaussian extends AbstractOperation
         DefaultOperatorCreator<TertiaryNDAConsumer> activationXCreator =
                 ( inputs, d ) ->
                 {
-                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) {
                         return ( t0Idx, t1Idx, t2Idx ) -> Math.pow(Math.E, -Math.pow(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )], 2));
                     } else {

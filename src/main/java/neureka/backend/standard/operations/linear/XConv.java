@@ -30,8 +30,8 @@ public class XConv extends AbstractOperation
 
         DefaultOperatorCreator<TertiaryNDIConsumer> convolutionNDICreator =
                 ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].value64();
-                    double[] t2_val = inputs[ 2 ].value64();
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
                     if ( d < 0 ) {
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
                     } else {
@@ -43,8 +43,8 @@ public class XConv extends AbstractOperation
                 };
         DefaultOperatorCreator<TertiaryNDAConsumer> convolutionCreator =
                 ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].value64();
-                    double[] t2_val = inputs[ 2 ].value64();
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
                     if ( d < 0 ) {
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] * t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
                     } else {

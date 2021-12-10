@@ -2924,23 +2924,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         forComponent( Tsr.class, gradient -> gradient.toType( typeClass ) );
         return (Tsr<T>) this;
     }
-
-    public double value64( int i ) {
-        if ( this.isOutsourced() ) {
-            if ( get( Device.class ) instanceof OpenCLDevice )
-                return get( OpenCLDevice.class ).value64f( (Tsr<Number>) this, i );
-            else return 0.0;
-        }
-        if ( this.isVirtual() ) {
-            if ( getData() instanceof double[] ) return ( (double[]) getData() )[ 0 ];
-            else return ( (float[]) getData() )[ 0 ];
-        } else {
-            if ( getData() instanceof double[] ) return ( (double[]) getData() )[ i ];
-            else return ( (float[]) getData() )[ i ];
-        }
+    
+    public <A> A getDataAs( Class<A> arrayTypeClass ) {
+        if ( arrayTypeClass == double[].class ) return (A) _value64();
+        if ( arrayTypeClass == float[].class ) return (A) value32();
+        return (A) getData();
     }
 
-    public double[] value64() {
+    private double[] _value64() {
         Device<V> found = this.get( Device.class );
         if ( getData() == null && this.isOutsourced() && found != null ) {
             if ( found instanceof OpenCLDevice )
@@ -3065,54 +3056,54 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         public static double getFrom( Tsr<?> t, int i ) {
             if ( t.isEmpty() || t.isUndefined() ) return 0;
-            else if ( t.isVirtual() ) return t.value64()[ 0 ];
-            return t.value64()[ t.indexOfIndex( i ) ];
+            else if ( t.isVirtual() ) return t.getDataAs( double[].class )[ 0 ];
+            return t.getDataAs( double[].class )[ t.indexOfIndex( i ) ];
         }
 
         public static double getFrom( Tsr<?> t, int[] idx ) {
             t.setIsVirtual( false );
-            return t.value64()[ t.indexOfIndices( idx ) ];
+            return t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ];
         }
 
         public static void setInto( Tsr<?> t, int i, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndex( i ) ] = value;
+            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] = value;
         }
 
         public static void setInto( Tsr<?> t, int[] idx, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndices( idx ) ] = value;
+            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] = value;
         }
 
         public static void addInto( Tsr<?> t, int i, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndex( i ) ] += value;
+            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] += value;
         }
 
         public static void addInto( Tsr<?> t, int[] idx, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndices( idx ) ] += value;
+            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] += value;
         }
 
         public static Tsr<?> addInto( Tsr<?> t, Tsr<?> source ) {
-            if ( t.isVirtual() && source.isVirtual() ) t.value64()[ 0 ] += source.value64()[ 0 ];
+            if ( t.isVirtual() && source.isVirtual() ) t.getDataAs( double[].class )[ 0 ] += source.getDataAs( double[].class )[ 0 ];
             else new FunctionBuilder( Neureka.get().backend() ).build( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false ).call( new Tsr[]{ t, source } );
             return source;
         }
 
         public static void subInto( Tsr<?> t, int i, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndex( i ) ] -= value;
+            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] -= value;
         }
 
         public static void subInto( Tsr<?> t, int[] idx, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndices( idx ) ] -= value;
+            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] -= value;
         }
 
         public static void subInto( Tsr<?> t, Tsr<?> source ) {
             if ( t.isVirtual() && source.isVirtual() ) {
-                t.value64()[ 0 ] -= source.value64()[ 0 ];
+                t.getDataAs( double[].class )[ 0 ] -= source.getDataAs( double[].class )[ 0 ];
             } else {
                 if ( t.isVirtual() ) t.setIsVirtual( false );
                 int[] index = new int[ t.getNDConf().shape().length ];
@@ -3126,12 +3117,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         public static void mulInto( Tsr<?> t, int i, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndex( i ) ] *= value;
+            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] *= value;
         }
 
         public static void mulInto( Tsr<?> t, int[] idx, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndices( idx ) ] *= value;
+            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] *= value;
         }
 
     }

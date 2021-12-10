@@ -242,8 +242,8 @@ public final class TsrAsString
             return i -> String.valueOf( ( (char[]) data )[ i ] );
         else if ( data == null )
             return i -> ( isCompact )
-                    ? formatFP( _tensor.value64( i ) )
-                    : String.valueOf( _tensor.value64( i ) );
+                    ? formatFP( _tensor.getDataAs( double[].class )[ i ] )
+                    : String.valueOf( _tensor.getDataAs( double[].class )[ i ] );
         else
             return i -> String.valueOf( ( (Object[]) data )[ i ] );
     }

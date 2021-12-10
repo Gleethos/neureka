@@ -43,8 +43,8 @@ public final class Product extends AbstractOperation {
         DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
                 ( inputs, d ) ->
                 {
-                    double[] t1_val = inputs[ 1 ].value64();
-                    double[] t2_val = inputs[ 2 ].value64();
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
                     if ( d < 0 ) {
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
                     } else {
@@ -58,8 +58,8 @@ public final class Product extends AbstractOperation {
         DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
                 ( inputs, d ) ->
                 {
-                    double[] t1_val = inputs[ 1 ].value64();
-                    double[] t2_val = inputs[ 2 ].value64();
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
                     if ( d < 0 ) {
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] * t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
                     } else {
@@ -160,14 +160,14 @@ public final class Product extends AbstractOperation {
 
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
                     else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
                 };
 
         DefaultOperatorCreator<TertiaryNDAConsumer> activationXCreator =
                 ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
                     else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
                 };

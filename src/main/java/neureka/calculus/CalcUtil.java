@@ -120,7 +120,7 @@ public class CalcUtil
         if ( allVirtual ) {
             int index = -1;
             for ( int i = 0; i < tensors.length; i++ ) {
-                double value = ( tensors[ i ] == null ) ? 0.0 : tensors[ i ].value64( 0 );
+                double value = ( tensors[ i ] == null ) ? 0.0 : tensors[ i ].getDataAs( double[].class )[ 0 ];
                 if ( value == 1.0 ) {
                     if ( index >= 0 ) return -1;
                     index = i;
@@ -213,7 +213,7 @@ public class CalcUtil
             );
             // At the end:
             //...multiply inner times outer: ( if inner is not 1 entirely... )
-            if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.value64( 0 ) == 1.0 ) ) {
+            if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getDataAs( double[].class )[ 0 ] == 1.0 ) ) {
                 tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
                 CalcUtil.recursiveExecution(
                         ExecutionCall.of( tensors )

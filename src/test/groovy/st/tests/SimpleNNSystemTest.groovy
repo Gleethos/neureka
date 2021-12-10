@@ -100,21 +100,21 @@ class SimpleNNSystemTest
             backprop(weights1, weights2, input, output, layer1, y)
         }
 
-        assert output.value64()[0] >= 0.0 && output.value64()[0] <= 1.0
-        assert output.value64()[1] >= 0.0 && output.value64()[1] <= 1.0
-        assert output.value64()[2] >= 0.0 && output.value64()[2] <= 1.0
+        assert output.getDataAs( double[].class )[0] >= 0.0 && output.getDataAs( double[].class )[0] <= 1.0
+        assert output.getDataAs( double[].class )[1] >= 0.0 && output.getDataAs( double[].class )[1] <= 1.0
+        assert output.getDataAs( double[].class )[2] >= 0.0 && output.getDataAs( double[].class )[2] <= 1.0
 
-        assert output.value64()[0] >= 0.0 &&output.value64()[0] <= 0.1
-        assert output.value64()[1] >= 0.95 &&output.value64()[1] <= 1.0
-        assert output.value64()[2] >= 0.95 &&output.value64()[2] <= 1.0
-        assert output.value64()[3] >= 0.95 &&output.value64()[3] <= 1.0
-        assert output.value64()[4] >= 0.0 &&output.value64()[4] <= 0.1
+        assert output.getDataAs( double[].class )[0] >= 0.0 &&output.getDataAs( double[].class )[0] <= 0.1
+        assert output.getDataAs( double[].class )[1] >= 0.95 &&output.getDataAs( double[].class )[1] <= 1.0
+        assert output.getDataAs( double[].class )[2] >= 0.95 &&output.getDataAs( double[].class )[2] <= 1.0
+        assert output.getDataAs( double[].class )[3] >= 0.95 &&output.getDataAs( double[].class )[3] <= 1.0
+        assert output.getDataAs( double[].class )[4] >= 0.0 &&output.getDataAs( double[].class )[4] <= 0.1
 
-        assert output.value64()[0] >= 0.0 && output.value64()[0] <= 0.0055
-        assert output.value64()[1] >= 0.95 && output.value64()[1] <= 1.0
-        assert output.value64()[2] >= 0.95 && output.value64()[2]<= 1.0
-        assert output.value64()[3] >= 0.95 && output.value64()[3] <= 1.0
-        assert output.value64()[4] >= 0.05 && output.value64()[4] <= 0.06
+        assert output.getDataAs( double[].class )[0] >= 0.0 && output.getDataAs( double[].class )[0] <= 0.0055
+        assert output.getDataAs( double[].class )[1] >= 0.95 && output.getDataAs( double[].class )[1] <= 1.0
+        assert output.getDataAs( double[].class )[2] >= 0.95 && output.getDataAs( double[].class )[2]<= 1.0
+        assert output.getDataAs( double[].class )[3] >= 0.95 && output.getDataAs( double[].class )[3] <= 1.0
+        assert output.getDataAs( double[].class )[4] >= 0.05 && output.getDataAs( double[].class )[4] <= 0.06
 
         if ( device instanceof DummyDevice ) {
             // When we are not running on the GPU we can assert the result deterministically

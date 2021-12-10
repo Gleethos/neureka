@@ -143,7 +143,7 @@ class Tensor_IO_Spec extends Specification
         when : t = Tsr.of([2], [3, 5, 7])
         then :
             t.toString().contains("(2):[3.0, 5.0]")
-            t.value64().length==2
+            t.getDataAs( double[].class ).length==2
 
         // Now the same with primitive array ! :
         when : t = Tsr.of(new int[]{2, 2}, new double[]{2, 4, 4})
@@ -151,7 +151,7 @@ class Tensor_IO_Spec extends Specification
         when : t = Tsr.of(new int[]{2}, new double[]{3, 5, 7})
         then :
             t.toString().contains("(2):[3.0, 5.0]")
-            t.value64().length==2
+            t.getDataAs( double[].class ).length==2
     }
 
     def 'Indexing after reshaping works as expected.'()
@@ -216,7 +216,7 @@ class Tensor_IO_Spec extends Specification
             !(x.getValue() instanceof float[])
             !(x.data instanceof float[])
             x.value32(0)==5.0f
-            x.value64(0)==5.0d
+            x.getDataAs( double[].class )[0]==5.0d
 
         when : 'Doing the same with double array...'
             double[] value64 = new double[1]
@@ -227,7 +227,7 @@ class Tensor_IO_Spec extends Specification
             x.getValue() instanceof double[]
             x.data instanceof double[]
             x.value32(0)==4.0f
-            x.value64(0)==4.0d
+            x.getDataAs( double[].class )[0]==4.0d
 
             x.isLeave()
             !x.isBranch()
@@ -254,7 +254,7 @@ class Tensor_IO_Spec extends Specification
             !(x.getValue() instanceof double[])
             !(x.data instanceof double[])
             x.value32(0)==7.0f
-            x.value64(0)==7.0d
+            x.getDataAs( double[].class )[0]==7.0d
 
     }
 

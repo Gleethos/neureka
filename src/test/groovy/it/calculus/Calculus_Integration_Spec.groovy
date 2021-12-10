@@ -50,8 +50,8 @@ class Calculus_Integration_Spec extends Specification
                 ? f.derive( inputs, index )
                 : f.call(   inputs        )
             List<Double> value = ( index != null )
-                                    ? (result.value64() as List<Double>)
-                                    : (result.value64() as List<Double>)
+                                    ? (result.getDataAs( double[].class ) as List<Double>)
+                                    : (result.getDataAs( double[].class ) as List<Double>)
 
         expect : "The calculated result ${result} should be equal to expected ${expected}."
             value == expected.values().first()

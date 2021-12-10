@@ -13,8 +13,6 @@ import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-import java.util.Arrays;
-
 public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
 {
 
@@ -121,7 +119,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         t0Idx.set( t0_drn.IndicesOfIndex( i ) );
         t1Idx.set( t0_drn.IndicesOfIndex( i ) );
         NDIterator t2Idx = NDIterator.of( t2_src, NDIterator.NonVirtual.TRUE );
-        double[] t0_value = t0_drn.value64();
+        double[] t0_value = t0_drn.getDataAs( double[].class );
         if ( d < 0 ) {
             while ( i < end ) {//increment on drain accordingly:
                 int ri = 0;

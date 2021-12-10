@@ -439,7 +439,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         migration.run(); // TODO: REMOVE
 
         if ( tensor.isVirtual() ) {
-            double value = tensor.value64( 0 );
+            double value = tensor.getDataAs( double[].class )[ 0 ];
             tensor.setIsOutsourced( true );
             CalcUtil.recursiveExecution(
                     ExecutionCall.of(tensor, Tsr.of( value ).to( this ))
@@ -507,7 +507,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 p = Pointer.to(data);
                 size = data.length;
             } else {
-                double[] data = tensor.value64();
+                double[] data = tensor.getDataAs( double[].class );
                 data = ( data == null ) ? new double[ tensor.size() ] : data;
                 p = Pointer.to(data);
                 size = data.length;

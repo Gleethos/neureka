@@ -11,10 +11,6 @@ import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
 public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
 {
     public Scalarization() {
@@ -71,7 +67,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         t0Idx.set( t0_drn.IndicesOfIndex( i ) );
-        double[] t0_value = t0_drn.value64();
+        double[] t0_value = t0_drn.getDataAs( double[].class );
         while ( i < end ) // increment on drain accordingly:
         {
             // setInto _value in drn:
@@ -91,7 +87,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();
         int[] t0Idx = t0_drn.IndicesOfIndex( i );
-        double[] t0_value = t0_drn.value64();
+        double[] t0_value = t0_drn.getDataAs( double[].class );
         while ( i < end ) // increment on drain accordingly:
         {
             // setInto _value in drn:

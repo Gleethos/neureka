@@ -67,7 +67,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
             ( (double[]) t0_drn.getData() )[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) );
         } else {
             //int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
-            double[] t0_value = t0_drn.value64();
+            double[] t0_value = t0_drn.getDataAs( double[].class );
             NDIterator t0Idx = NDIterator.of( t0_drn );
             NDIterator t1Idx = NDIterator.of( t1_src );
             NDIterator t2Idx = NDIterator.of( t2_src );
