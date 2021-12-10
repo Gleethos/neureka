@@ -42,14 +42,11 @@ import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.backend.api.BackendContext;
 import neureka.devices.Device;
-import neureka.devices.opencl.OpenCLDevice;
 import neureka.framing.Relation;
 import neureka.optimization.Optimizer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -77,29 +74,6 @@ import java.util.function.Consumer;
 public abstract class AbstractComponentOwner<C>
 {
     /**
-     *  The following static map enables fast access to properties which describe
-     *  the "importance" of an implementation of the {@link Component} interface.
-     *  This is relevant only for performance reasons because
-     *  the component owner referencing this component among
-     *  others can store them according to their order to
-     *  make component access as fast as possible! <br>
-     *  There is not much more to this then that.
-     *  New component implementations will default to a class order of 0
-     *  and otherwise one should consider profiling the access patterns
-     *  of the component system and update this mapping...
-     */
-    private static final Map<Class<? extends Component>, Integer> _CLASS_ORDER = new HashMap<>();
-    static {
-            _CLASS_ORDER.put( Optimizer.class,	    1   );
-            _CLASS_ORDER.put( JITProp.class,	    2   );
-            _CLASS_ORDER.put( OpenCLDevice.class,	3   );
-            _CLASS_ORDER.put( Tsr.class,	        4   );
-            _CLASS_ORDER.put( Relation.class,	    5   );
-            _CLASS_ORDER.put( Device.class,	        6   );
-            _CLASS_ORDER.put( GraphNode.class,	    7   );
-    }
-
-    /**
      *  An array of (type) unique components.
      */
     private Component<C>[] _components = null;
@@ -120,7 +94,7 @@ public abstract class AbstractComponentOwner<C>
                             @Override public C getNewOwner() { return null; }
                             @Override public boolean executeChange() {
                                 _remove( component );
-                                changeExecuted[0] = true;
+                                changeExecuted[ 0 ] = true;
                                 return true; // We inform the component that the change was executed successfully!
                             }
                         }
@@ -136,7 +110,7 @@ public abstract class AbstractComponentOwner<C>
                                 @Override public C getNewOwner() { return _this(); }
                                 @Override public boolean executeChange() {
                                     _add( _setOrReject( component ) );
-                                    changeExecuted[0] = true;
+                                    changeExecuted[ 0 ] = true;
                                     return true; // We inform the component that the change was executed successfully!
                                 }
                             }
@@ -164,7 +138,7 @@ public abstract class AbstractComponentOwner<C>
     }
 
     private void _add( Component<C> component ) {
-        if ( component == null ) return;
+        if ( component   == null ) return;
         if ( _components == null ) _setComps( new Component[]{ component } );
         else {
             for ( Component<C> c : _components ) if ( c == component ) return;
@@ -173,16 +147,37 @@ public abstract class AbstractComponentOwner<C>
             newComponents[ newComponents.length - 1 ] = component;
             _setComps( newComponents );
             for ( int i = 1; i < _components.length; i++ ) {
-                Component<C> a = _components[ i-1 ];
-                Component<C> b = _components[ i ];
-                int orderA = _CLASS_ORDER.getOrDefault( a, 0 );
-                int orderB = _CLASS_ORDER.getOrDefault( b, 0 );
-                if ( orderB > orderA ) {
+                Component<C> a = _components[ i - 1 ];
+                Component<C> b = _components[ i     ];
+                if ( _orderOf( b ) > _orderOf( a ) ) {
                     _components[ i - 1 ] = b;
-                    _components[ i ] = a;
+                    _components[ i     ] = a;
                 }
             }
         }
+    }
+
+    /**
+     *  The following method enables fast access to properties which describe
+     *  the "importance" of an implementation of the {@link Component} interface.
+     *  This is relevant only for performance reasons because
+     *  the component owner referencing this component among
+     *  others can store them according to their order to
+     *  make component access as fast as possible! <br>
+     *  There is not much more to this then that.
+     *  New component implementations will default to a class order of 0
+     *  and otherwise one should consider profiling the access patterns
+     *  of the component system and update this mapping...
+     */
+    private static <T extends Component> int _orderOf( T component ) {
+        Class<?> typeClass = component.getClass();
+        if ( GraphNode.class          .equals( typeClass ) ) return 6;
+        if ( Device.class   .isAssignableFrom( typeClass ) ) return 5;
+        if ( Relation.class           .equals( typeClass ) ) return 4;
+        if ( Tsr.class                .equals( typeClass ) ) return 3;
+        if ( JITProp.class            .equals( typeClass ) ) return 2;
+        if ( Optimizer.class.isAssignableFrom( typeClass ) ) return 1;
+        return 0;
     }
 
     /**
@@ -199,12 +194,14 @@ public abstract class AbstractComponentOwner<C>
     protected void _transferFrom( AbstractComponentOwner<C> other ) {
             if ( other._components != null ) {
             _setComps( other._components ); // Inform components about their new owner:
-            for ( Component<C> c : _components ) c.update(
-                    new Component.OwnerChangeRequest<C>() {
-                        @Override public C getOldOwner() { return other._this(); }
-                        @Override public C getNewOwner() { return _this(); }
-                        @Override public boolean executeChange() { return false; }
-                    });
+            for ( Component<C> c : _components )
+                c.update(
+                        new Component.OwnerChangeRequest<C>() {
+                            @Override public C       getOldOwner()   { return other._this(); }
+                            @Override public C       getNewOwner()   { return _this();       }
+                            @Override public boolean executeChange() { return false;         }
+                        }
+                    );
             other._deleteComponents();
         }
     }
@@ -227,7 +224,7 @@ public abstract class AbstractComponentOwner<C>
      */
     public <T extends Component<?>> T get( Class<T> componentClass )
     {
-        if ( _components != null) {
+        if ( _components != null ) {
             for ( Component<?> component : _components ) {
                 if ( componentClass.isInstance( component ) ) return (T) component;
             }
@@ -245,7 +242,7 @@ public abstract class AbstractComponentOwner<C>
      * @param <T> The type parameter defining the component class.
      * @return The correct component or null if nothing has been found.
      */
-    public <T extends Component<?>> List<T> getAll(Class<T> componentClass ) {
+    public <T extends Component<?>> List<T> getAll( Class<T> componentClass ) {
         List<T> found = new ArrayList<>();
         if ( _components != null && componentClass != null ) {
             for ( Component<?> component : _components ) {
@@ -300,15 +297,14 @@ public abstract class AbstractComponentOwner<C>
         Component<C> oldCompartment;
         if ( _components != null ) {
             oldCompartment = (Component<C>) get( newComponent.getClass() );
-            if ( oldCompartment != null ) {
+            if ( oldCompartment != null )
                 _addOrRemoveComp( oldCompartment, true );
-            }
         }
         _addOrRemoveComp( newComponent, false );
         return _this();
     }
 
-    protected <T> void _set(Component<T> anyComponent) {
+    protected <T> void _set( Component<T> anyComponent ) {
         this.set( (Component<C>) anyComponent);
     }
 
@@ -326,7 +322,6 @@ public abstract class AbstractComponentOwner<C>
      * @return The same component or null if it has been rejected.
      */
     protected abstract <T extends Component<C>> T _setOrReject(T newComponent );
-
 
     /**
      * This method abstract ought to be implemented further down

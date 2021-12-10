@@ -271,7 +271,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             } else {
                 Tsr<T> t = new Tsr<>();
                 t.setDataType( DataType.of( args[1].getClass() ) );
-                t._construct( (int[]) args[0], true, true );
+                t._constructAndAllocate( (int[]) args[0], true );
                 ((Object[])t.getData())[0] = args[1];
                 return t;
             }
@@ -346,29 +346,47 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return of( Double.class, shp, seed );
     }
 
-    public static <V> Tsr<V> of( List<? extends Number> shape, List<V> range ) {
+    /**
+     *  Creates a new {@link Tsr} instance based on a list of numbers representing the shape,
+     *  and a list of values representing the value of the resulting tensor.
+     *
+     * @param shape A list of numbers whose integer values will be used to form the shape of the resulting {@link Tsr}.
+     * @param value A list of values which will be used to populate the data array of the resulting {@link Tsr}.
+     * @param <V> The type parameter of the value list and returned tensor.
+     * @return A new {@link Tsr} instance constructed based on the provided shape and value list.
+     */
+    public static <V> Tsr<V> of( List<? extends Number> shape, List<V> value ) {
         Class<V> typeClass = (Class<V>) Object.class;
-        if ( range.size() > 0 ) typeClass = (Class<V>) range.get(0).getClass();
+        if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
         return Tsr.of(
                         DataType.of(typeClass),
                         shape.stream().mapToInt(Number::intValue).toArray(),
-                        range
-                );
-    }
-
-    public static <V> Tsr<V> of( int[] shape, List<V> range ) {
-        Class<V> typeClass = (Class<V>) Object.class;
-        if ( range.size() > 0 ) typeClass = (Class<V>) range.get(0).getClass();
-        return Tsr.of(
-                        DataType.of(typeClass),
-                        shape,
-                        range
+                        value
                 );
     }
 
     /**
-     *  This factory method will turn a list of either nested lists or values into a {@link Tsr}
-     *  instance with the corresponding.
+     *  Creates a new {@link Tsr} instance based on an array of integers representing the shape,
+     *  and a list of values representing the value of the resulting tensor.
+     *
+     * @param shape An array of integers will be used to form the shape of the resulting {@link Tsr}.
+     * @param value A list of values which will be used to populate the data array of the resulting {@link Tsr}.
+     * @param <V> The type parameter of the value list and returned tensor.
+     * @return A new {@link Tsr} instance constructed based on the provided shape and value list.
+     */
+    public static <V> Tsr<V> of( int[] shape, List<V> value ) {
+        Class<V> typeClass = (Class<V>) Object.class;
+        if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
+        return Tsr.of(
+                        DataType.of(typeClass),
+                        shape,
+                        value
+                );
+    }
+
+    /**
+     *  This factory method will turn a list of either nested lists of values into a {@link Tsr}
+     *  instance with the corresponding rank and shape.
      *
      * @param conf A list of either values or nested lists which are themselves either or.
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
@@ -399,8 +417,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                             );
     }
 
+    /**
+     *
+     *
+     * @param axesSizes
+     * @return
+     */
     public static Tsr<Number> ofShape( List<? extends Number> axesSizes ) {
-        return ofShape( axesSizes.toArray(new Number[0]) );
+        return ofShape( axesSizes.toArray( new Number[0] ) );
     }
 
     @SafeVarargs
@@ -568,7 +592,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public static Tsr<Number> ofShape( int[] shape ) { return new Tsr<>( shape ); }
 
-    private Tsr( int[] shape ) { _construct( shape, true, true ); }
+    private Tsr( int[] shape ) { _constructAndAllocate( shape, true ); }
 
     public static Tsr<Double> of( int[] shape, double value ) { return new Tsr<>( shape, value ); }
 
@@ -584,7 +608,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private Tsr( int[] shape, DataType<?> type )
     {
         setDataType( DataType.of( type.getTypeClass() ) );
-        _construct( shape, true, true );
+        _constructAndAllocate( shape, true );
     }
 
     public static <V> Tsr of( Class<V> typeClass, int[] shape, Object data ) { return new Tsr<>( shape, typeClass, data ); }
@@ -633,7 +657,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     // Inner construction layer:
 
-    private void _construct( int[] shape, boolean allocate, boolean virtual )
+    private void _constructAndAllocate(int[] shape, boolean virtual )
     {
         createConstructionAPI().configureFromNewShape( shape, virtual, true );
     }
@@ -730,7 +754,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Initializer<T> initializer )
     {
         setDataType( type );
-        _construct( shape, true, false );
+        _constructAndAllocate( shape, false );
         _initData( initializer );
     }
 

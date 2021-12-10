@@ -29,7 +29,11 @@ public interface BackendExtension extends Component<Extensions> {
      */
     void dispose();
 
-
+    /**
+     *  This class describes an available {@link Device} implementation found for a given {@link BackendExtension}.
+     *  It exists because a typical {@link BackendExtension} will most likely also have a
+     *  custom {@link Device} implementation exposing a specific API for executing tensors on them...
+     */
     class DeviceOption {
 
         private final Device<?> _device;
@@ -40,8 +44,14 @@ public interface BackendExtension extends Component<Extensions> {
             _confidence = confidence;
         }
 
+        /**
+         * @return The device which fits a given key word best.
+         */
         public Device<?> device() { return _device; }
 
+        /**
+         * @return The confidence level determining how well a given search key matches the wrapped device.
+         */
         public double confidence() { return _confidence; }
 
     }
