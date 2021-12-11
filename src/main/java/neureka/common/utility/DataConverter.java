@@ -314,7 +314,7 @@ public class DataConverter
     /**
      *  This is a static utility class containing the actual conversion logic
      *  which is usually referenced by the Converter lambdas via method signatures...
-     *  Besides that it also provides the ability to create seeded arrays of data.
+     *  Other than that it also provides the ability to create seeded arrays of data.
      */
     public static class Utility
     {
@@ -391,167 +391,167 @@ public class DataConverter
         }
 
         @Contract( pure = true )
-        public static double[] newSeededDoubleArray(String seed, int size) {
-            return newSeededDoubleArray(_longStringHash(seed), size);
+        public static double[] newSeededDoubleArray( String seed, int size ) {
+            return newSeededDoubleArray( _longStringHash( seed ), size );
         }
 
         @Contract( pure = true )
-        public static double[] newSeededDoubleArray(long seed, int size) {
-            return seededDoubleArray(new double[size], seed);
+        public static double[] newSeededDoubleArray( long seed, int size ) {
+            return seededDoubleArray( new double[size], seed );
         }
 
         @Contract( pure = true )
-        public static double[] seededDoubleArray(double[] array, String seed) {
-            return seededDoubleArray(array, _longStringHash(seed));
+        public static double[] seededDoubleArray( double[] array, String seed ) {
+            return seededDoubleArray(array, _longStringHash( seed ));
         }
 
         @Contract( pure = true )
-        public static double[] seededDoubleArray(double[] array, long seed) {
+        public static double[] seededDoubleArray( double[] array, long seed ) {
             Random dice = new Random();
-            dice.setSeed(seed);
-            for( int i=0; i<array.length; i++ ) array[ i ] = dice.nextGaussian();
+            dice.setSeed( seed );
+            for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextGaussian();
             return array;
         }
 
         @Contract( pure = true )
-        public static float[] newSeededFloatArray(String seed, int size) {
-            return newSeededFloatArray(_longStringHash(seed), size);
+        public static float[] newSeededFloatArray( String seed, int size ) {
+            return newSeededFloatArray( _longStringHash( seed ), size );
         }
 
         @Contract( pure = true )
-        public static float[] newSeededFloatArray(long seed, int size) {
-            return seededFloatArray(new float[size], seed);
+        public static float[] newSeededFloatArray( long seed, int size ) {
+            return seededFloatArray( new float[size], seed );
         }
 
         @Contract( pure = true )
-        public static float[] seededFloatArray(float[] array, String seed) {
-            return seededFloatArray(array, _longStringHash(seed));
+        public static float[] seededFloatArray( float[] array, String seed ) {
+            return seededFloatArray( array, _longStringHash( seed ) );
         }
 
         @Contract( pure = true )
-        public static float[] seededFloatArray(float[] array, long seed) {
+        public static float[] seededFloatArray( float[] array, long seed ) {
             Random dice = new Random();
-            dice.setSeed(seed);
-            for(int i=0; i<array.length; i++) array[ i ] = (float)dice.nextGaussian();
+            dice.setSeed( seed );
+            for ( int i = 0; i < array.length; i++ ) array[ i ] = (float) dice.nextGaussian();
             return array;
         }
 
         @Contract( pure = true )
-        public static int[] seededIntArray(int[] array, String seed) {
-            return seededIntArray(array, _longStringHash(seed));
+        public static int[] seededIntArray( int[] array, String seed ) {
+            return seededIntArray(array, _longStringHash( seed ));
         }
 
         @Contract( pure = true )
         public static int[] seededIntArray( int[] array, long seed ) {
             Random dice = new Random();
-            dice.setSeed(seed);
+            dice.setSeed( seed );
             for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextInt();
             return array;
         }
 
         @Contract( pure = true )
-        public static short[] seededShortArray(short[] array, String seed) {
-            return seededShortArray(array, _longStringHash(seed));
+        public static short[] seededShortArray( short[] array, String seed ) {
+            return seededShortArray(array, _longStringHash( seed ));
         }
 
         @Contract( pure = true )
         public static short[] seededShortArray( short[] array, long seed ) {
             Random dice = new Random();
-            dice.setSeed(seed);
+            dice.setSeed( seed );
             for ( int i = 0; i < array.length; i++ ) array[ i ] = (short) dice.nextInt();
             return array;
         }
 
         @Contract( pure = true )
-        public static byte[] seededByteArray(byte[] array, String seed) {
-            return seededByteArray(array, _longStringHash(seed));
+        public static byte[] seededByteArray( byte[] array, String seed ) {
+            return seededByteArray(array, _longStringHash( seed ));
         }
 
         @Contract( pure = true )
         public static byte[] seededByteArray( byte[] array, long seed ) {
             Random dice = new Random();
-            dice.setSeed(seed);
+            dice.setSeed( seed );
             for ( int i = 0; i < array.length; i++ ) array[ i ] = (byte) dice.nextInt();
             return array;
         }
 
         @Contract( pure = true )
-        public static long[] seededLongArray( long[] array, String seed) {
-            return seededLongArray(array, _longStringHash(seed));
+        public static long[] seededLongArray( long[] array, String seed ) {
+            return seededLongArray( array, _longStringHash( seed ) );
         }
 
         @Contract( pure = true )
         public static long[] seededLongArray( long[] array, long seed ) {
             Random dice = new Random();
-            dice.setSeed(seed);
+            dice.setSeed( seed );
             for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextLong();
             return array;
         }
 
         @Contract( pure = true )
-        public static boolean[] seededBooleanArray( boolean[] array, String seed) {
-            return seededBooleanArray(array, _longStringHash(seed));
+        public static boolean[] seededBooleanArray( boolean[] array, String seed ) {
+            return seededBooleanArray(array, _longStringHash( seed ));
         }
 
         @Contract( pure = true )
         public static boolean[] seededBooleanArray( boolean[] array, long seed ) {
             Random dice = new Random();
-            dice.setSeed(seed);
+            dice.setSeed( seed );
             for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextBoolean();
             return array;
         }
 
         @Contract( pure = true )
         public static char[] seededCharacterArray( char[] array, String seed) {
-            return seededCharacterArray(array, _longStringHash(seed));
+            return seededCharacterArray(array, _longStringHash( seed ));
         }
 
         @Contract( pure = true )
         public static char[] seededCharacterArray( char[] array, long seed ) {
             Random dice = new Random();
-            dice.setSeed(seed);
+            dice.setSeed( seed );
             for ( int i = 0; i < array.length; i++ ) array[ i ] = (char) dice.nextInt();
             return array;
         }
 
         @Contract( pure = true )
-        private static long _longStringHash(String string)
+        private static long _longStringHash( String string )
         {
             long h = 1125899906842597L; // prime
             int len = string.length();
-            for ( int i = 0; i < len; i++ ) h = 31*h + string.charAt( i );
+            for ( int i = 0; i < len; i++ ) h = 31 * h + string.charAt( i );
             return h;
         }
 
         @Contract( pure = true )
         public static short[] byteToShort( byte[] data ) {
             if ( data == null ) return null;
-            short[] newData = new short[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
+            short[] newData = new short[ data.length ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static BigInteger[] byteToBigInteger( byte[] data ) {
             if ( data == null ) return null;
-            BigInteger[] newData = new BigInteger[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );
+            BigInteger[] newData = new BigInteger[ data.length ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );
             return newData;
         }
 
         @Contract( pure = true )
         public static float[] doubleToFloat( double[] data ) {
             if ( data == null ) return null;
-            float[] newData = new float[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (float) data[ i ];
+            float[] newData = new float[ data.length ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = (float) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static byte[] doubleToByte( double[] data ) {
             if ( data == null ) return null;
-            byte[] newData = new byte[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
+            byte[] newData = new byte[ data.length ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
         }
 
@@ -559,7 +559,7 @@ public class DataConverter
         public static short[] doubleToShort( double[] data ) {
             if ( data == null ) return null;
             short[] newData = new short[ data.length ];
-            for(int i=0; i<data.length; i++) newData[ i ] = (short) data[ i ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = (short) data[ i ];
             return newData;
         }
 
@@ -567,135 +567,135 @@ public class DataConverter
         public static long[] doubleToLong( double[] data ) {
             if ( data == null ) return null;
             long[] newData = new long[ data.length ];
-            for(int i=0; i<data.length; i++) newData[ i ] = (long) data[ i ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = (long) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static double[] floatToDouble(float[] data) {
-            if (data==null) return null;
-            double[] newData = new double[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (double)data[ i ];
+            if ( data == null ) return null;
+            double[] newData = new double[ data.length ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = (double)data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static byte[] floatToByte( float[] data ) {
-            if (data==null) return null;
-            byte[] newData = new byte[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
+            if ( data == null ) return null;
+            byte[] newData = new byte[ data.length ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static short[] floatToShort( float[] data ) {
-            if (data==null) return null;
-            short[] newData = new short[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (short) data[ i ];
+            if ( data == null ) return null;
+            short[] newData = new short[ data.length ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = (short) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static long[] floatToLong( float[] data ) {
-            if (data==null) return null;
-            long[] newData = new long[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (long) data[ i ];
+            if ( data == null ) return null;
+            long[] newData = new long[ data.length ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = (long) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
-        public static double[] shortToDouble(short[] data) {
-            if (data==null) return null;
-            double[] newData = new double[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
+        public static double[] shortToDouble( short[] data ) {
+            if ( data == null ) return null;
+            double[] newData = new double[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
-        public static double[] byteToDouble(byte[] data) {
-            if (data==null) return null;
-            double[] newData = new double[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
+        public static double[] byteToDouble( byte[] data ) {
+            if ( data == null ) return null;
+            double[] newData = new double[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
-        public static float[] byteToFloat(byte[] data) {
-            if (data==null) return null;
-            float[] newData = new float[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
+        public static float[] byteToFloat( byte[] data ) {
+            if ( data == null ) return null;
+            float[] newData = new float[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
-        public static float[] shortToFloat(short[] data) {
-            if (data==null) return null;
-            float[] newData = new float[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
+        public static float[] shortToFloat( short[] data ) {
+            if ( data == null ) return null;
+            float[] newData = new float[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
-        public static int[] byteToInt(byte[] data) {
-            if (data==null) return null;
-            int[] newData = new int[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
+        public static int[] byteToInt( byte[] data ) {
+            if ( data == null ) return null;
+            int[] newData = new int[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
-        public static int[] shortToInt(short[] data) {
-            if (data==null) return null;
-            int[] newData = new int[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
+        public static int[] shortToInt( short[] data ) {
+            if ( data == null ) return null;
+            int[] newData = new int[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static byte[] shortToByte(short[] data) {
-            if (data==null) return null;
-            byte[] newData = new byte[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
+            if ( data == null ) return null;
+            byte[] newData = new byte[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static long[] byteToLong(byte[] data) {
-            if (data==null) return null;
-            long[] newData = new long[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
+            if ( data == null ) return null;
+            long[] newData = new long[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static long[] shortToLong(short[] data) {
-            if (data==null) return null;
-            long[] newData = new long[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
+            if ( data == null ) return null;
+            long[] newData = new long[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static BigInteger[] shortToBigInteger(short[] data) {
-            if (data==null) return null;
-            BigInteger[] newData = new BigInteger[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );
+            if ( data == null ) return null;
+            BigInteger[] newData = new BigInteger[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );
             return newData;
         }
 
         @Contract( pure = true )
         public static float[] intToFloat(int[] data) {
             if ( data == null ) return null;
-            float[] newData = new float[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (float) data[ i ];
+            float[] newData = new float[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = (float) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static int[] floatToInt(float[] data) {
             if ( data == null ) return null;
-            int[] newData = new int[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (int) data[ i ];
+            int[] newData = new int[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = (int) data[ i ];
             return newData;
         }
 
@@ -710,8 +710,8 @@ public class DataConverter
         @Contract( pure = true )
         public static int[] doubleToInt(double[] data) {
             if ( data == null ) return null;
-            int[] newData = new int[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (int) data[ i ];
+            int[] newData = new int[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = (int) data[ i ];
             return newData;
         }
 
@@ -726,32 +726,32 @@ public class DataConverter
         @Contract( pure = true )
         public static double[] intToDouble(int[] data) {
             if ( data == null ) return null;
-            double[] newData = new double[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
+            double[] newData = new double[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static long[] intToLong( int[] data ) {
             if ( data == null ) return null;
-            long[] newData = new long[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
+            long[] newData = new long[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static short[] intToShort( int[] data ) {
             if ( data == null ) return null;
-            short[] newData = new short[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (short) data[ i ];
+            short[] newData = new short[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = (short) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static byte[] intToByte( int[] data ) {
             if ( data == null ) return null;
-            byte[] newData = new byte[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
+            byte[] newData = new byte[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
         }
 
@@ -765,49 +765,49 @@ public class DataConverter
 
         @Contract( pure = true )
         public static byte[] longToByte(long[] data) {
-            if (data==null) return null;
-            byte[] newData = new byte[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
+            if ( data == null ) return null;
+            byte[] newData = new byte[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static short[] longToShort(long[] data) {
-            if (data==null) return null;
-            short[] newData = new short[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (short) data[ i ];
+            if ( data == null ) return null;
+            short[] newData = new short[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = (short) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static int[] longToInt(long[] data) {
-            if (data==null) return null;
-            int[] newData = new int[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (int) data[ i ];
+            if ( data == null ) return null;
+            int[] newData = new int[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = (int) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static float[] longToFloat(long[] data) {
-            if (data==null) return null;
-            float[] newData = new float[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (float) data[ i ];
+            if ( data == null ) return null;
+            float[] newData = new float[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = (float) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static double[] longToDouble(long[] data) {
-            if (data==null) return null;
-            double[] newData = new double[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = (double) data[ i ];
+            if ( data == null ) return null;
+            double[] newData = new double[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = (double) data[ i ];
             return newData;
         }
 
         @Contract( pure = true )
         public static BigInteger[] longToBigInteger( long[] data ) {
-            if (data==null) return null;
-            BigInteger[] newData = new BigInteger[data.length];
-            for(int i=0; i<data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );
+            if ( data == null ) return null;
+            BigInteger[] newData = new BigInteger[ data.length ];
+            for ( int i = 0; i <data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );
             return newData;
         }
 

@@ -52,7 +52,7 @@
                 ri = (ri==rank)?0:ri;
                 if (incrementing == false) {
                     bool isMatch = true;
-                    for(int i=0; i<rank; i++){
+                    for( int i = 0; i <rank; i++){
                         isMatch = (prv_src1_cfg[p_idx+ri] < prv_src1_cfg[ i ] && prv_src1_cfg[p_idx+ri]>=0) && isMatch;
                     }
                     if(isMatch){

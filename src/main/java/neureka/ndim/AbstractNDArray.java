@@ -466,7 +466,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
                 int newSize = lastIndexOfA + sB.length - firstIndexOfB;
                 int[] rsA = new int[ newSize ];
                 int[] rsB = new int[ newSize ];
-                for(int i=0; i<newSize; i++ ) {
+                for( int i = 0; i <newSize; i++ ) {
                     if (i<=lastIndexOfA) rsA[ i ] = i; else rsA[ i ] = -1;
                     if (i>=lastIndexOfA) rsB[ i ] = i-lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
                 }
