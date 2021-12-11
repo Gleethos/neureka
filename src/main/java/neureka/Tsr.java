@@ -232,9 +232,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     {
         if ( args == null || args.length == 0 ) return new Tsr<>();
         if ( args.length == 1 ) {
-            if ( args[ 0 ] instanceof Object[] ) {
-                return _of( (Object[]) args[ 0 ] );
-            } else if ( args[ 0 ] instanceof BigDecimal ) {
+            if ( args[ 0 ] instanceof BigDecimal ) {
                 Tsr<T> t = new Tsr<>();
                 t.createConstructionAPI()._constructAllF64( new int[]{ 1 }, ( (BigDecimal) args[ 0 ] ).doubleValue());
                 return t;
@@ -255,20 +253,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 args[ 0 ] = _intArray( (Object[]) args[ 0 ] );
             }
         }
-        if ( args[ 1 ] instanceof Object[] ) {
-            if ( ((Object[]) args[ 1 ] )[ 0 ] instanceof Integer ) args[ 1 ] = _doubleArray( (Object[]) args[ 1 ] );
-            else if ( ( ( Object[] ) args[ 1 ] )[ 0 ] instanceof BigDecimal ) args[ 1 ] = _doubleArray( (Object[]) args[ 1 ] );
-        }
         //CASES:
         if ( args[ 0 ] instanceof int[] ) {
             if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
                 Tsr<T> t = new Tsr<>();
                 args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
                 t.createConstructionAPI()._constructAllF64( (int[]) args[ 0 ], (Double) args[ 1 ] );
-                return t;
-            } else if ( args[ 1 ] instanceof double[] ) {
-                Tsr<T> t = new Tsr<>();
-                t.createConstructionAPI().constructForDoubles( (int[]) args[ 0 ], (double[]) args[ 1 ] );
                 return t;
             } else {
                 Tsr<T> t = new Tsr<>();
@@ -278,7 +268,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 return t;
             }
         }
- 
         /* EXPRESSION BASED CONSTRUCTION: 
             The following allows the creation of tensors based on passing an expression
             alongside input tensors to the constructor.
@@ -307,7 +296,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 ti++;
             }
             else if ( o instanceof  String ) f.append( (String) o );
-            else if ( o instanceof  Boolean ) doAD = (Boolean) o;
+            else
+                _LOG.debug(
+                    "Unexpected tensor construction argument of type '"+o.getClass().getSimpleName()+"'"
+                );
         }
         if ( tensors.length == 0 || tensors[0] == null) return new Tsr<>();
         return Function.of( f.toString(), doAD ).call( tensors );
@@ -585,6 +577,16 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new Tsr<>( valueType, shape, seed ); }
 
     /**
+     *  Constructs a vector of booleans based on the provided array.
+     *
+     * @param value The array of booleans from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of shorts.
+     */
+    public static Tsr<Short> of( boolean... value ) { return new Tsr<>( new int[]{ value.length }, value ); }
+
+    private Tsr( int[] shape, boolean[] value ) { createConstructionAPI().constructForBooleans( shape, value ); }
+
+    /**
      *  See {@link #of(Class, int[], String)}
      *  ...and {@link #of(List, String)}
      */
@@ -670,18 +672,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         for ( int i = 0; i < length; i++ ) {
             if ( arg[ i ] instanceof Double ) array[ i ] = ( (Double) arg[ i ] ).intValue();
             else array[ i ] = (Integer) arg[ i ];
-        }
-        return array;
-    }
-
-    private static double[] _doubleArray( Object[] arg )
-    {
-        int length = arg.length;
-        double[] array = new double[ length ];
-        for ( int i = 0; i < length; i++ ) {
-            if ( arg[ i ] instanceof Integer ) array[ i ] = (Integer) arg[ i ];
-            else if ( arg[ i ] instanceof Double ) array[ i ] = (Double) arg[ i ];
-            else if ( arg[ i ] instanceof BigDecimal ) array[ i ] = ( (BigDecimal) arg[ i ] ).doubleValue();
         }
         return array;
     }

@@ -1,5 +1,6 @@
 package ut.tensors
 
+import com.sun.org.apache.bcel.internal.generic.IAND
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
@@ -259,7 +260,7 @@ class Tensor_IO_Spec extends Specification
     }
 
 
-    def 'Tensors value type can be changed by calling "to64()" and "to32()".'()
+    def 'Tensors value type can be changed by calling "toType(...)".'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
@@ -278,6 +279,30 @@ class Tensor_IO_Spec extends Specification
             x.getDataAs( float[].class )[ 0 ]==3.0f
     }
 
+    def 'Vector tensors can be instantiated via factory methods.'(
+        def data, Class<?> type, List<Integer> shape
+    ) {
+        given :
+            Tsr<?> t = Tsr.of(data)
+
+        expect :
+            t.valueClass == type
+        and :
+            t.shape() == shape
+        and :
+            t.data == data
+        and :
+            t.value == data
+
+        where :
+            data                        ||  type  | shape
+            new double[]{1.1, 2.2, 3.3} || Double | [ 3 ]
+            new float[]{-0.21, 543.3}   || Float  | [ 2 ]
+            new boolean[]{true, false}  || Boolean| [ 2 ]
+            new short[]{1, 2, 99, -123} || Short  | [ 4 ]
+            new long[]{3, 8, 4, 2, 3, 0}|| Long   | [ 6 ]
+            new int[]{66, 1, 4, 42, -40}|| Integer| [ 5 ]
+    }
 
     def 'A tensor produced by a function has expected properties.'()
     {

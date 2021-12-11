@@ -243,6 +243,17 @@ public class NDAConstructor {
         configureFromNewShape( shape, false, false );
     }
 
+    public void constructForBooleans( int[] shape, boolean[] value )
+    {
+        int size = NDConfiguration.Utility.szeOfShp( shape );
+        _API.setType( DataType.of( Boolean.class ) );
+        if ( size != value.length ) {
+            _API.allocate( size );
+            for ( int i = 0; i < size; i++ ) ( (boolean[]) _API.getData())[ i ]  = value[ i % value.length ];
+        } else _API.setData( value );
+        configureFromNewShape( shape, false, false );
+    }
+
     public void constructForBytes( int[] shape, byte[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
