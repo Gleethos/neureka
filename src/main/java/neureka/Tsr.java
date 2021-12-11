@@ -2347,7 +2347,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         .idy()
                         .call(
                                 (Tsr<V>) Tsr.of(this.shape(), 0.0), this
-                        );
+                        )
+                        .to( this.getDevice() );
     }
 
 
@@ -3113,38 +3114,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         public static Tsr<Double> newRandom( int[] shape, long seed ) {
             int size = NDConfiguration.Utility.szeOfShp( shape );
             return Tsr.of( shape, DataConverter.Utility.newSeededDoubleArray( seed, size ) );
-        }
-
-        public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
-            Tsr<V> t = _newEmptyLike( template );
-            if ( template.getData() instanceof float[] ) t.setValue( (float) value ); //TODO remove instanceof
-            else t.setValue( value );
-            try {
-                if ( template.isOutsourced() ) ( (Device<Object>) template.get( Device.class ) ).store( t );
-            } catch ( Exception exception ) {
-                _LOG.error( "Failed storing a newly created tensor from a template tensor to its host device.", exception );
-                throw exception;
-            }
-            return t;
-        }
-
-        public static Tsr<?> newTsrLike( Tsr<?> template ) { // The output tensor will not have gradients!
-            Tsr<Object> t = (Tsr<Object>) _newEmptyLike( template );
-            if ( template.getData() instanceof float[] ) t._setValue32( new float[ template.size() ] );
-            else t._setValue64( new double[ template.size() ] );
-            try {
-                if ( template.isOutsourced() ) ( (Device<Object>) template.get( Device.class ) ).store( t );
-            } catch ( Exception exception ) {
-                _LOG.error( "Failed storing a newly created tensor from a template tensor to its host device.", exception );
-                throw exception;
-            }
-            return t;
-        }
-
-        private static <V> Tsr<V> _newEmptyLike( Tsr<V> template ) {
-            Tsr<V> t = (Tsr<V>) Tsr.newInstance();
-            t.createConstructionAPI().configureFromNewShape( template.getNDConf().shape(), false, true );
-            return t;
         }
 
     }

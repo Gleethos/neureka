@@ -280,7 +280,7 @@ public interface Operation
 
         public static Tsr<?>[] offsetted( Tsr<?>[] tsrs, int offset ) {
             Tsr<?>[] newTsrs = new Tsr[ tsrs.length - offset ];
-            newTsrs[ 0 ] = Tsr.Create.newTsrLike( tsrs[ 1 ] );
+            newTsrs[ 0 ] = tsrs[ 1 ].clone();
             if ( !tsrs[ 1 ].has( GraphNode.class ) && tsrs[ 1 ] != tsrs[ 0 ] ) {//Deleting intermediate results!
                 tsrs[ 1 ].delete();
                 tsrs[ 1 ] = null;

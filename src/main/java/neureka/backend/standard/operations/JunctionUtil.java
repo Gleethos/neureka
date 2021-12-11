@@ -85,7 +85,7 @@ public class JunctionUtil
             } else {
                 Tsr<?>[] reduction = Operation.Utility.without(tensors, 1+d);
                 if ( reduction.length > 2 ) {
-                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tensors[ 1 ]) : reduction[ 0 ];
+                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? tensors[ 1 ].clone() : reduction[ 0 ];
                     alternative = goDeeperWith.execute(
                             ExecutionCall.of(reduction)
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
@@ -130,7 +130,7 @@ public class JunctionUtil
                 Tsr<?> a;
                 if ( d > 1 ) {
                     Tsr<?>[] reduction = Operation.Utility.subset(tensors, 1, 1, d+1);
-                    reduction[ 0 ] =  Tsr.Create.newTsrLike(tensors[ 1 ]);
+                    reduction[ 0 ] = tensors[ 1 ].clone();
                     alternative = goDeeperWith.execute(
                                         ExecutionCall.of(reduction)
                                                         .andArgs(Arg.DerivIdx.of(-1))
@@ -222,9 +222,9 @@ public class JunctionUtil
                                                         .on(device)
                                 );
                 tensors[ 0 ] = reduction[ 0 ];
-            } else {
-                tensors[ 0 ] = Tsr.Create.newTsrLike(tensors[ 1 ]).setValue((d==0||thisIsForAddition)?1.0f:-1.0f);
             }
+            else tensors[ 0 ] = tensors[ 1 ].clone().setValue( d == 0 || thisIsForAddition ? 1f : -1f );
+
             return alternative;
         }
         else

@@ -156,7 +156,7 @@ public class Power extends AbstractOperation
                 } else {
 
                     Tsr<?>[] reduction = Utility.subset(tensors, 1,  2, tensors.length-2);
-                    reduction[ 0 ] =  Tsr.Create.newTsrLike(tensors[ 1 ]);
+                    reduction[ 0 ] = tensors[ 1 ].clone();
 
                     if ( d==0 ) {
                         alternative = traverse.execute(
@@ -185,13 +185,13 @@ public class Power extends AbstractOperation
                                         );
                         Tsr<?> inner = reduction[ 0 ];
 
-                        reduction = new Tsr[]{Tsr.Create.newTsrLike(tensors[ 1 ]), inner, tensors[d]};
+                        reduction = new Tsr[]{ tensors[ 1 ].clone(), inner, tensors[d] };
                         alternative = traverse.execute(
-                                                ExecutionCall.of(reduction)
-                                                                .andArgs(Arg.DerivIdx.of(-1))
-                                                                .running(Neureka.get().backend().getOperation("*"))
-                                                                .on(device)
-                                        );
+                                                ExecutionCall.of( reduction )
+                                                                .andArgs( Arg.DerivIdx.of(-1) )
+                                                                .running( Neureka.get().backend().getOperation("*") )
+                                                                .on( device )
+                                      );
                         Tsr<?> exp = reduction[ 0 ];
 
                         reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], exp};
