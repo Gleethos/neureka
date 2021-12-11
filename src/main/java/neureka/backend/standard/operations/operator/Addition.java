@@ -62,18 +62,18 @@ public class Addition extends AbstractOperation {
                                                                 Device device = call.getDeviceFor(Number.class);
                                                                 return ADAgent.of( derivative )
                                                                                 .setBackward(
-                                                                                    (node, backwardError ) ->
-                                                                                        this.getAlgorithm(Broadcast.class)
-                                                                                             .getImplementationFor(device)
+                                                                                    ( node, backwardError ) ->
+                                                                                        this.getAlgorithm( Broadcast.class )
+                                                                                             .getImplementationFor( device )
                                                                                              .runAndGetFirstTensor(
                                                                                                      ExecutionCall.of(
-                                                                                                             Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),
-                                                                                                             Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),
+                                                                                                             Tsr.like( (Tsr<Number>) toBeDerived ).all( 0d ).setIsVirtual(false),
+                                                                                                             Tsr.like( (Tsr<Number>) inputs[(d==0?1:0)] ).all( 0d ),
                                                                                                              backwardError
                                                                                                      )
-                                                                                                     .andArgs(Arg.DerivIdx.of(d))
-                                                                                                     .running(this)
-                                                                                                     .on(device)
+                                                                                                     .andArgs( Arg.DerivIdx.of(d) )
+                                                                                                     .running( this )
+                                                                                                     .on( device )
                                                                                              )
                                                                                 );
                                                             }

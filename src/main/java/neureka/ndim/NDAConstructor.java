@@ -78,7 +78,14 @@ public class NDAConstructor {
         if ( data instanceof Object[] )
             data = _autoConvertAndOptimizeObjectArray( (Object[]) data, dataType, size );
 
-        if ( dataType == DataType.of( data.getClass() ) ) // This means that "data" is a single value!
+        boolean isDefinitelyScalarValue = ( dataType == DataType.of( data.getClass() ) );
+
+        if ( data instanceof Number && !isDefinitelyScalarValue ) {
+            data = DataConverter.instance().convert( data, dataType.getJVMTypeClass() );
+            isDefinitelyScalarValue = true;
+        }
+
+        if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
             if ( _constructAllFromOne( shape, data ) ) return;
         else
             data = NDAConstructor.optimizeArray( dataType, data, size );

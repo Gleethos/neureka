@@ -99,6 +99,8 @@ import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.F32;
 import neureka.dtype.custom.F64;
+import neureka.fluent.building.states.IterByOrIterFromOrAll;
+import neureka.fluent.building.states.WithShapeOrScalarOrVectorOnDevice;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
@@ -455,7 +457,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static <V> WithShapeOrScalarOrVector<V> of( Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
+    public static <V> WithShapeOrScalarOrVectorOnDevice<V> of( Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -466,7 +468,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static WithShapeOrScalarOrVector<Double> ofDoubles() { return of(Double.class); }
+    public static WithShapeOrScalarOrVectorOnDevice<Double> ofDoubles() { return of(Double.class); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -477,7 +479,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static WithShapeOrScalarOrVector<Float> ofFloats() { return of(Float.class); }
+    public static WithShapeOrScalarOrVectorOnDevice<Float> ofFloats() { return of(Float.class); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -488,7 +490,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static WithShapeOrScalarOrVector<Integer> ofInts() { return of(Integer.class); }
+    public static WithShapeOrScalarOrVectorOnDevice<Integer> ofInts() { return of(Integer.class); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -499,7 +501,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static WithShapeOrScalarOrVector<Short> ofShorts() { return of(Short.class); }
+    public static WithShapeOrScalarOrVectorOnDevice<Short> ofShorts() { return of(Short.class); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -510,7 +512,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static WithShapeOrScalarOrVector<Byte> ofBytes() { return of(Byte.class); }
+    public static WithShapeOrScalarOrVectorOnDevice<Byte> ofBytes() { return of(Byte.class); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
@@ -3079,6 +3081,20 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    /**
+     *  Use this factory method to instantiate a new tensor with the same data type, shape
+     *  and memory location ({@link Device} instance) as the provided template tensor.
+     *
+     * @param template The template tensor whose type, shape and location should be taken to construct a new tensor.
+     * @param <V> The type parameter defining the value type of the provided as well as returned tensor.
+     * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
+     */
+    public static <V> IterByOrIterFromOrAll<V> like( Tsr<V> template ) {
+        return Tsr.of( (Class<V>) template.getDataType().getJVMTypeClass() )
+                   .on( template.getDevice() )
+                   .withShape( template.getNDConf().shape() );
+    }
 
     /**
      *  This is a nested static utility class which is used

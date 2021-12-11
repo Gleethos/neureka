@@ -106,31 +106,31 @@ public class JunctionUtil
             ExecutionCall<? extends Device<?>> call,
             CallExecutor goDeeperWith
     ) {
-        Tsr<?>[] tsrs = call.getTensors();
+        Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation type = call.getOperation();
 
         Tsr<?> alternative = null;
-        if ( tsrs.length > 3 )
+        if ( tensors.length > 3 )
         {
             if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
+                Tsr<?>[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};
                 alternative = goDeeperWith.execute(
                         call.withTensors( reduction )
                             );
-                tsrs[ 0 ] = reduction[ 0 ];
+                tensors[ 0 ] = reduction[ 0 ];
 
-                reduction = Operation.Utility.offsetted(tsrs, 1);
+                reduction = Operation.Utility.offsetted(tensors, 1);
                 alternative = goDeeperWith.execute(
                                     call.withTensors(reduction)
                             );
-                tsrs[ 0 ] = reduction[ 0 ];
+                tensors[ 0 ] = reduction[ 0 ];
             } else {
                 Tsr<?> a;
                 if ( d > 1 ) {
-                    Tsr<?>[] reduction = Operation.Utility.subset(tsrs, 1, 1, d+1);
-                    reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
+                    Tsr<?>[] reduction = Operation.Utility.subset(tensors, 1, 1, d+1);
+                    reduction[ 0 ] =  Tsr.Create.newTsrLike(tensors[ 1 ]);
                     alternative = goDeeperWith.execute(
                                         ExecutionCall.of(reduction)
                                                         .andArgs(Arg.DerivIdx.of(-1))
@@ -139,12 +139,12 @@ public class JunctionUtil
                     );
                     a = reduction[ 0 ];
                 }
-                else if ( d == 1 ) a = tsrs[ 1 ];
-                else a = Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
+                else if ( d == 1 ) a = tensors[ 1 ];
+                else a = Tsr.like( (Tsr<Number>) tensors[ 1 ] ).all( 1.0 );
                 Tsr<?> b;
-                if ( tsrs.length -  d - 2  > 1 ) {
-                    Tsr<?>[] reduction = Operation.Utility.subset(tsrs, 2, d+2, tsrs.length-(d+2));
-                    reduction[ 1 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
+                if ( tensors.length -  d - 2  > 1 ) {
+                    Tsr<?>[] reduction = Operation.Utility.subset(tensors, 2, d+2, tensors.length-(d+2));
+                    reduction[ 1 ] = Tsr.like( (Tsr<Number>) tensors[ 1 ] ).all( 1.0 );
                     reduction[ 0 ] = reduction[ 1 ];
                     alternative = goDeeperWith.execute(
                                         ExecutionCall.of(reduction)
@@ -153,16 +153,16 @@ public class JunctionUtil
                                                         .on(device)
                                 );
                     b = reduction[ 0 ];
-                } else b = Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
+                } else b = Tsr.like(  (Tsr<Number>) tensors[ 1 ] ).all( 1.0 );
 
                 alternative = goDeeperWith.execute(
-                                        ExecutionCall.of( tsrs[ 0 ], a, b )
+                                        ExecutionCall.of( tensors[ 0 ], a, b )
                                                         .andArgs( Arg.DerivIdx.of( -1 ) )
                                                         .running( Neureka.get().backend().getOperation("*") )
                                                         .on( device )
                                 );
                 alternative = goDeeperWith.execute(
-                                        ExecutionCall.of( tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1] )
+                                        ExecutionCall.of( tensors[ 0 ], tensors[ 0 ], tensors[ d + 1 ] )
                                                         .andArgs(Arg.DerivIdx.of(1))
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)

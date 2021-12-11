@@ -1,12 +1,11 @@
 package neureka.fluent.building;
 
 import neureka.Tsr;
+import neureka.devices.Device;
+import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
+import neureka.fluent.building.states.*;
 import neureka.ndim.Initializer;
-import neureka.fluent.building.states.IterByOrIterFromOrAll;
-import neureka.fluent.building.states.Step;
-import neureka.fluent.building.states.To;
-import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,12 +54,14 @@ import java.util.stream.IntStream;
  *
  * @param <V> The type of the values which ought to be represent by the {@link Tsr} built by this {@link TensorBuilder}.
  */
-public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrIterFromOrAll<V>, To<V>, Step<V>
+public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, IterByOrIterFromOrAll<V>, To<V>, Step<V>
 {
     private final DataType<V> _dataType;
     private int[] _shape;
     private V _from;
     private V _to;
+    private Device<V> _device = (Device<V>) CPU.get();
+
 
     public TensorBuilder( Class<V> typeClass ) { _dataType = DataType.of( typeClass ); }
 
@@ -70,7 +71,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
      */
     @SafeVarargs
     @Override
-    public final Tsr<V> andFill( V... values ) { return Tsr.of( _dataType, _shape, values ); }
+    public final Tsr<V> andFill( V... values ) { return Tsr.of( _dataType, _shape, values ).to( _device ); }
 
     /**
      *  This method receives an {@link neureka.ndim.Initializer} lambda which will be
@@ -80,24 +81,24 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
      * @return A new {@link Tsr} instance populated by the lambda supplied to this method.
      */
     @Override
-    public Tsr<V> andWhere( Initializer<V> initializer) { return Tsr.of( _dataType, _shape, initializer ); }
+    public Tsr<V> andWhere( Initializer<V> initializer) { return Tsr.of( _dataType, _shape, initializer ).to( _device ); }
 
     @Override
     public To<V> iterativelyFilledFrom( V index ) { _from = _checked(index); return this; }
 
     @Override
-    public Tsr<V> all( V value ) { return Tsr.of( _dataType, _shape, value ); }
+    public Tsr<V> all( V value ) { return Tsr.of( _dataType, _shape, value ).to( _device ); }
 
     @Override
     public Tsr<V> andSeed(Object seed) {
-        return Tsr.of( (Class<V>) _dataType.getJVMTypeClass(), _shape, seed.toString() );
+        return Tsr.of( (Class<V>) _dataType.getJVMTypeClass(), _shape, seed.toString() ).to( _device );
     }
 
     @Override
     public IterByOrIterFromOrAll<V> withShape( int... shape ) { _shape = shape; return this; }
 
     @Override
-    public Tsr<V> vector( Object[] values ) { return Tsr.of( _dataType, new int[]{ values.length }, values ); }
+    public Tsr<V> vector( Object[] values ) { return Tsr.of( _dataType, new int[]{ values.length }, values ).to( _device ); }
 
     @Override
     public Tsr<V> scalar( V value ) {
@@ -117,7 +118,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
             } else
                 throw new IllegalArgumentException("Provided value is of the wrong type!");
         }
-        return Tsr.of( _dataType, new int[]{1}, data );
+        return Tsr.of( _dataType, new int[]{1}, data ).to( _device );
     }
 
     @Override
@@ -191,7 +192,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
             throw new IllegalStateException("Cannot form a range for the provided elements...");
             // TODO: make it possible to have ranges like 'a' to 'z'...
         }
-        return Tsr.of( _dataType, _shape, data );
+        return Tsr.of( _dataType, _shape, data ).to( _device );
     }
 
     private int _size() {
@@ -216,4 +217,9 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
         return o;
     }
 
+    @Override
+    public WithShapeOrScalarOrVector<V> on( Device<V> device ) {
+        _device = device;
+        return this;
+    }
 }
