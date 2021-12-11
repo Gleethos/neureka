@@ -75,27 +75,25 @@ public class DataConverter
 
     /**
      *  This nested Map field manages Converter lambda instances!
-     *  Besides Converter lambdas there are also Class objects used as keys.
+     *  Other than converter lambdas, there are also Class objects used as keys.
      *  The keys of the outer Map represent "from types", whereas inner keys
      *  represent "to types".
      *  This allows for fast Converter access for a given type pair!
      */
-    private static Map<Class<?>, Map<Class, Conversion>> _converters = new HashMap<>();
+    private static Map<Class<?>, Map<Class, Conversion>> _converters = new HashMap<>(128);
 
     /**
      *  This class is a singleton.
-     *  Therefore it stores the following static "_instance" variable.
+     *  Meaning it stores the following static "_instance" variable.
      */
-    private static DataConverter _instance = new DataConverter();
+    private static final DataConverter _instance = new DataConverter();
 
     /**
      *  This method returns the singleton.
      *
      * @return The singleton instance of this class.
      */
-    public static DataConverter instance() {
-        return _instance;
-    }
+    public static DataConverter instance() { return _instance; }
 
     /**
      *  This constructor is private because the DataConverter class is a singleton.
@@ -104,67 +102,71 @@ public class DataConverter
      */
     private DataConverter()
     {
-        _set( byte[].class, float[].class, Utility::byteToFloat );
-        _set( byte[].class, double[].class, Utility::byteToDouble );
-        _set( byte[].class, short[].class, Utility::byteToShort );
-        _set( byte[].class, int[].class, Utility::byteToInt );
-        _set( byte[].class, long[].class, Utility::byteToLong );
+        _set( byte[].class, float[].class,      Utility::byteToFloat );
+        _set( byte[].class, double[].class,     Utility::byteToDouble );
+        _set( byte[].class, short[].class,      Utility::byteToShort );
+        _set( byte[].class, int[].class,        Utility::byteToInt );
+        _set( byte[].class, long[].class,       Utility::byteToLong );
         _set( byte[].class, BigInteger[].class, Utility::byteToBigInteger );
 
-        _set( float[].class, double[].class, Utility::floatToDouble );
-        _set( float[].class, int[].class,    Utility::floatToInt );
-        _set( float[].class, short[].class, Utility::floatToShort );
-        _set( float[].class, byte[].class, Utility::floatToByte );
-        _set( float[].class, long[].class, Utility::floatToLong );
+        _set( float[].class, double[].class,     Utility::floatToDouble );
+        _set( float[].class, int[].class,        Utility::floatToInt );
+        _set( float[].class, short[].class,      Utility::floatToShort );
+        _set( float[].class, byte[].class,       Utility::floatToByte );
+        _set( float[].class, long[].class,       Utility::floatToLong );
         _set( float[].class, BigInteger[].class, Utility::floatToBigInteger );
 
-        _set( int[].class, float[].class,    Utility::intToFloat );
-        _set( int[].class, double[].class,   Utility::intToDouble );
-        _set( int[].class, long[].class, Utility::intToLong );
-        _set( int[].class, short[].class, Utility::intToShort );
+        _set( int[].class, float[].class,      Utility::intToFloat );
+        _set( int[].class, double[].class,     Utility::intToDouble );
+        _set( int[].class, long[].class,       Utility::intToLong );
+        _set( int[].class, short[].class,      Utility::intToShort );
         _set( int[].class, BigInteger[].class, Utility::intToBigInteger );
-        _set( int[].class, byte[].class, Utility::intToByte );
+        _set( int[].class, byte[].class,       Utility::intToByte );
 
-        _set( long[].class, byte[].class, Utility::longToByte );
-        _set( long[].class, short[].class, Utility::longToShort );
-        _set( long[].class, int[].class, Utility::longToInt );
-        _set( long[].class, float[].class, Utility::longToFloat );
-        _set( long[].class, double[].class, Utility::longToDouble );
+        _set( long[].class, byte[].class,       Utility::longToByte );
+        _set( long[].class, short[].class,      Utility::longToShort );
+        _set( long[].class, int[].class,        Utility::longToInt );
+        _set( long[].class, float[].class,      Utility::longToFloat );
+        _set( long[].class, double[].class,     Utility::longToDouble );
         _set( long[].class, BigInteger[].class, Utility::longToBigInteger );
 
-        _set( short[].class, long[].class, Utility::shortToLong );
-        _set( short[].class, double[].class, Utility::shortToDouble );
-        _set( short[].class, float[].class, Utility::shortToFloat );
-        _set( short[].class, int[].class, Utility::shortToInt );
-        _set( short[].class, byte[].class, Utility::shortToByte );
+        _set( short[].class, long[].class,       Utility::shortToLong );
+        _set( short[].class, double[].class,     Utility::shortToDouble );
+        _set( short[].class, float[].class,      Utility::shortToFloat );
+        _set( short[].class, int[].class,        Utility::shortToInt );
+        _set( short[].class, byte[].class,       Utility::shortToByte );
         _set( short[].class, BigInteger[].class, Utility::shortToBigInteger );
 
-        _set( double[].class, byte[].class,  Utility::doubleToByte );
-        _set( double[].class, short[].class, Utility::doubleToShort );
-        _set( double[].class, int[].class, Utility::doubleToInt );
+        _set( double[].class, byte[].class,       Utility::doubleToByte );
+        _set( double[].class, short[].class,      Utility::doubleToShort );
+        _set( double[].class, int[].class,        Utility::doubleToInt );
         _set( double[].class, BigInteger[].class, Utility::doubleToBigInteger );
-        _set( double[].class, long[].class, Utility::doubleToLong );
-        _set( double[].class, float[].class, Utility::doubleToFloat );
+        _set( double[].class, long[].class,       Utility::doubleToLong );
+        _set( double[].class, float[].class,      Utility::doubleToFloat );
 
-        _set( List.class, int[].class, thing -> thing.stream().mapToInt( i -> (int) i ).toArray() );
+        _set( List.class, int[].class,    thing -> thing.stream().mapToInt(    i -> (int)    i ).toArray() );
         _set( List.class, double[].class, thing -> thing.stream().mapToDouble( i -> (double) i ).toArray() );
-        _set( List.class, long[].class, thing -> thing.stream().mapToLong( i -> (long) i ).toArray() );
+        _set( List.class, long[].class,   thing -> thing.stream().mapToLong(   i -> (long)   i ).toArray() );
+
         _set( BigInteger.class, Double.class, BigInteger::doubleValue );
+
         _set( BigDecimal.class, Double.class, BigDecimal::doubleValue );
+
         _set( Integer.class, Double.class, Integer::doubleValue );
-        _set( Integer.class, Float.class, Integer::floatValue );
-        _set( Integer.class, Short.class, Integer::shortValue );
-        _set( Integer.class, Byte.class, Integer::byteValue );
+        _set( Integer.class, Float.class,  Integer::floatValue );
+        _set( Integer.class, Short.class,  Integer::shortValue );
+        _set( Integer.class, Byte.class,   Integer::byteValue );
+
         _set( Double.class, Float.class, Double::floatValue );
 
-        _set( Float[].class, float[].class,     Utility::objFloatsToPrimFloats );
-        _set( Integer[].class, int[].class,     Utility::objIntsToPrimInts );
-        _set( Long[].class, long[].class,       Utility::objLongsToPrimLongs );
-        _set( Double[].class, double[].class,   Utility::objDoublesToPrimDoubles );
-        _set( Short[].class, short[].class,     Utility::objShortsToPrimShorts );
-        _set( Byte[].class, byte[].class,       Utility::objBytesToPrimBytes );
-        _set( Boolean[].class, boolean[].class, Utility::objBooleansToPrimBooleans );
-        _set( Character[].class, char[].class,  Utility::objCharsToPrimChars );
+        _set( Float[].class,     float[].class,   Utility::objFloatsToPrimFloats );
+        _set( Integer[].class,   int[].class,     Utility::objIntsToPrimInts );
+        _set( Long[].class,      long[].class,    Utility::objLongsToPrimLongs );
+        _set( Double[].class,    double[].class,  Utility::objDoublesToPrimDoubles );
+        _set( Short[].class,     short[].class,   Utility::objShortsToPrimShorts );
+        _set( Byte[].class,      byte[].class,    Utility::objBytesToPrimBytes );
+        _set( Boolean[].class,   boolean[].class, Utility::objBooleansToPrimBooleans );
+        _set( Character[].class, char[].class,    Utility::objCharsToPrimChars );
     }
 
     /**
@@ -233,53 +235,6 @@ public class DataConverter
             throw new IllegalArgumentException(message);
         }
         return (T) conversion.go(from);
-    }
-
-
-
-    public <F, T> T convert( F[] from, Class<T> to, int size ) {
-        if ( from.length == size )
-            return convert( from, to );
-        else {
-            Iterator<F> stream = IntStream.iterate(0, i -> i + 1).limit(size).mapToObj(i -> from[i % from.length] ).iterator();
-            int index = 0;
-            if ( from instanceof Integer[] ) {
-                Integer[] array = new Integer[size];
-                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Integer) it.next(); index++; }
-                return convert( array, to );
-            } else if ( from instanceof Double[] ) {
-                Double[] array = new Double[size];
-                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Double) it.next(); index++; }
-                return convert( array, to );
-            } else if ( from instanceof Float[] ) {
-                Float[] array = new Float[size];
-                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Float) it.next(); index++; }
-                return convert( array, to );
-            } else if ( from instanceof Short[] ) {
-                Short[] array = new Short[size];
-                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Short) it.next(); index++; }
-                return convert( array, to );
-            } else if ( from instanceof Long[] ) {
-                Long[] array = new Long[size];
-                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Long) it.next(); index++; }
-                return convert( array, to );
-            } else if ( from instanceof Byte[] ) {
-                Byte[] array = new Byte[size];
-                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Byte) it.next(); index++; }
-                return convert( array, to );
-            } else if ( from instanceof Boolean[] ) {
-                Boolean[] array = new Boolean[size];
-                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Boolean) it.next(); index++; }
-                return convert( array, to );
-            } else if ( from instanceof Character[] ) {
-                Character[] array = new Character[size];
-                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Character) it.next(); index++; }
-                return convert( array, to );
-            }
-            Object[] array = new Object[ size ];
-            for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = it.next(); index++; }
-            return convert( array, to );
-        }
     }
 
     /**
@@ -363,6 +318,7 @@ public class DataConverter
      */
     public static class Utility
     {
+        @Contract( pure = true )
         public static float[] objFloatsToPrimFloats( Float[] objects ) {
             float[] array = new float[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -371,6 +327,7 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static double[] objDoublesToPrimDoubles( Double[] objects ) {
             double[] array = new double[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -379,6 +336,7 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static int[] objIntsToPrimInts( Integer[] objects ) {
             int[] array = new int[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -387,6 +345,7 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static long[] objLongsToPrimLongs( Long[] objects ) {
             long[] array = new long[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -395,6 +354,7 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static short[] objShortsToPrimShorts( Short[] objects ) {
             short[] array = new short[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -403,6 +363,7 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static byte[] objBytesToPrimBytes( Byte[] objects ) {
             byte[] array = new byte[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -411,6 +372,7 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static boolean[] objBooleansToPrimBooleans( Boolean[] objects ) {
             boolean[] array = new boolean[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -419,6 +381,7 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static char[] objCharsToPrimChars( Character[] objects ) {
             char[] array = new char[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -427,18 +390,22 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static double[] newSeededDoubleArray(String seed, int size) {
             return newSeededDoubleArray(_longStringHash(seed), size);
         }
 
+        @Contract( pure = true )
         public static double[] newSeededDoubleArray(long seed, int size) {
             return seededDoubleArray(new double[size], seed);
         }
 
+        @Contract( pure = true )
         public static double[] seededDoubleArray(double[] array, String seed) {
             return seededDoubleArray(array, _longStringHash(seed));
         }
 
+        @Contract( pure = true )
         public static double[] seededDoubleArray(double[] array, long seed) {
             Random dice = new Random();
             dice.setSeed(seed);
@@ -446,18 +413,22 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static float[] newSeededFloatArray(String seed, int size) {
             return newSeededFloatArray(_longStringHash(seed), size);
         }
 
+        @Contract( pure = true )
         public static float[] newSeededFloatArray(long seed, int size) {
             return seededFloatArray(new float[size], seed);
         }
 
+        @Contract( pure = true )
         public static float[] seededFloatArray(float[] array, String seed) {
             return seededFloatArray(array, _longStringHash(seed));
         }
 
+        @Contract( pure = true )
         public static float[] seededFloatArray(float[] array, long seed) {
             Random dice = new Random();
             dice.setSeed(seed);
@@ -465,10 +436,12 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static int[] seededIntArray(int[] array, String seed) {
             return seededIntArray(array, _longStringHash(seed));
         }
 
+        @Contract( pure = true )
         public static int[] seededIntArray( int[] array, long seed ) {
             Random dice = new Random();
             dice.setSeed(seed);
@@ -476,10 +449,12 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static short[] seededShortArray(short[] array, String seed) {
             return seededShortArray(array, _longStringHash(seed));
         }
 
+        @Contract( pure = true )
         public static short[] seededShortArray( short[] array, long seed ) {
             Random dice = new Random();
             dice.setSeed(seed);
@@ -487,10 +462,12 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static byte[] seededByteArray(byte[] array, String seed) {
             return seededByteArray(array, _longStringHash(seed));
         }
 
+        @Contract( pure = true )
         public static byte[] seededByteArray( byte[] array, long seed ) {
             Random dice = new Random();
             dice.setSeed(seed);
@@ -498,10 +475,12 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static long[] seededLongArray( long[] array, String seed) {
             return seededLongArray(array, _longStringHash(seed));
         }
 
+        @Contract( pure = true )
         public static long[] seededLongArray( long[] array, long seed ) {
             Random dice = new Random();
             dice.setSeed(seed);
@@ -509,10 +488,12 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static boolean[] seededBooleanArray( boolean[] array, String seed) {
             return seededBooleanArray(array, _longStringHash(seed));
         }
 
+        @Contract( pure = true )
         public static boolean[] seededBooleanArray( boolean[] array, long seed ) {
             Random dice = new Random();
             dice.setSeed(seed);
@@ -520,10 +501,12 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         public static char[] seededCharacterArray( char[] array, String seed) {
             return seededCharacterArray(array, _longStringHash(seed));
         }
 
+        @Contract( pure = true )
         public static char[] seededCharacterArray( char[] array, long seed ) {
             Random dice = new Random();
             dice.setSeed(seed);
@@ -531,6 +514,7 @@ public class DataConverter
             return array;
         }
 
+        @Contract( pure = true )
         private static long _longStringHash(String string)
         {
             long h = 1125899906842597L; // prime
@@ -539,7 +523,7 @@ public class DataConverter
             return h;
         }
 
-
+        @Contract( pure = true )
         public static short[] byteToShort( byte[] data ) {
             if ( data == null ) return null;
             short[] newData = new short[data.length];
@@ -547,6 +531,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static BigInteger[] byteToBigInteger( byte[] data ) {
             if ( data == null ) return null;
             BigInteger[] newData = new BigInteger[data.length];
@@ -554,6 +539,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static float[] doubleToFloat( double[] data ) {
             if ( data == null ) return null;
             float[] newData = new float[data.length];
@@ -561,6 +547,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static byte[] doubleToByte( double[] data ) {
             if ( data == null ) return null;
             byte[] newData = new byte[data.length];
@@ -568,6 +555,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static short[] doubleToShort( double[] data ) {
             if ( data == null ) return null;
             short[] newData = new short[ data.length ];
@@ -575,6 +563,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static long[] doubleToLong( double[] data ) {
             if ( data == null ) return null;
             long[] newData = new long[ data.length ];
@@ -582,6 +571,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static double[] floatToDouble(float[] data) {
             if (data==null) return null;
             double[] newData = new double[data.length];
@@ -589,6 +579,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static byte[] floatToByte( float[] data ) {
             if (data==null) return null;
             byte[] newData = new byte[data.length];
@@ -596,6 +587,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static short[] floatToShort( float[] data ) {
             if (data==null) return null;
             short[] newData = new short[data.length];
@@ -603,6 +595,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static long[] floatToLong( float[] data ) {
             if (data==null) return null;
             long[] newData = new long[data.length];
@@ -610,6 +603,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static double[] shortToDouble(short[] data) {
             if (data==null) return null;
             double[] newData = new double[data.length];
@@ -617,6 +611,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static double[] byteToDouble(byte[] data) {
             if (data==null) return null;
             double[] newData = new double[data.length];
@@ -624,6 +619,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static float[] byteToFloat(byte[] data) {
             if (data==null) return null;
             float[] newData = new float[data.length];
@@ -631,6 +627,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static float[] shortToFloat(short[] data) {
             if (data==null) return null;
             float[] newData = new float[data.length];
@@ -638,6 +635,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static int[] byteToInt(byte[] data) {
             if (data==null) return null;
             int[] newData = new int[data.length];
@@ -645,6 +643,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static int[] shortToInt(short[] data) {
             if (data==null) return null;
             int[] newData = new int[data.length];
@@ -652,6 +651,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static byte[] shortToByte(short[] data) {
             if (data==null) return null;
             byte[] newData = new byte[data.length];
@@ -659,6 +659,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static long[] byteToLong(byte[] data) {
             if (data==null) return null;
             long[] newData = new long[data.length];
@@ -666,6 +667,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static long[] shortToLong(short[] data) {
             if (data==null) return null;
             long[] newData = new long[data.length];
@@ -673,6 +675,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static BigInteger[] shortToBigInteger(short[] data) {
             if (data==null) return null;
             BigInteger[] newData = new BigInteger[data.length];
@@ -680,6 +683,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static float[] intToFloat(int[] data) {
             if ( data == null ) return null;
             float[] newData = new float[data.length];
@@ -687,6 +691,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static int[] floatToInt(float[] data) {
             if ( data == null ) return null;
             int[] newData = new int[data.length];
@@ -694,6 +699,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static BigInteger[] floatToBigInteger( float[] data ) {
             if ( data == null ) return null;
             BigInteger[] newData = new BigInteger[ data.length ];
@@ -701,6 +707,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static int[] doubleToInt(double[] data) {
             if ( data == null ) return null;
             int[] newData = new int[data.length];
@@ -708,6 +715,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static BigInteger[] doubleToBigInteger( double[] data ) {
             if ( data == null ) return null;
             BigInteger[] newData = new BigInteger[ data.length ];
@@ -715,6 +723,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static double[] intToDouble(int[] data) {
             if ( data == null ) return null;
             double[] newData = new double[data.length];
@@ -722,6 +731,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static long[] intToLong( int[] data ) {
             if ( data == null ) return null;
             long[] newData = new long[data.length];
@@ -729,6 +739,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static short[] intToShort( int[] data ) {
             if ( data == null ) return null;
             short[] newData = new short[data.length];
@@ -736,6 +747,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static byte[] intToByte( int[] data ) {
             if ( data == null ) return null;
             byte[] newData = new byte[data.length];
@@ -743,6 +755,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static BigInteger[] intToBigInteger( int[] data ) {
             if ( data == null ) return null;
             BigInteger[] newData = new BigInteger[ data.length ];
@@ -750,6 +763,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static byte[] longToByte(long[] data) {
             if (data==null) return null;
             byte[] newData = new byte[data.length];
@@ -757,6 +771,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static short[] longToShort(long[] data) {
             if (data==null) return null;
             short[] newData = new short[data.length];
@@ -764,6 +779,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static int[] longToInt(long[] data) {
             if (data==null) return null;
             int[] newData = new int[data.length];
@@ -771,6 +787,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static float[] longToFloat(long[] data) {
             if (data==null) return null;
             float[] newData = new float[data.length];
@@ -793,8 +810,6 @@ public class DataConverter
             for(int i=0; i<data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );
             return newData;
         }
-
-        //---
 
         @Contract( pure = true )
         public static double[] objectsToDoubles( Object[] objects, int targetSize ) {

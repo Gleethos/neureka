@@ -69,8 +69,14 @@ public class NDAConstructor {
         }
     }
 
-    public void tryConstructing(int[] shape, DataType<?> dataType, Object data ) {
-        int size = NDConfiguration.Utility.szeOfShp(shape);
+    public static void main(String... args) {
+        System.out.println(
+                new Integer[]{1, 2, 3} instanceof Object[]
+        );
+    }
+
+    public void tryConstructing( int[] shape, DataType<?> dataType, Object data ) {
+        int size = NDConfiguration.Utility.szeOfShp( shape );
         if ( data instanceof List<?> ) {
             List<?> range = (List<?>) data;
             data = range.toArray();// TODO: This is probably wrong!
@@ -87,8 +93,6 @@ public class NDAConstructor {
 
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
             if ( _constructAllFromOne( shape, data ) ) return;
-        else
-            data = NDAConstructor.optimizeArray( dataType, data, size );
 
         _API.setType( dataType );
         configureFromNewShape( shape, false, false );
@@ -285,21 +289,6 @@ public class NDAConstructor {
             throw new IllegalArgumentException("Seeding not supported for value type '"+valueType.getSimpleName()+"'!");
 
         configureFromNewShape( shape, false, false  );
-    }
-
-    public static Object optimizeArray( DataType<?> dataType, Object data, int size ) {
-        if      ( data instanceof Integer[]   ) return DataConverter.instance().convert( (Integer[])   data, int[].class,    size );
-        else if ( data instanceof Double[]    ) return DataConverter.instance().convert( (Double[])    data, double[].class, size );
-        else if ( data instanceof Float[]     ) return DataConverter.instance().convert( (Float[])     data, float[].class,  size );
-        else if ( data instanceof Long[]      ) return DataConverter.instance().convert( (Long[])      data, long[].class,   size );
-        else if ( data instanceof Short[]     ) return DataConverter.instance().convert( (Short[])     data, short[].class,  size );
-        else if ( data instanceof Byte[]      ) return DataConverter.instance().convert( (Byte[])      data, byte[].class,   size );
-        else if ( data instanceof Boolean[]   ) return DataConverter.instance().convert( (Boolean[])   data, boolean[].class,size );
-        else if ( data instanceof Character[] ) return DataConverter.instance().convert( (Character[]) data, char[].class,   size );
-        else if ( data instanceof Object[] )
-            return NDAConstructor.optimizeObjectArray(dataType, (Object[]) data, size);
-        else
-            return data;
     }
 
     public static Object optimizeObjectArray( DataType<?> dataType, Object[] values, int size ) {

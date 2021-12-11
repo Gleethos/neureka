@@ -278,20 +278,20 @@ public interface Operation
             return newTsrs;
         }
 
-        public static Tsr<?>[] offsetted( Tsr<?>[] tsrs, int offset ) {
-            Tsr<?>[] newTsrs = new Tsr[ tsrs.length - offset ];
-            newTsrs[ 0 ] = tsrs[ 1 ].clone();
-            if ( !tsrs[ 1 ].has( GraphNode.class ) && tsrs[ 1 ] != tsrs[ 0 ] ) {//Deleting intermediate results!
-                tsrs[ 1 ].delete();
-                tsrs[ 1 ] = null;
+        public static Tsr<?>[] offsetted( Tsr<?>[] tensors, int offset ) {
+            Tsr<?>[] newTensors = new Tsr[ tensors.length - offset ];
+            newTensors[ 0 ] = tensors[ 1 ].clone();
+            if ( !tensors[ 1 ].has( GraphNode.class ) && tensors[ 1 ] != tensors[ 0 ] ) {//Deleting intermediate results!
+                tensors[ 1 ].delete();
+                tensors[ 1 ] = null;
             }
-            if (!tsrs[ 2 ].has( GraphNode.class ) && tsrs[ 2 ] != tsrs[ 0 ]) {//Deleting intermediate results!
-                tsrs[ 2 ].delete();
-                tsrs[ 2 ] = null;
+            if (!tensors[ 2 ].has( GraphNode.class ) && tensors[ 2 ] != tensors[ 0 ]) {//Deleting intermediate results!
+                tensors[ 2 ].delete();
+                tensors[ 2 ] = null;
             }
-            System.arraycopy( tsrs, 1 + offset, newTsrs, 1, tsrs.length - 1 - offset );
-            newTsrs[ 1 ] = tsrs[ 0 ];
-            return newTsrs;
+            System.arraycopy( tensors, 1 + offset, newTensors, 1, tensors.length - 1 - offset );
+            newTensors[ 1 ] = tensors[ 0 ];
+            return newTensors;
         }
 
     }

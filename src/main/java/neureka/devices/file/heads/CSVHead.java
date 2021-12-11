@@ -196,10 +196,10 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
     public Tsr<String> load() throws IOException {
         String[] data = _lazyLoad();
         Tsr<String> loaded = Tsr.of(
-                DataType.of( String.class ),
-                getShape(),
-                data
-        );
+                                    DataType.of( String.class ),
+                                    getShape(),
+                                    data
+                                );
         String[] index;
         String[] labels;
 
@@ -219,11 +219,7 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
             }
         }
         else labels = _colLabels;
-        loaded.label( _tensorName,
-                new String[][]{
-                index,
-                labels
-        } );
+        loaded.label( _tensorName, new String[][]{ index, labels } );
         return loaded;
     }
 
