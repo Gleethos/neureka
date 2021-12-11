@@ -2997,7 +2997,26 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public int getVersion() { return _version; }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /**
+     *  Use this factory method to instantiate a new tensor with the same data type, shape
+     *  and memory location ({@link Device} instance) as the provided template tensor.
+     *
+     * @param template The template tensor whose type, shape and location should be taken to construct a new tensor.
+     * @param <V> The type parameter defining the value type of the provided as well as returned tensor.
+     * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
+     */
+    public static <V> IterByOrIterFromOrAll<V> like( Tsr<V> template ) {
+        return Tsr.of( (Class<V>) template.getDataType().getJVMTypeClass() )
+                    .on( template.getDevice() )
+                    .withShape( template.getNDConf().shape() );
+    }
+
+    public static <V> Tsr<V> ofRandom( Class<V> valueTypeClass, int... shape ) {
+        long seed = 8701252152903546L;
+        return Tsr.of( valueTypeClass )
+                    .withShape( shape )
+                    .andSeed( seed );
+    }
 
     /**
      *  This is a static nested utility class
@@ -3040,9 +3059,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
 
         public static Tsr<?> addInto( Tsr<?> t, Tsr<?> source ) {
-            if ( t.isVirtual() && source.isVirtual() ) t.getDataAs( double[].class )[ 0 ] += source.getDataAs( double[].class )[ 0 ];
-            else new FunctionBuilder( Neureka.get().backend() ).build( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false ).call( new Tsr[]{ t, source } );
-            return source;
+            if ( t.isVirtual() && source.isVirtual() )
+                t.getDataAs( double[].class )[ 0 ] += source.getDataAs( double[].class )[ 0 ];
+            else
+                Neureka.get().backend().getFunction().addAssign().execute( t, source );
+            return
+                source;
         }
 
         public static void subInto( Tsr<?> t, int i, double value ) {
@@ -3056,9 +3078,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
 
         public static void subInto( Tsr<?> t, Tsr<?> source ) {
-            if ( t.isVirtual() && source.isVirtual() ) {
+            if ( t.isVirtual() && source.isVirtual() )
                 t.getDataAs( double[].class )[ 0 ] -= source.getDataAs( double[].class )[ 0 ];
-            } else {
+            else
+            {
                 if ( t.isVirtual() ) t.setIsVirtual( false );
                 int[] index = new int[ t.getNDConf().shape().length ];
                 int size = t.size();
@@ -3081,41 +3104,5 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     *  Use this factory method to instantiate a new tensor with the same data type, shape
-     *  and memory location ({@link Device} instance) as the provided template tensor.
-     *
-     * @param template The template tensor whose type, shape and location should be taken to construct a new tensor.
-     * @param <V> The type parameter defining the value type of the provided as well as returned tensor.
-     * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
-     */
-    public static <V> IterByOrIterFromOrAll<V> like( Tsr<V> template ) {
-        return Tsr.of( (Class<V>) template.getDataType().getJVMTypeClass() )
-                   .on( template.getDevice() )
-                   .withShape( template.getNDConf().shape() );
-    }
-
-    /**
-     *  This is a nested static utility class which is used
-     *  to create tensor instances.
-     */
-    public static class Create
-    {
-        public Create() { }
-
-        public  static Tsr<Double> E( List<Integer> shape ) { return E( shape.stream().mapToInt( e -> e ).toArray() ); }
-
-        public  static Tsr<Double> E( int... shape ) { return new Tsr<>( shape, 2.7182818284590452353602874713527 ); }
-
-        public static Tsr<Double> newRandom( int... shape ) { return newRandom( shape, 8701252152903546L ); }
-
-        public static Tsr<Double> newRandom( int[] shape, long seed ) {
-            int size = NDConfiguration.Utility.szeOfShp( shape );
-            return Tsr.of( shape, DataConverter.Utility.newSeededDoubleArray( seed, size ) );
-        }
-
-    }
 
 }

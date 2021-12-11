@@ -305,12 +305,17 @@ class Tensor_IO_Spec extends Specification
             int[] shape = new int[1]
             shape[0] = 4
         and : '...and passing it to the "newRandom" factory method to produce tensor x...'
-            Tsr x = Tsr.Create.newRandom(shape)
+            Tsr x = Tsr.ofRandom(Double, shape)
 
         then : '...the newly created variable x is as expected!'
             x.toString().contains("[4]:(-0.14690E0, -0.13858E0, -2.30775E0, 0.67281E0)")
-        when : 'Again calling the "newRandom" method with a long seed...'
-            x = Tsr.Create.newRandom(shape, 106605040595L)
+        when : 'Again using the "andSeed" method with a long seed...'
+            x = Tsr.ofDoubles().withShape(shape).andSeed(106605040595L)
+        then : '...the newly created variable x is as expected!'
+            x.toString().contains("[4]:(-0.36765E0, -0.45818E0, -1.6556E0, 0.73242E0)")
+
+        when : 'Again using the "andSeed" method with a long seed and with float as data type...'
+            x = Tsr.ofFloats().withShape(shape).andSeed(106605040595L)
         then : '...the newly created variable x is as expected!'
             x.toString().contains("[4]:(-0.36765E0, -0.45818E0, -1.6556E0, 0.73242E0)")
     }

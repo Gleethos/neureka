@@ -1,11 +1,13 @@
 package neureka.fluent.building;
 
 import neureka.Tsr;
+import neureka.common.utility.DataConverter;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.fluent.building.states.*;
 import neureka.ndim.Initializer;
+import neureka.ndim.config.NDConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +93,26 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
 
     @Override
     public Tsr<V> andSeed(Object seed) {
-        return Tsr.of( (Class<V>) _dataType.getJVMTypeClass(), _shape, seed.toString() ).to( _device );
+        Class<V> type = (Class<V>) _dataType.getJVMTypeClass();
+        Class<?> seedType = seed.getClass();
+        int size = NDConfiguration.Utility.szeOfShp( _shape );
+        if ( type == Double.class && seedType == Long.class )
+            return (Tsr<V>) Tsr.of(
+                                Double.class,
+                                _shape,
+                                DataConverter.Utility.newSeededDoubleArray( (Long) seed, size )
+                            )
+                            .to( _device );
+
+        else if ( type == Float.class && seedType == Long.class )
+            return (Tsr<V>) Tsr.of(
+                                Float.class,
+                                _shape,
+                                DataConverter.Utility.newSeededFloatArray( (Long) seed, size )
+                            )
+                            .to( _device );
+        else
+            return Tsr.of( type, _shape, seed.toString() ).to( _device );
     }
 
     @Override
