@@ -19,7 +19,7 @@ public final class Quadratic extends AbstractOperation
 
     private final DefaultOperatorCreator<TertiaryNDIConsumer> _creatorNDI =
             ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
+                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
                         double input = t1_val[ t1Idx.i() ];
@@ -30,7 +30,7 @@ public final class Quadratic extends AbstractOperation
 
     private final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorNDX =
             ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
+                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
                         double input = t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];

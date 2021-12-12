@@ -19,7 +19,7 @@ public final class ReLU extends AbstractOperation
 
     private final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
+                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
                         if (t1_val[ t1Idx.i() ]>=0) return t1_val[ t1Idx.i() ];
@@ -35,7 +35,7 @@ public final class ReLU extends AbstractOperation
 
     private final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
+                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
                         if (t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]>=0) return t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];

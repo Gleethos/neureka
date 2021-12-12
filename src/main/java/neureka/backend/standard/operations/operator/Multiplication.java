@@ -30,16 +30,16 @@ public class Multiplication extends AbstractOperation
 
     private static final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
-                double[] t2_val = inputs[ 2 ].getValueAs( double[].class );
+                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
                 else return ( t0Idx, t1Idx, t2Idx ) -> (d == 0) ? t2_val[t2Idx.i()] : t1_val[ t1Idx.i() ];
             };
 
     private static final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
-                double[] t2_val = inputs[ 2 ].getValueAs( double[].class );
+                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
                 NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                 NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
                 if ( d < 0 ) {
@@ -54,15 +54,15 @@ public class Multiplication extends AbstractOperation
 
     public static DefaultOperatorCreator<TertiaryNDIConsumer> xBCCreator =
             ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
-                double[] t2_val = inputs[ 2 ].getValueAs( double[].class );
+                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
                 return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
             };
 
     public static DefaultOperatorCreator<TertiaryNDAConsumer> xBCCreatorX =
             ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
-                double[] t2_val = inputs[ 2 ].getValueAs( double[].class );
+                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
                 NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                 NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
                 return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] * t2_val[ndc2.indexOfIndices(t2Idx)];
@@ -88,8 +88,8 @@ public class Multiplication extends AbstractOperation
                 ( inputs, d ) -> {
                     inputs[ 1 ].setIsVirtual( false );
                     inputs[ 2 ].setIsVirtual( false );
-                    double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getValueAs( double[].class );
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
                     if ( d < 0 ) {
                         return ( t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
                     } else {
@@ -105,8 +105,8 @@ public class Multiplication extends AbstractOperation
                 ( inputs, d ) -> {
                     inputs[ 1 ].setIsVirtual( false );
                     inputs[ 2 ].setIsVirtual( false );
-                    double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getValueAs( double[].class );
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
                     if ( d < 0 ) {
@@ -276,7 +276,7 @@ public class Multiplication extends AbstractOperation
 
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarOperatorCreator =
                 (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] * value;
                     else {
                         if ( d == 0 ) return t1Idx -> value;
@@ -286,7 +286,7 @@ public class Multiplication extends AbstractOperation
 
         ScalarOperatorCreator<PrimaryNDAConsumer> scalarOperatorXCreator =
                 (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     if ( d < 0 ) return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] * value;
                     else {
@@ -357,7 +357,7 @@ public class Multiplication extends AbstractOperation
                                                 call.getDevice().getKernel(call)
                                                         .passAllOf(call.getTsrOfType(Number.class, 0))
                                                         .passAllOf(call.getTsrOfType(Number.class, 0 + offset))
-                                                        .pass((float) call.getTsrOfType(Number.class, 1 + offset).getValueAs( double[].class )[0])
+                                                        .pass((float) call.getTsrOfType(Number.class, 1 + offset).getDataAs( double[].class )[0])
                                                         .pass(call.getTsrOfType(Number.class, 0).rank())
                                                         .pass(call.getValOf(Arg.DerivIdx.class))
                                                         .call(gwz);

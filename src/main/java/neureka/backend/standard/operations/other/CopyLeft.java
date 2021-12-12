@@ -66,14 +66,14 @@ public class CopyLeft extends AbstractOperation {
 
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] = value;
                     else return null;
                 };
 
         ScalarOperatorCreator<PrimaryNDAConsumer> scalarXCreator =
                 (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
+                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return t1Idx -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] = value;
                     else return null;
                 };
@@ -87,7 +87,7 @@ public class CopyLeft extends AbstractOperation {
                             .andImplementation(
                                 call ->
                                 {
-                                    double value = call.getTsrOfType( Number.class, 1 ).getValueAs( double[].class )[ 0 ];
+                                    double value = call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ];
                                     call.getDevice().getExecutor()
                                             .threaded (
                                                     call.getTsrOfType( Number.class, 0 ).size(),
