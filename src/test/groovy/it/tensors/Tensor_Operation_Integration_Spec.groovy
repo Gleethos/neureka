@@ -3,9 +3,9 @@ package it.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.assembly.FunctionBuilder
+import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
 import neureka.devices.host.CPU
-import neureka.common.utility.SettingsLoader
 import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
 import spock.lang.Specification

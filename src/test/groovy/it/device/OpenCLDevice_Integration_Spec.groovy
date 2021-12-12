@@ -212,7 +212,7 @@ class OpenCLDevice_Integration_Spec extends Specification
             B[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)
             A.to( device )
             B.to( device )
-            C.to( device )
+            C.to( device ).setIsVirtual(false)
 
         expect :
             !device.hasAdHocKernel( kernelName )
@@ -358,7 +358,7 @@ class OpenCLDevice_Integration_Spec extends Specification
 
             A.to( device )
             B.to( device )
-            C.to( device )
+            C.to( device ).setIsVirtual(false)
 
         expect :
             !device.hasAdHocKernel( kernelName )

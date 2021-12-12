@@ -441,19 +441,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
         tensor.set( newClt );
         migration.run(); // TODO: REMOVE
 
-        if ( tensor.isVirtual() ) {
-            double value = tensor.getValueAs( double[].class )[ 0 ];
-            tensor.setIsOutsourced( true );
-            CalcUtil.recursiveExecution(
-                    ExecutionCall.of(tensor, Tsr.of( value ).to( this ))
-                                .andArgs(Arg.DerivIdx.of(-1))
-                                .running(Neureka.get().backend().getOperation( "<" ))
-                                .on(this),
-                    (executionCall, executor) -> null
-            );
-        }
-        else tensor.setIsOutsourced( true );
+        tensor.setIsOutsourced( true );
 
+        // When tensors get stored on this device,
+        // they are implicitly converted to a float tensor:
         tensor.toType( F32.class );
     }
 

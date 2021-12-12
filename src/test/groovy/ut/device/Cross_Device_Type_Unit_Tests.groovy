@@ -320,4 +320,28 @@ class Cross_Device_Type_Unit_Tests extends Specification
             //CPU.get()                    | { d, t -> d.store(t) }
     }
 
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && deviceType == 'GPU' })
+    def 'Virtual tensors stay virtual when outsourced.'(
+            String deviceType
+    ) {
+        given :
+            def t = Tsr.ofFloats().withShape(4,3).all(-0.54f)
+
+        expect :
+            t.isVirtual()
+
+        when :
+            t.to(Device.find(deviceType))
+
+        then :
+            t.isOutsourced()
+        and :
+            t.isVirtual()
+
+        where :
+            deviceType << ['CPU','GPU']
+    }
+
+
 }
