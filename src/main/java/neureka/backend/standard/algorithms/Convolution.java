@@ -48,7 +48,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
-        double[] t0_value = t0_drn.getValueAs( double[].class );
+        double[] t0_value = t0_drn.getDataAs( double[].class );
 
         while ( i < end )
         {//increment on drain accordingly:
@@ -118,7 +118,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
-        double[] t0_value = t0_drn.getValueAs( double[].class );
+        double[] t0_value = t0_drn.getDataAs( double[].class );
 
         // Incrementing if 'i>0' so that all indexes match:
         for ( int ii = 0; ii < i; ii++ ) {
