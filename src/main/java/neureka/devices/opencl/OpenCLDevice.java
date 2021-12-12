@@ -421,7 +421,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
         newClt.config = _writeNDConfig( tensor.getNDConf() );
 
         cl_mem[] memos;
-        memos = new cl_mem[]{ newClt.value.data, newClt.config.data };
+        if ( parent == null )
+            memos = new cl_mem[]{ newClt.value.data, newClt.config.data };
+        else
+            memos = new cl_mem[]{ newClt.config.data };
 
         clEnqueueMigrateMemObjects(
                 _queue,
@@ -468,6 +471,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 (long) config.length * Sizeof.cl_int,
                 null, null
         );
+
         clEnqueueWriteBuffer(
                 _queue,
                 clf.data,
@@ -500,19 +504,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
     private void _store( Tsr<Number> tensor, cl_tsr<?,?> newClTsr, int fp ) {
         Pointer p;
         int size;
-        //if ( !tensor.isVirtual() ) {
-            if ( fp == 1 ) {
-                float[] data = tensor.getDataAs( float[].class );
-                data = ( data == null ) ? new float[ tensor.size() ] : data;
-                p = Pointer.to(data);
-                size = data.length;
-            } else {
-                double[] data = tensor.getDataAs( double[].class );
-                data = ( data == null ) ? new double[ tensor.size() ] : data;
-                p = Pointer.to(data);
-                size = data.length;
-            }
-        //}
+        if ( fp == 1 ) {
+            float[] data = tensor.getDataAs( float[].class );
+            data = ( data == null ) ? new float[ tensor.size() ] : data;
+            p = Pointer.to(data);
+            size = data.length;
+        } else {
+            double[] data = tensor.getDataAs( double[].class );
+            data = ( data == null ) ? new double[ tensor.size() ] : data;
+            p = Pointer.to(data);
+            size = data.length;
+        }
         newClTsr.value.size = size;
         //VALUE TRANSFER:
         cl_mem mem = clCreateBuffer(
@@ -622,6 +624,16 @@ public class OpenCLDevice extends AbstractDevice<Number>
          cl_tsr<?,?> clt = tensor.get(cl_tsr.class);
          if ( clt != null ) {
              clt.config = _writeNDConfig( tensor.getNDConf() );
+             cl_mem[] memos = new cl_mem[]{clt.config.data};
+             clEnqueueMigrateMemObjects(
+                     _queue,
+                     memos.length,
+                     memos,
+                     CL_MIGRATE_MEM_OBJECT_HOST,
+                     0,
+                     null,
+                     null
+             );
          }
          return this;
     }

@@ -287,8 +287,8 @@ public class Subtraction extends AbstractOperation
                                                         .getImplementationFor( device )
                                                         .runAndGetFirstTensor(
                                                                 ExecutionCall.of(
-                                                                            Tsr.like( (Tsr<Number>) toBeDerived ).all( 0d ).setIsVirtual(false),
-                                                                            Tsr.like( (Tsr<Number>) inputs[(d==0?1:0)] ).all( 0d ),
+                                                                            Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),
+                                                                            Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),
                                                                             backwardError
                                                                         )
                                                                         .andArgs( Arg.DerivIdx.of(d) )

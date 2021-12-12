@@ -140,11 +140,11 @@ public class JunctionUtil
                     a = reduction[ 0 ];
                 }
                 else if ( d == 1 ) a = tensors[ 1 ];
-                else a = Tsr.like( (Tsr<Number>) tensors[ 1 ] ).all( 1.0 );
+                else a = Tsr.Create.newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
                 Tsr<?> b;
                 if ( tensors.length -  d - 2  > 1 ) {
                     Tsr<?>[] reduction = Operation.Utility.subset(tensors, 2, d+2, tensors.length-(d+2));
-                    reduction[ 1 ] = Tsr.like( (Tsr<Number>) tensors[ 1 ] ).all( 1.0 );
+                    reduction[ 1 ] = Tsr.Create.newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
                     reduction[ 0 ] = reduction[ 1 ];
                     alternative = goDeeperWith.execute(
                                         ExecutionCall.of(reduction)
@@ -153,7 +153,8 @@ public class JunctionUtil
                                                         .on(device)
                                 );
                     b = reduction[ 0 ];
-                } else b = Tsr.like(  (Tsr<Number>) tensors[ 1 ] ).all( 1.0 );
+                }
+                else b = Tsr.Create.newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
 
                 alternative = goDeeperWith.execute(
                                         ExecutionCall.of( tensors[ 0 ], a, b )

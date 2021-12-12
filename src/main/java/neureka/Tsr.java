@@ -3095,4 +3095,34 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
 
+    /**
+     *  This is a nested static utility class which is used
+     *  to create tensor instances.
+     */
+    public static class Create
+    {
+        public Create() { }
+
+        public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
+            Tsr<V> t = _newEmptyLike( template );
+            if ( template.getData() instanceof float[] ) t.setValue( (float) value ); //TODO remove instanceof
+            else t.setValue( value );
+            try {
+                if ( template.isOutsourced() ) ( (Device<Object>) template.get( Device.class ) ).store( t );
+            } catch ( Exception exception ) {
+                _LOG.error( "Failed storing a newly created tensor from a template tensor to its host device.", exception );
+                throw exception;
+            }
+            return t;
+        }
+
+        private static <V> Tsr<V> _newEmptyLike( Tsr<V> template ) {
+            Tsr<V> t = (Tsr<V>) Tsr.newInstance();
+            t.createConstructionAPI().configureFromNewShape( template.getNDConf().shape(), false, true );
+            return t;
+        }
+
+    }
+
+
 }
