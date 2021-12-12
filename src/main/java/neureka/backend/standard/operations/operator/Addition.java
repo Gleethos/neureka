@@ -67,8 +67,8 @@ public class Addition extends AbstractOperation {
                                                                                              .getImplementationFor( device )
                                                                                              .runAndGetFirstTensor(
                                                                                                      ExecutionCall.of(
-                                                                                                             Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),
-                                                                                                             Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),
+                                                                                                             JunctionUtil.newTsrLike(toBeDerived, 0).setIsVirtual(false),
+                                                                                                             JunctionUtil.newTsrLike(inputs[(d==0?1:0)], 0),
                                                                                                              backwardError
                                                                                                      )
                                                                                                      .andArgs( Arg.DerivIdx.of(d) )

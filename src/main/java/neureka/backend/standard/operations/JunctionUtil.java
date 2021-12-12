@@ -8,9 +8,14 @@ import neureka.calculus.CallExecutor;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import org.jetbrains.annotations.Contract;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JunctionUtil
 {
+
+    private static final Logger _LOG = LoggerFactory.getLogger( JunctionUtil.class );
+
     @Contract( pure = true )
     public static Tsr<?> forConvolution(
             ExecutionCall<? extends Device<?>> call,
@@ -140,11 +145,11 @@ public class JunctionUtil
                     a = reduction[ 0 ];
                 }
                 else if ( d == 1 ) a = tensors[ 1 ];
-                else a = Tsr.Create.newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
+                else a = newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
                 Tsr<?> b;
                 if ( tensors.length -  d - 2  > 1 ) {
                     Tsr<?>[] reduction = Operation.Utility.subset(tensors, 2, d+2, tensors.length-(d+2));
-                    reduction[ 1 ] = Tsr.Create.newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
+                    reduction[ 1 ] = newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
                     reduction[ 0 ] = reduction[ 1 ];
                     alternative = goDeeperWith.execute(
                                         ExecutionCall.of(reduction)
@@ -154,7 +159,7 @@ public class JunctionUtil
                                 );
                     b = reduction[ 0 ];
                 }
-                else b = Tsr.Create.newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
+                else b = newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
 
                 alternative = goDeeperWith.execute(
                                         ExecutionCall.of( tensors[ 0 ], a, b )
@@ -230,6 +235,20 @@ public class JunctionUtil
         }
         else
             return alternative;
+    }
+
+
+    public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
+        Tsr<V> t = (Tsr<V>) Tsr.of( template.getNDConf().shape(), value );
+        t.setIsVirtual( false );
+        t.setValue( value );
+        try {
+            if ( template.isOutsourced() ) ( (Device<Object>) template.get( Device.class ) ).store( t );
+        } catch ( Exception exception ) {
+            _LOG.error( "Failed storing a newly created tensor from a template tensor to its host device.", exception );
+            throw exception;
+        }
+        return t;
     }
 
 }
