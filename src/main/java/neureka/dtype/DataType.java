@@ -162,7 +162,7 @@ public final class DataType<Type>
         return (T) newValue;
     }
 
-    public <T> T actualize(T value, int size )
+    public <T> Object actualize( T value, int size )
     {
         Object newValue = value;
         if ( getTypeClass() == F64.class ) {

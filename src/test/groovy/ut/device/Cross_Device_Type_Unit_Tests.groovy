@@ -113,7 +113,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             Tsr t = Tsr.of(shape, data).to(device)
 
         then : 'The tensor values (as List) are as expected.'
-            (t.getDataAs( double[].class ) as List<Float>) == expected
+            (t.getValueAs( double[].class ) as List<Float>) == expected
 
         when : 'The same underlying data is being queried by calling the device...'
             def result = (0..<t.size()).collect{device.valueFor(t, it)}

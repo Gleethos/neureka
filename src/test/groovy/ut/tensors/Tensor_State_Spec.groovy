@@ -183,8 +183,8 @@ class Tensor_State_Spec extends Specification
         expect: 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
         and : 'The tensor contains the expected data.'
-            t.getDataAs( double[].class ) == [6] as double[]
-            t.getDataAs( float[].class ) == [6] as float[]
+            t.getValueAs( double[].class ) == [6] as double[]
+            t.getValueAs( float[].class ) == [6] as float[]
             t.data == [6] as double[]
             t.value == [6] as double[]
 
@@ -193,15 +193,15 @@ class Tensor_State_Spec extends Specification
         then: 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
             !(t.data instanceof double[]) && !(t.data instanceof float[])
-            t.getDataAs( double[].class ) == null
-            t.getDataAs( float[].class ) == null
+            t.getValueAs( double[].class ) == null
+            t.getValueAs( float[].class ) == null
             t.data == null
             t.value == null
         when: 'The "isOutsourced" flag is set to its original state...'
             t.setIsOutsourced( false )
         then: 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
-            t.getDataAs( double[].class ) == [0] as double[]
-            t.getDataAs( float[].class ) == [0] as float[]
+            t.getValueAs( double[].class ) == [0] as double[]
+            t.getValueAs( float[].class ) == [0] as float[]
             t.data == [0] as double[]
             t.value == [0] as double[]
             t.isVirtual()
@@ -220,15 +220,15 @@ class Tensor_State_Spec extends Specification
             t.isOutsourced()
             !(t.data instanceof double[]) && !(t.data instanceof float[])
             t.dataType.getTypeClass() == Neureka.get().settings().dtype().defaultDataTypeClass
-            t.getDataAs( double[].class ) == null
-            t.getDataAs( float[].class ) == null
+            t.getValueAs( double[].class ) == null
+            t.getValueAs( float[].class ) == null
             t.data == null
             t.value == null
         when : 'The "isOutsourced" flag is set to its original state...'
             t.setIsOutsourced( false )
         then : 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
-            t.getDataAs( double[].class ) == [0, 0] as double[]
-            t.getDataAs( float[].class ) == [0, 0] as float[]
+            t.getValueAs( double[].class ) == [0, 0] as double[]
+            t.getValueAs( float[].class ) == [0, 0] as float[]
             t.data == [0] as double[]
             t.value == [0, 0] as double[]
             t.isVirtual()
@@ -241,8 +241,8 @@ class Tensor_State_Spec extends Specification
             Tsr t = Tsr.of(  DataType.of(I8.class ), new int[]{ 2 } )
         expect : 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
-            t.getDataAs( double[].class ) == [0, 0] as double[]
-            t.getDataAs( float[].class ) == [0, 0] as float[]
+            t.getValueAs( double[].class ) == [0, 0] as double[]
+            t.getValueAs( float[].class ) == [0, 0] as float[]
             t.data == [0] as byte[]
             t.value == [0, 0] as byte[]
             t.isVirtual()
@@ -252,15 +252,15 @@ class Tensor_State_Spec extends Specification
             t.isOutsourced()
             !(t.data instanceof double[]) && !(t.data instanceof float[])
             t.dataType.getTypeClass() == I8.class
-            t.getDataAs( double[].class ) == null
-            t.getDataAs( float[].class ) == null
+            t.getValueAs( double[].class ) == null
+            t.getValueAs( float[].class ) == null
             t.data == null
             t.value == null
         when : 'The "isOutsourced" flag is set to its original state...'
             t.setIsOutsourced( false )
         then : 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
-            t.getDataAs( double[].class ) == [0, 0] as double[]
-            t.getDataAs( float[].class ) == [0, 0] as float[]
+            t.getValueAs( double[].class ) == [0, 0] as double[]
+            t.getValueAs( float[].class ) == [0, 0] as float[]
             t.data == [0] as byte[]
             t.value == [0, 0] as byte[]
             t.isVirtual()

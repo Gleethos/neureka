@@ -13,7 +13,6 @@ import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionConstant;
 import neureka.devices.Device;
 import neureka.common.utility.Messages;
-import neureka.ndim.AbstractNDArray;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +120,7 @@ public class CalcUtil
         if ( allVirtual ) {
             int index = -1;
             for ( int i = 0; i < tensors.length; i++ ) {
-                double value = ( tensors[ i ] == null ) ? 0.0 : tensors[ i ].getDataAs( double[].class )[ 0 ];
+                double value = ( tensors[ i ] == null ) ? 0.0 : tensors[ i ].getValueAs( double[].class )[ 0 ];
                 if ( value == 1.0 ) {
                     if ( index >= 0 ) return -1;
                     index = i;
@@ -214,7 +213,7 @@ public class CalcUtil
             );
             // At the end:
             //...multiply inner times outer: ( if inner is not 1 entirely... )
-            if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getDataAs( double[].class )[ 0 ] == 1.0 ) ) {
+            if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getValueAs( double[].class )[ 0 ] == 1.0 ) ) {
                 tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
                 CalcUtil.recursiveExecution(
                         ExecutionCall.of( tensors )

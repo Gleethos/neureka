@@ -29,8 +29,8 @@ public class Subtraction extends AbstractOperation
 {
     private static final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
+                double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
+                double[] t2_val = inputs[ 2 ].getValueAs( double[].class );
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] - t2_val[t2Idx.i()];
                 } else {
@@ -46,8 +46,8 @@ public class Subtraction extends AbstractOperation
 
     private static final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
+                double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
+                double[] t2_val = inputs[ 2 ].getValueAs( double[].class );
                 NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                 NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
                 if ( d < 0 ) {
@@ -81,16 +81,16 @@ public class Subtraction extends AbstractOperation
 
         DefaultOperatorCreator<SecondaryNDIConsumer> operationCreator =
                 ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
+                    double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
+                    double[] t2_val = inputs[ 2 ].getValueAs( double[].class );
                     if ( d < 0 ) {
                         return ( t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] - t2_val[t2Idx.i()];
                     } else return ( t1Idx, t2Idx ) -> ( d == 0 ? 1.0 : -1.0 );
                 };
         DefaultOperatorCreator<PrimaryNDAConsumer> operationXCreator =
                 ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
+                    double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
+                    double[] t2_val = inputs[ 2 ].getValueAs( double[].class );
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
                     if ( d < 0 ) {
@@ -173,14 +173,14 @@ public class Subtraction extends AbstractOperation
 
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarOperatorCreator =
                 (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                    double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
                     if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] - value;
                     else if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
                 };
 
         ScalarOperatorCreator<PrimaryNDAConsumer> scalarOperatorXCreator =
                 (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                    double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     if ( d < 0 ) return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] - value;
                     else if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
@@ -252,7 +252,7 @@ public class Subtraction extends AbstractOperation
                                             call.getDevice().getKernel(call)
                                                     .passAllOf(call.getTsrOfType( Number.class, 0 ))
                                                     .passAllOf(call.getTsrOfType( Number.class, 0 ))
-                                                    .pass((float)call.getTsrOfType( Number.class, 1+offset).getDataAs( double[].class )[ 0 ])
+                                                    .pass((float)call.getTsrOfType( Number.class, 1+offset).getValueAs( double[].class )[ 0 ])
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )
                                                     .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                     .call( gwz );

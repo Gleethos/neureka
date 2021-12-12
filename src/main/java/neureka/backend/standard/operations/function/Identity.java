@@ -35,14 +35,14 @@ public final class Identity extends AbstractOperation
 
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                    double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
                     if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
                     else return ( t0Idx, t1Idx, t2Idx ) -> 1;
                 };
 
         DefaultOperatorCreator<TertiaryNDAConsumer> activationXCreator =
                 ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
+                    double[] t1_val = inputs[ 1 ].getValueAs( double[].class );
                     if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
                     else return ( t0Idx, t1Idx, t2Idx ) -> 1;
                 };
@@ -181,7 +181,7 @@ public final class Identity extends AbstractOperation
                             .andImplementation(
                                 call  -> {
                                     int offset = ( call.getTensors().length > 2 ) ? 1 : 0;
-                                    double value = call.getTsrOfType( Number.class, 1 + offset ).getDataAs( double[].class )[ 0 ];
+                                    double value = call.getTsrOfType( Number.class, 1 + offset ).getValueAs( double[].class )[ 0 ];
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTsrOfType( Number.class, 0 ).size(),
@@ -211,7 +211,7 @@ public final class Identity extends AbstractOperation
                                             call.getDevice().getKernel(call)
                                                     .passAllOf(t)
                                                     .passAllOf(t)
-                                                    .pass((float)call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ])
+                                                    .pass((float)call.getTsrOfType( Number.class, 1 ).getValueAs( double[].class )[ 0 ])
                                                     .pass(t.rank())
                                                     .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                     .call( gwz );

@@ -442,7 +442,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         migration.run(); // TODO: REMOVE
 
         if ( tensor.isVirtual() ) {
-            double value = tensor.getDataAs( double[].class )[ 0 ];
+            double value = tensor.getValueAs( double[].class )[ 0 ];
             tensor.setIsOutsourced( true );
             CalcUtil.recursiveExecution(
                     ExecutionCall.of(tensor, Tsr.of( value ).to( this ))
@@ -502,15 +502,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
 
     private void _store( Tsr<Number> tensor, cl_tsr<?,?> newClTsr, int fp ) {
+        boolean isVirtual = tensor.isVirtual();
         Pointer p;
         int size;
         if ( fp == 1 ) {
             float[] data = tensor.getDataAs( float[].class );
+            assert !isVirtual || data.length == 1;
             data = ( data == null ) ? new float[ tensor.size() ] : data;
             p = Pointer.to(data);
             size = data.length;
         } else {
-            double[] data = tensor.getDataAs( double[].class );
+            double[] data = tensor.getValueAs( double[].class );
             data = ( data == null ) ? new double[ tensor.size() ] : data;
             p = Pointer.to(data);
             size = data.length;
@@ -525,19 +527,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null
         );
         newClTsr.value.data = mem;
-        if ( !tensor.isVirtual() ) {
-            clEnqueueWriteBuffer(
-                    _queue,
-                    mem,
-                    CL_TRUE,
-                    0,
-                    size * (long) Sizeof.cl_float * fp,
-                    p,
-                    0,
-                    null,
-                    null
-            );
-        }
+        clEnqueueWriteBuffer(
+                _queue,
+                mem,
+                CL_TRUE,
+                0,
+                size * (long) Sizeof.cl_float * fp,
+                p,
+                0,
+                null,
+                null
+        );
     }
 
 

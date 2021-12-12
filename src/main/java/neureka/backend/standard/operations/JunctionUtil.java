@@ -239,6 +239,8 @@ public class JunctionUtil
 
 
     public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
+        //Tsr<V> t = (Tsr<V>) Tsr.like( (Tsr<Number>) template ).all( value );
+        //t.setIsVirtual(false);
         Tsr<V> t = (Tsr<V>) Tsr.of( template.getNDConf().shape(), value );
         t.setIsVirtual( false );
         t.setValue( value );
