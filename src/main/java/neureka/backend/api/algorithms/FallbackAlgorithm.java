@@ -33,7 +33,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
         setImplementationFor(
                 CPU.class,
                 CPUImplementation
-                    .withArity(arity)
+                    .withArity( arity )
                     .andImplementation(
                         call -> {
                             Function f = new FunctionBuilder(
@@ -41,7 +41,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                                 )
                                                 .build(
                                                         type,
-                                                        call.getTensors().length-1,
+                                                        call.getTensors().length - 1,
                                                         false
                                                 );
 
@@ -49,8 +49,10 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                                         .all( t -> t.getDataType().typeClassImplements(NumericType.class) )
                                                         .isValid();
 
-                            Class<?> typeClass = Stream.of(call.getTensors()).map( t -> t.getDataType().getTypeClass() ).findFirst().get();
-
+                            Class<?> typeClass = Stream.of( call.getTensors() )
+                                                        .map( t -> t.getDataType().getTypeClass() )
+                                                        .findFirst()
+                                                        .get();
                             if ( allNumeric )
                             {
                                 double[] inputs = new double[ call.getTensors().length-1 ];
@@ -63,7 +65,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                                 for ( int ii = 0; ii < inputs.length; ii++ ) {
                                                     inputs[ ii ] = call.getTsrOfType( Number.class, 1 + ii ).getValueAs( double[].class )[ i ];
                                                 }
-                                                call.getTsrOfType( Number.class, 0 ).getValueAs( double[].class )[ i ] = f.call( inputs );
+                                                call.getTsrOfType( Number.class, 0 ).getDataAs( double[].class )[ i ] = f.call( inputs );
                                             }
                                         }
                                     );
@@ -98,7 +100,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
         for ( Tsr<?> t : call.getTensors() ) {
             if ( t != null ) {
                 if ( shape == null ) shape = t.getNDConf().shape();
-                else if ( !Arrays.equals(shape, t.getNDConf().shape())) return 0.0f;
+                else if ( !Arrays.equals(shape, t.getNDConf().shape()) ) return 0.0f;
             }
         }
         if ( call.getOperation().getClass() == MatMul.class ) return 0;
@@ -123,17 +125,17 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
         }
         Tsr<?> localDerivative = function.executeDerive( call.getTensors(), call.getDerivativeIndex() );
         return ADAgent.of( localDerivative )
-                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, localDerivative ) )
-                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, localDerivative ) );
+                      .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, localDerivative ) )
+                      .setBackward( (node, backwardError ) -> mul.execute( backwardError, localDerivative ) );
     }
 
     @Override
-    public Tsr<?> dispatch(FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+    public Tsr<?> dispatch( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         return CalcUtil.defaultRecursiveExecution( caller, call );
     }
 
     @Override
-    public ExecutionCall<? extends Device<?>> prepare(ExecutionCall<? extends Device<?>> call )
+    public ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call )
     {
         Tsr<?>[] tensors = call.getTensors();
         Device<Object> device = call.getDeviceFor(Object.class);
@@ -152,7 +154,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
         return call;
     }
 
-    private void _tryExecute(ExecutionCall<CPU> call, Class<?> typeClass ) {
+    private void _tryExecute( ExecutionCall<CPU> call, Class<?> typeClass ) {
         Method m = _findMethod( call.getOperation().getFunction(), typeClass );
         if ( m == null ) {
             switch (call.getOperation().getOperator()) {
