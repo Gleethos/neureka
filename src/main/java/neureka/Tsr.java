@@ -3030,38 +3030,38 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         public static double getFrom( Tsr<?> t, int i ) {
             if ( t.isEmpty() || t.isUndefined() ) return 0;
-            else if ( t.isVirtual() ) return t.getValueAs( double[].class )[ 0 ];
+            else if ( t.isVirtual() ) return t.getDataAs( double[].class )[ 0 ];
             return t.getValueAs( double[].class )[ t.indexOfIndex( i ) ];
         }
 
         public static double getFrom( Tsr<?> t, int[] idx ) {
             t.setIsVirtual( false );
-            return t.getValueAs( double[].class )[ t.indexOfIndices( idx ) ];
+            return t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ];
         }
 
         public static void setInto( Tsr<?> t, int i, double value ) {
             t.setIsVirtual( false );
-            t.getValueAs( double[].class )[ t.indexOfIndex( i ) ] = value;
+            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] = value;
         }
 
         public static void setInto( Tsr<?> t, int[] idx, double value ) {
             t.setIsVirtual( false );
-            t.getValueAs( double[].class )[ t.indexOfIndices( idx ) ] = value;
+            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] = value;
         }
 
         public static void addInto( Tsr<?> t, int i, double value ) {
             t.setIsVirtual( false );
-            t.getValueAs( double[].class )[ t.indexOfIndex( i ) ] += value;
+            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] += value;
         }
 
         public static void addInto( Tsr<?> t, int[] idx, double value ) {
             t.setIsVirtual( false );
-            t.getValueAs( double[].class )[ t.indexOfIndices( idx ) ] += value;
+            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] += value;
         }
 
         public static Tsr<?> addInto( Tsr<?> t, Tsr<?> source ) {
             if ( t.isVirtual() && source.isVirtual() )
-                t.getValueAs( double[].class )[ 0 ] += source.getValueAs( double[].class )[ 0 ];
+                t.getDataAs( double[].class )[ 0 ] += source.getDataAs( double[].class )[ 0 ];
             else
                 Neureka.get().backend().getFunction().addAssign().execute( t, source );
             return
@@ -3070,17 +3070,17 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         public static void subInto( Tsr<?> t, int i, double value ) {
             t.setIsVirtual( false );
-            t.getValueAs( double[].class )[ t.indexOfIndex( i ) ] -= value;
+            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] -= value;
         }
 
         public static void subInto( Tsr<?> t, int[] idx, double value ) {
             t.setIsVirtual( false );
-            t.getValueAs( double[].class )[ t.indexOfIndices( idx ) ] -= value;
+            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] -= value;
         }
 
         public static void subInto( Tsr<?> t, Tsr<?> source ) {
             if ( t.isVirtual() && source.isVirtual() )
-                t.getValueAs( double[].class )[ 0 ] -= source.getValueAs( double[].class )[ 0 ];
+                t.getDataAs( double[].class )[ 0 ] -= source.getDataAs( double[].class )[ 0 ];
             else
             {
                 if ( t.isVirtual() ) t.setIsVirtual( false );
@@ -3095,12 +3095,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         public static void mulInto( Tsr<?> t, int i, double value ) {
             t.setIsVirtual( false );
-            t.getValueAs( double[].class )[ t.indexOfIndex( i ) ] *= value;
+            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] *= value;
         }
 
         public static void mulInto( Tsr<?> t, int[] idx, double value ) {
             t.setIsVirtual( false );
-            t.getValueAs( double[].class )[ t.indexOfIndices( idx ) ] *= value;
+            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] *= value;
         }
 
     }
