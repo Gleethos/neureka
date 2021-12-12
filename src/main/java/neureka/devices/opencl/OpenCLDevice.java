@@ -512,7 +512,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
             p = Pointer.to(data);
             size = data.length;
         } else {
-            double[] data = tensor.getValueAs( double[].class );
+            double[] data = tensor.getDataAs( double[].class );
+            assert !isVirtual || data.length == 1;
             data = ( data == null ) ? new double[ tensor.size() ] : data;
             p = Pointer.to(data);
             size = data.length;

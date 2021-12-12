@@ -184,7 +184,9 @@ class Tensor_State_Spec extends Specification
             !t.isOutsourced()
         and : 'The tensor contains the expected data.'
             t.getValueAs( double[].class ) == [6] as double[]
-            t.getValueAs( float[].class ) == [6] as float[]
+            t.getValueAs( float[].class  ) == [6] as float[]
+            t.getDataAs( double[].class ) == [6] as double[]
+            t.getDataAs( float[].class  ) == [6] as float[]
             t.data == [6] as double[]
             t.value == [6] as double[]
 
@@ -194,14 +196,18 @@ class Tensor_State_Spec extends Specification
             t.isOutsourced()
             !(t.data instanceof double[]) && !(t.data instanceof float[])
             t.getValueAs( double[].class ) == null
-            t.getValueAs( float[].class ) == null
+            t.getValueAs( float[].class  ) == null
+            t.getDataAs( double[].class ) == null
+            t.getDataAs( float[].class  ) == null
             t.data == null
             t.value == null
         when: 'The "isOutsourced" flag is set to its original state...'
             t.setIsOutsourced( false )
         then: 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
             t.getValueAs( double[].class ) == [0] as double[]
-            t.getValueAs( float[].class ) == [0] as float[]
+            t.getValueAs( float[].class  ) == [0] as float[]
+            t.getDataAs( double[].class ) == [0] as double[]
+            t.getDataAs( float[].class  ) == [0] as float[]
             t.data == [0] as double[]
             t.value == [0] as double[]
             t.isVirtual()

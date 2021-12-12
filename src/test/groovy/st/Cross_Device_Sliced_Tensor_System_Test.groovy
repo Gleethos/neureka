@@ -192,8 +192,8 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         //---
         when:
             if( device instanceof DummyDevice ) {
-                a.getValueAs( double[].class )[1] = a.getValueAs( double[].class )[1] * 6
-                a.getValueAs( double[].class )[7] = a.getValueAs( double[].class )[7] * 2
+                a.getDataAs( double[].class )[1] = a.getDataAs( double[].class )[1] * 6
+                a.getDataAs( double[].class )[7] = a.getDataAs( double[].class )[7] * 2
             } else {
                 Tsr k = Tsr.of([4, 6], [
                         1d, 6d, 1d, 1d,
