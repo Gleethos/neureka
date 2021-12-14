@@ -327,15 +327,17 @@ class Cross_Device_Type_Unit_Tests extends Specification
     ) {
         given :
             def t = Tsr.ofFloats().withShape(4,3).all(-0.54f)
+        and :
+            def device = Device.find(deviceType)
 
         expect :
             t.isVirtual()
 
         when :
-            t.to(Device.find(deviceType))
+            t.to(device)
 
         then :
-            t.isOutsourced()
+            t.isOutsourced() != ( device instanceof CPU )
         and :
             t.isVirtual()
 
