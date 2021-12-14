@@ -269,7 +269,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
     }
 
     @Ignore
-    def 'Devices cannot store slices which whose parents are not already stored.'(
+    def 'Devices cannot store slices which parents are not already stored.'(
             Device device, BiConsumer<Device, Tsr> storageMethod
     ) {
         given : 'The given device is available and Neureka is being reset.'
@@ -325,30 +325,29 @@ class Cross_Device_Type_Unit_Tests extends Specification
     def 'Virtual tensors stay virtual when outsourced.'(
             String deviceType
     ) {
-        given :
+        given : 'We create a homogeneously filled tensor, which is therefor "virtual".'
             def t = Tsr.ofFloats().withShape(4,3).all(-0.54f)
-        and :
+        and : 'We also get a device for testing...'
             def device = Device.find(deviceType)
 
-        expect :
+        expect : 'We expect that the tensor is virtual, meaning its underlying data array stores only a single value...'
             t.isVirtual()
 
-        when :
+        when : 'We send the tensor to the device...'
             t.to(device)
-
-        then :
+        then : 'This should cause it to be "outsourced", (except dor a CPU device of course).'
             t.isOutsourced() != ( device instanceof CPU )
-        and :
+        and : '...we expect the tensor to stay virtual on the device!'
             t.isVirtual()
 
-        when :
+        when : 'We restore the device...'
             device.restore(t)
-        then :
-            t.isOutsourced() != ( device instanceof CPU )
-        and :
+        then : 'The tensor should no longer be outsourced.'
+            !t.isOutsourced()
+        and : 'It should still be virtual!'
             t.isVirtual()
 
-        where :
+        where : 'We test on the following devices:'
             deviceType << ['CPU','GPU']
     }
 

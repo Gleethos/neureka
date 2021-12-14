@@ -45,7 +45,7 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public Device<Object> approve(ExecutionCall<? extends Device<?>> call ) { return this; }
 
     @Override
-    public <T> Device<Object> updateNDConf(AbstractNDArray<?, T> tensor) {
+    public <T> Device<Object> updateNDConf( Tsr<T> tensor ) {
         return this;
     }
 

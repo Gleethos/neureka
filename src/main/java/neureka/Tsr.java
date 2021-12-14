@@ -130,7 +130,7 @@ import java.util.stream.Collectors;
  *  This class name {@link Tsr} is a 3 letter abbreviation of the word "tensor", a mathematical concept.
  *  A tensor is a type of multidimensional data-structure with certain transformation properties.
  *  Technically however, it is mostly a simple container / data-structure which can house data indexed by N dimensions.
- *  Therefore it is often also described as an nd-array.
+ *  Therefore it is often also described as a nd-array.
  *  Elements of a tensor are also mostly numeric.<br>
  *  This means that: <br>
  *  <i><b>...a tensor of rank 0 is a scalar, a tensor of rank 1 is a vector and a tensor of rank 2 is a matrix, etc...</b></i>
@@ -211,10 +211,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      *  This constructor creates a completely empty tensor which is void of any contents and meaning.
      *  The use case for this would be to use the produced {@link Tsr}
-     *  instance as a target for an inline operations which fills this instance with an actual value. <br>
+     *  instance as a target for an inline operation which fills this instance with an actual value. <br>
      *  An example of this approach would be to call the {@link #putAt(List, Tsr)} method with an empty list as key.
      *  This will be interpreted as an inline copy of the contents of the
      *  second parameter into this {@link Tsr} instance.
+     *  This constructor will be called by the {@link Tsr#newInstance()} factory method.
      */
     private Tsr() {}
 
@@ -411,15 +412,17 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
-     *
-     *
-     * @param axesSizes
-     * @return
+     * @param axesSizes A list of numbers which will be interpreted as shape array.
+     * @return A tensor for storing numbers.
      */
     public static Tsr<Number> ofShape( List<? extends Number> axesSizes ) {
         return ofShape( axesSizes.toArray( new Number[0] ) );
     }
 
+    /**
+     * @param axesSizes An array of numbers which will be interpreted as shape array.
+     * @return A tensor for storing numbers.
+     */
     @SafeVarargs
     public static <T extends Number> Tsr<Number> ofShape( T... axesSizes ) {
         int[] shape = Arrays.stream( axesSizes ).mapToInt( Number::intValue ).toArray();
@@ -448,7 +451,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static <V> WithShapeOrScalarOrVectorOnDevice<V> of( Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
+    public static <V> WithShapeOrScalarOrVectorOnDevice<V> of( Class<V> typeClass ) { return new TensorBuilder<>( typeClass ); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -614,7 +617,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _constructAndAllocate( shape, true );
     }
 
-    public static <V> Tsr of( Class<V> typeClass, int[] shape, Object data ) { return new Tsr<>( shape, typeClass, data ); }
+    public static <V> Tsr<V> of( Class<V> typeClass, int[] shape, Object data ) { return new Tsr<>( shape, typeClass, data ); }
 
     public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, Object data ) { return new Tsr<>( shape.stream().mapToInt(i -> i).toArray(), typeClass, data ); }
 

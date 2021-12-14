@@ -48,23 +48,19 @@ SOFTWARE.
 
 package neureka.devices.opencl;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
 import neureka.common.composition.Component;
+import neureka.common.utility.DataConverter;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.CLFunctionCompiler;
 import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
-import neureka.common.utility.DataConverter;
-import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.NDConfiguration;
 import org.jocl.*;
 import org.slf4j.Logger;
@@ -193,8 +189,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
      *  The OpenCLPlatform :
      *  This method is a simple getter for the OpenCLPlatform instance hosting this current device.
      *  A platform would for example be vendor specific like Intel, AMD, Nvidia...
-     *
-     * @return The OpenCLPlatform instance representing the platform (amd, intel, nvidia) to which this device belongs.
      */
     private final OpenCLPlatform _platform;
 
@@ -211,8 +205,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
     */
 
     /**
-     * @param platform
-     * @param deviceId
+     * @param platform The platform containing this device.
+     * @param deviceId The underlying OpenCL id of this device.
      */
     private OpenCLDevice( OpenCLPlatform platform, cl_device_id deviceId )
     {
@@ -612,7 +606,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public <T extends Number> Device<Number> updateNDConf(AbstractNDArray<?, T> tensor) {
+    public <T extends Number> Device<Number> updateNDConf( Tsr<T> tensor ) {
          cl_tsr<?,?> clt = tensor.get(cl_tsr.class);
          if ( clt != null ) {
              clt.config = _writeNDConfig( tensor.getNDConf() );

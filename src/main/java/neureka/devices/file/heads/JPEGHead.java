@@ -91,8 +91,8 @@ public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
     @Override
     public Tsr<Number> load() throws IOException {
         Object value = _loadData();
-        Tsr<Number> t = Tsr.of( I16.class, new int[]{_height, _width, 3}, value );
-        return t;
+        Tsr t = Tsr.of( I16.class, new int[]{_height, _width, 3}, value );
+        return (Tsr<Number>) t;
     }
 
     @Override

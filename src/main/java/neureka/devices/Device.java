@@ -36,18 +36,18 @@ SOFTWARE.
 
 package neureka.devices;
 
-import neureka.backend.api.BackendExtension;
-import neureka.calculus.assembly.ParseUtil;
-import neureka.common.composition.Component;
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.BackendContext;
+import neureka.backend.api.BackendExtension;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.BackendContext;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.ParseUtil;
+import neureka.common.composition.Component;
 import neureka.devices.host.CPU;
-import neureka.ndim.AbstractNDArray;
+import neureka.ndim.config.NDConfiguration;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -59,7 +59,7 @@ import java.util.stream.Stream;
  * devices for storing tensors (instances of the Tsr&lt;V&gt; class), which may
  * also expose a useful API for executing operations on tensors.
  * Such instances are also components of tensors, which is why
- * this interface extends the Component&lt;Tsr&lt;V&gt;&gt; interface.
+ * this interface extends the Component&lt;Tsr&lt;V&gt;&gt; interface.                        <br><br>
  *
  * The device interface extends the "{@link Storage}" interface because devices
  * are capable of storing tensors on them.
@@ -83,8 +83,9 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     }
 
     /**
-     * This method returns {@link Device} instances matching
-     * the given search parameter.
+     *  This method returns {@link Device} instances matching
+     *  the given search parameters.
+     *
      * @param searchKeys The search parameter and name of the requested {@link Device} instance.
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
@@ -137,26 +138,82 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      *  of the given tensor and the "parent" tensor in whatever
      *  formant suites the underlying implementation and or final type.
      *  {@link Device} implementations are also tensor storages
-     *  which may also have to store tensors which are slices of bigger tensors.
+     *  which may also have to store tensors which are slices of bigger tensors.   <br><br>
      *
      * @param tensor The tensor whose data ought to be stored.
      * @return A reference this object to allow for method chaining. (factory pattern)
      */
-    <T extends V> Device<V> store(Tsr<T> tensor, Tsr<T> parent );
+    <T extends V> Device<V> store( Tsr<T> tensor, Tsr<T> parent );
 
-    <T extends V> boolean has(Tsr<T> tensor );
+    /**
+     *  Use this to check if a tensor is stored on this {@link Device}!  <br><br>
+     *
+     * @param tensor The tensor which may or may not be stored on this {@link Device}.
+     * @param <T> The type parameter for the value type of the tensor, which must be supported by this {@link Device}.
+     * @return The truth value determining if the provided tensor is stored on this {@link Device}.
+     */
+    <T extends V> boolean has( Tsr<T> tensor );
 
+    /**
+     *  Use this to remove the provided tensor from this {@link Device}!  <br><br>
+     *
+     * @param tensor The tensor which ought to be removed from this {@link Device}.
+     * @param <T> The type parameter for the value type of the tensor, which must be supported by this {@link Device}.
+     * @return This very instance to allow for method chaining.
+     */
     <T extends V> Device<V> free( Tsr<T> tensor );
 
+    /**
+     *  Use this to perform some custom memory cleanup for when the provided {@link Tsr} gets garbage collected.   <br><br>
+     *
+     * @param tensor The tensor for which a {@link Runnable} lambda ought to be executed upon garbage collection.
+     * @param action The {@link Runnable} action which ought to be performed when the tensor gets garbage collected.
+     * @param <T> The type parameter for the value type of the tensor, which must be supported by this {@link Device}.
+     * @return This very instance to allow for method chaining.
+     */
     <T extends V> Device<V> cleaning( Tsr<T> tensor, Runnable action );
 
+    /**
+     *  Use this method to write data to the provided tensor, given that
+     *  the tensor is already stored on this device!                         <br><br>
+     *
+     * @param tensor The tensor whose underlying data array ought to be written to.
+     * @param value The data inn the form of a primitive array.
+     * @param <T> The type parameter for the value type of the tensor, which must be supported by this {@link Device}.
+     * @return This very instance to allow for method chaining.
+     */
     <T extends V> Device<V> write( Tsr<T> tensor, Object value );
 
+    /**
+     *  This method is used internally mostly and should not be used in most cases.    <br><br>
+     *
+     * @param former The tensor whose associated data (on the device) ought to be assigned to the other tensor.
+     * @param replacement The tensor which ought to receive the data of the former tensor internally.
+     * @param <T> The type parameter for the value type of the tensors, which must be supported by this {@link Device}.
+     * @return This very instance to allow for method chaining.
+     */
     <T extends V> Device<V> swap( Tsr<T> former, Tsr<T> replacement );
 
+    /**
+     *  This method is used internally to give {@link Device} implementations the opportunity
+     *  to perform some exception handling before the {@link ExecutionCall} will be dispatched.
+     *  Use this for debugging when doing custom backend operations.
+     *
+     * @param call The {@link ExecutionCall} which should be approved by this {@link Device} before execution.
+     * @return This very instance to allow for method chaining.
+     */
     Device<V> approve( ExecutionCall<? extends Device<?>> call );
 
-    <T extends V> Device<V> updateNDConf( AbstractNDArray<?, T> tensor );
+    /**
+     *  This method automatically called within the {@link Tsr#setNDConf(NDConfiguration)} method
+     *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
+     *  given {@link Device} implementation... <br><br>
+     *
+     * @param tensor The tensor whose {@link NDConfiguration} should be resent to this {@link Device}.
+     * @param <T> The type parameter for the value type of the tensor, which must be supported by this {@link Device}.
+     * @return This very instance to allow for method chaining.
+     */
+    <T extends V> Device<V> updateNDConf( Tsr<T> tensor );
 
     <T extends V> Object valueFor( Tsr<T> tensor );
 
@@ -183,7 +240,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     /**
      *  This is a very simple fluent API for temporarily storing a number
      *  of tensors on this {@link Device}, executing a provided lambda action,
-     *  and then migrating all the tensors back to their original devices.
+     *  and then migrating all the tensors back to their original devices.              <br><br>
      *
      * @param first The first tensor among all passed tensors which ought to be
      *              stored temporarily on this {@link Device}.
@@ -214,11 +271,14 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         };
     }
 
-
+    /**
+     *  The second part of the method chain of the fluent API for executing
+     *  tensors on this {@link Device} temporarily.
+     */
     interface In {
         /**
          *
-         * @param lambda
+         * @param lambda The lambda during which the previously provided tensors should be stored on this {@link Device}.
          * @param <R> The return type parameter of the lambda which is expected to be passed to
          *            the context runner {@link In} returned by this method.
          *

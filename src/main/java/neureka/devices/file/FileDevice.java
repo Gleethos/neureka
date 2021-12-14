@@ -228,7 +228,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T> Device<Object> updateNDConf(AbstractNDArray<?, T> tensor) {
+    public <T> Device<Object> updateNDConf( Tsr<T> tensor ) {
         return this;
     }
 
