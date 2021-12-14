@@ -341,6 +341,13 @@ class Cross_Device_Type_Unit_Tests extends Specification
         and :
             t.isVirtual()
 
+        when :
+            device.restore(t)
+        then :
+            t.isOutsourced() != ( device instanceof CPU )
+        and :
+            t.isVirtual()
+
         where :
             deviceType << ['CPU','GPU']
     }
