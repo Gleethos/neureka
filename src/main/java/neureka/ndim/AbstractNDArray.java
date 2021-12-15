@@ -265,8 +265,20 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      */
     public abstract boolean isVirtual();
 
+    /**
+     *  The internal implementation handling {@link #setIsVirtual(boolean)}.
+     */
     protected abstract void _setIsVirtual(boolean isVirtual);
 
+    /**
+     *  The {@link AbstractNDArray} is in essence a precursor class to the {@link Tsr} which encapsulates
+     *  and protects most of its state...
+     *  This is especially important during constructing where a wider range of unexpected user input
+     *  might lead to a wider variety of exceptions.
+     *  The API returned by this method simplifies this greatly.
+     *
+     * @return An {@link NDAConstructor} exposing a simple API for configuring a new {@link Tsr} instance.
+     */
     protected NDAConstructor createConstructionAPI()
     {
         AbstractNDArray<C, ?> nda = this;
