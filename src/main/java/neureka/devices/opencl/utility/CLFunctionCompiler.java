@@ -60,7 +60,7 @@ public class CLFunctionCompiler {
                 .setStringifier(
                         children -> {
                             String expression = String.join( ", ", children );
-                            if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                            if ( expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')' ) {
                                 return _functionName + expression;
                             }
                             return _functionName + "(" + expression + ")";
@@ -106,7 +106,7 @@ public class CLFunctionCompiler {
     private void _adHocKernelFor( ExecutionCall<?> call ) {
 
         List<Tsr<Number>> args = Arrays.stream( _argPointer )
-                                    .mapToObj( p -> (Tsr<Number>) call.getTensors()[p+1] )
+                                    .mapToObj( p -> (Tsr<Number>) call.getTensors()[ p + 1 ] )
                                     .collect(Collectors.toList());
 
         args.add(0, call.getTsrOfType(Number.class, 0));
@@ -130,7 +130,7 @@ public class CLFunctionCompiler {
                                                         .mapToObj( String::valueOf )
                                                         .collect( Collectors.joining("x") )
                                                 )
-                                    .collect(Collectors.joining("_"));
+                                    .collect( Collectors.joining( "_" ) );
 
         if ( _device.hasAdHocKernel( kernelSignature ) ) {
             KernelCaller caller = _device.getAdHocKernel( kernelSignature );
@@ -208,7 +208,7 @@ public class CLFunctionCompiler {
         java.util.function.Function<Class<?>, String> formatter = type -> type.getSimpleName()
                                                                                  .toLowerCase()
                                                                                  .replace("integer", "int");
-        if (dtype.typeClassImplements(NumericType.class) ) {
+        if ( dtype.typeClassImplements(NumericType.class) ) {
             NumericType<?,?,?,?> instance = (NumericType<?,?,?,?>) dtype.getTypeClassInstance();
             if ( instance.holderType() == instance.targetType() )
                 return formatter.apply(instance.holderType()); // Float, Double, Long, Short...

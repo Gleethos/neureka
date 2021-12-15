@@ -100,7 +100,7 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
             t2.isOutsourced()
             t3.isOutsourced()
 
-        when : 'We set a summy implementation so that the real implementation does not get called'
+        when : 'We set a dummy implementation so that the real implementation does not get called'
             foundAlgorithm.setImplementationFor(mockDevice.getClass(), (call)->{})
         and : 'We call the function again...'
             fun( t1, t2, t3 )
@@ -198,7 +198,7 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
     }                                                                                     
 
 """)
-        and : 'After the kernel has been compiled we expect the implementation to '
+        and : 'After the kernel has been compiled we expect the implementation to be called through a caller.'
             1 * mockDevice.getAdHocKernel("test_fun_F64\$1_F64\$1_F64\$1_F64\$1") >> mockCaller
         and : 'We expect that the caller receives 4 inputs, 1 output tensor and the 3 function arguments.'
             4 * mockCaller.pass(_)
