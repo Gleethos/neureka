@@ -261,8 +261,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
             String message = "Cannot compile kernel source for name '"+name+"' because the name is already taken.\n" +
                     "Use another name or find out why this kernel already exists.\n" +
                     (
-                            ( adHoc.source.equals( source ) )
-                                    ? "Besides the name, the source code of the existing kernel is also identical.\n" : ""
+                        adHoc.source.equals( source )
+                                ? "Besides the name, the source code of the existing kernel is also identical.\n" : ""
                     );
             _log.error( message );
             throw new IllegalArgumentException( message );
@@ -272,7 +272,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         cl_program cpProgram = clCreateProgramWithSource(
                 getPlatform().getContext(),
                 1,
-                new String[]{source},
+                new String[]{ source },
                 null,
                 null
         );
@@ -364,9 +364,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
             _log.error( message );
             throw new IllegalArgumentException( message );
         }
-        double[] value = ( tensor.isVirtual() )
-                ? _value64f( tensor.get( cl_tsr.class ), 1, 0 )
-                : value64f( tensor );
+        double[] value = tensor.isVirtual()
+                            ? _value64f( tensor.get( cl_tsr.class ), 1, 0 )
+                            : value64f( tensor );
         free( tensor );
         tensor.forComponent( Tsr.class, this::restore);
         tensor.setValue( value );
@@ -540,8 +540,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public <T extends Number> Device<Number> write( Tsr<T> tensor, Object value ) {
-        if ( value instanceof double[] ) return overwrite64( (Tsr<Number>) tensor, (double[]) value);
-        else if ( value instanceof float[] ) return overwrite32( (Tsr<Number>) tensor, (float[]) value);
+        if ( value instanceof double[] ) return overwrite64( (Tsr<Number>) tensor, (double[]) value );
+        else if ( value instanceof float[] ) return overwrite32( (Tsr<Number>) tensor, (float[]) value );
         return this;
     }
 
