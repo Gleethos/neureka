@@ -68,11 +68,12 @@ public class FunctionBuilder
      * @return the function which has been built from the expression
      */
     public Function build( String expression, boolean doAD ) {
-        expression =
-                (expression.length() > 0
-                        && (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')'))
-                        ? ("(" + expression + ")")
-                        : expression;
+
+        if (
+            expression.length() > 0 &&
+            (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')')
+        )
+            expression = ("(" + expression + ")");
 
         if ( _context.getFunctionCache().has( expression, doAD ) )
             return _context.getFunctionCache().get( expression, doAD );
@@ -93,6 +94,7 @@ public class FunctionBuilder
      */
     private Function _build( String expression, boolean doAD )
     {
+        // TODO: Remove this! It's error prone! (Operations should define parsing to some extent)
         expression = expression
                 .replace("<<", "" + ((char) 171))
                 .replace(">>", "" + ((char) 187));

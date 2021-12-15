@@ -240,8 +240,29 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      */
     protected void _allocate( int size ) { _data = _dataType.allocate( size ); }
 
-    public abstract C setIsVirtual(boolean isVirtual );
+    /**
+     *  WARNING! Virtualizing is the process of compacting the underlying data array
+     *  down to an array holding a single value.
+     *  This only makes sense for homogeneously populated tensors.
+     *  Passing {@code false} to this method will "actualize" a "virtual" tensor.
+     *  Meaning the underlying data array will at least become as large as the size of the tensor
+     *  as is defined by {@link #size()}.
+     *
+     * @param isVirtual The truth value determining if this tensor should be "virtual" or "actual".
+     * @return This concrete instance, to allow for method chaining.
+     */
+    public abstract C setIsVirtual( boolean isVirtual );
 
+    /**
+     *  A Virtual tensor is a tensor whose underlying data array is of size 1, holding only a single value. <br>
+     *  This only makes sense for homogeneously populated tensors.
+     *  An example of such a tensor would be: <br>
+     *  {@code Tsr.ofInts().withShape(x,y).all(n)}                           <br><br>
+     *
+     *  Use {@link #setIsVirtual(boolean)} to "actualize" a "virtual" tensor, and vise versa.
+     *
+     * @return The truth value determining if this tensor is "virtual" or "actual".
+     */
     public abstract boolean isVirtual();
 
     protected abstract void _setIsVirtual(boolean isVirtual);
