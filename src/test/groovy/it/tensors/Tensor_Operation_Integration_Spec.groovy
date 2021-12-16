@@ -436,9 +436,9 @@ class Tensor_Operation_Integration_Spec extends Specification
 
         when : 'A three by two matrix is being transposed...'
             Tsr t = Tsr.of([2, 3], [
-                    1, 2, 3,
-                    4, 5, 6
-            ]).T()
+                                1, 2, 3,
+                                4, 5, 6
+                            ]).T()
 
         then : t.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
     }
@@ -481,7 +481,7 @@ class Tensor_Operation_Integration_Spec extends Specification
         and :
             def fun = new FunctionBuilder( Neureka.get().backend() ).build("Ig[0]", false)
         then :
-            fun(trs).toString().equals("[1]:(-8.0)")
+            fun(trs).toString() == "[1]:(-8.0)"
 
         when :
             trs[0] = y

@@ -17,16 +17,23 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ *  The {@link FunctionBuilder} takes a {@link BackendContext} instance based on which it can then build
+ *  {@link Function} instances by calling one of its build methods.
+ *  Usually one passes a {@link String} to be parsed to a {@link Function}.
+ *  The information needed for parsing is being provided by the {@link Operation}s within the previously
+ *  provided {@link BackendContext}...
+ */
 public class FunctionBuilder
 {
     private static Logger _LOG = LoggerFactory.getLogger(FunctionBuilder.class);
 
-    private static final Pattern variablePattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)");
-    private static final Pattern inputPattern    = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)");
-    private static final Pattern constantPattern = Pattern.compile("^((-?[0-9]*|[0-9]*)[.]?[0-9]*(e[-]?[0-9]+)?)");
+    private static final Pattern _variablePattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)");
+    private static final Pattern _inputPattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)");
+    private static final Pattern _constantPattern = Pattern.compile("^((-?[0-9]*|[0-9]*)[.]?[0-9]*(e[-]?[0-9]+)?)");
 
-    private static final Pattern reshapePattern = Pattern.compile("^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))");
-    private static final Pattern nodePattern = Pattern.compile("^([\\(]{1}.+[\\)]{1})");
+    private static final Pattern _reshapePattern = Pattern.compile("^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))");
+    private static final Pattern _nodePattern = Pattern.compile("^([\\(]{1}.+[\\)]{1})");
 
     private final BackendContext _context;
 
@@ -61,11 +68,12 @@ public class FunctionBuilder
      * @return the function which has been built from the expression
      */
     public Function build( String expression, boolean doAD ) {
-        expression =
-                (expression.length() > 0
-                        && (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')'))
-                        ? ("(" + expression + ")")
-                        : expression;
+
+        if (
+            expression.length() > 0 &&
+            (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')')
+        )
+            expression = ("(" + expression + ")");
 
         if ( _context.getFunctionCache().has( expression, doAD ) )
             return _context.getFunctionCache().get( expression, doAD );
@@ -86,6 +94,7 @@ public class FunctionBuilder
      */
     private Function _build( String expression, boolean doAD )
     {
+        // TODO: Remove this! It's error prone! (Operations should define parsing to some extent)
         expression = expression
                 .replace("<<", "" + ((char) 171))
                 .replace(">>", "" + ((char) 187));
@@ -219,9 +228,9 @@ public class FunctionBuilder
         //---
         String component = ParseUtil.unpackAndCorrect( foundComponent );
 
-        if ( constantPattern.matcher( component ).matches()   ) return new FunctionConstant().newBuild( component );
-        else if ( inputPattern.matcher( component ).find()    ) return new FunctionInput()   .newBuild( component );
-        else if ( variablePattern.matcher( component ).find() ) return new FunctionVariable().newBuild( component );
+        if ( _constantPattern.matcher( component ).matches()   ) return new FunctionConstant().newBuild( component );
+        else if ( _inputPattern.matcher( component ).find()    ) return new FunctionInput()   .newBuild( component );
+        else if ( _variablePattern.matcher( component ).find() ) return new FunctionVariable().newBuild( component );
         else if ( component.startsWith("-") ) {
             component = "-1 * "+component.substring(1);
             return _build(component, doAD);
@@ -264,7 +273,7 @@ public class FunctionBuilder
                                         foundComponents,
                                         _context.getOperation( operationIndex ).getOperator()
                                 );
-        } else if ( reshapePattern.matcher(asString).matches() ) {
+        } else if ( _reshapePattern.matcher(asString).matches() ) {
             foundComponents.set(0, foundComponents.get( 0 ).substring(1));
             String[] splitted;
             if (foundComponents.get(foundComponents.size() - 1).contains("]")) {

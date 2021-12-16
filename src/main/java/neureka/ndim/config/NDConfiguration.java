@@ -87,15 +87,16 @@ public interface NDConfiguration
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     *  The following method calculates the true index for an element in the data array
-     *  based on a provided "virtual index".
-     *  This virtual index might be different from the true index, for example because the nd-array is
-     *  a slice of another larger nd-array, or maybe because it is in fact a reshaped version of another nd-array.
-     *  This virtual index will be turned into an index array which defines the position for every axis.
-     *  Then this index array will be converted into the final and true index targeting an underlying item.
-     *  The information needed for performing this translation is contained within an implementation of
-     *  the {@link NDConfiguration} interface array, which contains everything
-     *  needed to treat a given block of data as an nd-array!
+     *  Use this to calculate the true index for an element in the data array (data array index)
+     *  based on a provided "virtual index", or "value array index".
+     *  This virtual index may be different from the true index depending on the type of nd-array,
+     *  like for example if the nd-array is
+     *  a slice of another larger nd-array, or if it is in fact a reshaped version of another nd-array.
+     *  This virtual index ought to be turned into an index array which defines the position for every axis.
+     *  Then this indices array will be converted into the final and true index targeting an underlying item.
+     *  The information needed for performing this translation is expressed by individual implementations of
+     *  this {@link NDConfiguration} interface, which contain everything
+     *  needed to treat a given block of data as a nd-array!
      *
      * @param index The virtual index of the tensor having this configuration.
      * @return The true index which targets the actual data within the underlying data array of an nd-array / tensor.
