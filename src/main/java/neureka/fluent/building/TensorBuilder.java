@@ -123,23 +123,35 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
 
     @Override
     public Tsr<V> scalar( V value ) {
-        Object data = value;
-        Class<?> targetType = _dataType.getJVMTypeClass();
-        if ( value != null && value != targetType ) {
-            if (
-                    Number.class.isAssignableFrom( value.getClass() ) &&
-                    Number.class.isAssignableFrom( targetType )
-            ) {
-                // This branch will mostly be reached when using Groovy, which not necessarily enforces the type "V"!
-                if (      targetType == Double.class  ) data = Double.valueOf(((Number)value).doubleValue());
-                else if ( targetType == Float.class   ) data = Float.valueOf(((Number)value).floatValue());
-                else if ( targetType == Integer.class ) data = Integer.valueOf(((Number)value).intValue());
-                else if ( targetType == Short.class   ) data = Short.valueOf(((Number)value).shortValue());
-                else if ( targetType == Byte.class    ) data = Byte.valueOf(((Number)value).byteValue());
-            } else
+        if ( value != null ) {
+            value = _checked( value );
+            if ( value.getClass() != _dataType.getJVMTypeClass() )
                 throw new IllegalArgumentException("Provided value is of the wrong type!");
         }
-        return Tsr.of( _dataType, new int[]{1}, data ).to( _device );
+        return Tsr.of( _dataType, new int[]{1}, value ).to( _device );
+    }
+
+    /**
+     *  This method makes sure that the data provided by the user is indeed of the right type
+     *  by converting it if possible to the previously provided data type.
+     *
+     * @param o The scalar value which may need to be converted to the provided data type.
+     * @return The value converted to the type defined by the provided {@link #_dataType}.
+     */
+    private V _checked( V o ) {
+        Class<?> jvmType = _dataType.getJVMTypeClass();
+        if ( Number.class.isAssignableFrom(jvmType) ) {
+            if ( o instanceof Number && o.getClass() != jvmType ) {
+                Number n = (Number) o;
+                if ( jvmType == Integer.class ) return (V) ((Integer) n.intValue());
+                if ( jvmType == Double.class  ) return (V) ((Double) n.doubleValue());
+                if ( jvmType == Short.class   ) return (V) ((Short) n.shortValue());
+                if ( jvmType == Byte.class    ) return (V) ((Byte) n.byteValue());
+                if ( jvmType == Long.class    ) return (V) ((Long) n.longValue());
+                if ( jvmType == Float.class   ) return (V) ((Float) n.floatValue());
+            }
+        }
+        return o;
     }
 
     @Override
@@ -220,22 +232,6 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
         int size = 1;
         for ( int axis : _shape ) size *= axis;
         return size;
-    }
-
-    private V _checked( V o ) {
-        Class<?> jvmTypeClass = _dataType.getJVMTypeClass();
-        if ( Number.class.isAssignableFrom(jvmTypeClass) ) {
-            if ( o instanceof Number && o.getClass() != jvmTypeClass ) {
-                Number n = (Number) o;
-                if ( jvmTypeClass == Integer.class ) return (V) ((Integer) n.intValue());
-                if ( jvmTypeClass == Double.class  ) return (V) ((Double) n.doubleValue());
-                if ( jvmTypeClass == Short.class   ) return (V) ((Short) n.shortValue());
-                if ( jvmTypeClass == Byte.class    ) return (V) ((Byte) n.byteValue());
-                if ( jvmTypeClass == Long.class    ) return (V) ((Long) n.longValue());
-                if ( jvmTypeClass == Float.class   ) return (V) ((Float) n.floatValue());
-            }
-        }
-        return o;
     }
 
     @Override

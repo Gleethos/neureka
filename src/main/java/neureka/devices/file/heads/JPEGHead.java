@@ -31,7 +31,6 @@ public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
 
     int _width;
     int _height;
-    //int _totalSize;
 
     public JPEGHead( String fileName )
     {
@@ -39,7 +38,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
         try {
             _loadHead();
         } catch( Exception e ) {
-            System.err.print("Failed reading JPG file!");
+            _LOG.error("Failed reading JPG file!");
         }
     }
 
@@ -76,7 +75,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
         {
             if ( _height < 1 || _width < 1 ) {
                 String message = "The height and width of the jpeg at '"+_fileName+"' is "+_height+" & "+_width+"." +
-                        "However both dimensions must at least be of size 1!";
+                                 "However both dimensions must at least be of size 1!";
                 Exception e = new IOException( message );
                 _LOG.error( message, e );
                 throw e;
@@ -84,7 +83,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
         }
         catch ( Exception e )
         {
-            e.printStackTrace();
+            _LOG.error( "Failed loading jpg file!", e );
         }
     }
 
@@ -117,7 +116,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
         }
         catch ( IOException e )
         {
-            e.printStackTrace();
+            _LOG.error( "Failed loading jpg file!", e );
             throw e;
         }
     }
@@ -167,7 +166,8 @@ public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
         try {
             ImageIO.write( buffi, "jpg", new File( _fileName ) );
         } catch ( Exception e ) {
-            e.printStackTrace();
+            _LOG.error("Failed writing tensor to jpg!", e);
+            return this;
         }
         tensor.setIsOutsourced( true );
         tensor.setDataType( DataType.of( I16.class ) );

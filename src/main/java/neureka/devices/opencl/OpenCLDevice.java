@@ -87,6 +87,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return platform.get( did );
     }
 
+    public enum Type {
+        CPU, GPU, ACCELERATOR, DEFAULT, CUSTOM, ALL, UNKNOWN
+    }
+
     public String toString() {
         return "OpenCLDevice[deviceId=" + _deviceId + ",platform=" + _platform + "]";
     }
@@ -344,6 +348,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public void dispose() {
         _tensors.forEach( this::restore );
         clFinish( _queue );
+        clReleaseCommandQueue(_queue);
     }
 
     /**
@@ -774,17 +779,15 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return DeviceQuery.getString( _deviceId, CL_DRIVER_VERSION );
     }
 
-    public String type() {
+    public Type type() {
         long deviceType = DeviceQuery.getLong( _deviceId, CL_DEVICE_TYPE );
-        if ( (deviceType & CL_DEVICE_TYPE_CPU) != 0 )
-            return "CPU";
-        if ( (deviceType & CL_DEVICE_TYPE_GPU) != 0 )
-            return "GPU";
-        if ( (deviceType & CL_DEVICE_TYPE_ACCELERATOR) != 0 )
-            return "ACCELERATOR";
-        if ( (deviceType & CL_DEVICE_TYPE_DEFAULT) != 0 )
-            return "DEFAULT";
-        return "UNKNOWN";
+        if ( ( deviceType & CL_DEVICE_TYPE_CPU         ) != 0 ) return Type.CPU;
+        if ( ( deviceType & CL_DEVICE_TYPE_GPU         ) != 0 ) return Type.GPU;
+        if ( ( deviceType & CL_DEVICE_TYPE_ACCELERATOR ) != 0 ) return Type.ACCELERATOR;
+        if ( ( deviceType & CL_DEVICE_TYPE_DEFAULT     ) != 0 ) return Type.DEFAULT;
+        if ( ( deviceType & CL_DEVICE_TYPE_CUSTOM      ) != 0 ) return Type.CUSTOM;
+        if ( ( deviceType & CL_DEVICE_TYPE_ALL         ) != 0 ) return Type.ALL;
+        return Type.UNKNOWN;
     }
 
     public int maxComputeUnits() {

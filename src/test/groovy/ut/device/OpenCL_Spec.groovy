@@ -64,7 +64,7 @@ class OpenCL_Spec extends Specification
         then : 'The device has realistic properties.'
             !cld.name().isBlank()
             !cld.vendor().isBlank()
-            !cld.type().isBlank()
+            cld.type() != OpenCLDevice.Type.UNKNOWN
             !cld.toString().isBlank()
             !cld.version().isBlank()
     }

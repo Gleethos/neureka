@@ -225,6 +225,10 @@ public class OpenCLPlatform {
         return _context;
     }
 
+    public void dispose() {
+        clReleaseContext( _context );
+    }
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +

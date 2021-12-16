@@ -112,7 +112,7 @@ public class CLContext implements BackendExtension
         double score = 0;
         for ( OpenCLPlatform p : getPlatforms() ) {
             for ( OpenCLDevice d : p.getDevices() ) {
-                double similarity = Stream.of("opencl",d.type(),d.name(),d.vendor())
+                double similarity = Stream.of("opencl",d.type().name(),d.name(),d.vendor())
                                             .mapToDouble( word -> ParseUtil.similarity( word, searchKey ) )
                                             .max()
                                             .orElse(0);
@@ -133,6 +133,7 @@ public class CLContext implements BackendExtension
             for ( OpenCLDevice device : platform.getDevices() ) {
                 device.dispose();
             }
+            platform.dispose();
         }
     }
 }
