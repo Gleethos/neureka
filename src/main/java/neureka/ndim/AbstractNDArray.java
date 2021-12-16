@@ -433,8 +433,14 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
 
     //---
 
+    /**
+     * @return The number of dimensions of this tensor / nd-array.
+     */
     public int rank() { return _NDConf.rank(); }
 
+    /**
+     * @return A list of the dimensions of this tensor / array.
+     */
     public List<Integer> shape() { return _asList(_NDConf.shape()); }
 
     public int shape( int i ) { return _NDConf.shape()[ i ]; }
