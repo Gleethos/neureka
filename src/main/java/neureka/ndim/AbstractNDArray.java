@@ -331,25 +331,6 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
             return DataConverter.instance().convert( getData(), newDT.getTypeClass() );
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    @Override
-    public void forEach( Consumer<? super V> action ) {
-        for ( V v : this ) action.accept( v );
-    }
-
-    @Override
-    public Spliterator<V> spliterator()
-    {
-        return new Spliterator<V>()
-        {
-            @Override public boolean tryAdvance( Consumer<? super V> action ) { return false; }
-            @Override public Spliterator<V> trySplit() { return null; }
-            @Override public long estimateSize() { return 0; }
-            @Override public int characteristics() { return 0; }
-        };
-    }
-
     /**
      *  An NDArray implementation ought to have some way to access its underlying data array.
      *  This method simple returns an element within this data array sitting at position "i".
@@ -376,8 +357,6 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      */
     public abstract C setValueAt( int i, V o );
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     /**
      *  This method compares the passed class with the underlying data-type of this NDArray.
      *  If the data-type of this NDArray is equivalent to the passed class then the returned
@@ -393,10 +372,41 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public int indexOfIndex( int i ) { return _NDConf.indexOfIndex( i ); }
+    /**
+     *  This is a convenience method identical to {@code tensor.getNDConf().indexOfIndex(i)}.
+     *  Use this to calculate the true index for an element in the data array (data array index)
+     *  based on a provided "virtual index", or "value array index".
+     *  This virtual index may be different from the true index depending on the type of nd-array,
+     *  like for example if the nd-array is
+     *  a slice of another larger nd-array, or if it is in fact a reshaped version of another nd-array.
+     *  The basis for performing this translation is expressed by individual implementations of
+     *  this {@link NDConfiguration} interface, which contain everything
+     *  needed to treat a given block of data as a nd-array!
+     *
+     * @param index The virtual index of the tensor having this configuration.
+     * @return The true index which targets the actual data within the underlying data array of an nd-array / tensor.
+     */
+    public int indexOfIndex( int index ) { return _NDConf.indexOfIndex( index ); }
 
+    /**
+     *  This is a convenience method identical to {@code tensor.getNDConf().IndicesOfIndex(i)}.
+     *  Use this to calculates the axis indices for an element in the nd-array array
+     *  based on a provided "virtual index".
+     *  The resulting index defines the position of the element for every axis.
+     *
+     * @param index The virtual index of the tensor having this configuration.
+     * @return The position of the (virtually) targeted element represented as an array of axis indices.
+     */
     public int[] IndicesOfIndex( int index ) { return _NDConf.indicesOfIndex( index ); }
 
+    /**
+     *  This is a convenience method identical to {@code tensor.getNDConf().indexOfIndices(indices)}.
+     *  Use this to calculates the true index for an element in the data array
+     *  based on a provided index array.
+     *
+     * @param indices The indices for every axis of a given nd-array.
+     * @return The true index targeting the underlying data array of a given nd-array.
+     */
     public int indexOfIndices( int[] indices ) { return _NDConf.indexOfIndices(indices); }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
