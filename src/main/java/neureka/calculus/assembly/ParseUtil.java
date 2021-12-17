@@ -26,7 +26,7 @@ public class ParseUtil
     @Contract( pure = true )
     public static String parsedOperation( final String exp, final int index ) {
         if (exp.length() <= index) return null;
-        String operation = "";
+        String operation;
         for ( int i = exp.length()-1; i >= index; i--) {
             operation = exp.substring(index, i);
             if (ParseUtil.isAnOperation(operation) || ParseUtil.isAnOperation(operation.toLowerCase())) {
@@ -46,33 +46,34 @@ public class ParseUtil
         {
             if ( exp.charAt( i ) == ')' ) --bracketDepth;
             else if ( exp.charAt( i ) == '(' ) ++bracketDepth;
-            if ( bracketDepth == 0 ) {
-                String possibleOperation;
-                for ( int ii = exp.length()-1; ii >= i+1; ii--) {
-                    String found = ParseUtil.parsedOperation( exp.substring( i, ii ), i );
-                    if (
-                         found != null && // If the found string is a function then we continue!
-                                 !Neureka.get().backend().getOperation(found).getOperator().equals(found)
-                    ) {
-                        ii = -1; // end inner loop
-                        component.append( found, 0, found.length() - 1 );
-                        i += found.length()-1;
-                    } else {
-                        possibleOperation = exp.substring( i + 1, ii );
-                        if ( ParseUtil.isAnOperation( possibleOperation ) ) {
-                            if (
-                                    ( exp.charAt( i ) == 'j' || !Character.isLetter( exp.charAt( i ) ) )
-                            ) {
-                                component.append( exp.charAt( i ) );
-                                return component.toString();
-                            }
-                        }
-                    }
-                }
+            if ( bracketDepth != 0 ) {
+                component.append( exp.charAt( i ) );
+                continue;
             }
-            component.append(exp.charAt( i ));
+            for ( int ii = exp.length() - 1; ii >= i + 1; ii--) {
+                String found = ParseUtil.parsedOperation( exp.substring( i, ii ), i );
+                if (
+                     found != null && // If the found string is a function then we continue!
+                     !Neureka.get().backend().getOperation(found).getOperator().equals(found)
+                ) {
+                    ii = -1; // end inner loop
+                    component.append( found, 0, found.length() - 1 );
+                    i += found.length()-1;
+                }
+                else if ( _isOperationComponent( exp, i, ii ) )
+                    return component.append( exp.charAt( i ) ).toString();
+            }
+            component.append( exp.charAt( i ) );
         }
         return component.toString();
+    }
+
+    @Contract( pure = true )
+    private static boolean _isOperationComponent( String exp, int i, int ii ) {
+        String possibleOperation = exp.substring( i + 1, ii );
+        return ParseUtil.isAnOperation( possibleOperation )
+                &&
+               ( exp.charAt(i) == 'j' || !Character.isLetter(exp.charAt(i)) );
     }
 
     @Contract( pure = true )
@@ -129,8 +130,8 @@ public class ParseUtil
 
     @Contract( pure = true )
     private static boolean isForbiddenChar( char c ) {
-        return c == '"' || c == '$' || c == '%' || c == '&' || c == '=' || c == '#' || c == '|' || c == '~' || c == ':'
-                || c == ';' || c == '@' || c == '?' || c == '\\' || c == '>' || c == '<' || c == ' ';
+        return c == '"' || c == '$' || c == '%' || c == '&'  || c == '=' || c == '#' || c == '|' || c == '~' || c == ':'
+            || c == ';' || c == '@' || c == '?' || c == '\\' || c == '>' || c == '<' || c == ' ';
     }
 
     @Contract( pure = true )
