@@ -110,6 +110,7 @@ class OpenCL_Spec extends Specification
     }
 
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'A given OpenCL context can be disposed!'() {
 
         given :
