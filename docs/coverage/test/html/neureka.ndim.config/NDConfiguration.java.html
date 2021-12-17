@@ -87,15 +87,16 @@ public interface NDConfiguration
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     *  The following method calculates the true index for an element in the data array
-     *  based on a provided &quot;virtual index&quot;.
-     *  This virtual index might be different from the true index, for example because the nd-array is
-     *  a slice of another larger nd-array, or maybe because it is in fact a reshaped version of another nd-array.
-     *  This virtual index will be turned into an index array which defines the position for every axis.
-     *  Then this index array will be converted into the final and true index targeting an underlying item.
-     *  The information needed for performing this translation is contained within an implementation of
-     *  the {@link NDConfiguration} interface array, which contains everything
-     *  needed to treat a given block of data as an nd-array!
+     *  Use this to calculate the true index for an element in the data array (data array index)
+     *  based on a provided &quot;virtual index&quot;, or &quot;value array index&quot;.
+     *  This virtual index may be different from the true index depending on the type of nd-array,
+     *  like for example if the nd-array is
+     *  a slice of another larger nd-array, or if it is in fact a reshaped version of another nd-array.
+     *  This virtual index ought to be turned into an index array which defines the position for every axis.
+     *  Then this indices array will be converted into the final and true index targeting an underlying item.
+     *  The information needed for performing this translation is expressed by individual implementations of
+     *  this {@link NDConfiguration} interface, which contain everything
+     *  needed to treat a given block of data as a nd-array!
      *
      * @param index The virtual index of the tensor having this configuration.
      * @return The true index which targets the actual data within the underlying data array of an nd-array / tensor.
@@ -132,8 +133,18 @@ public interface NDConfiguration
      *
      * @return An array of flattened arrays which define this nd-configuration in a compact manner.
      */
-    int[] asInlineArray();
-
+    default int[] asInlineArray()
+    {
+        //CONFIG TRANSFER: &lt;[ shape | translation | indicesMap | indices | strides ]&gt;
+<span class="fc" id="L139">        int rank = rank();</span>
+<span class="fc" id="L140">        int[] inline = new int[ rank * 5 ];</span>
+<span class="fc" id="L141">        System.arraycopy( shape(),       0, inline, rank * 0, rank ); // -=&gt; SHAPE COPY</span>
+<span class="fc" id="L142">        System.arraycopy( translation(), 0, inline, rank * 1, rank ); // -=&gt; TRANSLATION</span>
+<span class="fc" id="L143">        System.arraycopy( indicesMap(),  0, inline, rank * 2, rank ); // -=&gt; INDICES MAP (translates scalarization to dimension index)</span>
+<span class="fc" id="L144">        System.arraycopy( offset(),      0, inline, rank * 3, rank ); // -=&gt; SPREAD / STRIDES</span>
+<span class="fc" id="L145">        System.arraycopy( spread(),      0, inline, rank * 4, rank ); // -=&gt; OFFSET</span>
+<span class="fc" id="L146">        return inline;</span>
+    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     long keyCode();
@@ -164,19 +175,19 @@ public interface NDConfiguration
      * @return The truth value determining if this configuration is not modeling more complex indices like reshaped views or slices...
      */
     default boolean isSimple() {
-<span class="fc" id="L167">        int[] simpleTranslation = NDConfiguration.Utility.newTlnOf( this.shape() );</span>
-<span class="pc bpc" id="L168" title="1 of 2 branches missed.">        return Arrays.equals(this.translation(), simpleTranslation)</span>
+<span class="fc" id="L178">        int[] simpleTranslation = NDConfiguration.Utility.newTlnOf( this.shape() );</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        return Arrays.equals(this.translation(), simpleTranslation)</span>
                 &amp;&amp;
-<span class="pc bpc" id="L170" title="2 of 4 branches missed.">               IntStream.range(0, this.rank()).allMatch( i -&gt; this.spread(i) == 1 )</span>
+<span class="pc bpc" id="L181" title="2 of 4 branches missed.">               IntStream.range(0, this.rank()).allMatch( i -&gt; this.spread(i) == 1 )</span>
                 &amp;&amp;
-<span class="pc bpc" id="L172" title="1 of 2 branches missed.">               Arrays.equals(this.indicesMap(), simpleTranslation )</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">               Arrays.equals(this.indicesMap(), simpleTranslation )</span>
                 &amp;&amp;
-<span class="pc bpc" id="L174" title="2 of 4 branches missed.">               IntStream.range(0, this.rank()).allMatch( i -&gt; this.offset(i) == 0 );</span>
+<span class="pc bpc" id="L185" title="2 of 4 branches missed.">               IntStream.range(0, this.rank()).allMatch( i -&gt; this.offset(i) == 0 );</span>
     }
 
     default IndexToIndexFunction getIndexToIndexAccessPattern() {
-<span class="fc" id="L178">        NDConfiguration nda = this;</span>
-<span class="fc" id="L179">        return (nda::indexOfIndex);</span>
+<span class="fc" id="L189">        NDConfiguration nda = this;</span>
+<span class="fc" id="L190">        return (nda::indexOfIndex);</span>
     }
 
     interface IndexToIndexFunction { int map(int i); }
@@ -186,66 +197,66 @@ public interface NDConfiguration
      *  for nd-configuration related operations like reshaping,
      *  incrementing or decrementing index arrays...
      */
-<span class="nc" id="L189">    class Utility</span>
+<span class="nc" id="L200">    class Utility</span>
     {
         @Contract(pure = true)
         public static int[] rearrange(int[] tln, int[] shape, int[] newForm) {
-<span class="fc" id="L193">            int[] shpTln = newTlnOf( shape );</span>
-<span class="fc" id="L194">            int[] newTln = new int[ newForm.length ];</span>
-<span class="fc bfc" id="L195" title="All 2 branches covered.">            for ( int i = 0; i &lt; newForm.length; i++ ) {</span>
-<span class="fc bfc" id="L196" title="All 2 branches covered.">                if ( newForm[ i ] &lt; 0 ) newTln[ i ] = shpTln[ i ];</span>
-<span class="pc bpc" id="L197" title="1 of 2 branches missed.">                else if ( newForm[ i ] &gt;= 0 ) newTln[ i ] = tln[ newForm[ i ] ];</span>
+<span class="fc" id="L204">            int[] shpTln = newTlnOf( shape );</span>
+<span class="fc" id="L205">            int[] newTln = new int[ newForm.length ];</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">            for ( int i = 0; i &lt; newForm.length; i++ ) {</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">                if ( newForm[ i ] &lt; 0 ) newTln[ i ] = shpTln[ i ];</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">                else if ( newForm[ i ] &gt;= 0 ) newTln[ i ] = tln[ newForm[ i ] ];</span>
             }
-<span class="fc" id="L199">            return newTln;</span>
+<span class="fc" id="L210">            return newTln;</span>
         }
 
         @Contract(pure = true)
         public static int[] rearrange(int[] array, int[] ptr) {
-<span class="fc" id="L204">            int[] newShp = new int[ptr.length];</span>
-<span class="fc bfc" id="L205" title="All 2 branches covered.">            for ( int i = 0; i &lt; ptr.length; i++ ) {</span>
-<span class="fc bfc" id="L206" title="All 2 branches covered.">                if (ptr[ i ] &lt; 0) newShp[ i ] = Math.abs(ptr[ i ]);</span>
-<span class="pc bpc" id="L207" title="1 of 2 branches missed.">                else if (ptr[ i ] &gt;= 0) newShp[ i ] = array[ptr[ i ]];</span>
+<span class="fc" id="L215">            int[] newShp = new int[ptr.length];</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">            for ( int i = 0; i &lt; ptr.length; i++ ) {</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">                if (ptr[ i ] &lt; 0) newShp[ i ] = Math.abs(ptr[ i ]);</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                else if (ptr[ i ] &gt;= 0) newShp[ i ] = array[ptr[ i ]];</span>
             }
-<span class="fc" id="L209">            return newShp;</span>
+<span class="fc" id="L220">            return newShp;</span>
         }
 
         @Contract(pure = true)
         public static int[] newTlnOf(int[] shape) {
-<span class="fc" id="L214">            int[] tln = new int[ shape.length ];</span>
-<span class="fc" id="L215">            int prod = 1;</span>
-<span class="fc bfc" id="L216" title="All 2 branches covered.">            for ( int i = tln.length-1; i &gt;= 0; i-- ) {</span>
-<span class="fc" id="L217">                tln[ i ] = prod;</span>
-<span class="fc" id="L218">                prod *= shape[ i ];</span>
+<span class="fc" id="L225">            int[] tln = new int[ shape.length ];</span>
+<span class="fc" id="L226">            int prod = 1;</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">            for ( int i = tln.length-1; i &gt;= 0; i-- ) {</span>
+<span class="fc" id="L228">                tln[ i ] = prod;</span>
+<span class="fc" id="L229">                prod *= shape[ i ];</span>
             }
-<span class="fc" id="L220">            return tln;</span>
+<span class="fc" id="L231">            return tln;</span>
         }
 
         @Contract(pure = true)
         public static void increment( int[] indices, int[] shape ) {
-<span class="fc" id="L225">            int i = shape.length-1;</span>
-<span class="pc bpc" id="L226" title="1 of 4 branches missed.">            while ( i &gt;= 0 &amp;&amp; i &lt; shape.length ) i = _incrementAt( i, indices, shape );</span>
-<span class="fc" id="L227">        }</span>
+<span class="fc" id="L236">            int i = shape.length-1;</span>
+<span class="pc bpc" id="L237" title="1 of 4 branches missed.">            while ( i &gt;= 0 &amp;&amp; i &lt; shape.length ) i = _incrementAt( i, indices, shape );</span>
+<span class="fc" id="L238">        }</span>
 
         @Contract(pure = true)
         private static int _incrementAt( int i, int[] indices, int[] shape )
         {
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">            if ( indices[ i ] &lt; shape[ i ] ) {</span>
-<span class="fc" id="L233">                indices[ i ]++;</span>
-<span class="fc bfc" id="L234" title="All 2 branches covered.">                if ( indices[ i ] == shape[ i ] ) {</span>
-<span class="fc" id="L235">                    indices[ i ] = 0;</span>
-<span class="fc" id="L236">                    i--;</span>
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">            if ( indices[ i ] &lt; shape[ i ] ) {</span>
+<span class="fc" id="L244">                indices[ i ]++;</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">                if ( indices[ i ] == shape[ i ] ) {</span>
+<span class="fc" id="L246">                    indices[ i ] = 0;</span>
+<span class="fc" id="L247">                    i--;</span>
                 }
-<span class="fc" id="L238">                else i = -1;</span>
+<span class="fc" id="L249">                else i = -1;</span>
             }
-<span class="nc" id="L240">            else i--;</span>
-<span class="fc" id="L241">            return i;</span>
+<span class="nc" id="L251">            else i--;</span>
+<span class="fc" id="L252">            return i;</span>
         }
 
         @Contract(pure = true)
         public static int szeOfShp( int[] shape ) {
-<span class="fc" id="L246">            int size = 1;</span>
-<span class="fc bfc" id="L247" title="All 2 branches covered.">            for ( int i : shape ) size *= i;</span>
-<span class="fc" id="L248">            return size;</span>
+<span class="fc" id="L257">            int size = 1;</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">            for ( int i : shape ) size *= i;</span>
+<span class="fc" id="L259">            return size;</span>
         }
 
 

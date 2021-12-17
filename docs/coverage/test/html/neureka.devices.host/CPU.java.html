@@ -113,10 +113,15 @@ public class CPU extends AbstractDevice&lt;Number&gt;
 <span class="nc" id="L113">    public &lt;T extends Number&gt; CPU swap( Tsr&lt;T&gt; former, Tsr&lt;T&gt; replacement ) { return this; }</span>
 
     @Override
-<span class="fc" id="L116">    public Collection&lt;Tsr&lt;Number&gt;&gt; getTensors() { return _tensors; }</span>
+    public &lt;T extends Number&gt; Device&lt;Number&gt; updateNDConf( Tsr&lt;T&gt; tensor ) {
+<span class="nc" id="L117">        return this;</span>
+    }
 
     @Override
-<span class="nc" id="L119">    public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }</span>
+<span class="fc" id="L121">    public Collection&lt;Tsr&lt;Number&gt;&gt; getTensors() { return _tensors; }</span>
+
+    @Override
+<span class="nc" id="L124">    public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }</span>
 
     /**
      *  This method is part of the component system built into the {@link Tsr} class.
@@ -127,8 +132,8 @@ public class CPU extends AbstractDevice&lt;Number&gt;
      */
     @Override
     public boolean update( OwnerChangeRequest&lt;Tsr&lt;Number&gt;&gt; changeRequest ) {
-<span class="fc" id="L130">        super.update( changeRequest );</span>
-<span class="fc" id="L131">        return false; // This type of device can not be a component simply because it is the default device</span>
+<span class="fc" id="L135">        super.update( changeRequest );</span>
+<span class="fc" id="L136">        return false; // This type of device can not be a component simply because it is the default device</span>
     }
 
     /**
@@ -140,11 +145,11 @@ public class CPU extends AbstractDevice&lt;Number&gt;
      * @return The maximum number of CPU cores available to the JVM.
      *         This number is never smaller than one!
      */
-<span class="fc" id="L143">    public int getCoreCount() { return Runtime.getRuntime().availableProcessors(); }</span>
+<span class="fc" id="L148">    public int getCoreCount() { return Runtime.getRuntime().availableProcessors(); }</span>
 
     @Override
     public String toString() {
-<span class="fc" id="L147">        return this.getClass().getSimpleName()+&quot;[coreCount=&quot;+getCoreCount()+&quot;]&quot;;</span>
+<span class="fc" id="L152">        return this.getClass().getSimpleName()+&quot;[coreCount=&quot;+getCoreCount()+&quot;]&quot;;</span>
     }
 
     /**
@@ -167,7 +172,7 @@ public class CPU extends AbstractDevice&lt;Number&gt;
      *  If the workload is very small, then the current main thread will process the entire workload range
      *  whereas the underlying {@link ThreadPoolExecutor} will not be used to avoid unnecessary overhead.
      */
-<span class="fc" id="L170">    public static class JVMExecutor</span>
+<span class="fc" id="L175">    public static class JVMExecutor</span>
     {
         /*
             The following 2 constants determine if any given workload size will be parallelize or not...
@@ -176,12 +181,12 @@ public class CPU extends AbstractDevice&lt;Number&gt;
         private static final int MIN_THREADED_WORKLOAD_SIZE = 32;
         private static final int MIN_WORKLOAD_PER_THREAD = 8;
 
-<span class="fc" id="L179">        private final ThreadPoolExecutor _pool =</span>
-<span class="fc" id="L180">                (ThreadPoolExecutor) Executors.newFixedThreadPool(</span>
-<span class="fc" id="L181">                        Runtime.getRuntime().availableProcessors()</span>
+<span class="fc" id="L184">        private final ThreadPoolExecutor _pool =</span>
+<span class="fc" id="L185">                (ThreadPoolExecutor) Executors.newFixedThreadPool(</span>
+<span class="fc" id="L186">                        Runtime.getRuntime().availableProcessors()</span>
                 );
 
-<span class="fc" id="L184">        public ThreadPoolExecutor getPool() { return _pool; }</span>
+<span class="fc" id="L189">        public ThreadPoolExecutor getPool() { return _pool; }</span>
 
         /**
          *  This method slices the provided workload size into multiple ranges which can be executed in parallel.
@@ -191,30 +196,30 @@ public class CPU extends AbstractDevice&lt;Number&gt;
          */
         public void threaded( int workloadSize, RangeWorkload workload )
         {
-<span class="fc" id="L194">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
-<span class="pc bpc" id="L195" title="1 of 2 branches missed.">            cores = ( cores == 0 ) ? 1 : cores;</span>
-<span class="fc bfc" id="L196" title="All 4 branches covered.">            if ( workloadSize &gt;= MIN_THREADED_WORKLOAD_SIZE &amp;&amp; ( ( workloadSize / cores ) &gt;= MIN_WORKLOAD_PER_THREAD ) ) {</span>
-<span class="fc" id="L197">                final int chunk = workloadSize / cores;</span>
-<span class="fc" id="L198">                Future&lt;?&gt;[] futures = new Future[ cores ];</span>
-<span class="fc bfc" id="L199" title="All 2 branches covered.">                for ( int i = 0; i &lt; cores; i++ ) {</span>
-<span class="fc" id="L200">                    final int start = i * chunk;</span>
-<span class="fc bfc" id="L201" title="All 2 branches covered.">                    final int end = ( i == cores - 1 ) ? workloadSize : ( (i + 1) * chunk );</span>
-<span class="fc" id="L202">                    Neureka neureka = Neureka.get();</span>
-<span class="fc" id="L203">                    futures[ i ] = _pool.submit(() -&gt; {</span>
-<span class="fc" id="L204">                        Neureka.set( neureka ); // This ensures that the threads in the pool have the same settings!</span>
-<span class="fc" id="L205">                        workload.execute( start, end );</span>
-<span class="fc" id="L206">                    });</span>
+<span class="fc" id="L199">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">            cores = ( cores == 0 ) ? 1 : cores;</span>
+<span class="fc bfc" id="L201" title="All 4 branches covered.">            if ( workloadSize &gt;= MIN_THREADED_WORKLOAD_SIZE &amp;&amp; ( ( workloadSize / cores ) &gt;= MIN_WORKLOAD_PER_THREAD ) ) {</span>
+<span class="fc" id="L202">                final int chunk = workloadSize / cores;</span>
+<span class="fc" id="L203">                Future&lt;?&gt;[] futures = new Future[ cores ];</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">                for ( int i = 0; i &lt; cores; i++ ) {</span>
+<span class="fc" id="L205">                    final int start = i * chunk;</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">                    final int end = ( i == cores - 1 ) ? workloadSize : ( (i + 1) * chunk );</span>
+<span class="fc" id="L207">                    Neureka neureka = Neureka.get();</span>
+<span class="fc" id="L208">                    futures[ i ] = _pool.submit(() -&gt; {</span>
+<span class="fc" id="L209">                        Neureka.set( neureka ); // This ensures that the threads in the pool have the same settings!</span>
+<span class="fc" id="L210">                        workload.execute( start, end );</span>
+<span class="fc" id="L211">                    });</span>
                 }
-<span class="fc bfc" id="L208" title="All 2 branches covered.">                for ( Future&lt;?&gt; f : futures ) {</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">                for ( Future&lt;?&gt; f : futures ) {</span>
                     try {
-<span class="fc" id="L210">                        f.get(); // Return value is null because we submitted merely a simple Runnable</span>
-<span class="nc" id="L211">                    } catch ( InterruptedException | ExecutionException e ) {</span>
-<span class="nc" id="L212">                        e.printStackTrace();</span>
-<span class="fc" id="L213">                    }</span>
+<span class="fc" id="L215">                        f.get(); // Return value is null because we submitted merely a simple Runnable</span>
+<span class="nc" id="L216">                    } catch ( InterruptedException | ExecutionException e ) {</span>
+<span class="nc" id="L217">                        e.printStackTrace();</span>
+<span class="fc" id="L218">                    }</span>
                 }
-<span class="fc" id="L215">            }</span>
-<span class="fc" id="L216">            else sequential( workloadSize, workload );</span>
-<span class="fc" id="L217">        }</span>
+<span class="fc" id="L220">            }</span>
+<span class="fc" id="L221">            else sequential( workloadSize, workload );</span>
+<span class="fc" id="L222">        }</span>
 
         /**
          *  This method will simply execute the provided {@link RangeWorkload} lambda sequentially
@@ -224,8 +229,8 @@ public class CPU extends AbstractDevice&lt;Number&gt;
          * @param workload The {@link RangeWorkload} which will be executed sequentially.
          */
         public void sequential( int workloadSize, RangeWorkload workload ) {
-<span class="fc" id="L227">            workload.execute( 0, workloadSize );</span>
-<span class="fc" id="L228">        }</span>
+<span class="fc" id="L232">            workload.execute( 0, workloadSize );</span>
+<span class="fc" id="L233">        }</span>
 
     }
 

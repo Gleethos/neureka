@@ -19,14 +19,14 @@ public final class Sigmoid extends AbstractOperation
 
 <span class="fc" id="L20">    private final DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creator =</span>
             ( inputs, d ) -&gt; {
-<span class="fc" id="L22">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="fc" id="L22">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="fc bfc" id="L23" title="All 2 branches covered.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; calculate( t1_val[ t1Idx.i() ], false );</span>
 <span class="fc" id="L24">                else return ( t0Idx, t1Idx, t2Idx ) -&gt;  calculate( t1_val[ t1Idx.i() ], true );</span>
             };
 
 <span class="fc" id="L27">    private final DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorX =</span>
             ( inputs, d ) -&gt; {
-<span class="fc" id="L29">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="fc" id="L29">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="fc bfc" id="L30" title="All 2 branches covered.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; calculate( t1_val[inputs[ 1 ].indexOfIndices( t1Idx )], false );</span>
 <span class="fc" id="L31">                else return ( t0Idx, t1Idx, t2Idx ) -&gt;  calculate( t1_val[inputs[ 1 ].indexOfIndices( t1Idx )], true );</span>
             };

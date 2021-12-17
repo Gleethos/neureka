@@ -19,13 +19,13 @@ public final class Absolute extends AbstractOperation
 
 <span class="fc" id="L20">    private final DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _activationCreator =</span>
             ( inputs, d ) -&gt; {
-<span class="nc" id="L22">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L22">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L23" title="All 2 branches missed.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.abs(t1_val[ t1Idx.i() ]);</span>
 <span class="nc bnc" id="L24" title="All 2 branches missed.">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; ( t1_val[ t1Idx.i() ] &lt; 0 ) ? -1 : 1;</span>
             };
 <span class="fc" id="L26">    private final DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _activationXCreator =</span>
             ( inputs, d ) -&gt; {
-<span class="fc" id="L28">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="fc" id="L28">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="fc bfc" id="L29" title="All 2 branches covered.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.abs(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]);</span>
 <span class="fc bfc" id="L30" title="All 2 branches covered.">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; ( t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] &lt; 0 ) ? -1 : 1;</span>
             };

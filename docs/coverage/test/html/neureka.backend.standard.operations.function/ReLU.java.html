@@ -19,7 +19,7 @@ public final class ReLU extends AbstractOperation
 
 <span class="fc" id="L20">    private final DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creator =</span>
             ( inputs, d ) -&gt; {
-<span class="nc" id="L22">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L22">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L23" title="All 2 branches missed.">                if ( d &lt; 0 ) {</span>
 <span class="nc" id="L24">                    return ( t0Idx, t1Idx, t2Idx ) -&gt; {</span>
 <span class="nc bnc" id="L25" title="All 2 branches missed.">                        if (t1_val[ t1Idx.i() ]&gt;=0) return t1_val[ t1Idx.i() ];</span>
@@ -35,7 +35,7 @@ public final class ReLU extends AbstractOperation
 
 <span class="fc" id="L36">    private final DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorX =</span>
             ( inputs, d ) -&gt; {
-<span class="fc" id="L38">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="fc" id="L38">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="fc bfc" id="L39" title="All 2 branches covered.">                if ( d &lt; 0 ) {</span>
 <span class="fc" id="L40">                    return ( t0Idx, t1Idx, t2Idx ) -&gt; {</span>
 <span class="fc bfc" id="L41" title="All 2 branches covered.">                        if (t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]&gt;=0) return t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];</span>

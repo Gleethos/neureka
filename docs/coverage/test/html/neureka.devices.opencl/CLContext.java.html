@@ -81,7 +81,7 @@ public class CLContext implements BackendExtension
     {
         // Obtain the number of platforms
 <span class="fc" id="L83">        int[] numPlatforms = new int[ 1 ];</span>
-<span class="fc" id="L84">        clGetPlatformIDs(0, null, numPlatforms);</span>
+<span class="fc" id="L84">        clGetPlatformIDs( 0, null, numPlatforms );</span>
 
         // Obtain the platform IDs
 <span class="fc" id="L87">        cl_platform_id[] platforms = new cl_platform_id[ numPlatforms[ 0 ] ];</span>
@@ -89,15 +89,15 @@ public class CLContext implements BackendExtension
 
 <span class="fc" id="L90">        List&lt;OpenCLPlatform&gt; loadedPlatforms = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L91" title="All 2 branches covered.">        for ( cl_platform_id id : platforms ) {</span>
-            OpenCLPlatform newPlarform;
+            OpenCLPlatform newPlatform;
             try {
-<span class="fc" id="L94">                newPlarform = new OpenCLPlatform(id);</span>
-<span class="fc" id="L95">                loadedPlatforms.add(newPlarform);</span>
+<span class="fc" id="L94">                newPlatform = new OpenCLPlatform( id );</span>
+<span class="fc" id="L95">                loadedPlatforms.add( newPlatform );</span>
 <span class="nc" id="L96">            } catch ( Exception e ) {</span>
 <span class="nc" id="L97">                String message =</span>
 <span class="nc" id="L98">                        &quot;Failed to instantiate '&quot;+OpenCLPlatform.class.getSimpleName()+&quot;' &quot; +</span>
 <span class="nc" id="L99">                        &quot;with id '0x&quot;+Long.toHexString(id.getNativePointer())+&quot;'!&quot;;</span>
-<span class="nc" id="L100">                _LOG.error(message, e);</span>
+<span class="nc" id="L100">                _LOG.error( message, e );</span>
 <span class="fc" id="L101">            }</span>
         }
 <span class="pc bpc" id="L103" title="2 of 4 branches missed.">        if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -&gt; p.getDevices().isEmpty() ) ) {</span>
@@ -112,7 +112,7 @@ public class CLContext implements BackendExtension
 <span class="fc" id="L112">        double score = 0;</span>
 <span class="fc bfc" id="L113" title="All 2 branches covered.">        for ( OpenCLPlatform p : getPlatforms() ) {</span>
 <span class="fc bfc" id="L114" title="All 2 branches covered.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
-<span class="fc" id="L115">                double similarity = Stream.of(&quot;opencl&quot;,d.type(),d.name(),d.vendor())</span>
+<span class="fc" id="L115">                double similarity = Stream.of(&quot;opencl&quot;,d.type().name(),d.name(),d.vendor())</span>
 <span class="fc" id="L116">                                            .mapToDouble( word -&gt; ParseUtil.similarity( word, searchKey ) )</span>
 <span class="fc" id="L117">                                            .max()</span>
 <span class="fc" id="L118">                                            .orElse(0);</span>
@@ -120,11 +120,11 @@ public class CLContext implements BackendExtension
 <span class="fc" id="L120">                    result = d;</span>
 <span class="fc" id="L121">                    score = similarity;</span>
 <span class="fc bfc" id="L122" title="All 2 branches covered.">                    if ( score == 1 )</span>
-<span class="fc" id="L123">                        return new DeviceOption(result, score);</span>
+<span class="fc" id="L123">                        return new DeviceOption( result, score );</span>
                 }
 <span class="fc" id="L125">            }</span>
 <span class="fc" id="L126">        }</span>
-<span class="fc" id="L127">        return new DeviceOption(result, score);</span>
+<span class="fc" id="L127">        return new DeviceOption( result, score );</span>
     }
 
     @Override
@@ -133,7 +133,8 @@ public class CLContext implements BackendExtension
 <span class="nc bnc" id="L133" title="All 2 branches missed.">            for ( OpenCLDevice device : platform.getDevices() ) {</span>
 <span class="nc" id="L134">                device.dispose();</span>
 <span class="nc" id="L135">            }</span>
-<span class="nc" id="L136">        }</span>
-<span class="nc" id="L137">    }</span>
+<span class="nc" id="L136">            platform.dispose();</span>
+<span class="nc" id="L137">        }</span>
+<span class="nc" id="L138">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

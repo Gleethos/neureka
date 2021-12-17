@@ -120,7 +120,7 @@ import java.util.stream.IntStream;
 <span class="fc bfc" id="L120" title="All 2 branches covered.">        if ( allVirtual ) {</span>
 <span class="fc" id="L121">            int index = -1;</span>
 <span class="fc bfc" id="L122" title="All 2 branches covered.">            for ( int i = 0; i &lt; tensors.length; i++ ) {</span>
-<span class="fc bfc" id="L123" title="All 2 branches covered.">                double value = ( tensors[ i ] == null ) ? 0.0 : tensors[ i ].value64( 0 );</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">                double value = ( tensors[ i ] == null ) ? 0.0 : tensors[ i ].getValueAs( double[].class )[ 0 ];</span>
 <span class="fc bfc" id="L124" title="All 2 branches covered.">                if ( value == 1.0 ) {</span>
 <span class="fc bfc" id="L125" title="All 2 branches covered.">                    if ( index &gt;= 0 ) return -1;</span>
 <span class="fc" id="L126">                    index = i;</span>
@@ -213,7 +213,7 @@ import java.util.stream.IntStream;
             );
             // At the end:
             //...multiply inner times outer: ( if inner is not 1 entirely... )
-<span class="fc bfc" id="L216" title="All 6 branches covered.">            if ( !( ( inner.isVirtual() || inner.size() == 1 ) &amp;&amp; inner.value64( 0 ) == 1.0 ) ) {</span>
+<span class="fc bfc" id="L216" title="All 6 branches covered.">            if ( !( ( inner.isVirtual() || inner.size() == 1 ) &amp;&amp; inner.getValueAs( double[].class )[ 0 ] == 1.0 ) ) {</span>
 <span class="fc" id="L217">                tensors = new Tsr[]{ null, inner, tensors[ 0 ] };</span>
 <span class="fc" id="L218">                CalcUtil.recursiveExecution(</span>
 <span class="fc" id="L219">                        ExecutionCall.of( tensors )</span>
@@ -412,6 +412,7 @@ import java.util.stream.IntStream;
         }
 <span class="fc" id="L413">        return tensors;</span>
     }
+
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

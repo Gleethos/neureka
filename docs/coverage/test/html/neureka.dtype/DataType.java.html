@@ -162,7 +162,7 @@ public final class DataType&lt;Type&gt;
 <span class="fc" id="L162">        return (T) newValue;</span>
     }
 
-    public &lt;T&gt; T actualize(T value, int size )
+    public &lt;T&gt; Object actualize( T value, int size )
     {
 <span class="fc" id="L167">        Object newValue = value;</span>
 <span class="fc bfc" id="L168" title="All 2 branches covered.">        if ( getTypeClass() == F64.class ) {</span>

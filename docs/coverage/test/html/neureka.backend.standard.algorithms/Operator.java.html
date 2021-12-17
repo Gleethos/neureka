@@ -25,7 +25,7 @@ public class Operator extends AbstractFunctionalAlgorithm&lt;Operator&gt;
 <span class="fc" id="L25">                    return call.validate()</span>
 <span class="fc bfc" id="L26" title="All 4 branches covered.">                            .allNotNull( t -&gt; t.size() == size &amp;&amp; shape.equals( t.shape() ) )</span>
 <span class="fc" id="L27">                            .allNotNull( t -&gt; t.getDataType().typeClassImplements( NumericType.class ) )</span>
-<span class="fc" id="L28">                            .estimation();</span>
+<span class="fc" id="L28">                            .basicSuitability();</span>
                 }
         );
 <span class="fc" id="L31">        setCanPerformBackwardADFor( call -&gt; true );</span>
@@ -67,7 +67,7 @@ public class Operator extends AbstractFunctionalAlgorithm&lt;Operator&gt;
 <span class="nc" id="L67">            ( (double[]) t0_drn.getData() )[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) );</span>
         } else {
             //int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0
-<span class="fc" id="L70">            double[] t0_value = t0_drn.value64();</span>
+<span class="fc" id="L70">            double[] t0_value = t0_drn.getDataAs( double[].class );</span>
 <span class="fc" id="L71">            NDIterator t0Idx = NDIterator.of( t0_drn );</span>
 <span class="fc" id="L72">            NDIterator t1Idx = NDIterator.of( t1_src );</span>
 <span class="fc" id="L73">            NDIterator t2Idx = NDIterator.of( t2_src );</span>

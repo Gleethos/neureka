@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,7 +49,7 @@ public class CLContext implements BackendExtension
     /**
      * @return A list of context specific {@link OpenCLPlatform} instances possible containing {@link OpenCLDevice}s.
      */
-    public List<OpenCLPlatform> getPlatforms() { return _platforms; }
+    public List<OpenCLPlatform> getPlatforms() { return Collections.unmodifiableList( _platforms ); }
 
     /**
      *  Updating the CLContext will cause the list of existing {@link OpenCLPlatform} instances to be
@@ -110,7 +111,7 @@ public class CLContext implements BackendExtension
     public DeviceOption find( String searchKey ) {
         Device<Number> result = null;
         double score = 0;
-        for ( OpenCLPlatform p : getPlatforms() ) {
+        for ( OpenCLPlatform p : _platforms ) {
             for ( OpenCLDevice d : p.getDevices() ) {
                 double similarity = Stream.of("opencl",d.type().name(),d.name(),d.vendor())
                                             .mapToDouble( word -> ParseUtil.similarity( word, searchKey ) )
@@ -135,5 +136,7 @@ public class CLContext implements BackendExtension
             }
             platform.dispose();
         }
+        _platforms.clear();
     }
+
 }

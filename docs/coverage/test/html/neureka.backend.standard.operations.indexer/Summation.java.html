@@ -43,8 +43,8 @@ public final class Summation extends AbstractOperation
 <span class="fc" id="L43">        DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creator =</span>
                 ( inputs, d ) -&gt;
                 {
-<span class="nc" id="L46">                    double[] t1_val = inputs[ 1 ].value64();</span>
-<span class="nc" id="L47">                    double[] t2_val = inputs[ 2 ].value64();</span>
+<span class="nc" id="L46">                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
+<span class="nc" id="L47">                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L48" title="All 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ] + t2_val[t2Idx.i()];</span>
 <span class="nc" id="L49">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; 1.0;</span>
                 };
@@ -52,8 +52,8 @@ public final class Summation extends AbstractOperation
 <span class="fc" id="L52">        DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorX =</span>
                 ( inputs, d ) -&gt;
                 {
-<span class="fc" id="L55">                    double[] t1_val = inputs[ 1 ].value64();</span>
-<span class="fc" id="L56">                    double[] t2_val = inputs[ 2 ].value64();</span>
+<span class="fc" id="L55">                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
+<span class="fc" id="L56">                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );</span>
 <span class="fc bfc" id="L57" title="All 2 branches covered.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] + t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];</span>
 <span class="fc" id="L58">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; 1.0;</span>
                 };
@@ -150,14 +150,14 @@ public final class Summation extends AbstractOperation
 
 <span class="fc" id="L151">        DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; activationCreator =</span>
                 ( inputs, d ) -&gt; {
-<span class="nc" id="L153">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L153">                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L154" title="All 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ];</span>
 <span class="nc" id="L155">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ];</span>
                 };
 
 <span class="fc" id="L158">        DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; activationXCreator =</span>
                 ( inputs, d ) -&gt; {
-<span class="nc" id="L160">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L160">                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L161" title="All 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];</span>
 <span class="nc" id="L162">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];</span>
                 };

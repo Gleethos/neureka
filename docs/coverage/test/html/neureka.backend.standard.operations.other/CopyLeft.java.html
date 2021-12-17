@@ -52,7 +52,7 @@ public class CopyLeft extends AbstractOperation {
                         call -&gt;
                         {
 <span class="fc" id="L54">                            Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
-<span class="fc bfc" id="L55" title="All 2 branches covered.">                            int offset = ( tensors[ 0 ] == null ) ? 1 : 0;</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">                            int offset = ( tensors[ 0 ] == null ) ? 1 : 0;</span>
 <span class="fc" id="L56">                            call.getTsrOfType( Number.class, offset).incrementVersionBecauseOf(call);</span>
 <span class="fc" id="L57">                            call.getTsrOfType( Number.class, offset).setIsVirtual( false );</span>
 <span class="fc" id="L58">                            return</span>
@@ -66,14 +66,14 @@ public class CopyLeft extends AbstractOperation {
 
 <span class="fc" id="L67">        ScalarOperatorCreator&lt;PrimaryNDIConsumer&gt; scalarCreator =</span>
                 (inputs, value, d) -&gt; {
-<span class="nc" id="L69">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L69">                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L70" title="All 2 branches missed.">                    if ( d &lt; 0 ) return t1Idx -&gt; t1_val[ t1Idx.i() ] = value;</span>
 <span class="nc" id="L71">                    else return null;</span>
                 };
 
 <span class="fc" id="L74">        ScalarOperatorCreator&lt;PrimaryNDAConsumer&gt; scalarXCreator =</span>
                 (inputs, value, d) -&gt; {
-<span class="fc" id="L76">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="fc" id="L76">                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="pc bpc" id="L77" title="1 of 2 branches missed.">                    if ( d &lt; 0 ) return t1Idx -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] = value;</span>
 <span class="nc" id="L78">                    else return null;</span>
                 };
@@ -87,7 +87,7 @@ public class CopyLeft extends AbstractOperation {
 <span class="fc" id="L87">                            .andImplementation(</span>
                                 call -&gt;
                                 {
-<span class="fc" id="L90">                                    double value = call.getTsrOfType( Number.class, 1 ).value64( 0 );</span>
+<span class="fc" id="L90">                                    double value = call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ];</span>
 <span class="fc" id="L91">                                    call.getDevice().getExecutor()</span>
 <span class="fc" id="L92">                                            .threaded (</span>
 <span class="fc" id="L93">                                                    call.getTsrOfType( Number.class, 0 ).size(),</span>
@@ -123,7 +123,7 @@ public class CopyLeft extends AbstractOperation {
 <span class="fc" id="L123">                                            call.getDevice().getKernel(call)</span>
 <span class="fc" id="L124">                                                    .passAllOf( t )</span>
 <span class="fc" id="L125">                                                    .passAllOf( t )</span>
-<span class="fc" id="L126">                                                    .pass( call.getTsrOfType( Number.class, 1 ).value32( 0 ) )</span>
+<span class="fc" id="L126">                                                    .pass( call.getTsrOfType( Number.class, 1 ).getValueAs( float[].class )[ 0 ] )</span>
 <span class="fc" id="L127">                                                    .pass( t.rank() )</span>
 <span class="fc" id="L128">                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
 <span class="fc" id="L129">                                                    .call( gwz );</span>

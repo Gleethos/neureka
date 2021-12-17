@@ -225,12 +225,16 @@ public class OpenCLPlatform {
 <span class="fc" id="L225">        return _context;</span>
     }
 
+    public void dispose() {
+<span class="nc" id="L229">        clReleaseContext( _context );</span>
+<span class="nc" id="L230">    }</span>
+
     @Override
     public String toString() {
-<span class="fc" id="L230">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
+<span class="fc" id="L234">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
                     &quot;pid=&quot; + _pid + &quot;,&quot; +
                     &quot;context=&quot;+_context +
-<span class="fc" id="L233">                    &quot;kernels=[..&quot;+_kernels.size()+&quot;..]&quot; +</span>
+<span class="fc" id="L237">                    &quot;kernels=[..&quot;+_kernels.size()+&quot;..]&quot; +</span>
                 &quot;]&quot;;
     }
 

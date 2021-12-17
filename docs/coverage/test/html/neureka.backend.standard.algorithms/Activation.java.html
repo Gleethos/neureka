@@ -24,7 +24,7 @@ public class Activation extends AbstractFunctionalAlgorithm&lt;Activation&gt;
 <span class="fc" id="L24">        setIsSuitableFor(</span>
 <span class="fc" id="L25">                call -&gt; call.validate()</span>
 <span class="fc" id="L26">                            .allNotNull( t -&gt; t.getDataType().typeClassImplements(NumericType.class) )</span>
-<span class="fc" id="L27">                            .estimation()</span>
+<span class="fc" id="L27">                            .basicSuitability()</span>
         );
 <span class="fc" id="L29">        setCanPerformBackwardADFor( call -&gt; true );</span>
 <span class="fc" id="L30">        setCanPerformForwardADFor(</span>

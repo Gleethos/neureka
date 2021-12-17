@@ -19,7 +19,7 @@ public final class Quadratic extends AbstractOperation
 
 <span class="fc" id="L20">    private final DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creatorNDI =</span>
             ( inputs, d ) -&gt; {
-<span class="nc" id="L22">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L22">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L23" title="All 2 branches missed.">                if ( d &lt; 0 ) {</span>
 <span class="nc" id="L24">                    return ( t0Idx, t1Idx, t2Idx ) -&gt; {</span>
 <span class="nc" id="L25">                        double input = t1_val[ t1Idx.i() ];</span>
@@ -30,7 +30,7 @@ public final class Quadratic extends AbstractOperation
 
 <span class="fc" id="L31">    private final DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorNDX =</span>
             ( inputs, d ) -&gt; {
-<span class="fc" id="L33">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="fc" id="L33">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="fc bfc" id="L34" title="All 2 branches covered.">                if ( d &lt; 0 ) {</span>
 <span class="fc" id="L35">                    return ( t0Idx, t1Idx, t2Idx ) -&gt; {</span>
 <span class="fc" id="L36">                        double input = t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];</span>

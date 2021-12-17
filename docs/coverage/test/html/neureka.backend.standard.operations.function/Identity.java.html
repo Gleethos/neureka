@@ -35,14 +35,14 @@ public final class Identity extends AbstractOperation
 
 <span class="fc" id="L36">        DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; activationCreator =</span>
                 ( inputs, d ) -&gt; {
-<span class="fc" id="L38">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="fc" id="L38">                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="pc bpc" id="L39" title="1 of 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ];</span>
 <span class="nc" id="L40">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; 1;</span>
                 };
 
 <span class="fc" id="L43">        DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; activationXCreator =</span>
                 ( inputs, d ) -&gt; {
-<span class="fc" id="L45">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="fc" id="L45">                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="pc bpc" id="L46" title="1 of 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];</span>
 <span class="nc" id="L47">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; 1;</span>
                 };
@@ -131,7 +131,7 @@ public final class Identity extends AbstractOperation
 
 <span class="fc" id="L132">        ScalarOperatorCreator&lt;PrimaryNDIConsumer&gt; scalarizationCreator =</span>
                 (inputs, value, d) -&gt; {
-<span class="nc bnc" id="L134" title="All 2 branches missed.">                    if ( d &lt; 0 ) return t1Idx -&gt; value;</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">                    if ( d &lt; 0 ) return t1Idx -&gt; value;</span>
 <span class="nc" id="L135">                    else return t1Idx -&gt; value;</span>
                 };
 <span class="fc" id="L137">        Scalarization scalarization = new Scalarization()</span>
@@ -180,73 +180,74 @@ public final class Identity extends AbstractOperation
 <span class="fc" id="L180">                            .withArity(2)</span>
 <span class="fc" id="L181">                            .andImplementation(</span>
                                 call  -&gt; {
-<span class="nc" id="L183">                                    double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );</span>
-<span class="nc" id="L184">                                        call.getDevice().getExecutor()</span>
-<span class="nc" id="L185">                                                .threaded (</span>
-<span class="nc" id="L186">                                                        call.getTsrOfType( Number.class, 0 ).size(),</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">                                    int offset = ( call.getTensors().length &gt; 2 ) ? 1 : 0;</span>
+<span class="fc" id="L184">                                    double value = call.getTsrOfType( Number.class, 1 + offset ).getDataAs( double[].class )[ 0 ];</span>
+<span class="fc" id="L185">                                        call.getDevice().getExecutor()</span>
+<span class="fc" id="L186">                                                .threaded (</span>
+<span class="fc" id="L187">                                                        call.getTsrOfType( Number.class, 0 ).size(),</span>
                                                         (start, end) -&gt;
-<span class="nc" id="L188">                                                                Scalarization.scalarize(</span>
-<span class="nc" id="L189">                                                                        call.getTsrOfType( Number.class, 0 ), start, end,</span>
-<span class="nc" id="L190">                                                                        scalarizationCreator.create(</span>
-<span class="nc" id="L191">                                                                                call.getTensors(), value, call.getValOf( Arg.DerivIdx.class )</span>
+<span class="fc" id="L189">                                                                Scalarization.scalarize(</span>
+<span class="fc" id="L190">                                                                        call.getTsrOfType( Number.class, 0 ), start, end,</span>
+<span class="fc" id="L191">                                                                        scalarizationCreator.create(</span>
+<span class="fc" id="L192">                                                                                call.getTensors(), value, call.getValOf( Arg.DerivIdx.class )</span>
                                                                         )
                                                                 )
                                                 );
-<span class="nc" id="L195">                                }</span>
+<span class="fc" id="L196">                                }</span>
                             )
                 )
-<span class="fc" id="L198">                .setImplementationFor(</span>
+<span class="fc" id="L199">                .setImplementationFor(</span>
                         OpenCLDevice.class,
-<span class="fc" id="L200">                        CLImplementation.compiler()</span>
-<span class="fc" id="L201">                                .arity( 2 )</span>
-<span class="fc" id="L202">                                .kernelSource( scalarization.getKernelSource() )</span>
-<span class="fc" id="L203">                                .activationSource( &quot;output = value;\n&quot; )</span>
-<span class="fc" id="L204">                                .differentiationSource( &quot;output = value;\n&quot; )</span>
-<span class="fc" id="L205">                                .kernelPostfix( this.getFunction() )</span>
-<span class="fc" id="L206">                                .execution(</span>
+<span class="fc" id="L201">                        CLImplementation.compiler()</span>
+<span class="fc" id="L202">                                .arity( 2 )</span>
+<span class="fc" id="L203">                                .kernelSource( scalarization.getKernelSource() )</span>
+<span class="fc" id="L204">                                .activationSource( &quot;output = value;\n&quot; )</span>
+<span class="fc" id="L205">                                .differentiationSource( &quot;output = value;\n&quot; )</span>
+<span class="fc" id="L206">                                .kernelPostfix( this.getFunction() )</span>
+<span class="fc" id="L207">                                .execution(</span>
                                         call -&gt; {
-<span class="nc" id="L208">                                            Tsr&lt;Number&gt; t = call.getTsrOfType( Number.class, 0 );</span>
-<span class="nc" id="L209">                                            int gwz = t.size();</span>
-<span class="nc" id="L210">                                            call.getDevice().getKernel(call)</span>
-<span class="nc" id="L211">                                                    .passAllOf(t)</span>
+<span class="nc" id="L209">                                            Tsr&lt;Number&gt; t = call.getTsrOfType( Number.class, 0 );</span>
+<span class="nc" id="L210">                                            int gwz = t.size();</span>
+<span class="nc" id="L211">                                            call.getDevice().getKernel(call)</span>
 <span class="nc" id="L212">                                                    .passAllOf(t)</span>
-<span class="nc" id="L213">                                                    .pass((float)call.getTsrOfType( Number.class, 1 ).value64( 0 ))</span>
-<span class="nc" id="L214">                                                    .pass(t.rank())</span>
-<span class="nc" id="L215">                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
-<span class="nc" id="L216">                                                    .call( gwz );</span>
-<span class="nc" id="L217">                                        }</span>
+<span class="nc" id="L213">                                                    .passAllOf(t)</span>
+<span class="nc" id="L214">                                                    .pass((float)call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ])</span>
+<span class="nc" id="L215">                                                    .pass(t.rank())</span>
+<span class="nc" id="L216">                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
+<span class="nc" id="L217">                                                    .call( gwz );</span>
+<span class="nc" id="L218">                                        }</span>
                                 )
-<span class="fc" id="L219">                                .build()</span>
+<span class="fc" id="L220">                                .build()</span>
                 )
         );
 
 
-<span class="fc" id="L224">    }</span>
+<span class="fc" id="L225">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="nc" id="L228">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="nc bnc" id="L229" title="All 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;idy&quot; + expression;</span>
-<span class="nc" id="L230">        return &quot;idy&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="nc" id="L229">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="nc bnc" id="L230" title="All 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;idy&quot; + expression;</span>
+<span class="nc" id="L231">        return &quot;idy&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L235">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L236">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L240">        return calculate(</span>
-<span class="nc bnc" id="L241" title="All 2 branches missed.">                src[ 0 ].call( inputs, j ),</span>
+<span class="nc" id="L241">        return calculate(</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">                src[ 0 ].call( inputs, j ),</span>
                 d &gt;= 0
-<span class="nc bnc" id="L243" title="All 2 branches missed.">            ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">            ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
     }
 
     @Contract(pure = true)
     public static double calculate(double input, boolean derive) {
-<span class="nc bnc" id="L248" title="All 2 branches missed.">        if ( !derive ) return input;</span>
-<span class="nc" id="L249">        else return 1;</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        if ( !derive ) return input;</span>
+<span class="nc" id="L250">        else return 1;</span>
     }
 
 

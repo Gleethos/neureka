@@ -4,6 +4,7 @@ import neureka.common.composition.Component
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
+import neureka.devices.opencl.CLContext
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.DeviceQuery
 import neureka.framing.Relation
@@ -106,6 +107,36 @@ class OpenCL_Spec extends Specification
 
         and : 'It explains what went wrong.'
             exception.message == "Data parent is not outsourced!"
+    }
+
+
+    def 'A given OpenCL context can be disposed!'() {
+
+        given :
+            CLContext context
+            List<OpenCLDevice> devices = []
+            Runnable dispose = {
+                context = Neureka.get().backend().get(CLContext)
+                assert context.platforms.size() > 0
+                context.platforms.each {
+                    assert it.devices.size() > 0
+                    devices.addAll(it.devices)
+                }
+                context.dispose()
+            }
+            def thread = new Thread(dispose)
+
+        when :
+            thread.start()
+            thread.join()
+
+        then :
+            noExceptionThrown()
+        and :
+            context.platforms.size() == 0
+        and :
+            devices.every {it.size() == 0}
+
     }
 
 

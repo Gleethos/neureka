@@ -17,7 +17,7 @@ public class Convolution extends AbstractFunctionalAlgorithm&lt; Convolution &gt
 <span class="fc" id="L17">        setIsSuitableFor( call -&gt;</span>
 <span class="fc" id="L18">                call.validate()</span>
 <span class="fc" id="L19">                .allNotNull( t -&gt; t.getDataType().typeClassImplements(NumericType.class) )</span>
-<span class="fc" id="L20">                .estimation()</span>
+<span class="fc" id="L20">                .basicSuitability()</span>
         );
 <span class="fc" id="L22">    }</span>
 
@@ -48,7 +48,7 @@ public class Convolution extends AbstractFunctionalAlgorithm&lt; Convolution &gt
 <span class="fc" id="L48">        NDIterator t2Idx = NDIterator.of( t2_src );</span>
 <span class="fc" id="L49">        int rank = t0Idx.rank();</span>
 
-<span class="fc" id="L51">        double[] t0_value = t0_drn.value64();</span>
+<span class="fc" id="L51">        double[] t0_value = t0_drn.getDataAs( double[].class );</span>
 
 <span class="fc bfc" id="L53" title="All 2 branches covered.">        while ( i &lt; end )</span>
         {//increment on drain accordingly:
@@ -118,7 +118,7 @@ public class Convolution extends AbstractFunctionalAlgorithm&lt; Convolution &gt
 <span class="fc" id="L118">        NDIterator t2Idx = NDIterator.of( t2_src );</span>
 <span class="fc" id="L119">        int rank = t0Idx.rank();</span>
 
-<span class="fc" id="L121">        double[] t0_value = t0_drn.value64();</span>
+<span class="fc" id="L121">        double[] t0_value = t0_drn.getDataAs( double[].class );</span>
 
         // Incrementing if 'i&gt;0' so that all indexes match:
 <span class="pc bpc" id="L124" title="1 of 2 branches missed.">        for ( int ii = 0; ii &lt; i; ii++ ) {</span>

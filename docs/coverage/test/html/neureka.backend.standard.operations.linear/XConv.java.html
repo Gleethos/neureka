@@ -30,8 +30,8 @@ public class XConv extends AbstractOperation
 
 <span class="fc" id="L31">        DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; convolutionNDICreator =</span>
                 ( inputs, d ) -&gt; {
-<span class="fc" id="L33">                    double[] t1_val = inputs[ 1 ].value64();</span>
-<span class="fc" id="L34">                    double[] t2_val = inputs[ 2 ].value64();</span>
+<span class="fc" id="L33">                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
+<span class="fc" id="L34">                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );</span>
 <span class="pc bpc" id="L35" title="1 of 2 branches missed.">                    if ( d &lt; 0 ) {</span>
 <span class="fc" id="L36">                        return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];</span>
                     } else {
@@ -43,8 +43,8 @@ public class XConv extends AbstractOperation
                 };
 <span class="fc" id="L44">        DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; convolutionCreator =</span>
                 ( inputs, d ) -&gt; {
-<span class="fc" id="L46">                    double[] t1_val = inputs[ 1 ].value64();</span>
-<span class="fc" id="L47">                    double[] t2_val = inputs[ 2 ].value64();</span>
+<span class="fc" id="L46">                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
+<span class="fc" id="L47">                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );</span>
 <span class="pc bpc" id="L48" title="1 of 2 branches missed.">                    if ( d &lt; 0 ) {</span>
 <span class="fc" id="L49">                        return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] * t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];</span>
                     } else {

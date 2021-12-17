@@ -97,7 +97,7 @@ public class Randomization extends AbstractOperation
                                                                 start, end,
 <span class="nc" id="L98">                                                                creatorX.create(</span>
 <span class="nc" id="L99">                                                                        call.getTensors(),</span>
-<span class="nc" id="L100">                                                                        call.getTsrOfType( Number.class, 1 ).value64( 0 ),</span>
+<span class="nc" id="L100">                                                                        call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ],</span>
 <span class="nc" id="L101">                                                                        call.getValOf( Arg.DerivIdx.class )</span>
                                                                 )
                                                         )
@@ -107,7 +107,7 @@ public class Randomization extends AbstractOperation
                                                             start, end,
 <span class="nc" id="L108">                                                            creator.create(</span>
 <span class="nc" id="L109">                                                                    call.getTensors(),</span>
-<span class="nc" id="L110">                                                                    call.getTsrOfType( Number.class, 1 ).value64( 0 ),</span>
+<span class="nc" id="L110">                                                                    call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ],</span>
 <span class="nc" id="L111">                                                                    call.getValOf( Arg.DerivIdx.class )</span>
                                                             )
                                                 )

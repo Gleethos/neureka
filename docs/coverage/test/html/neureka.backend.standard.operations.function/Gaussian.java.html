@@ -35,7 +35,7 @@ public final class Gaussian extends AbstractOperation
 <span class="fc" id="L35">        DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; activationCreator =</span>
                 ( inputs, d ) -&gt;
                 {
-<span class="nc" id="L38">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L38">                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L39" title="All 2 branches missed.">                    if ( d &lt; 0 ) {</span>
 <span class="nc" id="L40">                        return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.pow(Math.E, -Math.pow(t1_val[ t1Idx.i() ], 2));</span>
                     } else {
@@ -50,7 +50,7 @@ public final class Gaussian extends AbstractOperation
 <span class="fc" id="L50">        DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; activationXCreator =</span>
                 ( inputs, d ) -&gt;
                 {
-<span class="nc" id="L53">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L53">                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L54" title="All 2 branches missed.">                    if ( d &lt; 0 ) {</span>
 <span class="nc" id="L55">                        return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.pow(Math.E, -Math.pow(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )], 2));</span>
                     } else {

@@ -196,10 +196,10 @@ import java.util.stream.Collectors;
     public Tsr&lt;String&gt; load() throws IOException {
 <span class="fc" id="L197">        String[] data = _lazyLoad();</span>
 <span class="fc" id="L198">        Tsr&lt;String&gt; loaded = Tsr.of(</span>
-<span class="fc" id="L199">                DataType.of( String.class ),</span>
-<span class="fc" id="L200">                getShape(),</span>
-                data
-        );
+<span class="fc" id="L199">                                    DataType.of( String.class ),</span>
+<span class="fc" id="L200">                                    getShape(),</span>
+                                    data
+                                );
         String[] index;
         String[] labels;
 
@@ -219,80 +219,76 @@ import java.util.stream.Collectors;
             }
 <span class="fc" id="L220">        }</span>
 <span class="fc" id="L221">        else labels = _colLabels;</span>
-<span class="fc" id="L222">        loaded.label( _tensorName,</span>
-                new String[][]{
-                index,
-                labels
-        } );
-<span class="fc" id="L227">        return loaded;</span>
+<span class="fc" id="L222">        loaded.label( _tensorName, new String[][]{ index, labels } );</span>
+<span class="fc" id="L223">        return loaded;</span>
     }
 
     public String getTensorName() {
-<span class="nc" id="L231">        _lazyLoad();</span>
-<span class="nc" id="L232">        return _tensorName;</span>
+<span class="nc" id="L227">        _lazyLoad();</span>
+<span class="nc" id="L228">        return _tensorName;</span>
     }
 
     @Override
     public int getValueSize() {
         String[] rawData;
-<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        if ( _rawData == null ) rawData = _lazyLoad();</span>
-<span class="fc" id="L239">        else rawData = _rawData.get();</span>
-<span class="fc" id="L240">        return rawData.length;</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">        if ( _rawData == null ) rawData = _lazyLoad();</span>
+<span class="fc" id="L235">        else rawData = _rawData.get();</span>
+<span class="fc" id="L236">        return rawData.length;</span>
     }
 
     @Override
     public int getDataSize() {
-<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        if ( _numberOfBytes != null ) return _numberOfBytes;</span>
-<span class="nc" id="L246">        else _lazyLoad();</span>
-<span class="nc" id="L247">        return _numberOfBytes;</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">        if ( _numberOfBytes != null ) return _numberOfBytes;</span>
+<span class="nc" id="L242">        else _lazyLoad();</span>
+<span class="nc" id="L243">        return _numberOfBytes;</span>
     }
 
     @Override
     public int getTotalSize() {
-<span class="fc" id="L252">        return getDataSize();</span>
+<span class="fc" id="L248">        return getDataSize();</span>
     }
 
     @Override
     public DataType&lt;?&gt; getDataType() {
-<span class="fc" id="L257">        return DataType.of( String.class );</span>
+<span class="fc" id="L253">        return DataType.of( String.class );</span>
     }
 
     @Override
     public int[] getShape() {
-<span class="fc" id="L262">        return new int[]{ _numberOfRows, _numberOfColumns };</span>
+<span class="fc" id="L258">        return new int[]{ _numberOfRows, _numberOfColumns };</span>
     }
 
     @Override
     public String extension() {
-<span class="fc" id="L267">        return &quot;csv&quot;;</span>
+<span class="fc" id="L263">        return &quot;csv&quot;;</span>
     }
 
     public String getDelimiter() {
-<span class="nc" id="L271">        return _delimiter;</span>
+<span class="nc" id="L267">        return _delimiter;</span>
     }
 
     public boolean isFirstRowIsLabels() {
-<span class="nc" id="L275">        return _firstRowIsLabels;</span>
+<span class="nc" id="L271">        return _firstRowIsLabels;</span>
     }
 
     public String[] getColLabels() {
-<span class="nc" id="L279">        return _colLabels;</span>
+<span class="nc" id="L275">        return _colLabels;</span>
     }
 
     public boolean isFirstColIsIndex() {
-<span class="nc" id="L283">        return _firstColIsIndex;</span>
+<span class="nc" id="L279">        return _firstColIsIndex;</span>
     }
 
     public String[] getRowLabels() {
-<span class="nc" id="L287">        return _rowLabels;</span>
+<span class="nc" id="L283">        return _rowLabels;</span>
     }
 
     public Integer getNumberOfRows() {
-<span class="nc" id="L291">        return _numberOfRows;</span>
+<span class="nc" id="L287">        return _numberOfRows;</span>
     }
 
     public Integer getNumberOfColumns() {
-<span class="nc" id="L295">        return _numberOfColumns;</span>
+<span class="nc" id="L291">        return _numberOfColumns;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -20,7 +20,7 @@ public final class Tanh extends AbstractOperation
 <span class="fc" id="L20">    private DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creator =</span>
             ( inputs, d ) -&gt;
             {
-<span class="nc" id="L23">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L23">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L24" title="All 2 branches missed.">                if ( d &lt; 0 ) {</span>
 <span class="nc" id="L25">                    return ( t0Idx, t1Idx, t2Idx ) -&gt; {</span>
 <span class="nc" id="L26">                        double input = t1_val[ t1Idx.i() ];</span>
@@ -37,7 +37,7 @@ public final class Tanh extends AbstractOperation
 <span class="fc" id="L37">    private DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorX =</span>
             ( inputs, d ) -&gt;
             {
-<span class="fc" id="L40">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="fc" id="L40">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="fc bfc" id="L41" title="All 2 branches covered.">                if ( d &lt; 0 ) {</span>
 <span class="fc" id="L42">                    return ( t0Idx, t1Idx, t2Idx ) -&gt; {</span>
 <span class="fc" id="L43">                        double input = t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];</span>

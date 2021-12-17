@@ -640,7 +640,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  This factory method is among the most flexible and forgiving ways to create a {@link Tsr} instance.
      *  It receives a {@link DataType} for type safety and to ensure that the produced {@link Tsr} instance
      *  will contain elements of the correct type, a shape array which stores the sizes of the axes that the
-     *  instance ought to possess and finally it receives a data {@link Object} which can be anything ranging from
+     *  instance ought to possess, and finally it receives a data {@link Object} which can be anything ranging from
      *  a {@link List} to an array or simply a single value which ought to fill out the entire {@link Tsr}.
      *
      * @param dataType The data type of the data represented by {@link Tsr} instance created by this method.

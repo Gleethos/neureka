@@ -20,14 +20,14 @@ public final class Softplus extends AbstractOperation
 
 <span class="fc" id="L21">    private final DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creator =</span>
             ( inputs, d ) -&gt; {
-<span class="nc" id="L23">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L23">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L24" title="All 2 branches missed.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.log(1 + Math.pow(Math.E, t1_val[ t1Idx.i() ]));</span>
 <span class="nc" id="L25">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[ t1Idx.i() ]));</span>
             };
 
 <span class="fc" id="L28">    private final DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorX =</span>
             ( inputs, d ) -&gt; {
-<span class="fc" id="L30">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="fc" id="L30">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="fc bfc" id="L31" title="All 2 branches covered.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.log(1 + Math.pow(Math.E, t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]));</span>
 <span class="fc" id="L32">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]));</span>
             };

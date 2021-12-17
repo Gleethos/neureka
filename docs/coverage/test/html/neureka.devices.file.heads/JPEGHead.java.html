@@ -31,143 +31,143 @@ import java.io.IOException;
 
     int _width;
     int _height;
-    //int _totalSize;
 
     public JPEGHead( String fileName )
     {
-<span class="fc" id="L38">        super( fileName );</span>
+<span class="fc" id="L37">        super( fileName );</span>
         try {
-<span class="fc" id="L40">            _loadHead();</span>
-<span class="nc" id="L41">        } catch( Exception e ) {</span>
-<span class="nc" id="L42">            System.err.print(&quot;Failed reading JPG file!&quot;);</span>
-<span class="fc" id="L43">        }</span>
-<span class="fc" id="L44">    }</span>
+<span class="fc" id="L39">            _loadHead();</span>
+<span class="nc" id="L40">        } catch( Exception e ) {</span>
+<span class="nc" id="L41">            _LOG.error(&quot;Failed reading JPG file!&quot;);</span>
+<span class="fc" id="L42">        }</span>
+<span class="fc" id="L43">    }</span>
 
     public JPEGHead( Tsr&lt;Number&gt; t, String filename ) {
-<span class="fc" id="L47">        super( filename );</span>
-<span class="pc bpc" id="L48" title="2 of 4 branches missed.">        assert t.rank() == 3;</span>
-<span class="pc bpc" id="L49" title="2 of 4 branches missed.">        assert t.shape( 2 ) == 3;</span>
-<span class="fc" id="L50">        _height = t.shape(0);</span>
-<span class="fc" id="L51">        _width = t.shape(1);</span>
-<span class="fc" id="L52">        t.setIsVirtual( false );</span>
-<span class="fc" id="L53">        store( t );</span>
-<span class="fc" id="L54">    }</span>
+<span class="fc" id="L46">        super( filename );</span>
+<span class="pc bpc" id="L47" title="2 of 4 branches missed.">        assert t.rank() == 3;</span>
+<span class="pc bpc" id="L48" title="2 of 4 branches missed.">        assert t.shape( 2 ) == 3;</span>
+<span class="fc" id="L49">        _height = t.shape(0);</span>
+<span class="fc" id="L50">        _width = t.shape(1);</span>
+<span class="fc" id="L51">        t.setIsVirtual( false );</span>
+<span class="fc" id="L52">        store( t );</span>
+<span class="fc" id="L53">    }</span>
 
 
     private void _loadHead()
     {
-<span class="fc" id="L59">        File found = _loadFile();</span>
+<span class="fc" id="L58">        File found = _loadFile();</span>
 
-<span class="fc" id="L61">        BufferedImage image = null;</span>
+<span class="fc" id="L60">        BufferedImage image = null;</span>
         Raster data;
 
         try {
-<span class="fc" id="L65">            image = ImageIO.read(found);</span>
-<span class="fc" id="L66">            data = image.getData();</span>
-<span class="fc" id="L67">            _height = data.getHeight();</span>
-<span class="fc" id="L68">            _width = data.getWidth();</span>
-<span class="nc" id="L69">        } catch ( Exception exception ) {</span>
-<span class="nc" id="L70">            String message = &quot;JPEG '&quot;+_fileName+&quot;' could not be read from file!&quot;;</span>
-<span class="nc" id="L71">            _LOG.error( message, exception );</span>
-<span class="nc" id="L72">            exception.printStackTrace();</span>
-<span class="fc" id="L73">        }</span>
+<span class="fc" id="L64">            image = ImageIO.read(found);</span>
+<span class="fc" id="L65">            data = image.getData();</span>
+<span class="fc" id="L66">            _height = data.getHeight();</span>
+<span class="fc" id="L67">            _width = data.getWidth();</span>
+<span class="nc" id="L68">        } catch ( Exception exception ) {</span>
+<span class="nc" id="L69">            String message = &quot;JPEG '&quot;+_fileName+&quot;' could not be read from file!&quot;;</span>
+<span class="nc" id="L70">            _LOG.error( message, exception );</span>
+<span class="nc" id="L71">            exception.printStackTrace();</span>
+<span class="fc" id="L72">        }</span>
 
         try
         {
-<span class="pc bpc" id="L77" title="2 of 4 branches missed.">            if ( _height &lt; 1 || _width &lt; 1 ) {</span>
-<span class="nc" id="L78">                String message = &quot;The height and width of the jpeg at '&quot;+_fileName+&quot;' is &quot;+_height+&quot; &amp; &quot;+_width+&quot;.&quot; +</span>
-                        &quot;However both dimensions must at least be of size 1!&quot;;
-<span class="nc" id="L80">                Exception e = new IOException( message );</span>
-<span class="nc" id="L81">                _LOG.error( message, e );</span>
-<span class="nc" id="L82">                throw e;</span>
+<span class="pc bpc" id="L76" title="2 of 4 branches missed.">            if ( _height &lt; 1 || _width &lt; 1 ) {</span>
+<span class="nc" id="L77">                String message = &quot;The height and width of the jpeg at '&quot;+_fileName+&quot;' is &quot;+_height+&quot; &amp; &quot;+_width+&quot;.&quot; +</span>
+                                 &quot;However both dimensions must at least be of size 1!&quot;;
+<span class="nc" id="L79">                Exception e = new IOException( message );</span>
+<span class="nc" id="L80">                _LOG.error( message, e );</span>
+<span class="nc" id="L81">                throw e;</span>
             }
         }
-<span class="nc" id="L85">        catch ( Exception e )</span>
+<span class="nc" id="L84">        catch ( Exception e )</span>
         {
-<span class="nc" id="L87">            e.printStackTrace();</span>
-<span class="fc" id="L88">        }</span>
-<span class="fc" id="L89">    }</span>
+<span class="nc" id="L86">            _LOG.error( &quot;Failed loading jpg file!&quot;, e );</span>
+<span class="fc" id="L87">        }</span>
+<span class="fc" id="L88">    }</span>
 
     @Override
     public Tsr&lt;Number&gt; load() throws IOException {
-<span class="fc" id="L93">        Object value = _loadData();</span>
-<span class="fc" id="L94">        Tsr&lt;Number&gt; t = Tsr.of( I16.class, new int[]{_height, _width, 3}, value );</span>
-<span class="fc" id="L95">        return t;</span>
+<span class="fc" id="L92">        Object value = _loadData();</span>
+<span class="fc" id="L93">        Tsr t = Tsr.of( I16.class, new int[]{_height, _width, 3}, value );</span>
+<span class="fc" id="L94">        return (Tsr&lt;Number&gt;) t;</span>
     }
 
     @Override
     protected Object _loadData() throws IOException
     {
-<span class="fc" id="L101">        File found = _loadFile();</span>
-<span class="fc" id="L102">        BufferedImage image = null;</span>
+<span class="fc" id="L100">        File found = _loadFile();</span>
+<span class="fc" id="L101">        BufferedImage image = null;</span>
         try
         {
-<span class="fc" id="L105">            image = ImageIO.read( found );</span>
-<span class="fc" id="L106">            byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();</span>
-<span class="fc" id="L107">            short[] newData = new short[ data.length ];</span>
+<span class="fc" id="L104">            image = ImageIO.read( found );</span>
+<span class="fc" id="L105">            byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();</span>
+<span class="fc" id="L106">            short[] newData = new short[ data.length ];</span>
 
-<span class="fc" id="L109">            UI8 ui8 = new UI8();</span>
-<span class="fc" id="L110">            CPU.get().getExecutor().threaded(</span>
+<span class="fc" id="L108">            UI8 ui8 = new UI8();</span>
+<span class="fc" id="L109">            CPU.get().getExecutor().threaded(</span>
                     data.length,
                     ( start, end ) -&gt; {
-<span class="fc bfc" id="L113" title="All 2 branches covered.">                        for ( int i=start; i&lt;end; i++ ) newData[i] = ui8.toTarget( data[i] );</span>
-<span class="fc" id="L114">                    }</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">                        for ( int i=start; i&lt;end; i++ ) newData[i] = ui8.toTarget( data[i] );</span>
+<span class="fc" id="L113">                    }</span>
             );
-<span class="fc" id="L116">            return newData;</span>
+<span class="fc" id="L115">            return newData;</span>
         }
-<span class="nc" id="L118">        catch ( IOException e )</span>
+<span class="nc" id="L117">        catch ( IOException e )</span>
         {
-<span class="nc" id="L120">            e.printStackTrace();</span>
-<span class="nc" id="L121">            throw e;</span>
+<span class="nc" id="L119">            _LOG.error( &quot;Failed loading jpg file!&quot;, e );</span>
+<span class="nc" id="L120">            throw e;</span>
         }
     }
 
     @Override
     public int getValueSize() {
-<span class="fc" id="L127">        return _width * _height * 3;</span>
+<span class="fc" id="L126">        return _width * _height * 3;</span>
     }
 
     @Override
     public int getDataSize() {
-<span class="nc" id="L132">        return _width * _height * 3;</span>
+<span class="nc" id="L131">        return _width * _height * 3;</span>
     }
 
     @Override
     public int getTotalSize() {
-<span class="fc" id="L137">        return _width * _height * 3;</span>
+<span class="fc" id="L136">        return _width * _height * 3;</span>
     }
 
     @Override
     public DataType&lt;?&gt; getDataType() {
-<span class="fc" id="L142">        return DataType.of( UI8.class );</span>
+<span class="fc" id="L141">        return DataType.of( UI8.class );</span>
     }
 
     @Override
     public int[] getShape() {
-<span class="fc" id="L147">        return new int[]{ _height, _width, 3 };</span>
+<span class="fc" id="L146">        return new int[]{ _height, _width, 3 };</span>
     }
 
     @Override
     public String extension() {
-<span class="fc" id="L152">        return &quot;jpg&quot;;</span>
+<span class="fc" id="L151">        return &quot;jpg&quot;;</span>
     }
 
     @Override
     public &lt;T extends Number&gt; Storage&lt;Number&gt; store( Tsr&lt;T&gt; tensor )
     {
-<span class="fc" id="L158">        byte[] data = DataConverter.instance().convert( tensor.getData(), byte[].class );</span>
+<span class="fc" id="L157">        byte[] data = DataConverter.instance().convert( tensor.getData(), byte[].class );</span>
 
-<span class="fc" id="L160">        BufferedImage buffi = new BufferedImage( _width, _height, BufferedImage.TYPE_3BYTE_BGR );</span>
-<span class="fc" id="L161">        buffi.setData(</span>
-<span class="fc" id="L162">                Raster.createRaster(</span>
-<span class="fc" id="L163">                        buffi.getSampleModel(), new DataBufferByte( data, data.length ),</span>
+<span class="fc" id="L159">        BufferedImage buffi = new BufferedImage( _width, _height, BufferedImage.TYPE_3BYTE_BGR );</span>
+<span class="fc" id="L160">        buffi.setData(</span>
+<span class="fc" id="L161">                Raster.createRaster(</span>
+<span class="fc" id="L162">                        buffi.getSampleModel(), new DataBufferByte( data, data.length ),</span>
                         new Point()
                 )
         );
         try {
-<span class="fc" id="L168">            ImageIO.write( buffi, &quot;jpg&quot;, new File( _fileName ) );</span>
-<span class="nc" id="L169">        } catch ( Exception e ) {</span>
-<span class="nc" id="L170">            e.printStackTrace();</span>
+<span class="fc" id="L167">            ImageIO.write( buffi, &quot;jpg&quot;, new File( _fileName ) );</span>
+<span class="nc" id="L168">        } catch ( Exception e ) {</span>
+<span class="nc" id="L169">            _LOG.error(&quot;Failed writing tensor to jpg!&quot;, e);</span>
+<span class="nc" id="L170">            return this;</span>
 <span class="fc" id="L171">        }</span>
 <span class="fc" id="L172">        tensor.setIsOutsourced( true );</span>
 <span class="fc" id="L173">        tensor.setDataType( DataType.of( I16.class ) );</span>

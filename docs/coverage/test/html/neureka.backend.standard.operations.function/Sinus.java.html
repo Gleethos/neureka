@@ -21,14 +21,14 @@ public final class Sinus extends AbstractOperation
 
 <span class="fc" id="L22">    private final DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creator =</span>
             ( inputs, d ) -&gt; {
-<span class="nc" id="L24">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L24">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L25" title="All 2 branches missed.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.sin(t1_val[ t1Idx.i() ]);</span>
 <span class="nc" id="L26">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.cos(t1_val[ t1Idx.i() ]);</span>
             };
 
 <span class="fc" id="L29">    private final DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorX =</span>
             ( inputs, d ) -&gt; {
-<span class="nc" id="L31">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L31">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="nc bnc" id="L32" title="All 2 branches missed.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.sin(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]);</span>
 <span class="nc" id="L33">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.cos(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]);</span>
             };
