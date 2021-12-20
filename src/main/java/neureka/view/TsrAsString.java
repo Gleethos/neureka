@@ -528,7 +528,7 @@ public final class TsrAsString
 
     /**
      *  A simple functional interface for turning something at a particular
-     *  multi dimensional index into a {@link String}.
+     *  multidimensional index into a {@link String}.
      */
     @FunctionalInterface
     private interface NDValStringifier
