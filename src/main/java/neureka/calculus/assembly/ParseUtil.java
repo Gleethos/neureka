@@ -203,14 +203,14 @@ public class ParseUtil
         exp = exp.replace("product", "prod");
 
         int bracketDepth = 0;
-        for ( int Ei = 0; Ei < exp.length(); ++Ei) {
-            if (exp.charAt(Ei) == '(') ++bracketDepth;
-            else if (exp.charAt(Ei) == ')') --bracketDepth;
+        for ( int ei = 0; ei < exp.length(); ++ei) {
+            if (exp.charAt(ei) == '(') ++bracketDepth;
+            else if (exp.charAt(ei) == ')') --bracketDepth;
         }
         if (bracketDepth != 0) {
             if (bracketDepth < 0) {
                 StringBuilder expBuilder = new StringBuilder(exp);
-                for ( int Bi = 0; Bi < -bracketDepth; ++Bi) {
+                for ( int bi = 0; bi < -bracketDepth; ++bi) {
                     expBuilder.insert(0, "(");
                 }
                 exp = expBuilder.toString();

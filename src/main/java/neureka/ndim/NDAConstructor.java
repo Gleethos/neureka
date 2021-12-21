@@ -19,13 +19,17 @@ public class NDAConstructor {
 
     private static final Logger _LOG = LoggerFactory.getLogger(NDAConstructor.class);
 
+    /**
+     *  An interface defining methods for configuring a {@link neureka.Tsr}
+     *  in the making...
+     */
     public interface API {
-        void setType( DataType<?> type );
-        void setConf( NDConfiguration conf );
-        void setData( Object o );
-        void allocate( int size );
+        void   setType( DataType<?> type );
+        void   setConf( NDConfiguration conf );
+        void   setData( Object o );
+        void   allocate( int size );
         Object getData();
-        void setIsVirtual(  boolean isVirtual );
+        void   setIsVirtual(  boolean isVirtual );
     }
 
     private final API _API;
@@ -67,12 +71,6 @@ public class NDAConstructor {
                     )
             );
         }
-    }
-
-    public static void main(String... args) {
-        System.out.println(
-                new Integer[]{1, 2, 3} instanceof Object[]
-        );
     }
 
     public void tryConstructing( int[] shape, DataType<?> dataType, Object data ) {
