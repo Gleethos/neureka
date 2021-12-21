@@ -33,7 +33,7 @@ public class Multiplication extends AbstractOperation
                 double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                 double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
-                else return ( t0Idx, t1Idx, t2Idx ) -> (d == 0) ? t2_val[t2Idx.i()] : t1_val[ t1Idx.i() ];
+                else return ( t0Idx, t1Idx, t2Idx ) -> (d == 0 ? t2_val[t2Idx.i()] : t1_val[ t1Idx.i() ]);
             };
 
     private static final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
@@ -249,7 +249,7 @@ public class Multiplication extends AbstractOperation
                             .arity( 3 )
                             .kernelSource( broadcast.getKernelSource() )
                             .activationSource( "value = src1 * src2;\n" )
-                            .differentiationSource( "value += handle * drain;\n" )
+                            .differentiationSource( "value += ( d == 0 ? drain : handle );\n" )
                             .kernelPostfix( this.getFunction() )
                             .execution(
                                     call -> {
