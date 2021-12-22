@@ -149,7 +149,7 @@ public class Call<D> {
         public boolean isValid() { return _isValid; }
 
         /**
-         *  The validity as float being >0/true and 0.0/false.
+         *  The validity as float being &#62;0/true and 0/false.
          *  If the {@link Call} is valid then a suitability estimation of 0.9f
          *  will be returned simply because a suitability of 1 would mean
          *  that no other algorithm could ever compete with this one if if was

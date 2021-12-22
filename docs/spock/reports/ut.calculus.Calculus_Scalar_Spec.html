@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:14 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:10 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.458 seconds</td>
+<td>0.664 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -1125,12 +1125,89 @@ else assert f.call( inputs )==expected</pre>
 <td class='ex-value'>0.0</td>
 <td class='ex-result'>OK</td>
 </tr>
+<tr class='ex-pass'>
+<td class='ex-value'>sum(7%i0)</td>
+<td class='ex-value'>[2.0, 3.0, 4.0]</td>
+<td class='ex-value'>&lt;null&gt;</td>
+<td class='ex-value'>3.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>sum(7%ij)</td>
+<td class='ex-value'>[2.0, 3.0, 4.0]</td>
+<td class='ex-value'>&lt;null&gt;</td>
+<td class='ex-value'>5.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>sum(7%i0)</td>
+<td class='ex-value'>[2.0, 3.0, 4.0]</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>0.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>sum(7%ij)</td>
+<td class='ex-value'>[2.0, 3.0, 4.0]</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>0.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>sum(i0%3)</td>
+<td class='ex-value'>[2.0, 3.0, 4.0]</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>sum(ij%3)</td>
+<td class='ex-value'>[2.0, 3.0, 4.0]</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>sum(ij-3)</td>
+<td class='ex-value'>[1.0, 2.0, 4.0]</td>
+<td class='ex-value'>&lt;null&gt;</td>
+<td class='ex-value'>-2.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>sum(ij-3)</td>
+<td class='ex-value'>[1.0, 2.0, 4.0]</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>sum(3-ij)</td>
+<td class='ex-value'>[1.0, 2.0, 4.0]</td>
+<td class='ex-value'>&lt;null&gt;</td>
+<td class='ex-value'>2.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>sum(3-ij)</td>
+<td class='ex-value'>[1.0, 2.0, 4.0]</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>-1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>sum(3-ij-ij)</td>
+<td class='ex-value'>[1.0, 2.0, 4.0]</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>-2.0</td>
+<td class='ex-result'>OK</td>
+</tr>
 </tbody>
 </table>
 </div>
 </td>
 <td>
-<div class='spec-status'>36/36 passed</div>
+<div class='spec-status'>47/47 passed</div>
 </td>
 </tr>
 </tbody>

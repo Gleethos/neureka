@@ -346,10 +346,10 @@ import static org.jocl.CL.*;
      */
     @Override
     public void dispose() {
-<span class="nc" id="L349">        _tensors.forEach( this::restore );</span>
-<span class="nc" id="L350">        clFinish( _queue );</span>
-<span class="nc" id="L351">        clReleaseCommandQueue(_queue);</span>
-<span class="nc" id="L352">    }</span>
+<span class="fc" id="L349">        _tensors.forEach( this::restore );</span>
+<span class="fc" id="L350">        clFinish( _queue );</span>
+<span class="fc" id="L351">        clReleaseCommandQueue(_queue);</span>
+<span class="fc" id="L352">    }</span>
 
     /**
      *  This method assumes that the passed tensor is stored on this device instance.

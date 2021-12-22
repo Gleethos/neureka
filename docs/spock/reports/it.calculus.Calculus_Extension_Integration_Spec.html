@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:01 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:00 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>5.546 seconds</td>
+<td>0.649 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -398,8 +398,8 @@ BackendContext testContext = oldContext.clone()</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t1 = Tsr.of([row_sze, com_sze], -3..8)
-Tsr t2 = Tsr.of([com_sze, col_sze], -7..4)
+<pre class='block-source'>Tsr t1 = Tsr.of([row_sze, com_sze], -3d..8d)
+Tsr t2 = Tsr.of([com_sze, col_sze], -7d..4d)
 run {
                 Neureka.get().backend()
                     .addOperation(
@@ -424,7 +424,7 @@ run {
                                 .build()
                                 .setAlgorithm(
                                         Algorithm.withName(null)
-                                                .setIsSuitableFor(call -&gt; 1.0f)
+                                                .setIsSuitableFor(call -&gt; SuitabilityPredicate.GOOD  )
                                                 .setCanPerformBackwardADFor(call -&gt; true)
                                                 .setCanPerformForwardADFor(call -&gt; false)
                                                 .setSupplyADAgentFor(
@@ -464,11 +464,11 @@ run {
 
                                                                     //for ( int i=0; i&lt;clContext.getGws(); i++ ) {
                                                                     //    kernel.gemm_template(
-                                                                    //            drn.value32(),                     //__global float[] drain,
+                                                                    //            drn.getDataAs( float[].class ),                     //__global float[] drain,
                                                                     //            drn.getNDConf().asInlineArray(),   //__global int[] drn_conf,
-                                                                    //            src1.value32(),                    //const __global float[] src1,
+                                                                    //            src1.getDataAs( float[].class ),                    //const __global float[] src1,
                                                                     //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,
-                                                                    //            src2.value32(),                    //const __global float[] src2,
+                                                                    //            src2.getDataAs( float[].class ),                    //const __global float[] src2,
                                                                     //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,
                                                                     //            //call.getTsrOfType( Number.class, 0).rank(),//int rank, == 2
                                                                     //            //-1, //const int d,
@@ -483,6 +483,7 @@ run {
                                                                 }
                                                             )
                                                 )
+                                                .buildFunAlgorithm()
                                 )
                 )
             }

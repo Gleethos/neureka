@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:43 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:15 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.565 seconds</td>
+<td>2.987 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -393,7 +393,20 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.get().settings().view().asString = "dgc"</pre>
+<pre class='block-source'>Neureka.get().settings().view().tensors({ TsrStringSettings it -&gt;
+    it.setIsScientific( true )
+    it.setIsMultiline( false )
+    it.setHasGradient( true )
+    it.setCellSize( 1 )
+    it.setHasValue( true )
+    it.setHasRecursiveGraph( false )
+    it.setHasDerivatives( false )
+    it.setHasShape( true )
+    it.setIsCellBound( false )
+    it.setPostfix(  "" )
+    it.setPrefix(  ""  )
+    it.setHasSlimNumbers(  false )
+})</pre>
 </td>
 </tr>
 <tr>
@@ -480,10 +493,9 @@ loaded.getDataType().getTypeClass() == type</pre>
 <tbody>
 <tr class='ex-pass'>
 <td class='ex-value'>(2x4):[
-   [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ],
-   [   2.0 ,   3.0 ,   4.0 ,  -2.0  ]
-]
-</td>
+   [       -2.0     ,       -1.0     ,       0.0      ,       1.0       ],
+   [       2.0      ,       3.0      ,       4.0      ,       -2.0      ]
+]</td>
 <td class='ex-value'>class neureka.dtype.custom.F64</td>
 <td class='ex-value'>test.idx3-ubyte</td>
 <td class='ex-value'>(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]</td>
@@ -491,10 +503,9 @@ loaded.getDataType().getTypeClass() == type</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>(2x4):[
-   [   2.0 ,   2.0 ,   2.0 ,   2.0  ],
-   [   2.0 ,   2.0 ,   2.0 ,   2.0  ]
-]
-</td>
+   [       2.0      ,       2.0      ,       2.0      ,       2.0       ],
+   [       2.0      ,       2.0      ,       2.0      ,       2.0       ]
+]</td>
 <td class='ex-value'>class neureka.dtype.custom.F64</td>
 <td class='ex-value'>test2.idx</td>
 <td class='ex-value'>(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]</td>
@@ -847,7 +858,7 @@ loaded.dataType == DataType.of( String.class )</pre>
 <td class='ex-value'>[:]</td>
 <td class='ex-value'>753</td>
 <td class='ex-value'>[19, 5]</td>
-<td class='ex-value'>dd82721ee8d78239019836213978e167</td>
+<td class='ex-value'>a3dc4ede7814b5d35d20a8c9310cd63c</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -855,7 +866,7 @@ loaded.dataType == DataType.of( String.class )</pre>
 <td class='ex-value'>[firstRowIsLabels:true]</td>
 <td class='ex-value'>702</td>
 <td class='ex-value'>[18, 5]</td>
-<td class='ex-value'>69840bb6a814c5f2767fb1534f355f31</td>
+<td class='ex-value'>baac406a366a51cb6d69e97a90711050</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -863,7 +874,7 @@ loaded.dataType == DataType.of( String.class )</pre>
 <td class='ex-value'>[firstColIsIndex:true]</td>
 <td class='ex-value'>639</td>
 <td class='ex-value'>[19, 4]</td>
-<td class='ex-value'>64d61739211d552aa649c7f65771a155</td>
+<td class='ex-value'>90c5d3a4b1ea87901879993bb79e9bc1</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -871,7 +882,7 @@ loaded.dataType == DataType.of( String.class )</pre>
 <td class='ex-value'>[firstColIsIndex:true, firstRowIsLabels:true]</td>
 <td class='ex-value'>594</td>
 <td class='ex-value'>[18, 4]</td>
-<td class='ex-value'>047af162925a68a47851f55670a83667</td>
+<td class='ex-value'>61d75f3dccc8d6987e686d151a423310</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -915,7 +926,7 @@ loaded.dataType == DataType.of( String.class )</pre>
 "   (        A       )(       B       )(       C        )\n" +
 "   [        1       ,        hi      ,        :)       ]:( r1 ),\n" +
 "   [        2       ,       hey      ,        ;)       ]:( r2 )\n" +
-"]\n"
+"]"
 !new File("build/resources/test/csv/test.csv").exists()</pre>
 </td>
 </tr>
@@ -937,7 +948,7 @@ Tsr loaded = csvHead.load()</pre>
 "   (        A       )(       B       )(       C        ):( test )\n" +
 "   [        1       ,        hi      ,        :)       ]:( r1 ),\n" +
 "   [        2       ,       hey      ,        ;)       ]:( r2 )\n" +
-"]\n"
+"]"
 new File("build/resources/test/csv/test.csv").exists()
 new File("build/resources/test/csv/test.csv").text == ",A,B,C\nr1,1,hi,:)\nr2,2,hey,;)\n"</pre>
 </td>
@@ -991,7 +1002,7 @@ new File("build/resources/test/csv/test.csv").text == ",A,B,C\nr1,1,hi,:)\nr2,2,
 "   (        A       )(       B       )(       C        )\n" +
 "   [        1       ,        hi      ,        :)       ]:( 0 ),\n" +
 "   [        2       ,       hey      ,        ;)       ]:( 1 )\n" +
-"]\n"
+"]"
 !new File("build/resources/test/csv/test.csv").exists()</pre>
 </td>
 </tr>
@@ -1013,7 +1024,7 @@ Tsr loaded = csvHead.load()</pre>
 "   (        A       )(       B       )(       C        ):( test )\n" +
 "   [        1       ,        hi      ,        :)       ]:( 0 ),\n" +
 "   [        2       ,       hey      ,        ;)       ]:( 1 )\n" +
-"]\n"
+"]"
 new File("build/resources/test/csv/test.csv").exists()
 new File("build/resources/test/csv/test.csv").text == ",A,B,C\n0,1,hi,:)\n1,2,hey,;)\n"</pre>
 </td>

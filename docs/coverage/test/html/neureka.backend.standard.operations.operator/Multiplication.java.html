@@ -33,7 +33,7 @@ public class Multiplication extends AbstractOperation
 <span class="fc" id="L33">                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );</span>
 <span class="fc" id="L34">                double[] t2_val = inputs[ 2 ].getDataAs( double[].class );</span>
 <span class="fc bfc" id="L35" title="All 2 branches covered.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];</span>
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; (d == 0) ? t2_val[t2Idx.i()] : t1_val[ t1Idx.i() ];</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; (d == 0 ? t2_val[t2Idx.i()] : t1_val[ t1Idx.i() ]);</span>
             };
 
 <span class="fc" id="L39">    private static final DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorX =</span>
@@ -249,7 +249,7 @@ public class Multiplication extends AbstractOperation
 <span class="fc" id="L249">                            .arity( 3 )</span>
 <span class="fc" id="L250">                            .kernelSource( broadcast.getKernelSource() )</span>
 <span class="fc" id="L251">                            .activationSource( &quot;value = src1 * src2;\n&quot; )</span>
-<span class="fc" id="L252">                            .differentiationSource( &quot;value += handle * drain;\n&quot; )</span>
+<span class="fc" id="L252">                            .differentiationSource( &quot;value += ( d == 0 ? drain : handle );\n&quot; )</span>
 <span class="fc" id="L253">                            .kernelPostfix( this.getFunction() )</span>
 <span class="fc" id="L254">                            .execution(</span>
                                     call -&gt; {

@@ -1,6 +1,6 @@
 package neureka.devices;
 
-public interface DeviceCleaner
+interface DeviceCleaner
 {
     static DeviceCleaner getInstance() {
         return new CustomDeviceCleaner();

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:12 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:06 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>4.686 seconds</td>
+<td>0.051 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -385,12 +385,25 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr payload = Mock( Tsr )
+<pre class='block-source'>Tsr           payload  = Mock( Tsr )
 Supplier&lt;Tsr&gt; supplier = () -&gt; payload
-Function function = Mock( Function )
-Object context = Mock( GraphLock )
-Device device = Mock( Device )
-payload.getDevice() &gt;&gt; device</pre>
+Function      function = Mock( Function )
+Object        context = Mock( GraphLock )
+Device        device = Mock( Device )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We set the payload up so that it return the mocked device!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>payload.getDevice() &gt;&gt; device</pre>
 </td>
 </tr>
 <tr>

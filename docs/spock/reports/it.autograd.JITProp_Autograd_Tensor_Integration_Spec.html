@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:04 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:03 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.479 seconds</td>
+<td>0.327 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -405,7 +405,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.get().settings().view().isUsingLegacyView = true</pre>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)</pre>
 </td>
 </tr>
 <tr>
@@ -485,7 +485,7 @@ a.toString().contains("(2.0):g:(36.0)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 Tsr a = Tsr.of(2).setRqsGradient(true)
 Tsr b = Tsr.of(-4)
 Tsr c = Tsr.of(3).setRqsGradient(true)
@@ -542,7 +542,7 @@ a.toString().contains("(38.0):g:(null)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
 Tsr a = Tsr.of(2).setRqsGradient(true)
 Tsr b = Tsr.of(-4)
@@ -603,7 +603,7 @@ a.toString().contains("(38.0):g:(null)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
 Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
 Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
@@ -729,7 +729,7 @@ x.toString().contains("(-4.5)")
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
 Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
 Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
@@ -893,7 +893,7 @@ x.toString().contains("(-4.5)")
 <pre class='block-source'>Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
 Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
 Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
-Neureka.get().settings().view().setIsUsingLegacyView(true)
+Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 Tsr a = Tsr.of(2).setRqsGradient(true)
 Tsr b = Tsr.of(-3)
 Tsr c = Tsr.of(3).setRqsGradient(true)</pre>
@@ -975,7 +975,7 @@ c.toString().contains("(1.5):g:(null)")</pre>
 <pre class='block-source'>Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
 Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
 Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
-Neureka.get().settings().view().setIsUsingLegacyView(true)
+Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 Tsr a = Tsr.of(2).setRqsGradient(true)
 Tsr b = Tsr.of(-3)
 Tsr c = Tsr.of(3).setRqsGradient(true)</pre>
@@ -1038,7 +1038,7 @@ c.toString().contains("g:(null)")</pre>
 <pre class='block-source'>Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
 Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
 Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
-Neureka.get().settings().view().setIsUsingLegacyView(true)
+Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 Tsr a = Tsr.of(2).setRqsGradient(true)
 Tsr b = Tsr.of(-4)
 Tsr c = Tsr.of(3).setRqsGradient(true)</pre>

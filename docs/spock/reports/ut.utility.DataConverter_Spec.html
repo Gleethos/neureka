@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:41 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:38 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,13 +329,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>1</td>
-<td>1</td>
+<td>2</td>
+<td>2</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.010 seconds</td>
+<td>0.020 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -350,6 +350,9 @@ div.footer {
 <ul id='toc'>
 <li>
 <a href='#-1132114507' class='feature-toc-pass'>The DataConverter can convert the given array data.</a>
+</li>
+<li>
+<a href='#65880175' class='feature-toc-pass'>An array of any type of object may be converted to a array of primitives.</a>
 </li>
 </ul>
 <tr>
@@ -403,6 +406,42 @@ DataConverter.Utility.newSeededFloatArray( "I'm a seed!", 2 ) == f32Array</pre>
 DataConverter.Utility.newSeededDoubleArray( 42, 2 ) == f64Array
 DataConverter.Utility.seededDoubleArray( f64Array, "I'm a seed!") == [-0.03725913496921719, -0.722714495437272] as double[]
 DataConverter.Utility.newSeededDoubleArray( "I'm a seed!", 2 ) == f64Array</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='65880175'>
+<span>An array of any type of object may be converted to a array of primitives.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>DataConverter.Utility.objectsToFloats([1, 2, 3].toArray(), 2) == [1, 2] as float[]
+DataConverter.Utility.objectsToDoubles([1, 2, 3].toArray(), 2) == [1, 2] as double[]
+DataConverter.Utility.objectsToBytes([1, 2, 3].toArray(), 2) == [1, 2] as byte[]
+DataConverter.Utility.objectsToInts([1, 2, 3].toArray(), 2) == [1, 2] as int[]
+DataConverter.Utility.objectsToLongs([1, 2, 3].toArray(), 2) == [1, 2] as long[]
+DataConverter.Utility.objectsToShorts([1, 2, 3].toArray(), 2) == [1, 2] as short[]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>DataConverter.Utility.objectsToFloats([2.2, 3.9].toArray(), 2) == [2.2,3.9] as float[]
+DataConverter.Utility.objectsToDoubles([2.2, 3.9].toArray(), 2) == [2.2, 3.9] as double[]
+DataConverter.Utility.objectsToBytes([2.2, 3.9].toArray(), 2) == [2, 3] as byte[]
+DataConverter.Utility.objectsToInts([2.2, 3.9].toArray(), 2) == [2, 3] as int[]
+DataConverter.Utility.objectsToLongs([2.2, 3.9].toArray(), 2) == [2, 3] as long[]
+DataConverter.Utility.objectsToShorts([2.2, 3.9].toArray(), 2) == [2, 3] as short[]</pre>
 </td>
 </tr>
 </tbody>

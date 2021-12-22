@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:21 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:01 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.202 seconds</td>
+<td>0.327 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -384,7 +384,7 @@ div.footer {
 <td>
 <pre class='block-source'>if ( device == null ) return
 Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-Neureka.get().settings().view().setIsUsingLegacyView(false)
+Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
 if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.get().canAccessOpenCL() ) return</pre>
 </td>
 </tr>
@@ -400,10 +400,10 @@ if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.get().canAccessOpenCL() 
 <td></td>
 <td>
 <pre class='block-source'>Tsr a = Tsr.of([4, 6], [
-        1, 2, 3, 4, 5, 6,
-        7, 8, 9, 1, 2, 3,
-        4, 5, 6, 7, 8, 9,
-        1, 2, 3, 4, 5, 6
+        1d, 2d, 3d, 4d, 5d, 6d,
+        7d, 8d, 9d, 1d, 2d, 3d,
+        4d, 5d, 6d, 7d, 8d, 9d,
+        1d, 2d, 3d, 4d, 5d, 6d
 ])
 device.store(a)</pre>
 </td>
@@ -452,7 +452,7 @@ b.spread() != null</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x1ac07d7e1b0],platform=OpenCLPlatform@620e56ea[pid=cl_platform_id[0x1ac0aa62e10],context=cl_context[0x1ac0a3b1220]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x283480e9080],platform=OpenCLPlatform@4b1a3833[pid=cl_platform_id[0x283480e8f40],context=cl_context[0x283492c4e10]kernels=[..39..]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -484,7 +484,7 @@ b.spread() != null</pre>
 <td>
 <pre class='block-source'>if ( device == null ) return
 Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-Neureka.get().settings().view().setIsUsingLegacyView(true)
+Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.get().canAccessOpenCL() ) return</pre>
 </td>
 </tr>
@@ -493,9 +493,9 @@ if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.get().canAccessOpenCL() 
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr x = Tsr.of([1], 3).setRqsGradient(true)
-Tsr b = Tsr.of([1], -4)
-Tsr w = Tsr.of([1], 2)
+<pre class='block-source'>Tsr x = Tsr.of([1],  3d).setRqsGradient(true)
+Tsr b = Tsr.of([1], -4d)
+Tsr w = Tsr.of([1],  2d)
 device.store(x).store(b).store(w)
 Tsr y = Tsr.of("((i0+i1)*i2)^2", [x, b, w])</pre>
 </td>
@@ -535,10 +535,10 @@ y = ((x+b)*w)**2</pre>
 x.toString().contains("-32.0")
 y = b + w * x
 Tsr a = Tsr.of([4, 6], [
-        1, 2, 3, 4, 5, 6,
-        7, 8, 9, 1, 2, 3,
-        4, 5, 6, 7, 8, 9,
-        1, 2, 3, 4, 5, 6
+        1d, 2d, 3d, 4d, 5d, 6d,
+        7d, 8d, 9d, 1d, 2d, 3d,
+        4d, 5d, 6d, 7d, 8d, 9d,
+        1d, 2d, 3d, 4d, 5d, 6d
 ])
 device.store(a)
 b = a[[-1..-3, -6..-3]]
@@ -588,16 +588,16 @@ b.spread() != null</pre>
 </td>
 <td>
 <pre class='block-source'>if( device instanceof DummyDevice ) {
-    a.value64()[1] = a.value64()[1] * 6
-    a.value64()[7] = a.value64()[7] * 2
+    a.getDataAs( double[].class )[1] = a.getDataAs( double[].class )[1] * 6
+    a.getDataAs( double[].class )[7] = a.getDataAs( double[].class )[7] * 2
 } else {
     Tsr k = Tsr.of([4, 6], [
-            1, 6, 1, 1,
-            1, 1, 1, 2,
-            1, 1, 1, 1,
-            1, 1, 1, 1,
-            1, 1, 1, 1,
-            1, 1, 1, 1
+            1d, 6d, 1d, 1d,
+            1d, 1d, 1d, 2d,
+            1d, 1d, 1d, 1d,
+            1d, 1d, 1d, 1d,
+            1d, 1d, 1d, 1d,
+            1d, 1d, 1d, 1d
     ])
     device.store( k )
     a[] = a * k
@@ -620,10 +620,10 @@ b.spread() != null</pre>
 </td>
 <td>
 <pre class='block-source'>Tsr c = Tsr.of([3, 4], [
-        -3, 2, 3,
-        5, 6, 2,
-        -1, 1, 2,
-        3, 4, 2,
+        -3d, 2d, 3d,
+         5d, 6d, 2d,
+        -1d, 1d, 2d,
+         3d, 4d, 2d,
 ])
 Tsr d = b + c</pre>
 </td>
@@ -684,8 +684,8 @@ b.spread() != null</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr p = Tsr.of([2,2], [2, 55, 4, 7]).to((device instanceof DummyDevice)?null:device)
-Tsr u = Tsr.of([2,2], [5, 2, 7, 34]).to((device instanceof DummyDevice)?null:device)
+<pre class='block-source'>Tsr p = Tsr.of([2,2], [2d, 55d, 4d, 7d]).to((device instanceof DummyDevice)?null:device)
+Tsr u = Tsr.of([2,2], [5d, 2d, 7d, 34d]).to((device instanceof DummyDevice)?null:device)
 p[] = u</pre>
 </td>
 </tr>
@@ -702,7 +702,7 @@ p[] = u</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>a[[[0..3]:2, [1..4]:2]] = Tsr.of([2, 2], [1, 2, 3, 4])</pre>
+<pre class='block-source'>a[[[0..3]:2, [1..4]:2]] = Tsr.of([2, 2], [1d, 2d, 3d, 4d])</pre>
 </td>
 </tr>
 <tr>
@@ -782,7 +782,7 @@ x = Tsr.of(b, "x", c)</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x1ac07d7e1b0],platform=OpenCLPlatform@620e56ea[pid=cl_platform_id[0x1ac0aa62e10],context=cl_context[0x1ac0a3b1220]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x283480e9080],platform=OpenCLPlatform@4b1a3833[pid=cl_platform_id[0x283480e8f40],context=cl_context[0x283492c4e10]kernels=[..39..]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>

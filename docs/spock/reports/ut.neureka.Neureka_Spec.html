@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:41 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:37 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,13 +329,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>5</td>
-<td>5</td>
+<td>6</td>
+<td>6</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>5.418 seconds</td>
+<td>15.107 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -379,6 +379,9 @@ div.footer {
 </li>
 <li>
 <a href='#-1947032983' class='feature-toc-pass'>OpenCL related library objects adhere to the same toString formatting convention!</a>
+</li>
+<li>
+<a href='#-1214198360' class='feature-toc-pass'>Backend related library objects adhere to the same toString formatting convention!</a>
 </li>
 </ul>
 <tr>
@@ -447,7 +450,7 @@ Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.version()=="0.9.0"</pre>
+<pre class='block-source'>Neureka.version()=="0.10.0"</pre>
 </td>
 </tr>
 <tr>
@@ -555,6 +558,24 @@ def get = { getter(Neureka.get().settings()) }</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>false</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
 <td class='ex-value'>false</td>
 <td class='ex-value'>&lt;executable&gt;</td>
 <td class='ex-value'>&lt;executable&gt;</td>
@@ -601,7 +622,7 @@ def get = { getter(Neureka.get().settings()) }</pre>
 </div>
 </td>
 <td>
-<div class='spec-status'>8/8 passed</div>
+<div class='spec-status'>11/11 passed</div>
 </td>
 </tr>
 <tr>
@@ -741,15 +762,15 @@ map['instance 2'] != null</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>JITProp@2139387064[finished=0,pending=0,isDone=false]</td>
+<td class='ex-value'>JITProp@376554995[finished=0,pending=0,isDone=false]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Neureka[settings=Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=true,isApplyingGradientWhenTensorIsUsed=true,isApplyingGradientWhenRequested=true],indexing=Neureka.Settings.Indexing[isUsingArrayBasedIndexing=true],view=Neureka.Settings.View[isUsingLegacyView=false,asString={BE_COMPACT=true, HAVE_RECURSIVE_GRAPH=false, HAVE_DERIVATIVES=true, HAVE_GRADIENT=true, HAVE_VALUE=true, BE_FORMATTED=false, HAVE_SHAPE=true, BE_CELL_BOUND=false, HAVE_PADDING_OF=1, BE_SHORTENED_BY=50}],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false],utility=neureka.Neureka$Utility@7699169e,backend=BackendContext[size=41]]</td>
+<td class='ex-value'>Neureka[settings=Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=true,isApplyingGradientWhenTensorIsUsed=true,isApplyingGradientWhenRequested=true],indexing=Neureka.Settings.Indexing[isUsingArrayBasedIndexing=true],view=Neureka.Settings.View[tensors=neureka.view.TsrStringSettings@6e1c3f7e],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false],utility=neureka.Neureka$Utility@ff4e279,backend=BackendContext[size=42]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=true,isApplyingGradientWhenTensorIsUsed=true,isApplyingGradientWhenRequested=true],indexing=Neureka.Settings.Indexing[isUsingArrayBasedIndexing=true],view=Neureka.Settings.View[isUsingLegacyView=false,asString={BE_COMPACT=true, HAVE_RECURSIVE_GRAPH=false, HAVE_DERIVATIVES=true, HAVE_GRADIENT=true, HAVE_VALUE=true, BE_FORMATTED=false, HAVE_SHAPE=true, BE_CELL_BOUND=false, HAVE_PADDING_OF=1, BE_SHORTENED_BY=50}],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false]</td>
+<td class='ex-value'>Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=true,isApplyingGradientWhenTensorIsUsed=true,isApplyingGradientWhenRequested=true],indexing=Neureka.Settings.Indexing[isUsingArrayBasedIndexing=true],view=Neureka.Settings.View[tensors=neureka.view.TsrStringSettings@6e1c3f7e],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -773,19 +794,19 @@ map['instance 2'] != null</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Neureka.Settings.View[isUsingLegacyView=false,asString={BE_COMPACT=true, HAVE_RECURSIVE_GRAPH=false, HAVE_DERIVATIVES=true, HAVE_GRADIENT=true, HAVE_VALUE=true, BE_FORMATTED=false, HAVE_SHAPE=true, BE_CELL_BOUND=false, HAVE_PADDING_OF=1, BE_SHORTENED_BY=50}]</td>
+<td class='ex-value'>Neureka.Settings.View[tensors=neureka.view.TsrStringSettings@6e1c3f7e]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Functions[dimTrim=dimtrim(I[0]),idy=(I[0] &lt;- I[1]),conv=(I[0] x I[1]),plus=(I[0] + I[1]),plusAssign=(I[0] &lt;- (I[0] + I[1])),minus=(I[0] - I[1]),minusAssign=(I[0] &lt;- (I[0] - I[1])),div=(I[0] / I[1]),divAssign=(I[0] &lt;- (I[0] / I[1])),pow=(I[0] ^ I[1]),powAssign=(I[0] &lt;- (I[0] ^ I[1])),mul=(I[0] * I[1]),mulAssign=(I[0] &lt;- (I[0] * I[1])),add=(I[0] + I[1]),addAssign=(I[0] &lt;- (I[0] + I[1])),mod=(I[0] % I[1]),modAssign=(I[0] &lt;- (I[0] % I[1])),neg=(-1.0 * I[0]),matMul=(I[0] @ I[1]),$jacocoData=[Z@39ac9087]</td>
+<td class='ex-value'>Functions[dimTrim=dimtrim(I[0]),idy=(I[0] &lt;- I[1]),conv=(I[0] x I[1]),plus=(I[0] + I[1]),plusAssign=(I[0] &lt;- (I[0] + I[1])),minus=(I[0] - I[1]),minusAssign=(I[0] &lt;- (I[0] - I[1])),div=(I[0] / I[1]),divAssign=(I[0] &lt;- (I[0] / I[1])),pow=(I[0] ^ I[1]),powAssign=(I[0] &lt;- (I[0] ^ I[1])),mul=(I[0] * I[1]),mulAssign=(I[0] &lt;- (I[0] * I[1])),add=(I[0] + I[1]),addAssign=(I[0] &lt;- (I[0] + I[1])),mod=(I[0] % I[1]),modAssign=(I[0] &lt;- (I[0] % I[1])),neg=(-1.0 * I[0]),matMul=(I[0] @ I[1]),$jacocoData=[Z@3b718496]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Functions[dimTrim=dimtrim(I[0]),idy=(I[0] &lt;- I[1]),conv=(I[0] x I[1]),plus=(I[0] + I[1]),plusAssign=(I[0] &lt;- (I[0] + I[1])),minus=(I[0] - I[1]),minusAssign=(I[0] &lt;- (I[0] - I[1])),div=(I[0] / I[1]),divAssign=(I[0] &lt;- (I[0] / I[1])),pow=(I[0] ^ I[1]),powAssign=(I[0] &lt;- (I[0] ^ I[1])),mul=(I[0] * I[1]),mulAssign=(I[0] &lt;- (I[0] * I[1])),add=(I[0] + I[1]),addAssign=(I[0] &lt;- (I[0] + I[1])),mod=(I[0] % I[1]),modAssign=(I[0] &lt;- (I[0] % I[1])),neg=(-1.0 * I[0]),matMul=(I[0] @ I[1]),$jacocoData=[Z@39ac9087]</td>
+<td class='ex-value'>Functions[dimTrim=dimtrim(I[0]),idy=(I[0] &lt;- I[1]),conv=(I[0] x I[1]),plus=(I[0] + I[1]),plusAssign=(I[0] &lt;- (I[0] + I[1])),minus=(I[0] - I[1]),minusAssign=(I[0] &lt;- (I[0] - I[1])),div=(I[0] / I[1]),divAssign=(I[0] &lt;- (I[0] / I[1])),pow=(I[0] ^ I[1]),powAssign=(I[0] &lt;- (I[0] ^ I[1])),mul=(I[0] * I[1]),mulAssign=(I[0] &lt;- (I[0] * I[1])),add=(I[0] + I[1]),addAssign=(I[0] &lt;- (I[0] + I[1])),mod=(I[0] % I[1]),modAssign=(I[0] &lt;- (I[0] % I[1])),neg=(-1.0 * I[0]),matMul=(I[0] @ I[1]),$jacocoData=[Z@3b718496]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>BackendContext[size=41]</td>
+<td class='ex-value'>BackendContext[size=42]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -793,7 +814,7 @@ map['instance 2'] != null</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>ExecutionCall[device=CPU[coreCount=12],derivativeIndex=-1,operation=neureka.backend.standard.operations.operator.Addition@46f53493,tensors=[..1..],j=-1, algorithm=?,context=[-1, -1]]</td>
+<td class='ex-value'>ExecutionCall[device=CPU[coreCount=12],derivativeIndex=-1,operation=Addition@38001485[identifier='add',operator='+'],tensors=[..1..],j=-1, algorithm=?,context=[-1, -1]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -801,11 +822,11 @@ map['instance 2'] != null</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>GraphNode@45a6e133[parents=[?, ?],function=(I[0] * I[1]),shape=?]</td>
+<td class='ex-value'>GraphNode@19a5e0b4[parents=[?, ?],function=(I[0] * I[1]),shape=?]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>GraphLock@7b341db6[owner=(I[0] * (3.0 / 2.0))]</td>
+<td class='ex-value'>GraphLock@41090b28[owner=(I[0] * (3.0 / 2.0))]</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -856,15 +877,15 @@ map['instance 2'] != null</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>CLContext@156d56a3[platforms=[OpenCLPlatform@67196666[pid=cl_platform_id[0x2066d693c30],context=cl_context[0x2066f5a3a40]kernels=[..39..]],OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]]</td>
+<td class='ex-value'>CLContext@57fc25ec[platforms=[OpenCLPlatform@4b1a3833[pid=cl_platform_id[0x283480e8f40],context=cl_context[0x283492c4e10]kernels=[..39..]],OpenCLPlatform@4aadf70c[pid=cl_platform_id[0x2834aa2af20],context=cl_context[0x283459ffe00]kernels=[..39..]]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLPlatform@67196666[pid=cl_platform_id[0x2066d693c30],context=cl_context[0x2066f5a3a40]kernels=[..39..]]</td>
+<td class='ex-value'>OpenCLPlatform@4b1a3833[pid=cl_platform_id[0x283480e8f40],context=cl_context[0x283492c4e10]kernels=[..39..]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066d693190],platform=OpenCLPlatform@67196666[pid=cl_platform_id[0x2066d693c30],context=cl_context[0x2066f5a3a40]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x283480e9080],platform=OpenCLPlatform@4b1a3833[pid=cl_platform_id[0x283480e8f40],context=cl_context[0x283492c4e10]kernels=[..39..]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -873,6 +894,243 @@ map['instance 2'] != null</pre>
 </td>
 <td>
 <div class='spec-status'>3/3 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1214198360'>
+<span>Backend related library objects adhere to the same toString formatting convention!</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The provided object matches the following pattern defining a common standard!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>toStringStandard.matcher(operation.toString()).matches()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The same criteria should also be met for every algorithm within the current operation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>operation.getAllAlgorithms().every {
+    toStringStandard.matcher(it.toString()).matches()
+}</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following operations are being used..</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>operation</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>Absolute@68384f68[identifier='abs',operator='abs']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Cosinus@375954e0[identifier='cos',operator='cos']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Gaussian@68d6e895[identifier='gaus',operator='gaus']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Identity@7f5bb480[identifier='idy',operator='idy']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Quadratic@348a7ac2[identifier='quad',operator='quad']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>ReLU@7bc96bae[identifier='relu',operator='relu']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Sigmoid@fe19960[identifier='sig',operator='sig']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Sinus@7f7f1384[identifier='sin',operator='sin']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Softplus@4526d1b6[identifier='softplus',operator='softplus']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Tanh@73c5c59b[identifier='tanh',operator='tanh']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Logarithm@7258f280[identifier='ln',operator='ln']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Summation@4f8d3c37[identifier='sumJs',operator='sumJs']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Product@40fd7e3[identifier='prodJs',operator='prodJs']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Power@e52ecbb[identifier='power',operator='^']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>PowerConv@38019af8[identifier='power_conv',operator='p']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>PowerLeftConv@238e8333[identifier='power_conv_left',operator='«p']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>PowerRightConv@47dde4c5[identifier='power_conv_right',operator='p»']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Division@26a6d30[identifier='divide',operator='/']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>DivisionConv@2898faf3[identifier='divide_conv',operator='d']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>DivisionLeftConv@c74648d[identifier='division_conv_left',operator='«d']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>DivisionRightConv@243de292[identifier='div_conv_right',operator='d»']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Multiplication@1986ec43[identifier='multiply',operator='*']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>MultiplicationLeftConv@6dc5c2a9[identifier='mul_conv_left',operator='«*']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>MultiplicationRightConv@3b6e56a[identifier='mul_conv_right',operator='*»']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Modulo@5af8f106[identifier='modulo',operator='%']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Subtraction@7f4546b3[identifier='subtract',operator='-']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>SubtractionConv@5c5d2751[identifier='sub_conv',operator='s']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>SubtractionLeftConv@7307403b[identifier='sub_conv_left',operator='«s']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>SubtractionRightConv@6683df78[identifier='sub_conv_right',operator='s»']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Addition@38001485[identifier='add',operator='+']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>AdditionConv@4815e15c[identifier='add_conv',operator='a']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>AdditionLeftConv@3a8d9ca6[identifier='add_conv_left',operator='«a']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>AdditionRightConv@28685c98[identifier='add_conv_right',operator='a»']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>XConv@48e4a769[identifier='mul_conv',operator='x']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>XConvLeft@732f8895[identifier='inv_convolve_mul_left',operator='«x']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>XConvRight@3359bd12[identifier='inv_convolve_mul_right',operator='x»']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>MatMul@57674ccf[identifier='matMul',operator='@']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>DimTrim@1469493e[identifier='dimtrim',operator='dimtrim']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Reshape@614c2b5c[identifier='reshape',operator=',']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CopyLeft@6df1cb55[identifier='left_inline',operator='&lt;']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CopyRight@7581a0f0[identifier='inject_right',operator='&gt;']</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Anonymous@739bee9f[identifier='my_test_fun',operator='my_test_fun']</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>42/42 passed</div>
 </td>
 </tr>
 </tbody>

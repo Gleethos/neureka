@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:02 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:05 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.691 seconds</td>
+<td>0.612 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -370,12 +370,19 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
-Tsr a = Tsr.of([2, 3], [
-        1, 2, 3,
-        4, 5, 6
-]).setRqsGradient(true)
-Function rs = Function.of("[1, 0]:(I[0])")</pre>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+Tsr&lt;Double&gt; a = Tsr.of([2, 3], [
+    1d, 2d, 3d,
+    4d, 5d, 6d
+]).setRqsGradient(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>Function rs = Function.of("[1, 0]:(I[0])")</pre>
 </td>
 </tr>
 <tr>
@@ -396,9 +403,9 @@ GraphNode nb = b.get( GraphNode.class )</pre>
 <pre class='block-source'>assert na.getChildren().size()==1
 assert b.toString().contains("")
 b.backward(Tsr.of([3, 2],[
-        -1, 2,
-        4, 7,
-        -9, 8
+        -1d, 2d,
+         4d, 7d,
+        -9d, 8d
 ]))
 assert a.toString().contains("[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)")
 assert b.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
@@ -431,11 +438,11 @@ assert !nb.getLock().isLocked()</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr a = Tsr.of(2).setRqsGradient(true)
-Tsr b = a * 3 / 5
-Tsr c = Tsr.of(3)
-Tsr d = b ^ c
-Tsr e = d * c
+<pre class='block-source'>Tsr&lt;Double&gt; a = Tsr.of(2d).setRqsGradient(true)
+Tsr&lt;Double&gt; b = a * 3 / 5
+Tsr&lt;Double&gt; c = Tsr.of(3d)
+Tsr&lt;Double&gt; d = b ^ c
+Tsr&lt;Double&gt; e = d * c
 GraphNode n = e.get( GraphNode.class )</pre>
 </td>
 </tr>

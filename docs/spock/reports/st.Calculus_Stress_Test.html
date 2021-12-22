@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:06 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:00 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.761 seconds</td>
+<td>0.693 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -469,7 +469,7 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>true</td>
 <td class='ex-result'>OK</td>
 </tr>
@@ -504,7 +504,7 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = Tsr.of( shape, -4..2 )</pre>
+<pre class='block-source'>Tsr&lt;Double&gt; t = Tsr.of( shape, -4d..2d )</pre>
 </td>
 </tr>
 <tr>
@@ -593,8 +593,8 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t1 = Tsr.of( shape1, -4..2 ).to( device )
-Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
+<pre class='block-source'>Tsr&lt;Double&gt; t1 = Tsr.of( shape1, -4d..2d ).to( device )
+Tsr&lt;Double&gt; t2 = Tsr.of( shape2, -3d..5d ).to( device )</pre>
 </td>
 </tr>
 <tr>
@@ -704,7 +704,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -713,7 +713,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -722,7 +722,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -731,7 +731,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -776,7 +776,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -785,7 +785,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -794,7 +794,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -803,7 +803,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -848,7 +848,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -857,7 +857,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -866,7 +866,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -875,7 +875,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066f59c970],platform=OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x241d0092710],platform=OpenCLPlatform@efbcd30[pid=cl_platform_id[0x241d0093840],context=cl_context[0x241cfdfffb0]kernels=[..39..]]]</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>

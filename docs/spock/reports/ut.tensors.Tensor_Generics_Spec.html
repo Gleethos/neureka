@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:29 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:44 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,13 +329,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>2</td>
-<td>2</td>
+<td>3</td>
+<td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.008 seconds</td>
+<td>0.023 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -364,6 +364,9 @@ div.footer {
 </li>
 <li>
 <a href='#183473621' class='feature-toc-pass'>String tensor instance discovers expected class.</a>
+</li>
+<li>
+<a href='#1749540055' class='feature-toc-pass'>1D tensors can be created from primitive arrays.</a>
 </li>
 </ul>
 <tr>
@@ -440,6 +443,101 @@ div.footer {
 </td>
 <td>
 <pre class='block-source'>t.toString() == "(2x4):[Hi, I'm, a, String, list, Hi, I'm, a]"</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1749540055'>
+<span>1D tensors can be created from primitive arrays.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>def t = Tsr.of(data)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>t.rank() == 1</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>t.size() == size</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>t.getValueClass() == expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>size</th>
+<th class='ex-header'>data</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>3</td>
+<td class='ex-value'>[-1.0, 3.0, 6.0]</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>4</td>
+<td class='ex-value'>[1, -2, 9, 12]</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[42, 73]</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>3</td>
+<td class='ex-value'>[-16, 54, 12]</td>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>1</td>
+<td class='ex-value'>[26]</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>5/5 passed</div>
 </td>
 </tr>
 </tbody>

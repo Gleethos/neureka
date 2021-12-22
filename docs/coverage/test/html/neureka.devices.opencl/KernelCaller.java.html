@@ -17,8 +17,8 @@ import static org.jocl.CL.*;
  */
 <span class="pc bpc" id="L18" title="1 of 2 branches missed.">public class KernelCaller</span>
 {
-    private final cl_command_queue _queue;
-    private final cl_kernel _kernel;
+    private final cl_command_queue  _queue;
+    private final cl_kernel         _kernel;
     private final List&lt;Tsr&lt;Number&gt;&gt; _inputs;
 
 <span class="fc" id="L24">    private int _argId = 0;</span>
@@ -29,7 +29,7 @@ import static org.jocl.CL.*;
      * @param queue The queue on which calls ought to be dispatched.
      */
 <span class="fc" id="L31">    public KernelCaller( @NotNull cl_kernel kernel, @NotNull cl_command_queue queue ) {</span>
-<span class="fc" id="L32">        _queue = queue;</span>
+<span class="fc" id="L32">        _queue  = queue;</span>
 <span class="fc" id="L33">        _kernel = kernel;</span>
 <span class="fc" id="L34">        _inputs = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L35">    }</span>

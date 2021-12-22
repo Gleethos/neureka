@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:08 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:08:57 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.160 seconds</td>
+<td>0.225 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -379,7 +379,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)</pre>
 </td>
 </tr>
@@ -395,22 +395,22 @@ Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)</p
 <td></td>
 <td>
 <pre class='block-source'>Tsr i_a = Tsr.of([2, 1], [
-        1,
-        2
+        1d,
+        2d
 ])
 Tsr w_a = Tsr.of([2, 2], [
-        1, 3,
-        4, -1
+        1d, 3d,
+        4d, -1d
 ]).setRqsGradient(true)
 Tsr o_a = Tsr.of(i_a, "x", w_a)
 Tsr w_b = Tsr.of([2, 2], [
-        -2, 1,  // 9, 1 -&gt; -17
-        2, -1   // ... -&gt; 17
+        -2d, 1d,  // 9, 1 -&gt; -17
+        2d, -1d   // ... -&gt; 17
 ]).setRqsGradient(true)
 Tsr o_b = Tsr.of(o_a, "x", w_b)
 Tsr w_c = Tsr.of([2, 2], [
-        0.5, 3,
-        -2, -0.5
+        0.5d, 3d,
+        -2d, -0.5d
 ]).setRqsGradient(true)
 Tsr o_c = Tsr.of(o_a, "x", w_c)
 Tsr out = o_b * o_c</pre>
@@ -512,7 +512,7 @@ assert w_b.toString().contains("g:(67.5, 7.5, -166.5, -18.5)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)</pre>
 </td>
 </tr>
@@ -521,12 +521,12 @@ Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)</p
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr i_a = Tsr.of([2, 1], [1, 2])
-Tsr w_a = Tsr.of([2, 2], [1, 3, 4, -1]).setRqsGradient(true)
+<pre class='block-source'>Tsr i_a = Tsr.of([2, 1], [1d, 2d])
+Tsr w_a = Tsr.of([2, 2], [1d, 3d, 4d, -1d]).setRqsGradient(true)
 Tsr o_a = Tsr.of(i_a,"x", w_a)
-Tsr w_b = Tsr.of([2, 2], [-2, 1, 2, -1]).setRqsGradient(true)
+Tsr w_b = Tsr.of([2, 2], [-2d, 1d, 2d, -1d]).setRqsGradient(true)
 Tsr o_b = Tsr.of(o_a,"x", w_b)
-Tsr w_c = Tsr.of([2, 2], [0.5, 3, -2, -0.5]).setRqsGradient(true)
+Tsr w_c = Tsr.of([2, 2], [0.5d, 3d, -2d, -0.5d]).setRqsGradient(true)
 Tsr o_c = Tsr.of(o_a, "x", w_c)
 Tsr out = o_b*o_c</pre>
 </td>

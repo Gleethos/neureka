@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:35 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:16 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,11 +335,16 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.277 seconds</td>
+<td>0.487 seconds</td>
 </tr>
 </tbody>
 </table>
 </div>
+<pre class='title'>The CPU device, an API for CPU based execution</pre>
+<pre class='narrative'>The CPU class, one of many implementations of the Device interface, 
+    is simply supposed to be an API for dispatching threaded workloads onto the CPU.
+    Contrary to other types of device, the CPU will host tensor data by default, simply
+    because the tensors will be stored in RAM if no device was specified.</pre>
 <div class='spec-headers'>
 <div class='spec-header'>
                 <h2> class neureka.devices.host.CPU Behavior </h2>
@@ -475,7 +480,7 @@ else {
         }
     })
     t.start()
-    Tsr c = (a / b) * 3
+    Tsr c = ( a / b ) * 3
     assert c.shape() == [100,60,60,2]
     int result = min[0]
     try {

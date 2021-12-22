@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:15 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:09:18 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,13 +329,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>5</td>
-<td>5</td>
+<td>6</td>
+<td>6</td>
 <td>0</td>
 <td>0</td>
 <td>2</td>
 <td>100.0%</td>
-<td>0.300 seconds</td>
+<td>1.702 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -377,7 +377,10 @@ div.footer {
 <a href='#-501728636' class='feature-toc-ignored'>Devices store slices which can also be restored.</a>
 </li>
 <li>
-<a href='#-2145895206' class='feature-toc-ignored'>Devices cannot store slices which whose parents are not already stored.</a>
+<a href='#793281450' class='feature-toc-ignored'>Devices cannot store slices which parents are not already stored.</a>
+</li>
+<li>
+<a href='#853989262' class='feature-toc-pass'>Virtual tensors stay virtual when outsourced.</a>
 </li>
 </ul>
 <tr>
@@ -584,35 +587,35 @@ t.setValue(data2)</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2bc224f7f50],platform=OpenCLPlatform@7209e0f4[pid=cl_platform_id[0x2bc1e6bd360],context=cl_context[0x2bc2198ee00]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x27341fb75d0],platform=OpenCLPlatform@48e57a78[pid=cl_platform_id[0x27341fb7b70],context=cl_context[0x273433820f0]kernels=[..39..]]]</td>
 <td class='ex-value'>[]</td>
 <td class='ex-value'>[]</td>
 <td class='ex-value'>(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2bc224f7f50],platform=OpenCLPlatform@7209e0f4[pid=cl_platform_id[0x2bc1e6bd360],context=cl_context[0x2bc2198ee00]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x27341fb75d0],platform=OpenCLPlatform@48e57a78[pid=cl_platform_id[0x27341fb7b70],context=cl_context[0x273433820f0]kernels=[..39..]]]</td>
 <td class='ex-value'>[2.0, 3.0, 4.0, 5.0, 6.0]</td>
 <td class='ex-value'>[1.0, 1.0, 1.0, 1.0, 1.0]</td>
 <td class='ex-value'>(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2bc224f7f50],platform=OpenCLPlatform@7209e0f4[pid=cl_platform_id[0x2bc1e6bd360],context=cl_context[0x2bc2198ee00]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x27341fb75d0],platform=OpenCLPlatform@48e57a78[pid=cl_platform_id[0x27341fb7b70],context=cl_context[0x273433820f0]kernels=[..39..]]]</td>
 <td class='ex-value'>[3.0, 5.0, 6.0]</td>
 <td class='ex-value'>[4.0, 2.0, 3.0]</td>
 <td class='ex-value'>(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2bc224f7f50],platform=OpenCLPlatform@7209e0f4[pid=cl_platform_id[0x2bc1e6bd360],context=cl_context[0x2bc2198ee00]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x27341fb75d0],platform=OpenCLPlatform@48e57a78[pid=cl_platform_id[0x27341fb7b70],context=cl_context[0x273433820f0]kernels=[..39..]]]</td>
 <td class='ex-value'>[9.0, 4.0, 7.0, -12.0]</td>
 <td class='ex-value'>[-5.0, -2.0, 1.0]</td>
 <td class='ex-value'>(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2bc224f7f50],platform=OpenCLPlatform@7209e0f4[pid=cl_platform_id[0x2bc1e6bd360],context=cl_context[0x2bc2198ee00]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x27341fb75d0],platform=OpenCLPlatform@48e57a78[pid=cl_platform_id[0x27341fb7b70],context=cl_context[0x273433820f0]kernels=[..39..]]]</td>
 <td class='ex-value'>[22.0, 24.0, 35.0, 80.0]</td>
 <td class='ex-value'>[-1.0, -1.0, -1.0]</td>
 <td class='ex-value'>(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
@@ -675,7 +678,7 @@ t.setValue(data2)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>(t.value64() as List&lt;Float&gt;) == expected</pre>
+<pre class='block-source'>(t.getValueAs( double[].class ) as List&lt;Float&gt;) == expected</pre>
 </td>
 </tr>
 <tr>
@@ -745,14 +748,14 @@ t.setValue(data2)</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2bc224f7f50],platform=OpenCLPlatform@7209e0f4[pid=cl_platform_id[0x2bc1e6bd360],context=cl_context[0x2bc2198ee00]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x27341fb75d0],platform=OpenCLPlatform@48e57a78[pid=cl_platform_id[0x27341fb7b70],context=cl_context[0x273433820f0]kernels=[..39..]]]</td>
 <td class='ex-value'>[3, 2]</td>
 <td class='ex-value'>[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
 <td class='ex-value'>[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2bc224f7f50],platform=OpenCLPlatform@7209e0f4[pid=cl_platform_id[0x2bc1e6bd360],context=cl_context[0x2bc2198ee00]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x27341fb75d0],platform=OpenCLPlatform@48e57a78[pid=cl_platform_id[0x27341fb7b70],context=cl_context[0x273433820f0]kernels=[..39..]]]</td>
 <td class='ex-value'>[3, 2]</td>
 <td class='ex-value'>[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
 <td class='ex-value'>[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
@@ -898,7 +901,7 @@ exception.message == "Device arguments may not be null!\n" +
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2bc224f7f50],platform=OpenCLPlatform@7209e0f4[pid=cl_platform_id[0x2bc1e6bd360],context=cl_context[0x2bc2198ee00]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x27341fb75d0],platform=OpenCLPlatform@48e57a78[pid=cl_platform_id[0x27341fb7b70],context=cl_context[0x273433820f0]kernels=[..39..]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -1084,11 +1087,11 @@ device.size() == initialNumber
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2bc224f7f50],platform=OpenCLPlatform@7209e0f4[pid=cl_platform_id[0x2bc1e6bd360],context=cl_context[0x2bc2198ee00]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x27341fb75d0],platform=OpenCLPlatform@48e57a78[pid=cl_platform_id[0x27341fb7b70],context=cl_context[0x273433820f0]kernels=[..39..]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>FileDevice[directory=build/test-can,stored={},loadable=[],loaded=[]]</td>
+<td class='ex-value'>FileDevice[directory=build/test-can,stored={},loadable=[test2.idx],loaded=[]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -1235,8 +1238,8 @@ device.size() == initialNumber
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description ignored' id='-2145895206'>
-<span>Devices cannot store slices which whose parents are not already stored.</span>
+<div class='feature-description ignored' id='793281450'>
+<span>Devices cannot store slices which parents are not already stored.</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -1376,6 +1379,125 @@ device.size() == initialSize</pre>
 </td>
 <td>
 <div class='block-text'>The following Device instances are being tested :</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='853989262'>
+<span>Virtual tensors stay virtual when outsourced.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We create a homogeneously filled tensor, which is therefor "virtual".</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We also get a device for testing...</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>We expect that the tensor is virtual, meaning its underlying data array stores only a single value...</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We send the tensor to the device...</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>This should cause it to be "outsourced", (except dor a CPU device of course).</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>...we expect the tensor to stay virtual on the device!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We restore the device...</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The tensor should no longer be outsourced.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>It should still be virtual!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>We test on the following devices:</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>deviceType</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
 </td>
 </tr>
 </tbody>

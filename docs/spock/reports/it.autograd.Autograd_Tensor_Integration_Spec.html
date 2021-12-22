@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Nov 17 22:25:01 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Dec 22 17:08:57 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.515 seconds</td>
+<td>5.678 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -401,7 +401,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)</pre>
 </td>
 </tr>
 <tr>
@@ -445,7 +445,7 @@ Tsr w = Tsr.of(new int[]{1}, 2)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>y.toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0), ")</pre>
+<pre class='block-source'>y.toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0)")</pre>
 </td>
 </tr>
 <tr>
@@ -501,7 +501,7 @@ Tsr w = Tsr.of(new int[]{1}, 2)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>y.toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0), ")</pre>
+<pre class='block-source'>y.toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0)")</pre>
 </td>
 </tr>
 <tr>
@@ -557,7 +557,7 @@ Tsr w = Tsr.of(new int[]{1}, 2)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>y.toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0), ")</pre>
+<pre class='block-source'>y.toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0)")</pre>
 </td>
 </tr>
 <tr>
@@ -623,7 +623,7 @@ Tsr w = Tsr.of(new int[]{1}, 2)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)</pre>
 </td>
 </tr>
 <tr>
@@ -815,7 +815,7 @@ y = Tsr.of("(2^i0^i1^i2^2", x, b, w)</pre>
 </td>
 <td>
 <pre class='block-source'>y.toString().contains("[1]:(4.0);")
-y.toString().contains(" -&gt;d[1]:(1.38629E0), ")</pre>
+y.toString().contains(" -&gt;d[1]:(1.38629E0)")</pre>
 </td>
 </tr>
 <tr>

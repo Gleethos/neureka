@@ -18,7 +18,7 @@ neureka.calculus.args
 neureka.calculus.assembly
 neureka.calculus.implementations
 neureka.common.composition
-neureka.common.functional
+neureka.common.utility
 neureka.devices
 neureka.devices.file
 neureka.devices.file.heads
@@ -28,8 +28,12 @@ neureka.devices.opencl
 neureka.devices.opencl.utility
 neureka.dtype
 neureka.dtype.custom
+neureka.fluent.building
+neureka.fluent.building.states
+neureka.fluent.slicing
+neureka.fluent.slicing.states
 neureka.framing
-neureka.framing.states
+neureka.framing.fluent
 neureka.ndim
 neureka.ndim.config
 neureka.ndim.config.types
@@ -45,8 +49,4 @@ neureka.ndim.iterators.types.simple
 neureka.ndim.iterators.types.simple.main
 neureka.optimization
 neureka.optimization.implementations
-neureka.utility
-neureka.utility.fluent
-neureka.utility.fluent.states
-neureka.utility.slicing
-neureka.utility.slicing.states
+neureka.view
