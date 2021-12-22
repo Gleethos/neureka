@@ -17,8 +17,8 @@ import static org.jocl.CL.*;
  */
 public class KernelCaller
 {
-    private final cl_command_queue _queue;
-    private final cl_kernel _kernel;
+    private final cl_command_queue  _queue;
+    private final cl_kernel         _kernel;
     private final List<Tsr<Number>> _inputs;
 
     private int _argId = 0;
@@ -29,7 +29,7 @@ public class KernelCaller
      * @param queue The queue on which calls ought to be dispatched.
      */
     public KernelCaller( @NotNull cl_kernel kernel, @NotNull cl_command_queue queue ) {
-        _queue = queue;
+        _queue  = queue;
         _kernel = kernel;
         _inputs = new ArrayList<>();
     }

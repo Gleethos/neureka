@@ -203,6 +203,9 @@ public final class TsrAsString
      */
     private ValStringifier _createBasicStringifierFor( Object data, boolean isCompact )
     {
+        if ( data == null )
+            throw new IllegalArgumentException("Tensor has no value data!");
+
         Function<String, String> slim = vStr -> {
             if ( _haveSlimNumbers ) {
                 if ( vStr.endsWith("E0")   ) vStr = vStr.substring( 0, vStr.length() - 2 );
@@ -240,10 +243,6 @@ public final class TsrAsString
             return i -> String.valueOf( ( (boolean[]) data )[ i ] );
         else if ( data instanceof char[] )
             return i -> String.valueOf( ( (char[]) data )[ i ] );
-        else if ( data == null )
-            return i -> ( isCompact )
-                    ? formatFP( _tensor.getValueAs( double[].class )[ i ] )
-                    : String.valueOf( _tensor.getValueAs( double[].class )[ i ] );
         else
             return i -> String.valueOf( ( (Object[]) data )[ i ] );
     }
@@ -326,7 +325,7 @@ public final class TsrAsString
     private void _stringifyAllValues()
     {
         int max = _rowLimit;
-        ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );
+        ValStringifier getter = _createValStringifierAndFormatter( _tensor.getValue() );
         int size = _tensor.size();
         int trim = ( size - max );
         size = ( trim > 0 ? max : size );
@@ -411,7 +410,7 @@ public final class TsrAsString
             }
             _$( Util.indent( dim ) );
             _$( _legacy ? "( " : "[ " );
-            ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );
+            ValStringifier getter = _createValStringifierAndFormatter( _tensor.getValue() );
             NDValStringifier fun = _tensor.isVirtual()
                                         ? iarr -> getter.stringify( 0 )
                                         : iarr -> getter.stringify( _tensor.indexOfIndices( iarr ) );
