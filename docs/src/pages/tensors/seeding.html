@@ -19,14 +19,15 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-        Tsr t1 = Tsr.of([2, 3], "I am a seed! :)")
-        Tsr t2 = Tsr.of([2, 3], "I am a seed! :)")
-        Tsr t3 = Tsr.of([2, 3], "I am also a seed! But different. :)")
+        def t1 = Tsr.of([2, 3], "I am a seed! :)")
+        def t2 = Tsr.of([2, 3], "I am a seed! :)")
+        def t3 = Tsr.of([2, 3], "I am also a seed! But different. :)")
 
         // t1.toString() == t2.toString()
         // t3.toString() != t2.toString()
@@ -36,12 +37,78 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-        Tsr t1 = Tsr.of(new int[]{2, 3}, "I am a seed! :)");
-        Tsr t2 = Tsr.of(new int[]{2, 3}, "I am a seed! :)");
-        Tsr t3 = Tsr.of(new int[]{2, 3}, "I am also a seed! But different. :)");
+        Tsr&#60;Double&#62; t1 = Tsr.of(Double.class, new int[]{2, 3}, "I am a seed! :)");
+        Tsr&#60;Double&#62; t2 = Tsr.of(Double.class, new int[]{2, 3}, "I am a seed! :)");
+        Tsr&#60;Double&#62; t3 = Tsr.of(Double.class, new int[]{2, 3}, "I am also a seed! But different. :)");
 
         // t1.toString() == t2.toString()
         // t3.toString() != t2.toString()
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab">
+                <pre><code class="hljs kotlin">
+
+        val t1 = Tsr.of(Double::class.java, IntArray.of(2, 3), "I am a seed! :)")
+        val t2 = Tsr.of(Double::class.java, IntArray.of(2, 3), "I am a seed! :)")
+        val t3 = Tsr.of(Double::class.java, IntArray.of(2, 3), "I am also a seed! But different. :)")
+
+        // t1.toString() == t2.toString()
+        // t3.toString() != t2.toString()
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm 12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h3>
+            Default seeding:
+        </h3>
+        <p>
+            If you simply want to create random tensors without
+            having to think about what kind of seed you want to supply,
+            then simply resort to the following API.
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+        def t1 = Tsr.ofRandom(Double, 2, 3)
+        def t2 = Tsr.ofRandom(Double, 2, 3)
+
+        // t1.toString() == t2.toString()
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+        Tsr&#60;Double&#62; t1 = Tsr.ofRandom(Double.class, 2, 3);
+        Tsr&#60;Double&#62; t2 = Tsr.ofRandom(Double.class, 2, 3);
+
+        // t1.toString() == t2.toString()
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab">
+                <pre><code class="hljs kotlin">
+
+        val t1 = Tsr.ofRandom(Double::class.java, 2, 3)
+        val t2 = Tsr.ofRandom(Double::class.java, 2, 3)
+
+        // t1.toString() == t2.toString()
 
                 </code></pre>
             </div>
