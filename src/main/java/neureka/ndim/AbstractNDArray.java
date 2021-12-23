@@ -38,20 +38,19 @@ package neureka.ndim;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.common.composition.AbstractComponentOwner;
+import neureka.common.utility.DataConverter;
 import neureka.devices.Device;
+import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
-import neureka.common.utility.DataConverter;
-import neureka.common.composition.AbstractComponentOwner;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
 
 /**
@@ -198,34 +197,53 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
 
     protected <T> void _initData( Initializer<T> initializer )
     {
+        CPU.JVMExecutor executor = CPU.get().getExecutor();
         Object data = getData();
         if ( data instanceof double[] )
-            for ( int i = 0; i < ( (double[]) data ).length; i++ )
-                ( (double[]) data )[ i ] = (double) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            executor.threaded( ( (double[]) data ).length, (start, end) -> {
+                for (int i = start; i < end; i++)
+                    ((double[]) data)[i] = (double) initializer.init(i, _NDConf.indicesOfIndex(i));
+            });
         else if ( data instanceof float[] )
-            for ( int i = 0; i < ( (float[]) data ).length; i++ )
-                ( (float[]) data )[ i ] = (float) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            executor.threaded( ( (float[]) data ).length, (start, end) -> {
+                for (int i = start; i < end; i++)
+                    ( (float[]) data )[ i ] = (float) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            });
         else if ( data instanceof int[] )
-            for ( int i = 0; i < ( (int[]) data ).length; i++ )
-                ( (int[]) data )[ i ] = (int) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            executor.threaded( ( (int[]) data ).length, (start, end) -> {
+                for (int i = start; i < end; i++)
+                    ( (int[]) data )[ i ] = (int) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            });
         else if ( data instanceof short[] )
-            for ( int i = 0; i < ( (short[]) data ).length; i++ )
-                ( (short[]) data )[ i ] = (short) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            executor.threaded( ( (short[]) data ).length, (start, end) -> {
+                for (int i = start; i < end; i++)
+                    ( (short[]) data )[ i ] = (short) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            });
         else if ( data instanceof byte[] )
-            for ( int i = 0; i < ( (byte[]) data ).length; i++ )
-                ( (byte[]) data )[ i ] = (byte) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            executor.threaded( ( (byte[]) data ).length, (start, end) -> {
+                for (int i = start; i < end; i++)
+                    ( (byte[]) data )[ i ] = (byte) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            });
         else if ( data instanceof long[] )
-            for ( int i = 0; i < ( (long[]) data ).length; i++ )
-                ( (long[]) data )[ i ] = (long) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            executor.threaded( ( (long[]) data ).length, (start, end) -> {
+                for (int i = start; i < end; i++)
+                    ( (long[]) data )[ i ] = (long) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            });
         else if ( data instanceof boolean[] )
-            for ( int i = 0; i < ( (boolean[]) data ).length; i++ )
-                ( (boolean[]) data )[ i ] = (boolean) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            executor.threaded( ( (boolean[]) data ).length, (start, end) -> {
+                for (int i = start; i < end; i++)
+                    ( (boolean[]) data )[ i ] = (boolean) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            });
         else if ( data instanceof char[] )
-            for ( int i = 0; i < ( (char[]) data ).length; i++ )
-                ( (char[]) data )[ i ] = (char) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            executor.threaded( ( (char[]) data ).length, (start, end) -> {
+                for (int i = start; i < end; i++)
+                    ( (char[]) data )[ i ] = (char) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            });
         else
-            for ( int i = 0; i < ( (Object[]) data ).length; i++ )
-                ( (Object[]) data )[ i ] = initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            executor.threaded( ( (Object[]) data ).length, (start, end) -> {
+                for (int i = start; i < end; i++)
+                    ( (Object[]) data )[ i ] = initializer.init( i, _NDConf.indicesOfIndex( i )  );
+            });
     }
 
     /**
