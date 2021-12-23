@@ -1,15 +1,14 @@
 package neureka.ndim;
 
+import neureka.common.utility.DataConverter;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
-import neureka.common.utility.DataConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -302,7 +301,9 @@ public class NDAConstructor {
 
     public static Object optimizeObjectArray( DataType<?> dataType, Object[] values, int size ) {
         Object data = values;
-        IntStream indices = IntStream.iterate( 0, i -> i + 1 ).limit(size).map(i -> i % values.length );
+        IntStream indices = IntStream.iterate( 0, i -> i + 1 ).limit(size);
+        if ( size > 1_000 ) indices = indices.parallel();
+        indices = indices.map(i -> i % values.length );
         if      ( dataType == DataType.of(Double.class)  ) data = indices.mapToDouble( i -> (Double) values[i] ).toArray();
         else if ( dataType == DataType.of(Integer.class) ) data = indices.map( i -> (Integer) values[i] ).toArray();
         else if ( dataType == DataType.of(Long.class)    ) data = indices.mapToLong( i -> (Long) values[i] ).toArray();
