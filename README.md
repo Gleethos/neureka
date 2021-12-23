@@ -88,9 +88,11 @@ Kotlin DSL:
 ```
 implementation("com.github.gleethos:neureka:0.10.0")
 ```
-...or alternatively: 
+---
 
-1. Add [jitpack](https://jitpack.io/) in your root build.gradle at the end of repositories:
+## Getting started with [JitPack](https://jitpack.io/) ##
+
+**1. Add the JitPack url in your root `build.gradle` at the end of `repositories`**
 ```
 allprojects {
 	repositories {
@@ -99,13 +101,20 @@ allprojects {
 	}
 }
 ```
-2. Add Neureka as dependency:
+**2. Add Neureka as dependency**
+
+...either by specifiying the version tag:
 ```
 dependencies {
 	implementation 'com.github.Gleethos:neureka:v0.10.0'
 }
 ```
-
+...or by using a custom commit hash instead:
+```
+dependencies {
+	implementation 'com.github.Gleethos:neureka:6137b64'//Any commit hash...
+}
+```
 ---
 
 ## Getting started with Groovy Grape ##
