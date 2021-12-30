@@ -1,7 +1,8 @@
 package ut.backend
 
 import neureka.backend.standard.operations.linear.SimpleMatMul;
-import spock.lang.Specification;
+import spock.lang.Specification
+import ut.backend.core.InternalMatMulTest;
 
 class Matrix_Multiplication_Spec extends Specification {
 
@@ -22,6 +23,13 @@ class Matrix_Multiplication_Spec extends Specification {
             [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 1, 0, 0, 1 ]
             [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
             [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
+
+    }
+
+    def 'The internal matric multiplication test script runs!'() {
+
+        expect:
+            InternalMatMulTest.start()
 
     }
 
