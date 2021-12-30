@@ -99,19 +99,19 @@ public class MultiplyNeither implements MatrixOperation {
     static void addMx1(
             final double[] product,
             final double[] left,
-            final int complexity,
+            final int colCount,
             final double[] right
     ) {
-        int nbRows = product.length;
-        for (int c = 0; c < complexity; c++) {
+        int rowCount = product.length;
+        for (int c = 0; c < colCount; c++) {
             AXPY.invoke(
                     product,
                     0,
                     right[c],
                     left,
-                    c * nbRows,
+                    c * rowCount,
                     0,
-                    nbRows
+                    rowCount
             );
         }
     }
@@ -285,21 +285,21 @@ public class MultiplyNeither implements MatrixOperation {
     static void fill1xN_RM(
             final double[] product,
             final double[] left,
-            final int complexity,
+            final int rowCount,
             final double[] right
-    ) {
-        int nbRows = product.length;
-        //for (int c = 0; c < complexity; c++) {
-        //    AXPY.invoke(
-        //            product,
-        //            0,
-        //            right[c],
-        //            left,
-        //            c * nbRows,
-        //            0,
-        //            nbRows
-        //    );
-        //}
+    ) {//...
+        int colCount = product.length;
+        for (int ci = 0; ci < colCount; ci++) {
+            AXPY.invoke(
+                    product,
+                    0,
+                    left[ci],
+                    right,
+                    ci * rowCount,
+                    0,
+                    rowCount
+            );
+        }
     }
 
     static void fill1xN(

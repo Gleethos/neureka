@@ -133,7 +133,7 @@ class InternalMatMulTest {
 
         assert A.data == [-5, -4] as double[]
         assert B.data == [5, -5, -4, -3] as double[]
-        //assert C.data == (type == Type.COL_MAJOR ? [-5, 32] : [-9, 37] ) as double[]
+        assert C.data == (type == Type.COL_MAJOR ? [-5, 32] : [-9, 37] ) as double[]
 
         //---
 
