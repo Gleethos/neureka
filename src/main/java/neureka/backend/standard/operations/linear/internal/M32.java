@@ -1,6 +1,6 @@
 package neureka.backend.standard.operations.linear.internal;
 
-import neureka.backend.standard.operations.linear.internal.operation.matrix.Multiply;
+import neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizable;
 
 public class M32 {
 
@@ -23,7 +23,7 @@ public class M32 {
 
         M32 retVal = new M32(_rowCount, otherColCount, otherData);
 
-        Multiply
+        Vectorizable
                 .newPrimitive32(_rowCount, otherColCount)
                 .invoke(
                         retVal._data, _data, _colCount, matrix._data

@@ -6,7 +6,7 @@ import neureka.backend.standard.operations.linear.internal.operation.array.AXPY;
 import neureka.backend.standard.operations.linear.internal.operation.array.DOT;
 import neureka.devices.host.CPU;
 
-public class Multiply {
+public class Vectorizable {
 
     @FunctionalInterface
     public interface Primitive32 {
@@ -25,60 +25,60 @@ public class Multiply {
     public static Primitive32 newPrimitive32(final long rows, final long columns)
     {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD) {
-            return Multiply::threaded_F32_MxN_CM;
+            return Vectorizable::threaded_F32_MxN_CM;
         }
         if (columns == 1) {
             return ( Conf.ROW_MAJOR
-                    ? Multiply::full_F32_Mx1_RM
-                    : Multiply::full_F32_Mx1_CM
+                    ? Vectorizable::full_F32_Mx1_RM
+                    : Vectorizable::full_F32_Mx1_CM
             );
         }
         if ( rows == 1 )
             return (
                     Conf.ROW_MAJOR
-                            ? Multiply::fill1xN_RM
-                            : Multiply::fill1xN
+                            ? Vectorizable::full_F32_1xN_RM
+                            : Vectorizable::full_F32_1xN_CM
             );
-        return Multiply::full_F32_MxN_CM;
+        return Vectorizable::full_F32_MxN_CM;
     }
 
     public static Primitive64 newPrimitive64(final long rows, final long columns)
     {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD)
-            return Multiply::threaded_F64_MxN_CM;
+            return Vectorizable::threaded_F64_MxN_CM;
 
         if ( !Conf.ROW_MAJOR ) {
-            if (rows == 5 && columns == 5) return Multiply::fill5x5;
-            if (rows == 4 && columns == 4) return Multiply::fill4x4;
-            if (rows == 3 && columns == 3) return Multiply::fill3x3;
-            if (rows == 2 && columns == 2) return Multiply::fill2x2;
-            if (rows == 1 && columns == 1) return Multiply::fill1x1;
+            if (rows == 5 && columns == 5) return Vectorizable::fill5x5;
+            if (rows == 4 && columns == 4) return Vectorizable::fill4x4;
+            if (rows == 3 && columns == 3) return Vectorizable::fill3x3;
+            if (rows == 2 && columns == 2) return Vectorizable::fill2x2;
+            if (rows == 1 && columns == 1) return Vectorizable::fill1x1;
         }
         if (columns == 1)
             return (
                 Conf.ROW_MAJOR
-                    ? Multiply::addMx1_RM
-                    : Multiply::addMx1
+                    ? Vectorizable::addMx1_RM
+                    : Vectorizable::addMx1
             );
 
         if ( !Conf.ROW_MAJOR ) {
-            if ( rows == 10) return Multiply::fill0xN;
-            if ( rows == 9 ) return Multiply::fill9xN;
-            if ( rows == 8 ) return Multiply::fill8xN;
-            if ( rows == 7 ) return Multiply::fill7xN;
-            if ( rows == 6 ) return Multiply::fill6xN;
+            if ( rows == 10) return Vectorizable::fill0xN;
+            if ( rows == 9 ) return Vectorizable::fill9xN;
+            if ( rows == 8 ) return Vectorizable::fill8xN;
+            if ( rows == 7 ) return Vectorizable::fill7xN;
+            if ( rows == 6 ) return Vectorizable::fill6xN;
         }
         if ( rows == 1 )
             return (
                     Conf.ROW_MAJOR
-                            ? Multiply::fill1xN_RM
-                            : Multiply::fill1xN
+                            ? Vectorizable::full_F64_1xN_RM
+                            : Vectorizable::full_F64_1xN_CM
             );
 
         return (
                 Conf.ROW_MAJOR
-                        ? Multiply::full_F64_MxN_RM
-                        : Multiply::full_F64_MxN_CM
+                        ? Vectorizable::full_F64_MxN_RM
+                        : Vectorizable::full_F64_MxN_CM
         );
     }
 
@@ -223,7 +223,7 @@ public class Multiply {
         CPU.get().divide(
                 0,
                 right.length / complexity,
-                (f, l) -> Multiply.partial_F64_MxN_CM(product, f, l, left, complexity, right)
+                (f, l) -> Vectorizable.partial_F64_MxN_CM(product, f, l, left, complexity, right)
         );
     }
 
@@ -231,7 +231,7 @@ public class Multiply {
         CPU.get().divide(
                 0,
                 right.length / complexity,
-                (f, l) -> Multiply.partial_F32_MxN_CM(product, f, l, left, complexity, right)
+                (f, l) -> Vectorizable.partial_F32_MxN_CM(product, f, l, left, complexity, right)
         );
     }
 
@@ -294,7 +294,7 @@ public class Multiply {
         product[0] = tmp00;
     }
 
-    static void fill1xN(
+    static void full_F64_1xN_CM(
             final double[] product,
             final double[] left,
             final int complexity,
@@ -305,7 +305,7 @@ public class Multiply {
         }
     }
 
-    static void fill1xN_RM(
+    static void full_F64_1xN_RM(
             final double[] product,
             final double[] left,
             final int rowCount,
@@ -325,7 +325,7 @@ public class Multiply {
         }
     }
 
-    static void fill1xN(
+    static void full_F32_1xN_CM(
             final float[] product,
             final float[] left,
             final int complexity,
@@ -337,7 +337,7 @@ public class Multiply {
     }
 
 
-    static void fill1xN_RM(
+    static void full_F32_1xN_RM(
             final float[] product,
             final float[] left,
             final int rowCount,
@@ -775,15 +775,15 @@ public class Multiply {
     }
 
     static void full_F64_MxN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
-        Multiply.partial_F64_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
+        Vectorizable.partial_F64_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
     }
 
     static void full_F64_MxN_RM(final double[] product, final double[] left, final int complexity, final double[] right) {
-        Multiply.partial_F64_MxN_RM(product, 0, right.length / complexity, left, complexity, right);
+        Vectorizable.partial_F64_MxN_RM(product, 0, right.length / complexity, left, complexity, right);
     }
 
     static void full_F32_MxN_CM(final float[] product, final float[] left, final int complexity, final float[] right) {
-        Multiply.partial_F32_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
+        Vectorizable.partial_F32_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
     }
 
 }

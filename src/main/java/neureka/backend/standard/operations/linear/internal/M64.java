@@ -1,6 +1,6 @@
 package neureka.backend.standard.operations.linear.internal;
 
-import neureka.backend.standard.operations.linear.internal.operation.matrix.Multiply;
+import neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizable;
 
 public class M64 {
 
@@ -23,7 +23,7 @@ public class M64 {
 
         M64 retVal = new M64(_rowCount, otherColCount, otherData);
 
-        Multiply
+        Vectorizable
             .newPrimitive64(_rowCount, otherColCount)
             .invoke(
                 retVal._data, _data, _colCount, matrix._data
