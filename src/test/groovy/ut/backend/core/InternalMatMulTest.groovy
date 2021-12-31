@@ -2,6 +2,7 @@ package ut.backend.core
 
 import groovy.transform.CompileStatic
 import neureka.backend.standard.operations.linear.fast.Conf
+import neureka.backend.standard.operations.linear.fast.M32
 import neureka.backend.standard.operations.linear.fast.M64
 import neureka.backend.standard.operations.linear.fast.matrix.MatrixF32
 import neureka.backend.standard.operations.linear.fast.matrix.MatrixF64
@@ -36,6 +37,8 @@ class InternalMatMulTest {
         _basicF64TestOLD(Type.COL_MAJOR)
         _basicF32Test(Type.ROW_MAJOR)
         _basicF32Test(Type.COL_MAJOR)
+        _basicF32TestOLD(Type.ROW_MAJOR)
+        _basicF32TestOLD(Type.COL_MAJOR)
 
         Type.COL_MAJOR.set()
 
@@ -228,7 +231,7 @@ class InternalMatMulTest {
 
 
 
-    private static void _basicF32Test(Type type) {
+    private static void _basicF32TestOLD(Type type) {
 
         type.set()
 
@@ -260,8 +263,49 @@ class InternalMatMulTest {
         assert D.data == (type == Type.COL_MAJOR ? [-3, -3] : [2, 2] ) as float[]
     }
 
+    private static void _basicF32Test(Type type) {
+
+        type.set()
+
+        M32 A = new M32(2, 2,  new float[4])
+        M32 B = new M32(2, 1,  new float[2])
+        _fillIt32(A.data, -339)
+        _fillIt32(B.data, 543)
+
+        var C =  _matmulF32(A,B)
+
+        /*
+                        ( 5)
+                        (-5)
+                (-5 -4) (-5)
+                (-3 -2) (-5)
+
+                        ( 5)
+                        (-5)
+                (-5 -3) (-10)
+                (-4 -2) (-5)
+        */
+
+        assert A.data == [-5, -4, -3, -2] as float[]
+        assert B.data == [5, -5] as float[]
+        assert C.data == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as float[]
+
+        //var D = C.add(7d)
+
+        //assert D.data == (type == Type.COL_MAJOR ? [-3, -3] : [2, 2] ) as float[]
+    }
+
+
 
     private static MatrixF32 _matmulF32(MatrixF32 A, MatrixF32 B) {
+        var data = new float[A.getRowDim()*B.getColDim()]
+        var C = A.multiply(B, data)
+        assert C.data === data
+        return C
+    }
+
+
+    private static M32 _matmulF32(M32 A, M32 B) {
         var data = new float[A.getRowDim()*B.getColDim()]
         var C = A.multiply(B, data)
         assert C.data === data

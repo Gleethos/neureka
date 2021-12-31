@@ -42,61 +42,48 @@ public class Multiply implements MatrixOperation {
                     : Multiply::fillMx1
             );
         }
-        if (rows == 1) {
-            return Multiply::fill1xN;
-        }
-        return Multiply::fillMxN;
-    }
-
-    public static Primitive64 newPrimitive64(final long rows, final long columns) {
-        System.out.println("Choosing: "+rows+" | "+columns);
-        if (rows > THRESHOLD && columns > THRESHOLD) {
-            return Multiply::fillMxN_MT;
-        }
-        if (rows == 5 && columns == 5) {
-            return Multiply::fill5x5;
-        }
-        if (rows == 4 && columns == 4) {
-            return Multiply::fill4x4;
-        }
-        if (rows == 3 && columns == 3) {
-            return Multiply::fill3x3;
-        }
-        if (rows == 2 && columns == 2) {
-            return Multiply::fill2x2;
-        }
-        if (rows == 1 && columns == 1) {
-            return Multiply::fill1x1;
-        }
-        if (columns == 1) {
-            return (
-                Conf.ROW_MAJOR
-                    ? Multiply::fillMx1_RM
-                    : Multiply::fillMx1
-            );
-        }
-        if (rows == 10) {
-            return Multiply::fill0xN;
-        }
-        if (rows == 9) {
-            return Multiply::fill9xN;
-        }
-        if (rows == 8) {
-            return Multiply::fill8xN;
-        }
-        if (rows == 7) {
-            return Multiply::fill7xN;
-        }
-        if (rows == 6) {
-            return Multiply::fill6xN;
-        }
-        if (rows == 1) {
+        if ( rows == 1 )
             return (
                     Conf.ROW_MAJOR
                             ? Multiply::fill1xN_RM
                             : Multiply::fill1xN
             );
+        return Multiply::fillMxN;
+    }
+
+    public static Primitive64 newPrimitive64(final long rows, final long columns) {
+
+        if (rows > THRESHOLD && columns > THRESHOLD)
+            return Multiply::fillMxN_MT;
+
+        if ( !Conf.ROW_MAJOR ) {
+            if (rows == 5 && columns == 5) return Multiply::fill5x5;
+            if (rows == 4 && columns == 4) return Multiply::fill4x4;
+            if (rows == 3 && columns == 3) return Multiply::fill3x3;
+            if (rows == 2 && columns == 2) return Multiply::fill2x2;
+            if (rows == 1 && columns == 1) return Multiply::fill1x1;
         }
+        if (columns == 1)
+            return (
+                Conf.ROW_MAJOR
+                    ? Multiply::fillMx1_RM
+                    : Multiply::fillMx1
+            );
+
+        if ( !Conf.ROW_MAJOR ) {
+            if ( rows == 10) return Multiply::fill0xN;
+            if ( rows == 9 ) return Multiply::fill9xN;
+            if ( rows == 8 ) return Multiply::fill8xN;
+            if ( rows == 7 ) return Multiply::fill7xN;
+            if ( rows == 6 ) return Multiply::fill6xN;
+        }
+        if ( rows == 1 )
+            return (
+                    Conf.ROW_MAJOR
+                            ? Multiply::fill1xN_RM
+                            : Multiply::fill1xN
+            );
+
         return Multiply::fillMxN;
     }
 
@@ -205,15 +192,25 @@ public class Multiply implements MatrixOperation {
     }
 
     static void addMxN_MT(final double[] product, final double[] left, final int complexity, final double[] right) {
-        Multiply.divide(0, right.length / complexity, (f, l) -> Multiply.addMxC(product, f, l, left, complexity, right));
+        Multiply.divide(
+                0,
+                right.length / complexity,
+                (f, l) -> Multiply.addMxC(product, f, l, left, complexity, right)
+        );
     }
 
     static void addMxN_MT(final float[] product, final float[] left, final int complexity, final float[] right) {
-        Multiply.divide(0, right.length / complexity, (f, l) -> Multiply.addMxC(product, f, l, left, complexity, right));
+        Multiply.divide(
+                0,
+                right.length / complexity,
+                (f, l) -> Multiply.addMxC(product, f, l, left, complexity, right)
+        );
     }
 
     static void divide(final int first, final int limit, final WorkScheduler.Worker worker) {
-        DIVIDER.parallelism(PARALLELISM).threshold(THRESHOLD).divide(first, limit, worker);
+        DIVIDER.parallelism(PARALLELISM)
+                .threshold(THRESHOLD)
+                .divide(first, limit, worker);
     }
 
     static void fill0xN(final double[] product, final double[] left, final int complexity, final double[] right) {
@@ -316,6 +313,28 @@ public class Multiply implements MatrixOperation {
             product[j] = DOT.invoke(left, 0, right, j * complexity, 0, complexity);
         }
     }
+
+
+    static void fill1xN_RM(
+            final float[] product,
+            final float[] left,
+            final int rowCount,
+            final float[] right
+    ) {//...
+        int colCount = product.length;
+        for (int ci = 0; ci < colCount; ci++) {
+            AXPY.invoke(
+                    product,
+                    0,
+                    left[ci],
+                    right,
+                    ci * rowCount,
+                    0,
+                    rowCount
+            );
+        }
+    }
+
 
     static void fill2x2(final double[] product, final double[] left, final int complexity, final double[] right) {
 
