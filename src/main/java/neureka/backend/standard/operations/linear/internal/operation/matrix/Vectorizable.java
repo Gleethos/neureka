@@ -48,11 +48,11 @@ public class Vectorizable {
             return Vectorizable::threaded_F64_MxN_CM;
 
         if ( !Conf.ROW_MAJOR ) {
-            if (rows == 5 && columns == 5) return Vectorizable::fill5x5;
-            if (rows == 4 && columns == 4) return Vectorizable::fill4x4;
-            if (rows == 3 && columns == 3) return Vectorizable::fill3x3;
-            if (rows == 2 && columns == 2) return Vectorizable::fill2x2;
-            if (rows == 1 && columns == 1) return Vectorizable::fill1x1;
+            if (rows == 5 && columns == 5) return Vectorizable::full_F64_5x5_CM;
+            if (rows == 4 && columns == 4) return Vectorizable::full_F64_4x4_CM;
+            if (rows == 3 && columns == 3) return Vectorizable::full_F64_3x3_CM;
+            if (rows == 2 && columns == 2) return Vectorizable::full_F64_2x2_CM;
+            if (rows == 1 && columns == 1) return Vectorizable::full_F64_1x1_CM;
         }
         if (columns == 1)
             return (
@@ -281,7 +281,7 @@ public class Vectorizable {
         }
     }
 
-    static void fill1x1(final double[] product, final double[] left, final int complexity, final double[] right) {
+    static void full_F64_1x1_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
 
         double tmp00 = 0.0;
 
@@ -358,7 +358,7 @@ public class Vectorizable {
     }
 
 
-    static void fill2x2(final double[] product, final double[] left, final int complexity, final double[] right) {
+    static void full_F64_2x2_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
 
         double tmp00 = 0.0;
         double tmp10 = 0.0;
@@ -389,7 +389,7 @@ public class Vectorizable {
         product[3] = tmp11;
     }
 
-    static void fill3x3(final double[] product, final double[] left, final int complexity, final double[] right) {
+    static void full_F64_3x3_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
 
         double tmp00 = 0.0;
         double tmp10 = 0.0;
@@ -439,7 +439,7 @@ public class Vectorizable {
         product[8] = tmp22;
     }
 
-    static void fill4x4(final double[] product, final double[] left, final int complexity, final double[] right) {
+    static void full_F64_4x4_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
 
         double tmp00 = 0.0;
         double tmp10 = 0.0;
@@ -514,7 +514,7 @@ public class Vectorizable {
         product[15] = tmp33;
     }
 
-    static void fill5x5(final double[] product, final double[] left, final int complexity, final double[] right) {
+    static void full_F64_5x5_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
 
         double tmp00 = 0.0;
         double tmp10 = 0.0;
