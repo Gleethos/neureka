@@ -29,11 +29,18 @@ class InternalMatMulTest {
 
     static void start() {
 
+        _basicF64Test(Type.ROW_MAJOR)
+        _basicF64Test(Type.COL_MAJOR)
+        _basicF32Test(Type.ROW_MAJOR)
+        _basicF32Test(Type.COL_MAJOR)
+
         Type.COL_MAJOR.set()
         _test(2,2,2,1621312579,-1622243452)
         _test(3,3,3,458449078,175514624)
         _test(4,4,4,-1394046135,1168903786)
         _test(5,5,5,726435157,1348725681)
+        _test(6,6,6,952800666,-1151626979)
+        _test(7,7,7,478609247,202982307)
 
         _test(1,1,10,-1194484459,155274511)
         _test(1,1,9,-242625105,72695794)
@@ -66,13 +73,6 @@ class InternalMatMulTest {
         _test(1,9,1,-1636372669,-1638368666)
         _test(1,10,1,-1635478939,-1636372669)
         _test(DIM,DIM,DIM,245517809,1204091031)
-
-
-        _basicF64Test(Type.ROW_MAJOR)
-        _basicF64Test(Type.COL_MAJOR)
-        _basicF32Test(Type.ROW_MAJOR)
-        _basicF32Test(Type.COL_MAJOR)
-
 
     }
 
