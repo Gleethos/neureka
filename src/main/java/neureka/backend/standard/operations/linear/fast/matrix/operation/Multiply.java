@@ -4,12 +4,9 @@ package neureka.backend.standard.operations.linear.fast.matrix.operation;
 import neureka.backend.standard.operations.linear.fast.Conf;
 import neureka.backend.standard.operations.linear.fast.array.operation.AXPY;
 import neureka.backend.standard.operations.linear.fast.array.operation.DOT;
-import neureka.devices.host.concurrent.Parallelism;
-import neureka.devices.host.concurrent.ProcessingService;
-import neureka.devices.host.concurrent.WorkScheduler;
+import neureka.devices.host.CPU;
 
 import java.util.Arrays;
-import java.util.function.IntSupplier;
 
 public class Multiply {
 
@@ -27,13 +24,8 @@ public class Multiply {
 
     }
 
-    public static IntSupplier PARALLELISM = Parallelism.THREADS;
-    public static int THRESHOLD = 32;
-
-    private static final WorkScheduler.Divider DIVIDER = ProcessingService.INSTANCE.divider();
-
     public static Primitive32 newPrimitive32(final long rows, final long columns) {
-        if (rows > THRESHOLD && columns > THRESHOLD) {
+        if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD) {
             return Multiply::fillMxN_MT;
         }
         if (columns == 1) {
@@ -53,7 +45,7 @@ public class Multiply {
 
     public static Primitive64 newPrimitive64(final long rows, final long columns) {
 
-        if (rows > THRESHOLD && columns > THRESHOLD)
+        if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD)
             return Multiply::fillMxN_MT;
 
         if ( !Conf.ROW_MAJOR ) {
@@ -192,7 +184,7 @@ public class Multiply {
     }
 
     static void addMxN_MT(final double[] product, final double[] left, final int complexity, final double[] right) {
-        Multiply.divide(
+        CPU.get().divide(
                 0,
                 right.length / complexity,
                 (f, l) -> Multiply.addMxC(product, f, l, left, complexity, right)
@@ -200,17 +192,11 @@ public class Multiply {
     }
 
     static void addMxN_MT(final float[] product, final float[] left, final int complexity, final float[] right) {
-        Multiply.divide(
+        CPU.get().divide(
                 0,
                 right.length / complexity,
                 (f, l) -> Multiply.addMxC(product, f, l, left, complexity, right)
         );
-    }
-
-    static void divide(final int first, final int limit, final WorkScheduler.Worker worker) {
-        DIVIDER.parallelism(PARALLELISM)
-                .threshold(THRESHOLD)
-                .divide(first, limit, worker);
     }
 
     static void fill0xN(final double[] product, final double[] left, final int complexity, final double[] right) {

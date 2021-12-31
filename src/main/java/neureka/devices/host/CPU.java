@@ -6,6 +6,9 @@ import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
+import neureka.devices.host.concurrent.Parallelism;
+import neureka.devices.host.concurrent.ProcessingService;
+import neureka.devices.host.concurrent.WorkScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +20,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.function.IntSupplier;
 
 /**
  *  The CPU class, one of many implementations of the {@link Device} interface,
@@ -30,6 +34,11 @@ public class CPU extends AbstractDevice<Number>
 {
     private static final Logger _LOG = LoggerFactory.getLogger( CPU.class );
     private static final CPU _INSTANCE;
+
+    private static final WorkScheduler.Divider DIVIDER = ProcessingService.INSTANCE.divider();
+    public static IntSupplier PARALLELISM = Parallelism.THREADS;
+    public static int THRESHOLD = 32;
+
 
     static {  _INSTANCE = new CPU();  }
 
@@ -161,6 +170,13 @@ public class CPU extends AbstractDevice<Number>
     public interface RangeWorkload {
         void execute( int start, int end );
     }
+
+    public void divide(final int first, final int limit, final WorkScheduler.Worker worker) {
+        DIVIDER.parallelism(PARALLELISM)
+                .threshold(THRESHOLD)
+                .divide(first, limit, worker);
+    }
+
 
     /**
      *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
