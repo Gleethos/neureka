@@ -24,7 +24,7 @@ public class M32 {
         M32 retVal = new M32(_rowCount, otherColCount, otherData);
 
         Vectorizable
-                .newVOF32(_rowCount, otherColCount)
+                .operationForF32(_rowCount, otherColCount)
                 .invoke(
                         retVal._data, _data, _colCount, matrix._data
                 );

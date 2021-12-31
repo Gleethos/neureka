@@ -28,7 +28,7 @@ public class Vectorizable {
         );
     }
 
-    public static VectorOperationF32 newVOF32(final long rows, final long columns)
+    public static VectorOperationF32 operationForF32(final long rows, final long columns)
     {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD) {
             return Vectorizable::threaded_F32_MxN_CM;
@@ -48,7 +48,7 @@ public class Vectorizable {
         return Vectorizable::full_F32_MxN_CM;
     }
 
-    public static VectorOperationF64 newVOF64(final long rows, final long columns)
+    public static VectorOperationF64 operationForF64(final long rows, final long columns)
     {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD)
             return Vectorizable::threaded_F64_MxN_CM;

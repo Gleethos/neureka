@@ -24,7 +24,7 @@ public class M64 {
         M64 retVal = new M64(_rowCount, otherColCount, otherData);
 
         Vectorizable
-            .newVOF64(_rowCount, otherColCount)
+            .operationForF64(_rowCount, otherColCount)
             .invoke(
                 retVal._data, _data, _colCount, matrix._data
             );
