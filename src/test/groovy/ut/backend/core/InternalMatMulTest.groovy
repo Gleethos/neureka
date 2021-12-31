@@ -41,37 +41,49 @@ class InternalMatMulTest {
         _basicF32TestOLD(Type.COL_MAJOR)
 
         Type.COL_MAJOR.set()
-
-        _testDoubles(DIM,DIM,245517809)
-        _testFloats(DIM,DIM, 1204091031)
+        _test(1,1,10,-1194484459,155274511)
+        _test(1,1,9,-242625105,72695794)
+        _test(1,1,8,-1060007964,-1265014008)
+        _test(1,1,7,1047354419,-1000173898)
+        _test(1,1,6,606279625,-138392009)
+        _test(1,1,5,800495719,1248567540)
+        _test(1,1,4,-605917383,93003368)
+        _test(1,1,3,1703409186,-1524639888)
+        _test(1,1,2,-1782294977,853895268)
+        _test(1,1,1,-1641913795,-1642807525)
+        _test(DIM,DIM,DIM,245517809,1204091031)
 
     }
 
-    private static void _testDoubles(int dim, int dim2, int hash) {
+    private static void _test(int d1, int d2, int d3, int hash1, int hash2) {
+        _testDoubles(d1,d2,d3,hash1)
+        _testFloats(d1,d2,d3,hash2)
+    }
 
-        MatrixF64 A = MatrixF64.FACTORY.make(dim, dim2,  new double[dim*dim2])
-        MatrixF64 B = MatrixF64.FACTORY.make(dim, dim2,  new double[dim*dim2])
+    private static void _testDoubles(int dim, int dim2, int dim3, int hash) {
+
+        var A = MatrixF64.FACTORY.make(dim, dim2,  new double[dim*dim2])
+        var B = MatrixF64.FACTORY.make(dim2, dim3,  new double[dim2*dim3])
 
         _fillIt64(A.data, 43)
         _fillIt64(B.data, 87)
 
-        MatrixF64 C = _matmulF64(A,B)
+        var C = _matmulF64(A,B)
 
         assert _hash(C.getData()) ==  hash
     }
 
-    private static void _testFloats(int dim, int dim2, int hash) {
+    private static void _testFloats(int dim, int dim2, int dim3, int hash) {
 
-        MatrixF32 A = MatrixF32.FACTORY.make(dim, dim2, new float[dim*dim2])
-        MatrixF32 B = MatrixF32.FACTORY.make(dim, dim2, new float[dim*dim2])
+        var A = MatrixF32.FACTORY.make(dim, dim2, new float[dim*dim2])
+        var B = MatrixF32.FACTORY.make(dim2, dim3, new float[dim2*dim3])
 
         _fillIt32(A.data, 12)
         _fillIt32(B.data, 98)
 
-        MatrixF32 C = _matmulF32(A,B)
+        var C = _matmulF32(A,B)
 
         assert _hash(C.getData()) == hash
-
     }
 
     private static void _basicF64TestOLD(Type type) {
