@@ -4,8 +4,6 @@ import groovy.transform.CompileStatic
 import neureka.backend.standard.operations.linear.fast.Conf
 import neureka.backend.standard.operations.linear.fast.M32
 import neureka.backend.standard.operations.linear.fast.M64
-import neureka.backend.standard.operations.linear.fast.matrix.MatrixF32
-import neureka.backend.standard.operations.linear.fast.matrix.MatrixF64
 
 @CompileStatic
 class InternalMatMulTest {
@@ -72,12 +70,8 @@ class InternalMatMulTest {
 
         _basicF64Test(Type.ROW_MAJOR)
         _basicF64Test(Type.COL_MAJOR)
-        _basicF64TestOLD(Type.ROW_MAJOR)
-        _basicF64TestOLD(Type.COL_MAJOR)
         _basicF32Test(Type.ROW_MAJOR)
         _basicF32Test(Type.COL_MAJOR)
-        _basicF32TestOLD(Type.ROW_MAJOR)
-        _basicF32TestOLD(Type.COL_MAJOR)
 
 
     }
@@ -89,8 +83,8 @@ class InternalMatMulTest {
 
     private static void _testDoubles(int dim, int dim2, int dim3, int hash) {
 
-        var A = MatrixF64.FACTORY.make(dim, dim2,  new double[dim*dim2])
-        var B = MatrixF64.FACTORY.make(dim2, dim3,  new double[dim2*dim3])
+        var A = new M64(dim, dim2,  new double[dim*dim2])
+        var B = new M64(dim2, dim3,  new double[dim2*dim3])
 
         _fillIt64(A.data, 43)
         _fillIt64(B.data, 87)
@@ -102,8 +96,8 @@ class InternalMatMulTest {
 
     private static void _testFloats(int dim, int dim2, int dim3, int hash) {
 
-        var A = MatrixF32.FACTORY.make(dim, dim2, new float[dim*dim2])
-        var B = MatrixF32.FACTORY.make(dim2, dim3, new float[dim2*dim3])
+        var A = new M32(dim, dim2, new float[dim*dim2])
+        var B = new M32(dim2, dim3, new float[dim2*dim3])
 
         _fillIt32(A.data, 12)
         _fillIt32(B.data, 98)
@@ -112,60 +106,6 @@ class InternalMatMulTest {
 
         assert _hash(C.getData()) == hash
     }
-
-    private static void _basicF64TestOLD(Type type) {
-
-        type.set()
-
-        //---
-
-        MatrixF64 A = MatrixF64.FACTORY.make(1, 2,  new double[2])
-        MatrixF64 B = MatrixF64.FACTORY.make(2, 2,  new double[4])
-        _fillIt64(A.data, -339)
-        _fillIt64(B.data, 543)
-
-        var C =  _matmulF64(A,B)
-
-        /*
-                        ( 5  -5 )
-                        (-4  -3 )
-                (-5 -4) (-9  37 )
-
-                        ( 5  -4 )
-                        (-5  -3 )
-                (-5 -4) (-5  32 )
-        */
-
-        assert A.data == [-5, -4] as double[]
-        assert B.data == [5, -5, -4, -3] as double[]
-        assert C.data == (type == Type.COL_MAJOR ? [-5, 32] : [-9, 37] ) as double[]
-
-        //---
-
-        A = MatrixF64.FACTORY.make(2, 2,  new double[4])
-        B = MatrixF64.FACTORY.make(2, 1,  new double[2])
-        _fillIt64(A.data, -339)
-        _fillIt64(B.data, 543)
-
-        C =  _matmulF64(A,B)
-
-        /*
-                        ( 5)
-                        (-5)
-                (-5 -4) (-5)
-                (-3 -2) (-5)
-
-                        ( 5)
-                        (-5)
-                (-5 -3) (-10)
-                (-4 -2) (-10)
-        */
-
-        assert A.data == [-5, -4, -3, -2] as double[]
-        assert B.data == [5, -5] as double[]
-        assert C.data == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as double[]
-    }
-
 
     private static void _basicF64Test(Type type) {
 
@@ -221,37 +161,6 @@ class InternalMatMulTest {
 
     }
 
-
-
-    private static void _basicF32TestOLD(Type type) {
-
-        type.set()
-
-        MatrixF32 A = MatrixF32.FACTORY.make(2, 2,  new float[4])
-        MatrixF32 B = MatrixF32.FACTORY.make(2, 1,  new float[2])
-        _fillIt32(A.data, -339)
-        _fillIt32(B.data, 543)
-
-        var C =  _matmulF32(A,B)
-
-        /*
-                        ( 5)
-                        (-5)
-                (-5 -4) (-5)
-                (-3 -2) (-5)
-
-                        ( 5)
-                        (-5)
-                (-5 -3) (-10)
-                (-4 -2) (-5)
-        */
-
-        assert A.data == [-5, -4, -3, -2] as float[]
-        assert B.data == [5, -5] as float[]
-        assert C.data == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as float[]
-
-    }
-
     private static void _basicF32Test(Type type) {
 
         type.set()
@@ -281,25 +190,8 @@ class InternalMatMulTest {
 
     }
 
-
-
-    private static MatrixF32 _matmulF32(MatrixF32 A, MatrixF32 B) {
-        var data = new float[A.getRowDim()*B.getColDim()]
-        var C = A.multiply(B, data)
-        assert C.data === data
-        return C
-    }
-
-
     private static M32 _matmulF32(M32 A, M32 B) {
         var data = new float[A.getRowDim()*B.getColDim()]
-        var C = A.multiply(B, data)
-        assert C.data === data
-        return C
-    }
-
-    private static MatrixF64 _matmulF64(MatrixF64 A, MatrixF64 B) {
-        var data = new double[A.getRowDim()*B.getColDim()]
         var C = A.multiply(B, data)
         assert C.data === data
         return C
