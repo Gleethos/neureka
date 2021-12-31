@@ -1,8 +1,6 @@
 /*<#LICENSE#>*/
 package neureka.backend.standard.operations.linear.fast.array.operation;
 
-import neureka.backend.standard.operations.linear.fast.structure.Access1D;
-
 /**
  * The ?dot routines perform a vector-vector reduction operation defined as Equation where xi and yi are
  * elements of vectors x and y.
@@ -10,54 +8,12 @@ import neureka.backend.standard.operations.linear.fast.structure.Access1D;
  */
 public final class DOT {
 
-    public static int THRESHOLD = 128;
-
-    public static double invoke(final Access1D<?> array1, final int offset1, final double[] array2, final int offset2, final int first, final int limit) {
-        double retVal = 0.0;
-        for (int i = first; i < limit; i++) {
-            retVal += array1.doubleValue(offset1 + i) * array2[offset2 + i];
-        }
-        return retVal;
-    }
-
-    public static float invoke(final Access1D<?> array1, final int offset1, final float[] array2, final int offset2, final int first, final int limit) {
-        float retVal = 0F;
-        for (int i = first; i < limit; i++) {
-            retVal += array1.floatValue(offset1 + i) * array2[offset2 + i];
-        }
-        return retVal;
-    }
-
-    public static double invoke(final double[] array1, final int offset1, final Access1D<?> array2, final int offset2, final int first, final int limit) {
-        double retVal = 0.0;
-        for (int i = first; i < limit; i++) {
-            retVal += array1[offset1 + i] * array2.doubleValue(offset2 + i);
-        }
-        return retVal;
-    }
-
     public static double invoke(final double[] array1, final int offset1, final double[] array2, final int offset2, final int first, final int limit) {
         return DOT.unrolled04(array1, offset1, array2, offset2, first, limit);
     }
 
-    public static float invoke(final float[] array1, final int offset1, final Access1D<?> array2, final int offset2, final int first, final int limit) {
-        float retVal = 0F;
-        for (int i = first; i < limit; i++) {
-            retVal += array1[offset1 + i] * array2.floatValue(offset2 + i);
-        }
-        return retVal;
-    }
-
     public static float invoke(final float[] array1, final int offset1, final float[] array2, final int offset2, final int first, final int limit) {
         return DOT.unrolled04(array1, offset1, array2, offset2, first, limit);
-    }
-
-    public static double invokeP64(final Access1D<?> array1, final int offset1, final Access1D<?> array2, final int offset2, final int first, final int limit) {
-        double retVal = 0.0;
-        for (int i = first; i < limit; i++) {
-            retVal += array1.doubleValue(offset1 + i) * array2.doubleValue(offset2 + i);
-        }
-        return retVal;
     }
 
     static double unrolled04(final double[] array1, final int offset1, final double[] array2, final int offset2, final int first, final int limit) {

@@ -1,8 +1,6 @@
 /*<#LICENSE#>*/
 package neureka.backend.standard.operations.linear.fast.array.operation;
 
-import neureka.backend.standard.operations.linear.fast.structure.Access2D;
-
 import java.lang.reflect.Array;
 
 /**
@@ -26,12 +24,6 @@ public final class COPY {
         final T[] retVal = (T[]) Array.newInstance(original.getClass().getComponentType(), tmpLength);
         System.arraycopy(original, 0, retVal, 0, tmpLength);
         return retVal;
-    }
-
-    public static void row(final Access2D<?> source, final long row, final double[] destination, final int first, final int limit) {
-        for (int j = first; j < limit; j++) {
-            destination[j] = source.doubleValue(row, j);
-        }
     }
 
 }

@@ -11,7 +11,7 @@ import neureka.backend.standard.operations.linear.fast.concurrent.WorkScheduler;
 import java.util.Arrays;
 import java.util.function.IntSupplier;
 
-public class Multiply implements MatrixOperation {
+public class Multiply {
 
     @FunctionalInterface
     public interface Primitive32 {
