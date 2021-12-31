@@ -135,21 +135,6 @@ public final class F32Core extends F32Array implements Core<Double> {
         return _rowDim;
     }
 
-    @Override
-    public void operateAll(final UnaryFunction<Double> modifier) {
-        this.modify(0, _rowDim * _colDim, 1, modifier);
-    }
-
-    @Override
-    public void operateWith(final Access1D<Double> left, final BinaryFunction<Double> function) {
-        _utility.operateWith(left, function);
-    }
-
-    @Override
-    public void operate(final BinaryFunction<Double> function, final Access1D<Double> right) {
-        _utility.operate(function, right);
-    }
-
     public MatrixCore<Double> multiply(final MatrixCore<Double> right, Object otherData) {
         F32Core retVal = FACTORY.make(_rowDim, right.numberOfColumns(), otherData);
         retVal._multiplyNeither.invoke(retVal.data, data, _colDim, F32Core.cast(right).data);

@@ -11,8 +11,7 @@ import neureka.backend.standard.operations.linear.fast.structure.*;
 public final class Array2D<N extends Comparable<N>>
         implements
             Structure2D,
-        Size,
-            Mutate1D.Modifiable<N>,
+            Size,
             Mutate2D.Receiver<N>,
             Access2D<N>
 {
@@ -69,21 +68,6 @@ public final class Array2D<N extends Comparable<N>>
     @Override
     public N getAt(final long row, final long col) {
         return _delegate.get(Structure2D.index(_rowsCount, row, col));
-    }
-
-    @Override
-    public void operateAll(final UnaryFunction<N> modifier) {
-        _delegate.modify(0L, this.size(), 1L, modifier);
-    }
-
-    @Override
-    public void operateWith(final Access1D<N> left, final BinaryFunction<N> function) {
-        _delegate.modify(0L, this.size(), 1L, left, function);
-    }
-
-    @Override
-    public void operate(final BinaryFunction<N> function, final Access1D<N> right) {
-        _delegate.modify(0L, this.size(), 1L, function, right);
     }
 
     @Override

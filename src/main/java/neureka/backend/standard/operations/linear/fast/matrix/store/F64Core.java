@@ -122,24 +122,6 @@ public final class F64Core extends F64Array implements Core<Double> {
         return _rowDim;
     }
 
-    @Override
-    public void operateAll(final UnaryFunction<Double> modifier) {
-
-        if ( _colDim > ModifyAll.THRESHOLD ) {
-
-            final WorkScheduler scheduler = new WorkScheduler() {
-                @Override
-                public void work(final int first, final int limit) {
-                    F64Core.this.modify(_rowDim * first, _rowDim * limit, 1, modifier);
-                }
-
-            };
-            scheduler.invoke(0, _colDim, ModifyAll.THRESHOLD);
-        }
-        else
-            this.modify(0, _rowDim * _colDim, 1, modifier);
-    }
-
     public MatrixCore<Double> multiply(final MatrixCore<Double> right, Object otherData) {
 
         F64Core retVal = FACTORY.make(_rowDim, right.numberOfColumns(), otherData);

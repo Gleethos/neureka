@@ -9,7 +9,7 @@ import neureka.backend.standard.operations.linear.fast.structure.*;
  */
 public interface TransformableRegion<N extends Comparable<N>>
         extends
-            Mutate1D.Modifiable<N>,
+            Size,
             Mutate2D.Receiver<N>,
             Structure2D,
             Access2D<N>

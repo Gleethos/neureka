@@ -26,8 +26,7 @@ public abstract
             Access1D<N>,
             Mutate1D,
             Mutate1D.Fillable<N>,
-            Mutate1D.Modifiable<N>,
-        Size
+            Size
 {
 
     public static final class Factory<N extends Comparable<N>> extends ArrayFactory<N, BasicArray<N>> {
@@ -83,20 +82,6 @@ public abstract
         int result = 1;
         result = prime * result + (myFactory == null ? 0 : myFactory.hashCode());
         return result;
-    }
-
-    public void operateAll(final UnaryFunction<N> modifier) {
-        this.modify(0L, this.size(), 1L, modifier);
-    }
-
-    public void operateWith(final Access1D<N> left, final BinaryFunction<N> function) {
-        long limit = Math.min(left.size(), this.size());
-        this.modify(0L, limit, 1L, left, function);
-    }
-
-    public void operate(final BinaryFunction<N> function, final Access1D<N> right) {
-        long limit = Math.min(this.size(), right.size());
-        this.modify(0L, limit, 1L, function, right);
     }
 
     @Override

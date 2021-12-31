@@ -32,16 +32,6 @@ public interface Mutate1D extends Size {
 
     }
 
-    interface Modifiable<N extends Comparable<N>> extends Size {
-
-        void operateAll(final UnaryFunction<N> modifier);
-
-        void operateWith(final Access1D<N> left, final BinaryFunction<N> function);
-
-        void operate(final BinaryFunction<N> function, final Access1D<N> right);
-
-    }
-
     void set(long index, double value);
 
 }

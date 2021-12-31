@@ -18,8 +18,7 @@ import java.util.RandomAccess;
 public final
         class Array1D<N extends Comparable<N>>
         implements
-        Size,
-            Mutate1D.Modifiable<N>,
+            Size,
             Mutate1D,
             Mutate1D.Fillable<N>,
             Access1D<N>,
@@ -82,29 +81,6 @@ public final
     @Override
     public N get(final long index) {
         return _delegate.get(this.convert(index));
-    }
-
-    @Override
-    public void operateAll(final UnaryFunction<N> modifier) {
-        _delegate.modify(myFirst, myLimit, myStep, modifier);
-    }
-
-    @Override
-    public void operateWith(final Access1D<N> left, final BinaryFunction<N> function) {
-        long limit = Math.min(length, left.size());
-
-        for ( long i = 0L; i < limit; i++ )
-            this.set(
-               i, function.invoke(left.doubleValue(i), this.doubleValue(i))
-            );
-    }
-
-    @Override
-    public void operate(final BinaryFunction<N> function, final Access1D<N> right) {
-        long limit = Math.min(length, right.size());
-        for (long i = 0L; i < limit; i++) {
-            this.set(i, function.invoke(this.doubleValue(i), right.doubleValue(i)));
-        }
     }
 
     @Override
