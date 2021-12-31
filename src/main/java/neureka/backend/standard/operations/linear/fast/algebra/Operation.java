@@ -39,16 +39,4 @@ public interface Operation {
 
     }
 
-    /**
-     * @see <a href="https://en.wikipedia.org/wiki/Subtraction">Subtraction</a>
-     */
-    interface Subtraction<T> extends Operation {
-
-        /**
-         * @param subtrahend The subtrahend
-         * @return <code>this - subtrahend</code>.
-         */
-        T subtract(T subtrahend);
-    }
-
 }

@@ -100,18 +100,6 @@ public abstract
     }
 
     @Override
-    public M subtract(final M subtrahend) {
-
-        ProgrammingError.throwIfNotEqualDimensions(_core, subtrahend);
-
-        final Core<N> retVal = _core.factory().copy(subtrahend);
-
-        retVal.operateWith(_core, _core.factory().forFunctions().subtraction());
-
-        return this.getResultFactory().instantiate(retVal);
-    }
-
-    @Override
     public final void supplyToTrans(final Core<N> receiver) {
         _core.supplyToTrans(receiver);
     }

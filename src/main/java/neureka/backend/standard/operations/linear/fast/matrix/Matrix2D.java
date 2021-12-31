@@ -19,11 +19,7 @@ public interface Matrix2D<N extends Comparable<N>, M extends Matrix2D<N, M>>
         Access2D<N>,
         Structure2D,
         Size,
-        Operation.Subtraction<M>,
         Operation.Multiplication<M>,
-        ScalarOperation.Division<M, N>,
-        ScalarOperation.Addition<M, N>,
-        ScalarOperation.Subtraction<M, N>,
         ScalarOperation.Multiplication<M, N>
 {
 
