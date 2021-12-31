@@ -40,8 +40,10 @@ public abstract class WorkScheduler {
             WorkScheduler._call(_executor, first, limit, _threshold, _parallelism.getAsInt(), worker);
         }
 
-        public Divider parallelism(final IntSupplier parallelism) {
-            if (parallelism != null) {
+        public Divider parallelism(
+                final IntSupplier parallelism
+        ) {
+            if ( parallelism != null ) {
                 _parallelism = parallelism;
             }
             return this;
@@ -93,21 +95,22 @@ public abstract class WorkScheduler {
      * @param first The first index, in a range, to include.
      * @param limit The first index NOT to include - last (excl.) index in a range.
      */
-    public final void invoke(final int first, final int limit, final int threshold) {
-
-        // int availableWorkers = OjAlgoUtils.ENVIRONMENT.threads - DaemonPoolExecutor.INSTANCE.getActiveCount() / 2;
+    public final void invoke(
+            final int first,
+            final int limit,
+            final int threshold
+    ) {
         int availableWorkers = ConcreteMachine.ENVIRONMENT.threads;
-
         _call(
                 DaemonPoolExecutor.INSTANCE,
                 first,
                 limit,
                 threshold,
                 availableWorkers,
-                this::work
+                this::_work
         );
     }
 
-    protected abstract void work(final int first, final int limit);
+    protected abstract void _work(final int first, final int limit);
 
 }

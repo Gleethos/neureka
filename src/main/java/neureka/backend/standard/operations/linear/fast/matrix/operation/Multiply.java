@@ -24,7 +24,8 @@ public class Multiply {
 
     }
 
-    public static Primitive32 newPrimitive32(final long rows, final long columns) {
+    public static Primitive32 newPrimitive32(final long rows, final long columns)
+    {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD) {
             return Multiply::fillMxN_MT;
         }
@@ -43,8 +44,8 @@ public class Multiply {
         return Multiply::fillMxN;
     }
 
-    public static Primitive64 newPrimitive64(final long rows, final long columns) {
-
+    public static Primitive64 newPrimitive64(final long rows, final long columns)
+    {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD)
             return Multiply::fillMxN_MT;
 

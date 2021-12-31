@@ -41,14 +41,14 @@ public enum Parallelism implements IntSupplier {
      */
     ONE(() -> 1);
 
-    private final IntSupplier myValue;
+    private final IntSupplier _supplier;
 
-    Parallelism(final IntSupplier value) {
-        myValue = value;
+    Parallelism( final IntSupplier value ) {
+        _supplier = value;
     }
 
     public int getAsInt() {
-        return myValue.getAsInt();
+        return _supplier.getAsInt();
     }
 
 }
