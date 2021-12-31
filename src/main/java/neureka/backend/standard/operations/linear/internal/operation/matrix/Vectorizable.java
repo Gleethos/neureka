@@ -57,16 +57,16 @@ public class Vectorizable {
         if (columns == 1)
             return (
                 Conf.ROW_MAJOR
-                    ? Vectorizable::addMx1_RM
-                    : Vectorizable::addMx1
+                    ? Vectorizable::full_F64_Mx1_RM
+                    : Vectorizable::full_F64_Mx1_CM
             );
 
         if ( !Conf.ROW_MAJOR ) {
-            if ( rows == 10) return Vectorizable::fill0xN;
-            if ( rows == 9 ) return Vectorizable::fill9xN;
-            if ( rows == 8 ) return Vectorizable::fill8xN;
-            if ( rows == 7 ) return Vectorizable::fill7xN;
-            if ( rows == 6 ) return Vectorizable::fill6xN;
+            if ( rows == 10) return Vectorizable::full_F64_0xN_CM;
+            if ( rows == 9 ) return Vectorizable::full_F64_9xN_CM;
+            if ( rows == 8 ) return Vectorizable::full_F64_8xN_CM;
+            if ( rows == 7 ) return Vectorizable::full_F64_7xN_CM;
+            if ( rows == 6 ) return Vectorizable::full_F64_6xN_CM;
         }
         if ( rows == 1 )
             return (
@@ -82,7 +82,7 @@ public class Vectorizable {
         );
     }
 
-    static void addMx1(
+    static void full_F64_Mx1_CM(
             final double[] product,
             final double[] left,
             final int colCount,
@@ -102,7 +102,7 @@ public class Vectorizable {
         }
     }
 
-    static void addMx1_RM(
+    static void full_F64_Mx1_RM(
             final double[] product,
             final double[] left,
             final int rowCount,
@@ -235,7 +235,7 @@ public class Vectorizable {
         );
     }
 
-    static void fill0xN(final double[] product, final double[] left, final int complexity, final double[] right) {
+    static void full_F64_0xN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
 
         int tmpRowDim = 10;
         int tmpColDim = right.length / complexity;
@@ -620,7 +620,7 @@ public class Vectorizable {
         product[24] = tmp44;
     }
 
-    static void fill6xN(final double[] product, final double[] left, final int complexity, final double[] right) {
+    static void full_F64_6xN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
 
         int tmpRowDim = 6;
         int tmpColDim = right.length / complexity;
@@ -654,7 +654,7 @@ public class Vectorizable {
         }
     }
 
-    static void fill7xN(final double[] product, final double[] left, final int complexity, final double[] right) {
+    static void full_F64_7xN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
 
         int tmpRowDim = 7;
         int tmpColDim = right.length / complexity;
@@ -691,7 +691,7 @@ public class Vectorizable {
         }
     }
 
-    static void fill8xN(final double[] product, final double[] left, final int complexity, final double[] right) {
+    static void full_F64_8xN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
 
         int tmpRowDim = 8;
         int tmpColDim = right.length / complexity;
@@ -731,7 +731,7 @@ public class Vectorizable {
         }
     }
 
-    static void fill9xN(final double[] product, final double[] left, final int complexity, final double[] right) {
+    static void full_F64_9xN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
 
         int tmpRowDim = 9;
         int tmpColDim = right.length / complexity;
