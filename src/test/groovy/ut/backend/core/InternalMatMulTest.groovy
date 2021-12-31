@@ -42,35 +42,35 @@ class InternalMatMulTest {
 
         Type.COL_MAJOR.set()
 
-        _testDoubles()
-        _testFloats()
+        _testDoubles(DIM,DIM,245517809)
+        _testFloats(DIM,DIM, 1204091031)
 
     }
 
-    private static void _testDoubles() {
+    private static void _testDoubles(int dim, int dim2, int hash) {
 
-        MatrixF64 A = MatrixF64.FACTORY.make(DIM, DIM,  new double[DIM*DIM])
-        MatrixF64 B = MatrixF64.FACTORY.make(DIM, DIM,  new double[DIM*DIM])
+        MatrixF64 A = MatrixF64.FACTORY.make(dim, dim2,  new double[dim*dim2])
+        MatrixF64 B = MatrixF64.FACTORY.make(dim, dim2,  new double[dim*dim2])
 
         _fillIt64(A.data, 43)
         _fillIt64(B.data, 87)
 
         MatrixF64 C = _matmulF64(A,B)
 
-        assert _hash(C.getData()) ==  245517809
+        assert _hash(C.getData()) ==  hash
     }
 
-    private static void _testFloats() {
+    private static void _testFloats(int dim, int dim2, int hash) {
 
-        MatrixF32 A = MatrixF32.FACTORY.make(DIM, DIM, new float[DIM*DIM])
-        MatrixF32 B = MatrixF32.FACTORY.make(DIM, DIM, new float[DIM*DIM])
+        MatrixF32 A = MatrixF32.FACTORY.make(dim, dim2, new float[dim*dim2])
+        MatrixF32 B = MatrixF32.FACTORY.make(dim, dim2, new float[dim*dim2])
 
         _fillIt32(A.data, 12)
         _fillIt32(B.data, 98)
 
         MatrixF32 C = _matmulF32(A,B)
 
-        assert _hash(C.getData()) == 1204091031
+        assert _hash(C.getData()) == hash
 
     }
 
