@@ -149,20 +149,53 @@ public class Multiply {
         }
     }
 
-
     static void addMxC(
             final double[] product,
             final int firstColumn,
             final int columnLimit,
             final double[] left,
-            final int complexity,
+            final int commonColumnCount,
             final double[] right
     ) {
-        int nbRows = left.length / complexity;
+        int leftRowCount = left.length / commonColumnCount;
 
-        for (int c = 0; c < complexity; c++) {
+        for (int ci = 0; ci < commonColumnCount; ci++) {
             for (int j = firstColumn; j < columnLimit; j++) {
-                AXPY.invoke(product, j * nbRows, right[c + j * complexity], left, c * nbRows, 0, nbRows);
+                AXPY.invoke(
+                        product,
+                        j * leftRowCount,
+                        right[ci + j * commonColumnCount],
+                        left,
+                        ci * leftRowCount,
+                        0,
+                        leftRowCount
+                );
+            }
+        }
+    }
+
+    static void addMxC_RM( //WIP!!!!!!
+            final double[] product,
+            final int columnStart,
+            final int columnLimit,
+            final double[] left,
+            final int commonColumnCount,
+            final double[] right
+    ) {
+        final int leftRowCount = left.length / commonColumnCount;
+        final int rightRowCount = commonColumnCount;
+        // TODO: Flip the below loops and see what is faster!!!
+        for (int ci = columnStart; ci < columnLimit; ci++) {
+            for (int ri = 0; ri < leftRowCount; ri++) {
+                AXPY.invoke(
+                    product,
+                    ci * rightRowCount,
+                    left[ci + ri * commonColumnCount],
+                    right,
+                    ci * rightRowCount,
+                    0,
+                    rightRowCount
+                );
             }
         }
     }
@@ -773,7 +806,6 @@ public class Multiply {
             final int complexity,
             final float[] right
     ) {
-        Arrays.fill(product, 0F);
         Multiply.addMx1(
                 product,
                 left,
@@ -788,7 +820,6 @@ public class Multiply {
             final int complexity,
             final float[] right
     ) {
-        Arrays.fill(product, 0F);
         Multiply.addMx1_RM(
                 product,
                 left,
@@ -798,30 +829,18 @@ public class Multiply {
     }
 
     static void fillMxN(final double[] product, final double[] left, final int complexity, final double[] right) {
-
-        Arrays.fill(product, 0D);
-
         Multiply.addMxC(product, 0, right.length / complexity, left, complexity, right);
     }
 
     static void fillMxN(final float[] product, final float[] left, final int complexity, final float[] right) {
-
-        Arrays.fill(product, 0F);
-
         Multiply.addMxC(product, 0, right.length / complexity, left, complexity, right);
     }
 
     static void fillMxN_MT(final double[] product, final double[] left, final int complexity, final double[] right) {
-
-        Arrays.fill(product, 0D);
-
         Multiply.addMxN_MT(product, left, complexity, right);
     }
 
     static void fillMxN_MT(final float[] product, final float[] left, final int complexity, final float[] right) {
-
-        Arrays.fill(product, 0F);
-
         Multiply.addMxN_MT(product, left, complexity, right);
     }
 

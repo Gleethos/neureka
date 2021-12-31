@@ -10,15 +10,15 @@ public final class AXPY {
 
     public static void invoke(
             final double[] y,
-            final int basey,
-            final double a,
+            final int yOffset,
+            final double multiplier,
             final double[] x,
-            final int basex,
-            final int first,
+            final int xOffset,
+            final int start,
             final int limit
     ) {
-        for (int i = first; i < limit; i++) {
-            y[basey + i] += a * x[basex + i];
+        for (int i = start; i < limit; i++) {
+            y[yOffset + i] += multiplier * x[xOffset + i];
         }
     }
 
