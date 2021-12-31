@@ -49,7 +49,9 @@ public abstract
 
         Core<N> retVal = physical.copy(_core);
 
-        retVal.operateAll(physical.forFunctions().addition().second(scalarAddend));
+        retVal.operateAll(
+                physical.forFunctions().addition().second(scalarAddend)
+        );
 
         return this.getResultFactory().instantiate(retVal);
     }

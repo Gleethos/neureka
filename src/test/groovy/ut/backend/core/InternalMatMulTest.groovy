@@ -49,69 +49,29 @@ class InternalMatMulTest {
 
     private static void _testDoubles() {
 
-        /*
-         * Create 2 random matrices, large enough
-         */
         MatrixF64 A = MatrixF64.FACTORY.make(DIM, DIM,  new double[DIM*DIM])
         MatrixF64 B = MatrixF64.FACTORY.make(DIM, DIM,  new double[DIM*DIM])
 
         _fillIt64(A.data, 43)
         _fillIt64(B.data, 87)
 
-        /*
-         * A runnable task that executes the multiplication
-         */
+        MatrixF64 C = _matmulF64(A,B)
 
-        // Warmup:
-        MatrixF64 c1 = _matmulF64(A,B)
-        MatrixF64 a1 = A.addMat(c1)
-        MatrixF64 m1 = A.subtract(c1)
-
-        MatrixF64 s = A.subtract((Double)4d)
-        assert _hash(s.getData()) == -2106189063
-
-        A.divide(0.6d)
-
-        assert _hash(c1.getData()) ==  245517809
-        assert _hash(a1.getData()) == -962793700
-        assert _hash(m1.getData()) ==  188015414
-
-        assert Arrays.toString(m1.divide(0.3d).getData()).hashCode() == -2049253096
-
-        System.out.println("DOUBLES DONE!")
+        assert _hash(C.getData()) ==  245517809
     }
 
     private static void _testFloats() {
 
-        /*
-         * Create 2 random matrices, large enough
-         */
         MatrixF32 A = MatrixF32.FACTORY.make(DIM, DIM, new float[DIM*DIM])
         MatrixF32 B = MatrixF32.FACTORY.make(DIM, DIM, new float[DIM*DIM])
 
         _fillIt32(A.data, 12)
         _fillIt32(B.data, 98)
 
-        /*
-         * A runnable task that executes the multiplication
-         */
+        MatrixF32 C = _matmulF32(A,B)
 
-        MatrixF32 s = A.subtract((Double)4d)
-        assert _hash(s.getData()) == 1671633773
+        assert _hash(C.getData()) == 1204091031
 
-        MatrixF32 c2 = _matmulF32(A,B)
-        MatrixF32 a2 = A.addMat(c2)
-        MatrixF32 m2 = A.subtract(c2)
-
-        A.divide(0.6d)
-
-        assert _hash(c2.getData()) == 1204091031
-        assert _hash(a2.getData()) == -1389630508
-        assert _hash(m2.getData()) == -1238245633
-
-        assert _hash(m2.divide(0.3d).getData()) == 587244582
-
-        System.out.println("FLOATS DONE!")
     }
 
     private static void _basicF64TestOLD(Type type) {
@@ -165,10 +125,6 @@ class InternalMatMulTest {
         assert A.data == [-5, -4, -3, -2] as double[]
         assert B.data == [5, -5] as double[]
         assert C.data == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as double[]
-
-        var D = C.add(7d)
-
-        assert D.data == (type == Type.COL_MAJOR ? [-3, -3] : [2, 2] ) as double[]
     }
 
 
@@ -224,9 +180,6 @@ class InternalMatMulTest {
         assert B.data == [5, -5] as double[]
         assert C.data == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as double[]
 
-        //var D = C.add(7d)
-
-        //assert D.data == (type == Type.COL_MAJOR ? [-3, -3] : [2, 2] ) as double[]
     }
 
 
@@ -290,9 +243,6 @@ class InternalMatMulTest {
         assert B.data == [5, -5] as float[]
         assert C.data == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as float[]
 
-        //var D = C.add(7d)
-
-        //assert D.data == (type == Type.COL_MAJOR ? [-3, -3] : [2, 2] ) as float[]
     }
 
 

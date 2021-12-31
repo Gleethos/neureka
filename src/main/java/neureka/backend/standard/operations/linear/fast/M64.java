@@ -26,7 +26,7 @@ public class M64 {
         Multiply
             .newPrimitive64(_rowCount, otherColCount)
             .invoke(
-                    retVal._data, _data, _colCount, matrix._data
+                retVal._data, _data, _colCount, matrix._data
             );
             return retVal;
     }
