@@ -6,7 +6,7 @@ import neureka.backend.standard.operations.linear.fast.function.FunctionSet;
 import neureka.backend.standard.operations.linear.fast.function.UnaryFunction;
 import neureka.backend.standard.operations.linear.fast.structure.Access1D;
 import neureka.backend.standard.operations.linear.fast.structure.Mutate1D;
-import neureka.backend.standard.operations.linear.fast.structure.Structure1D;
+import neureka.backend.standard.operations.linear.fast.structure.Size;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ public abstract
             Mutate1D,
             Mutate1D.Fillable<N>,
             Mutate1D.Modifiable<N>,
-            Structure1D
+        Size
 {
 
     public static final class Factory<N extends Comparable<N>> extends ArrayFactory<N, BasicArray<N>> {

@@ -9,10 +9,7 @@ import neureka.backend.standard.operations.linear.fast.array.operation.FillMatch
 import neureka.backend.standard.operations.linear.fast.concurrent.WorkScheduler;
 import neureka.backend.standard.operations.linear.fast.function.BinaryFunction;
 import neureka.backend.standard.operations.linear.fast.function.UnaryFunction;
-import neureka.backend.standard.operations.linear.fast.matrix.operation.MultiplyBoth;
-import neureka.backend.standard.operations.linear.fast.matrix.operation.MultiplyLeft;
-import neureka.backend.standard.operations.linear.fast.matrix.operation.MultiplyNeither;
-import neureka.backend.standard.operations.linear.fast.matrix.operation.MultiplyRight;
+import neureka.backend.standard.operations.linear.fast.matrix.operation.Multiply;
 import neureka.backend.standard.operations.linear.fast.structure.*;
 
 
@@ -71,10 +68,7 @@ public final class F32Core extends F32Array implements Core<Double> {
             throw new IllegalArgumentException();
     }
 
-    private final MultiplyBoth.Primitive      _multiplyBoth;
-    private final MultiplyLeft.Primitive32    _multiplyLeft;
-    private final MultiplyNeither.Primitive32 _multiplyNeither;
-    private final MultiplyRight.Primitive32   _multiplyRight;
+    private final Multiply.Primitive32 _multiplyNeither;
     private final int _colDim;
     private final int _rowDim;
     private final Array2D<Double> _utility;
@@ -87,11 +81,7 @@ public final class F32Core extends F32Array implements Core<Double> {
         _colDim = numbCols;
 
         _utility = this.wrapInArray2D(_rowDim);
-
-        _multiplyBoth = MultiplyBoth.newPrimitive32(_rowDim, _colDim);
-        _multiplyLeft = MultiplyLeft.newPrimitive32(_rowDim, _colDim);
-        _multiplyRight = MultiplyRight.newPrimitive32(_rowDim, _colDim);
-        _multiplyNeither = MultiplyNeither.newPrimitive32(_rowDim, _colDim);
+        _multiplyNeither = Multiply.newPrimitive32(_rowDim, _colDim);
     }
 
     F32Core(final long numbRows, final long numbCols) {
@@ -102,11 +92,7 @@ public final class F32Core extends F32Array implements Core<Double> {
         _colDim = Math.toIntExact(numbCols);
 
         _utility = this.wrapInArray2D(_rowDim);
-
-        _multiplyBoth = MultiplyBoth.newPrimitive32(_rowDim, _colDim);
-        _multiplyLeft = MultiplyLeft.newPrimitive32(_rowDim, _colDim);
-        _multiplyRight = MultiplyRight.newPrimitive32(_rowDim, _colDim);
-        _multiplyNeither = MultiplyNeither.newPrimitive32(_rowDim, _colDim);
+        _multiplyNeither = Multiply.newPrimitive32(_rowDim, _colDim);
     }
 
     @Override
@@ -130,16 +116,7 @@ public final class F32Core extends F32Array implements Core<Double> {
         if (complexity != Math.toIntExact(right.size() / this.numberOfColumns())) {
             ProgrammingError.throwForMultiplicationNotPossible();
         }
-        if ( left instanceof F32Core ) {
-            if ( right instanceof F32Core )
-                _multiplyNeither.invoke(data, F32Core.cast(left).data, complexity, F32Core.cast(right).data);
-            else
-                _multiplyRight.invoke(data, F32Core.cast(left).data, complexity, right);
-        }
-        else if ( right instanceof F32Core )
-            _multiplyLeft.invoke(data, left, complexity, F32Core.cast(right).data);
-        else
-            _multiplyBoth.invoke(this, left, complexity, right);
+        _multiplyNeither.invoke(data, F32Core.cast(left).data, complexity, F32Core.cast(right).data);
     }
 
     public float floatValue(final long row, final long col) {
@@ -175,10 +152,7 @@ public final class F32Core extends F32Array implements Core<Double> {
 
     public MatrixCore<Double> multiply(final MatrixCore<Double> right, Object otherData) {
         F32Core retVal = FACTORY.make(_rowDim, right.numberOfColumns(), otherData);
-        if ( right instanceof F32Core )
-            retVal._multiplyNeither.invoke(retVal.data, data, _colDim, F32Core.cast(right).data);
-        else
-            retVal._multiplyRight.invoke(retVal.data, data, _colDim, right);
+        retVal._multiplyNeither.invoke(retVal.data, data, _colDim, F32Core.cast(right).data);
         return retVal;
     }
 

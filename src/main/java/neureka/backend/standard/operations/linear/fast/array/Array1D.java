@@ -7,7 +7,7 @@ import neureka.backend.standard.operations.linear.fast.function.UnaryFunction;
 import neureka.backend.standard.operations.linear.fast.structure.Access1D;
 import neureka.backend.standard.operations.linear.fast.structure.FactorySupplement;
 import neureka.backend.standard.operations.linear.fast.structure.Mutate1D;
-import neureka.backend.standard.operations.linear.fast.structure.Structure1D;
+import neureka.backend.standard.operations.linear.fast.structure.Size;
 
 import java.util.RandomAccess;
 
@@ -18,7 +18,7 @@ import java.util.RandomAccess;
 public final
         class Array1D<N extends Comparable<N>>
         implements
-            Structure1D,
+        Size,
             Mutate1D.Modifiable<N>,
             Mutate1D,
             Mutate1D.Fillable<N>,

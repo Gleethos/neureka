@@ -1,8 +1,6 @@
 /*<#LICENSE#>*/
 package neureka.backend.standard.operations.linear.fast.function;
 
-import neureka.backend.standard.operations.linear.fast.type.NumberDefinition;
-
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.UnaryOperator;
 
@@ -20,14 +18,6 @@ public interface UnaryFunction<N extends Comparable<N>> extends UnaryOperator<N>
 
     default float invoke(final float arg) {
         return (float) this.invoke((double) arg);
-    }
-
-    default int invoke(final int arg) {
-        return NumberDefinition.toInt(this.invoke((double) arg));
-    }
-
-    default long invoke(final long arg) {
-        return NumberDefinition.toLong(this.invoke((double) arg));
     }
 
     N invoke(N arg);

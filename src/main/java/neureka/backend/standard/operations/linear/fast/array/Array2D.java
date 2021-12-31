@@ -11,7 +11,7 @@ import neureka.backend.standard.operations.linear.fast.structure.*;
 public final class Array2D<N extends Comparable<N>>
         implements
             Structure2D,
-            Structure1D,
+        Size,
             Mutate1D.Modifiable<N>,
             Mutate2D.Receiver<N>,
             Access2D<N>

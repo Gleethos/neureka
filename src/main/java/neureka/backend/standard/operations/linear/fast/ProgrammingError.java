@@ -2,7 +2,7 @@
 package neureka.backend.standard.operations.linear.fast;
 
 import neureka.backend.standard.operations.linear.fast.structure.Access2D;
-import neureka.backend.standard.operations.linear.fast.structure.Structure1D;
+import neureka.backend.standard.operations.linear.fast.structure.Size;
 import neureka.backend.standard.operations.linear.fast.structure.Structure2D;
 
 /**
@@ -39,7 +39,7 @@ public class ProgrammingError extends RuntimeException {
         ProgrammingError.throwIfNotEqualColumnDimensions(mtrx1, mtrx2);
     }
 
-    public static void throwIfNotEqualRowDimensions(final Structure2D mtrx1, final Structure1D mtrx2) {
+    public static void throwIfNotEqualRowDimensions(final Structure2D mtrx1, final Size mtrx2) {
         if (mtrx2 instanceof Structure2D) {
             if (mtrx1.numberOfRows() != ((Structure2D) mtrx2).numberOfRows()) {
                 throw new ProgrammingError("Row dimensions are not equal!");

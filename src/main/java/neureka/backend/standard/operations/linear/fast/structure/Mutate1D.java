@@ -8,14 +8,14 @@ import neureka.backend.standard.operations.linear.fast.function.UnaryFunction;
  * 1-dimensional mutator methods
  *
  */
-public interface Mutate1D extends Structure1D {
+public interface Mutate1D extends Size {
 
     /**
      * Fills the target
      *
      * 
      */
-    interface Fillable<N extends Comparable<N>> extends Structure1D {
+    interface Fillable<N extends Comparable<N>> extends Size {
 
         /**
          * <p>
@@ -32,7 +32,7 @@ public interface Mutate1D extends Structure1D {
 
     }
 
-    interface Modifiable<N extends Comparable<N>> extends Structure1D {
+    interface Modifiable<N extends Comparable<N>> extends Size {
 
         void operateAll(final UnaryFunction<N> modifier);
 

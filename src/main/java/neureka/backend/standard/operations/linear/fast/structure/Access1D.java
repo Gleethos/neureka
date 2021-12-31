@@ -1,7 +1,7 @@
 /*<#LICENSE#>*/
 package neureka.backend.standard.operations.linear.fast.structure;
 
-public interface Access1D<N extends Comparable<N>> extends Structure1D {
+public interface Access1D<N extends Comparable<N>> extends Size {
 
     static String toString(final Access1D<?> access) {
         int size = access.size();

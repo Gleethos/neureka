@@ -11,7 +11,7 @@ public interface MatrixCore<N extends Comparable<N>>
             Matrix2D<N, MatrixCore<N>>,
             Access2D.Collectable<N, TransformableRegion<N>>,
             Structure2D,
-            Structure1D
+        Size
 {
     interface Factory<N extends Comparable<N>, I extends Core<N>> extends Factory2D.Dense<I> {
 

@@ -5,7 +5,7 @@ package neureka.backend.standard.operations.linear.fast.structure;
  * A (fixed size) 2-dimensional data structure.
  *
  */
-public interface Structure2D extends Structure1D {
+public interface Structure2D extends Size {
 
     static long column(final long index, final long structure) {
         return index / structure;
