@@ -75,7 +75,11 @@ public class Multiply {
                             : Multiply::fill1xN
             );
 
-        return Multiply::full_F64_MxN_CM;
+        return (
+                Conf.ROW_MAJOR
+                        ? Multiply::full_F64_MxN_RM
+                        : Multiply::full_F64_MxN_CM
+        );
     }
 
     static void addMx1(
@@ -147,7 +151,7 @@ public class Multiply {
         }
     }
 
-    static void F64_MxN_CM(
+    static void partial_F64_MxN_CM(
             final double[] product,
             final int firstColumn,
             final int columnLimit,
@@ -172,7 +176,7 @@ public class Multiply {
         }
     }
 
-    static void full_F64_MxN_RM( //WIP!!!!!!
+    static void partial_F64_MxN_RM(
         final double[] product,
         final int columnStart,
         final int columnLimit,
@@ -198,7 +202,7 @@ public class Multiply {
         }
     }
 
-    static void F32_MxN_CM(
+    static void partial_F32_MxN_CM(
             final float[] product,
             final int firstColumn,
             final int columnLimit,
@@ -219,7 +223,7 @@ public class Multiply {
         CPU.get().divide(
                 0,
                 right.length / complexity,
-                (f, l) -> Multiply.F64_MxN_CM(product, f, l, left, complexity, right)
+                (f, l) -> Multiply.partial_F64_MxN_CM(product, f, l, left, complexity, right)
         );
     }
 
@@ -227,7 +231,7 @@ public class Multiply {
         CPU.get().divide(
                 0,
                 right.length / complexity,
-                (f, l) -> Multiply.F32_MxN_CM(product, f, l, left, complexity, right)
+                (f, l) -> Multiply.partial_F32_MxN_CM(product, f, l, left, complexity, right)
         );
     }
 
@@ -771,11 +775,15 @@ public class Multiply {
     }
 
     static void full_F64_MxN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
-        Multiply.F64_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
+        Multiply.partial_F64_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
+    }
+
+    static void full_F64_MxN_RM(final double[] product, final double[] left, final int complexity, final double[] right) {
+        Multiply.partial_F64_MxN_RM(product, 0, right.length / complexity, left, complexity, right);
     }
 
     static void full_F32_MxN_CM(final float[] product, final float[] left, final int complexity, final float[] right) {
-        Multiply.F32_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
+        Multiply.partial_F32_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
     }
 
 }
