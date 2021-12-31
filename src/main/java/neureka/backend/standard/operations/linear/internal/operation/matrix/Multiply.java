@@ -1,9 +1,9 @@
 /*<#LICENSE#>*/
-package neureka.backend.standard.operations.linear.fast.matrix.operation;
+package neureka.backend.standard.operations.linear.internal.operation.matrix;
 
-import neureka.backend.standard.operations.linear.fast.Conf;
-import neureka.backend.standard.operations.linear.fast.array.operation.AXPY;
-import neureka.backend.standard.operations.linear.fast.array.operation.DOT;
+import neureka.backend.standard.operations.linear.internal.Conf;
+import neureka.backend.standard.operations.linear.internal.operation.array.AXPY;
+import neureka.backend.standard.operations.linear.internal.operation.array.DOT;
 import neureka.devices.host.CPU;
 
 import java.util.Arrays;

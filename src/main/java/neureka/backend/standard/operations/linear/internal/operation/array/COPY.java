@@ -1,5 +1,5 @@
 /*<#LICENSE#>*/
-package neureka.backend.standard.operations.linear.fast.array.operation;
+package neureka.backend.standard.operations.linear.internal.operation.array;
 
 import java.lang.reflect.Array;
 
@@ -8,15 +8,6 @@ import java.lang.reflect.Array;
  *
  */
 public final class COPY {
-
-    public static int THRESHOLD = 128;
-
-    public static double[] copyOf(final double[] original) {
-        final int tmpLength = original.length;
-        final double[] retVal = new double[tmpLength];
-        System.arraycopy(original, 0, retVal, 0, tmpLength);
-        return retVal;
-    }
 
     @SuppressWarnings("unchecked")
     public static <T> T[] copyOf(final T[] original) {

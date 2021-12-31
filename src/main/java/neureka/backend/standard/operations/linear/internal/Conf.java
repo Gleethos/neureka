@@ -1,4 +1,4 @@
-package neureka.backend.standard.operations.linear.fast;
+package neureka.backend.standard.operations.linear.internal;
 
 public class Conf {
 

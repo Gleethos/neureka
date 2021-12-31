@@ -1,5 +1,5 @@
 /*<#LICENSE#>*/
-package neureka.backend.standard.operations.linear.fast.array.operation;
+package neureka.backend.standard.operations.linear.internal.operation.array;
 
 /**
  * The ?axpy routines perform a vector-vector operation defined as y := a*x + y where: a is a scalar x and y
@@ -7,8 +7,6 @@ package neureka.backend.standard.operations.linear.fast.array.operation;
  *
  */
 public final class AXPY {
-
-    public static int THRESHOLD = 128;
 
     public static void invoke(
             final double[] y,

@@ -1,6 +1,6 @@
-package neureka.backend.standard.operations.linear.fast;
+package neureka.backend.standard.operations.linear.internal;
 
-import neureka.backend.standard.operations.linear.fast.matrix.operation.Multiply;
+import neureka.backend.standard.operations.linear.internal.operation.matrix.Multiply;
 
 public class M32 {
 
