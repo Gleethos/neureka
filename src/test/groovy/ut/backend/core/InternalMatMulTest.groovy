@@ -31,16 +31,12 @@ class InternalMatMulTest {
 
     static void start() {
 
-        _basicF64Test(Type.ROW_MAJOR)
-        _basicF64Test(Type.COL_MAJOR)
-        _basicF64TestOLD(Type.ROW_MAJOR)
-        _basicF64TestOLD(Type.COL_MAJOR)
-        _basicF32Test(Type.ROW_MAJOR)
-        _basicF32Test(Type.COL_MAJOR)
-        _basicF32TestOLD(Type.ROW_MAJOR)
-        _basicF32TestOLD(Type.COL_MAJOR)
-
         Type.COL_MAJOR.set()
+        _test(2,2,2,1621312579,-1622243452)
+        _test(3,3,3,458449078,175514624)
+        _test(4,4,4,-1394046135,1168903786)
+        _test(5,5,5,726435157,1348725681)
+
         _test(1,1,10,-1194484459,155274511)
         _test(1,1,9,-242625105,72695794)
         _test(1,1,8,-1060007964,-1265014008)
@@ -50,8 +46,39 @@ class InternalMatMulTest {
         _test(1,1,4,-605917383,93003368)
         _test(1,1,3,1703409186,-1524639888)
         _test(1,1,2,-1782294977,853895268)
+
         _test(1,1,1,-1641913795,-1642807525)
+
+        _test(2,1,1,-1782294977,853895268)
+        _test(3,1,1,1703409186,-1524639888)
+        _test(4,1,1,-605917383,93003368)
+        _test(5,1,1,800495719,1248567540)
+        _test(6,1,1,606279625,-138392009)
+        _test(7,1,1,1047354419,-1000173898)
+        _test(8,1,1,-1060007964,-1265014008)
+        _test(9,1,1,-242625105,72695794)
+        _test(10,1,1,-1194484459,155274511)
+        _test(1,2,1,-1639292187,-1641913795)
+        _test(1,3,1,-1638189920,-1641794631)
+        _test(1,4,1,-1637296190,-1641139229)
+        _test(1,5,1,-1637177026,-1641139229)
+        _test(1,6,1,-1636521624,-1641109438)
+        _test(1,7,1,-1636521624,-1640990274)
+        _test(1,8,1,-1636491833,-1640096544)
+        _test(1,9,1,-1636372669,-1638368666)
+        _test(1,10,1,-1635478939,-1636372669)
         _test(DIM,DIM,DIM,245517809,1204091031)
+
+
+        _basicF64Test(Type.ROW_MAJOR)
+        _basicF64Test(Type.COL_MAJOR)
+        _basicF64TestOLD(Type.ROW_MAJOR)
+        _basicF64TestOLD(Type.COL_MAJOR)
+        _basicF32Test(Type.ROW_MAJOR)
+        _basicF32Test(Type.COL_MAJOR)
+        _basicF32TestOLD(Type.ROW_MAJOR)
+        _basicF32TestOLD(Type.COL_MAJOR)
+
 
     }
 
