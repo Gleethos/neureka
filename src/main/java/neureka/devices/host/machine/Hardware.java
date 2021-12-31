@@ -1,5 +1,5 @@
 /*<#LICENSE#>*/
-package neureka.backend.standard.operations.linear.fast.machine;
+package neureka.devices.host.machine;
 
 import neureka.backend.standard.operations.linear.fast.array.operation.COPY;
 

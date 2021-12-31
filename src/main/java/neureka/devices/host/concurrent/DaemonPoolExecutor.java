@@ -1,7 +1,7 @@
 /*<#LICENSE#>*/
-package neureka.backend.standard.operations.linear.fast.concurrent;
+package neureka.devices.host.concurrent;
 
-import neureka.backend.standard.operations.linear.fast.machine.ConcreteMachine;
+import neureka.devices.host.machine.ConcreteMachine;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;

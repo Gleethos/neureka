@@ -1,4 +1,4 @@
-package neureka.backend.standard.operations.linear.fast.concurrent;
+package neureka.devices.host.concurrent;
 
 import java.util.concurrent.ExecutorService;
 

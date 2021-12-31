@@ -4,9 +4,9 @@ package neureka.backend.standard.operations.linear.fast.matrix.operation;
 import neureka.backend.standard.operations.linear.fast.Conf;
 import neureka.backend.standard.operations.linear.fast.array.operation.AXPY;
 import neureka.backend.standard.operations.linear.fast.array.operation.DOT;
-import neureka.backend.standard.operations.linear.fast.concurrent.Parallelism;
-import neureka.backend.standard.operations.linear.fast.concurrent.ProcessingService;
-import neureka.backend.standard.operations.linear.fast.concurrent.WorkScheduler;
+import neureka.devices.host.concurrent.Parallelism;
+import neureka.devices.host.concurrent.ProcessingService;
+import neureka.devices.host.concurrent.WorkScheduler;
 
 import java.util.Arrays;
 import java.util.function.IntSupplier;

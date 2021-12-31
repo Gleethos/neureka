@@ -1,5 +1,5 @@
 /*<#LICENSE#>*/
-package neureka.backend.standard.operations.linear.fast.machine;
+package neureka.devices.host.machine;
 
 /**
  * Stuff common to {@link Hardware} and {@link ConcreteMachine}.

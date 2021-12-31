@@ -1,4 +1,4 @@
-package neureka.backend.standard.operations.linear.fast.machine;
+package neureka.devices.host.machine;
 
 /**
  * How much memory, and how many threads share that memory. Used to describe either total system resources
