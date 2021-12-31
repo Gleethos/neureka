@@ -49,6 +49,7 @@ public class Multiply implements MatrixOperation {
     }
 
     public static Primitive64 newPrimitive64(final long rows, final long columns) {
+        System.out.println("Choosing: "+rows+" | "+columns);
         if (rows > THRESHOLD && columns > THRESHOLD) {
             return Multiply::fillMxN_MT;
         }

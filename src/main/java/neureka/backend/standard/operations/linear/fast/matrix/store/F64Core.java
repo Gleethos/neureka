@@ -1,15 +1,17 @@
 /*<#LICENSE#>*/
 package neureka.backend.standard.operations.linear.fast.matrix.store;
 
-import neureka.backend.standard.operations.linear.fast.ProgrammingError;
 import neureka.backend.standard.operations.linear.fast.array.Array2D;
 import neureka.backend.standard.operations.linear.fast.array.F64Array;
-import neureka.backend.standard.operations.linear.fast.array.operation.*;
+import neureka.backend.standard.operations.linear.fast.array.operation.FillMatchingSingle;
+import neureka.backend.standard.operations.linear.fast.array.operation.ModifyAll;
 import neureka.backend.standard.operations.linear.fast.concurrent.WorkScheduler;
 import neureka.backend.standard.operations.linear.fast.function.UnaryFunction;
 import neureka.backend.standard.operations.linear.fast.matrix.operation.Multiply;
 import neureka.backend.standard.operations.linear.fast.structure.Access1D;
 import neureka.backend.standard.operations.linear.fast.structure.Access2D;
+
+import java.util.Arrays;
 
 public final class F64Core extends F64Array implements Core<Double> {
 
@@ -142,10 +144,7 @@ public final class F64Core extends F64Array implements Core<Double> {
 
         F64Core retVal = FACTORY.make(_rowDim, right.numberOfColumns(), otherData);
 
-        //if (right instanceof F64Core)
-            retVal._multiplyNeither.invoke(retVal.data, data, _colDim, F64Core.cast(right).data);
-        //else
-        //    retVal._multiplyRight.invoke(retVal.data, data, _colDim, right);
+        retVal._multiplyNeither.invoke(retVal.data, data, _colDim, F64Core.cast(right).data);
 
         return retVal;
     }

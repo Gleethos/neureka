@@ -2,6 +2,7 @@ package ut.backend.core
 
 import groovy.transform.CompileStatic
 import neureka.backend.standard.operations.linear.fast.Conf
+import neureka.backend.standard.operations.linear.fast.M64
 import neureka.backend.standard.operations.linear.fast.matrix.MatrixF32
 import neureka.backend.standard.operations.linear.fast.matrix.MatrixF64
 
@@ -31,6 +32,8 @@ class InternalMatMulTest {
 
         _basicF64Test(Type.ROW_MAJOR)
         _basicF64Test(Type.COL_MAJOR)
+        _basicF64TestOLD(Type.ROW_MAJOR)
+        _basicF64TestOLD(Type.COL_MAJOR)
         _basicF32Test(Type.ROW_MAJOR)
         _basicF32Test(Type.COL_MAJOR)
 
@@ -108,7 +111,7 @@ class InternalMatMulTest {
         System.out.println("FLOATS DONE!")
     }
 
-    private static void _basicF64Test(Type type) {
+    private static void _basicF64TestOLD(Type type) {
 
         type.set()
 
@@ -166,6 +169,65 @@ class InternalMatMulTest {
     }
 
 
+    private static void _basicF64Test(Type type) {
+
+        type.set()
+
+        //---
+
+        M64 A = new M64(1, 2,  new double[2])
+        M64 B = new M64(2, 2,  new double[4])
+        _fillIt64(A.data, -339)
+        _fillIt64(B.data, 543)
+
+        var C =  _matmulF64(A,B)
+
+        /*
+                        ( 5  -5 )
+                        (-4  -3 )
+                (-5 -4) (-9  37 )
+
+                        ( 5  -4 )
+                        (-5  -3 )
+                (-5 -4) (-5  32 )
+        */
+
+        assert A.data == [-5, -4] as double[]
+        assert B.data == [5, -5, -4, -3] as double[]
+        assert C.data == (type == Type.COL_MAJOR ? [-5, 32] : [-9, 37] ) as double[]
+
+        //---
+
+        A = new M64(2, 2,  new double[4])
+        B = new M64(2, 1,  new double[2])
+        _fillIt64(A.data, -339)
+        _fillIt64(B.data, 543)
+
+        C =  _matmulF64(A,B)
+
+        /*
+                        ( 5)
+                        (-5)
+                (-5 -4) (-5)
+                (-3 -2) (-5)
+
+                        ( 5)
+                        (-5)
+                (-5 -3) (-10)
+                (-4 -2) (-10)
+        */
+
+        assert A.data == [-5, -4, -3, -2] as double[]
+        assert B.data == [5, -5] as double[]
+        assert C.data == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as double[]
+
+        //var D = C.add(7d)
+
+        //assert D.data == (type == Type.COL_MAJOR ? [-3, -3] : [2, 2] ) as double[]
+    }
+
+
+
     private static void _basicF32Test(Type type) {
 
         type.set()
@@ -207,6 +269,13 @@ class InternalMatMulTest {
     }
 
     private static MatrixF64 _matmulF64(MatrixF64 A, MatrixF64 B) {
+        var data = new double[A.getRowDim()*B.getColDim()]
+        var C = A.multiply(B, data)
+        assert C.data === data
+        return C
+    }
+
+    private static M64 _matmulF64(M64 A, M64 B) {
         var data = new double[A.getRowDim()*B.getColDim()]
         var C = A.multiply(B, data)
         assert C.data === data
