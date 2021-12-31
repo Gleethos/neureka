@@ -88,18 +88,6 @@ public abstract
     }
 
     @Override
-    public M multiply(final N scalarMultiplicand) {
-
-        Factory<N, ?> physical = _core.factory();
-
-        Core<N> retVal = physical.copy(_core);
-
-        retVal.operateAll(physical.forFunctions().multiplication().second(scalarMultiplicand));
-
-        return this.getResultFactory().instantiate(retVal);
-    }
-
-    @Override
     public final void supplyToTrans(final Core<N> receiver) {
         _core.supplyToTrans(receiver);
     }

@@ -98,19 +98,7 @@ public interface MatrixCore<N extends Comparable<N>>
         return retVal;
     }
 
-    default MatrixCore<N> multiply(final N scalarMultiplicand) {
-        return new UnaryOperationCore<>(
-                this,
-                this.factory().forFunctions().multiplication().second(scalarMultiplicand)
-        );
-    }
-
     Factory<N, ?> factory();
-
-    default MatrixCore<N> subtract(final MatrixCore<N> subtrahend) {
-        throw new IllegalStateException();
-        //return this.onMatching(this.factory().forFunctions().subtraction(), subtrahend).collect(this.factory());
-    }
 
     default void supplyToTrans(final TransformableRegion<N> receiver) {
         receiver.fillMatchingAccess(this);
