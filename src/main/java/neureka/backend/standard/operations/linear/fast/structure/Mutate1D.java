@@ -1,9 +1,6 @@
 /*<#LICENSE#>*/
 package neureka.backend.standard.operations.linear.fast.structure;
 
-import neureka.backend.standard.operations.linear.fast.function.BinaryFunction;
-import neureka.backend.standard.operations.linear.fast.function.UnaryFunction;
-
 /**
  * 1-dimensional mutator methods
  *

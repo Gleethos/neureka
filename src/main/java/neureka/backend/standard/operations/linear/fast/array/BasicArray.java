@@ -95,22 +95,4 @@ public abstract
 
     protected abstract void modify(long first, long limit, long step, UnaryFunction<N> function);
 
-    /**
-     * A utility facade that conveniently/consistently presents the {@linkplain BasicArray}
-     * as a one-dimensional array. Note that you will modify the actual array by accessing it through this
-     * facade.
-     */
-    protected final Array1D<N> wrapInArray1D() {
-        return new Array1D<>(this);
-    }
-
-    /**
-     * A utility facade that conveniently/consistently presents the {@linkplain BasicArray}
-     * as a two-dimensional array. Note that you will modify the actual array by accessing it through this
-     * facade.
-     */
-    protected final Array2D<N> wrapInArray2D(final int structure) {
-        return new Array2D<>(this, structure);
-    }
-
 }

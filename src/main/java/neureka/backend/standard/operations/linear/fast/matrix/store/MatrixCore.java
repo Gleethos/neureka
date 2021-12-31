@@ -19,67 +19,8 @@ public interface MatrixCore<N extends Comparable<N>>
 
     }
 
-    static int firstInColumn(final Access1D<?> matrix, final int col, final int defaultAndMinimum) {
-        return matrix instanceof MatrixCore<?> ? Math.max(((MatrixCore<?>) matrix).firstInColumn(col), defaultAndMinimum) : defaultAndMinimum;
-    }
-
-    static int firstInRow(final Access1D<?> matrix, final int row, final int defaultAndMinimum) {
-        return matrix instanceof MatrixCore<?> ? Math.max(((MatrixCore<?>) matrix).firstInRow(row), defaultAndMinimum) : defaultAndMinimum;
-    }
-
-    static int limitOfColumn(final Access1D<?> matrix, final int col, final int defaultAndMaximum) {
-        return matrix instanceof MatrixCore<?> ? Math.min(((MatrixCore<?>) matrix).limitOfColumn(col), defaultAndMaximum) : defaultAndMaximum;
-    }
-
-    static int limitOfRow(final Access1D<?> matrix, final int row, final int defaultAndMaximum) {
-        return matrix instanceof MatrixCore<?> ? Math.min(((MatrixCore<?>) matrix).limitOfRow(row), defaultAndMaximum) : defaultAndMaximum;
-    }
-
     default double doubleValue(final long row, final long col) {
         return NumberDefinition.doubleValue(this.getAt(row, col));
-    }
-
-    /**
-     * The default value is simply <code>0</code>, and if all elements are zeros then
-     * <code>this.countRows()</code>.
-     *
-     * @param col The column index
-     * @return The row index of the first non-zero element in the specified column
-     */
-    default int firstInColumn(final int col) {
-        return 0;
-    }
-
-    /**
-     * The default value is simply <code>0</code>, and if all elements are zeros then
-     * <code>this.countColumns()</code>.
-     *
-     * @return The column index of the first non-zero element in the specified row
-     */
-    default int firstInRow(final int row) {
-        return 0;
-    }
-
-    /**
-     * The default value is simply <code>this.countRows()</code>, and if all elements are zeros then
-     * <code>0</code>.
-     *
-     * @return The row index of the first zero element, after all non-zeros, in the specified column (index of
-     *         the last non-zero + 1)
-     */
-    default int limitOfColumn(final int col) {
-        return (int) this.numberOfRows();
-    }
-
-    /**
-     * The default value is simply <code>this.countColumns()</code>, and if all elements are zeros then
-     * <code>0</code>.
-     *
-     * @return The column index of the first zero element, after all non-zeros, in the specified row (index of
-     *         the last non-zero + 1)
-     */
-    default int limitOfRow(final int row) {
-        return (int) this.numberOfColumns();
     }
 
     default void multiplyAccess(final Access1D<N> right, final TransformableRegion<N> target) {
