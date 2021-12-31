@@ -9,20 +9,26 @@ import neureka.devices.host.CPU;
 public class Vectorizable {
 
     @FunctionalInterface
-    public interface Primitive32 {
-
-        void invoke(float[] product, float[] left, int complexity, float[] right);
-
+    public interface VectorOperationF32 {
+        void invoke(
+                float[] product,
+                float[] left,
+                int complexity,
+                float[] right
+        );
     }
 
     @FunctionalInterface
-    public interface Primitive64 {
-
-        void invoke(double[] product, double[] left, int complexity, double[] right);
-
+    public interface VectorOperationF64 {
+        void invoke(
+                double[] product,
+                double[] left,
+                int complexity,
+                double[] right
+        );
     }
 
-    public static Primitive32 newPrimitive32(final long rows, final long columns)
+    public static VectorOperationF32 newVOF32(final long rows, final long columns)
     {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD) {
             return Vectorizable::threaded_F32_MxN_CM;
@@ -42,7 +48,7 @@ public class Vectorizable {
         return Vectorizable::full_F32_MxN_CM;
     }
 
-    public static Primitive64 newPrimitive64(final long rows, final long columns)
+    public static VectorOperationF64 newVOF64(final long rows, final long columns)
     {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD)
             return Vectorizable::threaded_F64_MxN_CM;
