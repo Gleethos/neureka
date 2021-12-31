@@ -45,7 +45,11 @@ public class Vectorizable {
                             ? Vectorizable::full_F32_1xN_RM
                             : Vectorizable::full_F32_1xN_CM
             );
-        return Vectorizable::full_F32_MxN_CM;
+        return (
+                Conf.ROW_MAJOR
+                        ? Vectorizable::full_F32_MxN_RM
+                        : Vectorizable::full_F32_MxN_CM
+        );
     }
 
     public static VectorOperationF64 operationForF64(final long rows, final long columns)
@@ -53,7 +57,7 @@ public class Vectorizable {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD)
             return Vectorizable::threaded_F64_MxN_CM;
 
-        if ( !Conf.ROW_MAJOR ) {
+        if ( !Conf.ROW_MAJOR ) { // Supported in column major only!
             if (rows == 5 && columns == 5) return Vectorizable::full_F64_5x5_CM;
             if (rows == 4 && columns == 4) return Vectorizable::full_F64_4x4_CM;
             if (rows == 3 && columns == 3) return Vectorizable::full_F64_3x3_CM;
@@ -67,7 +71,7 @@ public class Vectorizable {
                     : Vectorizable::full_F64_Mx1_CM
             );
 
-        if ( !Conf.ROW_MAJOR ) {
+        if ( !Conf.ROW_MAJOR ) { // Supported in column major only!
             if ( rows == 10) return Vectorizable::full_F64_0xN_CM;
             if ( rows == 9 ) return Vectorizable::full_F64_9xN_CM;
             if ( rows == 8 ) return Vectorizable::full_F64_8xN_CM;
@@ -182,7 +186,7 @@ public class Vectorizable {
         }
     }
 
-    static void partial_F64_MxN_RM(
+    static void partial_F64_MxN_RM( // WORK IN PROGRESS!
         final double[] product,
         final int columnStart,
         final int columnLimit,
@@ -224,6 +228,33 @@ public class Vectorizable {
             }
         }
     }
+
+    static void partial_F32_MxN_RM( // WORK IN PROGRESS!
+                                    final float[] product,
+                                    final int columnStart,
+                                    final int columnLimit,
+                                    final float[] left,
+                                    final int commonColumnCount,
+                                    final float[] right
+    ) {
+        final int leftRowCount = left.length / commonColumnCount;
+        final int rightRowCount = commonColumnCount;
+        // TODO: Flip the below loops and see what is faster!!!
+        for (int ci = columnStart; ci < columnLimit; ci++) {
+            for (int ri = 0; ri < leftRowCount; ri++) {
+                AXPY.invoke(
+                        product,
+                        ci * rightRowCount,
+                        left[ci + ri * commonColumnCount],
+                        right,
+                        ci * rightRowCount,
+                        0,
+                        rightRowCount
+                );
+            }
+        }
+    }
+
 
     static void threaded_F64_MxN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
         CPU.get().divide(
@@ -790,6 +821,10 @@ public class Vectorizable {
 
     static void full_F32_MxN_CM(final float[] product, final float[] left, final int complexity, final float[] right) {
         Vectorizable.partial_F32_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
+    }
+
+    static void full_F32_MxN_RM(final float[] product, final float[] left, final int complexity, final float[] right) {
+        Vectorizable.partial_F32_MxN_RM(product, 0, right.length / complexity, left, complexity, right);
     }
 
 }

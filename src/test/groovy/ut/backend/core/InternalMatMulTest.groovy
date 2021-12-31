@@ -29,6 +29,12 @@ class InternalMatMulTest {
 
     static void start() {
 
+        //---
+
+        //_testFloats(d1,d2,d3,hash2)
+
+        //---
+
         _basicF64Test(Type.ROW_MAJOR)
         _basicF64Test(Type.COL_MAJOR)
         _basicF32Test(Type.ROW_MAJOR)
