@@ -211,9 +211,6 @@ class InternalMatMulTest {
         assert B.data == [5, -5] as float[]
         assert C.data == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as float[]
 
-        var D = C.add(7d)
-
-        assert D.data == (type == Type.COL_MAJOR ? [-3, -3] : [2, 2] ) as float[]
     }
 
     private static void _basicF32Test(Type type) {

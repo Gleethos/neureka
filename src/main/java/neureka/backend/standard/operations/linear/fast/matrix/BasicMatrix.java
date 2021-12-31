@@ -32,30 +32,6 @@ public abstract
         _factory = store.factory();
     }
 
-    public M addMat(final M addend) {
-
-        ProgrammingError.throwIfNotEqualDimensions(_core, addend);
-
-        final Core<N> retVal = _core.factory().copy(addend);
-
-        retVal.operateWith(_core, _core.factory().forFunctions().addition());
-
-        return this.getResultFactory().instantiate(retVal);
-    }
-
-    public M add(final N scalarAddend) {
-
-        Factory<N, ?> physical = _core.factory();
-
-        Core<N> retVal = physical.copy(_core);
-
-        retVal.operateAll(
-                physical.forFunctions().addition().second(scalarAddend)
-        );
-
-        return this.getResultFactory().instantiate(retVal);
-    }
-
     @Override
     public int size() {
         return _core.size();
@@ -69,18 +45,6 @@ public abstract
     @Override
     public int numberOfRows() {
         return _core.numberOfRows();
-    }
-
-    @Override
-    public M divide(final N scalarDivisor) {
-
-        Factory<N, ?> factory = _core.factory();
-
-        Core<N> retVal = factory.copy(_core);
-
-        retVal.operateAll(factory.forFunctions().division().second(scalarDivisor));
-
-        return this.getResultFactory().instantiate(retVal);
     }
 
     @Override
@@ -143,18 +107,6 @@ public abstract
         final Core<N> retVal = _core.factory().copy(subtrahend);
 
         retVal.operateWith(_core, _core.factory().forFunctions().subtraction());
-
-        return this.getResultFactory().instantiate(retVal);
-    }
-
-    @Override
-    public M subtract(final N scalarSubtrahend) {
-
-        Factory<N, ?> factory = _core.factory();
-
-        Core<N> retVal = factory.copy(_core);
-
-        retVal.operateAll(factory.forFunctions().subtraction().second(scalarSubtrahend));
 
         return this.getResultFactory().instantiate(retVal);
     }

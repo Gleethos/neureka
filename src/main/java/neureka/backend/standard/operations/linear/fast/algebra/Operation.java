@@ -11,12 +11,6 @@ public interface Operation {
      */
     interface Addition<T> extends Operation {
 
-        /**
-         * @param addend What to add
-         * @return <code>this + addend</code>
-         */
-        T addMat(T addend);
-
     }
 
     /**

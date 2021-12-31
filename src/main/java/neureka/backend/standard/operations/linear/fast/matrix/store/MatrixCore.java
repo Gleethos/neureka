@@ -35,20 +35,6 @@ public interface MatrixCore<N extends Comparable<N>>
         return matrix instanceof MatrixCore<?> ? Math.min(((MatrixCore<?>) matrix).limitOfRow(row), defaultAndMaximum) : defaultAndMaximum;
     }
 
-    default MatrixCore<N> add(final N scalarAddend) {
-        return new UnaryOperationCore<>(
-                            this,
-                            this.factory().forFunctions().multiplication().second(scalarAddend)
-                    );
-    }
-
-    default MatrixCore<N> divide(final N scalarDivisor) {
-        return new UnaryOperationCore<>(
-                this,
-                this.factory().forFunctions().multiplication().second(scalarDivisor)
-        );
-    }
-
     default double doubleValue(final long row, final long col) {
         return NumberDefinition.doubleValue(this.getAt(row, col));
     }
@@ -124,10 +110,6 @@ public interface MatrixCore<N extends Comparable<N>>
     default MatrixCore<N> subtract(final MatrixCore<N> subtrahend) {
         throw new IllegalStateException();
         //return this.onMatching(this.factory().forFunctions().subtraction(), subtrahend).collect(this.factory());
-    }
-
-    default MatrixCore<N> subtract(final N scalarSubtrahend) {
-        throw new IllegalStateException();
     }
 
     default void supplyToTrans(final TransformableRegion<N> receiver) {
