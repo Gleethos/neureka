@@ -6,8 +6,6 @@ import neureka.backend.standard.operations.linear.internal.operation.array.AXPY;
 import neureka.backend.standard.operations.linear.internal.operation.array.DOT;
 import neureka.devices.host.CPU;
 
-import java.util.Arrays;
-
 public class Multiply {
 
     @FunctionalInterface
@@ -27,12 +25,12 @@ public class Multiply {
     public static Primitive32 newPrimitive32(final long rows, final long columns)
     {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD) {
-            return Multiply::fillMxN_MT;
+            return Multiply::threaded_F32_MxN_CM;
         }
         if (columns == 1) {
             return ( Conf.ROW_MAJOR
-                    ? Multiply::fillMx1_RM
-                    : Multiply::fillMx1
+                    ? Multiply::full_F32_Mx1_RM
+                    : Multiply::full_F32_Mx1_CM
             );
         }
         if ( rows == 1 )
@@ -41,13 +39,13 @@ public class Multiply {
                             ? Multiply::fill1xN_RM
                             : Multiply::fill1xN
             );
-        return Multiply::fillMxN;
+        return Multiply::full_F32_MxN_CM;
     }
 
     public static Primitive64 newPrimitive64(final long rows, final long columns)
     {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD)
-            return Multiply::fillMxN_MT;
+            return Multiply::threaded_F64_MxN_CM;
 
         if ( !Conf.ROW_MAJOR ) {
             if (rows == 5 && columns == 5) return Multiply::fill5x5;
@@ -59,8 +57,8 @@ public class Multiply {
         if (columns == 1)
             return (
                 Conf.ROW_MAJOR
-                    ? Multiply::fillMx1_RM
-                    : Multiply::fillMx1
+                    ? Multiply::addMx1_RM
+                    : Multiply::addMx1
             );
 
         if ( !Conf.ROW_MAJOR ) {
@@ -77,7 +75,7 @@ public class Multiply {
                             : Multiply::fill1xN
             );
 
-        return Multiply::fillMxN;
+        return Multiply::full_F64_MxN_CM;
     }
 
     static void addMx1(
@@ -120,7 +118,7 @@ public class Multiply {
         }
     }
 
-    static void addMx1(final float[] product, final float[] left, final int complexity, final float[] right) {
+    static void full_F32_Mx1_CM(final float[] product, final float[] left, final int complexity, final float[] right) {
 
         int nbRows = product.length;
 
@@ -129,7 +127,7 @@ public class Multiply {
         }
     }
 
-    static void addMx1_RM(
+    static void full_F32_Mx1_RM(
             final float[] product,
             final float[] left,
             final int rowCount,
@@ -149,7 +147,7 @@ public class Multiply {
         }
     }
 
-    static void addMxC(
+    static void F64_MxN_CM(
             final double[] product,
             final int firstColumn,
             final int columnLimit,
@@ -174,13 +172,13 @@ public class Multiply {
         }
     }
 
-    static void addMxC_RM( //WIP!!!!!!
-            final double[] product,
-            final int columnStart,
-            final int columnLimit,
-            final double[] left,
-            final int commonColumnCount,
-            final double[] right
+    static void full_F64_MxN_RM( //WIP!!!!!!
+        final double[] product,
+        final int columnStart,
+        final int columnLimit,
+        final double[] left,
+        final int commonColumnCount,
+        final double[] right
     ) {
         final int leftRowCount = left.length / commonColumnCount;
         final int rightRowCount = commonColumnCount;
@@ -200,7 +198,7 @@ public class Multiply {
         }
     }
 
-    static void addMxC(
+    static void F32_MxN_CM(
             final float[] product,
             final int firstColumn,
             final int columnLimit,
@@ -217,19 +215,19 @@ public class Multiply {
         }
     }
 
-    static void addMxN_MT(final double[] product, final double[] left, final int complexity, final double[] right) {
+    static void threaded_F64_MxN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
         CPU.get().divide(
                 0,
                 right.length / complexity,
-                (f, l) -> Multiply.addMxC(product, f, l, left, complexity, right)
+                (f, l) -> Multiply.F64_MxN_CM(product, f, l, left, complexity, right)
         );
     }
 
-    static void addMxN_MT(final float[] product, final float[] left, final int complexity, final float[] right) {
+    static void threaded_F32_MxN_CM(final float[] product, final float[] left, final int complexity, final float[] right) {
         CPU.get().divide(
                 0,
                 right.length / complexity,
-                (f, l) -> Multiply.addMxC(product, f, l, left, complexity, right)
+                (f, l) -> Multiply.F32_MxN_CM(product, f, l, left, complexity, right)
         );
     }
 
@@ -772,76 +770,12 @@ public class Multiply {
         }
     }
 
-    static void fillMx1(
-            final double[] product,
-            final double[] left,
-            final int complexity,
-            final double[] right
-    ) {
-        Multiply.addMx1(
-                product,
-                left,
-                complexity,
-                right
-        );
+    static void full_F64_MxN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
+        Multiply.F64_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
     }
 
-    static void fillMx1_RM(
-            final double[] product,
-            final double[] left,
-            final int complexity,
-            final double[] right
-    ) {
-        Multiply.addMx1_RM(
-                product,
-                left,
-                complexity,
-                right
-        );
-    }
-
-    static void fillMx1(
-            final float[] product,
-            final float[] left,
-            final int complexity,
-            final float[] right
-    ) {
-        Multiply.addMx1(
-                product,
-                left,
-                complexity,
-                right
-        );
-    }
-
-    static void fillMx1_RM(
-            final float[] product,
-            final float[] left,
-            final int complexity,
-            final float[] right
-    ) {
-        Multiply.addMx1_RM(
-                product,
-                left,
-                complexity,
-                right
-        );
-    }
-
-    static void fillMxN(final double[] product, final double[] left, final int complexity, final double[] right) {
-        Multiply.addMxC(product, 0, right.length / complexity, left, complexity, right);
-    }
-
-    static void fillMxN(final float[] product, final float[] left, final int complexity, final float[] right) {
-        Multiply.addMxC(product, 0, right.length / complexity, left, complexity, right);
-    }
-
-    static void fillMxN_MT(final double[] product, final double[] left, final int complexity, final double[] right) {
-        Multiply.addMxN_MT(product, left, complexity, right);
-    }
-
-    static void fillMxN_MT(final float[] product, final float[] left, final int complexity, final float[] right) {
-        Multiply.addMxN_MT(product, left, complexity, right);
+    static void full_F32_MxN_CM(final float[] product, final float[] left, final int complexity, final float[] right) {
+        Multiply.F32_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
     }
 
 }
