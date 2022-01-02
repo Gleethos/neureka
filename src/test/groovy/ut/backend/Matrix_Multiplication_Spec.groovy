@@ -26,7 +26,7 @@ class Matrix_Multiplication_Spec extends Specification {
 
     }
 
-    def 'The internal matric multiplication test script runs!'() {
+    def 'The internal matrix multiplication test script runs!'() {
 
         expect:
             InternalMatMulTest.start()

@@ -17,9 +17,8 @@ public final class DaemonPoolExecutor extends ThreadPoolExecutor {
                                         5L,
                                                     TimeUnit.SECONDS,
                                                     new SynchronousQueue<Runnable>(),
-                                                    DaemonPoolExecutor.newThreadFactory("neureka-daemon-")
+                                                        DaemonPoolExecutor.newThreadFactory("neureka-daemon-")
                                                     );
-
     /**
      * @see AbstractExecutorService#submit(Callable)
      */

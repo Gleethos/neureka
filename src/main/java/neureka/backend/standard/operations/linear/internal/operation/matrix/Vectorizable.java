@@ -121,15 +121,16 @@ public class Vectorizable {
     static void full_F64_Mx1_RM(
             final double[] product,
             final double[] left,
-            final int rowCount,
+            final int complexity,
             final double[] right
     ) {
         int colCount = right.length;
-        for (int ri = 0; ri < rowCount; ri++) {
+        int leftRowCount = left.length / complexity;
+        for (int ri = 0; ri < leftRowCount; ri++) {
             product[ri] =
                  DOT.invoke(
                          left,
-                         ri * rowCount,
+                         ri * complexity,
                          right,
                          0,
                          0,
@@ -138,12 +139,23 @@ public class Vectorizable {
         }
     }
 
-    static void full_F32_Mx1_CM(final float[] product, final float[] left, final int complexity, final float[] right) {
-
+    static void full_F32_Mx1_CM(
+            final float[] product,
+            final float[] left,
+            final int complexity,
+            final float[] right
+    ) {
         int nbRows = product.length;
 
         for (int c = 0; c < complexity; c++) {
-            AXPY.invoke(product, 0, right[c], left, c * nbRows, 0, nbRows);
+            AXPY.invoke(
+                    product,
+                    0,
+                    right[c],
+                    left,
+                    c * nbRows,
+                    0, nbRows
+            );
         }
     }
 

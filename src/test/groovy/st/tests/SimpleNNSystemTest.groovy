@@ -117,8 +117,10 @@ class SimpleNNSystemTest
         assert output.getValueAs( double[].class )[4] >= 0.05 && output.getValueAs( double[].class )[4] <= 0.06
 
         if ( device instanceof DummyDevice ) {
-            // When we are not running on the GPU we can assert the result deterministically
-            assert output.getValue() == [0.005138652230769073, 0.9643301624478202, 0.973443956356711, 0.9602105841917244, 0.05098795507447197]
+            // When we are not running on the GPU we can assert the result almost deterministically
+            var asString = output.value.collect({it.toString().substring(0,13)}).join(',')
+
+            assert asString == '0.00513865223,0.96433016244,0.97344395635,0.96021058419,0.05098795507'
         }
     }
 
