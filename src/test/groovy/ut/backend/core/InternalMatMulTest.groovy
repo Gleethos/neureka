@@ -77,9 +77,9 @@ class InternalMatMulTest {
 
         //---
         Type.ROW_MAJOR.set()
-        _testFloats(2,3,4, -34070530)
-        _testFloats(20,30,40, -237450937)
-        _testFloats(42,61,53, 1490187176)
+        _test(2,3,4, -34070530)
+        _test(20,30,40, -237450937)
+        _test(42,61,53, 1490187176)
 
         //---
         _basicF64Test(Type.ROW_MAJOR)
