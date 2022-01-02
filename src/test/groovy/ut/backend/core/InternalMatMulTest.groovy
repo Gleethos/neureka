@@ -36,7 +36,6 @@ class InternalMatMulTest {
         _testFloats(20,30,40, -874284717)
         _testFloats(42,61,53, -37310652)
 
-
         //---
 
         _basicF64Test(Type.ROW_MAJOR)
