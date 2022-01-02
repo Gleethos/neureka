@@ -1,6 +1,7 @@
 /*<#LICENSE#>*/
 package neureka.devices.host.concurrent;
 
+import neureka.devices.host.CPU;
 import neureka.devices.host.machine.ConcreteMachine;
 
 import java.util.concurrent.ExecutionException;
@@ -102,7 +103,7 @@ public abstract class WorkScheduler {
     ) {
         int availableWorkers = ConcreteMachine.ENVIRONMENT.threads;
         _call(
-                DaemonPoolExecutor.INSTANCE,
+                CPU.get().getExecutor().getPool(),
                 first,
                 limit,
                 threshold,

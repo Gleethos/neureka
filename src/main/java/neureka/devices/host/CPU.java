@@ -9,6 +9,7 @@ import neureka.devices.Device;
 import neureka.devices.host.concurrent.Parallelism;
 import neureka.devices.host.concurrent.ProcessingService;
 import neureka.devices.host.concurrent.WorkScheduler;
+import neureka.devices.host.machine.ConcreteMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,10 +17,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntSupplier;
 
 /**
@@ -35,12 +34,16 @@ public class CPU extends AbstractDevice<Number>
     private static final Logger _LOG = LoggerFactory.getLogger( CPU.class );
     private static final CPU _INSTANCE;
 
-    private static final WorkScheduler.Divider DIVIDER = ProcessingService.INSTANCE.divider();
-    public static IntSupplier PARALLELISM = Parallelism.THREADS;
-    public static int THRESHOLD = 32;
+    private static final WorkScheduler.Divider _DIVIDER;
+    private static final IntSupplier _PARALLELISM;
 
+    public static int PARALLELIZATION_THRESHOLD = 32;
 
-    static {  _INSTANCE = new CPU();  }
+    static {
+        _INSTANCE = new CPU();
+        _DIVIDER = ProcessingService.INSTANCE.divider();
+        _PARALLELISM = Parallelism.THREADS;
+    }
 
     private final JVMExecutor _executor = new JVMExecutor();
     private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<>());
@@ -172,8 +175,8 @@ public class CPU extends AbstractDevice<Number>
     }
 
     public void divide(final int first, final int limit, final WorkScheduler.Worker worker) {
-        DIVIDER.parallelism(PARALLELISM)
-                .threshold(THRESHOLD)
+        _DIVIDER.parallelism(_PARALLELISM)
+                .threshold(PARALLELIZATION_THRESHOLD)
                 .divide(first, limit, worker);
     }
 
@@ -190,6 +193,9 @@ public class CPU extends AbstractDevice<Number>
      */
     public static class JVMExecutor
     {
+        private static final AtomicInteger COUNTER = new AtomicInteger();
+        private static final ThreadGroup GROUP = new ThreadGroup("neureka-daemon-group");
+
         /*
             The following 2 constants determine if any given workload size will be parallelize or not...
             We might want to adjust this some more for better performance...
@@ -198,9 +204,31 @@ public class CPU extends AbstractDevice<Number>
         private static final int MIN_WORKLOAD_PER_THREAD = 8;
 
         private final ThreadPoolExecutor _pool =
-                (ThreadPoolExecutor) Executors.newFixedThreadPool(
-                        Runtime.getRuntime().availableProcessors()
-                );
+                                            new ThreadPoolExecutor(
+                                                    ConcreteMachine.ENVIRONMENT.units,
+                                                    Integer.MAX_VALUE,
+                                                    5L,
+                                                    TimeUnit.SECONDS,
+                                                    new SynchronousQueue<Runnable>(),
+                                                    _newThreadFactory("neureka-daemon-")
+                                            );
+
+
+        private static ThreadFactory _newThreadFactory(final String name) {
+            return _newThreadFactory(GROUP, name);
+        }
+
+        private static ThreadFactory _newThreadFactory(final ThreadGroup group, final String name) {
+
+            String prefix = name.endsWith("-") ? name : name + "-";
+
+            return target -> {
+                Thread thread = new Thread(group, target, prefix + COUNTER.incrementAndGet());
+                thread.setDaemon(true);
+                return thread;
+            };
+        }
+
 
         public ThreadPoolExecutor getPool() { return _pool; }
 

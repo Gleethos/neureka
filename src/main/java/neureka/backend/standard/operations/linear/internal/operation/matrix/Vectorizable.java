@@ -30,7 +30,7 @@ public class Vectorizable {
 
     public static VectorOperationF32 operationForF32(final long rows, final long columns)
     {
-        if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD) {
+        if (rows > CPU.get().PARALLELIZATION_THRESHOLD && columns > CPU.get().PARALLELIZATION_THRESHOLD) {
             return ( Conf.ROW_MAJOR
                     ? Vectorizable::threaded_F32_MxN_RM
                     : Vectorizable::threaded_F32_MxN_CM
@@ -57,7 +57,7 @@ public class Vectorizable {
 
     public static VectorOperationF64 operationForF64(final long rows, final long columns)
     {
-        if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD)
+        if (rows > CPU.get().PARALLELIZATION_THRESHOLD && columns > CPU.get().PARALLELIZATION_THRESHOLD)
             return ( Conf.ROW_MAJOR
                 ? Vectorizable::threaded_F64_MxN_RM
                 : Vectorizable::threaded_F64_MxN_CM
