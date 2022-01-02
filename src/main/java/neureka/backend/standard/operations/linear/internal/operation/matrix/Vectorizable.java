@@ -58,7 +58,10 @@ public class Vectorizable {
     public static VectorOperationF64 operationForF64(final long rows, final long columns)
     {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD)
-            return Vectorizable::threaded_F64_MxN_CM;
+            return ( Conf.ROW_MAJOR
+                ? Vectorizable::threaded_F64_MxN_RM
+                : Vectorizable::threaded_F64_MxN_CM
+            );
 
         if ( !Conf.ROW_MAJOR ) { // Supported in column major only!
             if (rows == 5 && columns == 5) return Vectorizable::full_F64_5x5_CM;
@@ -189,27 +192,25 @@ public class Vectorizable {
         }
     }
 
-    static void partial_F64_MxN_RM( // WORK IN PROGRESS!
+    static void partial_F64_MxN_RM(
         final double[] product,
-        final int columnStart,
-        final int columnLimit,
+        final int firstRow,
+        final int rowLimit,
         final double[] left,
-        final int commonColumnCount,
+        final int complexity,
         final double[] right
     ) {
-        final int leftRowCount = left.length / commonColumnCount;
-        final int rightRowCount = commonColumnCount;
-        // TODO: Flip the below loops and see what is faster!!!
-        for (int ci = columnStart; ci < columnLimit; ci++) {
-            for (int ri = 0; ri < leftRowCount; ri++) {
+        int rightCols = right.length / complexity;
+        for (int c = 0; c < complexity; c++) {
+            for (int j = firstRow; j < rowLimit; j++) {
                 AXPY.invoke(
-                    product,
-                    ci * rightRowCount,
-                    left[ci + ri * commonColumnCount],
-                    right,
-                    ci * rightRowCount,
-                    0,
-                    rightRowCount
+                        product,
+                        j * rightCols, // Seems good
+                        left[c + j * complexity],
+                        right, // Correct
+                        c * rightCols,  // Correct
+                        0, // Correct
+                        rightCols // correct
                 );
             }
         }
@@ -285,6 +286,14 @@ public class Vectorizable {
                 0,
                 left.length / complexity,
                 (f, l) -> Vectorizable.partial_F32_MxN_RM(product, f, l, left, complexity, right)
+        );
+    }
+
+    static void threaded_F64_MxN_RM(final double[] product, final double[] left, final int complexity, final double[] right) {
+        CPU.get().divide(
+                0,
+                left.length / complexity,
+                (f, l) -> Vectorizable.partial_F64_MxN_RM(product, f, l, left, complexity, right)
         );
     }
 
@@ -827,12 +836,22 @@ public class Vectorizable {
         }
     }
 
-    static void full_F64_MxN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
+    static void full_F64_MxN_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
         Vectorizable.partial_F64_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
     }
 
-    static void full_F64_MxN_RM(final double[] product, final double[] left, final int complexity, final double[] right) {
-        Vectorizable.partial_F64_MxN_RM(product, 0, right.length / complexity, left, complexity, right);
+    static void full_F64_MxN_RM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+        Vectorizable.partial_F64_MxN_RM(product, 0, left.length / complexity, left, complexity, right);
     }
 
     static void full_F32_MxN_CM(
