@@ -1,5 +1,6 @@
 package neureka.backend.standard.operations.linear.internal;
 
+import neureka.Tsr;
 import neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizable;
 
 public class M32 {
@@ -41,7 +42,22 @@ public class M32 {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName()+"["+_rowCount+"x"+_colCount+"]";
+        return this.getClass().getSimpleName()+"["+_rowCount+"x"+_colCount+"]"
+                + Tsr.of(
+                            Float.class,
+                            new int[]{_rowCount,_colCount},
+                            _data
+                        )
+                        .toString( it ->
+                                    it.setHasShape(false)
+                                      .setHasSlimNumbers(true)
+                                      .setHasValue(true)
+                                      .setIsMultiline(true)
+                                      .setIsLegacy(true)
+                                      .setIsScientific(true)
+                                      .setIsCellBound(true)
+                                      .setCellSize(4)
+                                );
     }
 
 }

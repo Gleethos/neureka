@@ -31,13 +31,16 @@ public class Vectorizable {
     public static VectorOperationF32 operationForF32(final long rows, final long columns)
     {
         if (rows > CPU.get().THRESHOLD && columns > CPU.get().THRESHOLD) {
-            return Vectorizable::threaded_F32_MxN_CM;
+            return ( Conf.ROW_MAJOR
+                    ? Vectorizable::threaded_F32_MxN_RM
+                    : Vectorizable::threaded_F32_MxN_CM
+                );
         }
         if (columns == 1) {
             return ( Conf.ROW_MAJOR
                     ? Vectorizable::full_F32_Mx1_RM
                     : Vectorizable::full_F32_Mx1_CM
-            );
+                );
         }
         if ( rows == 1 )
             return (
@@ -214,42 +217,47 @@ public class Vectorizable {
 
     static void partial_F32_MxN_CM(
             final float[] product,
-            final int firstColumn,
+            final int firstColumn, // right column
             final int columnLimit,
             final float[] left,
             final int complexity,
             final float[] right
     ) {
         int nbRows = left.length / complexity;
-
         for (int c = 0; c < complexity; c++) {
             for (int j = firstColumn; j < columnLimit; j++) {
-                AXPY.invoke(product, j * nbRows, right[c + j * complexity], left, c * nbRows, 0, nbRows);
+                AXPY.invoke(
+                        product,
+                        j * nbRows,
+                        right[c + j * complexity],
+                        left,
+                        c * nbRows,
+                        0,
+                        nbRows
+                );
             }
         }
     }
 
     static void partial_F32_MxN_RM( // WORK IN PROGRESS!
                                     final float[] product,
-                                    final int columnStart,
-                                    final int columnLimit,
+                                    final int firstRow, // left row
+                                    final int rowLimit, // correct -> Todo: adjust input
                                     final float[] left,
-                                    final int commonColumnCount,
+                                    final int complexity,
                                     final float[] right
     ) {
-        final int leftRowCount = left.length / commonColumnCount;
-        final int rightRowCount = commonColumnCount;
-        // TODO: Flip the below loops and see what is faster!!!
-        for (int ci = columnStart; ci < columnLimit; ci++) {
-            for (int ri = 0; ri < leftRowCount; ri++) {
+        int rightCols = right.length / complexity;
+        for (int c = 0; c < complexity; c++) {
+            for (int j = firstRow; j < rowLimit; j++) {
                 AXPY.invoke(
                         product,
-                        ci * rightRowCount,
-                        left[ci + ri * commonColumnCount],
-                        right,
-                        ci * rightRowCount,
-                        0,
-                        rightRowCount
+                        j * rightCols, // Seems good
+                        left[c + j * complexity],
+                        right, // Correct
+                        c * rightCols,  // Correct
+                        0, // Correct
+                        rightCols // correct
                 );
             }
         }
@@ -269,6 +277,14 @@ public class Vectorizable {
                 0,
                 right.length / complexity,
                 (f, l) -> Vectorizable.partial_F32_MxN_CM(product, f, l, left, complexity, right)
+        );
+    }
+
+    static void threaded_F32_MxN_RM(final float[] product, final float[] left, final int complexity, final float[] right) {
+        CPU.get().divide(
+                0,
+                left.length / complexity,
+                (f, l) -> Vectorizable.partial_F32_MxN_RM(product, f, l, left, complexity, right)
         );
     }
 
@@ -819,12 +835,22 @@ public class Vectorizable {
         Vectorizable.partial_F64_MxN_RM(product, 0, right.length / complexity, left, complexity, right);
     }
 
-    static void full_F32_MxN_CM(final float[] product, final float[] left, final int complexity, final float[] right) {
+    static void full_F32_MxN_CM(
+            final float[] product,
+            final float[] left,
+            final int complexity,
+            final float[] right
+    ) {
         Vectorizable.partial_F32_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
     }
 
-    static void full_F32_MxN_RM(final float[] product, final float[] left, final int complexity, final float[] right) {
-        Vectorizable.partial_F32_MxN_RM(product, 0, right.length / complexity, left, complexity, right);
+    static void full_F32_MxN_RM(
+            final float[] product,
+            final float[] left,
+            final int complexity,
+            final float[] right
+    ) {
+        Vectorizable.partial_F32_MxN_RM(product, 0, left.length / complexity, left, complexity, right);
     }
 
 }

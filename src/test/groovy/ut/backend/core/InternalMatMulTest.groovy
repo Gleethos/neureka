@@ -31,7 +31,11 @@ class InternalMatMulTest {
 
         //---
 
-        //_testFloats(d1,d2,d3,hash2)
+        Type.ROW_MAJOR.set()
+        _testFloats(2,3,4, -424206796)
+        _testFloats(20,30,40, -874284717)
+        _testFloats(42,61,53, -37310652)
+
 
         //---
 
