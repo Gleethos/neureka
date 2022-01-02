@@ -13,7 +13,7 @@ import java.util.function.IntSupplier;
 public enum Parallelism implements IntSupplier {
 
     /**
-     * The total number of threads (incl. hyperthreads)
+     * The total number of threads (incl. hyper-threads)
      */
     THREADS(() -> ConcreteMachine.ENVIRONMENT.threads),
     /**

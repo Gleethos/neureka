@@ -7,7 +7,6 @@ import neureka.calculus.Function;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.devices.host.concurrent.Parallelism;
-import neureka.devices.host.concurrent.ProcessingService;
 import neureka.devices.host.concurrent.WorkScheduler;
 import neureka.devices.host.machine.ConcreteMachine;
 import org.slf4j.Logger;
@@ -41,7 +40,7 @@ public class CPU extends AbstractDevice<Number>
 
     static {
         _INSTANCE = new CPU();
-        _DIVIDER = ProcessingService.INSTANCE.divider();
+        _DIVIDER = new WorkScheduler.Divider(CPU.get().getExecutor().getPool());
         _PARALLELISM = Parallelism.THREADS;
     }
 

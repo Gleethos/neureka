@@ -28,7 +28,7 @@ public abstract class WorkScheduler {
 
         private int _threshold = 128;
 
-        Divider(final ExecutorService executor) {
+        public Divider(final ExecutorService executor) {
             super();
             _executor = executor;
         }
