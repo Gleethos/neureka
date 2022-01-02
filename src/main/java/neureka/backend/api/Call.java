@@ -8,6 +8,7 @@ import neureka.devices.Device;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -249,6 +250,23 @@ public class Call<D> {
                 last = current; // Note: shapes are cached!
             }
             return all;
+        }
+
+        public <T> Validator allShare( Function<Tsr<?>, T> propertyProvider ) {
+            T first = null;
+            for ( Tsr<?> t : _tensors ) {
+                if ( t != null ) {
+                    T found = propertyProvider.apply( t );
+                    if ( first == null && found != null ) first = found;
+                    else if ( first != null ) {
+                        if ( !first.equals(found) ) {
+                            _isValid = false;
+                            return this;
+                        }
+                    }
+                }
+            }
+            return this;
         }
 
         public class Estimator {

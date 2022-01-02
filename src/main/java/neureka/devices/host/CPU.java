@@ -212,7 +212,6 @@ public class CPU extends AbstractDevice<Number>
                                                     _newThreadFactory("neureka-daemon-")
                                             );
 
-
         private static ThreadFactory _newThreadFactory(final String name) {
             return _newThreadFactory(GROUP, name);
         }

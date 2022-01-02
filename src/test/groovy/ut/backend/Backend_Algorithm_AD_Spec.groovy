@@ -13,7 +13,7 @@ import neureka.backend.standard.algorithms.Convolution
 import neureka.backend.standard.algorithms.Operator
 import spock.lang.Specification
 
-class Backend_Algorithm_AD_Unit_Tests extends Specification
+class Backend_Algorithm_AD_Spec extends Specification
 {
 
     def 'Operator implementations behave as expected.'(

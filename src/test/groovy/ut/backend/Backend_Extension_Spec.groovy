@@ -13,7 +13,7 @@ import neureka.calculus.implementations.FunctionInput
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
-class Backend_Extension_Unit_Tests extends Specification
+class Backend_Extension_Spec extends Specification
 {
     def setupSpec()
     {

@@ -11,7 +11,7 @@ import neureka.backend.standard.algorithms.Activation
 import neureka.backend.standard.algorithms.Operator
 import spock.lang.Specification
 
-class Backend_Algorithm_Implementation_Tests extends Specification
+class Backend_Algorithm_Implementation_Spec extends Specification
 {
     def setupSpec()
     {

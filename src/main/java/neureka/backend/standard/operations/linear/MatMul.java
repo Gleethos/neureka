@@ -83,21 +83,22 @@ public class MatMul extends AbstractOperation
                                     )
                                     .setCallPreparation(
                                         call -> {
-                                            Tsr<?>[] tsrs = call.getTensors();
+                                            Tsr<?>[] tensors = call.getTensors();
                                             Device<Number> device = call.getDeviceFor(Number.class);
-                                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:
+                                            if ( tensors[ 0 ] == null ) // Creating a new tensor:
                                             {
-                                                int[] shp = new int[]{ tsrs[ 1 ].shape(0), tsrs[ 2 ].shape(1) };
-                                                Tsr<Double> output = Tsr.of( shp, 0.0 );
+                                                Class<Number> type = (Class<Number>) tensors[1].getDataType().getJVMTypeClass();
+                                                int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };
+                                                Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 );
                                                 output.setIsVirtual( false );
                                                 try {
                                                     device.store( output );
                                                 } catch ( Exception e ) {
                                                     e.printStackTrace();
                                                 }
-                                                tsrs[ 0 ] = output;
+                                                tensors[ 0 ] = output;
                                             }
-                                            _autoClone( tsrs );
+                                            _autoClone( tensors );
                                             return call;
                                         }
                                     )
@@ -109,20 +110,7 @@ public class MatMul extends AbstractOperation
                                 CPU.class,
                                 CPUImplementation
                                     .withArity(3)
-                                    .andImplementation(
-                                        call ->
-                                        {
-                                            double[] A = (double[]) call.getTsrOfType(Double.class, 1).getData();
-                                            double[] B = (double[]) call.getTsrOfType(Double.class, 2).getData();
-                                            double[] C = (double[]) call.getTsrOfType(Double.class, 0).getData();
-
-                                            int[] shapeA = call.getTsrOfType(Double.class, 1).getNDConf().shape();
-                                            int[] shapeB = call.getTsrOfType(Double.class, 2).getNDConf().shape();
-                                            int[] shapeC = call.getTsrOfType(Double.class, 0).getNDConf().shape();
-
-                                            SimpleMatMul.execute(A, shapeA, B, shapeB, C, shapeC);
-                                        }
-                                    )
+                                    .andImplementation( new SimpleMatMul() )
                         )
                         .setImplementationFor(
                                 OpenCLDevice.class,

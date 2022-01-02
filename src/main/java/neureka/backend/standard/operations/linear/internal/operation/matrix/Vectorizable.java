@@ -162,21 +162,22 @@ public class Vectorizable {
     static void full_F32_Mx1_RM(
             final float[] product,
             final float[] left,
-            final int rowCount,
+            final int complexity,
             final float[] right
     ) {
-        int colCount = right.length;
-        for (int ri = 0; ri < rowCount; ri++) {
-            product[ri] =
-                    DOT.invoke(
-                            left,
-                            ri * rowCount,
-                            right,
-                            0,
-                            0,
-                            colCount
-                    );
-        }
+            int colCount = right.length;
+            int leftRowCount = left.length / complexity;
+            for (int ri = 0; ri < leftRowCount; ri++) {
+                product[ri] =
+                        DOT.invoke(
+                                left,
+                                ri * complexity,
+                                right,
+                                0,
+                                0,
+                                colCount
+                        );
+            }
     }
 
     static void partial_F64_MxN_CM(

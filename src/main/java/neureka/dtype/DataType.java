@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
@@ -238,10 +239,10 @@ public final class DataType<Type>
         final DataType<?> other = (DataType<?>) o;
         final Object this$_log = this.getLog();
         final Object other$_log = other.getLog();
-        if (this$_log == null ? other$_log != null : !this$_log.equals(other$_log)) return false;
+        if ( !Objects.equals(this$_log, other$_log) ) return false;
         final Object this$_typeClass = this.getTypeClass();
         final Object other$_typeClass = other.getTypeClass();
-        if (this$_typeClass == null ? other$_typeClass != null : !this$_typeClass.equals(other$_typeClass))
+        if ( !Objects.equals(this$_typeClass, other$_typeClass) )
             return false;
         return true;
     }

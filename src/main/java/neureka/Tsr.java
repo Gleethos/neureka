@@ -2696,13 +2696,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         } else if ( value instanceof Double ) {
             this.setIsVirtual( true );
             if ( getData() instanceof double[] ) ( (double[]) getData())[ 0 ] = (Double) value;
-            else ( (float[]) getData())[ 0 ] = ( (Double) value ).floatValue();
+            else ( (float[]) getData() )[ 0 ] = ( (Double) value ).floatValue();
         } else if ( value instanceof Integer ) {
             this.setIsVirtual( true );
-            ( (int[]) getData())[ 0 ] = (Integer) value;
+            ( (int[]) getData() )[ 0 ] = (Integer) value;
         } else if ( value instanceof Long ) {
             this.setIsVirtual( true );
-            ( (long[]) getData())[ 0 ] = (Long) value;
+            ( (long[]) getData() )[ 0 ] = (Long) value;
         } else if ( value instanceof int[] ) {
             _setData( value );
             setIsVirtual( false );

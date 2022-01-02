@@ -79,7 +79,7 @@ class CPU_Spec extends Specification
             if ( exec.getPool().getCorePoolSize() <= 2 ) true
             else {
                 int[] min = new int[]{ exec.getPool().getCorePoolSize() }
-                assert min[0] == Runtime.getRuntime().availableProcessors()
+                assert min[0] > 0 && min[0] <= Runtime.getRuntime().availableProcessors()
                 Thread t = new Thread(() -> {
                     while ( min[0] > 0 ) {
                         int current = exec.getPool().getCorePoolSize() - exec.getPool().getActiveCount()

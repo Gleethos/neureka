@@ -1,8 +1,12 @@
 /*<#LICENSE#>*/
 package neureka.devices.host.machine;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class ConcreteMachine extends CommonMachine {
 
+    private static Logger _LOG = LoggerFactory.getLogger(ConcreteMachine.class);
     public static ConcreteMachine ENVIRONMENT = null;
 
     static {
@@ -17,10 +21,11 @@ public final class ConcreteMachine extends CommonMachine {
         }
 
         if (ENVIRONMENT == null) {
-            System.out.println("Neureka includes a small set of predefined hardware profiles,");
-            System.out.println("none of which were deemed suitable for the hardware you're currently using.");
-            System.out.println("A default hardware profile, that is perfectly usable, has been set for you.");
-            //System.out.println("Architecture={} Threads={} Memory={}", architecture, threads, memory);
+            _LOG.info(
+                    "No matching hardware profile found for this system. " +
+                    "Instantiating a default hardware profile with the following main properties: " +
+                    "Architecture={} Threads={} Memory={}", architecture, threads, memory
+            );
             ENVIRONMENT = Hardware.makeSimple(architecture, memory, threads).virtualize();
         }
     }
