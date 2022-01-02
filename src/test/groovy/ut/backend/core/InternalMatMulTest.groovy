@@ -77,9 +77,9 @@ class InternalMatMulTest {
 
         //---
         Type.ROW_MAJOR.set()
-        _testFloats(2,3,4, -424206796)
-        _testFloats(20,30,40, -874284717)
-        _testFloats(42,61,53, -37310652)
+        _testFloats(2,3,4, -34070530)
+        _testFloats(20,30,40, -237450937)
+        _testFloats(42,61,53, 1490187176)
 
         //---
         _basicF64Test(Type.ROW_MAJOR)
@@ -90,7 +90,7 @@ class InternalMatMulTest {
 
     private static void _test(int d1, int d2, int d3, int hash1) {
         _testDoubles(d1,d2,d3,hash1)
-        _testFloats2(d1,d2,d3,hash1)
+        _testFloats(d1,d2,d3,hash1)
     }
 
     private static void _testDoubles(int dim, int dim2, int dim3, int hash) {
@@ -106,26 +106,13 @@ class InternalMatMulTest {
         assert _hash(C.getData()) ==  hash
     }
 
-    private static void _testFloats2(int dim, int dim2, int dim3, int hash) {
+    private static void _testFloats(int dim, int dim2, int dim3, int hash) {
 
         var A = new M32(dim, dim2, new float[dim*dim2])
         var B = new M32(dim2, dim3, new float[dim2*dim3])
 
         _fillIt32(A.data, 43)
         _fillIt32(B.data, 87)
-
-        var C = _matmulF32(A,B)
-
-        assert _hash(C.getData()) == hash
-    }
-
-    private static void _testFloats(int dim, int dim2, int dim3, int hash) {
-
-        var A = new M32(dim, dim2, new float[dim*dim2])
-        var B = new M32(dim2, dim3, new float[dim2*dim3])
-
-        _fillIt32(A.data, 12)
-        _fillIt32(B.data, 98)
 
         var C = _matmulF32(A,B)
 
