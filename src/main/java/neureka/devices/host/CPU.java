@@ -173,10 +173,14 @@ public class CPU extends AbstractDevice<Number>
         void execute( int start, int end );
     }
 
-    public void divide(final int first, final int limit, final WorkScheduler.Worker worker) {
-        _DIVIDER.parallelism(_PARALLELISM)
-                .threshold(PARALLELIZATION_THRESHOLD)
-                .divide(first, limit, worker);
+    public void divide(
+            final int first,
+            final int limit,
+            final WorkScheduler.Worker worker
+    ) {
+        _DIVIDER.parallelism( _PARALLELISM )
+                .threshold( PARALLELIZATION_THRESHOLD )
+                .divide( first, limit, worker );
     }
 
 
@@ -192,15 +196,15 @@ public class CPU extends AbstractDevice<Number>
      */
     public static class JVMExecutor
     {
-        private static final AtomicInteger COUNTER = new AtomicInteger();
-        private static final ThreadGroup GROUP = new ThreadGroup("neureka-daemon-group");
+        private static final AtomicInteger _COUNTER = new AtomicInteger();
+        private static final ThreadGroup   _GROUP   = new ThreadGroup("neureka-daemon-group");
 
         /*
             The following 2 constants determine if any given workload size will be parallelize or not...
             We might want to adjust this some more for better performance...
          */
-        private static final int MIN_THREADED_WORKLOAD_SIZE = 32;
-        private static final int MIN_WORKLOAD_PER_THREAD = 8;
+        private static final int _MIN_THREADED_WORKLOAD_SIZE = 32;
+        private static final int _MIN_WORKLOAD_PER_THREAD    = 8;
 
         private final ThreadPoolExecutor _pool =
                                             new ThreadPoolExecutor(
@@ -212,21 +216,20 @@ public class CPU extends AbstractDevice<Number>
                                                     _newThreadFactory("neureka-daemon-")
                                             );
 
-        private static ThreadFactory _newThreadFactory(final String name) {
-            return _newThreadFactory(GROUP, name);
+        private static ThreadFactory _newThreadFactory( final String name ) {
+            return _newThreadFactory( _GROUP, name );
         }
 
-        private static ThreadFactory _newThreadFactory(final ThreadGroup group, final String name) {
+        private static ThreadFactory _newThreadFactory( final ThreadGroup group, final String name) {
 
             String prefix = name.endsWith("-") ? name : name + "-";
 
             return target -> {
-                Thread thread = new Thread(group, target, prefix + COUNTER.incrementAndGet());
+                Thread thread = new Thread(group, target, prefix + _COUNTER.incrementAndGet());
                 thread.setDaemon(true);
                 return thread;
             };
         }
-
 
         public ThreadPoolExecutor getPool() { return _pool; }
 
@@ -240,7 +243,7 @@ public class CPU extends AbstractDevice<Number>
         {
             int cores = _pool.getCorePoolSize() - _pool.getActiveCount();
             cores = ( cores == 0 ) ? 1 : cores;
-            if ( workloadSize >= MIN_THREADED_WORKLOAD_SIZE && ( ( workloadSize / cores ) >= MIN_WORKLOAD_PER_THREAD ) ) {
+            if ( workloadSize >= _MIN_THREADED_WORKLOAD_SIZE && ( ( workloadSize / cores ) >= _MIN_WORKLOAD_PER_THREAD) ) {
                 final int chunk = workloadSize / cores;
                 Future<?>[] futures = new Future[ cores ];
                 for ( int i = 0; i < cores; i++ ) {

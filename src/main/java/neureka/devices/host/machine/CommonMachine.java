@@ -7,7 +7,7 @@ package neureka.devices.host.machine;
  */
 public abstract class CommonMachine extends BasicMachine {
 
-    static final long K = 1024L;
+    protected static final long K = 1024L;
 
     public final String architecture;//x86_64
 
@@ -55,32 +55,21 @@ public abstract class CommonMachine extends BasicMachine {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (!(obj instanceof CommonMachine)) {
-            return false;
-        }
+        if ( this == obj ) return true;
+        if ( !super.equals(obj) ) return false;
+        if ( !(obj instanceof CommonMachine) ) return false;
+
         CommonMachine other = (CommonMachine) obj;
-        if (architecture == null) {
-            if (other.architecture != null) {
-                return false;
-            }
-        } else if (!architecture.equals(other.architecture)) {
-            return false;
+        if ( architecture == null ) {
+            if ( other.architecture != null ) return false;
         }
-        if (cache != other.cache) {
+        else if (!architecture.equals(other.architecture))
             return false;
-        }
-        if (cores != other.cores) {
-            return false;
-        }
-        if (units != other.units) {
-            return false;
-        }
+
+        if (cache != other.cache) return false;
+        if (cores != other.cores) return false;
+        if (units != other.units) return false;
+
         return true;
     }
 

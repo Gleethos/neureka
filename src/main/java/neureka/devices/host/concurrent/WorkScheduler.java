@@ -10,6 +10,8 @@ import java.util.concurrent.Future;
 import java.util.function.IntSupplier;
 
 /**
+ *  Divides workloads until they can be processed efficiently
+ *  and then submits them to a thread pool for execution...
  */
 public abstract class WorkScheduler {
 
@@ -33,12 +35,19 @@ public abstract class WorkScheduler {
             _executor = executor;
         }
 
-        public void divide(final int limit, final Worker worker) {
+        public void divide( final int limit, final Worker worker ) {
             this.divide(0, limit, worker);
         }
 
-        public void divide(final int first, final int limit, final Worker worker) {
-            WorkScheduler._call(_executor, first, limit, _threshold, _parallelism.getAsInt(), worker);
+        public void divide( final int first, final int limit, final Worker worker ) {
+            WorkScheduler._call(
+                    _executor,
+                    first,
+                    limit,
+                    _threshold,
+                    _parallelism.getAsInt(),
+                    worker
+                );
         }
 
         public Divider parallelism(
@@ -50,7 +59,7 @@ public abstract class WorkScheduler {
             return this;
         }
 
-        public Divider threshold(final int threshold) {
+        public Divider threshold( final int threshold ) {
             _threshold = threshold;
             return this;
         }
@@ -72,13 +81,13 @@ public abstract class WorkScheduler {
             int split = start + workload / 2;
             int nextWorkers = workers / 2;
 
-            Future<?> firstPart = executor.submit(() -> WorkScheduler._call(executor, start, split, threshold, nextWorkers, worker));
-            Future<?> secondPart = executor.submit(() -> WorkScheduler._call(executor, split, end, threshold, nextWorkers, worker));
+            Future<?> firstPart = executor.submit( () -> _call(executor, start, split, threshold, nextWorkers, worker) );
+            Future<?> secondPart = executor.submit( () -> _call(executor, split, end, threshold, nextWorkers, worker) );
 
             try {
                 firstPart.get();
                 secondPart.get();
-            } catch (final InterruptedException | ExecutionException cause) {
+            } catch ( final InterruptedException | ExecutionException cause ) {
                 throw new RuntimeException(cause);
             }
         }

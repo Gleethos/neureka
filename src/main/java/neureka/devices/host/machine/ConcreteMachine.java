@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 public final class ConcreteMachine extends CommonMachine {
 
-    private static Logger _LOG = LoggerFactory.getLogger(ConcreteMachine.class);
+    private static final Logger _LOG = LoggerFactory.getLogger(ConcreteMachine.class);
     public static ConcreteMachine ENVIRONMENT = null;
 
     static {
