@@ -6,6 +6,11 @@ import neureka.backend.standard.operations.linear.internal.operation.array.AXPY;
 import neureka.backend.standard.operations.linear.internal.operation.array.DOT;
 import neureka.devices.host.CPU;
 
+/**
+ *  A collection of primitive operations performed on arrays
+ *  which are designed so that they can be vectorized by the
+ *  JVMs JIT compiler (AVX instructions).
+ */
 public class Vectorizable {
 
     @FunctionalInterface
@@ -30,13 +35,13 @@ public class Vectorizable {
 
     public static VectorOperationF32 operationForF32(final long rows, final long columns)
     {
-        if (rows > CPU.get().PARALLELIZATION_THRESHOLD && columns > CPU.get().PARALLELIZATION_THRESHOLD) {
+        if ( rows > CPU.PARALLELIZATION_THRESHOLD && columns > CPU.PARALLELIZATION_THRESHOLD) {
             return ( Conf.ROW_MAJOR
                     ? Vectorizable::threaded_F32_MxN_RM
                     : Vectorizable::threaded_F32_MxN_CM
                 );
         }
-        if (columns == 1) {
+        if ( columns == 1 ) {
             return ( Conf.ROW_MAJOR
                     ? Vectorizable::full_F32_Mx1_RM
                     : Vectorizable::full_F32_Mx1_CM
@@ -52,12 +57,12 @@ public class Vectorizable {
                 Conf.ROW_MAJOR
                         ? Vectorizable::full_F32_MxN_RM
                         : Vectorizable::full_F32_MxN_CM
-        );
+            );
     }
 
     public static VectorOperationF64 operationForF64(final long rows, final long columns)
     {
-        if (rows > CPU.get().PARALLELIZATION_THRESHOLD && columns > CPU.get().PARALLELIZATION_THRESHOLD)
+        if ( rows > CPU.PARALLELIZATION_THRESHOLD && columns > CPU.PARALLELIZATION_THRESHOLD )
             return ( Conf.ROW_MAJOR
                 ? Vectorizable::threaded_F64_MxN_RM
                 : Vectorizable::threaded_F64_MxN_CM
@@ -70,7 +75,7 @@ public class Vectorizable {
             if (rows == 2 && columns == 2) return Vectorizable::full_F64_2x2_CM;
             if (rows == 1 && columns == 1) return Vectorizable::full_F64_1x1_CM;
         }
-        if (columns == 1)
+        if ( columns == 1 )
             return (
                 Conf.ROW_MAJOR
                     ? Vectorizable::full_F64_Mx1_RM
@@ -89,13 +94,13 @@ public class Vectorizable {
                     Conf.ROW_MAJOR
                             ? Vectorizable::full_F64_1xN_RM
                             : Vectorizable::full_F64_1xN_CM
-            );
+                );
 
         return (
                 Conf.ROW_MAJOR
                         ? Vectorizable::full_F64_MxN_RM
                         : Vectorizable::full_F64_MxN_CM
-        );
+            );
     }
 
     static void full_F64_Mx1_CM(
@@ -105,7 +110,7 @@ public class Vectorizable {
             final double[] right
     ) {
         int rowCount = product.length;
-        for (int c = 0; c < colCount; c++) {
+        for ( int c = 0; c < colCount; c++ ) {
             AXPY.invoke(
                     product,
                     0,
@@ -218,12 +223,12 @@ public class Vectorizable {
             for (int j = firstRow; j < rowLimit; j++) {
                 AXPY.invoke(
                         product,
-                        j * rightCols, // Seems good
+                        j * rightCols,
                         left[c + j * complexity],
-                        right, // Correct
-                        c * rightCols,  // Correct
-                        0, // Correct
-                        rightCols // correct
+                        right,
+                        c * rightCols,
+                        0,
+                        rightCols
                 );
             }
         }
@@ -253,10 +258,10 @@ public class Vectorizable {
         }
     }
 
-    static void partial_F32_MxN_RM( // WORK IN PROGRESS!
+    static void partial_F32_MxN_RM(
                                     final float[] product,
                                     final int firstRow, // left row
-                                    final int rowLimit, // correct -> Todo: adjust input
+                                    final int rowLimit,
                                     final float[] left,
                                     final int complexity,
                                     final float[] right
@@ -266,12 +271,12 @@ public class Vectorizable {
             for (int j = firstRow; j < rowLimit; j++) {
                 AXPY.invoke(
                         product,
-                        j * rightCols, // Seems good
+                        j * rightCols,
                         left[c + j * complexity],
-                        right, // Correct
-                        c * rightCols,  // Correct
-                        0, // Correct
-                        rightCols // correct
+                        right,
+                        c * rightCols,
+                        0,
+                        rightCols
                 );
             }
         }
