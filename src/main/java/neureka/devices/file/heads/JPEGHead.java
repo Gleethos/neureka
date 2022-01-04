@@ -170,7 +170,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
             return this;
         }
         tensor.setIsOutsourced( true );
-        tensor.setDataType( DataType.of( I16.class ) );
+        tensor.getMutate().setDataType( DataType.of( I16.class ) );
         return this;
     }
 

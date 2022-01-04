@@ -263,7 +263,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 return t;
             } else {
                 Tsr<T> t = new Tsr<>();
-                t.setDataType( DataType.of( args[1].getClass() ) );
+                t._setDataType( DataType.of( args[1].getClass() ) );
                 t._constructAndAllocate( (int[]) args[0], true );
                 ((Object[])t.getData())[0] = args[1];
                 return t;
@@ -614,7 +614,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     private Tsr( int[] shape, DataType<?> type )
     {
-        setDataType( DataType.of( type.getTypeClass() ) );
+        _setDataType( DataType.of( type.getTypeClass() ) );
         _constructAndAllocate( shape, true );
     }
 
@@ -624,7 +624,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     private Tsr( int[] shape, Class<V> typeClass, Object data )
     {
-        setDataType( DataType.of( typeClass ) );
+        _setDataType( DataType.of( typeClass ) );
         createConstructionAPI().configureFromNewShape( shape, false, false );
         setValue( data );
     }
@@ -748,7 +748,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Initializer<T> initializer )
     {
-        setDataType( type );
+        _setDataType( type );
         _constructAndAllocate( shape, false );
         _initData( initializer );
     }
@@ -1213,7 +1213,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         });
         forComponent( Device.class, device -> device.free( this ) );
         _setData( null );
-        setNDConf( null );
+        _setNDConf( null );
         _flags = -1;
         forComponent( Tsr.class, Tsr::delete );
         _deleteComponents();
@@ -1478,9 +1478,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     |   ------------------------------------------
     */
 
-    public Tsr<V> toLayout( NDConfiguration.Layout layout ) {
+    private void _toLayout(NDConfiguration.Layout layout ) {
 
-        if ( layout == this.getNDConf().getLayout() ) return this;
+        if ( layout == this.getNDConf().getLayout() ) return;
 
         Tsr<V> transposed = this.T().clone().detach();
         IntStream.range(0,transposed.size())
@@ -1488,7 +1488,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     .forEach( i -> this.setAt( i, transposed.getDataAt( i ) ) );
 
         NDConfiguration old = this.getNDConf();
-        this.setNDConf(
+        this._setNDConf(
             AbstractNDC.construct(
                     old.shape(),
                     layout.newTranslationFor(old.shape()),
@@ -1498,7 +1498,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     layout
             )
         );
-        return this;
     }
 
     /**
@@ -1549,14 +1548,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     protected Tsr<V> _become( Tsr<V> tensor )
     {
         if ( tensor == null ) return this;
-        this.setDataType( tensor.getDataType() );
+        this._setDataType( tensor.getDataType() );
         _setData( tensor.getData() );
-        setNDConf( tensor.getNDConf() );
+        _setNDConf( tensor.getNDConf() );
         _flags = tensor._flags;
         _transferFrom( tensor );
         tensor._setData( null );
-        tensor.setDataType( null );
-        tensor.setNDConf( null );
+        tensor._setDataType( null );
+        tensor._setNDConf( null );
         tensor._flags = -1;
         return this;
     }
@@ -2451,7 +2450,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     {
         this.setIsVirtual( false );
         Tsr<V> subset = new Tsr<>();
-        subset.setDataType( this.getDataType() );
+        subset._setDataType( this.getDataType() );
         subset._setData( this.getData() );
         int[] newTranslation = getNDConf().translation();
         int[] newIdxmap = this.getNDConf().getLayout().newTranslationFor( newShape );
@@ -2514,7 +2513,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             }
         }
 
-        subset.setNDConf(
+        subset._setNDConf(
                 AbstractNDC.construct(
                         newShape,
                         newTranslation,
@@ -2685,7 +2684,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private void _setValue64( double[] value ) {
         if ( this.isOutsourced() ) this.get( Device.class ).write( this, value );
         else if ( getData() == null ) {
-            setDataType( DataType.of( F64.class ) );
+            _setDataType( DataType.of( F64.class ) );
             _setData( value );
         }
         else if ( getData() instanceof float[] )
@@ -2700,7 +2699,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private void _setValue32( float[] value ) {
         if ( this.isOutsourced() ) this.get( Device.class ).write( this, value );
         else if ( getData() == null ) {
-            setDataType( DataType.of( F32.class ) );
+            _setDataType( DataType.of( F32.class ) );
             _setData( value );
         }
         else if ( getData() instanceof float[] )
@@ -2938,19 +2937,19 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param <T> The type parameter for the returned tensor.
      * @return The same tensor instance whose data has been converted to hold a different type.
      */
-    public <T> Tsr<T> toType( Class<T> typeClass )
+    private <T> Tsr<T> _toType(Class<T> typeClass )
     {
         if ( this.isOutsourced() ) {
-            setDataType( DataType.of( typeClass ) );
+            _setDataType( DataType.of( typeClass ) );
             return (Tsr<T>) this;
         }
         else {
             Object newData = _convertedDataOfType( typeClass );
             _setData( null );
-            setDataType( DataType.of( typeClass ) );
+            _setDataType( DataType.of( typeClass ) );
             _setData( newData );
         }
-        forComponent( Tsr.class, gradient -> gradient.toType( typeClass ) );
+        forComponent( Tsr.class, gradient -> gradient._toType( typeClass ) );
         return (Tsr<T>) this;
     }
 
@@ -3142,5 +3141,35 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     }
 
+    /**
+     *  This method exposes an API for mutating the state of this tensor.
+     *  The usage of methods exposed by this API is generally discouraged
+     *  because the exposed state can easily lead to broken tensors and exceptions...</b><br>
+     *  <br>
+     *  Use this in performance critical situations only.
+     */
+    @Override
+    public Mutate getMutate() {
+        return new Mutate() {
+            @Override
+            public Mutate setNDConf( NDConfiguration configuration ) {
+                Tsr.this._setNDConf( configuration );
+                return this;
+            }
+            @Override
+            public <V> Tsr<V> toType( Class<V> typeClass ) {
+                return Tsr.this._toType( typeClass );
+            }
+            @Override
+            public <V> Tsr<V> setDataType( DataType<V> dataType ) {
+                return (Tsr<V>) Tsr.this._setDataType(dataType);
+            }
+            @Override
+            public Mutate toLayout(NDConfiguration.Layout layout) {
+                Tsr.this._toLayout( layout );
+                return this;
+            }
+        };
+    }
 
 }

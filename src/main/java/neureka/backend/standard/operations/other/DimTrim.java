@@ -121,7 +121,8 @@ public class DimTrim extends AbstractOperation
             newSpread.add( 0 );
             newOffset.add( 0 );
         }
-        tensor.setNDConf(
+        tensor.getMutate()
+              .setNDConf(
                 AbstractNDC.construct(
                         newShape.stream().mapToInt( i -> i ).toArray(),
                         newTranslation.stream().mapToInt( i -> i ).toArray(),
@@ -157,7 +158,8 @@ public class DimTrim extends AbstractOperation
             newSpread.add( tensor.getNDConf().spread( i ) );
             newOffset.add( tensor.getNDConf().offset( i ) );
         }
-        tensor.setNDConf(
+        tensor.getMutate()
+              .setNDConf(
                 AbstractNDC.construct(
                         newShape.stream().mapToInt( i -> i ).toArray(),
                         newTranslation.stream().mapToInt( i -> i ).toArray(),

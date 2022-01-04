@@ -444,7 +444,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         // When tensors get stored on this device,
         // they are implicitly converted to a float tensor:
-        tensor.toType( F32.class );
+        tensor.getMutate().toType( F32.class );
     }
 
     private cl_tsr.cl_config _writeNDConfig( NDConfiguration ndc ) {

@@ -205,7 +205,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     Device<V> approve( ExecutionCall<? extends Device<?>> call );
 
     /**
-     *  This method automatically called within the {@link Tsr#setNDConf(NDConfiguration)} method
+     *  This method automatically called within the {@link Tsr.Mutate#setNDConf(NDConfiguration)} method
      *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
      *  given {@link Device} implementation... <br><br>
      *

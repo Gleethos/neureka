@@ -164,7 +164,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      * @param dataType The new {@link DataType} which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    public C setDataType( DataType<?> dataType )
+    protected C _setDataType(DataType<?> dataType )
     {
         _guardSet("data type");
         if ( _data != null ) {
@@ -303,8 +303,8 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         AbstractNDArray<C, ?> nda = this;
         return new NDAConstructor(
                     new NDAConstructor.API() {
-                        @Override public void setType( DataType<?> type        ) { nda.setDataType( type ); }
-                        @Override public void setConf( NDConfiguration conf    ) { nda.setNDConf(   conf ); }
+                        @Override public void setType( DataType<?> type        ) { nda.getMutate().setDataType( type ); }
+                        @Override public void setConf( NDConfiguration conf    ) { nda.getMutate().setNDConf(   conf ); }
                         @Override public void setData( Object o                ) { nda._setData(      o  ); }
                         @Override public void allocate( int size               ) { nda._allocate(   size ); }
                         @Override public Object getData()                        { return nda.getData();    }
@@ -437,7 +437,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      * @param ndConfiguration The new NDConfiguration instance which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    public C setNDConf( NDConfiguration ndConfiguration )
+    protected C _setNDConf(NDConfiguration ndConfiguration )
     {
         _guardSet( "ND-Configuration" );
         if ( _NDConf != null && ndConfiguration != null ) {
@@ -568,7 +568,70 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
 
     }
 
+    /**
+     *  This method exposes an API for mutating the state of this tensor.
+     *  The usage of methods exposed by this API is generally discouraged
+     *  because the exposed state can easily lead to broken tensors and exceptions...</b><br>
+     *  <br>
+     *  Use this in performance critical situations only.
+     */
+    public abstract Mutate getMutate();
 
+    /**
+     *  Tensors should be considered immutable, however sometimes it
+     *  is important to mutate their state for performance reasons.
+     *  This interface exposes several methods for mutating the state of this tensor.
+     *  The usage of methods exposed by this API is generally discouraged
+     *  because the exposed state can easily lead to broken tensors and exceptions...</b><br>
+     *  <br>
+     */
+    public interface Mutate {
+        /**
+         *  This method sets the NDConfiguration of this NDArray.
+         *  Therefore, it should not be used lightly as it can cause major internal inconsistencies.
+         *
+         * @param configuration The new NDConfiguration instance which ought to be set.
+         * @return The final instance type of this class which enables method chaining.
+         */
+        Mutate setNDConf( NDConfiguration configuration );
+        /**
+         *  This method is an inline operation which changes the underlying data of this tensor.
+         *  It converts the data types of the elements of this tensor to the specified type!<br>
+         *  <br>
+         *  <b>WARNING : The use of this method is discouraged for the following reasons: </b><br>
+         *  <br>
+         *  1. Inline operations are inherently error-prone for most use cases. <br>
+         *  2. This inline operation in particular has no safety net,
+         *     meaning that there is no implementation of version mismatch detection
+         *     like there is for those operations present in the standard operation backend...
+         *     No exceptions will be thrown during backpropagation! <br>
+         *  3. This method has not yet been implemented to also handle instances which
+         *     are slices of parent tensors!
+         *     Therefore, there might be unexpected performance penalties or side effects
+         *     associated with this method.<br>
+         *     <br>
+         *
+         * @param typeClass The target type class for elements of this tensor.
+         * @param <T> The type parameter for the returned tensor.
+         * @return The same tensor instance whose data has been converted to hold a different type.
+         */
+        <V> Tsr<V> toType( Class<V> typeClass );
+
+        /**
+         *  This method enables modifying the data-type configuration of this {@link AbstractNDArray}.
+         *  Warning! The method should not be used unless absolutely necessary.
+         *  This is because it can cause unpredictable inconsistencies between the
+         *  underlying {@link DataType} instance of this {@link AbstractNDArray} and the actual type of the actual
+         *  data it is wrapping (or it is referencing on a {@link neureka.devices.Device}).<br>
+         *  <br>
+         * @param dataType The new {@link DataType} which ought to be set.
+         * @return The final instance type of this class which enables method chaining.
+         */
+        <V> Tsr<V> setDataType( DataType<V> dataType );
+
+        Mutate toLayout( NDConfiguration.Layout layout );
+
+    }
 
 
 }
