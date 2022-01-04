@@ -3,13 +3,12 @@ package neureka.ndim.config.types.complex;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 
-public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
+public class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 {
-
     /**
      *  The shape of the NDArray.
      */
-    protected final int[] _shape;
+    private final int[] _shape;
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
@@ -18,7 +17,7 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
      *  The mapping of an index to an index array.
      *  The index array is created and filled
      *  during iteration and passed to this configuration for element access...
-     *  However it is also possible to creat an index array from an index integer.
+     *  However, it is also possible to creat an index array from an index integer.
      *  This is what the following property does :
      */
     private final int[] _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!

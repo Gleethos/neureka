@@ -124,6 +124,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 /**
@@ -1476,6 +1477,30 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     |       §(5) : OBJECT STATE MODIFICATION :
     |   ------------------------------------------
     */
+
+    public Tsr<V> toLayout( NDConfiguration.Layout layout ) {
+
+        if ( layout == this.getNDConf().getLayout() ) return this;
+
+        Tsr<V> transposed = this.T().clone().detach();
+        IntStream.range(0,transposed.size())
+                    .parallel()
+                    .forEach( i -> this.setAt( i, transposed.getDataAt( i ) ) );
+
+        NDConfiguration old = this.getNDConf();
+        this.setNDConf(
+            AbstractNDC.construct(
+                    old.shape(),
+                    layout.newTranslationFor(old.shape()),
+                    old.translation(),
+                    old.spread(),
+                    old.offset(),
+                    layout
+            )
+        );
+        return this;
+    }
+
     /**
      *  This method is responsible for incrementing
      *  the "_version" field variable which represents the version of the data of this tensor.
@@ -2429,7 +2454,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         subset.setDataType( this.getDataType() );
         subset._setData( this.getData() );
         int[] newTranslation = getNDConf().translation();
-        int[] newIdxmap = NDConfiguration.Utility.newTlnOf( newShape );
+        int[] newIdxmap = this.getNDConf().getLayout().newTranslationFor( newShape );
 
         for ( int i = 0; i < this.rank(); i++ )
             newSpread[ i ] = ( newSpread[i] == 0 ) ? 1 : newSpread[ i ];
@@ -2489,7 +2514,16 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             }
         }
 
-        subset.setNDConf( AbstractNDC.construct( newShape, newTranslation, newIdxmap, newSpread, newOffset ) );
+        subset.setNDConf(
+                AbstractNDC.construct(
+                        newShape,
+                        newTranslation,
+                        newIdxmap,
+                        newSpread,
+                        newOffset,
+                        NDConfiguration.Layout.ROW_MAJOR
+                )
+        );
 
         if ( this.isOutsourced() ) {
             Device<V> device = this.get( Device.class );

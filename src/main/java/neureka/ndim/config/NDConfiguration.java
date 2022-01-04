@@ -41,6 +41,55 @@ import java.util.stream.IntStream;
 
 public interface NDConfiguration
 {
+    enum Layout {
+
+        ROW_MAJOR, COLUMN_MAJOR;
+
+        @Contract(pure = true)
+        public int[] newTranslationFor( int[] shape ) {
+            int[] tln = new int[ shape.length ];
+            int prod = 1;
+            if ( this == COLUMN_MAJOR ) {
+                for ( int i = 0; i < tln.length; i++ ) {
+                    tln[ i ] = prod;
+                    prod *= shape[ i ];
+                }
+            } else if ( this == ROW_MAJOR ) {
+                for (int i = tln.length - 1; i >= 0; i--) {
+                    tln[i] = prod;
+                    prod *= shape[i];
+                }
+            }
+            else
+                throw new IllegalStateException("Unknown data layout!");
+
+            return tln;
+        }
+
+        @Contract(pure = true)
+        public int[] rearrange(int[] tln, int[] shape, int[] newForm) {
+            int[] shpTln = this.newTranslationFor( shape );
+            int[] newTln = new int[ newForm.length ];
+            for ( int i = 0; i < newForm.length; i++ ) {
+                if ( newForm[ i ] < 0 ) newTln[ i ] = shpTln[ i ];
+                else if ( newForm[ i ] >= 0 ) newTln[ i ] = tln[ newForm[ i ] ];
+            }
+            return newTln;
+        }
+    }
+
+    /**
+     *  The layout of a tensor can either be row major or column major.
+     *  Row major means that row elements are right next to one another
+     *  in the underlying data array of a tensor.
+     *  Column major is the exact opposite...
+     *
+     * @return The layout of the underlying data array of a tensor.
+     */
+    default Layout getLayout() {
+        return Layout.ROW_MAJOR;
+    }
+
     /**
      *  This method returns the number of axis of
      *  an nd-array / {@link neureka.Tsr} which is equal to the
@@ -175,7 +224,7 @@ public interface NDConfiguration
      * @return The truth value determining if this configuration is not modeling more complex indices like reshaped views or slices...
      */
     default boolean isSimple() {
-        int[] simpleTranslation = NDConfiguration.Utility.newTlnOf( this.shape() );
+        int[] simpleTranslation = this.getLayout().newTranslationFor( this.shape() );
         return Arrays.equals(this.translation(), simpleTranslation)
                 &&
                IntStream.range(0, this.rank()).allMatch( i -> this.spread(i) == 1 )
@@ -200,17 +249,6 @@ public interface NDConfiguration
     class Utility
     {
         @Contract(pure = true)
-        public static int[] rearrange(int[] tln, int[] shape, int[] newForm) {
-            int[] shpTln = newTlnOf( shape );
-            int[] newTln = new int[ newForm.length ];
-            for ( int i = 0; i < newForm.length; i++ ) {
-                if ( newForm[ i ] < 0 ) newTln[ i ] = shpTln[ i ];
-                else if ( newForm[ i ] >= 0 ) newTln[ i ] = tln[ newForm[ i ] ];
-            }
-            return newTln;
-        }
-
-        @Contract(pure = true)
         public static int[] rearrange(int[] array, int[] ptr) {
             int[] newShp = new int[ptr.length];
             for ( int i = 0; i < ptr.length; i++ ) {
@@ -220,16 +258,6 @@ public interface NDConfiguration
             return newShp;
         }
 
-        @Contract(pure = true)
-        public static int[] newTlnOf(int[] shape) {
-            int[] tln = new int[ shape.length ];
-            int prod = 1;
-            for ( int i = tln.length-1; i >= 0; i-- ) {
-                tln[ i ] = prod;
-                prod *= shape[ i ];
-            }
-            return tln;
-        }
 
         @Contract(pure = true)
         public static void increment( int[] indices, int[] shape ) {

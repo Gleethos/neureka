@@ -27,12 +27,12 @@ public final class DefaultNDIterator implements NDIterator
 
     @Override
     public void increment() {
-        NDConfiguration.Utility.increment(_indices, _shape );
+        NDConfiguration.Utility.increment( _indices, _shape );
     }
 
     @Override
     public void decrement() {
-        //NDConfiguration.Utility.
+        //NDConfiguration.Utility... // TODO: This is currently not needed
     }
 
     @Override

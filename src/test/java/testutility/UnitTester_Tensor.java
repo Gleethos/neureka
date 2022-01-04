@@ -116,7 +116,7 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
-        int [] result =  NDConfiguration.Utility.newTlnOf(dim);
+        int [] result =  NDConfiguration.Layout.ROW_MAJOR.newTranslationFor(dim);
         printSessionStart("Testing Tsr.indexing: dimension _translation!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;

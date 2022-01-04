@@ -2,6 +2,7 @@ package it.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.ndim.config.NDConfiguration
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
@@ -146,21 +147,44 @@ class Tensor_Indexing_Integration_Spec extends Specification
     def 'Indexing modes produce expected results when doing convolution.'()
     {
         given :
-            Tsr t0 = Tsr.of([3, 2, 1], [
-                    1, 2,
-                    3, 4,
-                    5, 6
-            ])
-            Tsr x0 = Tsr.of([1, 2, 3], [
-                    1, 2, 3,
-                    4, 5, 6
-            ])
+            Tsr<Double> t0 = Tsr.of([3, 2, 1], [
+                                        1d, 2d,
+                                        3d, 4d,
+                                        5d, 6d
+                                ])
+            Tsr<Double> x0 = Tsr.of([1, 2, 3], [
+                                        1d, 2d, 3d,
+                                        4d, 5d, 6d
+                                ])
             /*
                     9   12  15
                     19  26  33
                     29  40  51
              */
-        when : Tsr out0 = Tsr.of("i0xi1", [t0, x0] )
+
+        expect :
+            t0.data == [1, 2, 3, 4, 5, 6] as double[]
+            x0.data == [1, 2, 3, 4, 5, 6] as double[]
+            t0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR
+            x0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR
+
+        when : Tsr<Double> out0 = Tsr.of("i0xi1", [t0, x0] )
+        then :
+            out0.toString() == "(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]"
+
+        when :
+            t0.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            x0.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+        then :
+            t0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR
+            x0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR
+            t0.data == [1, 3, 5, 2, 4, 6] as double[]
+            x0.data == [1, 4, 2, 5, 3, 6] as double[]
+        and :
+            t0.toString() == "(3x2x1):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]"
+            x0.toString() == "(1x2x3):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]"
+
+        when : out0 = Tsr.of("i0xi1", [t0, x0] )
         then :
             out0.toString() == "(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]"
     }

@@ -15,6 +15,7 @@ import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.config.NDConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +87,10 @@ public class DimTrim extends AbstractOperation
     }
 
     private static Tsr<?> _pad( Tsr<?> tensor, int[] ends, boolean newTsr ) {
+
+        if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
+            throw new IllegalArgumentException("Column major not yet supported for shape trimming!");
+
         tensor = ( newTsr ? tensor.getAt(new ArrayList<>()) : tensor );
         List<Integer> newShape = new ArrayList<>();
         List<Integer> newTranslation = new ArrayList<>();
@@ -122,7 +127,8 @@ public class DimTrim extends AbstractOperation
                         newTranslation.stream().mapToInt( i -> i ).toArray(),
                         newIdxmap.stream().mapToInt( i -> i ).toArray(),
                         newSpread.stream().mapToInt( i -> i ).toArray(),
-                        newOffset.stream().mapToInt( i -> i ).toArray()
+                        newOffset.stream().mapToInt( i -> i ).toArray(),
+                        NDConfiguration.Layout.ROW_MAJOR
                 )
         );
         return tensor;
@@ -130,6 +136,9 @@ public class DimTrim extends AbstractOperation
 
     private static Tsr<?> _trim( Tsr<?> tensor, int[] ends, boolean newTsr )
     {
+        if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
+            throw new IllegalArgumentException("Column major not yet supported for shape trimming!");
+
         tensor = ( newTsr ? tensor.getAt( new ArrayList<>() ) : tensor );
         List<Integer> newShape = new ArrayList<>();
         List<Integer> newTranslation = new ArrayList<>();
@@ -154,7 +163,8 @@ public class DimTrim extends AbstractOperation
                         newTranslation.stream().mapToInt( i -> i ).toArray(),
                         newIdxmap.stream().mapToInt( i -> i ).toArray(),
                         newSpread.stream().mapToInt( i -> i ).toArray(),
-                        newOffset.stream().mapToInt( i -> i ).toArray()
+                        newOffset.stream().mapToInt( i -> i ).toArray(),
+                        NDConfiguration.Layout.ROW_MAJOR
                 )
         );
         ends[ 0 ] = prefix;

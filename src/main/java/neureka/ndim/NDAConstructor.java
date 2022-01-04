@@ -45,6 +45,7 @@ public class NDAConstructor {
      */
     public void configureFromNewShape( int[] newShape, boolean makeVirtual, boolean autoAllocate )
     {
+        NDConfiguration.Layout layout = NDConfiguration.Layout.ROW_MAJOR;
         _API.setIsVirtual( makeVirtual );
         int size = NDConfiguration.Utility.szeOfShp( newShape );
         if ( size == 0 ) {
@@ -56,7 +57,7 @@ public class NDAConstructor {
         if ( _API.getData() == null && autoAllocate ) _API.allocate( makeVirtual ? 1 : size );
         if ( makeVirtual ) _API.setConf( VirtualNDConfiguration.construct( newShape ) );
         else {
-            int[] newTranslation = NDConfiguration.Utility.newTlnOf( newShape );
+            int[] newTranslation = layout.newTranslationFor( newShape );
             int[] newSpread = new int[ newShape.length ];
             Arrays.fill( newSpread, 1 );
             int[] newOffset = new int[ newShape.length ];
@@ -66,7 +67,8 @@ public class NDAConstructor {
                             newTranslation,
                             newTranslation, // indicesMap
                             newSpread,
-                            newOffset
+                            newOffset,
+                            layout
                     )
             );
         }

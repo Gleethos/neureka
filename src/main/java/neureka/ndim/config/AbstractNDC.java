@@ -1,6 +1,7 @@
 package neureka.ndim.config;
 
 import neureka.Neureka;
+import neureka.ndim.config.types.ColumnMajorNDConfiguration;
 import neureka.ndim.config.types.complex.*;
 import neureka.ndim.config.types.simple.*;
 import neureka.ndim.config.types.views.SimpleReshapeView;
@@ -25,8 +26,8 @@ public abstract class AbstractNDC implements NDConfiguration
 {
     /**
      *  Instances implementing the {@link NDConfiguration} interface will be cached in the hashmap below.
-     *  In production we can expect a multitude of tensors having the same shape and also the same way of viewing their data.
-     *  Therefore they will have configuration instances with the same state.
+     *  In production, we can expect a multitude of tensors having the same shape and also the same way of viewing their data.
+     *  Therefore, they will have configuration instances with the same state.
      *  Implementations of {@link NDConfiguration} are expected to be immutable which allows us to have them be
      *  shared between tensors (because they are read only, meaning no side-effects).
      */
@@ -93,7 +94,8 @@ public abstract class AbstractNDC implements NDConfiguration
                Arrays.hashCode( translation() ) * 2L +
                Arrays.hashCode( indicesMap() ) * 3L +
                Arrays.hashCode( spread() ) * 4L +
-               Arrays.hashCode( offset() ) * 5L;
+               Arrays.hashCode( offset() ) * 5L
+               + ( getLayout() == Layout.ROW_MAJOR ? 0 : 1 );
     }
 
     @Override
@@ -103,7 +105,8 @@ public abstract class AbstractNDC implements NDConfiguration
                 Arrays.equals(translation(), ndc.translation()) &&
                 Arrays.equals(indicesMap(), ndc.indicesMap()) &&
                 Arrays.equals(spread(), ndc.spread()) &&
-                Arrays.equals(offset(), ndc.offset());
+                Arrays.equals(offset(), ndc.offset()) &&
+                this.getLayout() == ndc.getLayout();
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -113,7 +116,8 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] translation,
             int[] indicesMap,
             int[] spread,
-            int[] offset
+            int[] offset,
+            Layout layout
     ) {
         for ( int dim : shape ) {
             if ( dim == 0 ) {
@@ -122,9 +126,13 @@ public abstract class AbstractNDC implements NDConfiguration
                 throw new IllegalStateException( message );
             }
         }
-        if ( Neureka.get().settings().ndim().isOnlyUsingDefaultNDConfiguration() ) {
+
+        if ( layout == Layout.COLUMN_MAJOR )
+            return ColumnMajorNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
+
+        if ( Neureka.get().settings().ndim().isOnlyUsingDefaultNDConfiguration() )
             return ComplexDefaultNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
-        }
+
         boolean isSimple = _isSimpleConfiguration(shape, translation, indicesMap, spread, offset);
         NDConfiguration ndc = null;
         if ( isSimple ) {
@@ -168,7 +176,8 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] spread,
             int[] offset
     ) {
-        int[] newTranslation = Utility.newTlnOf( shape );
+        // Note: Column major is not simple because there are no simple column major implementations...
+        int[] newTranslation = Layout.ROW_MAJOR.newTranslationFor( shape );
         int[] newSpread = new int[ shape.length ];
         Arrays.fill( newSpread, 1 );
         return  Arrays.equals( translation, newTranslation ) &&
@@ -193,8 +202,8 @@ public abstract class AbstractNDC implements NDConfiguration
     protected static NDConfiguration _simpleReshape( int[] newForm, NDConfiguration ndc )
     {
         int[] newShape = Utility.rearrange( ndc.shape(), newForm );
-        int[] newTranslation = Utility.rearrange( ndc.translation(), newShape, newForm );
-        int[] newIdxmap = Utility.newTlnOf( newShape );
+        int[] newTranslation = ndc.getLayout().rearrange( ndc.translation(), newShape, newForm );
+        int[] newIndicesMap = ndc.getLayout().newTranslationFor( newShape );
         int[] newSpread = new int[ newForm.length ];
         for ( int i = 0; i < newForm.length; i++ ) {
             if ( newForm[ i ] < 0 ) newSpread[ i ] = 1;
@@ -205,7 +214,14 @@ public abstract class AbstractNDC implements NDConfiguration
             if ( newForm[ i ] < 0 ) newOffset[ i ] = 0;
             else if ( newForm[ i ] >= 0 ) newOffset[ i ] = ndc.offset( newForm[ i ] );
         }
-        return AbstractNDC.construct( newShape, newTranslation, newIdxmap, newSpread, newOffset );
+        return AbstractNDC.construct(
+                newShape,
+                newTranslation,
+                newIndicesMap,
+                newSpread,
+                newOffset,
+                Layout.ROW_MAJOR
+            );
     }
 
     @Override

@@ -325,7 +325,8 @@ public final class TsrAsString
     private void _stringifyAllValues()
     {
         int max = _rowLimit;
-        ValStringifier getter = _createValStringifierAndFormatter( _tensor.getValue() );
+        Object data = ( _tensor.getData() == null ? _tensor.getValue() : _tensor.getData() );
+        ValStringifier getter = _createValStringifierAndFormatter( data );
         int size = _tensor.size();
         int trim = ( size - max );
         size = ( trim > 0 ? max : size );
