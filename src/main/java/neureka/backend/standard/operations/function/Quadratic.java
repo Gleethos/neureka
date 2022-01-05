@@ -15,18 +15,6 @@ import org.jetbrains.annotations.Contract;
 
 public final class Quadratic extends AbstractOperation
 {
-
-    private final DefaultOperatorCreator<TertiaryF64NDFun> _creatorNDI =
-            ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                if ( d < 0 ) {
-                    return ( t0Idx, t1Idx, t2Idx ) -> {
-                        double input = t1_val[ t1Idx.i() ];
-                        return input * input;
-                    };
-                } else return ( t0Idx, t1Idx, t2Idx ) -> 2 * t1_val[ t1Idx.i() ];
-            };
-
     public Quadratic() {
         super(
                 new OperationBuilder()
@@ -54,16 +42,22 @@ public final class Quadratic extends AbstractOperation
                             .withArity(3)
                             .andImplementation(
                                 call  ->
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
-                                                                        start, end,
-                                                                        _creatorNDI.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                )
+                                    call.getDevice()
+                                        .getExecutor()
+                                        .threaded(
+                                            call.getTsrOfType( Number.class, 0 ).size(),
+                                            Activation.newWorkloadFor(
+                                                    call,
+                                                    new Activation.Fun<>(
+                                                            x -> x * x,
+                                                            x -> 2 * x
+                                                    ),
+                                                    new Activation.Fun<>(
+                                                            x -> x * x,
+                                                            x -> 2 * x
+                                                    )
+                                            )
+                                        )
                             )
                 )
                 .setImplementationFor(

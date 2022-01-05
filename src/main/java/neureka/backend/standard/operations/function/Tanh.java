@@ -1,6 +1,7 @@
 package neureka.backend.standard.operations.function;
 
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.PrimitiveFun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -61,16 +62,21 @@ public final class Tanh extends AbstractOperation
                             .withArity(3)
                             .andImplementation(
                                 call  ->
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
-                                                                        start, end,
-                                                                        _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
+                                    call.getDevice().getExecutor()
+                                        .threaded(
+                                            call.getTsrOfType( Number.class, 0 ).size(),
+                                            Activation.newWorkloadFor(
+                                                call,
+                                                new Activation.Fun<>(
+                                                   x -> x / Math.pow(1d + Math.pow(x, 2d), 0.5d),
+                                                   x -> 1 - Math.pow(x / Math.pow(1 + Math.pow(x, 2), .5), 2)
+                                                ),
+                                                new Activation.Fun<>(
+                                                   x -> (float) (x / Math.pow(1f + Math.pow(x, 2f), .5f)),
+                                                   x -> (float) (1f - Math.pow(x / Math.pow(1 + Math.pow(x, 2f), .5f), 2f))
                                                 )
+                                            )
+                                        )
                             )
                 ).setImplementationFor(
                         OpenCLDevice.class,

@@ -15,14 +15,6 @@ import org.jetbrains.annotations.Contract;
 
 public final class Absolute extends AbstractOperation
 {
-
-    private final DefaultOperatorCreator<TertiaryF64NDFun> _activationCreator =
-            ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.abs(t1_val[ t1Idx.i() ]);
-                else return ( t0Idx, t1Idx, t2Idx ) -> ( t1_val[ t1Idx.i() ] < 0 ) ? -1 : 1;
-            };
-
     public Absolute()
     {
         super(
@@ -50,16 +42,22 @@ public final class Absolute extends AbstractOperation
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call  -> call.getDevice().getExecutor()
-                                            .threaded(
-                                                call.getTsrOfType( Number.class, 0 ).size(),
-                                                ( start, end ) ->
-                                                    Activation.activate(
-                                                            call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
-                                                            start, end,
-                                                            _activationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
+                                call  ->
+                                    call.getDevice().getExecutor()
+                                        .threaded(
+                                            call.getTsrOfType( Number.class, 0 ).size(),
+                                            Activation.newWorkloadFor(
+                                                    call,
+                                                    new Activation.Fun<>(
+                                                        x -> Math.abs(x),
+                                                        x -> ( x < 0 ) ? -1 : 1
+                                                    ),
+                                                    new Activation.Fun<>(
+                                                            x -> Math.abs(x),
+                                                            x -> ( x < 0 ) ? -1 : 1
                                                     )
                                             )
+                                        )
                             )
                 )
                 .setImplementationFor(

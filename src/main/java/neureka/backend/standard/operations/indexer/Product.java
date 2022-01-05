@@ -220,12 +220,17 @@ public final class Product extends AbstractOperation {
                                                 .getExecutor()
                                                 .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
-                                                                        start, end,
-                                                                        activationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
+                                                        Activation.newWorkloadFor(
+                                                                call,
+                                                                new Activation.Fun<>(
+                                                                        x -> x,
+                                                                        x -> x
+                                                                ),
+                                                                new Activation.Fun<>(
+                                                                        x -> x,
+                                                                        x -> x
                                                                 )
+                                                        )
                                                 )
                             )
                 )
