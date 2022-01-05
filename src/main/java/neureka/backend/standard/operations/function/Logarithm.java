@@ -15,14 +15,6 @@ import org.jetbrains.annotations.Contract;
 
 public final class Logarithm extends AbstractOperation
 {
-
-    private final DefaultOperatorCreator<TertiaryF64NDFun> _creator =
-            ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.log(t1_val[ t1Idx.i() ]);
-                else return ( t0Idx, t1Idx, t2Idx ) -> 1.0/(t1_val[ t1Idx.i() ]);
-            };
-
     public Logarithm()
     {
         super (
@@ -51,16 +43,22 @@ public final class Logarithm extends AbstractOperation
                             .withArity(3)
                             .andImplementation(
                                 call  ->
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Activation.activate (
-                                                                   call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
-                                                                   start, end,
-                                                                   _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
+                                    call.getDevice()
+                                        .getExecutor()
+                                        .threaded(
+                                            call.getTsrOfType( Number.class, 0 ).size(),
+                                            Activation.newWorkloadFor(
+                                                call,
+                                                new Activation.Fun<>(
+                                                        x -> Math.log(x),
+                                                        x -> 1d / x
+                                                ),
+                                                new Activation.Fun<>(
+                                                        x -> (float) Math.log(x),
+                                                        x -> 1f / x
                                                 )
+                                            )
+                                        )
                             )
                 )
                 .setImplementationFor(
