@@ -31,21 +31,6 @@ public final class Gaussian extends AbstractOperation
                         .setIsInline(         false     )
         );
 
-        DefaultOperatorCreator<TertiaryF64NDFun> activationCreator =
-                ( inputs, d ) ->
-                {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    if ( d < 0 ) {
-                        return ( t0Idx, t1Idx, t2Idx ) -> Math.pow(Math.E, -Math.pow(t1_val[ t1Idx.i() ], 2));
-                    } else {
-                        return ( t0Idx, t1Idx, t2Idx ) -> {
-                            double input = t1_val[ t1Idx.i() ];
-                            return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
-                        };
-
-                    }
-                };
-
         Activation operationAlgorithm = new Activation()
             .setCanPerformBackwardADFor( call -> true )
             .setCanPerformForwardADFor(
@@ -64,80 +49,86 @@ public final class Gaussian extends AbstractOperation
             )
         .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
         .setCallPreparation(
-                call -> {
-                        Tsr[] tsrs = call.getTensors();
-                        Device device = call.getDevice();
-                        if ( tsrs[ 0 ] == null ) // Creating a new tensor:
-                        {
-                            int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr output = Tsr.of( shp, 0.0 );
-                        output.setIsVirtual( false );
-                        try {
-                            device.store( output );
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
-                        }
-                        return call;
-                    }
-            )
-            .buildFunAlgorithm();
+            call -> {
+                Tsr<?>[] tsrs = call.getTensors();
+                Device device = call.getDevice();
+                if ( tsrs[ 0 ] == null ) // Creating a new tensor:
+                {
+                    int[] shp = tsrs[ 1 ].getNDConf().shape();
+                Tsr<?> output = Tsr.of( shp, 0.0 );
+                output.setIsVirtual( false );
+                try {
+                    device.store( output );
+                } catch( Exception e ) {
+                    e.printStackTrace();
+                }
+                tsrs[ 0 ] = output;
+                }
+                return call;
+            }
+        )
+        .buildFunAlgorithm();
 
         setAlgorithm(
-                Activation.class,
-                operationAlgorithm.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(3)
-                            .andImplementation(
-                                call  ->
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
-                                                                        start, end,
-                                                                        activationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                )
-                            )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation
-                                .compiler()
-                                .arity( 3 )
-                                .kernelSource( operationAlgorithm.getKernelSource() )
-                                .activationSource(
-                                        "output =\n" +
-                                                "    (float)pow(\n" +
-                                                "        (float)M_E,\n" +
-                                                "        -(float)pow(\n" +
-                                                "            (float)input,\n" +
-                                                "            (float)2\n" +
-                                                "        )\n" +
-                                                "    );\n"
+            Activation.class,
+            operationAlgorithm.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(3)
+                    .andImplementation(
+                        call  ->
+                            call.getDevice()
+                                .getExecutor()
+                                .threaded(
+                                    call.getTsrOfType( Number.class, 0 ).size(),
+                                    Activation.newWorkloadFor(
+                                        call,
+                                        new Activation.Fun<>(
+                                            x -> Math.pow(Math.E, -Math.pow(x, 2)),
+                                            x -> -2 * x * Math.pow(Math.E, -Math.pow(x, 2))
+                                        ),
+                                        new Activation.Fun<>(
+                                            x -> (float) Math.pow(Math.E, -Math.pow(x, 2)),
+                                            x -> (float) (-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
+                                        )
+                                    )
                                 )
-                                .differentiationSource(
-                                        "output = 1 / (1 + (float)pow((float)M_E, -input));\n"
-                                )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
+                    )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation
+                    .compiler()
+                    .arity( 3 )
+                    .kernelSource( operationAlgorithm.getKernelSource() )
+                    .activationSource(
+                        "output =\n" +
+                                "    (float)pow(\n" +
+                                "        (float)M_E,\n" +
+                                "        -(float)pow(\n" +
+                                "            (float)input,\n" +
+                                "            (float)2\n" +
+                                "        )\n" +
+                                "    );\n"
+                    )
+                    .differentiationSource(
+                        "output = 1 / (1 + (float)pow((float)M_E, -input));\n"
+                    )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                            call.getDevice().getKernel(call)
+                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                    .call( gwz );
+                        }
+                    )
+                    .build()
+            )
         );
     }
 

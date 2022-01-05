@@ -7,6 +7,7 @@ import neureka.backend.api.PrimitiveFun;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.calculus.CalcUtil;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
@@ -67,6 +68,9 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
             Fun<PrimitiveFun.PrimaryF32> funF32
     ) {
         Class<?> typeClass = call.getTensors()[0].getValueClass();
+        Class<?> rightTypeClass = call.getTensors()[1].getValueClass();
+        boolean rightIsOutsourced = call.getTensors()[1].isOutsourced();
+
         Tsr<?> t0_drn = call.getTensors()[0];
         Tsr<?> t1_src = call.getTensors()[1];
 
@@ -74,25 +78,51 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
 
         CPU.RangeWorkload workload = null;
 
-        if ( typeClass == Double.class ) {
-            PrimitiveFun.PrimaryF64 fun = funF64.get(d);
-            double[] t0_value = (double[]) t0_drn.getData();
-            double[] t1_value = (double[]) t1_src.getData();
-            workload = (i, end) -> {
-                NDIterator t0Idx = NDIterator.of( t0_drn );
-                NDIterator t1Idx = NDIterator.of( t1_src );
-                t0Idx.set( t0_drn.IndicesOfIndex( i ) );
-                t1Idx.set( t0_drn.IndicesOfIndex( i ) );
-                while ( i < end ) { // increment on drain accordingly:
-                    //setInto _value in drn:
-                    t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);
-                    //increment on drain:
-                    t0Idx.increment();
-                    t1Idx.increment();
-                    i++;
-                }
-            };
-        } else if ( typeClass == Float.class ) {
+        if ( typeClass == Double.class )
+        {
+            if ( rightTypeClass == Integer.class )
+            {
+                PrimitiveFun.PrimaryF64 fun = funF64.get(d);
+                double[] t0_value = (double[]) t0_drn.getData();
+                int[] t1_value = (int[]) t1_src.getData();
+                workload = (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of(t0_drn);
+                    NDIterator t1Idx = NDIterator.of(t1_src);
+                    t0Idx.set(t0_drn.IndicesOfIndex(i));
+                    t1Idx.set(t0_drn.IndicesOfIndex(i));
+                    while (i < end) { // increment on drain accordingly:
+                        //setInto _value in drn:
+                        t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);
+                        //increment on drain:
+                        t0Idx.increment();
+                        t1Idx.increment();
+                        i++;
+                    }
+                };
+            }
+            else
+            {
+                PrimitiveFun.PrimaryF64 fun = funF64.get(d);
+                double[] t0_value = (double[]) t0_drn.getData();
+                double[] t1_value = t1_src.getDataAs(double[].class);
+                workload = (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of(t0_drn);
+                    NDIterator t1Idx = NDIterator.of(t1_src);
+                    t0Idx.set(t0_drn.IndicesOfIndex(i));
+                    t1Idx.set(t0_drn.IndicesOfIndex(i));
+                    while (i < end) { // increment on drain accordingly:
+                        //setInto _value in drn:
+                        t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);
+                        //increment on drain:
+                        t0Idx.increment();
+                        t1Idx.increment();
+                        i++;
+                    }
+                };
+            }
+        }
+        else if ( typeClass == Float.class )
+        {
             PrimitiveFun.PrimaryF32 fun = funF32.get(d);
             float[] t0_value = (float[]) t0_drn.getData();
             float[] t1_value = (float[]) t1_src.getData();
@@ -112,29 +142,13 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
             };
         }
 
-        return workload;
-    }
-
-    @Contract(pure = true)
-    public static void activate(
-            Tsr<?> t0_drn, Tsr<?> t1_src,
-            int i, int end,
-            Operation.TertiaryF64NDFun operation
-    ) {
-        NDIterator t0Idx = NDIterator.of( t0_drn );
-        NDIterator t1Idx = NDIterator.of( t1_src );
-        t0Idx.set( t0_drn.IndicesOfIndex( i ) );
-        t1Idx.set( t0_drn.IndicesOfIndex( i ) );
-
-        double[] t0_value = (double[]) t0_drn.getData();
-        while ( i < end ) { // increment on drain accordingly:
-            //setInto _value in drn:
-            t0_value[t0Idx.i()] = operation.execute(null, t1Idx, null);
-            //increment on drain:
-            t0Idx.increment();
-            t1Idx.increment();
-            i++;
+        if ( workload == null ) {
+            throw new IllegalArgumentException(
+                "Operand types '"+typeClass.getSimpleName()+"' and '"+rightTypeClass.getSimpleName()+"'."
+            );
         }
+
+        return workload;
     }
 
     public static class Fun<T> {

@@ -33,13 +33,6 @@ public final class Identity extends AbstractOperation
                         .setIsInline(         false    )
         );
 
-        DefaultOperatorCreator<TertiaryF64NDFun> activationCreator =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
-                    else return ( t0Idx, t1Idx, t2Idx ) -> 1;
-                };
-
         Activation operationAlgorithm = new Activation()
         .setCanPerformBackwardADFor( call -> true )
         .setCanPerformForwardADFor(
@@ -77,16 +70,22 @@ public final class Identity extends AbstractOperation
                             .withArity(2)
                             .andImplementation(
                                 call  ->
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
-                                                                        start, end,
-                                                                        activationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
+                                    call.getDevice()
+                                        .getExecutor()
+                                        .threaded(
+                                            call.getTsrOfType( Number.class, 0 ).size(),
+                                            Activation.newWorkloadFor(
+                                                call,
+                                                new Activation.Fun<>(
+                                                        x -> x,
+                                                        x -> 1
+                                                ),
+                                                new Activation.Fun<>(
+                                                        x -> x,
+                                                        x -> 1
                                                 )
+                                            )
+                                        )
                             )
                 )
                 .setImplementationFor(
