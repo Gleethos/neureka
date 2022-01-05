@@ -28,7 +28,7 @@ import java.util.stream.IntStream;
 public class Power extends AbstractOperation
 {
 
-    private final static DefaultOperatorCreator<TertiaryNDIConsumer> _creator = ( inputs, d )->
+    private final static DefaultOperatorCreator<TertiaryF64NDFun> _creator = (inputs, d )->
     {
         double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
         double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
@@ -67,7 +67,7 @@ public class Power extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<SecondaryNDIConsumer> operationCreator = ( inputs, d )->
+        DefaultOperatorCreator<SecondaryF64NDFun> operationCreator = (inputs, d )->
         {
             double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
             double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
@@ -317,7 +317,7 @@ public class Power extends AbstractOperation
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
+        ScalarOperatorCreator<PrimaryF64NDFun> scalarCreator =
                 ( inputs, value, d ) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return t1Idx -> Math.pow(t1_val[ t1Idx.i() ], value);

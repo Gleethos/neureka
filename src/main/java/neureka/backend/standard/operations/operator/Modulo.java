@@ -39,7 +39,7 @@ public class Modulo extends AbstractOperation {
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<SecondaryNDIConsumer> operationCreator =
+        DefaultOperatorCreator<SecondaryF64NDFun> operationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
@@ -120,7 +120,7 @@ public class Modulo extends AbstractOperation {
         //________________
         // BROADCASTING :
 
-        DefaultOperatorCreator<TertiaryNDIConsumer> creator =
+        DefaultOperatorCreator<TertiaryF64NDFun> creator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
@@ -230,7 +230,7 @@ public class Modulo extends AbstractOperation {
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
+        ScalarOperatorCreator<PrimaryF64NDFun> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 )

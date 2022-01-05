@@ -17,7 +17,6 @@ import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class Addition extends AbstractOperation {
 
-    private static final DefaultOperatorCreator<TertiaryNDIConsumer> _broadcastCreator =
+    private static final DefaultOperatorCreator<TertiaryF64NDFun> _broadcastCreator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                 double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
@@ -85,7 +84,7 @@ public class Addition extends AbstractOperation {
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<SecondaryNDIConsumer> operationCreator =
+        DefaultOperatorCreator<SecondaryF64NDFun> operationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
@@ -205,7 +204,7 @@ public class Addition extends AbstractOperation {
                                             .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
                                             .buildFunAlgorithm();
 
-        ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
+        ScalarOperatorCreator<PrimaryF64NDFun> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] + value;

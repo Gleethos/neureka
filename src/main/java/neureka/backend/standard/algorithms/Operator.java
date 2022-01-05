@@ -60,7 +60,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
     public static void operate(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int d, int i, int end,
-            Operation.SecondaryNDIConsumer operation
+            Operation.SecondaryF64NDFun operation
     ) {
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
             ( (double[]) t0_drn.getData() )[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) );

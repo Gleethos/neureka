@@ -33,7 +33,7 @@ public final class Identity extends AbstractOperation
                         .setIsInline(         false    )
         );
 
-        DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
+        DefaultOperatorCreator<TertiaryF64NDFun> activationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
@@ -115,7 +115,7 @@ public final class Identity extends AbstractOperation
                 )
         );
 
-        ScalarOperatorCreator<PrimaryNDIConsumer> scalarizationCreator =
+        ScalarOperatorCreator<PrimaryF64NDFun> scalarizationCreator =
                 (inputs, value, d) -> {
                     if ( d < 0 ) return t1Idx -> value;
                     else return t1Idx -> value;

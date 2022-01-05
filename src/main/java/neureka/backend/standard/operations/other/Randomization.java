@@ -32,7 +32,7 @@ public class Randomization extends AbstractOperation
                         .setIsInline(         true      )
         );
 
-        ScalarOperatorCreator< PrimaryNDIConsumer > creator =
+        ScalarOperatorCreator<PrimaryF64NDFun> creator =
                 ( inputs, value, d ) -> t1Idx -> {
                     int sum = 0;
                     int[] indices = t1Idx.get();

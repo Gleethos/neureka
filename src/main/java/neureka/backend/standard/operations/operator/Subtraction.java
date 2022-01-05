@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class Subtraction extends AbstractOperation
 {
-    private static final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+    private static final DefaultOperatorCreator<TertiaryF64NDFun> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                 double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
@@ -58,7 +58,7 @@ public class Subtraction extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<SecondaryNDIConsumer> operationCreator =
+        DefaultOperatorCreator<SecondaryF64NDFun> operationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
@@ -130,7 +130,7 @@ public class Subtraction extends AbstractOperation
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        ScalarOperatorCreator<PrimaryNDIConsumer> scalarOperatorCreator =
+        ScalarOperatorCreator<PrimaryF64NDFun> scalarOperatorCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] - value;

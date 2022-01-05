@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Contract;
 public final class Quadratic extends AbstractOperation
 {
 
-    private final DefaultOperatorCreator<TertiaryNDIConsumer> _creatorNDI =
+    private final DefaultOperatorCreator<TertiaryF64NDFun> _creatorNDI =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                 if ( d < 0 ) {

@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class Multiplication extends AbstractOperation
 {
 
-    private static final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+    private static final DefaultOperatorCreator<TertiaryF64NDFun> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                 double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
@@ -36,21 +36,13 @@ public class Multiplication extends AbstractOperation
                 else return ( t0Idx, t1Idx, t2Idx ) -> (d == 0 ? t2_val[t2Idx.i()] : t1_val[ t1Idx.i() ]);
             };
 
-    public static DefaultOperatorCreator<TertiaryNDIConsumer> xBCCreator =
+    public static DefaultOperatorCreator<TertiaryF64NDFun> xBCCreator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                 double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
                 return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
             };
 
-    public static DefaultOperatorCreator<TertiaryNDAConsumer> xBCCreatorX =
-            ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] * t2_val[ndc2.indexOfIndices(t2Idx)];
-            };
 
     public Multiplication()
     {
@@ -68,7 +60,7 @@ public class Multiplication extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<SecondaryNDIConsumer> defaultOperatorcreator =
+        DefaultOperatorCreator<SecondaryF64NDFun> defaultOperatorcreator =
                 ( inputs, d ) -> {
                     inputs[ 1 ].setIsVirtual( false );
                     inputs[ 2 ].setIsVirtual( false );
@@ -222,7 +214,7 @@ public class Multiplication extends AbstractOperation
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        ScalarOperatorCreator<PrimaryNDIConsumer> scalarOperatorCreator =
+        ScalarOperatorCreator<PrimaryF64NDFun> scalarOperatorCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] * value;

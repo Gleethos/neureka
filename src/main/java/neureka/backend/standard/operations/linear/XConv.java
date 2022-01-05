@@ -27,7 +27,7 @@ public class XConv extends AbstractOperation
                         .setIsInline(         false       )
         );
 
-        DefaultOperatorCreator<TertiaryNDIConsumer> convolutionNDICreator =
+        DefaultOperatorCreator<TertiaryF64NDFun> convolutionNDICreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     double[] t2_val = inputs[ 2 ].getDataAs( double[].class );

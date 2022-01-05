@@ -40,7 +40,7 @@ public final class Summation extends AbstractOperation
         //________________
         // BROADCASTING :
 
-        DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+        DefaultOperatorCreator<TertiaryF64NDFun> _creator =
                 ( inputs, d ) ->
                 {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
@@ -129,7 +129,7 @@ public final class Summation extends AbstractOperation
         //______________
         // ACTIVATION :
 
-        DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
+        DefaultOperatorCreator<TertiaryF64NDFun> activationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];

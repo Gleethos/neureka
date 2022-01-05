@@ -7,7 +7,6 @@ import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
-import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
@@ -62,7 +61,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
     public static void scalarize (
             Tsr<?> t0_drn, Tsr<?> src,
             int i, int end,
-            Operation.PrimaryNDIConsumer operation
+            Operation.PrimaryF64NDFun operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator srcIdx = NDIterator.of( src );

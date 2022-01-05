@@ -1,6 +1,5 @@
 package neureka.backend.standard.operations.function;
 
-import neureka.Neureka;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -17,17 +16,11 @@ import org.jetbrains.annotations.Contract;
 public final class Absolute extends AbstractOperation
 {
 
-    private final DefaultOperatorCreator<TertiaryNDIConsumer> _activationCreator =
+    private final DefaultOperatorCreator<TertiaryF64NDFun> _activationCreator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.abs(t1_val[ t1Idx.i() ]);
                 else return ( t0Idx, t1Idx, t2Idx ) -> ( t1_val[ t1Idx.i() ] < 0 ) ? -1 : 1;
-            };
-    private final DefaultOperatorCreator<TertiaryNDAConsumer> _activationXCreator =
-            ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.abs(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]);
-                else return ( t0Idx, t1Idx, t2Idx ) -> ( t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] < 0 ) ? -1 : 1;
             };
 
     public Absolute()

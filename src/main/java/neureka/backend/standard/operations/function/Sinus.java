@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Contract;
 public final class Sinus extends AbstractOperation
 {
 
-    private final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+    private final DefaultOperatorCreator<TertiaryF64NDFun> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.sin(t1_val[ t1Idx.i() ]);

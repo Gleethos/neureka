@@ -64,7 +64,7 @@ public class CopyLeft extends AbstractOperation {
                 )
                 .buildFunAlgorithm();
 
-        ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
+        ScalarOperatorCreator<PrimaryF64NDFun> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] = value;

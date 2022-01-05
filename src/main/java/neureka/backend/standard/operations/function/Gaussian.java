@@ -1,6 +1,5 @@
 package neureka.backend.standard.operations.function;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
@@ -32,7 +31,7 @@ public final class Gaussian extends AbstractOperation
                         .setIsInline(         false     )
         );
 
-        DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
+        DefaultOperatorCreator<TertiaryF64NDFun> activationCreator =
                 ( inputs, d ) ->
                 {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
@@ -41,21 +40,6 @@ public final class Gaussian extends AbstractOperation
                     } else {
                         return ( t0Idx, t1Idx, t2Idx ) -> {
                             double input = t1_val[ t1Idx.i() ];
-                            return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
-                        };
-
-                    }
-                };
-
-        DefaultOperatorCreator<TertiaryNDAConsumer> activationXCreator =
-                ( inputs, d ) ->
-                {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    if ( d < 0 ) {
-                        return ( t0Idx, t1Idx, t2Idx ) -> Math.pow(Math.E, -Math.pow(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )], 2));
-                    } else {
-                        return ( t0Idx, t1Idx, t2Idx ) -> {
-                            double input = t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
                             return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
                         };
 

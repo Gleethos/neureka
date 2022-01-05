@@ -29,7 +29,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
     public static void convolve (
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int d, int i, int end,
-            Operation.TertiaryNDIConsumer operation
+            Operation.TertiaryF64NDFun operation
     ) {
         if ( d < 0 ) _convolve(t0_drn, t1_src, t2_src, i, end, operation);
         else _deConvolve(t0_drn, t1_src, t2_src, i, end, operation);
@@ -39,7 +39,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
     public static void _convolve (
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int i, int end,
-            Operation.TertiaryNDIConsumer operation
+            Operation.TertiaryF64NDFun operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
@@ -109,7 +109,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
     private static void _deConvolve(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int i, int end,
-            Operation.TertiaryNDIConsumer operation
+            Operation.TertiaryF64NDFun operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );

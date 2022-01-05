@@ -65,17 +65,13 @@ public interface Operation
     static OperationBuilder builder() { return new OperationBuilder(); }
 
     @FunctionalInterface
-    interface TertiaryNDIConsumer { double execute( NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx ); }
+    interface TertiaryF64NDFun { double execute(NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx ); }
+
     @FunctionalInterface
-    interface TertiaryNDAConsumer { double execute( int[] t0Idx, int[] t1Idx, int[] t2Idx ); }
+    interface SecondaryF64NDFun { double execute(NDIterator t0Idx, NDIterator t1Idx ); }
+
     @FunctionalInterface
-    interface SecondaryNDIConsumer { double execute( NDIterator t0Idx, NDIterator t1Idx ); }
-    @FunctionalInterface
-    interface SecondaryNDAConsumer { double execute( int[] t0Idx, int[] t1Idx ); }
-    @FunctionalInterface
-    interface PrimaryNDIConsumer { double execute( NDIterator t0Idx ); }
-    @FunctionalInterface
-    interface PrimaryNDAConsumer { double execute( int[] t0Idx ); }
+    interface PrimaryF64NDFun { double execute(NDIterator t0Idx ); }
 
     //---
 

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Contract;
 
 public class Division extends AbstractOperation
 {
-    private static final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+    private static final DefaultOperatorCreator<TertiaryF64NDFun> _creator =
     ( inputs, d ) -> {
         double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
         double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
@@ -56,7 +56,7 @@ public class Division extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        final DefaultOperatorCreator<SecondaryNDIConsumer> _operationCreator =
+        final DefaultOperatorCreator<SecondaryF64NDFun> _operationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
@@ -225,7 +225,7 @@ public class Division extends AbstractOperation
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
+        ScalarOperatorCreator<PrimaryF64NDFun> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) {

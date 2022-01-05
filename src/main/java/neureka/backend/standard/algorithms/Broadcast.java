@@ -107,7 +107,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
     public static void broadcast(
             Tsr<Number> t0_drn, Tsr<Number> t1_src, Tsr<Number> t2_src,
             int d, int i, int end,
-            Operation.TertiaryNDIConsumer operation
+            Operation.TertiaryF64NDFun operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int[] t1Shp = t1_src.getNDConf().shape();
