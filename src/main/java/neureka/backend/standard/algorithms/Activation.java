@@ -88,16 +88,16 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
             Operation.TertiaryNDAConsumer operation
     ) {
         NDConfiguration ndc0 = t0_drn.getNDConf();
-        int[] t0Shp = ndc0.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+        int[] t0Shp = ndc0.shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int rank = t0Shp.length;
         int[] t0Idx = ndc0.indicesOfIndex( i );
         int[] t1Idx = new int[ rank ];
         double[] t0_value = (double[]) t0_drn.getData();
-        while ( i < end ) {//increment on drain accordingly:
+        while ( i < end ) { // increment on drain accordingly:
             System.arraycopy(t0Idx, 0, t1Idx, 0, rank);
-            //setInto _value in drn:
+            // set value in drn:
             t0_value[ ndc0.indexOfIndices(t0Idx) ] = operation.execute( t0Idx, t1Idx, null );
-            //increment on drain:
+            // increment on drain:
             NDConfiguration.Utility.increment( t0Idx, t0Shp );
             i++;
         }

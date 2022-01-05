@@ -2,10 +2,12 @@ package neureka.backend.standard.operations.linear;
 
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
+import neureka.backend.standard.operations.linear.internal.Conf;
 import neureka.backend.standard.operations.linear.internal.M32;
 import neureka.backend.standard.operations.linear.internal.M64;
 import neureka.devices.host.CPU;
 import neureka.ndim.AbstractNDArray;
+import neureka.ndim.config.NDConfiguration;
 
 public class SimpleMatMul implements ImplementationFor<CPU> {
 
@@ -37,11 +39,21 @@ public class SimpleMatMul implements ImplementationFor<CPU> {
     @Override
     public void run( ExecutionCall<CPU> call ) {
 
+        if ( !call.validate().allShare( t -> t.getNDConf().getLayout() ).isValid() )
+            throw new IllegalArgumentException(
+                    "Data layout inconsistency between provided tensors encountered. " +
+                    "All tensors must be of the same layout."
+            );
+
         if ( !call.validate().allShare(AbstractNDArray::getDataType).isValid() )
             throw new IllegalArgumentException(
                "Type inconsistency between provided tensors encountered. " +
                "All tensors must be of the same type."
             );
+
+        NDConfiguration.Layout layout = call.getTensors()[ 1 ].getNDConf().getLayout();
+
+        Conf.ROW_MAJOR = ( layout == NDConfiguration.Layout.ROW_MAJOR );
 
         int[] shapeA = call.getTensors()[ 1 ].getNDConf().shape();
         int[] shapeB = call.getTensors()[ 2 ].getNDConf().shape();
@@ -53,9 +65,8 @@ public class SimpleMatMul implements ImplementationFor<CPU> {
         int bRows = shapeB[0];
         int bCols = shapeB[1];
 
-        if ( aCols != bRows ) {
+        if ( aCols != bRows )
             throw new IllegalArgumentException("A:Rows: " + aCols + " did not match B:Columns " + bRows + ".");
-        }
 
         Class<?> type = call.getTensors()[0].getDataType().getJVMTypeClass();
         if ( type == Double.class ) {

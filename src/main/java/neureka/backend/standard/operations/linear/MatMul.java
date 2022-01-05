@@ -90,6 +90,7 @@ public class MatMul extends AbstractOperation
                                                 Class<Number> type = (Class<Number>) tensors[1].getDataType().getJVMTypeClass();
                                                 int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };
                                                 Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 );
+                                                output.getMutate().toLayout(tensors[1].getNDConf().getLayout());
                                                 output.setIsVirtual( false );
                                                 try {
                                                     device.store( output );

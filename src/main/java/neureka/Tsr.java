@@ -1483,9 +1483,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         if ( layout == this.getNDConf().getLayout() ) return;
 
         Tsr<V> transposed = this.T().clone().detach();
-        IntStream.range(0,transposed.size())
+        if ( !this.isVirtual() )
+            IntStream.range(0,transposed.size())
                     .parallel()
-                    .forEach( i -> this.setAt( i, transposed.getDataAt( i ) ) );
+                    .forEach( i -> this.setDataAt( i, transposed.getDataAt( i ) ) );
 
         NDConfiguration old = this.getNDConf();
         this._setNDConf(
