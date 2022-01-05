@@ -60,16 +60,17 @@ public final class ReLU extends AbstractOperation
                             .withArity(3)
                             .andImplementation(
                                 call  ->
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
-                                                                        start, end,
-                                                                        _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                )
+                                    call.getDevice()
+                                       .getExecutor()
+                                       .threaded(
+                                           call.getTsrOfType( Number.class, 0 ).size(),
+                                           ( start, end ) ->
+                                                   Activation.activate (
+                                                           call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
+                                                           start, end,
+                                                           _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
+                                                   )
+                                       )
                             )
                 )
                 .setImplementationFor(
