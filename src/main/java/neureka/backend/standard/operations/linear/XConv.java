@@ -1,6 +1,5 @@
 package neureka.backend.standard.operations.linear;
 
-import neureka.Neureka;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
@@ -41,19 +40,6 @@ public class XConv extends AbstractOperation
                         };
                     }
                 };
-        DefaultOperatorCreator<TertiaryNDAConsumer> convolutionCreator =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                    if ( d < 0 ) {
-                        return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] * t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
-                    } else {
-                        return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if ( d == 0 ) return t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
-                            else return t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
-                        };
-                    }
-                };
 
         Convolution convolution = ConvUtil.getConv();//.createDeconvolutionFor( this.getOperator() );
 
@@ -67,19 +53,9 @@ public class XConv extends AbstractOperation
                                     .andImplementation(
                                         call ->
                                                 call.getDevice().getExecutor()
-                                                        .threaded (
+                                                        .threaded(
                                                                 call.getTsrOfType( Number.class, 0 ).size(),
-                                                                (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                                ? ( start, end ) ->
-                                                                        Convolution.convolve (
-                                                                                call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                                call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                                convolutionCreator.create(
-                                                                                        call.getTensors(),
-                                                                                        -1//call.getValOf( Arg.DerivIdx.class )
-                                                                                )
-                                                                        )
-                                                                :  ( start, end ) ->
+                                                                ( start, end ) ->
                                                                         Convolution.convolve (
                                                                                 call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
                                                                                 call.getValOf( Arg.DerivIdx.class ), start, end,

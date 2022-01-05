@@ -55,21 +55,6 @@ public final class Product extends AbstractOperation {
                     }
                 };
 
-        DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
-                ( inputs, d ) ->
-                {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                    if ( d < 0 ) {
-                        return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] * t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
-                    } else {
-                        return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if ( d == 0 ) return t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
-                            else return t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
-                        };
-                    }
-                };
-
         Broadcast operationAlgorithm = new Broadcast(JunctionUtil::forMultiplications)
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
@@ -106,19 +91,9 @@ public final class Product extends AbstractOperation {
                             .andImplementation(
                                 call  ->
                                         call.getDevice().getExecutor()
-                                                .threaded (
+                                                .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                        ? ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ),
-                                                                        call.getTsrOfType( Number.class, 1 ),
-                                                                        call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ),
-                                                                        start, end,
-                                                                        _creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                        :  ( start, end ) ->
+                                                        ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ),
                                                                         call.getTsrOfType( Number.class, 1 ),
@@ -163,13 +138,6 @@ public final class Product extends AbstractOperation {
                     double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
                     if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
                     else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
-                };
-
-        DefaultOperatorCreator<TertiaryNDAConsumer> activationXCreator =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
-                    else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
                 };
 
         Activation activation = new Activation()
@@ -252,14 +220,7 @@ public final class Product extends AbstractOperation {
                                                 .getExecutor()
                                                 .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                        ? ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTsrOfType( Number.class, 0 ),
-                                                                        start, end,
-                                                                        activationXCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                        : ( start, end ) ->
+                                                        ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
                                                                         start, end,

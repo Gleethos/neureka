@@ -162,8 +162,6 @@ class Autograd_NN_Spec extends Specification
             boolean useIteratorBasedIndexing
     ) {
         given :
-            Neureka.get().settings().indexing().setIsUsingArrayBasedIndexing(!useIteratorBasedIndexing)
-        and :
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )

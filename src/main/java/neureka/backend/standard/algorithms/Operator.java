@@ -4,11 +4,10 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
-import neureka.calculus.RecursiveExecutor;
 import neureka.calculus.CalcUtil;
+import neureka.calculus.RecursiveExecutor;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
-import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
@@ -81,31 +80,6 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
                 t0Idx.increment();
                 t1Idx.increment();
                 t2Idx.increment();
-                i++;
-            }
-        }
-    }
-
-
-
-    @Contract(pure = true)
-    public static void operate(
-            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
-            int d, int i, int end,
-            Operation.PrimaryNDAConsumer operation
-    ) {
-        if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
-            ((double[])t0_drn.getData())[ 0 ] = operation.execute( new int[t0_drn.rank()] );
-        } else {
-            NDConfiguration ndc0 = t0_drn.getNDConf();
-            int[] t0Shp = ndc0.shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
-            int[] t0Idx = ndc0.indicesOfIndex( i );
-            double[] t0_value = (double[]) t0_drn.getData();
-            while ( i < end ) {//increment on drain accordingly:
-                //setInto _value in drn:
-                t0_value[ndc0.indexOfIndices(t0Idx)] = operation.execute( t0Idx );
-                //increment on drain:
-                NDConfiguration.Utility.increment( t0Idx, t0Shp );
                 i++;
             }
         }

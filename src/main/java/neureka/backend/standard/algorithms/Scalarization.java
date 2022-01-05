@@ -58,45 +58,27 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
         return Neureka.get().utility().readResource("kernels/scalarization_template.cl");
     }
 
-
     @Contract(pure = true)
     public static void scalarize (
-            Tsr<?> t0_drn,
+            Tsr<?> t0_drn, Tsr<?> src,
             int i, int end,
             Operation.PrimaryNDIConsumer operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
+        NDIterator srcIdx = NDIterator.of( src );
         t0Idx.set( t0_drn.IndicesOfIndex( i ) );
+        srcIdx.set( src.IndicesOfIndex( i ) );
         double[] t0_value = t0_drn.getDataAs( double[].class );
         while ( i < end ) // increment on drain accordingly:
         {
             // setInto _value in drn:
-            t0_value[ t0Idx.i() ] = operation.execute( t0Idx );
+            t0_value[ t0Idx.i() ] = operation.execute( srcIdx );
             // increment on drain:
             t0Idx.increment();
+            srcIdx.increment();
             //NDConfiguration.Utility.increment(t0Idx, t0Shp);
             i++;
         }
     }
-
-    @Contract(pure = true)
-    public static void scalarize (
-            Tsr<?> t0_drn,
-            int i, int end,
-            Operation.PrimaryNDAConsumer operation
-    ) {
-        int[] t0Shp = t0_drn.getNDConf().shape();
-        int[] t0Idx = t0_drn.IndicesOfIndex( i );
-        double[] t0_value = t0_drn.getDataAs( double[].class );
-        while ( i < end ) // increment on drain accordingly:
-        {
-            // setInto _value in drn:
-            t0_value[ t0_drn.indexOfIndices(t0Idx) ] = operation.execute( t0Idx );
-            // increment on drain:
-            NDConfiguration.Utility.increment(t0Idx, t0Shp);
-            i++;
-        }
-    }
-
 
 }

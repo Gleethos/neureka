@@ -58,7 +58,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                 double[] inputs = new double[ call.getTensors().length-1 ];
                                 call.getDevice()
                                     .getExecutor()
-                                    .threaded (
+                                    .threaded(
                                         call.getTsrOfType( Number.class, 0 ).size(),
                                         ( start, end ) -> {
                                             for ( int i = start; i < end; i++ ) {
@@ -74,7 +74,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                             {
                                 call.getDevice()
                                     .getExecutor()
-                                    .threaded (
+                                    .threaded(
                                         call.getTsrOfType( Object.class, 0 ).size(),
                                         ( start, end ) -> {
                                             for ( int i = start; i < end; i++ ) {
@@ -172,7 +172,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
         call
             .getDevice()
             .getExecutor()
-            .threaded (
+            .threaded(
                     call.getTsrOfType( Object.class, 0 ).size(),
                     ( start, end ) -> {
                         Object[] inputs = new Object[ call.getTensors().length - 1 ];

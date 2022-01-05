@@ -60,20 +60,13 @@ public final class Absolute extends AbstractOperation
                                 call  -> call.getDevice().getExecutor()
                                             .threaded(
                                                 call.getTsrOfType( Number.class, 0 ).size(),
-                                                   (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                      ? ( start, end ) ->
-                                                                Activation.activate(
-                                                                        call.getTsrOfType( Number.class, 0 ),
-                                                                        start, end,
-                                                                        _activationXCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                      : ( start, end ) ->
-                                                                Activation.activate(
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
-                                                                        start, end,
-                                                                        _activationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                )
+                                                ( start, end ) ->
+                                                    Activation.activate(
+                                                            call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
+                                                            start, end,
+                                                            _activationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
+                                                    )
+                                            )
                             )
                 )
                 .setImplementationFor(

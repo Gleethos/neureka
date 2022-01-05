@@ -16,10 +16,6 @@ Neureka.configure {
             it.isApplyingGradientWhenRequested = true
         }
 
-        indexing { 
-            it.isUsingArrayBasedIndexing = true
-        }
-
         view { 
             tensors {
                 it.rowLimit          = 50

@@ -38,12 +38,11 @@ package neureka;
 
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.Operation;
-import neureka.devices.opencl.CLContext;
-import neureka.dtype.custom.F64;
 import neureka.common.utility.Messages;
 import neureka.common.utility.SettingsLoader;
+import neureka.devices.opencl.CLContext;
+import neureka.dtype.custom.F64;
 import neureka.view.TsrStringSettings;
-import neureka.view.TsrAsString;
 import org.slf4j.Logger;
 
 import java.io.BufferedReader;
@@ -53,7 +52,6 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  *    {@link Neureka} is the key access point for thread local / global library settings ( see{@link Settings})
@@ -214,7 +212,6 @@ public final class Neureka
             settings().autograd().setIsRetainingPendingErrorForJITProp( true );
             settings().autograd().setIsApplyingGradientWhenTensorIsUsed( true );
             settings().autograd().setIsApplyingGradientWhenRequested( true );
-            settings().indexing().setIsUsingArrayBasedIndexing( true );
             settings().debug().setIsKeepingDerivativeTargetPayloads( false );
         }
     }
@@ -240,7 +237,6 @@ public final class Neureka
     {
         private final Debug    _debug;
         private final AutoGrad _autograd;
-        private final Indexing _indexing;
         private final View     _view;
         private final NDim     _ndim;
         private final DType    _dtype;
@@ -250,7 +246,6 @@ public final class Neureka
         private Settings() {
             _debug    = new Debug();
             _autograd = new AutoGrad();
-            _indexing = new Indexing();
             _view     = new View();
             _ndim     = new NDim();
             _dtype    = new DType();
@@ -279,13 +274,6 @@ public final class Neureka
         public AutoGrad autograd( Object closure ) {
             SettingsLoader.tryGroovyClosureOn( closure, _autograd );
             return _autograd;
-        }
-
-        public Indexing indexing() { return _indexing; }
-
-        public Indexing indexing( Object closure ) {
-            SettingsLoader.tryGroovyClosureOn( closure, _indexing );
-            return _indexing;
         }
 
         public View view() { return _view; }
@@ -328,7 +316,6 @@ public final class Neureka
             return "Neureka.Settings[" +
                         "debug="    + _debug    + "," +
                         "autograd=" + _autograd + "," +
-                        "indexing=" + _indexing + "," +
                         "view="     + _view     + "," +
                         "ndim="     + _ndim     + "," +
                         "dtype="    + _dtype    + "," +
@@ -499,26 +486,6 @@ public final class Neureka
             }
         }
 
-        
-        public class Indexing
-        {
-            private boolean _isUsingArrayBasedIndexing = true;
-
-            public boolean isUsingArrayBasedIndexing() { return _isUsingArrayBasedIndexing; }
-
-            public void setIsUsingArrayBasedIndexing( boolean thorough ) {
-                if ( notModifiable() ) return;
-                _isUsingArrayBasedIndexing = thorough;
-            }
-
-            public String toString() {
-                return "Neureka.Settings.Indexing[" +
-                            "isUsingArrayBasedIndexing=" + this.isUsingArrayBasedIndexing() +
-                        "]";
-            }
-        }
-
-        
         public class View
         {
             private final TsrStringSettings _settings;

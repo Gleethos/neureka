@@ -1,6 +1,5 @@
 package neureka.backend.standard.operations.operator;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
@@ -19,7 +18,6 @@ import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
@@ -37,25 +35,6 @@ public class Subtraction extends AbstractOperation
                     int sign = -((d * 2) -1);
                     // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
                     return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] + t2_val[t2Idx.i()] * sign;
-                    //return ( t0Idx, t1Idx, t2Idx ) -> {
-                    //    if (d == 0) return 1;
-                    //    else return -1;
-                    //};
-                }
-            };
-
-    private static final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
-            ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                if ( d < 0 ) {
-                    return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] - t2_val[ndc2.indexOfIndices(t2Idx)];
-                } else {
-                    int sign = -((d * 2) -1);
-                    // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
-                    return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] + t2_val[ndc2.indexOfIndices(t2Idx)] * sign;
                     //return ( t0Idx, t1Idx, t2Idx ) -> {
                     //    if (d == 0) return 1;
                     //    else return -1;
@@ -87,16 +66,6 @@ public class Subtraction extends AbstractOperation
                         return ( t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] - t2_val[t2Idx.i()];
                     } else return ( t1Idx, t2Idx ) -> ( d == 0 ? 1.0 : -1.0 );
                 };
-        DefaultOperatorCreator<PrimaryNDAConsumer> operationXCreator =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                    NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                    if ( d < 0 ) {
-                        return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] - t2_val[ndc2.indexOfIndices( t1Idx )];
-                    } else return t1Idx -> ( d == 0 ? 1.0 : -1.0 );
-                };
 
         Operator operator = new Operator(JunctionUtil::forSubtractions)
                                    .setSupplyADAgentFor(
@@ -113,19 +82,9 @@ public class Subtraction extends AbstractOperation
                             .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
-                                                .threaded (
+                                                .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                        ? ( start, end ) ->
-                                                                Operator.operate (
-                                                                        call.getTsrOfType( Number.class, 0 ),
-                                                                        call.getTsrOfType( Number.class, 1 ),
-                                                                        call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ),
-                                                                        start, end,
-                                                                        operationXCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                        : ( start, end ) ->
+                                                        ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTsrOfType( Number.class, 0 ),
                                                                         call.getTsrOfType( Number.class, 1 ),
@@ -178,14 +137,6 @@ public class Subtraction extends AbstractOperation
                     else if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
                 };
 
-        ScalarOperatorCreator<PrimaryNDAConsumer> scalarOperatorXCreator =
-                (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                    if ( d < 0 ) return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] - value;
-                    else if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
-                };
-
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setSupplyADAgentFor(
@@ -213,16 +164,9 @@ public class Subtraction extends AbstractOperation
                                         call.getDevice().getExecutor()
                                                 .threaded(
                                                         call.getTsrOfType(Number.class, 0).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                                ? (start, end) ->
+                                                        (start, end) ->
                                                                 Scalarization.scalarize(
-                                                                        call.getTsrOfType(Number.class, 0),
-                                                                        start, end,
-                                                                        scalarOperatorXCreator.create(call.getTensors(), value, -1)
-                                                                )
-                                                                : (start, end) ->
-                                                                Scalarization.scalarize(
-                                                                        call.getTsrOfType(Number.class, 0),
+                                                                        call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1),
                                                                         start, end,
                                                                         scalarOperatorCreator.create(call.getTensors(), value, -1)
                                                                 )
@@ -314,14 +258,7 @@ public class Subtraction extends AbstractOperation
                                                 .getExecutor()
                                                 .threaded(
                                                         call.getTsrOfType(Number.class, 0).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                                ? (start, end) ->
-                                                                    Broadcast.broadcast(
-                                                                        call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1), call.getTsrOfType(Number.class, 2),
-                                                                        call.getValOf(Arg.DerivIdx.class), start, end,
-                                                                        _creatorX.create(call.getTensors(), call.getValOf(Arg.DerivIdx.class))
-                                                                )
-                                                                : (start, end) ->
+                                                        (start, end) ->
                                                                     Broadcast.broadcast(
                                                                         call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1), call.getTsrOfType(Number.class, 2),
                                                                         call.getValOf(Arg.DerivIdx.class), start, end,

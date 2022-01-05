@@ -1,6 +1,5 @@
 package neureka.backend.standard.operations.function;
 
-import neureka.Neureka;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -23,14 +22,6 @@ public final class Sigmoid extends AbstractOperation
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> calculate( t1_val[ t1Idx.i() ], false );
                 else return ( t0Idx, t1Idx, t2Idx ) ->  calculate( t1_val[ t1Idx.i() ], true );
             };
-
-    private final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
-            ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> calculate( t1_val[inputs[ 1 ].indexOfIndices( t1Idx )], false );
-                else return ( t0Idx, t1Idx, t2Idx ) ->  calculate( t1_val[inputs[ 1 ].indexOfIndices( t1Idx )], true );
-            };
-
 
     public Sigmoid()
     {
@@ -62,16 +53,9 @@ public final class Sigmoid extends AbstractOperation
                             .andImplementation(
                                 call  ->
                                         call.getDevice().getExecutor()
-                                                .threaded (
+                                                .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                        ? ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTsrOfType( Number.class, 0 ),
-                                                                        start, end,
-                                                                        _creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                        : ( start, end ) ->
+                                                        ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
                                                                         start, end,

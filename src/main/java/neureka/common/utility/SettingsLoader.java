@@ -73,7 +73,6 @@ public class SettingsLoader
                     .checkAndAssign("autograd.isRetainingPendingErrorForJITProp"   , Boolean.class, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)                  )//~= true
                     .checkAndAssign("autograd.isApplyingGradientWhenTensorIsUsed"  , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)                 )//~= true
                     .checkAndAssign("autograd.isApplyingGradientWhenRequested"     , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenRequested(v)                    )//~= true
-                    .checkAndAssign("indexing.isUsingArrayBasedIndexing"           , Boolean.class, v -> s.indexing().setIsUsingArrayBasedIndexing(v)                               )//~= false
                     .checkAndAssign("view.tensors.HAVE_ROW_LIMIT_OF"    , Integer.class, v -> s.view().getTensorSettings().setRowLimit(v)                              )//~= 50,
                     .checkAndAssign("view.tensors.BE_COMPACT"           , Boolean.class, v -> s.view().getTensorSettings().setIsScientific(v)                              )//~= true,
                     .checkAndAssign("view.tensors.BE_FORMATTED"         , Boolean.class, v -> s.view().getTensorSettings().setIsMultiline(v)                        )//~= true,

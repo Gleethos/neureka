@@ -40,13 +40,6 @@ public final class Identity extends AbstractOperation
                     else return ( t0Idx, t1Idx, t2Idx ) -> 1;
                 };
 
-        DefaultOperatorCreator<TertiaryNDAConsumer> activationXCreator =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
-                    else return ( t0Idx, t1Idx, t2Idx ) -> 1;
-                };
-
         Activation operationAlgorithm = new Activation()
         .setCanPerformBackwardADFor( call -> true )
         .setCanPerformForwardADFor(
@@ -85,16 +78,9 @@ public final class Identity extends AbstractOperation
                             .andImplementation(
                                 call  ->
                                         call.getDevice().getExecutor()
-                                                .threaded (
+                                                .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                        ? ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTsrOfType( Number.class, 0 ),
-                                                                        start, end,
-                                                                        activationXCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                        : ( start, end ) ->
+                                                        ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
                                                                         start, end,
@@ -183,11 +169,12 @@ public final class Identity extends AbstractOperation
                                     int offset = ( call.getTensors().length > 2 ) ? 1 : 0;
                                     double value = call.getTsrOfType( Number.class, 1 + offset ).getDataAs( double[].class )[ 0 ];
                                         call.getDevice().getExecutor()
-                                                .threaded (
+                                                .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
                                                         (start, end) ->
                                                                 Scalarization.scalarize(
-                                                                        call.getTsrOfType( Number.class, 0 ), start, end,
+                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
+                                                                        start, end,
                                                                         scalarizationCreator.create(
                                                                                 call.getTensors(), value, call.getValOf( Arg.DerivIdx.class )
                                                                         )

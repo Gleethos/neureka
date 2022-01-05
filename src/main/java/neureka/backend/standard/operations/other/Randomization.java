@@ -42,15 +42,6 @@ public class Randomization extends AbstractOperation
                     return dice.nextGaussian();
                 };
 
-        ScalarOperatorCreator<PrimaryNDAConsumer> creatorX =
-                ( inputs, value, d ) -> t1Idx -> {
-                    int sum = 0;
-                    for ( int indices : t1Idx ) sum += indices;
-                    Random dice = new Random();
-                    dice.setSeed( Double.doubleToLongBits( value + sum ) );
-                    return dice.nextGaussian();
-                };
-
         Scalarization scalarization = new Scalarization()
         .setCanPerformBackwardADFor( call -> true )
         .setCanPerformForwardADFor(
@@ -88,23 +79,12 @@ public class Randomization extends AbstractOperation
                             .withArity(3)
                             .andImplementation(
                                 call -> call.getDevice().getExecutor()
-                                        .threaded (
+                                        .threaded(
                                                 call.getTsrOfType( Number.class, 0 ).size(),
-                                                (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                ? ( start, end ) ->
+                                                ( start, end ) ->
                                                         Scalarization.scalarize (
-                                                                call.getTsrOfType( Number.class, 0 ),
+                                                            call.getTsrOfType( Number.class, 0 ),  call.getTsrOfType( Number.class, 1 ),
                                                                 start, end,
-                                                                creatorX.create(
-                                                                        call.getTensors(),
-                                                                        call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ],
-                                                                        call.getValOf( Arg.DerivIdx.class )
-                                                                )
-                                                        )
-                                                : ( start, end ) ->
-                                                        Scalarization.scalarize (
-                                                            call.getTsrOfType( Number.class, 0 ),
-                                                            start, end,
                                                             creator.create(
                                                                     call.getTensors(),
                                                                     call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ],

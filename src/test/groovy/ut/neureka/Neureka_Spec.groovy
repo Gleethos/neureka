@@ -134,7 +134,6 @@ class Neureka_Spec extends Specification
             true  | { Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}  | { Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}
             true  | { Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()} | { Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}
             true  | { Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}    | { Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}
-            true  | { Neureka.Settings it -> it.indexing().isUsingArrayBasedIndexing()}          | { Neureka.Settings s, v -> s.indexing().setIsUsingArrayBasedIndexing(v)}
     }
 
 
@@ -177,7 +176,6 @@ class Neureka_Spec extends Specification
                     new JITProp<>([] as Set),
                     Neureka.get(),
                     Neureka.get().settings(),
-                    Neureka.get().settings().indexing(),
                     Neureka.get().settings().autograd(),
                     Neureka.get().settings().debug(),
                     Neureka.get().settings().dtype(),

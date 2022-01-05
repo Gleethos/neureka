@@ -19,7 +19,6 @@ import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 public class Modulo extends AbstractOperation {
@@ -55,23 +54,6 @@ public class Modulo extends AbstractOperation {
                         };
                     }
                 };
-        DefaultOperatorCreator<PrimaryNDAConsumer> operationXCreator =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                    NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                    if ( d < 0 ) return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] % t2_val[ndc2.indexOfIndices( t1Idx )];
-                    else {
-                        return t1Idx -> {
-                            if ( d == 0 ) {
-                                return 1 / t2_val[ndc2.indexOfIndices( t1Idx )];
-                            } else {
-                                return -(t1_val[ndc1.indexOfIndices( t1Idx )] / Math.pow(t2_val[ndc2.indexOfIndices( t1Idx )], 2));
-                            }
-                        };
-                    }
-                };
 
         Operator operator = new Operator(JunctionUtil::forDivisionsOrModuli)
                    .setSupplyADAgentFor(
@@ -89,19 +71,9 @@ public class Modulo extends AbstractOperation {
                             .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
-                                                .threaded (
+                                                .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                        ? ( start, end ) ->
-                                                                Operator.operate (
-                                                                        call.getTsrOfType( Number.class, 0 ),
-                                                                        call.getTsrOfType( Number.class, 1 ),
-                                                                        call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ),
-                                                                        start, end,
-                                                                        operationXCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                        : ( start, end ) ->
+                                                        ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTsrOfType( Number.class, 0 ),
                                                                         call.getTsrOfType( Number.class, 1 ),
@@ -168,24 +140,6 @@ public class Modulo extends AbstractOperation {
                     }
                 };
 
-        DefaultOperatorCreator<TertiaryNDAConsumer> creatorX =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                    NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                    if ( d < 0 ) {
-                        return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ ndc1.indexOfIndices( t1Idx ) ] % t2_val[ ndc2.indexOfIndices(t2Idx) ];
-                    } else {
-                        return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if ( d == 0 )
-                                return 1 / t2_val[ ndc2.indexOfIndices( t2Idx ) ];
-                            else
-                                return -( t1_val[ ndc1.indexOfIndices( t1Idx ) ] / Math.pow(t2_val[ ndc2.indexOfIndices( t2Idx ) ], 2) );
-                        };
-                    }
-                };
-
         Broadcast broadcast = new Broadcast((executionCall, executor) -> null)
             .setCanPerformBackwardADFor( call -> true )
             .setCanPerformForwardADFor(
@@ -231,16 +185,9 @@ public class Modulo extends AbstractOperation {
                             .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
-                                                .threaded (
+                                                .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                        ? ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                        creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                        : ( start, end ) ->
+                                                        ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
                                                                         call.getValOf( Arg.DerivIdx.class ), start, end,
@@ -294,18 +241,6 @@ public class Modulo extends AbstractOperation {
                     }
                 };
 
-        ScalarOperatorCreator<PrimaryNDAConsumer> scalarXCreator =
-                (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                    if ( d < 0 )
-                        return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] % value;
-                    else {
-                        if ( d == 0 ) return t1Idx -> 1 / value;
-                        else return t1Idx -> - value / Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], 2);
-                    }
-                };
-
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
             .setCanPerformBackwardADFor( call -> true )
@@ -336,18 +271,11 @@ public class Modulo extends AbstractOperation {
                                 call -> {
                                     double value = call.getTsrOfType( Number.class, 2 ).getDataAs( double[].class )[ 0 ];
                                     call.getDevice().getExecutor()
-                                            .threaded (
+                                            .threaded(
                                                     call.getTsrOfType( Number.class, 0 ).size(),
-                                                    (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                    ? ( start, end ) ->
+                                                    ( start, end ) ->
                                                             Scalarization.scalarize (
-                                                                    call.getTsrOfType( Number.class, 0 ),
-                                                                    start, end,
-                                                                    scalarXCreator.create(call.getTensors(), value, -1)
-                                                            )
-                                                    : ( start, end ) ->
-                                                            Scalarization.scalarize (
-                                                                    call.getTsrOfType( Number.class, 0 ),
+                                                                    call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
                                                                     start, end,
                                                                     scalarCreator.create(call.getTensors(), value, -1)
                                                             )

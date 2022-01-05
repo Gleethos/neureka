@@ -1,6 +1,5 @@
 package neureka.backend.standard.operations.operator;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
@@ -33,17 +32,6 @@ public class Addition extends AbstractOperation {
                 // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
                 return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] + t2_val[t2Idx.i()];
             };
-
-    private static final DefaultOperatorCreator<TertiaryNDAConsumer> _broadcastCreatorX =
-            ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
-                return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] + t2_val[ndc2.indexOfIndices(t2Idx)];
-            };
-
 
     private final Broadcast _broadcast = new Broadcast((executionCall, executor) -> null)
                                                     .setCanPerformBackwardADFor( call -> true )
@@ -105,16 +93,6 @@ public class Addition extends AbstractOperation {
                     else return ( t1Idx, t2Idx ) -> 1.0;
                 };
 
-        DefaultOperatorCreator<PrimaryNDAConsumer> operationXCreator =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                    NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                    if ( d < 0 ) return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] + t2_val[ndc2.indexOfIndices( t1Idx )];
-                    else return t1Idx -> 1.0;
-                };
-
         Operator operator = new Operator(JunctionUtil::forAdditions)
                                     .setSupplyADAgentFor( getDefaultAlgorithm() )
                                     .buildFunAlgorithm();
@@ -129,19 +107,9 @@ public class Addition extends AbstractOperation {
                                         call ->
                                                 call.getDevice()
                                                         .getExecutor()
-                                                        .threaded (
+                                                        .threaded(
                                                                 call.getTsrOfType( Number.class, 0 ).size(),
-                                                                (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                                ? ( start, end ) ->
-                                                                        Operator.operate (
-                                                                                call.getTsrOfType( Number.class, 0 ),
-                                                                                call.getTsrOfType( Number.class, 1 ),
-                                                                                call.getTsrOfType( Number.class, 2 ),
-                                                                                call.getValOf( Arg.DerivIdx.class ),
-                                                                                start, end,
-                                                                                operationXCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                        )
-                                                                : ( start, end ) ->
+                                                                ( start, end ) ->
                                                                         Operator.operate (
                                                                                 call.getTsrOfType( Number.class, 0 ),
                                                                                 call.getTsrOfType( Number.class, 1 ),
@@ -194,14 +162,7 @@ public class Addition extends AbstractOperation {
                                             .getExecutor()
                                             .threaded(
                                                     call.getTsrOfType(Number.class, 0).size(),
-                                                    (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                            ? (start, end) ->
-                                                            Broadcast.broadcast(
-                                                                    call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1), call.getTsrOfType(Number.class, 2),
-                                                                    call.getValOf(Arg.DerivIdx.class), start, end,
-                                                                    _broadcastCreatorX.create(call.getTensors(), call.getValOf(Arg.DerivIdx.class))
-                                                            )
-                                                            : (start, end) ->
+                                                    (start, end) ->
                                                             Broadcast.broadcast(
                                                                     call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1), call.getTsrOfType(Number.class, 2),
                                                                     call.getValOf(Arg.DerivIdx.class), start, end,
@@ -251,16 +212,7 @@ public class Addition extends AbstractOperation {
                     else
                         return t1Idx -> 1;
                 };
-
-        ScalarOperatorCreator<PrimaryNDAConsumer> scalarXCreator =
-                (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                    if ( d < 0 ) return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] + value;
-                    else
-                        return t1Idx -> 1;
-                };
-
+ 
         setAlgorithm(
                 scalarization.setImplementationFor(
                         CPU.class,
@@ -279,16 +231,9 @@ public class Addition extends AbstractOperation {
                                                 .getExecutor()
                                                 .threaded(
                                                         call.getTsrOfType(Number.class, 0).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                                ? (start, end) ->
+                                                        (start, end) ->
                                                                 Scalarization.scalarize(
-                                                                        call.getTsrOfType(Number.class, 0),
-                                                                        start, end,
-                                                                        scalarXCreator.create(call.getTensors(), value, -1)
-                                                                )
-                                                                : (start, end) ->
-                                                                Scalarization.scalarize(
-                                                                        call.getTsrOfType(Number.class, 0),
+                                                                        call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1),
                                                                         start, end,
                                                                         scalarCreator.create(call.getTensors(), value, -1)
                                                                 )

@@ -20,7 +20,6 @@ import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.stream.Collectors;
@@ -47,27 +46,6 @@ public class Power extends AbstractOperation
                             t1_val[ t1Idx.i() ],
                             t2_val[ t2Idx.i() ]
                     ) * Math.log(t1_val[ t1Idx.i() ]);
-                }
-            };
-        }
-    };
-
-    private final static DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX = (inputs, d )->
-    {
-        double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-        double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-        NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-        NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-        if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) ->
-                Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], t2_val[ndc2.indexOfIndices(t2Idx)]);
-        else {
-            return ( t0Idx, t1Idx, t2Idx ) -> {
-                if ( d == 0 ) {
-                    double temp = t2_val[ndc2.indexOfIndices(t2Idx)];
-                    return temp * Math.pow( t1_val[ndc1.indexOfIndices( t1Idx )], temp - 1 );
-                } else {
-                    double temp = t1_val[ndc1.indexOfIndices( t1Idx )];
-                    return Math.pow( temp, t2_val[ndc2.indexOfIndices(t2Idx)] )  * Math.log(temp);
                 }
             };
         }
@@ -108,25 +86,6 @@ public class Power extends AbstractOperation
                                 t1_val[ t1Idx.i() ],
                                 t2_val[t2Idx.i()]
                             ) * Math.log(t1_val[ t1Idx.i() ]);
-                };
-            }
-        };
-
-        DefaultOperatorCreator<PrimaryNDAConsumer> operationXCreator = (inputs, d )->
-        {
-            double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-            double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-            NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-            NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-            if ( d < 0 ) return t1Idx ->
-                    Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], t2_val[ndc2.indexOfIndices( t1Idx )]);
-            else {
-                return t1Idx ->
-                {
-                    double temp1 = t1_val[ndc1.indexOfIndices( t1Idx )];
-                    double temp2 = t2_val[ndc2.indexOfIndices( t1Idx )];
-                    if ( d == 0 ) return temp2 * Math.pow( temp1, temp2 - 1 );
-                    else return Math.pow( temp1, temp2 ) * Math.log(temp1);
                 };
             }
         };
@@ -226,19 +185,9 @@ public class Power extends AbstractOperation
                             .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
-                                                .threaded (
+                                                .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                        ? ( start, end ) ->
-                                                                Operator.operate (
-                                                                        call.getTsrOfType( Number.class, 0 ),
-                                                                        call.getTsrOfType( Number.class, 1 ),
-                                                                        call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ),
-                                                                        start, end,
-                                                                        operationXCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                        : ( start, end ) ->
+                                                        ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTsrOfType( Number.class, 0 ),
                                                                         call.getTsrOfType( Number.class, 1 ),
@@ -323,16 +272,9 @@ public class Power extends AbstractOperation
                             .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
-                                                .threaded (
+                                                .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                               ? ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                        _creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                : ( start, end ) ->
+                                                        ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
                                                                         call.getValOf( Arg.DerivIdx.class ), start, end,
@@ -385,17 +327,6 @@ public class Power extends AbstractOperation
                     }
                 };
 
-        ScalarOperatorCreator<PrimaryNDAConsumer> scalarXCreator =
-                ( inputs, value, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                    if ( d < 0 ) return t1Idx -> Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], value);
-                    else {
-                        if ( d == 0 ) return t1Idx -> value*Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], value-1);
-                        else return t1Idx -> Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], value)*Math.log(value);
-                    }
-                };
-
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setCanPerformBackwardADFor( call -> true )
@@ -414,21 +345,14 @@ public class Power extends AbstractOperation
                                 call -> {
                                     double value = call.getTsrOfType( Number.class, 2 ).getDataAs( double[].class )[ 0 ];
                                     call.getDevice().getExecutor()
-                                            .threaded (
+                                            .threaded(
                                                     call.getTsrOfType( Number.class, 0 ).size(),
-                                                    (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                    ? ( start, end ) ->
-                                                            Scalarization.scalarize (
-                                                                    call.getTsrOfType( Number.class, 0 ),
-                                                                    start, end,
-                                                                    scalarXCreator.create(call.getTensors(), value, -1)
-                                                            )
-                                                    : ( start, end ) ->
-                                                    Scalarization.scalarize (
-                                                            call.getTsrOfType( Number.class, 0 ),
-                                                            start, end,
+                                                    ( start, end ) ->
+                                                        Scalarization.scalarize (
+                                                            call.getTsrOfType( Number.class, 0 ),  call.getTsrOfType( Number.class, 1 ),
+                                                                start, end,
                                                             scalarCreator.create(call.getTensors(), value, -1)
-                                                    )
+                                                        )
                                             );
                                 }
                             )

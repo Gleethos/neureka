@@ -1,6 +1,5 @@
 package neureka.backend.standard.operations.function;
 
-import neureka.Neureka;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -17,7 +16,7 @@ import org.jetbrains.annotations.Contract;
 public final class Tanh extends AbstractOperation
 {
 
-    private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+    private final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) ->
             {
                 double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
@@ -29,23 +28,6 @@ public final class Tanh extends AbstractOperation
                 } else {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
                         double input = t1_val[ t1Idx.i() ];
-                        return 1 - Math.pow(input / Math.pow(1 + Math.pow(input, 2), 0.5), 2);
-                    };
-                }
-            };
-
-    private DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
-            ( inputs, d ) ->
-            {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                if ( d < 0 ) {
-                    return ( t0Idx, t1Idx, t2Idx ) -> {
-                        double input = t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
-                        return input / Math.pow(1 + Math.pow(input, 2), 0.5);
-                    };
-                } else {
-                    return ( t0Idx, t1Idx, t2Idx ) -> {
-                        double input = t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
                         return 1 - Math.pow(input / Math.pow(1 + Math.pow(input, 2), 0.5), 2);
                     };
                 }
@@ -80,16 +62,9 @@ public final class Tanh extends AbstractOperation
                             .andImplementation(
                                 call  ->
                                         call.getDevice().getExecutor()
-                                                .threaded (
+                                                .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                        ? ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTsrOfType( Number.class, 0 ),
-                                                                        start, end,
-                                                                        _creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                        : ( start, end ) ->
+                                                        ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
                                                                         start, end,

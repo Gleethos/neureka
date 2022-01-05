@@ -85,16 +85,9 @@ public class MultiplicationRightConv extends AbstractOperation {
                             .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
-                                                .threaded (
+                                                .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                                ? ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                        Multiplication.xBCCreatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                                : ( start, end ) ->
+                                                        ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
                                                                         call.getValOf( Arg.DerivIdx.class ), start, end,
