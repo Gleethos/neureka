@@ -173,6 +173,9 @@ public class CPU extends AbstractDevice<Number>
         void execute( int start, int end );
     }
 
+    /**
+     *  Takes the provided range and divides it into multi-threaded workloads.
+     */
     public void divide(
             final int first,
             final int limit,
