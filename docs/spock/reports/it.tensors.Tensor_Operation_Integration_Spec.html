@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Dec 22 17:09:23 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Thu Jan 06 12:27:37 CET 2022 by danie</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,13 +329,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>12</td>
-<td>12</td>
+<td>13</td>
+<td>13</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>20.410 seconds</td>
+<td>6.535 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -383,6 +383,9 @@ div.footer {
 </li>
 <li>
 <a href='#-1712186838' class='feature-toc-pass'>Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance</a>
+</li>
+<li>
+<a href='#-1970396224' class='feature-toc-pass'>Activation functions work across types on slices and non sliced tensors.</a>
 </li>
 </ul>
 <tr>
@@ -1126,11 +1129,11 @@ assert ccAsStr.contains("(2x2):[0.0, 0.0, 0.0, 0.0]")</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>CPU[coreCount=32]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x16be5a4c780],platform=OpenCLPlatform@5d9b7e76[pid=cl_platform_id[0x16be5a4caf0],context=cl_context[0x16be71f5890]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x20d01241360],platform=OpenCLPlatform@6186f2da[pid=cl_platform_id[0x7ffa3f98a490],context=cl_context[0x20d7ac43ea0]kernels=[..39..]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -1203,11 +1206,11 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>CPU[coreCount=32]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x16be5a4c780],platform=OpenCLPlatform@5d9b7e76[pid=cl_platform_id[0x16be5a4caf0],context=cl_context[0x16be71f5890]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x20d01241360],platform=OpenCLPlatform@6186f2da[pid=cl_platform_id[0x7ffa3f98a490],context=cl_context[0x20d7ac43ea0]kernels=[..39..]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -1301,7 +1304,6 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <table class='ex-table'>
 <thead>
 <tr>
-<th class='ex-header'>idx</th>
 <th class='ex-header'>whichGrad</th>
 <th class='ex-header'>bShape</th>
 <th class='ex-header'>operation</th>
@@ -1313,29 +1315,26 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <tbody>
 <tr class='ex-pass'>
 <td class='ex-value'>false</td>
-<td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure6@69ca6cfa</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure6@7f1c4ae4</td>
 <td class='ex-value'>9.0, 10.0, 11.0, 12.0</td>
 <td class='ex-value'>5.0, -2.0, 7.0, 3.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure7@54747e34</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure7@4d5dab52</td>
 <td class='ex-value'>9.0, 10.0, 11.0, 12.0</td>
 <td class='ex-value'>5.0, -2.0, 7.0, 3.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure8@74800203</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure8@247fd58e</td>
 <td class='ex-value'>9.0, 10.0, 11.0, 12.0</td>
 <td class='ex-value'>5.0, -2.0, 7.0, 3.0</td>
 <td class='ex-value'>GPU</td>
@@ -1343,59 +1342,35 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>false</td>
-<td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure9@69b6dead</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure9@317767</td>
 <td class='ex-value'>8.0, 16.0, 24.0, 32.0</td>
 <td class='ex-value'>40.0, -16.0, 56.0, 24.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure10@49552c05</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure10@508ce262</td>
 <td class='ex-value'>8.0, 16.0, 24.0, 32.0</td>
 <td class='ex-value'>40.0, -16.0, 56.0, 24.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure11@5c081c7d</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure11@2ea8356f</td>
 <td class='ex-value'>8.0, 16.0, 24.0, 32.0</td>
 <td class='ex-value'>40.0, -16.0, 56.0, 24.0</td>
 <td class='ex-value'>GPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>false</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure12@1ab3e7a1</td>
-<td class='ex-value'>9.0, 10.0, 12.0, 13.0</td>
-<td class='ex-value'>3.0, 10.0</td>
-<td class='ex-value'>CPU</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>false</td>
-<td class='ex-value'>true</td>
-<td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure13@75e53c5e</td>
-<td class='ex-value'>9.0, 10.0, 11.0, 12.0</td>
-<td class='ex-value'>13.0</td>
-<td class='ex-value'>CPU</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>true</td>
-<td class='ex-value'>true</td>
-<td class='ex-value'>[2, 1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure14@3a5ecf5d</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure12@10dfa02</td>
 <td class='ex-value'>9.0, 10.0, 12.0, 13.0</td>
 <td class='ex-value'>3.0, 10.0</td>
 <td class='ex-value'>CPU</td>
@@ -1403,9 +1378,8 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>true</td>
-<td class='ex-value'>true</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure15@31c905f0</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure13@177ef770</td>
 <td class='ex-value'>9.0, 10.0, 11.0, 12.0</td>
 <td class='ex-value'>13.0</td>
 <td class='ex-value'>CPU</td>
@@ -1413,49 +1387,62 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>true</td>
+<td class='ex-value'>[2, 1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure14@63f83af8</td>
+<td class='ex-value'>9.0, 10.0, 12.0, 13.0</td>
+<td class='ex-value'>3.0, 10.0</td>
+<td class='ex-value'>CPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure16@30b63352</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure15@2d1ae72e</td>
+<td class='ex-value'>9.0, 10.0, 11.0, 12.0</td>
+<td class='ex-value'>13.0</td>
+<td class='ex-value'>CPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure16@37c8366d</td>
 <td class='ex-value'>9.0, 10.0, 11.0, 12.0</td>
 <td class='ex-value'>13.0</td>
 <td class='ex-value'>GPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>false</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure17@7f0512aa</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure17@168420df</td>
 <td class='ex-value'>9.0, 11.0, 11.0, 13.0</td>
 <td class='ex-value'>12.0, 1.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>false</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure18@ff5453d</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure18@559474f6</td>
 <td class='ex-value'>9.0, 11.0, 11.0, 13.0</td>
 <td class='ex-value'>12.0, 1.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure19@2558a2eb</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure19@1ea5f466</td>
 <td class='ex-value'>9.0, 11.0, 11.0, 13.0</td>
 <td class='ex-value'>12.0, 1.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure20@566de773</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure20@1e960454</td>
 <td class='ex-value'>9.0, 11.0, 11.0, 13.0</td>
 <td class='ex-value'>12.0, 1.0</td>
 <td class='ex-value'>CPU</td>
@@ -1463,9 +1450,8 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>true</td>
-<td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure21@6c9e0007</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure21@6deabf2c</td>
 <td class='ex-value'>9.0, 11.0, 11.0, 13.0</td>
 <td class='ex-value'>12.0, 1.0</td>
 <td class='ex-value'>GPU</td>
@@ -1473,49 +1459,44 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>true</td>
-<td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure22@6e9d9f71</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure22@595a66ed</td>
 <td class='ex-value'>9.0, 11.0, 11.0, 13.0</td>
 <td class='ex-value'>12.0, 1.0</td>
 <td class='ex-value'>GPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>false</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure23@1c00976c</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure23@54e1aafc</td>
 <td class='ex-value'>-7.0, -7.0, -5.0, -5.0</td>
 <td class='ex-value'>-12.0, -1.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>false</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure24@f1e04f3</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure24@724a569</td>
 <td class='ex-value'>-7.0, -7.0, -5.0, -5.0</td>
 <td class='ex-value'>-12.0, -1.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure25@50281814</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure25@1edfbabb</td>
 <td class='ex-value'>-7.0, -7.0, -5.0, -5.0</td>
 <td class='ex-value'>-12.0, -1.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure26@499d248e</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure26@27346282</td>
 <td class='ex-value'>-7.0, -7.0, -5.0, -5.0</td>
 <td class='ex-value'>-12.0, -1.0</td>
 <td class='ex-value'>CPU</td>
@@ -1523,9 +1504,8 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>true</td>
-<td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure27@4faf2181</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure27@5895b58d</td>
 <td class='ex-value'>-7.0, -7.0, -5.0, -5.0</td>
 <td class='ex-value'>-12.0, -1.0</td>
 <td class='ex-value'>GPU</td>
@@ -1533,49 +1513,44 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>true</td>
-<td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure28@353b3cf8</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure28@32b02731</td>
 <td class='ex-value'>-7.0, -7.0, -5.0, -5.0</td>
 <td class='ex-value'>-12.0, -1.0</td>
 <td class='ex-value'>GPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>false</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure29@55956750</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure29@4e774c4d</td>
 <td class='ex-value'>7.0, 7.0, 5.0, 5.0</td>
 <td class='ex-value'>12.0, 1.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>false</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure30@28472700</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure30@7eb66bfe</td>
 <td class='ex-value'>7.0, 7.0, 5.0, 5.0</td>
 <td class='ex-value'>12.0, 1.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure31@172893b3</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure31@1b08988b</td>
 <td class='ex-value'>7.0, 7.0, 5.0, 5.0</td>
 <td class='ex-value'>12.0, 1.0</td>
 <td class='ex-value'>CPU</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure32@31ec2abf</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure32@6ba3536b</td>
 <td class='ex-value'>7.0, 7.0, 5.0, 5.0</td>
 <td class='ex-value'>12.0, 1.0</td>
 <td class='ex-value'>CPU</td>
@@ -1583,9 +1558,8 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>true</td>
-<td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure33@23b84ef3</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure33@4c904fbd</td>
 <td class='ex-value'>7.0, 7.0, 5.0, 5.0</td>
 <td class='ex-value'>12.0, 1.0</td>
 <td class='ex-value'>GPU</td>
@@ -1593,9 +1567,8 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>true</td>
-<td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov3_closure34@efba2f</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure34@14791987</td>
 <td class='ex-value'>7.0, 7.0, 5.0, 5.0</td>
 <td class='ex-value'>12.0, 1.0</td>
 <td class='ex-value'>GPU</td>
@@ -1814,6 +1787,153 @@ Tsr t2 = Tsr.of( "Ig[0]", [x] )</pre>
 </td>
 <td>
 <pre class='block-source'>fun(trs) == null</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1970396224'>
+<span>Activation functions work across types on slices and non sliced tensors.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We create a function based on the provided expression.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var func = Function.of(funExpression)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We create 2 tensors storing the same values, one sliced and the other a normal tensor.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var t1 = Tsr.of(type).withShape(2, 3).andSeed("Tempeh")
+var t2 = Tsr.of(type).withShape(4, 5).all(0)[1..2, 1..3]
+t2[0..1, 0..2] = t1</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The types of both tensors should match what was provided during instantiation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t1.dataType == DataType.of(type)
+t1.valueClass == type
+t2.dataType == DataType.of(type)
+t2.valueClass == type</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We apply the function to both tensors...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var result1 = func(t1)
+var result2 = func(t2)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The data of the first (non slice) tensor should be as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>result1.data == expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>As well the value of the slice tensor (Its data would be a sparse array).</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>result2.value == expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>funExpression</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>tanh(i0)</td>
+<td class='ex-value'>[-0.2608431635405718, -0.6400224689534015, -0.15255723053856546, 0.1566537867655921, 0.5489211983894932, -0.17031712209680225]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>tanh(i0)</td>
+<td class='ex-value'>[-0.26084316, -0.64002246, -0.15255724, 0.15665378, 0.54892117, -0.17031713]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>relu(i0)</td>
+<td class='ex-value'>[-0.0027019706408068795, -0.008329762613111082, -0.001543641184315801, 0.15861207834235577, 0.6567031992927272, -0.001728424711189524]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>relu(i0)</td>
+<td class='ex-value'>[-0.0027019705, -0.008329763, -0.0015436412, 0.15861207, 0.6567032, -0.0017284247]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>4/4 passed</div>
 </td>
 </tr>
 </tbody>

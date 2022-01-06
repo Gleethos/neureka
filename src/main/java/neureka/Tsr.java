@@ -3145,7 +3145,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
-     *  because the exposed state can easily lead to broken tensors and exceptions...</b><br>
+     *  because the exposed state can easily lead to broken tensors and exceptions...<br>
      *  <br>
      *  Use this in performance critical situations only.
      */

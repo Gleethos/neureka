@@ -571,7 +571,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     /**
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
-     *  because the exposed state can easily lead to broken tensors and exceptions...</b><br>
+     *  because the exposed state can easily lead to broken tensors and exceptions...<br>
      *  <br>
      *  Use this in performance critical situations only.
      */
@@ -582,7 +582,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *  is important to mutate their state for performance reasons.
      *  This interface exposes several methods for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
-     *  because the exposed state can easily lead to broken tensors and exceptions...</b><br>
+     *  because the exposed state can easily lead to broken tensors and exceptions...<br>
      *  <br>
      */
     public interface Mutate {
@@ -612,7 +612,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          *     <br>
          *
          * @param typeClass The target type class for elements of this tensor.
-         * @param <T> The type parameter for the returned tensor.
+         * @param <V> The type parameter for the returned tensor.
          * @return The same tensor instance whose data has been converted to hold a different type.
          */
         <V> Tsr<V> toType( Class<V> typeClass );

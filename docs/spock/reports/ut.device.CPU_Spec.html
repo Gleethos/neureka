@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Dec 22 17:09:16 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Thu Jan 06 12:27:55 CET 2022 by danie</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.487 seconds</td>
+<td>0.315 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -472,7 +472,7 @@ exec.getPool() != null</pre>
 <pre class='block-source'>if ( exec.getPool().getCorePoolSize() &lt;= 2 ) true
 else {
     int[] min = new int[]{ exec.getPool().getCorePoolSize() }
-    assert min[0] == Runtime.getRuntime().availableProcessors()
+    assert min[0] &gt; 0 &amp;&amp; min[0] &lt;= Runtime.getRuntime().availableProcessors()
     Thread t = new Thread(() -&gt; {
         while ( min[0] &gt; 0 ) {
             int current = exec.getPool().getCorePoolSize() - exec.getPool().getActiveCount()

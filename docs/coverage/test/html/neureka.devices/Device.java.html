@@ -205,7 +205,7 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
     Device&lt;V&gt; approve( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call );
 
     /**
-     *  This method automatically called within the {@link Tsr#setNDConf(NDConfiguration)} method
+     *  This method automatically called within the {@link Tsr.Mutate#setNDConf(NDConfiguration)} method
      *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
      *  given {@link Device} implementation... &lt;br&gt;&lt;br&gt;
      *

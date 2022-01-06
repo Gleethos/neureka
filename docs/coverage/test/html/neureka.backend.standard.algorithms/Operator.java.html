@@ -4,11 +4,10 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
-import neureka.calculus.RecursiveExecutor;
 import neureka.calculus.CalcUtil;
+import neureka.calculus.RecursiveExecutor;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
-import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
@@ -17,43 +16,43 @@ import java.util.List;
 public class Operator extends AbstractFunctionalAlgorithm&lt;Operator&gt;
 {
     public Operator( RecursiveExecutor finalExecutor ) {
-<span class="fc" id="L20">        super(&quot;operator&quot;);</span>
-<span class="fc" id="L21">        setIsSuitableFor(</span>
+<span class="fc" id="L19">        super(&quot;operator&quot;);</span>
+<span class="fc" id="L20">        setIsSuitableFor(</span>
                 call -&gt; {
-<span class="fc bfc" id="L23" title="All 2 branches covered.">                    List&lt;Integer&gt; shape = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[ 1 ].shape() : call.getTensors()[ 0 ].shape();</span>
-<span class="fc" id="L24">                    int size = shape.stream().reduce(1, ( x, y ) -&gt; x * y );</span>
-<span class="fc" id="L25">                    return call.validate()</span>
-<span class="fc bfc" id="L26" title="All 4 branches covered.">                            .allNotNull( t -&gt; t.size() == size &amp;&amp; shape.equals( t.shape() ) )</span>
-<span class="fc" id="L27">                            .allNotNull( t -&gt; t.getDataType().typeClassImplements( NumericType.class ) )</span>
-<span class="fc" id="L28">                            .basicSuitability();</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">                    List&lt;Integer&gt; shape = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[ 1 ].shape() : call.getTensors()[ 0 ].shape();</span>
+<span class="fc" id="L23">                    int size = shape.stream().reduce(1, ( x, y ) -&gt; x * y );</span>
+<span class="fc" id="L24">                    return call.validate()</span>
+<span class="fc bfc" id="L25" title="All 4 branches covered.">                            .allNotNull( t -&gt; t.size() == size &amp;&amp; shape.equals( t.shape() ) )</span>
+<span class="fc" id="L26">                            .allNotNull( t -&gt; t.getDataType().typeClassImplements( NumericType.class ) )</span>
+<span class="fc" id="L27">                            .basicSuitability();</span>
                 }
         );
-<span class="fc" id="L31">        setCanPerformBackwardADFor( call -&gt; true );</span>
-<span class="fc" id="L32">        setCanPerformForwardADFor( call -&gt; true );</span>
-<span class="fc" id="L33">        setExecutionDispatcher( (caller, call) -&gt; CalcUtil.executeFor( caller, call, finalExecutor ) );</span>
-<span class="fc" id="L34">        setCallPreparation(</span>
+<span class="fc" id="L30">        setCanPerformBackwardADFor( call -&gt; true );</span>
+<span class="fc" id="L31">        setCanPerformForwardADFor( call -&gt; true );</span>
+<span class="fc" id="L32">        setExecutionDispatcher( (caller, call) -&gt; CalcUtil.executeFor( caller, call, finalExecutor ) );</span>
+<span class="fc" id="L33">        setCallPreparation(</span>
                 call -&gt; {
-<span class="fc" id="L36">                    Tsr&lt;?&gt;[] tsrs = call.getTensors();</span>
-<span class="fc" id="L37">                    Device&lt;Double&gt; device = (Device&lt;Double&gt;) call.getDevice();</span>
-<span class="pc bpc" id="L38" title="1 of 2 branches missed.">                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:</span>
+<span class="fc" id="L35">                    Tsr&lt;?&gt;[] tsrs = call.getTensors();</span>
+<span class="fc" id="L36">                    Device&lt;Double&gt; device = (Device&lt;Double&gt;) call.getDevice();</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:</span>
                     {
-<span class="fc" id="L40">                        int[] shp = tsrs[ 1 ].getNDConf().shape();</span>
-<span class="fc" id="L41">                        Tsr&lt;Double&gt; output = Tsr.of( shp, 0.0 );</span>
-<span class="fc" id="L42">                        output.setIsVirtual( false );</span>
+<span class="fc" id="L39">                        int[] shp = tsrs[ 1 ].getNDConf().shape();</span>
+<span class="fc" id="L40">                        Tsr&lt;Double&gt; output = Tsr.of( shp, 0.0 );</span>
+<span class="fc" id="L41">                        output.setIsVirtual( false );</span>
                         try {
-<span class="fc" id="L44">                            device.store( output );</span>
-<span class="nc" id="L45">                        } catch( Exception e ) {</span>
-<span class="nc" id="L46">                            e.printStackTrace();</span>
-<span class="fc" id="L47">                        }</span>
-<span class="fc" id="L48">                        tsrs[ 0 ] = output;</span>
+<span class="fc" id="L43">                            device.store( output );</span>
+<span class="nc" id="L44">                        } catch( Exception e ) {</span>
+<span class="nc" id="L45">                            e.printStackTrace();</span>
+<span class="fc" id="L46">                        }</span>
+<span class="fc" id="L47">                        tsrs[ 0 ] = output;</span>
                     }
-<span class="fc" id="L50">                    return call;</span>
+<span class="fc" id="L49">                    return call;</span>
                 }
         );
-<span class="fc" id="L53">    }</span>
+<span class="fc" id="L52">    }</span>
 
     public String getKernelSource() {
-<span class="fc" id="L56">        return Neureka.get().utility().readResource(&quot;kernels/operator_template.cl&quot;);</span>
+<span class="fc" id="L55">        return Neureka.get().utility().readResource(&quot;kernels/operator_template.cl&quot;);</span>
     }
 
 
@@ -61,55 +60,30 @@ public class Operator extends AbstractFunctionalAlgorithm&lt;Operator&gt;
     public static void operate(
             Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             int d, int i, int end,
-            Operation.SecondaryNDIConsumer operation
+            Operation.SecondaryF64NDFun operation
     ) {
-<span class="pc bpc" id="L66" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
-<span class="nc" id="L67">            ( (double[]) t0_drn.getData() )[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) );</span>
+<span class="pc bpc" id="L65" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
+<span class="nc" id="L66">            ( (double[]) t0_drn.getData() )[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) );</span>
         } else {
             //int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0
-<span class="fc" id="L70">            double[] t0_value = t0_drn.getDataAs( double[].class );</span>
-<span class="fc" id="L71">            NDIterator t0Idx = NDIterator.of( t0_drn );</span>
-<span class="fc" id="L72">            NDIterator t1Idx = NDIterator.of( t1_src );</span>
-<span class="fc" id="L73">            NDIterator t2Idx = NDIterator.of( t2_src );</span>
-<span class="fc" id="L74">            t0Idx.set( t0_drn.IndicesOfIndex( i ) );</span>
-<span class="fc" id="L75">            t1Idx.set( t1_src.IndicesOfIndex( i ) );</span>
-<span class="fc" id="L76">            t2Idx.set( t2_src.IndicesOfIndex( i ) );</span>
-<span class="fc bfc" id="L77" title="All 2 branches covered.">            while ( i &lt; end ) {//increment on drain accordingly:</span>
+<span class="fc" id="L69">            double[] t0_value = t0_drn.getDataAs( double[].class );</span>
+<span class="fc" id="L70">            NDIterator t0Idx = NDIterator.of( t0_drn );</span>
+<span class="fc" id="L71">            NDIterator t1Idx = NDIterator.of( t1_src );</span>
+<span class="fc" id="L72">            NDIterator t2Idx = NDIterator.of( t2_src );</span>
+<span class="fc" id="L73">            t0Idx.set( t0_drn.IndicesOfIndex( i ) );</span>
+<span class="fc" id="L74">            t1Idx.set( t1_src.IndicesOfIndex( i ) );</span>
+<span class="fc" id="L75">            t2Idx.set( t2_src.IndicesOfIndex( i ) );</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            while ( i &lt; end ) {//increment on drain accordingly:</span>
                 //setInto _value in drn:
-<span class="fc" id="L79">                t0_value[ t0Idx.i() ] = operation.execute( t1Idx, t2Idx );</span>
+<span class="fc" id="L78">                t0_value[ t0Idx.i() ] = operation.execute( t1Idx, t2Idx );</span>
                 //increment on drain:
-<span class="fc" id="L81">                t0Idx.increment();</span>
-<span class="fc" id="L82">                t1Idx.increment();</span>
-<span class="fc" id="L83">                t2Idx.increment();</span>
-<span class="fc" id="L84">                i++;</span>
+<span class="fc" id="L80">                t0Idx.increment();</span>
+<span class="fc" id="L81">                t1Idx.increment();</span>
+<span class="fc" id="L82">                t2Idx.increment();</span>
+<span class="fc" id="L83">                i++;</span>
             }
         }
-<span class="fc" id="L87">    }</span>
-
-
-
-    @Contract(pure = true)
-    public static void operate(
-            Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
-            int d, int i, int end,
-            Operation.PrimaryNDAConsumer operation
-    ) {
-<span class="pc bpc" id="L97" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
-<span class="nc" id="L98">            ((double[])t0_drn.getData())[ 0 ] = operation.execute( new int[t0_drn.rank()] );</span>
-        } else {
-<span class="fc" id="L100">            NDConfiguration ndc0 = t0_drn.getNDConf();</span>
-<span class="fc" id="L101">            int[] t0Shp = ndc0.shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L102">            int[] t0Idx = ndc0.indicesOfIndex( i );</span>
-<span class="fc" id="L103">            double[] t0_value = (double[]) t0_drn.getData();</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">            while ( i &lt; end ) {//increment on drain accordingly:</span>
-                //setInto _value in drn:
-<span class="fc" id="L106">                t0_value[ndc0.indexOfIndices(t0Idx)] = operation.execute( t0Idx );</span>
-                //increment on drain:
-<span class="fc" id="L108">                NDConfiguration.Utility.increment( t0Idx, t0Shp );</span>
-<span class="fc" id="L109">                i++;</span>
-            }
-        }
-<span class="fc" id="L112">    }</span>
+<span class="fc" id="L86">    }</span>
 
 
 }

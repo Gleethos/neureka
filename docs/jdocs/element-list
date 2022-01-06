@@ -11,6 +11,9 @@ neureka.backend.standard.operations
 neureka.backend.standard.operations.function
 neureka.backend.standard.operations.indexer
 neureka.backend.standard.operations.linear
+neureka.backend.standard.operations.linear.internal
+neureka.backend.standard.operations.linear.internal.operation.array
+neureka.backend.standard.operations.linear.internal.operation.matrix
 neureka.backend.standard.operations.operator
 neureka.backend.standard.operations.other
 neureka.calculus
@@ -24,6 +27,8 @@ neureka.devices.file
 neureka.devices.file.heads
 neureka.devices.file.heads.util
 neureka.devices.host
+neureka.devices.host.concurrent
+neureka.devices.host.machine
 neureka.devices.opencl
 neureka.devices.opencl.utility
 neureka.dtype

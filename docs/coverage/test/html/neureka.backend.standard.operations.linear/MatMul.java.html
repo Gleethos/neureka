@@ -83,53 +83,42 @@ public class MatMul extends AbstractOperation
                                     )
 <span class="fc" id="L84">                                    .setCallPreparation(</span>
                                         call -&gt; {
-<span class="fc" id="L86">                                            Tsr&lt;?&gt;[] tsrs = call.getTensors();</span>
+<span class="fc" id="L86">                                            Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
 <span class="fc" id="L87">                                            Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
-<span class="pc bpc" id="L88" title="1 of 2 branches missed.">                                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">                                            if ( tensors[ 0 ] == null ) // Creating a new tensor:</span>
                                             {
-<span class="fc" id="L90">                                                int[] shp = new int[]{ tsrs[ 1 ].shape(0), tsrs[ 2 ].shape(1) };</span>
-<span class="fc" id="L91">                                                Tsr&lt;Double&gt; output = Tsr.of( shp, 0.0 );</span>
-<span class="fc" id="L92">                                                output.setIsVirtual( false );</span>
+<span class="fc" id="L90">                                                Class&lt;Number&gt; type = (Class&lt;Number&gt;) tensors[1].getDataType().getJVMTypeClass();</span>
+<span class="fc" id="L91">                                                int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };</span>
+<span class="fc" id="L92">                                                Tsr&lt;Number&gt; output = Tsr.of( type ).withShape( shp ).all( 0 );</span>
+<span class="fc" id="L93">                                                output.getMutate().toLayout(tensors[1].getNDConf().getLayout());</span>
+<span class="fc" id="L94">                                                output.setIsVirtual( false );</span>
                                                 try {
-<span class="fc" id="L94">                                                    device.store( output );</span>
-<span class="nc" id="L95">                                                } catch ( Exception e ) {</span>
-<span class="nc" id="L96">                                                    e.printStackTrace();</span>
-<span class="fc" id="L97">                                                }</span>
-<span class="fc" id="L98">                                                tsrs[ 0 ] = output;</span>
+<span class="fc" id="L96">                                                    device.store( output );</span>
+<span class="nc" id="L97">                                                } catch ( Exception e ) {</span>
+<span class="nc" id="L98">                                                    e.printStackTrace();</span>
+<span class="fc" id="L99">                                                }</span>
+<span class="fc" id="L100">                                                tensors[ 0 ] = output;</span>
                                             }
-<span class="fc" id="L100">                                            _autoClone( tsrs );</span>
-<span class="fc" id="L101">                                            return call;</span>
+<span class="fc" id="L102">                                            _autoClone( tensors );</span>
+<span class="fc" id="L103">                                            return call;</span>
                                         }
                                     )
-<span class="fc" id="L104">                                    .buildFunAlgorithm();</span>
+<span class="fc" id="L106">                                    .buildFunAlgorithm();</span>
 
-<span class="fc" id="L106">        setAlgorithm(</span>
+<span class="fc" id="L108">        setAlgorithm(</span>
                 simpleMatMulAlgorithm
-<span class="fc" id="L108">                        .setImplementationFor(</span>
+<span class="fc" id="L110">                        .setImplementationFor(</span>
                                 CPU.class,
                                 CPUImplementation
-<span class="fc" id="L111">                                    .withArity(3)</span>
-<span class="fc" id="L112">                                    .andImplementation(</span>
-                                        call -&gt;
-                                        {
-<span class="fc" id="L115">                                            double[] A = (double[]) call.getTsrOfType(Double.class, 1).getData();</span>
-<span class="fc" id="L116">                                            double[] B = (double[]) call.getTsrOfType(Double.class, 2).getData();</span>
-<span class="fc" id="L117">                                            double[] C = (double[]) call.getTsrOfType(Double.class, 0).getData();</span>
-
-<span class="fc" id="L119">                                            int[] shapeA = call.getTsrOfType(Double.class, 1).getNDConf().shape();</span>
-<span class="fc" id="L120">                                            int[] shapeB = call.getTsrOfType(Double.class, 2).getNDConf().shape();</span>
-<span class="fc" id="L121">                                            int[] shapeC = call.getTsrOfType(Double.class, 0).getNDConf().shape();</span>
-
-<span class="fc" id="L123">                                            SimpleMatMul.execute(A, shapeA, B, shapeB, C, shapeC);</span>
-<span class="fc" id="L124">                                        }</span>
-                                    )
+<span class="fc" id="L113">                                    .withArity(3)</span>
+<span class="fc" id="L114">                                    .andImplementation( new SimpleMatMul() )</span>
                         )
-<span class="fc" id="L127">                        .setImplementationFor(</span>
+<span class="fc" id="L116">                        .setImplementationFor(</span>
                                 OpenCLDevice.class,
-<span class="fc" id="L129">                                CLImplementation.fromSource()</span>
-<span class="fc" id="L130">                                        .arity( 3 )</span>
-<span class="fc" id="L131">                                        .kernelName( &quot;simple_matMul&quot; )</span>
-<span class="fc" id="L132">                                        .kernelSource(</span>
+<span class="fc" id="L118">                                CLImplementation.fromSource()</span>
+<span class="fc" id="L119">                                        .arity( 3 )</span>
+<span class="fc" id="L120">                                        .kernelName( &quot;simple_matMul&quot; )</span>
+<span class="fc" id="L121">                                        .kernelSource(</span>
                                                 &quot;__kernel void simple_matMul(                                          \n&quot; +
                                                 &quot;       const int M, const int N, const int K,                        \n&quot; +
                                                 &quot;       const __global float* A,                                      \n&quot; +
@@ -148,21 +137,21 @@ public class MatMul extends AbstractOperation
                                                 &quot;    C[globalCol + globalRow*N] = acc;                                \n&quot; +
                                                 &quot;}                                                                    \n&quot;
                                         )
-<span class="fc" id="L151">                                        .lambda( call -&gt; {</span>
-<span class="fc" id="L152">                                            int M = call.getTensors()[1].shape(0);</span>
-<span class="fc" id="L153">                                            int N = call.getTensors()[2].shape(1);</span>
-<span class="fc" id="L154">                                            int K = call.getTensors()[1].shape(1);</span>
-<span class="fc" id="L155">                                            call.getDevice()</span>
-<span class="fc" id="L156">                                                    .getKernel(call)</span>
-<span class="fc" id="L157">                                                    .pass(M) // M</span>
-<span class="fc" id="L158">                                                    .pass(N) // N</span>
-<span class="fc" id="L159">                                                    .pass(K) // K</span>
-<span class="fc" id="L160">                                                    .pass(call.getTsrOfType(Number.class, 1))</span>
-<span class="fc" id="L161">                                                    .pass(call.getTsrOfType(Number.class, 2))</span>
-<span class="fc" id="L162">                                                    .pass(call.getTsrOfType(Number.class, 0))</span>
-<span class="fc" id="L163">                                                    .call(new long[]{M,N}, null);</span>
-<span class="fc" id="L164">                                        } )</span>
-<span class="fc" id="L165">                                        .build()</span>
+<span class="fc" id="L140">                                        .lambda( call -&gt; {</span>
+<span class="fc" id="L141">                                            int M = call.getTensors()[1].shape(0);</span>
+<span class="fc" id="L142">                                            int N = call.getTensors()[2].shape(1);</span>
+<span class="fc" id="L143">                                            int K = call.getTensors()[1].shape(1);</span>
+<span class="fc" id="L144">                                            call.getDevice()</span>
+<span class="fc" id="L145">                                                    .getKernel(call)</span>
+<span class="fc" id="L146">                                                    .pass(M) // M</span>
+<span class="fc" id="L147">                                                    .pass(N) // N</span>
+<span class="fc" id="L148">                                                    .pass(K) // K</span>
+<span class="fc" id="L149">                                                    .pass(call.getTsrOfType(Number.class, 1))</span>
+<span class="fc" id="L150">                                                    .pass(call.getTsrOfType(Number.class, 2))</span>
+<span class="fc" id="L151">                                                    .pass(call.getTsrOfType(Number.class, 0))</span>
+<span class="fc" id="L152">                                                    .call(new long[]{M,N}, null);</span>
+<span class="fc" id="L153">                                        } )</span>
+<span class="fc" id="L154">                                        .build()</span>
                         )
         );
         /*
@@ -195,7 +184,7 @@ public class MatMul extends AbstractOperation
                 .build();
         */
 
-<span class="fc" id="L198">    }</span>
+<span class="fc" id="L187">    }</span>
 
     /**
      *  This method will clone {@link Tsr} instances if they do not
@@ -204,10 +193,10 @@ public class MatMul extends AbstractOperation
      * @param tensors The tensors which ought to be cloned based on the complexity of their access patterns.
      */
     private static void _autoClone( Tsr&lt;?&gt;[] tensors ) {
-<span class="fc bfc" id="L207" title="All 2 branches covered.">        for ( int i = 0; i &lt; tensors.length; i++ ) {</span>
-<span class="fc bfc" id="L208" title="All 2 branches covered.">            if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {</span>
-<span class="fc" id="L209">                _LOG.warn(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
-<span class="fc" id="L210">                tensors[i] = tensors[i].clone();</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        for ( int i = 0; i &lt; tensors.length; i++ ) {</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">            if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {</span>
+<span class="fc" id="L198">                _LOG.warn(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
+<span class="fc" id="L199">                tensors[i] = tensors[i].clone();</span>
                 /*
                     The user should do cloning explicitly because using slices
                     will cause the backend to perform aut cloning every time the
@@ -215,28 +204,28 @@ public class MatMul extends AbstractOperation
                  */
             }
         }
-<span class="fc" id="L218">    }</span>
+<span class="fc" id="L207">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L222">        StringBuilder reconstructed = new StringBuilder();</span>
-<span class="fc bfc" id="L223" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
-<span class="fc" id="L224">            reconstructed.append( children[ i ] );</span>
-<span class="fc bfc" id="L225" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
-<span class="fc" id="L226">                reconstructed.append(&quot; @ &quot;);</span>
+<span class="fc" id="L211">        StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
+<span class="fc" id="L213">            reconstructed.append( children[ i ] );</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
+<span class="fc" id="L215">                reconstructed.append(&quot; @ &quot;);</span>
             }
         }
-<span class="fc" id="L229">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+<span class="fc" id="L218">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L234">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L223">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L239">        return src[ 0 ].call( inputs, j );</span>
+<span class="nc" id="L228">        return src[ 0 ].call( inputs, j );</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -58,7 +58,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm&lt;FallbackAl
 <span class="nc" id="L58">                                double[] inputs = new double[ call.getTensors().length-1 ];</span>
 <span class="nc" id="L59">                                call.getDevice()</span>
 <span class="nc" id="L60">                                    .getExecutor()</span>
-<span class="nc" id="L61">                                    .threaded (</span>
+<span class="nc" id="L61">                                    .threaded(</span>
 <span class="nc" id="L62">                                        call.getTsrOfType( Number.class, 0 ).size(),</span>
                                         ( start, end ) -&gt; {
 <span class="nc bnc" id="L64" title="All 2 branches missed.">                                            for ( int i = start; i &lt; end; i++ ) {</span>
@@ -74,7 +74,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm&lt;FallbackAl
                             {
 <span class="fc" id="L75">                                call.getDevice()</span>
 <span class="fc" id="L76">                                    .getExecutor()</span>
-<span class="fc" id="L77">                                    .threaded (</span>
+<span class="fc" id="L77">                                    .threaded(</span>
 <span class="fc" id="L78">                                        call.getTsrOfType( Object.class, 0 ).size(),</span>
                                         ( start, end ) -&gt; {
 <span class="fc bfc" id="L80" title="All 2 branches covered.">                                            for ( int i = start; i &lt; end; i++ ) {</span>
@@ -172,7 +172,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm&lt;FallbackAl
 <span class="fc" id="L172">        call</span>
 <span class="fc" id="L173">            .getDevice()</span>
 <span class="fc" id="L174">            .getExecutor()</span>
-<span class="fc" id="L175">            .threaded (</span>
+<span class="fc" id="L175">            .threaded(</span>
 <span class="fc" id="L176">                    call.getTsrOfType( Object.class, 0 ).size(),</span>
                     ( start, end ) -&gt; {
 <span class="fc" id="L178">                        Object[] inputs = new Object[ call.getTensors().length - 1 ];</span>

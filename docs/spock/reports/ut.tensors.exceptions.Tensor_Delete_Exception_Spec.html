@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Dec 22 17:09:44 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Thu Jan 06 12:27:56 CET 2022 by danie</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.017 seconds</td>
+<td>0.009 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -524,7 +524,7 @@ exception.message == "Trying to access the ND-Configuration of an already delete
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>t.setNDConf(null)</pre>
+<pre class='block-source'>t.mutate.setNDConf(null)</pre>
 </td>
 </tr>
 <tr>
@@ -792,7 +792,7 @@ exception.message == "Trying to access the data type of an already deleted tenso
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>t.setDataType(DataType.of(Float.class))</pre>
+<pre class='block-source'>t.mutate.setDataType(DataType.of(Float.class))</pre>
 </td>
 </tr>
 <tr>

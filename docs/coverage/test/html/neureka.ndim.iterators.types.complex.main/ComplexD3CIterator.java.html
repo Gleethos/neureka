@@ -5,27 +5,27 @@ import neureka.ndim.iterators.NDIterator;
 
 public final class ComplexD3CIterator extends ComplexD3Configuration implements NDIterator
 {
-<span class="nc" id="L8">    private int _d1 = 0;</span>
-<span class="nc" id="L9">    private int _d2 = 0;</span>
-<span class="nc" id="L10">    private int _d3 = 0;</span>
+<span class="fc" id="L8">    private int _d1 = 0;</span>
+<span class="fc" id="L9">    private int _d2 = 0;</span>
+<span class="fc" id="L10">    private int _d3 = 0;</span>
 
     public ComplexD3CIterator(ComplexD3Configuration ndc) {
-<span class="nc" id="L13">        super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );</span>
-<span class="nc" id="L14">    }</span>
+<span class="fc" id="L13">        super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );</span>
+<span class="fc" id="L14">    }</span>
 
 
     @Override
     public void increment() {
-<span class="nc" id="L19">        _d3++;</span>
-<span class="nc bnc" id="L20" title="All 2 branches missed.">        if ( _d3 == _shape3 ) {</span>
-<span class="nc" id="L21">            _d3 = 0;</span>
-<span class="nc" id="L22">            _d2++;</span>
-<span class="nc bnc" id="L23" title="All 2 branches missed.">            if ( _d2 == _shape2 ) {</span>
-<span class="nc" id="L24">                _d2 = 0;</span>
-<span class="nc" id="L25">                _d1++;</span>
+<span class="fc" id="L19">        _d3++;</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">        if ( _d3 == _shape3 ) {</span>
+<span class="fc" id="L21">            _d3 = 0;</span>
+<span class="fc" id="L22">            _d2++;</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">            if ( _d2 == _shape2 ) {</span>
+<span class="fc" id="L24">                _d2 = 0;</span>
+<span class="fc" id="L25">                _d1++;</span>
             }
         }
-<span class="nc" id="L28">    }</span>
+<span class="fc" id="L28">    }</span>
 
     @Override
     public void decrement() {
@@ -39,7 +39,7 @@ public final class ComplexD3CIterator extends ComplexD3Configuration implements 
 
     @Override
     public int i() {
-<span class="nc" id="L42">        return this.indexOfIndices( _d1, _d2, _d3 );</span>
+<span class="fc" id="L42">        return this.indexOfIndices( _d1, _d2, _d3 );</span>
     }
 
     @Override
@@ -61,10 +61,10 @@ public final class ComplexD3CIterator extends ComplexD3Configuration implements 
 
     @Override
     public void set( int[] indices ) {
-<span class="nc" id="L64">        _d1 = indices[0];</span>
-<span class="nc" id="L65">        _d2 = indices[1];</span>
-<span class="nc" id="L66">        _d3 = indices[2];</span>
-<span class="nc" id="L67">    }</span>
+<span class="fc" id="L64">        _d1 = indices[0];</span>
+<span class="fc" id="L65">        _d2 = indices[1];</span>
+<span class="fc" id="L66">        _d3 = indices[2];</span>
+<span class="fc" id="L67">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

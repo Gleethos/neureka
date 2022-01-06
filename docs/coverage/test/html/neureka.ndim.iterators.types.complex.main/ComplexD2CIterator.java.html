@@ -5,22 +5,22 @@ import neureka.ndim.iterators.NDIterator;
 
 public final class ComplexD2CIterator extends ComplexD2Configuration implements NDIterator
 {
-<span class="nc" id="L8">    protected int _d1 = 0;</span>
-<span class="nc" id="L9">    protected int _d2 = 0;</span>
+<span class="fc" id="L8">    protected int _d1 = 0;</span>
+<span class="fc" id="L9">    protected int _d2 = 0;</span>
 
     public ComplexD2CIterator(ComplexD2Configuration ndc) {
-<span class="nc" id="L12">        super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );</span>
-<span class="nc" id="L13">    }</span>
+<span class="fc" id="L12">        super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );</span>
+<span class="fc" id="L13">    }</span>
 
 
     @Override
     public void increment() {
-<span class="nc" id="L18">        _d2++;</span>
-<span class="nc bnc" id="L19" title="All 2 branches missed.">        if ( _d2 == _shape2 ) {</span>
-<span class="nc" id="L20">            _d2 = 0;</span>
-<span class="nc" id="L21">            _d1++;</span>
+<span class="fc" id="L18">        _d2++;</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        if ( _d2 == _shape2 ) {</span>
+<span class="fc" id="L20">            _d2 = 0;</span>
+<span class="fc" id="L21">            _d1++;</span>
         }
-<span class="nc" id="L23">    }</span>
+<span class="fc" id="L23">    }</span>
 
     @Override
     public void decrement() {
@@ -32,12 +32,12 @@ public final class ComplexD2CIterator extends ComplexD2Configuration implements 
 
     @Override
     public int i() {
-<span class="nc" id="L35">        return this.indexOfIndices( _d1, _d2 );</span>
+<span class="fc" id="L35">        return this.indexOfIndices( _d1, _d2 );</span>
     }
 
     @Override
     public int get( int axis ) {
-<span class="nc bnc" id="L40" title="All 2 branches missed.">        return ( axis == 0 ) ? _d1 : _d2;</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        return ( axis == 0 ) ? _d1 : _d2;</span>
     }
 
     @Override
@@ -47,15 +47,15 @@ public final class ComplexD2CIterator extends ComplexD2Configuration implements 
 
     @Override
     public void set( int axis, int position ) {
-<span class="nc bnc" id="L50" title="All 2 branches missed.">        if ( axis == 0 ) _d1 = position;</span>
-<span class="nc" id="L51">        else _d2 = position;</span>
-<span class="nc" id="L52">    }</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if ( axis == 0 ) _d1 = position;</span>
+<span class="fc" id="L51">        else _d2 = position;</span>
+<span class="fc" id="L52">    }</span>
 
     @Override
     public void set( int[] indices ) {
-<span class="nc" id="L56">        _d1 = indices[ 0 ];</span>
-<span class="nc" id="L57">        _d2 = indices[ 1 ];</span>
-<span class="nc" id="L58">    }</span>
+<span class="fc" id="L56">        _d1 = indices[ 0 ];</span>
+<span class="fc" id="L57">        _d2 = indices[ 1 ];</span>
+<span class="fc" id="L58">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

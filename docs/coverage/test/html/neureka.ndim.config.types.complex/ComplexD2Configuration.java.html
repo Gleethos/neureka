@@ -73,7 +73,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
 
     @Override
     public int shape( int i ) {
-<span class="nc bnc" id="L76" title="All 2 branches missed.">        return (i==0)?_shape1:_shape2;</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        return (i==0)?_shape1:_shape2;</span>
     }
 
     @Override
@@ -144,10 +144,10 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
 
     @Override
     public int indexOfIndices(int d1, int d2) {
-<span class="nc" id="L147">        int i = 0;</span>
-<span class="nc" id="L148">        i += (d1 * _spread1 + _offset1) * _translation1;</span>
-<span class="nc" id="L149">        i += (d2 * _spread2 + _offset2) * _translation2;</span>
-<span class="nc" id="L150">        return i;</span>
+<span class="fc" id="L147">        int i = 0;</span>
+<span class="fc" id="L148">        i += (d1 * _spread1 + _offset1) * _translation1;</span>
+<span class="fc" id="L149">        i += (d2 * _spread2 + _offset2) * _translation2;</span>
+<span class="fc" id="L150">        return i;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

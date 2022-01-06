@@ -117,7 +117,7 @@ public class CLContext implements BackendExtension
 <span class="fc" id="L117">                                            .mapToDouble( word -&gt; ParseUtil.similarity( word, searchKey ) )</span>
 <span class="fc" id="L118">                                            .max()</span>
 <span class="fc" id="L119">                                            .orElse(0);</span>
-<span class="fc bfc" id="L120" title="All 2 branches covered.">                if ( similarity &gt; score ) {</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">                if ( similarity &gt; score ) {</span>
 <span class="fc" id="L121">                    result = d;</span>
 <span class="fc" id="L122">                    score = similarity;</span>
 <span class="fc bfc" id="L123" title="All 2 branches covered.">                    if ( score == 1 )</span>

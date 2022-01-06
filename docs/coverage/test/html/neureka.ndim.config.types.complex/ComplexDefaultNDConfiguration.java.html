@@ -3,13 +3,12 @@
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 
-public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
+public class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 {
-
     /**
      *  The shape of the NDArray.
      */
-    protected final int[] _shape;
+    private final int[] _shape;
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
@@ -18,7 +17,7 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
      *  The mapping of an index to an index array.
      *  The index array is created and filled
      *  during iteration and passed to this configuration for element access...
-     *  However it is also possible to creat an index array from an index integer.
+     *  However, it is also possible to creat an index array from an index integer.
      *  This is what the following property does :
      */
     private final int[] _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
@@ -38,13 +37,13 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
             int[] indicesMap,
             int[] spread,
             int[] offset
-<span class="fc" id="L41">    ) {</span>
-<span class="fc" id="L42">        _shape = _cacheArray(shape);</span>
-<span class="fc" id="L43">        _translation = _cacheArray(translation);</span>
-<span class="fc" id="L44">        _indicesMap = _cacheArray(indicesMap);</span>
-<span class="fc" id="L45">        _spread = _cacheArray(spread);</span>
-<span class="fc" id="L46">        _offset = _cacheArray(offset);</span>
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L40">    ) {</span>
+<span class="fc" id="L41">        _shape = _cacheArray(shape);</span>
+<span class="fc" id="L42">        _translation = _cacheArray(translation);</span>
+<span class="fc" id="L43">        _indicesMap = _cacheArray(indicesMap);</span>
+<span class="fc" id="L44">        _spread = _cacheArray(spread);</span>
+<span class="fc" id="L45">        _offset = _cacheArray(offset);</span>
+<span class="fc" id="L46">    }</span>
 
     public static NDConfiguration construct(
             int[] shape,
@@ -53,62 +52,62 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
             int[] spread,
             int[] offset
     ) {
-<span class="fc" id="L56">        return _cached(new ComplexDefaultNDConfiguration(shape, translation, indicesMap, spread, offset));</span>
+<span class="fc" id="L55">        return _cached(new ComplexDefaultNDConfiguration(shape, translation, indicesMap, spread, offset));</span>
     }
 
     @Override
     public int rank() {
-<span class="fc" id="L61">        return _shape.length;</span>
+<span class="fc" id="L60">        return _shape.length;</span>
     }
 
     @Override
     public int[] shape() {
-<span class="fc" id="L66">        return _shape;</span>
+<span class="fc" id="L65">        return _shape;</span>
     }
 
     @Override
     public int shape( int i ) {
-<span class="nc" id="L71">        return _shape[ i ];</span>
+<span class="nc" id="L70">        return _shape[ i ];</span>
     }
 
     @Override
     public int[] indicesMap() {
-<span class="fc" id="L76">        return _indicesMap;</span>
+<span class="fc" id="L75">        return _indicesMap;</span>
     }
 
     @Override
     public int indicesMap(int i ) {
-<span class="nc" id="L81">        return _indicesMap[ i ];</span>
+<span class="nc" id="L80">        return _indicesMap[ i ];</span>
     }
 
     @Override
     public int[] translation() {
-<span class="fc" id="L86">        return _translation;</span>
+<span class="fc" id="L85">        return _translation;</span>
     }
 
     @Override
     public int translation( int i ) {
-<span class="nc" id="L91">        return _translation[ i ];</span>
+<span class="nc" id="L90">        return _translation[ i ];</span>
     }
 
     @Override
     public int[] spread() {
-<span class="fc" id="L96">        return _spread;</span>
+<span class="fc" id="L95">        return _spread;</span>
     }
 
     @Override
     public int spread( int i ) {
-<span class="nc" id="L101">        return _spread[ i ];</span>
+<span class="nc" id="L100">        return _spread[ i ];</span>
     }
 
     @Override
     public int[] offset() {
-<span class="fc" id="L106">        return _offset;</span>
+<span class="fc" id="L105">        return _offset;</span>
     }
 
     @Override
     public int offset( int i ) {
-<span class="nc" id="L111">        return _offset[ i ];</span>
+<span class="nc" id="L110">        return _offset[ i ];</span>
     }
 
 
@@ -116,25 +115,25 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
 
     @Override
     public int indexOfIndex( int index ) {
-<span class="fc" id="L119">        return indexOfIndices( indicesOfIndex( index ) );</span>
+<span class="fc" id="L118">        return indexOfIndices( indicesOfIndex( index ) );</span>
     }
 
     @Override
     public int[] indicesOfIndex( int index ) {
-<span class="fc" id="L124">        int[] indices = new int[ _shape.length ];</span>
-<span class="fc bfc" id="L125" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
-<span class="fc" id="L126">            indices[ ii ] += index / _indicesMap[ ii ];</span>
-<span class="fc" id="L127">            index %= _indicesMap[ ii ];</span>
+<span class="fc" id="L123">        int[] indices = new int[ _shape.length ];</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
+<span class="fc" id="L125">            indices[ ii ] += index / _indicesMap[ ii ];</span>
+<span class="fc" id="L126">            index %= _indicesMap[ ii ];</span>
         }
-<span class="fc" id="L129">        return indices;</span>
+<span class="fc" id="L128">        return indices;</span>
     }
 
     @Override
     public int indexOfIndices( int[] indices ) {
-<span class="fc" id="L134">        int i = 0;</span>
-<span class="fc bfc" id="L135" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ )</span>
-<span class="fc" id="L136">            i += ( indices[ ii ] * _spread[ ii ] + _offset[ ii ] ) * _translation[ ii ];</span>
-<span class="fc" id="L137">        return i;</span>
+<span class="fc" id="L133">        int i = 0;</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ )</span>
+<span class="fc" id="L135">            i += ( indices[ ii ] * _spread[ ii ] + _offset[ ii ] ) * _translation[ ii ];</span>
+<span class="fc" id="L136">        return i;</span>
     }
 
     
