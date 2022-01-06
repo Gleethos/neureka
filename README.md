@@ -63,8 +63,6 @@ This powerful feature has been inspired by PyTorch:
 | [**neureka.optimization**](src/main/java/neureka/optimization/README.md) | a sub-package for weight-gradient optimization |
 | [**neureka.autograd**](src/main/java/neureka/autograd/README.md) | the guts of Neurekas autograd system |
 | [**neureka.backend**](src/main/java/neureka/backend/README.md) | the backend containing both a consistent API and a standard implementation  |
-
-
  
  
 ---
@@ -90,8 +88,7 @@ implementation("com.github.gleethos:neureka:0.11.0")
 ```
 ---
 
-## Getting started with [JitPack](https://jitpack.io/) ##
-
+## Getting started with [![](https://jitpack.io/v/Gleethos/neureka.svg)](https://jitpack.io/#Gleethos/neureka) ##
 **1. Add the JitPack url in your root `build.gradle` at the end of `repositories`**
 ```
 allprojects {
