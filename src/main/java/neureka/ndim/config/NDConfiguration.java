@@ -91,6 +91,17 @@ public interface NDConfiguration
     }
 
     /**
+     *  A slice will have a unique kind of access pattern defined by the ND-Configuration.
+     *
+     * @return The truth value determining if this ND-Configuration models a slice index pattern.
+     */
+    default boolean isSlice() {
+        boolean noOffsets = Arrays.stream(offset()).allMatch( o -> o == 0 );
+        boolean simpleSpread = Arrays.stream(spread()).allMatch( s -> s == 1 );
+        return noOffsets && simpleSpread;
+    }
+
+    /**
      *  This method returns the number of axis of
      *  an nd-array / {@link neureka.Tsr} which is equal to the
      *  length of the shape of an nd-array / {@link neureka.Tsr}.
