@@ -40,11 +40,12 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
         setCallPreparation(
                         call -> {
                             Tsr<?>[] tensors = call.getTensors();
-                            Device<Number> device = call.getDeviceFor(Number.class);
+                            Device device = call.getDeviceFor(Number.class);
                             if ( tensors[ 0 ] == null ) // Creating a new tensor:
                             {
                                 int[] shp = tensors[ 1 ].getNDConf().shape();
-                                Tsr<Double> output = Tsr.of( shp, 0.0 );
+                                Class<Object> type = (Class<Object>) tensors[ 1 ].getValueClass();
+                                Tsr<Object> output = Tsr.of(type).withShape(shp).all( 0.0 );
                                 output.setIsVirtual( false );
                                 try {
                                     device.store( output );
@@ -69,7 +70,6 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
     ) {
         Class<?> typeClass = call.getTensors()[0].getValueClass();
         Class<?> rightTypeClass = call.getTensors()[1].getValueClass();
-        boolean rightIsOutsourced = call.getTensors()[1].isOutsourced();
 
         Tsr<?> t0_drn = call.getTensors()[0];
         Tsr<?> t1_src = call.getTensors()[1];

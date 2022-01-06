@@ -2,10 +2,12 @@ package it.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionBuilder
 import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
 import neureka.devices.host.CPU
+import neureka.dtype.DataType
 import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
 import spock.lang.Specification
@@ -491,5 +493,38 @@ class Tensor_Operation_Integration_Spec extends Specification
             fun(trs) == null
     }
 
+
+    def 'Activation functions work across types on slices and non sliced tensors.'(
+            Class<?> type, String funExpression
+    ) {
+        given : 'We create a function based on the provided expression.'
+            var func = Function.of(funExpression)
+        and : 'We create 2 tensors storing the same values, one sliced and the other a normal tensor.'
+            var t1 = Tsr.of(type).withShape(2, 3).andSeed("Tempeh")
+            var t2 = Tsr.of(type).withShape(4, 5).all(0)[1..2, 1..3]
+            t2[0..1, 0..2] = t1
+
+        expect : 'The types of both tensors should match what was provided during instantiation.'
+            t1.dataType == DataType.of(type)
+            t1.valueClass == type
+            t2.dataType == DataType.of(type)
+            t2.valueClass == type
+
+        when : 'We apply the function to both tensors...'
+            var result1 = func(t1)
+            var result2 = func(t2)
+        then : 'The data of the first (non slice) tensor should be as expected.'
+            result1.data == expected
+        and : 'As well the value of the slice tensor (Its data would be a sparse array).'
+            result2.value == expected
+
+        where :
+            type   |  funExpression || expected
+            Double |   'tanh(i0)'   || [-0.2608431635405718, -0.6400224689534015, -0.15255723053856546, 0.1566537867655921, 0.5489211983894932, -0.17031712209680225] as double[]
+            Float  |   'tanh(i0)'   || [-0.26084316, -0.64002246, -0.15255724, 0.15665378, 0.54892117, -0.17031713] as float[]
+            Double |   'relu(i0)'   || [-0.0027019706408068795, -0.008329762613111082, -0.001543641184315801, 0.15861207834235577, 0.6567031992927272, -0.001728424711189524] as double[]
+            Float  |   'relu(i0)'   || [-0.0027019705, -0.008329763, -0.0015436412, 0.15861207, 0.6567032, -0.0017284247] as float[]
+
+    }
 
 }
