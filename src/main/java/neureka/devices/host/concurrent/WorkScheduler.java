@@ -15,13 +15,6 @@ import java.util.function.IntSupplier;
  */
 public abstract class WorkScheduler {
 
-    @FunctionalInterface
-    public interface Worker {
-
-        void work(final int start, final int end);
-
-    }
-
     public static final class Divider {
 
         private final ExecutorService _executor;
@@ -35,18 +28,18 @@ public abstract class WorkScheduler {
             _executor = executor;
         }
 
-        public void divide( final int limit, final Worker worker ) {
-            this.divide(0, limit, worker);
+        public void divide( final int limit, final CPU.RangeWorkload rangeWorkload) {
+            this.divide(0, limit, rangeWorkload);
         }
 
-        public void divide( final int first, final int limit, final Worker worker ) {
+        public void divide( final int first, final int limit, final CPU.RangeWorkload rangeWorkload) {
             WorkScheduler._call(
                     _executor,
                     first,
                     limit,
                     _threshold,
                     _parallelism.getAsInt(),
-                    worker
+                    rangeWorkload
                 );
         }
 
@@ -72,7 +65,7 @@ public abstract class WorkScheduler {
             final int end,
             final int threshold,
             final int workers,
-            final Worker worker
+            final CPU.RangeWorkload rangeWorkload
     ) {
         int workload = end - start;
 
@@ -81,8 +74,8 @@ public abstract class WorkScheduler {
             int split = start + workload / 2;
             int nextWorkers = workers / 2;
 
-            Future<?> firstPart = executor.submit( () -> _call(executor, start, split, threshold, nextWorkers, worker) );
-            Future<?> secondPart = executor.submit( () -> _call(executor, split, end, threshold, nextWorkers, worker) );
+            Future<?> firstPart = executor.submit( () -> _call(executor, start, split, threshold, nextWorkers, rangeWorkload) );
+            Future<?> secondPart = executor.submit( () -> _call(executor, split, end, threshold, nextWorkers, rangeWorkload) );
 
             try {
                 firstPart.get();
@@ -92,7 +85,7 @@ public abstract class WorkScheduler {
             }
         }
         else
-            worker.work(start, end);
+            rangeWorkload.execute(start, end);
     }
 
     public WorkScheduler() {

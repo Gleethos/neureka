@@ -1,6 +1,5 @@
 package neureka.devices.host;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
@@ -174,20 +173,6 @@ public class CPU extends AbstractDevice<Number>
     }
 
     /**
-     *  Takes the provided range and divides it into multi-threaded workloads.
-     */
-    public void divide(
-            final int first,
-            final int limit,
-            final WorkScheduler.Worker worker
-    ) {
-        _DIVIDER.parallelism( _PARALLELISM )
-                .threshold( PARALLELIZATION_THRESHOLD )
-                .divide( first, limit, worker );
-    }
-
-
-    /**
      *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
      *  however it differs in that the {@link JVMExecutor} is processing {@link RangeWorkload} lambdas
      *  instead of simply exposing a single index or concrete elements for a given workload size.
@@ -244,27 +229,10 @@ public class CPU extends AbstractDevice<Number>
          */
         public void threaded( int workloadSize, RangeWorkload workload )
         {
-            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();
+            int cores = get().getCoreCount();
             cores = ( cores == 0 ) ? 1 : cores;
             if ( workloadSize >= _MIN_THREADED_WORKLOAD_SIZE && ( ( workloadSize / cores ) >= _MIN_WORKLOAD_PER_THREAD) ) {
-                final int chunk = workloadSize / cores;
-                Future<?>[] futures = new Future[ cores ];
-                for ( int i = 0; i < cores; i++ ) {
-                    final int start = i * chunk;
-                    final int end = ( i == cores - 1 ) ? workloadSize : ( (i + 1) * chunk );
-                    Neureka neureka = Neureka.get();
-                    futures[ i ] = _pool.submit(() -> {
-                        Neureka.set( neureka ); // This ensures that the threads in the pool have the same settings!
-                        workload.execute( start, end );
-                    });
-                }
-                for ( Future<?> f : futures ) {
-                    try {
-                        f.get(); // Return value is null because we submitted merely a simple Runnable
-                    } catch ( InterruptedException | ExecutionException e ) {
-                        e.printStackTrace();
-                    }
-                }
+                threaded(0, workloadSize, workload );
             }
             else sequential( workloadSize, workload );
         }
@@ -278,6 +246,20 @@ public class CPU extends AbstractDevice<Number>
          */
         public void sequential( int workloadSize, RangeWorkload workload ) {
             workload.execute( 0, workloadSize );
+        }
+
+
+        /**
+         *  Takes the provided range and divides it into multi-threaded workloads.
+         */
+        public void threaded(
+                final int first,
+                final int limit,
+                final RangeWorkload rangeWorkload
+        ) {
+            _DIVIDER.parallelism( _PARALLELISM )
+                    .threshold( PARALLELIZATION_THRESHOLD )
+                    .divide( first, limit, rangeWorkload);
         }
 
     }

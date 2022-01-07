@@ -284,35 +284,43 @@ public class Vectorizable {
 
 
     static void threaded_F64_MxN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
-        CPU.get().divide(
+        CPU.get()
+           .getExecutor()
+           .threaded(
                 0,
                 right.length / complexity,
                 (f, l) -> Vectorizable.partial_F64_MxN_CM(product, f, l, left, complexity, right)
-        );
+            );
     }
 
     static void threaded_F32_MxN_CM(final float[] product, final float[] left, final int complexity, final float[] right) {
-        CPU.get().divide(
+        CPU.get()
+           .getExecutor()
+           .threaded(
                 0,
                 right.length / complexity,
                 (f, l) -> Vectorizable.partial_F32_MxN_CM(product, f, l, left, complexity, right)
-        );
+            );
     }
 
     static void threaded_F32_MxN_RM(final float[] product, final float[] left, final int complexity, final float[] right) {
-        CPU.get().divide(
+        CPU.get()
+           .getExecutor()
+           .threaded(
                 0,
                 left.length / complexity,
                 (f, l) -> Vectorizable.partial_F32_MxN_RM(product, f, l, left, complexity, right)
-        );
+            );
     }
 
     static void threaded_F64_MxN_RM(final double[] product, final double[] left, final int complexity, final double[] right) {
-        CPU.get().divide(
+        CPU.get()
+           .getExecutor()
+           .threaded(
                 0,
                 left.length / complexity,
                 (f, l) -> Vectorizable.partial_F64_MxN_RM(product, f, l, left, complexity, right)
-        );
+            );
     }
 
     static void full_F64_0xN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
