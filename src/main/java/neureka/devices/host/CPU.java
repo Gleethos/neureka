@@ -200,7 +200,7 @@ public class CPU extends AbstractDevice<Number>
                                                     Integer.MAX_VALUE,
                                                     5L,
                                                     TimeUnit.SECONDS,
-                                                    new SynchronousQueue<Runnable>(),
+                                                    new SynchronousQueue<Runnable>(), // This is basically always of size 1
                                                     _newThreadFactory("neureka-daemon-")
                                             );
 
@@ -208,12 +208,16 @@ public class CPU extends AbstractDevice<Number>
             return _newThreadFactory( _GROUP, name );
         }
 
-        private static ThreadFactory _newThreadFactory( final ThreadGroup group, final String name) {
+        private static ThreadFactory _newThreadFactory( final ThreadGroup group, final String name ) {
 
             String prefix = name.endsWith("-") ? name : name + "-";
 
             return target -> {
-                Thread thread = new Thread(group, target, prefix + _COUNTER.incrementAndGet());
+                Thread thread = new Thread(
+                                    group,
+                                    target,
+                                    prefix + _COUNTER.incrementAndGet() // The name, including the thread number.
+                                );
                 thread.setDaemon(true);
                 return thread;
             };

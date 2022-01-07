@@ -15,15 +15,19 @@ import java.util.function.IntSupplier;
  */
 public abstract class WorkScheduler {
 
-    public static final class Divider {
-
+    /**
+     *  Divides workloads until they can be processed efficiently
+     *  and then submits them to a thread pool for execution...
+     */
+    public static final class Divider
+    {
         private final ExecutorService _executor;
 
         private IntSupplier _parallelism = Parallelism.THREADS;
 
         private int _threshold = 128;
 
-        public Divider(final ExecutorService executor) {
+        public Divider( final ExecutorService executor ) {
             super();
             _executor = executor;
         }
