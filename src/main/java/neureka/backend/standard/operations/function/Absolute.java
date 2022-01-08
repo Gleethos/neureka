@@ -1,9 +1,12 @@
 package neureka.backend.standard.operations.function;
 
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.standard.algorithms.FunPair;
+import neureka.backend.standard.algorithms.FunPairs;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.Function;
@@ -43,20 +46,20 @@ public final class Absolute extends AbstractOperation
                             .withArity(3)
                             .andImplementation(
                                 call  ->
-                                    call.getDevice().getExecutor()
+                                    call.getDevice()
+                                        .getExecutor()
                                         .threaded(
                                             call.getTsrOfType( Number.class, 0 ).size(),
-                                            Activation.newWorkloadFor(
-                                                    call,
-                                                    new Activation.Fun<>(
-                                                        x -> Math.abs(x),
-                                                        x -> ( x < 0 ) ? -1 : 1
-                                                    ),
-                                                    new Activation.Fun<>(
-                                                            x -> Math.abs(x),
-                                                            x -> ( x < 0 ) ? -1 : 1
-                                                    )
-                                            )
+                                            Activation.workloadFor(call)
+                                                        .with(Fun.F64ToF64.pair(
+                                                                x -> Math.abs( x ),
+                                                                x -> ( x < 0 ) ? -1 : 1 )
+                                                        )
+                                                        .with(Fun.F32ToF32.pair(
+                                                                x -> Math.abs( x ),
+                                                                x -> ( x < 0 ) ? -1 : 1 )
+                                                        )
+                                                        .get()
                                         )
                             )
                 )

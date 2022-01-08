@@ -1,7 +1,7 @@
 package neureka.backend.standard.operations.function;
 
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.PrimitiveFun;
+import neureka.backend.api.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -67,11 +67,11 @@ public final class Tanh extends AbstractOperation
                                             call.getTsrOfType( Number.class, 0 ).size(),
                                             Activation.newWorkloadFor(
                                                 call,
-                                                new Activation.Fun<>(
+                                                Fun.F64ToF64.pair(
                                                    x -> x / Math.pow(1d + Math.pow(x, 2d), 0.5d),
                                                    x -> 1 - Math.pow(x / Math.pow(1 + Math.pow(x, 2), .5), 2)
                                                 ),
-                                                new Activation.Fun<>(
+                                                Fun.F32ToF32.pair(
                                                    x -> (float) (x / Math.pow(1f + Math.pow(x, 2f), .5f)),
                                                    x -> (float) (1f - Math.pow(x / Math.pow(1 + Math.pow(x, 2f), .5f), 2f))
                                                 )

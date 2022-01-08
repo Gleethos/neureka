@@ -1,6 +1,7 @@
 package neureka.backend.standard.operations.function;
 
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -49,11 +50,11 @@ public final class ReLU extends AbstractOperation
                                            call.getTsrOfType( Number.class, 0 ).size(),
                                                Activation.newWorkloadFor(
                                                        call,
-                                                       new Activation.Fun<>(
+                                                       Fun.F64ToF64.pair(
                                                                x -> (  x >= 0 ? x : x * .01 ),
                                                                x -> (  x >= 0 ? 1 :  .01    )
                                                        ),
-                                                       new Activation.Fun<>(
+                                                       Fun.F32ToF32.pair(
                                                                x -> (  x >= 0 ? x  : x * .01f ),
                                                                x -> (  x >= 0 ? 1f : .01f     )
                                                        )

@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.function;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -76,11 +77,11 @@ public final class Identity extends AbstractOperation
                                             call.getTsrOfType( Number.class, 0 ).size(),
                                             Activation.newWorkloadFor(
                                                 call,
-                                                new Activation.Fun<>(
+                                                Fun.F64ToF64.pair(
                                                         x -> x,
                                                         x -> 1
                                                 ),
-                                                new Activation.Fun<>(
+                                                Fun.F32ToF32.pair(
                                                         x -> x,
                                                         x -> 1
                                                 )

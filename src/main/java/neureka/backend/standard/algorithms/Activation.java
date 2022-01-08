@@ -3,16 +3,13 @@ package neureka.backend.standard.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.PrimitiveFun;
-import neureka.backend.api.Operation;
+import neureka.backend.api.Fun;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.calculus.CalcUtil;
-import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
 import neureka.ndim.iterators.NDIterator;
-import org.jetbrains.annotations.Contract;
 
 /**
  *  This is lambda based {@link neureka.backend.api.Algorithm} implementation
@@ -63,10 +60,29 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
         return Neureka.get().utility().readResource("kernels/activation_template.cl");
     }
 
+
+    public static FunPairs.Builder<Fun> workloadFor(
+            ExecutionCall<CPU> call
+    ) {
+        return FunPairs.compose( pairs -> {
+            return newWorkloadFor( call, pairs );
+        });
+    }
+
     public static CPU.RangeWorkload newWorkloadFor(
             ExecutionCall<CPU> call,
-            Fun<PrimitiveFun.PrimaryF64> funF64,
-            Fun<PrimitiveFun.PrimaryF32> funF32
+            FunPair<?> f1,
+            FunPair<?> f2
+    ) {
+        return workloadFor(call)
+                .with((FunPair<? extends Fun>) f1)
+                .with((FunPair<? extends Fun>) f2)
+                .get();
+    }
+
+    public static CPU.RangeWorkload newWorkloadFor(
+            ExecutionCall<CPU> call,
+            FunPairs<Fun> funs
     ) {
         Class<?> typeClass = call.getTensors()[0].getValueClass();
         Class<?> rightTypeClass = call.getTensors()[1].getValueClass();
@@ -81,7 +97,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
 
         if ( typeClass == Double.class )
         {
-            PrimitiveFun.PrimaryF64 fun = funF64.get(d);
+            Fun.F64ToF64 fun = funs.get(Fun.F64ToF64.class).get(d);
             double[] t0_value = (double[]) t0_drn.getData();
 
             if ( rightTypeClass == Integer.class )
@@ -128,7 +144,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
         }
         else if ( typeClass == Float.class )
         {
-            PrimitiveFun.PrimaryF32 fun = funF32.get(d);
+            Fun.F32ToF32 fun = funs.get(Fun.F32ToF32.class).get(d);
             float[] t0_value = (float[]) t0_drn.getData();
             float[] t1_value = (float[]) t1_src.getData();
             if ( noSlices )
@@ -161,18 +177,10 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
         return workload;
     }
 
-    public static class Fun<T> {
-
-        private final T _a;
-        private final T _d;
-
-        public Fun(T a, T d) {
-            _a = a;
-            _d = d;
+    public static class Funs<T> extends FunPair<T> {
+        public Funs(T a, T d) {
+            super(a, d);
         }
-
-        public T get(int d) { return ( d < 0 ? _a : _d ); }
-
     }
 
 }

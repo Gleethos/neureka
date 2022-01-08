@@ -1,6 +1,7 @@
 package neureka.backend.standard.operations.function;
 
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -50,11 +51,11 @@ public final class Sigmoid extends AbstractOperation
                                             call.getTsrOfType( Number.class, 0 ).size(),
                                             Activation.newWorkloadFor(
                                                 call,
-                                                new Activation.Fun<>(
+                                                Fun.F64ToF64.pair(
                                                     x -> calculate( x, false ),
                                                     x -> calculate( x, true )
                                                 ),
-                                                new Activation.Fun<>(
+                                                Fun.F32ToF32.pair(
                                                     x -> (float) calculate( x, false ),
                                                     x -> (float) calculate( x, true )
                                                 )

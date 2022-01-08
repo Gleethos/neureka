@@ -1,6 +1,7 @@
 package neureka.backend.standard.operations.function;
 
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -48,11 +49,11 @@ public final class Quadratic extends AbstractOperation
                                             call.getTsrOfType( Number.class, 0 ).size(),
                                             Activation.newWorkloadFor(
                                                     call,
-                                                    new Activation.Fun<>(
+                                                    Fun.F64ToF64.pair(
                                                             x -> x * x,
                                                             x -> 2 * x
                                                     ),
-                                                    new Activation.Fun<>(
+                                                    Fun.F32ToF32.pair(
                                                             x -> x * x,
                                                             x -> 2 * x
                                                     )

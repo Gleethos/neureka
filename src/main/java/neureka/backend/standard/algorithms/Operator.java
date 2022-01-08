@@ -2,16 +2,20 @@ package neureka.backend.standard.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Fun;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.RecursiveExecutor;
 import neureka.devices.Device;
+import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class Operator extends AbstractFunctionalAlgorithm<Operator>
 {
@@ -55,6 +59,60 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         return Neureka.get().utility().readResource("kernels/operator_template.cl");
     }
 
+    public static CPU.RangeWorkload newWorkloadFor(
+            ExecutionCall<CPU> call,
+            Activation.Funs<neureka.backend.api.Fun.F64F64ToF64> funF64,
+            Activation.Funs<neureka.backend.api.Fun.F32F32ToF32> funF32
+    ) {
+        Class<?> typeClass = call.getTensors()[1].getValueClass();
+        Class<?> rightTypeClass = call.getTensors()[2].getValueClass();
+
+        int d = call.getDerivativeIndex();
+
+        CPU.RangeWorkload workload = null;
+
+        if ( typeClass == Double.class && rightTypeClass == Double.class )
+            workload = _newWorkloadF64(  call.getTensors()[0], call.getTensors()[1], call.getTensors()[2], funF64.get(d) );
+
+        return workload;
+    }
+
+
+    @Contract(pure = true)
+    private static CPU.RangeWorkload _newWorkloadF64(
+            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
+            neureka.backend.api.Fun.F64F64ToF64 operation
+    ) {
+
+        t1_src.setIsVirtual( false );
+        t2_src.setIsVirtual( false );
+        double[] t1_val = t1_src.getDataAs( double[].class );
+        double[] t2_val = t2_src.getDataAs( double[].class );
+
+        if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
+            return (start, end) ->
+                        ( (double[]) t0_drn.getData() )[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );
+        } else {
+            double[] t0_value = t0_drn.getDataAs(double[].class);
+            return (i, end) -> {
+                NDIterator t0Idx = NDIterator.of(t0_drn);
+                NDIterator t1Idx = NDIterator.of(t1_src);
+                NDIterator t2Idx = NDIterator.of(t2_src);
+                t0Idx.set(t0_drn.IndicesOfIndex(i));
+                t1Idx.set(t1_src.IndicesOfIndex(i));
+                t2Idx.set(t2_src.IndicesOfIndex(i));
+                while ( i < end ) {//increment on drain accordingly:
+                    //setInto _value in drn:
+                    t0_value[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);
+                    //increment on drain:
+                    t0Idx.increment();
+                    t1Idx.increment();
+                    t2Idx.increment();
+                    i++;
+                }
+            };
+        }
+    }
 
     @Contract(pure = true)
     public static void operate(
@@ -85,5 +143,11 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         }
     }
 
+    public static class Funs<T> extends FunPair<T> {
+
+        public Funs(T a, T d) {
+            super(a, d);
+        }
+    }
 
 }

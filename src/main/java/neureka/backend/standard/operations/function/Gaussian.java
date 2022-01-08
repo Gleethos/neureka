@@ -2,6 +2,7 @@ package neureka.backend.standard.operations.function;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -83,11 +84,11 @@ public final class Gaussian extends AbstractOperation
                                     call.getTsrOfType( Number.class, 0 ).size(),
                                     Activation.newWorkloadFor(
                                         call,
-                                        new Activation.Fun<>(
+                                        Fun.F64ToF64.pair(
                                             x -> Math.pow(Math.E, -Math.pow(x, 2)),
                                             x -> -2 * x * Math.pow(Math.E, -Math.pow(x, 2))
                                         ),
-                                        new Activation.Fun<>(
+                                        Fun.F32ToF32.pair(
                                             x -> (float) Math.pow(Math.E, -Math.pow(x, 2)),
                                             x -> (float) (-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
                                         )
