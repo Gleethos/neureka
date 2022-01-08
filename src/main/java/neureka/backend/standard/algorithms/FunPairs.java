@@ -1,21 +1,18 @@
 package neureka.backend.standard.algorithms;
 
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Fun;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.host.CPU;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class FunPairs<F extends Fun> {
 
     private final List<FunPair<F>> _functions = new ArrayList<>();
 
-    public static <F extends Fun, P extends FunPair<F>> Builder<F> compose(
-            BiFunction<ExecutionCall<CPU>, FunPairs<F>, CPU.RangeWorkload> composed
+    public static <F extends Fun, P extends FunPair<F>> Builder<F> implementation(
+            FunImplementation<F> composed
             //,
             //Function<CPU.RangeWorkload, ImplementationFor<CPU>> implementationProvider
     ) {
@@ -37,12 +34,12 @@ public class FunPairs<F extends Fun> {
     public static class Builder<F extends Fun>
     {
         private final List<FunPair<F>> _functions = new ArrayList<>();
-        BiFunction<ExecutionCall<CPU>, FunPairs<F>, CPU.RangeWorkload> _composed;
+        FunImplementation<F> _implementation;
 
         private Builder(
-                BiFunction<ExecutionCall<CPU>, FunPairs<F>, CPU.RangeWorkload> composed
+                FunImplementation<F> composed
         ) {
-            _composed = composed;
+            _implementation = composed;
         }
 
         public <P extends FunPair<F>> Builder<F> with(Class<F> type, P fun) {
@@ -56,13 +53,7 @@ public class FunPairs<F extends Fun> {
         }
 
         public ImplementationFor<CPU> get() {
-            return call -> {
-                call.getDevice().getExecutor()
-                        .threaded(
-                                call.getTsrOfType( Number.class, 0 ).size(),
-                                _composed.apply(call, new FunPairs<F>(_functions))
-                        );
-            };
+            return call -> _implementation.get(call, new FunPairs<F>(_functions));
         }
 
     }
