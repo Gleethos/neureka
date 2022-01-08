@@ -30,10 +30,7 @@ public final class ReLU extends AbstractOperation
         );
 
         Activation operationAlgorithm = new Activation()
-            .setSupplyADAgentFor(
-                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-            )
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
             .buildFunAlgorithm();
 
         setAlgorithm(
@@ -43,22 +40,16 @@ public final class ReLU extends AbstractOperation
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call  ->
-                                    call.getDevice()
-                                       .getExecutor()
-                                       .threaded(
-                                           call.getTsrOfType( Number.class, 0 ).size(),
-                                               Activation.workloadFor( call )
-                                                       .with(Fun.F64ToF64.pair(
-                                                               x -> (  x >= 0 ? x : x * .01 ),
-                                                               x -> (  x >= 0 ? 1 :  .01    )
-                                                       ))
-                                                       .with(Fun.F32ToF32.pair(
-                                                               x -> (  x >= 0 ? x  : x * .01f ),
-                                                               x -> (  x >= 0 ? 1f : .01f     )
-                                                       )
-                                               ).get()
-                                       )
+                                    Activation.implementationForCPU()
+                                        .with(Fun.F64ToF64.pair(
+                                                x -> (  x >= 0 ? x : x * .01 ),
+                                                x -> (  x >= 0 ? 1 :  .01    )
+                                        ))
+                                        .with(Fun.F32ToF32.pair(
+                                                x -> (  x >= 0 ? x  : x * .01f ),
+                                                x -> (  x >= 0 ? 1f : .01f     )
+                                        ))
+                                        .get()
                             )
                 )
                 .setImplementationFor(

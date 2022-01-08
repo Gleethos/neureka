@@ -16,24 +16,6 @@ import org.jetbrains.annotations.Contract;
 
 public final class Tanh extends AbstractOperation
 {
-
-    private final DefaultOperatorCreator<TertiaryF64NDFun> _creator =
-            ( inputs, d ) ->
-            {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                if ( d < 0 ) {
-                    return ( t0Idx, t1Idx, t2Idx ) -> {
-                        double input = t1_val[ t1Idx.i() ];
-                        return input / Math.pow(1 + Math.pow(input, 2), 0.5);
-                    };
-                } else {
-                    return ( t0Idx, t1Idx, t2Idx ) -> {
-                        double input = t1_val[ t1Idx.i() ];
-                        return 1 - Math.pow(input / Math.pow(1 + Math.pow(input, 2), 0.5), 2);
-                    };
-                }
-            };
-
     public Tanh()
     {
         super (
@@ -48,10 +30,7 @@ public final class Tanh extends AbstractOperation
         );
 
         Activation operationAlgorithm = new Activation()
-            .setSupplyADAgentFor(
-                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-            )
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
             .buildFunAlgorithm();
 
         setAlgorithm(
@@ -61,23 +40,16 @@ public final class Tanh extends AbstractOperation
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call  ->
-                                    call.getDevice().getExecutor()
-                                        .threaded(
-                                            call.getTsrOfType( Number.class, 0 ).size(),
-                                            Activation.workloadFor( call )
-                                                .with(Fun.F64ToF64.pair(
-                                                        x -> x / Math.pow(1d + Math.pow(x, 2d), 0.5d),
-                                                        x -> 1 - Math.pow(x / Math.pow(1 + Math.pow(x, 2), .5), 2)
-                                                    )
-                                                )
-                                                .with(Fun.F32ToF32.pair(
-                                                       x -> (float) (x / Math.pow(1f + Math.pow(x, 2f), .5f)),
-                                                       x -> (float) (1f - Math.pow(x / Math.pow(1 + Math.pow(x, 2f), .5f), 2f))
-                                                    )
-                                                )
-                                                .get()
-                                        )
+                                Activation.implementationForCPU()
+                                    .with(Fun.F64ToF64.pair(
+                                            x -> x / Math.pow(1d + Math.pow(x, 2d), 0.5d),
+                                            x -> 1 - Math.pow(x / Math.pow(1 + Math.pow(x, 2), .5), 2)
+                                    ))
+                                    .with(Fun.F32ToF32.pair(
+                                           x -> (float) (x / Math.pow(1f + Math.pow(x, 2f), .5f)),
+                                           x -> (float) (1f - Math.pow(x / Math.pow(1 + Math.pow(x, 2f), .5f), 2f))
+                                    ))
+                                    .get()
                             )
                 ).setImplementationFor(
                         OpenCLDevice.class,

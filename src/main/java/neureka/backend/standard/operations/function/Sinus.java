@@ -77,23 +77,17 @@ public final class Sinus extends AbstractOperation
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call  ->
-                                    call.getDevice()
-                                        .getExecutor()
-                                        .threaded(
-                                            call.getTsrOfType( Number.class, 0 ).size(),
-                                            Activation.workloadFor( call )
-                                                .with(Fun.F64ToF64.pair(
-                                                        x -> Math.sin(x),
-                                                        x -> Math.cos(x)
-                                                ) )
-                                                .with(Fun.F32ToF32.pair(
-                                                        x -> (float) Math.sin(x),
-                                                        x -> (float) Math.cos(x)
-                                                )
-                                            )
-                                            .get()
+                                Activation.implementationForCPU()
+                                        .with(Fun.F64ToF64.pair(
+                                                x -> Math.sin(x),
+                                                x -> Math.cos(x)
+                                        ) )
+                                        .with(Fun.F32ToF32.pair(
+                                                x -> (float) Math.sin(x),
+                                                x -> (float) Math.cos(x)
                                         )
+                                    )
+                                    .get()
                             )
                 )
                 .setImplementationFor(

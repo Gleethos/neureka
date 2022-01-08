@@ -42,22 +42,16 @@ public final class Quadratic extends AbstractOperation
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call  ->
-                                    call.getDevice()
-                                        .getExecutor()
-                                        .threaded(
-                                            call.getTsrOfType( Number.class, 0 ).size(),
-                                            Activation.workloadFor( call )
-                                                    .with(Fun.F64ToF64.pair(
-                                                            x -> x * x,
-                                                            x -> 2 * x
-                                                    ))
-                                                    .with(Fun.F32ToF32.pair(
-                                                            x -> x * x,
-                                                            x -> 2 * x
-                                                    )
-                                                ).get()
-                                        )
+                                Activation.implementationForCPU()
+                                    .with(Fun.F64ToF64.pair(
+                                            x -> x * x,
+                                            x -> 2 * x
+                                    ))
+                                    .with(Fun.F32ToF32.pair(
+                                            x -> x * x,
+                                            x -> 2 * x
+                                    ))
+                                    .get()
                             )
                 )
                 .setImplementationFor(

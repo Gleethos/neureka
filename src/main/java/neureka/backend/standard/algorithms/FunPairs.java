@@ -2,6 +2,7 @@ package neureka.backend.standard.algorithms;
 
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Fun;
+import neureka.backend.api.ImplementationFor;
 import neureka.devices.host.CPU;
 
 import java.util.ArrayList;
@@ -14,7 +15,9 @@ public class FunPairs<F extends Fun> {
     private final List<FunPair<F>> _functions = new ArrayList<>();
 
     public static <F extends Fun, P extends FunPair<F>> Builder<F> compose(
-            Function<FunPairs<F>, CPU.RangeWorkload> composed
+            BiFunction<ExecutionCall<CPU>, FunPairs<F>, CPU.RangeWorkload> composed
+            //,
+            //Function<CPU.RangeWorkload, ImplementationFor<CPU>> implementationProvider
     ) {
         return new Builder<F>( composed );
     }
@@ -34,10 +37,10 @@ public class FunPairs<F extends Fun> {
     public static class Builder<F extends Fun>
     {
         private final List<FunPair<F>> _functions = new ArrayList<>();
-        Function<FunPairs<F>, CPU.RangeWorkload> _composed;
+        BiFunction<ExecutionCall<CPU>, FunPairs<F>, CPU.RangeWorkload> _composed;
 
         private Builder(
-                Function<FunPairs<F>, CPU.RangeWorkload> composed
+                BiFunction<ExecutionCall<CPU>, FunPairs<F>, CPU.RangeWorkload> composed
         ) {
             _composed = composed;
         }
@@ -52,8 +55,14 @@ public class FunPairs<F extends Fun> {
             return this;
         }
 
-        public CPU.RangeWorkload get() {
-            return _composed.apply( new FunPairs<F>(_functions) );
+        public ImplementationFor<CPU> get() {
+            return call -> {
+                call.getDevice().getExecutor()
+                        .threaded(
+                                call.getTsrOfType( Number.class, 0 ).size(),
+                                _composed.apply(call, new FunPairs<F>(_functions))
+                        );
+            };
         }
 
     }

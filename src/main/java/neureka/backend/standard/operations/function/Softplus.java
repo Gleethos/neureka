@@ -46,23 +46,16 @@ public final class Softplus extends AbstractOperation
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call  ->
-                                    call.getDevice()
-                                        .getExecutor()
-                                        .threaded(
-                                            call.getTsrOfType( Number.class, 0 ).size(),
-                                            Activation.workloadFor( call )
-                                                .with(Fun.F64ToF64.pair(
-                                                        x -> Math.log(1d + Math.pow(Math.E, x)),
-                                                        x -> 1d / (1d + Math.pow(Math.E, -x))
-                                                    )
-                                                )
-                                                .with(Fun.F32ToF32.pair(
-                                                        x -> (float) Math.log(1 + Math.pow(Math.E, x)),
-                                                        x -> (float) (1f / (1f + Math.pow(Math.E, -x)))
-                                                    )
-                                                ).get()
+                                Activation.implementationForCPU()
+                                    .with(Fun.F64ToF64.pair(
+                                            x -> Math.log(1d + Math.pow(Math.E, x)),
+                                            x -> 1d / (1d + Math.pow(Math.E, -x))
                                         )
+                                    )
+                                    .with(Fun.F32ToF32.pair(
+                                            x -> (float) Math.log(1 + Math.pow(Math.E, x)),
+                                            x -> (float) (1f / (1f + Math.pow(Math.E, -x)))
+                                    )).get()
                             )
                 )
                 .setImplementationFor(
