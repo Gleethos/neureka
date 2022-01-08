@@ -51,17 +51,17 @@ public final class Softplus extends AbstractOperation
                                         .getExecutor()
                                         .threaded(
                                             call.getTsrOfType( Number.class, 0 ).size(),
-                                            Activation.newWorkloadFor(
-                                                call,
-                                                Fun.F64ToF64.pair(
-                                                    x -> Math.log(1d + Math.pow(Math.E, x)),
-                                                    x -> 1d / (1d + Math.pow(Math.E, -x))
-                                                ),
-                                                Fun.F32ToF32.pair(
-                                                    x -> (float) Math.log(1 + Math.pow(Math.E, x)),
-                                                    x -> (float) (1f / (1f + Math.pow(Math.E, -x)))
+                                            Activation.workloadFor( call )
+                                                .with(Fun.F64ToF64.pair(
+                                                        x -> Math.log(1d + Math.pow(Math.E, x)),
+                                                        x -> 1d / (1d + Math.pow(Math.E, -x))
+                                                    )
                                                 )
-                                            )
+                                                .with(Fun.F32ToF32.pair(
+                                                        x -> (float) Math.log(1 + Math.pow(Math.E, x)),
+                                                        x -> (float) (1f / (1f + Math.pow(Math.E, -x)))
+                                                    )
+                                                ).get()
                                         )
                             )
                 )

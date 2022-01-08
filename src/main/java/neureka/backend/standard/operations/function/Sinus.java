@@ -82,17 +82,17 @@ public final class Sinus extends AbstractOperation
                                         .getExecutor()
                                         .threaded(
                                             call.getTsrOfType( Number.class, 0 ).size(),
-                                            Activation.newWorkloadFor(
-                                                call,
-                                                Fun.F64ToF64.pair(
+                                            Activation.workloadFor( call )
+                                                .with(Fun.F64ToF64.pair(
                                                         x -> Math.sin(x),
                                                         x -> Math.cos(x)
-                                                ),
-                                                Fun.F32ToF32.pair(
+                                                ) )
+                                                .with(Fun.F32ToF32.pair(
                                                         x -> (float) Math.sin(x),
                                                         x -> (float) Math.cos(x)
                                                 )
                                             )
+                                            .get()
                                         )
                             )
                 )

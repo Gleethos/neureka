@@ -47,17 +47,17 @@ public final class Cosinus extends AbstractOperation
                                     call.getDevice().getExecutor()
                                     .threaded(
                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                            Activation.newWorkloadFor(
-                                                call,
-                                                Fun.F64ToF64.pair(
+                                            Activation.workloadFor( call )
+                                                .with(Fun.F64ToF64.pair(
                                                         x -> Math.cos(x),
                                                         x -> -Math.sin(x)
-                                                ),
-                                                Fun.F32ToF32.pair(
+                                                ) )
+                                                .with(Fun.F32ToF32.pair(
                                                         x -> (float) Math.cos(x),
                                                         x -> (float) -Math.sin(x)
                                                 )
                                             )
+                                            .get()
                                     )
                             )
                 )
