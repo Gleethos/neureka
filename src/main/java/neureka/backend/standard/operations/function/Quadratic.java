@@ -47,17 +47,16 @@ public final class Quadratic extends AbstractOperation
                                         .getExecutor()
                                         .threaded(
                                             call.getTsrOfType( Number.class, 0 ).size(),
-                                            Activation.newWorkloadFor(
-                                                    call,
-                                                    Fun.F64ToF64.pair(
+                                            Activation.workloadFor( call )
+                                                    .with(Fun.F64ToF64.pair(
                                                             x -> x * x,
                                                             x -> 2 * x
-                                                    ),
-                                                    Fun.F32ToF32.pair(
+                                                    ))
+                                                    .with(Fun.F32ToF32.pair(
                                                             x -> x * x,
                                                             x -> 2 * x
                                                     )
-                                            )
+                                                ).get()
                                         )
                             )
                 )

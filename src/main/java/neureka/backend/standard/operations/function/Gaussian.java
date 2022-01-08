@@ -82,17 +82,16 @@ public final class Gaussian extends AbstractOperation
                                 .getExecutor()
                                 .threaded(
                                     call.getTsrOfType( Number.class, 0 ).size(),
-                                    Activation.newWorkloadFor(
-                                        call,
-                                        Fun.F64ToF64.pair(
+                                    Activation.workloadFor( call )
+                                            .with(Fun.F64ToF64.pair(
                                             x -> Math.pow(Math.E, -Math.pow(x, 2)),
                                             x -> -2 * x * Math.pow(Math.E, -Math.pow(x, 2))
-                                        ),
-                                        Fun.F32ToF32.pair(
+                                        ))
+                                        .with(Fun.F32ToF32.pair(
                                             x -> (float) Math.pow(Math.E, -Math.pow(x, 2)),
                                             x -> (float) (-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
                                         )
-                                    )
+                                    ).get()
                                 )
                     )
             )

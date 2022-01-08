@@ -48,17 +48,16 @@ public final class ReLU extends AbstractOperation
                                        .getExecutor()
                                        .threaded(
                                            call.getTsrOfType( Number.class, 0 ).size(),
-                                               Activation.newWorkloadFor(
-                                                       call,
-                                                       Fun.F64ToF64.pair(
+                                               Activation.workloadFor( call )
+                                                       .with(Fun.F64ToF64.pair(
                                                                x -> (  x >= 0 ? x : x * .01 ),
                                                                x -> (  x >= 0 ? 1 :  .01    )
-                                                       ),
-                                                       Fun.F32ToF32.pair(
+                                                       ))
+                                                       .with(Fun.F32ToF32.pair(
                                                                x -> (  x >= 0 ? x  : x * .01f ),
                                                                x -> (  x >= 0 ? 1f : .01f     )
                                                        )
-                                               )
+                                               ).get()
                                        )
                             )
                 )

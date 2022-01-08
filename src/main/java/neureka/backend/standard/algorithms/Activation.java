@@ -64,23 +64,12 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
     public static FunPairs.Builder<Fun> workloadFor(
             ExecutionCall<CPU> call
     ) {
-        return FunPairs.compose( pairs -> {
-            return newWorkloadFor( call, pairs );
-        });
+        return FunPairs.compose(
+                pairs -> _newWorkloadFor( call, pairs )
+        );
     }
 
-    public static CPU.RangeWorkload newWorkloadFor(
-            ExecutionCall<CPU> call,
-            FunPair<?> f1,
-            FunPair<?> f2
-    ) {
-        return workloadFor(call)
-                .with((FunPair<? extends Fun>) f1)
-                .with((FunPair<? extends Fun>) f2)
-                .get();
-    }
-
-    public static CPU.RangeWorkload newWorkloadFor(
+    private static CPU.RangeWorkload _newWorkloadFor(
             ExecutionCall<CPU> call,
             FunPairs<Fun> funs
     ) {
