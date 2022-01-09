@@ -15,7 +15,6 @@ import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class Operator extends AbstractFunctionalAlgorithm<Operator>
 {
@@ -59,11 +58,27 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         return Neureka.get().utility().readResource("kernels/operator_template.cl");
     }
 
-    public static CPU.RangeWorkload newWorkloadFor(
+
+    public static Functions.Builder<Fun> implementationForCPU() {
+        return Functions.implementation(
+                (call, pairs) ->
+                        call.getDevice()
+                                .getExecutor()
+                                .threaded(
+                                        call.getTsrOfType( Number.class, 0 ).size(),
+                                        _newWorkloadFor( call, pairs )
+                                )
+        );
+    }
+
+
+    private static CPU.RangeWorkload _newWorkloadFor(
             ExecutionCall<CPU> call,
-            Activation.Funs<neureka.backend.api.Fun.F64F64ToF64> funF64,
-            Activation.Funs<neureka.backend.api.Fun.F32F32ToF32> funF32
+            Functions<Fun> pairs
     ) {
+
+        FunArray<neureka.backend.api.Fun.F64F64ToF64> funF64 = pairs.get(Fun.F64F64ToF64.class);
+        //FunArray<neureka.backend.api.Fun.F32F32ToF32> funF32 = pairs.get(Fun.F32F32ToF32.class);
         Class<?> typeClass = call.getTensors()[1].getValueClass();
         Class<?> rightTypeClass = call.getTensors()[2].getValueClass();
 
@@ -143,10 +158,24 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         }
     }
 
-    public static class Funs<T> extends FunPair<T> {
+    public static class Funs<T extends Fun> implements FunArray<T> {
 
-        public Funs(T a, T d) {
-            super(a, d);
+        private T _a, _d, _d2;
+
+        public Funs( T a, T d, T d2 ) {
+            _a  = a;
+            _d  = d;
+            _d2 = d2;
+        }
+
+        @Override
+        public T get(int d) {
+            return ( d < 0 ? _a : ( d == 0 ) ? _d : _d2 );
+        }
+
+        @Override
+        public Class<T> getType() {
+            return (Class<T>) _a.getClass();
         }
     }
 

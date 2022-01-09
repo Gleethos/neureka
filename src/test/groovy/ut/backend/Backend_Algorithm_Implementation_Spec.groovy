@@ -92,8 +92,11 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             (1.._) * call.getDevice() >> device
             1 * device.getExecutor() >> nativeExecutor
             1 * nativeExecutor.threaded( _, _ )
-            (1.._) * call.getTsrOfType( Number.class, 0) >> tensor
+            (0.._) * call.getTensors() >> new Tsr[]{ tensor, tensor, tensor }
+            (1.._) * call.getTsrOfType( Number.class, 0 ) >> tensor
+            (0.._) * call.getTsrOfType( Number.class, 1 ) >> tensor
             (1.._) * tensor.size() >> 0
+            (0.._) * tensor.valueClass >> Double
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
             imp << Neureka.get().backend()

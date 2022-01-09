@@ -61,8 +61,8 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
     }
 
 
-    public static FunPairs.Builder<Fun> implementationForCPU() {
-        return FunPairs.implementation(
+    public static Functions.Builder<Fun> implementationForCPU() {
+        return Functions.implementation(
                             (call, pairs) ->
                                 call.getDevice()
                                     .getExecutor()
@@ -75,7 +75,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
 
     private static CPU.RangeWorkload _newWorkloadFor(
             ExecutionCall<CPU> call,
-            FunPairs<Fun> funs
+            Functions<Fun> funs
     ) {
         Class<?> typeClass = call.getTensors()[0].getValueClass();
         Class<?> rightTypeClass = call.getTensors()[1].getValueClass();
@@ -170,7 +170,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
         return workload;
     }
 
-    public static class Funs<T> extends FunPair<T> {
+    public static class Funs<T extends Fun> extends FunPair<T> {
         public Funs(T a, T d) {
             super(a, d);
         }

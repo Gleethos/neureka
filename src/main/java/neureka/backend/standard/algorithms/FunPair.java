@@ -1,21 +1,23 @@
 package neureka.backend.standard.algorithms;
 
-public class FunPair<T> {
+import neureka.backend.api.Fun;
+
+public class FunPair<T extends Fun> implements FunArray<T> {
 
     private final Class<T> _type;
     private final T _a;
     private final T _d;
 
-    public FunPair(T a, T d) {
+    public FunPair( T a, T d ) {
         _a = a;
         _d = d;
         _type = (Class<T>) _a.getClass();
     }
 
-    public T get(int d) { return ( d < 0 ? _a : _d ); }
+    @Override
+    public T get( int d ) { return ( d < 0 ? _a : _d ); }
 
-    public Class<T> getType() {
-        return _type;
-    }
+    @Override
+    public Class<T> getType() { return _type; }
 
 }

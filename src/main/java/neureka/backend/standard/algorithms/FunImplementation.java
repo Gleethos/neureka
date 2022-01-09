@@ -6,6 +6,6 @@ import neureka.devices.host.CPU;
 
 public interface FunImplementation<F extends Fun> {
 
-    void get(ExecutionCall<CPU> call, FunPairs<F> pairs);
+    void get(ExecutionCall<CPU> call, Functions<F> pairs);
 
 }
