@@ -111,21 +111,11 @@ public class Subtraction extends AbstractOperation
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        ScalarOperatorCreator<PrimaryF64NDFun> scalarOperatorCreator =
-                (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] - value;
-                    else if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
-                };
-
         Scalarization scalarization = new Scalarization()
-                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                    getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                )
-                .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forSubtractions ) )
-                .buildFunAlgorithm();
+                                        .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
+                                        .setSupplyADAgentFor( getDefaultAlgorithm() )
+                                        .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forSubtractions ) )
+                                        .buildFunAlgorithm();
 
         setAlgorithm(
                 Scalarization.class,
@@ -134,26 +124,13 @@ public class Subtraction extends AbstractOperation
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call -> {
-                                    if ( call.getDerivativeIndex() == 0 )
-                                        call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 0.0d );
-                                    else if ( call.getDerivativeIndex() == 1 )
-                                        call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 0.0d );
-                                    else {
-                                        int offset = (call.getTsrOfType(Number.class, 2).isVirtual() || call.getTsrOfType(Number.class, 2).size() == 1) ? 1 : 0;
-                                        double value = call.getTsrOfType(Number.class, 1 + offset).getValueAt(0).doubleValue();
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType(Number.class, 0).size(),
-                                                        (start, end) ->
-                                                                Scalarization.scalarize(
-                                                                        call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1),
-                                                                        start, end,
-                                                                        scalarOperatorCreator.create(call.getTensors(), value, -1)
-                                                                )
-                                                );
-                                    }
-                                }
+                                    Operator.implementationForCPU()
+                                            .with(Fun.F64F64ToF64.triple(
+                                                    ( a, b ) -> a - b,
+                                                    ( a, b ) ->  1, // Deriving at input 0
+                                                    ( a, b ) -> -1 // deriving input 1
+                                            ))
+                                            .get()
                             )
                 )
                 .setImplementationFor(
