@@ -68,18 +68,18 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                                 .getExecutor()
                                 .threaded(
                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                        _newWorkloadFor( call, pairs )
+                                        newWorkloadFor( call, pairs )
                                 )
         );
     }
     @Contract(pure = true)
-    public static CPU.RangeWorkload _newWorkloadFor(
+    public static CPU.RangeWorkload newWorkloadFor(
         ExecutionCall<CPU> call,
         Functions<Fun> functions
     ) {
+        Tsr<?> t0_drn = call.getTensors()[0];
+        Tsr<?> src    = call.getTensors()[1];
         double value = call.getTsrOfType( Number.class, 2 ).getDataAs( double[].class )[ 0 ];
-        Tsr<?> t0_drn = call.getTensors()[1];
-        Tsr<?> src    = call.getTensors()[2];
 
         Fun.F64F64ToF64 operation = functions.get(Fun.F64F64ToF64.class).get(call.getDerivativeIndex() );
 

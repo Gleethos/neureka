@@ -17,7 +17,7 @@ public class Functions<F extends Fun> {
         return new Builder<F>( composed );
     }
 
-    private Functions(List<FunArray<F>> fun) {
+    private Functions( List<FunArray<F>> fun ) {
         _functions.addAll(fun);
     }
 

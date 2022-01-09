@@ -210,18 +210,14 @@ public class Addition extends AbstractOperation {
                                     else if ( call.getDerivativeIndex() == 1 )
                                         call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d );
                                     else {
-                                        double value = call.getTsrOfType(Number.class, 2).getValueAt(0).doubleValue();
-                                        call.getDevice()
-                                                .getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType(Number.class, 0).size(),
-                                                        (start, end) ->
-                                                                Scalarization.scalarize(
-                                                                        call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1),
-                                                                        start, end,
-                                                                        scalarCreator.create(call.getTensors(), value, -1)
-                                                                )
-                                                );
+                                        Scalarization.implementationForCPU()
+                                                .with(Fun.F64F64ToF64.triple(
+                                                        ( a, b ) -> a + b,
+                                                        ( a, b ) ->  1, // Deriving at input 0
+                                                        ( a, b ) ->  1 // deriving input 1
+                                                ))
+                                                .get()
+                                                .run( call );
                                         }
                                     }
                                 )
