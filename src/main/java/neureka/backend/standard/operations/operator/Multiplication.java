@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -18,7 +19,6 @@ import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
@@ -60,28 +60,9 @@ public class Multiplication extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<SecondaryF64NDFun> defaultOperatorcreator =
-                ( inputs, d ) -> {
-                    inputs[ 1 ].setIsVirtual( false );
-                    inputs[ 2 ].setIsVirtual( false );
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                    if ( d < 0 ) {
-                        return ( t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
-                    } else {
-                        return ( t1Idx, t2Idx ) -> {
-                            if ( d == 0 ) return t2_val[t2Idx.i()];
-                            else return t1_val[ t1Idx.i() ];
-                        };
-                    }
-                };
-
         Operator operator = new Operator(JunctionUtil::forMultiplications)
-                                   .setSupplyADAgentFor(
-                                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                                                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                                    )
-                                    .buildFunAlgorithm();
+                                   .setSupplyADAgentFor( getDefaultAlgorithm() )
+                                   .buildFunAlgorithm();
 
         setAlgorithm(
                 Operator.class,
@@ -90,20 +71,13 @@ public class Multiplication extends AbstractOperation
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call ->
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Operator.operate (
-                                                                        call.getTsrOfType( Number.class, 0 ),
-                                                                        call.getTsrOfType( Number.class, 1 ),
-                                                                        call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ),
-                                                                        start, end,
-                                                                        defaultOperatorcreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                )
+                                    Operator.implementationForCPU()
+                                            .with(Fun.F64F64ToF64.tripple(
+                                                    ( a, b ) -> a * b,
+                                                    ( a, b ) -> b, // Deriving at input 0
+                                                    ( a, b ) -> a  // deriving input 1
+                                            ))
+                                            .get()
                             )
                 )
                 .setImplementationFor(
