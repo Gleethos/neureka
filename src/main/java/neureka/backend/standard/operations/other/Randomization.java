@@ -32,16 +32,6 @@ public class Randomization extends AbstractOperation
                         .setIsInline(         true      )
         );
 
-        ScalarOperatorCreator<PrimaryF64NDFun> creator =
-                ( inputs, value, d ) -> t1Idx -> {
-                    int sum = 0;
-                    int[] indices = t1Idx.get();
-                    for ( int i : indices ) sum += i;
-                    Random dice = new Random();
-                    dice.setSeed( Double.doubleToLongBits( value + sum ) );
-                    return dice.nextGaussian();
-                };
-
         Scalarization scalarization = new Scalarization()
         .setCanPerformBackwardADFor( call -> true )
         .setCanPerformForwardADFor(
@@ -81,16 +71,22 @@ public class Randomization extends AbstractOperation
                                 call -> call.getDevice().getExecutor()
                                         .threaded(
                                                 call.getTsrOfType( Number.class, 0 ).size(),
-                                                ( start, end ) ->
-                                                        Scalarization.scalarize (
-                                                            call.getTsrOfType( Number.class, 0 ),  call.getTsrOfType( Number.class, 1 ),
-                                                                start, end,
-                                                            creator.create(
-                                                                    call.getTensors(),
-                                                                    call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ],
-                                                                    call.getValOf( Arg.DerivIdx.class )
-                                                            )
-                                                )
+                                                ( start, end ) -> {
+                                                    double value = call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ];
+                                                    Scalarization.scalarize (
+                                                        call.getTsrOfType( Number.class, 0 ),
+                                                        call.getTsrOfType( Number.class, 1 ),
+                                                        start, end,
+                                                        t1Idx -> {
+                                                            int sum = 0;
+                                                            int[] indices = t1Idx.get();
+                                                            for ( int i : indices ) sum += i;
+                                                            Random dice = new Random();
+                                                            dice.setSeed( Double.doubleToLongBits( value + sum ) );
+                                                            return dice.nextGaussian();
+                                                        }
+                                                    );
+                                                }
                                         )
                         )
                 )
