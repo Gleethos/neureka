@@ -46,10 +46,7 @@ public final class Identity extends AbstractOperation
                     return true;
                 }
         )
-        .setSupplyADAgentFor(
-            ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-        )
+        .setSupplyADAgentFor( getDefaultAlgorithm() )
         .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
         .setCallPreparation(
                 call -> {
@@ -120,10 +117,7 @@ public final class Identity extends AbstractOperation
                         return true;
                     }
             )
-            .setSupplyADAgentFor(
-                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                    getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-            )
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
             .setCallPreparation(
                 call -> {
