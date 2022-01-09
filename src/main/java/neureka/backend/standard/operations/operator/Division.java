@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Fun;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -56,22 +57,6 @@ public class Division extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        final DefaultOperatorCreator<SecondaryF64NDFun> _operationCreator =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                    if ( d < 0 )
-                        return ( t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] / t2_val[t2Idx.i()];
-                    else {
-                        return ( t1Idx, t2Idx ) -> {
-                            if ( d == 0 )
-                                return 1 / t2_val[t2Idx.i()];
-                            else
-                                return -(t1_val[t2Idx.i()] / Math.pow(t2_val[t1Idx.i()], 2));
-                        };
-                    }
-                };
-
         Operator operator = new Operator(JunctionUtil::forDivisionsOrModuli)
                                    .setSupplyADAgentFor(
                                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
@@ -87,20 +72,13 @@ public class Division extends AbstractOperation
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call ->
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Operator.operate (
-                                                                    call.getTsrOfType( Number.class, 0 ),
-                                                                    call.getTsrOfType( Number.class, 1 ),
-                                                                    call.getTsrOfType( Number.class, 2 ),
-                                                                    call.getValOf( Arg.DerivIdx.class ),
-                                                                    start, end,
-                                                                    _operationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                )
+                                    Operator.implementationForCPU()
+                                            .with(Fun.F64F64ToF64.tripple(
+                                                    ( a, b ) -> a / b,
+                                                    ( a, b ) -> 1 / b, // Deriving at input 0
+                                                    ( a, b ) -> -( a / Math.pow( b, 2 ) ) // deriving input 1
+                                            ))
+                                            .get()
                             )
                     )
                     .setImplementationFor(

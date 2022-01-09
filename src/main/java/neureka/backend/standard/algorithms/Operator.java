@@ -131,35 +131,6 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         }
     }
 
-    @Contract(pure = true)
-    public static void operate(
-            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
-            int d, int i, int end,
-            Operation.SecondaryF64NDFun operation
-    ) {
-        if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
-            ( (double[]) t0_drn.getData() )[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) );
-        } else {
-            //int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
-            double[] t0_value = t0_drn.getDataAs( double[].class );
-            NDIterator t0Idx = NDIterator.of( t0_drn );
-            NDIterator t1Idx = NDIterator.of( t1_src );
-            NDIterator t2Idx = NDIterator.of( t2_src );
-            t0Idx.set( t0_drn.IndicesOfIndex( i ) );
-            t1Idx.set( t1_src.IndicesOfIndex( i ) );
-            t2Idx.set( t2_src.IndicesOfIndex( i ) );
-            while ( i < end ) {//increment on drain accordingly:
-                //setInto _value in drn:
-                t0_value[ t0Idx.i() ] = operation.execute( t1Idx, t2Idx );
-                //increment on drain:
-                t0Idx.increment();
-                t1Idx.increment();
-                t2Idx.increment();
-                i++;
-            }
-        }
-    }
-
     public static class Funs<T extends Fun> implements FunArray<T> {
 
         private T _a, _d, _d2;
