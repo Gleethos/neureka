@@ -55,8 +55,8 @@ public class Modulo extends AbstractOperation {
                                 Operator.implementationForCPU()
                                         .with(Fun.F64F64ToF64.tripple(
                                             ( a, b ) -> a % b,
-                                            ( a, b ) -> 1 / b,
-                                            ( a, b ) -> -(a / Math.pow(b, 2))
+                                            ( a, b ) -> 1 / b, // Deriving at input 0
+                                            ( a, b ) -> -(a / Math.pow(b, 2)) // deriving input 1
                                         ))
                                         .get()
                             )

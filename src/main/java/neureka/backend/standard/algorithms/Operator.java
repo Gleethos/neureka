@@ -86,8 +86,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
 
         CPU.RangeWorkload workload = null;
 
-        if ( typeClass == Double.class && rightTypeClass == Double.class )
-            workload = _newWorkloadF64(  call.getTensors()[0], call.getTensors()[1], call.getTensors()[2], funF64.get(d) );
+        workload = _newWorkloadF64(  call.getTensors()[0], call.getTensors()[1], call.getTensors()[2], funF64.get(d) );
 
         return workload;
     }
@@ -103,6 +102,9 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         t2_src.setIsVirtual( false );
         double[] t1_val = t1_src.getDataAs( double[].class );
         double[] t2_val = t2_src.getDataAs( double[].class );
+
+        assert t1_val != null;
+        assert t2_val != null;
 
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
             return (start, end) ->
