@@ -188,16 +188,6 @@ public class Multiplication extends AbstractOperation
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        ScalarOperatorCreator<PrimaryF64NDFun> scalarOperatorCreator =
-                (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] * value;
-                    else {
-                        if ( d == 0 ) return t1Idx -> value;
-                        else return t1Idx -> t1_val[ t1Idx.i() ];
-                    }
-                };
-
         Scalarization scalarization = new Scalarization()
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
@@ -217,19 +207,15 @@ public class Multiplication extends AbstractOperation
                                         call.getTensors()[0] = call.getTensors()[2].shallowCopy();
                                     else if ( call.getDerivativeIndex() == 1 )
                                         call.getTensors()[0] = call.getTensors()[1].shallowCopy();
-                                    else {
-                                        double value = call.getTsrOfType(Number.class, 2).getValueAt(0).doubleValue();
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType(Number.class, 0).size(),
-                                                        (start, end) ->
-                                                                Scalarization.scalarize(
-                                                                        call.getTsrOfType(Number.class, 0), call.getTsrOfType(Number.class, 1),
-                                                                        start, end,
-                                                                        scalarOperatorCreator.create(call.getTensors(), value, -1)
-                                                                )
-                                                );
-                                    }
+                                    else
+                                        Scalarization.implementationForCPU()
+                                                .with(Fun.F64F64ToF64.triple(
+                                                        ( a, b ) -> a * b,
+                                                        ( a, b ) -> b, // Deriving at input 0
+                                                        ( a, b ) -> a  // deriving input 1
+                                                ))
+                                                .get()
+                                                .run( call );
                                 }
                             )
                 )
