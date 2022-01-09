@@ -96,7 +96,6 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             neureka.backend.api.Fun.F64F64ToF64 operation
     ) {
-
         t1_src.setIsVirtual( false );
         t2_src.setIsVirtual( false );
         double[] t1_val = t1_src.getDataAs( double[].class );

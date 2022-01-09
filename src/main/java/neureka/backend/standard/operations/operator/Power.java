@@ -149,10 +149,7 @@ public class Power extends AbstractOperation
         };
 
         Operator operator = new Operator( rja )
-                                .setSupplyADAgentFor(
-                                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                                                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                                )
+                                .setSupplyADAgentFor( getDefaultAlgorithm() )
                                 .buildFunAlgorithm();
 
         setAlgorithm(Operator.class,
@@ -313,19 +310,13 @@ public class Power extends AbstractOperation
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call -> {
-                                    double value = call.getTsrOfType( Number.class, 2 ).getDataAs( double[].class )[ 0 ];
-                                    call.getDevice().getExecutor()
-                                            .threaded(
-                                                    call.getTsrOfType( Number.class, 0 ).size(),
-                                                    ( start, end ) ->
-                                                        Scalarization.scalarize (
-                                                            call.getTsrOfType( Number.class, 0 ),  call.getTsrOfType( Number.class, 1 ),
-                                                                start, end,
-                                                            scalarCreator.create(call.getTensors(), value, -1)
-                                                        )
-                                            );
-                                }
+                                Scalarization.implementationForCPU()
+                                                .with(Fun.F64F64ToF64.triple(
+                                                        ( a, b ) -> Math.pow( a, b ),
+                                                        ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
+                                                        ( a, b ) -> Math.pow( a, b ) * Math.log( a ) // deriving input 1
+                                                ))
+                                                .get()
                             )
                 )
                 .setImplementationFor(
