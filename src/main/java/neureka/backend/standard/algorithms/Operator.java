@@ -4,7 +4,6 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Fun;
-import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.RecursiveExecutor;
@@ -131,19 +130,17 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         }
     }
 
-    public static class Funs<T extends Fun> implements FunArray<T> {
+    public static class FunTriple<T extends Fun> implements FunArray<T> {
 
-        private T _a, _d, _d2;
+        private final T _a, _d1, _d2;
 
-        public Funs( T a, T d, T d2 ) {
-            _a  = a;
-            _d  = d;
-            _d2 = d2;
+        public FunTriple(T a, T d, T d2 ) {
+            _a  = a; _d1 = d; _d2 = d2;
         }
 
         @Override
-        public T get(int d) {
-            return ( d < 0 ? _a : ( d == 0 ) ? _d : _d2 );
+        public T get(int derivativeIndex) {
+            return ( derivativeIndex < 0 ? _a : ( derivativeIndex == 0 ) ? _d1 : _d2 );
         }
 
         @Override

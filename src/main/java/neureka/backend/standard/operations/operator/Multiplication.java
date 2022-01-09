@@ -72,7 +72,7 @@ public class Multiplication extends AbstractOperation
                             .withArity(3)
                             .andImplementation(
                                     Operator.implementationForCPU()
-                                            .with(Fun.F64F64ToF64.tripple(
+                                            .with(Fun.F64F64ToF64.triple(
                                                     ( a, b ) -> a * b,
                                                     ( a, b ) -> b, // Deriving at input 0
                                                     ( a, b ) -> a  // deriving input 1

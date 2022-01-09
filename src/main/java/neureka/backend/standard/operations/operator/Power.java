@@ -162,7 +162,7 @@ public class Power extends AbstractOperation
                             .withArity(3)
                             .andImplementation(
                                     Operator.implementationForCPU()
-                                            .with(Fun.F64F64ToF64.tripple(
+                                            .with(Fun.F64F64ToF64.triple(
                                                     ( a, b ) -> Math.pow( a, b ),
                                                     ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
                                                     ( a, b ) -> Math.pow( a, b ) * Math.log( a ) // deriving input 1

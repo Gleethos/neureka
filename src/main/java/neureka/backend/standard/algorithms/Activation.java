@@ -170,10 +170,4 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
         return workload;
     }
 
-    public static class Funs<T extends Fun> extends FunPair<T> {
-        public Funs(T a, T d) {
-            super(a, d);
-        }
-    }
-
 }
