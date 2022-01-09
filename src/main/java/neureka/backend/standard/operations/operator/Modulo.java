@@ -232,7 +232,7 @@ public class Modulo extends AbstractOperation {
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                               Operator.implementationForCPU()
+                               Scalarization.implementationForCPU()
                                        .with(Fun.F64F64ToF64.triple(
                                                ( a, b ) -> a % b,
                                                ( a, b ) -> 1 / b, // Deriving at input 0
