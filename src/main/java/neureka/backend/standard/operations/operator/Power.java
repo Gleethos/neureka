@@ -285,23 +285,14 @@ public class Power extends AbstractOperation
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        ScalarOperatorCreator<PrimaryF64NDFun> scalarCreator =
-                ( inputs, value, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    if ( d < 0 ) return t1Idx -> Math.pow(t1_val[ t1Idx.i() ], value);
-                    else {
-                        if ( d == 0 ) return t1Idx -> value*Math.pow(t1_val[ t1Idx.i() ], value-1);
-                        else return t1Idx -> Math.pow(t1_val[ t1Idx.i() ], value)*Math.log(value);
-                    }
-                };
-
-        Scalarization scalarization = new Scalarization()
-                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> true )
-                .setSupplyADAgentFor( getDefaultAlgorithm() )
-                .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, rja ) )
-                .buildFunAlgorithm();
+        Scalarization scalarization =
+                new Scalarization()
+                        .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
+                        .setCanPerformBackwardADFor( call -> true )
+                        .setCanPerformForwardADFor( call -> true )
+                        .setSupplyADAgentFor( getDefaultAlgorithm() )
+                        .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, rja ) )
+                        .buildFunAlgorithm();
 
         setAlgorithm(
                 Scalarization.class,
