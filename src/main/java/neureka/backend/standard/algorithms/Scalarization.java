@@ -4,7 +4,6 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Fun;
-import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.devices.Device;
@@ -68,12 +67,12 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                                 .getExecutor()
                                 .threaded(
                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                        newWorkloadFor( call, pairs )
+                                        _workloadFor( call, pairs )
                                 )
         );
     }
     @Contract(pure = true)
-    public static CPU.RangeWorkload newWorkloadFor(
+    private static CPU.RangeWorkload _workloadFor(
         ExecutionCall<CPU> call,
         Functions<Fun> functions
     ) {
@@ -104,30 +103,6 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                 i++;
             }
         };
-    }
-
-
-    @Contract(pure = true)
-    public static void scalarize (
-            Tsr<?> t0_drn, Tsr<?> src,
-            int i, int end,
-            Operation.PrimaryF64NDFun operation
-    ) {
-        NDIterator t0Idx = NDIterator.of( t0_drn );
-        NDIterator srcIdx = NDIterator.of( src );
-        t0Idx.set( t0_drn.IndicesOfIndex( i ) );
-        srcIdx.set( src.IndicesOfIndex( i ) );
-        double[] t0_value = t0_drn.getDataAs( double[].class );
-        while ( i < end ) // increment on drain accordingly:
-        {
-            // setInto _value in drn:
-            t0_value[ t0Idx.i() ] = operation.execute( srcIdx );
-            // increment on drain:
-            t0Idx.increment();
-            srcIdx.increment();
-            //NDConfiguration.Utility.increment(t0Idx, t0Shp);
-            i++;
-        }
     }
 
 }
