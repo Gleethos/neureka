@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.other;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Fun;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -64,13 +65,6 @@ public class CopyLeft extends AbstractOperation {
                 )
                 .buildFunAlgorithm();
 
-        ScalarOperatorCreator<PrimaryF64NDFun> scalarCreator =
-                (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] = value;
-                    else return null;
-                };
-
         setAlgorithm(
                 Scalarization.class,
                 scalarization.setImplementationFor(
@@ -78,20 +72,13 @@ public class CopyLeft extends AbstractOperation {
                         CPUImplementation
                             .withArity(2)
                             .andImplementation(
-                                call ->
-                                {
-                                    double value = call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ];
-                                    call.getDevice().getExecutor()
-                                            .threaded(
-                                                    call.getTsrOfType( Number.class, 0 ).size(),
-                                                    ( start, end ) ->
-                                                            Scalarization.scalarize (
-                                                                    call.getTsrOfType( Number.class, 0 ),  call.getTsrOfType( Number.class, 1 ),
-                                                                    start, end,
-                                                                    scalarCreator.create(call.getTensors(), value, -1)
-                                                            )
-                                            );
-                                }
+                                    Scalarization.implementationForCPU()
+                                            .with(Fun.F64F64ToF64.triple(
+                                                    ( a, b ) -> b,
+                                                    null,
+                                                    null
+                                            ))
+                                            .get()
                         )
                 )
                 .setImplementationFor(
