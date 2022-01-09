@@ -108,11 +108,6 @@ public final class Identity extends AbstractOperation
                 )
         );
 
-        ScalarOperatorCreator<PrimaryF64NDFun> scalarizationCreator =
-                (inputs, value, d) -> {
-                    if ( d < 0 ) return t1Idx -> value;
-                    else return t1Idx -> value;
-                };
         Scalarization scalarization = new Scalarization()
             .setCanPerformBackwardADFor( call -> true )
             .setCanPerformForwardADFor(
@@ -158,22 +153,13 @@ public final class Identity extends AbstractOperation
                         CPUImplementation
                             .withArity(2)
                             .andImplementation(
-                                call  -> {
-                                    int offset = ( call.getTensors().length > 2 ) ? 1 : 0;
-                                    double value = call.getTsrOfType( Number.class, 1 + offset ).getDataAs( double[].class )[ 0 ];
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (start, end) ->
-                                                                Scalarization.scalarize(
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
-                                                                        start, end,
-                                                                        scalarizationCreator.create(
-                                                                                call.getTensors(), value, call.getValOf( Arg.DerivIdx.class )
-                                                                        )
-                                                                )
-                                                );
-                                }
+                                Scalarization.implementationForCPU()
+                                        .with(Fun.F64F64ToF64.triple(
+                                                ( a, b ) -> b,
+                                                ( a, b ) -> b, // Deriving at input 0
+                                                ( a, b ) -> b // deriving input 1
+                                        ))
+                                        .get()
                             )
                 )
                 .setImplementationFor(

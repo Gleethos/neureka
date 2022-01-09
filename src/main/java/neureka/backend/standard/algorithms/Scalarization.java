@@ -77,9 +77,11 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
         ExecutionCall<CPU> call,
         Functions<Fun> functions
     ) {
+        int offset = ( call.getTensors().length == 3 ? 1 : 0 );
+
         Tsr<?> t0_drn = call.getTensors()[0];
-        Tsr<?> src    = call.getTensors()[1];
-        double value = call.getTsrOfType( Number.class, 2 ).getDataAs( double[].class )[ 0 ];
+        Tsr<?> src    = call.getTensors()[offset];
+        double value = call.getTsrOfType( Number.class, 1 + offset ).getDataAs( double[].class )[ 0 ];
 
         Fun.F64F64ToF64 operation = functions.get(Fun.F64F64ToF64.class).get(call.getDerivativeIndex() );
 
