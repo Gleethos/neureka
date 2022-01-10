@@ -28,30 +28,6 @@ import java.util.stream.IntStream;
 
 public class Power extends AbstractOperation
 {
-
-    private final static DefaultOperatorCreator<TertiaryF64NDFun> _creator = (inputs, d )->
-    {
-        double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-        double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-        if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.pow(t1_val[ t1Idx.i() ], t2_val[t2Idx.i()]);
-        else {
-            return ( t0Idx, t1Idx, t2Idx ) -> {
-                if ( d == 0 ) {
-                    return t2_val[ t2Idx.i() ]
-                            * Math.pow(
-                            t1_val[ t1Idx.i() ],
-                            t2_val[ t2Idx.i() ] - 1
-                    );
-                } else {
-                    return Math.pow(
-                            t1_val[ t1Idx.i() ],
-                            t2_val[ t2Idx.i() ]
-                    ) * Math.log(t1_val[ t1Idx.i() ]);
-                }
-            };
-        }
-    };
-
     public Power()
     {
         super(
@@ -238,18 +214,15 @@ public class Power extends AbstractOperation
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call ->
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                        _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                )
-                                )
+                                    Broadcast.implementationForCPU()
+                                        .with(Fun.F64F64ToF64.triple(
+                                                ( a, b ) -> Math.pow(a, b),
+                                                // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
+                                                ( a, b ) -> a * Math.pow( a, b - 1  ), // Deriving at input 0
+                                                ( a, b ) -> Math.pow( a, b ) * Math.log(a) // deriving input 1
+                                        ))
+                                        .get()
+                            )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
