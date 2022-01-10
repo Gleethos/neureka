@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -82,17 +83,13 @@ public class MultiplicationLeftConv extends AbstractOperation {
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                call ->
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                        Multiplication.xBCCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                )
+                                    Broadcast.implementationForCPU()
+                                            .with(Fun.F64F64ToF64.triple(
+                                                    ( a, b ) -> a * b,
+                                                    ( a, b ) -> a * b,
+                                                    ( a, b ) -> a * b
+                                            ))
+                                            .get()
                             )
                 )
                 .setImplementationFor(

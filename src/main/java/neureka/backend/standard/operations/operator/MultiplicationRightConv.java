@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.backend.api.Fun;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.args.Arg;
@@ -77,48 +78,46 @@ public class MultiplicationRightConv extends AbstractOperation {
                 .buildFunAlgorithm();
 
         setAlgorithm(
-                Broadcast.class,
-                xBroadcast.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(3)
-                            .andImplementation(
-                                call ->
-                                        call.getDevice().getExecutor()
-                                                .threaded(
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                        Multiplication.xBCCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                )
-                                                )
-                            )
+            Broadcast.class,
+            xBroadcast.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(3)
+                    .andImplementation(
+                        Broadcast.implementationForCPU()
+                                .with(Fun.F64F64ToF64.triple(
+                                    ( a, b ) -> a * b,
+                                    ( a, b ) -> a * b,
+                                    ( a, b ) -> a * b
+                                ))
+                                .get()
+                    )
+                )
+                .setImplementationFor(
+                    OpenCLDevice.class,
+                    CLImplementation
+                        .compiler()
+                        .arity( 3 )
+                        .kernelSource( xBroadcast.getKernelSource() )
+                        .activationSource( "value = src1 * src2;\n" )
+                        .differentiationSource( "value += handle * drain;\n" )
+                        .kernelPostfix( this.getFunction() )
+                        .execution(
+                            call -> {
+                                int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                call.getDevice()
+                                    .getKernel(call)
+                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                    .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
+                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                    .call( gwz );
+                            }
                         )
-                        .setImplementationFor(
-                                OpenCLDevice.class,
-                                CLImplementation.compiler()
-                                        .arity( 3 )
-                                        .kernelSource( xBroadcast.getKernelSource() )
-                                        .activationSource( "value = src1 * src2;\n" )
-                                        .differentiationSource( "value += handle * drain;\n" )
-                                        .kernelPostfix( this.getFunction() )
-                                        .execution(
-                                                call -> {
-                                                    int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                                    int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                                    call.getDevice().getKernel(call)
-                                                            .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                            .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                            .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
-                                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                            .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                            .call( gwz );
-                                                }
-                                        )
-                                        .build()
-                        )
+                        .build()
+                )
         );
 
     }

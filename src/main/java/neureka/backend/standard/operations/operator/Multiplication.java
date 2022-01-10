@@ -27,13 +27,6 @@ import java.util.stream.Collectors;
 
 public class Multiplication extends AbstractOperation
 {
-    public static DefaultOperatorCreator<TertiaryF64NDFun> xBCCreator =
-            ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
-            };
-
     public Multiplication()
     {
         super(
