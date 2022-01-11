@@ -215,57 +215,59 @@ public class Power extends AbstractOperation
                 .buildFunAlgorithm();
 
         setAlgorithm(
-                Broadcast.class,
-                broadcast.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(3)
-                            .andImplementation(
-                                    Broadcast.implementationForCPU()
-                                        .with(Fun.F64F64ToF64.triple(
-                                                ( a, b ) -> Math.pow(a, b),
-                                                // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
-                                                ( a, b ) -> a * Math.pow( a, b - 1  ), // Deriving at input 0
-                                                ( a, b ) -> Math.pow( a, b ) * Math.log(a) // deriving input 1
-                                        ))
-                                        .with(Fun.F32F32ToF32.triple(
-                                                ( a, b ) -> (float) Math.pow(a, b),
-                                                // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
-                                                ( a, b ) -> (float) (a * Math.pow( a, b - 1  )), // Deriving at input 0
-                                                ( a, b ) -> (float) (Math.pow( a, b ) * Math.log(a)) // deriving input 1
-                                        ))
-                                        .get()
-                            )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( broadcast.getKernelSource() )
-                                .activationSource( "value += pow(src1, src2);" )
-                                .differentiationSource(
-                                        "if ( d == 0 ) {\n" +
-                                        "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
-                                        "} else {\n" +
-                                        "    value += (pow(target, handle) * log(handle)) * drain;\n" +
-                                        "}"
-                                )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
+            Broadcast.class,
+            broadcast.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(3)
+                    .andImplementation(
+                        Broadcast.implementationForCPU()
+                            .with(Fun.F64F64ToF64.triple(
+                                ( a, b ) -> Math.pow(a, b),
+                                // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
+                                ( a, b ) -> a * Math.pow( a, b - 1  ), // Deriving at input 0
+                                ( a, b ) -> Math.pow( a, b ) * Math.log(a) // deriving input 1
+                            ))
+                            .with(Fun.F32F32ToF32.triple(
+                                ( a, b ) -> (float) Math.pow(a, b),
+                                // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
+                                ( a, b ) -> (float) (a * Math.pow( a, b - 1  )), // Deriving at input 0
+                                ( a, b ) -> (float) (Math.pow( a, b ) * Math.log(a)) // deriving input 1
+                            ))
+                            .get()
+                    )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation
+                    .compiler()
+                    .arity( 3 )
+                    .kernelSource( broadcast.getKernelSource() )
+                    .activationSource( "value += pow(src1, src2);" )
+                    .differentiationSource(
+                        "if ( d == 0 ) {\n" +
+                        "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
+                        "} else {\n" +
+                        "    value += (pow(target, handle) * log(handle)) * drain;\n" +
+                        "}"
+                    )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                            call.getDevice()
+                                .getKernel(call)
+                                .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
+                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                .call( gwz );
+                        }
+                    )
+                    .build()
+            )
         );
 
         //___________________________
@@ -281,50 +283,57 @@ public class Power extends AbstractOperation
                         .buildFunAlgorithm();
 
         setAlgorithm(
-                Scalarization.class,
-                scalarization.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(3)
-                            .andImplementation(
-                                Scalarization.implementationForCPU()
-                                                .with(Fun.F64F64ToF64.triple(
-                                                        ( a, b ) -> Math.pow( a, b ),
-                                                        ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
-                                                        ( a, b ) -> Math.pow( a, b ) * Math.log( a ) // deriving input 1
-                                                ))
-                                                .get()
-                            )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( scalarization.getKernelSource() )
-                                .activationSource( "output = pow( input1, value );" )
-                                .differentiationSource(
-                                        "if ( d == 0 ) {                                      \n" +
-                                        "    output = value * pow( input1, value - (float) 1 );   \n" +
-                                        "} else {                                             \n" +
-                                        "    output = pow( input1, value ) * log( value );        \n" +
-                                        "}"
-                                )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
-                                            int gwz = call.getTsrOfType( Number.class, 0 ).size();
-                                            call.getDevice().getKernel( call )
-                                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
-                                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
-                                                    .pass((float)call.getTsrOfType( Number.class, 1+offset).getDataAs( double[].class )[ 0 ])
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
+            Scalarization.class,
+            scalarization.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(3)
+                    .andImplementation(
+                        Scalarization.implementationForCPU()
+                            .with(Fun.F64F64ToF64.triple(
+                                ( a, b ) -> Math.pow( a, b ),
+                                ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
+                                ( a, b ) -> Math.pow( a, b ) * Math.log( a ) // deriving input 1
+                            ))
+                            .with(Fun.F32F32ToF32.triple(
+                                ( a, b ) -> (float) Math.pow( a, b ),
+                                ( a, b ) -> (float) (b * Math.pow( a, b - 1 )), // Deriving at input 0
+                                ( a, b ) -> (float) (Math.pow( a, b ) * Math.log( a )) // deriving input 1
+                            ))
+                            .get()
+                    )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation
+                    .compiler()
+                    .arity( 3 )
+                    .kernelSource( scalarization.getKernelSource() )
+                    .activationSource( "output = pow( input1, value );" )
+                    .differentiationSource(
+                        "if ( d == 0 ) {                                      \n" +
+                        "    output = value * pow( input1, value - (float) 1 );   \n" +
+                        "} else {                                             \n" +
+                        "    output = pow( input1, value ) * log( value );        \n" +
+                        "}"
+                    )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
+                            int gwz = call.getTsrOfType( Number.class, 0 ).size();
+                            call.getDevice()
+                                .getKernel( call )
+                                .passAllOf(call.getTsrOfType( Number.class, 0 ))
+                                .passAllOf(call.getTsrOfType( Number.class, 0 ))
+                                .pass((float)call.getTsrOfType( Number.class, 1+offset).getDataAs( double[].class )[ 0 ])
+                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                .call( gwz );
+                        }
+                    )
+                    .build()
+            )
         );
 
 

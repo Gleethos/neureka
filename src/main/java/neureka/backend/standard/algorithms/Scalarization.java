@@ -64,12 +64,12 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
     public static Functions.Builder<Fun> implementationForCPU() {
         return Functions.implementation(
                 (call, pairs) ->
-                        call.getDevice()
-                                .getExecutor()
-                                .threaded(
-                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                        _workloadFor( call, pairs )
-                                )
+                    call.getDevice()
+                        .getExecutor()
+                        .threaded(
+                            call.getTsrOfType( Number.class, 0 ).size(),
+                            _workloadFor( call, pairs )
+                        )
         );
     }
     @Contract(pure = true)

@@ -194,60 +194,67 @@ public class Addition extends AbstractOperation {
                 };
  
         setAlgorithm(
-                scalarization.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(3)
-                            .andImplementation(
-                                call -> {
-                                    assert call.getTensors().length == 3;
-                                    if ( call.getDerivativeIndex() == 0 )
-                                        call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d );
-                                    else if ( call.getDerivativeIndex() == 1 )
-                                        call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d );
-                                    else {
-                                        Scalarization.implementationForCPU()
-                                                .with(Fun.F64F64ToF64.triple(
-                                                        ( a, b ) -> a + b,
-                                                        ( a, b ) ->  1, // Deriving at input 0
-                                                        ( a, b ) ->  1 // deriving input 1
-                                                ))
-                                                .get()
-                                                .run( call );
-                                        }
-                                    }
-                                )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( scalarization.getKernelSource() )
-                                .activationSource( "output = input1 + value;\n" )
-                                .differentiationSource( "output = 1;\n" )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            assert call.getTensors().length == 3;
-                                            if ( call.getDerivativeIndex() == 0 )
-                                                call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d );
-                                            else if ( call.getDerivativeIndex() == 1 )
-                                                call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d );
-                                            else {
-                                                int gwz = call.getTsrOfType(Number.class, 0).size();
-                                                float value = call.getTsrOfType(Number.class, 2).getValueAt(0).floatValue();
-                                                call.getDevice().getKernel(call)
-                                                        .passAllOf(call.getTsrOfType(Number.class, 0))
-                                                        .passAllOf(call.getTsrOfType(Number.class, 1))
-                                                        .pass(value)
-                                                        .pass(call.getTsrOfType(Number.class, 0).rank())
-                                                        .pass(call.getValOf(Arg.DerivIdx.class))
-                                                        .call(gwz);
-                                            }
-                                        }
-                                )
-                                .build()
-                )
+            scalarization.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(3)
+                    .andImplementation(
+                        call -> {
+                            assert call.getTensors().length == 3;
+                            if ( call.getDerivativeIndex() == 0 )
+                                call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d );
+                            else if ( call.getDerivativeIndex() == 1 )
+                                call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d );
+                            else {
+                                Scalarization.implementationForCPU()
+                                    .with(Fun.F64F64ToF64.triple(
+                                        ( a, b ) -> a + b,
+                                        ( a, b ) ->  1, // Deriving at input 0
+                                        ( a, b ) ->  1 // deriving input 1
+                                    ))
+                                   .with(Fun.F32F32ToF32.triple(
+                                        ( a, b ) -> a + b,
+                                        ( a, b ) ->  1, // Deriving at input 0
+                                        ( a, b ) ->  1 // deriving input 1
+                                   ))
+                                    .get()
+                                    .run( call );
+                                }
+                            }
+                        )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation
+                    .compiler()
+                    .arity( 3 )
+                    .kernelSource( scalarization.getKernelSource() )
+                    .activationSource( "output = input1 + value;\n" )
+                    .differentiationSource( "output = 1;\n" )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            assert call.getTensors().length == 3;
+                            if ( call.getDerivativeIndex() == 0 )
+                                call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d );
+                            else if ( call.getDerivativeIndex() == 1 )
+                                call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d );
+                            else {
+                                int gwz = call.getTsrOfType(Number.class, 0).size();
+                                float value = call.getTsrOfType(Number.class, 2).getValueAt(0).floatValue();
+                                call.getDevice()
+                                    .getKernel(call)
+                                    .passAllOf(call.getTsrOfType(Number.class, 0))
+                                    .passAllOf(call.getTsrOfType(Number.class, 1))
+                                    .pass(value)
+                                    .pass(call.getTsrOfType(Number.class, 0).rank())
+                                    .pass(call.getValOf(Arg.DerivIdx.class))
+                                    .call(gwz);
+                            }
+                        }
+                    )
+                    .build()
+            )
         );
     }
 

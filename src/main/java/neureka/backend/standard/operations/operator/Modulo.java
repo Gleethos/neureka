@@ -162,33 +162,33 @@ public class Modulo extends AbstractOperation {
                         )
                 )
                 .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( broadcast.getKernelSource() )
-                                .activationSource( "value = ((int)src1) % ((int)src2);\n" )
-                                .differentiationSource(
-                                        "if ( d == 0 ) {\n" +
-                                        "    value += (1/handle) * drain;\n" +//TODO: this is probably wrong!
-                                        "} else {\n" +
-                                        "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
-                                        "}"
-                                )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
+                    OpenCLDevice.class,
+                    CLImplementation.compiler()
+                            .arity( 3 )
+                            .kernelSource( broadcast.getKernelSource() )
+                            .activationSource( "value = ((int)src1) % ((int)src2);\n" )
+                            .differentiationSource(
+                                    "if ( d == 0 ) {\n" +
+                                    "    value += (1/handle) * drain;\n" +//TODO: this is probably wrong!
+                                    "} else {\n" +
+                                    "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
+                                    "}"
+                            )
+                            .kernelPostfix( this.getFunction() )
+                            .execution(
+                                    call -> {
+                                        int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                        int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                        call.getDevice().getKernel(call)
+                                                .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                                .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                                .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
+                                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                                .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                                .call( gwz );
+                                    }
+                            )
+                            .build()
                 )
         );
 
@@ -213,50 +213,57 @@ public class Modulo extends AbstractOperation {
                 .buildFunAlgorithm();
 
         setAlgorithm(
-                Scalarization.class,
-                scalarization.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(3)
-                            .andImplementation(
-                               Scalarization.implementationForCPU()
-                                       .with(Fun.F64F64ToF64.triple(
-                                               ( a, b ) -> a % b,
-                                               ( a, b ) -> 1 / b, // Deriving at input 0
-                                               ( a, b ) -> -(a / Math.pow(b, 2)) // deriving input 1
-                                       ))
-                                       .get()
-                            )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( scalarization.getKernelSource() )
-                                .activationSource( "output = ((int)input1) % ((int)value);     \n" )
-                                .differentiationSource(
-                                        "if ( d == 0 ) {                               \n" +
-                                        "    output = 1/value;                           \n" +
-                                        "} else {                                        \n" +
-                                        "    output = -value /(float)pow(input1, 2.0f);  \n" +
-                                        "}"
-                                )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
-                                            int gwz = call.getTsrOfType( Number.class, 0 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
-                                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
-                                                    .pass((float)call.getTsrOfType( Number.class, 1+offset).getDataAs( double[].class )[ 0 ])
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
+            Scalarization.class,
+            scalarization.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(3)
+                    .andImplementation(
+                       Scalarization.implementationForCPU()
+                               .with(Fun.F64F64ToF64.triple(
+                                   ( a, b ) -> a % b,
+                                   ( a, b ) -> 1 / b, // Deriving at input 0
+                                   ( a, b ) -> -(a / Math.pow(b, 2)) // deriving input 1
+                               ))
+                               .with(Fun.F32F32ToF32.triple(
+                                       ( a, b ) -> a % b,
+                                       ( a, b ) -> 1 / b, // Deriving at input 0
+                                       ( a, b ) -> (float) -(a / Math.pow(b, 2)) // deriving input 1
+                               ))
+                               .get()
+                    )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation
+                    .compiler()
+                    .arity( 3 )
+                    .kernelSource( scalarization.getKernelSource() )
+                    .activationSource( "output = ((int)input1) % ((int)value);     \n" )
+                    .differentiationSource(
+                        "if ( d == 0 ) {                               \n" +
+                        "    output = 1/value;                           \n" +
+                        "} else {                                        \n" +
+                        "    output = -value /(float)pow(input1, 2.0f);  \n" +
+                        "}"
+                    )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
+                            int gwz = call.getTsrOfType( Number.class, 0 ).size();
+                            call.getDevice()
+                                .getKernel(call)
+                                .passAllOf(call.getTsrOfType( Number.class, 0 ))
+                                .passAllOf(call.getTsrOfType( Number.class, 0 ))
+                                .pass((float)call.getTsrOfType( Number.class, 1+offset).getDataAs( double[].class )[ 0 ])
+                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                .call( gwz );
+                        }
+                    )
+                    .build()
+            )
         );
 
     }

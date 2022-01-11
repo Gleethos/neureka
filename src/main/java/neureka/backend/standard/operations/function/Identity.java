@@ -143,18 +143,23 @@ public final class Identity extends AbstractOperation
         setAlgorithm(
                 Scalarization.class,
                 scalarization.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(2)
-                            .andImplementation(
-                                Scalarization.implementationForCPU()
-                                        .with(Fun.F64F64ToF64.triple(
-                                                ( a, b ) -> b,
-                                                ( a, b ) -> b, // Deriving at input 0
-                                                ( a, b ) -> b // deriving input 1
-                                        ))
-                                        .get()
-                            )
+                    CPU.class,
+                    CPUImplementation
+                        .withArity(2)
+                        .andImplementation(
+                            Scalarization.implementationForCPU()
+                                .with(Fun.F64F64ToF64.triple(
+                                    ( a, b ) -> b,
+                                    ( a, b ) -> b, // Deriving at input 0
+                                    ( a, b ) -> b // deriving input 1
+                                ))
+                                .with(Fun.F32F32ToF32.triple(
+                                        ( a, b ) -> b,
+                                        ( a, b ) -> b, // Deriving at input 0
+                                        ( a, b ) -> b // deriving input 1
+                                ))
+                                .get()
+                        )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,

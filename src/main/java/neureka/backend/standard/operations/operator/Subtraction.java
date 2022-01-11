@@ -112,50 +112,56 @@ public class Subtraction extends AbstractOperation
                                         .buildFunAlgorithm();
 
         setAlgorithm(
-                Scalarization.class,
-                scalarization.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(3)
-                            .andImplementation(
-                                    Scalarization.implementationForCPU()
-                                            .with(Fun.F64F64ToF64.triple(
-                                                    ( a, b ) -> a - b,
-                                                    ( a, b ) ->  1, // Deriving at input 0
-                                                    ( a, b ) -> -1 // deriving input 1
-                                            ))
-                                            .get()
-                            )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( scalarization.getKernelSource() )
-                                .activationSource( "output = input1 - value;\n" )
-                                .differentiationSource(
-                                        "if (d==0) {     \n" +//drn and src2 switch:
-                                        "    output = 1;  \n" +
-                                        "} else {         \n" +
-                                        "    output = -1;   " +
-                                        "}"
-                                )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
-                                            int gwz = call.getTsrOfType( Number.class, 0 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
-                                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
-                                                    .pass((float)call.getTsrOfType( Number.class, 1+offset).getDataAs( double[].class )[ 0 ])
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
+            Scalarization.class,
+            scalarization.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(3)
+                    .andImplementation(
+                        Scalarization.implementationForCPU()
+                                .with(Fun.F64F64ToF64.triple(
+                                        ( a, b ) -> a - b,
+                                        ( a, b ) ->  1, // Deriving at input 0
+                                        ( a, b ) -> -1 // deriving input 1
+                                ))
+                                .with(Fun.F32F32ToF32.triple(
+                                        ( a, b ) -> a - b,
+                                        ( a, b ) ->  1, // Deriving at input 0
+                                        ( a, b ) -> -1 // deriving input 1
+                                ))
+                                .get()
+                    )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation.compiler()
+                        .arity( 3 )
+                        .kernelSource( scalarization.getKernelSource() )
+                        .activationSource( "output = input1 - value;\n" )
+                        .differentiationSource(
+                            "if (d==0) {     \n" +//drn and src2 switch:
+                            "    output = 1;  \n" +
+                            "} else {         \n" +
+                            "    output = -1;   " +
+                            "}"
+                        )
+                        .kernelPostfix( this.getFunction() )
+                        .execution(
+                            call -> {
+                                int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
+                                int gwz = call.getTsrOfType( Number.class, 0 ).size();
+                                call.getDevice()
+                                    .getKernel(call)
+                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
+                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
+                                    .pass((float)call.getTsrOfType( Number.class, 1+offset).getDataAs( double[].class )[ 0 ])
+                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                    .call( gwz );
+                            }
+                        )
+                        .build()
+            )
         );
 
         //________________

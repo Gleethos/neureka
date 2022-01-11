@@ -187,58 +187,65 @@ public class Multiplication extends AbstractOperation
                 .buildFunAlgorithm();
 
         setAlgorithm(
-                Scalarization.class,
-                scalarization.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(3)
-                            .andImplementation(
-                                call -> {
-                                    if ( call.getDerivativeIndex() == 0 )
-                                        call.getTensors()[0] = call.getTensors()[2].shallowCopy();
-                                    else if ( call.getDerivativeIndex() == 1 )
-                                        call.getTensors()[0] = call.getTensors()[1].shallowCopy();
-                                    else
-                                        Scalarization.implementationForCPU()
-                                                .with(Fun.F64F64ToF64.triple(
-                                                        ( a, b ) -> a * b,
-                                                        ( a, b ) -> b, // Deriving at input 0
-                                                        ( a, b ) -> a  // deriving input 1
-                                                ))
-                                                .get()
-                                                .run( call );
-                                }
-                            )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( scalarization.getKernelSource() )
-                                .activationSource( "output = input1 * value;\n" )
-                                .differentiationSource( "if ( d == 0 ) {output = value;}else{output = input1;}\n" )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            if ( call.getDerivativeIndex() == 0 )
-                                                call.getTensors()[0] = call.getTensors()[2].shallowCopy();
-                                            else if ( call.getDerivativeIndex() == 1 )
-                                                call.getTensors()[0] = call.getTensors()[1].shallowCopy();
-                                            else {
-                                                int offset = (call.getTsrOfType(Number.class, 2).isVirtual() || call.getTsrOfType(Number.class, 2).size() == 1) ? 1 : 0;
-                                                int gwz = call.getTsrOfType(Number.class, 0).size();
-                                                call.getDevice().getKernel(call)
-                                                        .passAllOf(call.getTsrOfType(Number.class, 0))
-                                                        .passAllOf(call.getTsrOfType(Number.class, 0 + offset))
-                                                        .pass((float) call.getTsrOfType(Number.class, 1 + offset).getDataAs( double[].class )[0])
-                                                        .pass(call.getTsrOfType(Number.class, 0).rank())
-                                                        .pass(call.getValOf(Arg.DerivIdx.class))
-                                                        .call(gwz);
-                                            }
-                                        }
-                                )
-                                .build()
-                )
+            Scalarization.class,
+            scalarization.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(3)
+                    .andImplementation(
+                        call -> {
+                            if ( call.getDerivativeIndex() == 0 )
+                                call.getTensors()[0] = call.getTensors()[2].shallowCopy();
+                            else if ( call.getDerivativeIndex() == 1 )
+                                call.getTensors()[0] = call.getTensors()[1].shallowCopy();
+                            else
+                                Scalarization.implementationForCPU()
+                                        .with(Fun.F64F64ToF64.triple(
+                                            ( a, b ) -> a * b,
+                                            ( a, b ) -> b, // Deriving at input 0
+                                            ( a, b ) -> a  // deriving input 1
+                                        ))
+                                        .with(Fun.F32F32ToF32.triple(
+                                                ( a, b ) -> a * b,
+                                                ( a, b ) -> b, // Deriving at input 0
+                                                ( a, b ) -> a  // deriving input 1
+                                        ))
+                                        .get()
+                                        .run( call );
+                        }
+                    )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation
+                    .compiler()
+                    .arity( 3 )
+                    .kernelSource( scalarization.getKernelSource() )
+                    .activationSource( "output = input1 * value;\n" )
+                    .differentiationSource( "if ( d == 0 ) {output = value;}else{output = input1;}\n" )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            if ( call.getDerivativeIndex() == 0 )
+                                call.getTensors()[0] = call.getTensors()[2].shallowCopy();
+                            else if ( call.getDerivativeIndex() == 1 )
+                                call.getTensors()[0] = call.getTensors()[1].shallowCopy();
+                            else {
+                                int offset = (call.getTsrOfType(Number.class, 2).isVirtual() || call.getTsrOfType(Number.class, 2).size() == 1) ? 1 : 0;
+                                int gwz = call.getTsrOfType(Number.class, 0).size();
+                                call.getDevice()
+                                    .getKernel(call)
+                                    .passAllOf(call.getTsrOfType(Number.class, 0))
+                                    .passAllOf(call.getTsrOfType(Number.class, 0 + offset))
+                                    .pass((float) call.getTsrOfType(Number.class, 1 + offset).getDataAs( double[].class )[0])
+                                    .pass(call.getTsrOfType(Number.class, 0).rank())
+                                    .pass(call.getValOf(Arg.DerivIdx.class))
+                                    .call(gwz);
+                            }
+                        }
+                    )
+                    .build()
+            )
         );
 
     }

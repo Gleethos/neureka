@@ -66,44 +66,51 @@ public class CopyLeft extends AbstractOperation {
                 .buildFunAlgorithm();
 
         setAlgorithm(
-                Scalarization.class,
-                scalarization.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(2)
-                            .andImplementation(
-                                    Scalarization.implementationForCPU()
-                                            .with(Fun.F64F64ToF64.triple(
-                                                    ( a, b ) -> b,
-                                                    null,
-                                                    null
-                                            ))
-                                            .get()
-                        )
+            Scalarization.class,
+            scalarization.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(2)
+                    .andImplementation(
+                        Scalarization.implementationForCPU()
+                                .with(Fun.F64F64ToF64.triple(
+                                    ( a, b ) -> b,
+                                    null,
+                                    null
+                                ))
+                                .with(Fun.F32F32ToF32.triple(
+                                    ( a, b ) -> b,
+                                    null,
+                                    null
+                                ))
+                                .get()
                 )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 2 )
-                                .kernelSource( scalarization.getKernelSource() )
-                                .activationSource( "output = value;\n" )
-                                .differentiationSource( "output = value;\n" )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            Tsr<Number> t = call.getTsrOfType( Number.class, 0 );
-                                            int gwz = t.size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf( t )
-                                                    .passAllOf( t )
-                                                    .pass( call.getTsrOfType( Number.class, 1 ).getValueAs( float[].class )[ 0 ] )
-                                                    .pass( t.rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation
+                    .compiler()
+                    .arity( 2 )
+                    .kernelSource( scalarization.getKernelSource() )
+                    .activationSource( "output = value;\n" )
+                    .differentiationSource( "output = value;\n" )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            Tsr<Number> t = call.getTsrOfType( Number.class, 0 );
+                            int gwz = t.size();
+                            call.getDevice()
+                                .getKernel(call)
+                                .passAllOf( t )
+                                .passAllOf( t )
+                                .pass( call.getTsrOfType( Number.class, 1 ).getValueAs( float[].class )[ 0 ] )
+                                .pass( t.rank() )
+                                .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                .call( gwz );
+                        }
+                    )
+                    .build()
+            )
         );
 
         Activation activation = new Activation()
