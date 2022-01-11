@@ -1511,7 +1511,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param call The context object containing all relevant information that defines a call for tensor execution.
      * @return This very tensor instance. (factory pattern)
      */
-    public Tsr<V> incrementVersionBecauseOf( ExecutionCall<?> call ) {
+    private Tsr<V> _incrementVersionBecauseOf(ExecutionCall<?> call ) {
         if ( Neureka.get().settings().autograd().isPreventingInlineOperations() ) {
             _version++;
             GraphNode<?> node = get( GraphNode.class );
@@ -3033,6 +3033,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return TsrAsString.representing( this ).byDefaults().toString();
     }
 
+    /**
+     *  The version number is tracking how often this tensor has been mutated.
+     *  This is especially useful for checking the correcting of autp-grad!
+     */
     public int getVersion() { return _version; }
 
     /**
@@ -3049,6 +3053,15 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     .withShape( template.getNDConf().shape() );
     }
 
+    /**
+     *  This factory method produces a randomly populated tensor of the provided
+     *  type and shape using a hard coded default seed.
+     *
+     * @param valueTypeClass The type class of the values stored by the returned tensor.
+     * @param shape The shape of the tensor produced by this factory method.
+     * @param <V> The type parameter of the values stored by the returned tensor.
+     * @return A randomly filled tensor of the provided type.
+     */
     public static <V> Tsr<V> ofRandom( Class<V> valueTypeClass, int... shape ) {
         long seed = 8701252152903546L;
         return Tsr.of( valueTypeClass )
@@ -3153,21 +3166,16 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public Mutate getMutate() {
         return new Mutate() {
             @Override
-            public Mutate setNDConf( NDConfiguration configuration ) {
-                Tsr.this._setNDConf( configuration );
-                return this;
-            }
+            public Mutate setNDConf( NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return this; }
             @Override
-            public <V> Tsr<V> toType( Class<V> typeClass ) {
-                return Tsr.this._toType( typeClass );
-            }
+            public <V> Tsr<V> toType( Class<V> typeClass ) { return Tsr.this._toType( typeClass ); }
             @Override
-            public <V> Tsr<V> setDataType( DataType<V> dataType ) {
-                return (Tsr<V>) Tsr.this._setDataType(dataType);
-            }
+            public <V> Tsr<V> setDataType( DataType<V> dataType ) { return (Tsr<V>) Tsr.this._setDataType(dataType); }
             @Override
-            public Mutate toLayout(NDConfiguration.Layout layout) {
-                Tsr.this._toLayout( layout );
+            public Mutate toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return this; }
+            @Override
+            public Mutate incrementVersion( ExecutionCall<?> call ) {
+                _incrementVersionBecauseOf( call );
                 return this;
             }
         };

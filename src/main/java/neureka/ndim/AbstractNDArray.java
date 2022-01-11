@@ -38,6 +38,7 @@ package neureka.ndim;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.utility.DataConverter;
 import neureka.devices.Device;
@@ -646,6 +647,18 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          * @return The final instance type of this class which enables method chaining.
          */
         Mutate toLayout( NDConfiguration.Layout layout );
+
+        /**
+         *  This method is responsible for incrementing
+         *  the "_version" field variable which represents the version of the data of this tensor.
+         *  Meaning :
+         *  Every time the underlying data (_value) changes this version ought to increment alongside.
+         *  The method is called during the execution procedure.
+         *
+         * @param call The context object containing all relevant information that defines a call for tensor execution.
+         * @return This very tensor instance. (factory pattern)
+         */
+        Mutate incrementVersion( ExecutionCall<?> call );
 
     }
 
