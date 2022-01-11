@@ -18,33 +18,37 @@ import org.jetbrains.annotations.Contract;
 
 public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
 {
-
-    public Broadcast( RecursiveExecutor finalExecutor ) {
+    public Broadcast( RecursiveExecutor finalExecutor )
+    {
         super("broadcast");
         setIsSuitableFor(
-                call->
-                {
-                    if (
+            call->
+            {
+                boolean isInvalid =
                             !call.validate()
-                            .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                            .isValid()
-                    ) return SuitabilityPredicate.UNSUITABLE;
+                                .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
+                                .isValid();
 
-                    int maxRank = 0;
-                    for ( Tsr<?> t : call.getTensors() ) if ( t != null && t.rank() > maxRank ) maxRank = t.rank();
-                    for ( int i = 0; i < maxRank; i++ )
+                if ( isInvalid )
+                    return SuitabilityPredicate.UNSUITABLE;
+
+                int maxRank = 0;
+                for ( Tsr<?> t : call.getTensors() )
+                    if ( t != null && t.rank() > maxRank ) maxRank = t.rank();
+
+                for ( int i = 0; i < maxRank; i++ )
+                {
+                    int currentDim = -1;
+                    for( Tsr<?> t : call.getTensors() )
                     {
-                        int currentDim = -1;
-                        for( Tsr<?> t : call.getTensors() )
-                        {
-                            if ( t!=null && i < t.rank() ) {
-                                if ( currentDim == -1 ) currentDim = t.shape( i );
-                                else if ( currentDim != t.shape( i ) && currentDim != 1 && t.shape( i ) != 1 ) return 0.0f;
-                            }
+                        if ( t != null && i < t.rank() ) {
+                            if ( currentDim == -1 ) currentDim = t.shape( i );
+                            else if ( currentDim != t.shape( i ) && currentDim != 1 && t.shape( i ) != 1 ) return 0.0f;
                         }
                     }
-                    return SuitabilityPredicate.GOOD;
                 }
+                return SuitabilityPredicate.GOOD;
+            }
         );
         setCanPerformForwardADFor( call -> {
             Tsr<?> last = null;
@@ -55,50 +59,51 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
             return true;
         });
         setExecutionDispatcher(
-                ( caller, call ) -> {
-                    int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
-                    if (
-                            call.getTsrOfType( Number.class, offset).shape().size() != call.getTsrOfType( Number.class, 1+offset).shape().size()
-                    ) // Creating a new tensor:
-                    {
-                        Tsr<?>[] tsrs = {call.getTsrOfType( Number.class, offset), call.getTsrOfType( Number.class, 1+offset) };
-                        Reshape.makeFit(tsrs, caller.isDoingAD() );
-                        tsrs = new Tsr[]{null, tsrs[0], tsrs[1]};
-                        CalcUtil.recursiveExecution( call.withTensors( tsrs ), (executionCall, executor) -> null );
-                        return tsrs[0];
-                    }
-                    return CalcUtil.executeFor(caller, call, finalExecutor );
+            ( caller, call ) -> {
+                int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
+                if (
+                    call.getTsrOfType( Number.class, offset).shape().size() != call.getTsrOfType( Number.class, 1+offset).shape().size()
+                ) // Creating a new tensor:
+                {
+                    Tsr<?>[] tsrs = {call.getTsrOfType( Number.class, offset), call.getTsrOfType( Number.class, 1+offset) };
+                    Reshape.makeFit(tsrs, caller.isDoingAD() );
+                    tsrs = new Tsr[]{null, tsrs[0], tsrs[1]};
+                    CalcUtil.recursiveExecution( call.withTensors( tsrs ), (executionCall, executor) -> null );
+                    return tsrs[0];
                 }
+                return CalcUtil.executeFor(caller, call, finalExecutor );
+            }
         );
         setCallPreparation(
-                call -> {
-                    Tsr<?>[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:
-                    {
-                        int[] s1 = tsrs[1].getNDConf().shape();
-                        int[] s2 = tsrs[2].getNDConf().shape();
+            call -> {
+                Tsr<?>[] inputs = call.getTensors();
+                Device device = call.getDevice();
+                if ( inputs[ 0 ] == null ) // Creating a new tensor:
+                {
+                    int[] s1 = inputs[1].getNDConf().shape();
+                    int[] s2 = inputs[2].getNDConf().shape();
 
-                        assert s1.length == s2.length;
-                        int[] newShape = new int[s1.length];
+                    assert s1.length == s2.length;
+                    int[] outShape = new int[s1.length];
 
-                        for ( int i = 0; i < newShape.length; i++ )
-                            assert s1[ i ] == 1 || s2[ i ] == 1 || s1[ i ] == s2[ i ];
+                    for ( int i = 0; i < outShape.length; i++ )
+                        assert s1[ i ] == 1 || s2[ i ] == 1 || s1[ i ] == s2[ i ];
 
-                        for ( int i = 0; i < newShape.length; i++ )
-                            newShape[ i ] = ( s1[ i ] == 1 ) ? s2[ i ] : s1[ i ];
+                    for ( int i = 0; i < outShape.length; i++ )
+                        outShape[ i ] = ( s1[ i ] == 1 ? s2[ i ] : s1[ i ] );
 
-                        Tsr<?> output = Tsr.of( newShape, 0.0 );
-                        output.setIsVirtual( false );
-                        try {
-                            device.store( output );
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+                    Class<Object> type = (Class<Object>) inputs[ 1 ].getValueClass();
+                    Tsr<?> output = Tsr.of(type).withShape(outShape).all( 0.0 );
+                    output.setIsVirtual( false );
+                    try {
+                        device.store( output );
+                    } catch( Exception e ) {
+                        e.printStackTrace();
                     }
-                    return call;
+                    inputs[ 0 ] = output;
                 }
+                return call;
+            }
         );
     }
 
