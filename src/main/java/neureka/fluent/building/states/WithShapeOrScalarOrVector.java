@@ -5,9 +5,9 @@ import neureka.Tsr;
 public interface WithShapeOrScalarOrVector<V>
 {
     /**
-     *  After having defined the type of the {@link Tsr} which
-     *  ought to be created, the builder API expects an array of int values
+     *  Define a tensor shape by passing an array of int values to this method,
      *  which represent the shape of the {@link Tsr} that should be built.
+     *  This should be called immediately after having specified the type of the tensor.
      *
      * @param shape The shape array of the {@link Tsr} that should be built.
      * @return The next step in the call transition graph of this fluent builder API.

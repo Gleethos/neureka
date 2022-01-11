@@ -301,6 +301,9 @@ public class NDAConstructor {
         configureFromNewShape( shape, false, false  );
     }
 
+    /**
+     *  If possible, turns the provided {@code Object} array into a memory compact array of primitive types.
+     */
     public static Object optimizeObjectArray( DataType<?> dataType, Object[] values, int size ) {
         Object data = values;
         IntStream indices = IntStream.iterate( 0, i -> i + 1 ).limit(size);
