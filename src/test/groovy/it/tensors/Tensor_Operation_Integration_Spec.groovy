@@ -387,7 +387,7 @@ class Tensor_Operation_Integration_Spec extends Specification
             w.toString({it.hasSlimNumbers = true}) == "[$wShape]:($wValue):g:(null)"
 
         when :
-            c.backward(Tsr.of([2, 2], [5, -2, 7, 3]))
+            c.backward(Tsr.of([2, 2], [5, -2, 7, 3]).mutate.toType(type))
         then :
             w.toString({it.hasSlimNumbers = true}) == "[$wShape]:($wValue):g:($wGradient)"
 
