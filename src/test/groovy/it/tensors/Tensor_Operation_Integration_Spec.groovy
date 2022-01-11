@@ -362,8 +362,8 @@ class Tensor_Operation_Integration_Spec extends Specification
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
         and :
             String wValue = whichGrad
-                                ? "8.0" + ( bShape.inject(1, {x,y->x*y}) > 1 ? ", 9.0" : "" )
-                                : "1.0, 2.0, 3.0, 4.0"
+                                ? "8" + ( bShape.inject(1, {x,y->x*y}) > 1 ? ", 9" : "" )
+                                : "1, 2, 3, 4"
         and :
             def aShape = [2, 2]
         and :
@@ -383,67 +383,67 @@ class Tensor_Operation_Integration_Spec extends Specification
         when :
             Tsr c = operation.apply(a, b)
         then :
-            c.toString().startsWith("[2x2]:($cValue)")
-            w.toString() == "[$wShape]:($wValue):g:(null)"
+            c.toString({it.hasSlimNumbers = true}).startsWith("[2x2]:($cValue)")
+            w.toString({it.hasSlimNumbers = true}) == "[$wShape]:($wValue):g:(null)"
 
         when :
             c.backward(Tsr.of([2, 2], [5, -2, 7, 3]))
         then :
-            w.toString() == "[$wShape]:($wValue):g:($wGradient)"
+            w.toString({it.hasSlimNumbers = true}) == "[$wShape]:($wValue):g:($wGradient)"
 
         when :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
         then :
-            c.toString() == "(2x2):[$cValue]"
+            c.toString({it.hasSlimNumbers = true}) == "(2x2):[$cValue]"
 
         where:
-            device | type   | whichGrad | bShape |    operation      ||     cValue              | wGradient
+            device | type   | whichGrad | bShape |    operation      ||     cValue      | wGradient
 
-            'CPU'  | Double | false     | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"
-            'GPU'  | Double | false     | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"
-            'CPU'  | Float  | false     | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"
-            'GPU'  | Float  | false     | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"
+            'CPU'  | Double | false     | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "5, -2, 7, 3"
+            'GPU'  | Double | false     | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "5, -2, 7, 3"
+            'CPU'  | Float  | false     | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "5, -2, 7, 3"
+            'GPU'  | Float  | false     | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "5, -2, 7, 3"
 
-            'CPU'  | Double | false     | [1]    | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0"
-            'GPU'  | Double | false     | [1]    | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0"
-            'CPU'  | Float  | false     | [1]    | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0"
-            'GPU'  | Float  | false     | [1]    | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0"
+            'CPU'  | Double | false     | [1]    | { x, y -> x * y } || "8, 16, 24, 32" | "40, -16, 56, 24"
+            'GPU'  | Double | false     | [1]    | { x, y -> x * y } || "8, 16, 24, 32" | "40, -16, 56, 24"
+            'CPU'  | Float  | false     | [1]    | { x, y -> x * y } || "8, 16, 24, 32" | "40, -16, 56, 24"
+            'GPU'  | Float  | false     | [1]    | { x, y -> x * y } || "8, 16, 24, 32" | "40, -16, 56, 24"
 
-            'CPU'  | Double | true      | [2,1]  | { x, y -> x + y } || "9.0, 10.0, 12.0, 13.0" | "3.0, 10.0"
-            'CPU'  | Double | true      | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "13.0"
-            //'GPU'  | Double |  true     | [2,1]  | { x, y -> x + y } || "9.0, 10.0, 12.0, 13.0" | "3.0, 10.0"
-            'GPU'  | Double | true      | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "13.0"
-            'CPU'  | Float  | true      | [2,1]  | { x, y -> x + y } || "9.0, 10.0, 12.0, 13.0" | "3.0, 10.0"
-            'CPU'  | Float  | true      | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "13.0"
-            //'GPU'  | Float  |  true     | [2,1]  | { x, y -> x + y } || "9.0, 10.0, 12.0, 13.0" | "3.0, 10.0"
-            'GPU'  | Float  | true      | [1]    | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "13.0"
+            'CPU'  | Double | true      | [2,1]  | { x, y -> x + y } || "9, 10, 12, 13" | "3, 10"
+            'CPU'  | Double | true      | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "13"
+            //'GPU'  | Double |  true     | [2,1]  | { x, y -> x + y } || "9, 10, 12, 13" | "3, 10"
+            'GPU'  | Double | true      | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "13"
+            'CPU'  | Float  | true      | [2,1]  | { x, y -> x + y } || "9, 10, 12, 13" | "3, 10"
+            'CPU'  | Float  | true      | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "13"
+            //'GPU'  | Float  |  true     | [2,1]  | { x, y -> x + y } || "9, 10, 12, 13" | "3, 10"
+            'GPU'  | Float  | true      | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "13"
 
-            'CPU'  | Double | true      | [1,2]  | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-            'CPU'  | Double | true      | [2]    | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-            'GPU'  | Double | true      | [1,2]  | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-            'GPU'  | Double | true      | [2]    | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-            'CPU'  | Float  | true      | [1,2]  | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-            'CPU'  | Float  | true      | [2]    | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-            'GPU'  | Float  | true      | [1,2]  | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-            'GPU'  | Float  | true      | [2]    | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
+            'CPU'  | Double | true      | [1,2]  | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
+            'CPU'  | Double | true      | [2]    | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
+            'GPU'  | Double | true      | [1,2]  | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
+            'GPU'  | Double | true      | [2]    | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
+            'CPU'  | Float  | true      | [1,2]  | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
+            'CPU'  | Float  | true      | [2]    | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
+            'GPU'  | Float  | true      | [1,2]  | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
+            'GPU'  | Float  | true      | [2]    | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
 
-            'CPU'  | Double | true      | [1,2]  | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-            'CPU'  | Double | true      | [2]    | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-            'GPU'  | Double | true      | [1,2]  | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-            'GPU'  | Double | true      | [2]    | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-            'CPU'  | Float  | true      | [1,2]  | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-            'CPU'  | Float  | true      | [2]    | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-            'GPU'  | Float  | true      | [1,2]  | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-            'GPU'  | Float  | true      | [2]    | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
+            'CPU'  | Double | true      | [1,2]  | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
+            'CPU'  | Double | true      | [2]    | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
+            'GPU'  | Double | true      | [1,2]  | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
+            'GPU'  | Double | true      | [2]    | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
+            'CPU'  | Float  | true      | [1,2]  | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
+            'CPU'  | Float  | true      | [2]    | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
+            'GPU'  | Float  | true      | [1,2]  | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
+            'GPU'  | Float  | true      | [2]    | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
 
-            'CPU'  | Double | true      | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-            'CPU'  | Double | true      | [2]    | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-            'GPU'  | Double | true      | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-            'GPU'  | Double | true      | [2]    | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-            'CPU'  | Float  | true      | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-            'CPU'  | Float  | true      | [2]    | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-            'GPU'  | Float  | true      | [1,2]  | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-            'GPU'  | Float  | true      | [2]    | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
+            'CPU'  | Double | true      | [1,2]  | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
+            'CPU'  | Double | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
+            'GPU'  | Double | true      | [1,2]  | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
+            'GPU'  | Double | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
+            'CPU'  | Float  | true      | [1,2]  | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
+            'CPU'  | Float  | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
+            'GPU'  | Float  | true      | [1,2]  | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
+            'GPU'  | Float  | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
     }
 
 
