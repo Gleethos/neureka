@@ -167,7 +167,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     ri++;
                 }
                 //----------
-                //setInto _value in drn:
+                //set in value in drn:
                 t0_value[t0Idx.i()] = operation.invoke( t1_value[t1Idx.i()], t2_value[t2Idx.i()] );
                 //increment on drain:
                 t0Idx.increment();
@@ -197,7 +197,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                 boolean running = true;
                 boolean incrementing = false;
                 while ( running ) {
-                    ri = ( ri == rank ) ? 0 : ri;
+                    ri = ( ri == rank ? 0 : ri );
                     if ( !incrementing ) {
                         value += operation.invoke( t1_value[t1Idx.i()], t2_value[t2Idx.i()] );
                         incrementing = true;
@@ -211,9 +211,9 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                                 t2Idx.set( ri, 0 );
                                 running = (ri != rank - 1);
                                 ri++;
-                            } else {
-                                incrementing = false;//return to calculation!
                             }
+                            else incrementing = false;//return to calculation!
+
                         } else {
                             running = (ri != rank - 1);
                             ri++;
