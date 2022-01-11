@@ -35,11 +35,13 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         setCallPreparation(
             call -> {
                 Tsr<?>[] inputs = call.getTensors();
-                Device<Double> device = (Device<Double>) call.getDevice();
+                Device<Object> device = (Device<Object>) call.getDevice();
                 if ( inputs[ 0 ] == null ) // Creating a new tensor:
                 {
-                    int[] shp = inputs[ 1 ].getNDConf().shape();
-                    Tsr<Double> output = Tsr.of( shp, 0.0 );
+                    int[] outShape = inputs[ 1 ].getNDConf().shape();
+
+                    Class<Object> type = (Class<Object>) inputs[ 1 ].getValueClass();
+                    Tsr<Object> output = Tsr.of( type ).withShape( outShape ).all( 0.0 );
                     output.setIsVirtual( false );
                     try {
                         device.store( output );
@@ -76,7 +78,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
     ) {
 
         FunArray<neureka.backend.api.Fun.F64F64ToF64> funF64 = pairs.get(Fun.F64F64ToF64.class);
-        //FunArray<neureka.backend.api.Fun.F32F32ToF32> funF32 = pairs.get(Fun.F32F32ToF32.class);
+        FunArray<neureka.backend.api.Fun.F32F32ToF32> funF32 = pairs.get(Fun.F32F32ToF32.class);
         Class<?> typeClass = call.getTensors()[1].getValueClass();
         Class<?> rightTypeClass = call.getTensors()[2].getValueClass();
 
@@ -84,9 +86,16 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
 
         CPU.RangeWorkload workload = null;
 
-        workload = _newWorkloadF64(  call.getTensors()[0], call.getTensors()[1], call.getTensors()[2], funF64.get(d) );
+        if ( typeClass == Double.class )
+            workload = _newWorkloadF64(  call.getTensors()[0], call.getTensors()[1], call.getTensors()[2], funF64.get(d) );
 
-        return workload;
+        if ( typeClass == Float.class )
+            workload = _newWorkloadF32(  call.getTensors()[0], call.getTensors()[1], call.getTensors()[2], funF32.get(d) );
+
+        if ( workload == null )
+            throw new IllegalArgumentException("");
+        else
+            return workload;
     }
 
 
@@ -127,6 +136,45 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
             };
         }
     }
+
+    @Contract(pure = true)
+    private static CPU.RangeWorkload _newWorkloadF32(
+            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
+            Fun.F32F32ToF32 operation
+    ) {
+        t1_src.setIsVirtual( false );
+        t2_src.setIsVirtual( false );
+        float[] t1_val = t1_src.getDataAs( float[].class );
+        float[] t2_val = t2_src.getDataAs( float[].class );
+
+        assert t1_val != null;
+        assert t2_val != null;
+
+        if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
+            return (start, end) ->
+                    ( (double[]) t0_drn.getData() )[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );
+        } else {
+            float[] t0_value = t0_drn.getDataAs(float[].class);
+            return (i, end) -> {
+                NDIterator t0Idx = NDIterator.of(t0_drn);
+                NDIterator t1Idx = NDIterator.of(t1_src);
+                NDIterator t2Idx = NDIterator.of(t2_src);
+                t0Idx.set(t0_drn.IndicesOfIndex(i));
+                t1Idx.set(t1_src.IndicesOfIndex(i));
+                t2Idx.set(t2_src.IndicesOfIndex(i));
+                while ( i < end ) {//increment on drain accordingly:
+                    //setInto _value in drn:
+                    t0_value[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);
+                    //increment on drain:
+                    t0Idx.increment();
+                    t1Idx.increment();
+                    t2Idx.increment();
+                    i++;
+                }
+            };
+        }
+    }
+
 
     public static class FunTriple<T extends Fun> implements FunArray<T> {
 

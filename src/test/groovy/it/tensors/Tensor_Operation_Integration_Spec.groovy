@@ -534,17 +534,31 @@ class Tensor_Operation_Integration_Spec extends Specification
         when : 'We apply the function to both tensors...'
             var result1 = func(t1)
             var result2 = func(t2)
-        then : 'The data of the first (non slice) tensor should be as expected.'
+        then :
+            result1.valueClass == type
+            result2.valueClass == type
+
+        and : 'The data of the first (non slice) tensor should be as expected.'
             result1.data == expected
         and : 'As well the value of the slice tensor (Its data would be a sparse array).'
             result2.value == expected
 
         where :
             type   |  funExpression || expected
-            Double |   'tanh(i0)'   || [-0.2608431635405718, -0.6400224689534015, -0.15255723053856546, 0.1566537867655921, 0.5489211983894932, -0.17031712209680225] as double[]
-            Float  |   'tanh(i0)'   || [-0.26084316, -0.64002246, -0.15255724, 0.15665378, 0.54892117, -0.17031713] as float[]
-            Double |   'relu(i0)'   || [-0.0027019706408068795, -0.008329762613111082, -0.001543641184315801, 0.15861207834235577, 0.6567031992927272, -0.001728424711189524] as double[]
-            Float  |   'relu(i0)'   || [-0.0027019705, -0.008329763, -0.0015436412, 0.15861207, 0.6567032, -0.0017284247] as float[]
+            Double | 'tanh(i0)'     || [-0.2608431635405718, -0.6400224689534015, -0.15255723053856546, 0.1566537867655921, 0.5489211983894932, -0.17031712209680225] as double[]
+            Float  | 'tanh(i0)'     || [-0.26084316, -0.64002246, -0.15255724, 0.15665378, 0.54892117, -0.17031713] as float[]
+            Double | 'relu(i0)'     || [-0.0027019706408068795, -0.008329762613111082, -0.001543641184315801, 0.15861207834235577, 0.6567031992927272, -0.001728424711189524] as double[]
+            Float  | 'relu(i0)'     || [-0.0027019705, -0.008329763, -0.0015436412, 0.15861207, 0.6567032, -0.0017284247] as float[]
+            Double | 'relu(i0*i0)'  || [0.07300645343782339, 0.6938494519078316, 0.023828281059158886, 0.025157791396081604, 0.43125909196130346, 0.029874519822505895] as double[]
+            Float  | 'relu(i0*i0)'  || [0.07300645, 0.6938495, 0.023828283, 0.025157789, 0.43125907, 0.02987452] as float[]
+            Double | 'relu(i0-i0)'  || [0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as double[]
+            Float  | 'relu(i0-i0)'  || [0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as float[]
+            Double | 'relu(i0)-i0'  || [0.26749509343988104, 0.8246464986979971, 0.1528204772472643, 0.0, 0.0, 0.17111404640776287] as double[]
+            Float  | 'relu(i0)-i0'  || [0.2674951, 0.82464653, 0.15282048, 0.0, 0.0, 0.17111404] as float[]
+            Double | 'relu(-i0)+i0' || [0.0, 0.0, 0.0, 0.15702595755893223, 0.6501361672998, 0.0] as double[]
+            //Float  | 'relu(-i0)+i0' || [0.0, 0.0, 0.0, 0.15702595174312592, 0.650136142373085, 0.0] as float[]
+            Double | 'relu(-i0)/i0' || [-1.0, -1.0, -1.0, -0.01, -0.01, -1.0] as double[]
+            //Float  | 'relu(-i0)/i0' || [-1.0, -1.0, -1.0, -0.01, -0.01, -1.0] as float[]
 
     }
 
