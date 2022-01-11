@@ -410,39 +410,43 @@ class Tensor_Operation_Integration_Spec extends Specification
             'GPU'  | Float  | false     | [1]    | { x, y -> x * y } || "8, 16, 24, 32" | "40, -16, 56, 24"
 
             'CPU'  | Double | true      | [2,1]  | { x, y -> x + y } || "9, 10, 12, 13" | "3, 10"
-            'CPU'  | Double | true      | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "13"
             //'GPU'  | Double |  true     | [2,1]  | { x, y -> x + y } || "9, 10, 12, 13" | "3, 10"
-            'GPU'  | Double | true      | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "13"
             'CPU'  | Float  | true      | [2,1]  | { x, y -> x + y } || "9, 10, 12, 13" | "3, 10"
-            'CPU'  | Float  | true      | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "13"
             //'GPU'  | Float  |  true     | [2,1]  | { x, y -> x + y } || "9, 10, 12, 13" | "3, 10"
+
+            'CPU'  | Double | true      | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "13"
+            'GPU'  | Double | true      | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "13"
+            'CPU'  | Float  | true      | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "13"
             'GPU'  | Float  | true      | [1]    | { x, y -> x + y } || "9, 10, 11, 12" | "13"
 
             'CPU'  | Double | true      | [1,2]  | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
-            'CPU'  | Double | true      | [2]    | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
             'GPU'  | Double | true      | [1,2]  | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
-            'GPU'  | Double | true      | [2]    | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
             'CPU'  | Float  | true      | [1,2]  | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
-            'CPU'  | Float  | true      | [2]    | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
             'GPU'  | Float  | true      | [1,2]  | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
+
+            'CPU'  | Double | true      | [2]    | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
+            'GPU'  | Double | true      | [2]    | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
+            'CPU'  | Float  | true      | [2]    | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
             'GPU'  | Float  | true      | [2]    | { x, y -> x + y } || "9, 11, 11, 13" | "12, 1"
 
             'CPU'  | Double | true      | [1,2]  | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
-            'CPU'  | Double | true      | [2]    | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
             'GPU'  | Double | true      | [1,2]  | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
-            'GPU'  | Double | true      | [2]    | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
             'CPU'  | Float  | true      | [1,2]  | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
-            'CPU'  | Float  | true      | [2]    | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
             'GPU'  | Float  | true      | [1,2]  | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
+
+            'CPU'  | Double | true      | [2]    | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
+            'GPU'  | Double | true      | [2]    | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
+            'CPU'  | Float  | true      | [2]    | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
             'GPU'  | Float  | true      | [2]    | { x, y -> x - y } || "-7, -7, -5, -5"| "-12, -1"
 
             'CPU'  | Double | true      | [1,2]  | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
-            'CPU'  | Double | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
             'GPU'  | Double | true      | [1,2]  | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
-            'GPU'  | Double | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
             'CPU'  | Float  | true      | [1,2]  | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
-            'CPU'  | Float  | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
             'GPU'  | Float  | true      | [1,2]  | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
+
+            'CPU'  | Double | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
+            'GPU'  | Double | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
+            'CPU'  | Float  | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
             'GPU'  | Float  | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
     }
 
