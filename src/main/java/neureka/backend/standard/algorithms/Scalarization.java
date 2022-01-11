@@ -78,32 +78,62 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
         Functions<Fun> functions
     ) {
         int offset = ( call.getTensors().length == 3 ? 1 : 0 );
-
         Tsr<?> t0_drn = call.getTensors()[0];
         Tsr<?> src    = call.getTensors()[offset];
-        double value = call.getTsrOfType( Number.class, 1 + offset ).getDataAs( double[].class )[ 0 ];
 
-        Fun.F64F64ToF64 operation = functions.get(Fun.F64F64ToF64.class).get(call.getDerivativeIndex() );
+        Class<?> typeClass = call.getTensors()[1].getValueClass();
 
-        double[] t0_value = t0_drn.getDataAs(double[].class);
-        double[] t1_value = src.getDataAs(double[].class);
+        CPU.RangeWorkload workload = null;
 
-        return ( i, end ) -> {
-            NDIterator t0Idx = NDIterator.of(t0_drn);
-            NDIterator srcIdx = NDIterator.of(src);
-            t0Idx.set(t0_drn.IndicesOfIndex(i));
-            srcIdx.set(src.IndicesOfIndex(i));
-            while ( i < end ) // increment on drain accordingly:
-            {
-                // setInto _value in drn:
-                t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);
-                // increment on drain:
-                t0Idx.increment();
-                srcIdx.increment();
-                //NDConfiguration.Utility.increment(t0Idx, t0Shp);
-                i++;
-            }
-        };
+        if ( typeClass == Double.class ) {
+            double value = call.getTsrOfType(Number.class, 1 + offset).getDataAs(double[].class)[0];
+            Fun.F64F64ToF64 operation = functions.get(Fun.F64F64ToF64.class).get(call.getDerivativeIndex());
+            double[] t0_value = t0_drn.getDataAs(double[].class);
+            double[] t1_value = src.getDataAs(double[].class);
+            workload = ( i, end ) -> {
+                NDIterator t0Idx = NDIterator.of(t0_drn);
+                NDIterator srcIdx = NDIterator.of(src);
+                t0Idx.set(t0_drn.IndicesOfIndex(i));
+                srcIdx.set(src.IndicesOfIndex(i));
+                while (i < end) // increment on drain accordingly:
+                {
+                    // setInto _value in drn:
+                    t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);
+                    // increment on drain:
+                    t0Idx.increment();
+                    srcIdx.increment();
+                    //NDConfiguration.Utility.increment(t0Idx, t0Shp);
+                    i++;
+                }
+            };
+        }
+        if ( typeClass == Float.class ) {
+            float value = call.getTsrOfType(Number.class, 1 + offset).getDataAs(float[].class)[0];
+            Fun.F32F32ToF32 operation = functions.get(Fun.F32F32ToF32.class).get(call.getDerivativeIndex());
+            float[] t0_value = t0_drn.getDataAs(float[].class);
+            float[] t1_value = src.getDataAs(float[].class);
+            workload = ( i, end ) -> {
+                NDIterator t0Idx = NDIterator.of(t0_drn);
+                NDIterator srcIdx = NDIterator.of(src);
+                t0Idx.set(t0_drn.IndicesOfIndex(i));
+                srcIdx.set(src.IndicesOfIndex(i));
+                while (i < end) // increment on drain accordingly:
+                {
+                    // setInto _value in drn:
+                    t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);
+                    // increment on drain:
+                    t0Idx.increment();
+                    srcIdx.increment();
+                    //NDConfiguration.Utility.increment(t0Idx, t0Shp);
+                    i++;
+                }
+            };
+        }
+
+        if ( workload == null )
+            throw new IllegalArgumentException("");
+        else
+            return workload;
     }
 
 }
