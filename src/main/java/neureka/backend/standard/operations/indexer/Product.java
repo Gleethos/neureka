@@ -75,13 +75,18 @@ public final class Product extends AbstractOperation {
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                    Broadcast.implementationForCPU()
-                                            .with(Fun.F64F64ToF64.triple(
-                                                    ( a, b ) -> a * b,
-                                                    ( a, b ) -> b, // Deriving at input 0
-                                                    ( a, b ) -> a  // deriving input 1
-                                            ))
-                                            .get()
+                                Broadcast.implementationForCPU()
+                                        .with(Fun.F64F64ToF64.triple(
+                                            ( a, b ) -> a * b,
+                                            ( a, b ) -> b, // Deriving at input 0
+                                            ( a, b ) -> a  // deriving input 1
+                                        ))
+                                        .with(Fun.F32F32ToF32.triple(
+                                            ( a, b ) -> a * b,
+                                            ( a, b ) -> b, // Deriving at input 0
+                                            ( a, b ) -> a  // deriving input 1
+                                        ))
+                                        .get()
                             )
                 )
                 .setImplementationFor(

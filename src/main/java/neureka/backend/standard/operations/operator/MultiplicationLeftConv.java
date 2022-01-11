@@ -83,13 +83,18 @@ public class MultiplicationLeftConv extends AbstractOperation {
                         CPUImplementation
                             .withArity(3)
                             .andImplementation(
-                                    Broadcast.implementationForCPU()
-                                            .with(Fun.F64F64ToF64.triple(
-                                                    ( a, b ) -> a * b,
-                                                    ( a, b ) -> a * b,
-                                                    ( a, b ) -> a * b
-                                            ))
-                                            .get()
+                                Broadcast.implementationForCPU()
+                                        .with(Fun.F64F64ToF64.triple(
+                                            ( a, b ) -> a * b,
+                                            ( a, b ) -> a * b,
+                                            ( a, b ) -> a * b
+                                        ))
+                                        .with(Fun.F32F32ToF32.triple(
+                                            ( a, b ) -> a * b,
+                                            ( a, b ) -> a * b,
+                                            ( a, b ) -> a * b
+                                        ))
+                                        .get()
                             )
                 )
                 .setImplementationFor(

@@ -90,6 +90,11 @@ public class MultiplicationRightConv extends AbstractOperation {
                                     ( a, b ) -> a * b,
                                     ( a, b ) -> a * b
                                 ))
+                                .with(Fun.F32F32ToF32.triple(
+                                        ( a, b ) -> a * b,
+                                        ( a, b ) -> a * b,
+                                        ( a, b ) -> a * b
+                                ))
                                 .get()
                     )
                 )

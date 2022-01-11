@@ -35,6 +35,10 @@ public interface Fun {
 
     interface F32F32ToF32 extends Fun {
         float invoke(float x, float y);
+
+        static FunArray<F32F32ToF32> triple( F32F32ToF32 activation, F32F32ToF32 derivation1, F32F32ToF32 derivation2 ) {
+            return new Operator.FunTriple<>(activation, derivation1, derivation2);
+        }
     }
 
 }

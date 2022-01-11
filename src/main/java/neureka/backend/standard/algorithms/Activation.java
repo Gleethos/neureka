@@ -77,11 +77,11 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
             ExecutionCall<CPU> call,
             Functions<Fun> funs
     ) {
-        Class<?> typeClass = call.getTensors()[0].getValueClass();
-        Class<?> rightTypeClass = call.getTensors()[1].getValueClass();
-
         Tsr<?> t0_drn = call.getTensors()[0];
         Tsr<?> t1_src = call.getTensors()[1];
+        Class<?> typeClass = t0_drn.getValueClass();
+        Class<?> rightTypeClass = t1_src.getValueClass();
+
         boolean noSlices = !t0_drn.getNDConf().isSlice() && !t1_src.getNDConf().isSlice();
 
         int d = call.getDerivativeIndex();
