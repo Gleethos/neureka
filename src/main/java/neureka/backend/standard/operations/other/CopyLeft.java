@@ -54,7 +54,7 @@ public class CopyLeft extends AbstractOperation {
                         {
                             Tsr<?>[] tensors = call.getTensors();
                             int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
-                            call.getTsrOfType( Number.class, offset).incrementVersionBecauseOf(call);
+                            call.getTsrOfType( Number.class, offset).getMutate().incrementVersion(call);
                             call.getTsrOfType( Number.class, offset).setIsVirtual( false );
                             return
                                     ExecutionCall.of(tensors[offset], tensors[1+offset])
@@ -119,7 +119,7 @@ public class CopyLeft extends AbstractOperation {
                     {
                         Tsr<?>[] tensors = call.getTensors();
                         int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
-                        call.getTsrOfType( Number.class, offset).incrementVersionBecauseOf(call);
+                        call.getTsrOfType( Number.class, offset).getMutate().incrementVersion(call);
                         return ExecutionCall.of(tensors[offset], tensors[1+offset])
                                             .andArgs(Arg.DerivIdx.of(-1))
                                             .running(Neureka.get().backend().getOperation("idy"))
