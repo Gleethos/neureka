@@ -151,8 +151,8 @@ class Tensor_Operation_Integration_Spec extends Specification
     ) {
         given :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
-            Tsr a = Tsr.of(5)
-            Tsr b = Tsr.of(3)
+            Tsr a = Tsr.of(5d)
+            Tsr b = Tsr.of(3d)
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
@@ -184,9 +184,9 @@ class Tensor_Operation_Integration_Spec extends Specification
     {
         given :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
-            Tsr a = Tsr.of(2).setRqsGradient(true)
-            Tsr b = Tsr.of(-4)
-            Tsr c = Tsr.of(3).setRqsGradient(true)
+            Tsr a = Tsr.of(2d).setRqsGradient(true)
+            Tsr b = Tsr.of(-4d)
+            Tsr c = Tsr.of(3d).setRqsGradient(true)
 
         expect :
             ( a / a                     ).toString().contains("[1]:(1.0)")
@@ -195,7 +195,7 @@ class Tensor_Operation_Integration_Spec extends Specification
             ( a *= b                    ).toString().contains("(-8.0)")
             ( a += -c                   ).toString().contains("(-11.0)")
             ( a -= c                    ).toString().contains("(-14.0)")
-            ( a /= Tsr.of(2)      ).toString().contains("(-7.0)")
+            ( a /= Tsr.of(2d)     ).toString().contains("(-7.0)")
             ( a %= c                    ).toString().contains("(-1.0)")
     }
 
@@ -203,7 +203,7 @@ class Tensor_Operation_Integration_Spec extends Specification
     {
         given :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
-            Tsr a = Tsr.of([100, 100], 3..19)
+            Tsr a = Tsr.of([100, 100], 3d..19d)
             Tsr x = a[1..-2,0..-1]
             Tsr y = a[0..-3,0..-1]
             Tsr z = a[2..-1,0..-1]
@@ -261,7 +261,7 @@ class Tensor_Operation_Integration_Spec extends Specification
     ) {
         given :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
-            Tsr a = Tsr.of([4, 4], 0..16).to( device )
+            Tsr a = Tsr.of([4, 4], 0d..16d).to( device )
 
             Tsr x = a[1..-2,0..-1]
             Tsr y = a[0..-3,0..-1]
@@ -333,7 +333,7 @@ class Tensor_Operation_Integration_Spec extends Specification
     ) {
         given :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
-            Tsr a = Tsr.of([11, 11], 3..19).to( device )
+            Tsr a = Tsr.of([11, 11], 3d..19d).to( device )
             Tsr x = a[1..-2,0..-1]
             Tsr y = a[0..-3,0..-1]
 
@@ -458,8 +458,8 @@ class Tensor_Operation_Integration_Spec extends Specification
 
         when : 'A three by two matrix is being transposed...'
             Tsr t = Tsr.of([2, 3], [
-                                1, 2, 3,
-                                4, 5, 6
+                                1d, 2d, 3d,
+                                4d, 5d, 6d
                             ]).T()
 
         then : t.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")

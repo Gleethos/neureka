@@ -157,7 +157,8 @@ public class DataConverter
         _set( Integer.class, Short.class,  Integer::shortValue );
         _set( Integer.class, Byte.class,   Integer::byteValue );
 
-        _set( Double.class, Float.class, Double::floatValue );
+        _set( Double.class, Float.class,   Double::floatValue );
+        _set( Double.class, Integer.class, Double::intValue );
 
         _set( Float[].class,     float[].class,   Utility::objFloatsToPrimFloats );
         _set( Integer[].class,   int[].class,     Utility::objIntsToPrimInts );

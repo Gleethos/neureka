@@ -161,7 +161,7 @@ class Tensor_IO_Spec extends Specification
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 
         and : 'A new tensor instance with the shape (4x3).'
-            Tsr t1 = Tsr.of([4, 3], 1..12)
+            Tsr t1 = Tsr.of([4, 3], 1d..12d)
 
         when : 'Recording the index behavior before and after a reshape operation...'
             def t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})

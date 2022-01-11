@@ -18,41 +18,40 @@ import neureka.ndim.iterators.NDIterator;
  */
 public class Activation extends AbstractFunctionalAlgorithm<Activation>
 {
-
     public Activation() {
         super("activation");
         setIsSuitableFor(
-                call -> call.validate()
-                            .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                            .basicSuitability()
+           call -> call.validate()
+                       .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
+                       .basicSuitability()
         );
         setCanPerformBackwardADFor( call -> true );
         setCanPerformForwardADFor(
-                        call -> call
-                                .validate()
-                                .all( ( first, second ) -> first.shape().equals(second.shape()) )
-                                .isValid()
-                );
+            call -> call
+                    .validate()
+                    .all( ( first, second ) -> first.shape().equals(second.shape()) )
+                    .isValid()
+        );
         setExecutionDispatcher( CalcUtil::defaultRecursiveExecution);
         setCallPreparation(
-                        call -> {
-                            Tsr<?>[] inputs = call.getTensors();
-                            Device device = call.getDeviceFor(Number.class);
-                            if ( inputs[ 0 ] == null ) // Creating a new tensor:
-                            {
-                                int[] shape = inputs[ 1 ].getNDConf().shape();
-                                Class<Object> type = (Class<Object>) inputs[ 1 ].getValueClass();
-                                Tsr<Object> output = Tsr.of(type).withShape(shape).all( 0.0 );
-                                output.setIsVirtual( false );
-                                try {
-                                    device.store( output );
-                                } catch( Exception e ) {
-                                    e.printStackTrace();
-                                }
-                                inputs[ 0 ] = output;
-                            }
-                            return call;
-                        }
+            call -> {
+                Tsr<?>[] inputs = call.getTensors();
+                Device device = call.getDeviceFor(Number.class);
+                if ( inputs[ 0 ] == null ) // Creating a new tensor:
+                {
+                    int[] shape = inputs[ 1 ].getNDConf().shape();
+                    Class<Object> type = (Class<Object>) inputs[ 1 ].getValueClass();
+                    Tsr<Object> output = Tsr.of(type).withShape(shape).all( 0.0 );
+                    output.setIsVirtual( false );
+                    try {
+                        device.store( output );
+                    } catch( Exception e ) {
+                        e.printStackTrace();
+                    }
+                    inputs[ 0 ] = output;
+                }
+                return call;
+            }
         );
     }
 

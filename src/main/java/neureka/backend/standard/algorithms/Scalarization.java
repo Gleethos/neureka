@@ -19,38 +19,39 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
         setCanPerformBackwardADFor( call -> true );
         setCanPerformForwardADFor( call -> true );
         setIsSuitableFor( call ->
-                                call.validate()
-                                        .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                                        //.first( Objects::isNull )
-                                        .tensors( tensors ->  {
-                                            if ( tensors.length != 2 && tensors.length != 3 ) return false;
-                                            int offset = ( tensors.length == 2 ? 0 : 1 );
-                                            if ( tensors[1+offset].size() > 1 && !tensors[1+offset].isVirtual() ) return false;
-                                            return
-                                                //tensors[1+offset].shape().stream().allMatch( d -> d == 1 )
-                                                //||
-                                                tensors[offset].shape().equals(tensors[1+offset].shape());
-                                        })
-                                        .suitabilityIfValid( SuitabilityPredicate.VERY_GOOD )
+            call.validate()
+                .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
+                //.first( Objects::isNull )
+                .tensors( tensors ->  {
+                    if ( tensors.length != 2 && tensors.length != 3 ) return false;
+                    int offset = ( tensors.length == 2 ? 0 : 1 );
+                    if ( tensors[1+offset].size() > 1 && !tensors[1+offset].isVirtual() ) return false;
+                    return
+                        //tensors[1+offset].shape().stream().allMatch( d -> d == 1 )
+                        //||
+                        tensors[offset].shape().equals(tensors[1+offset].shape());
+                })
+                .suitabilityIfValid( SuitabilityPredicate.VERY_GOOD )
         );
         setCallPreparation(
-                call -> {
-                    Tsr<?>[] tensors = call.getTensors();
-                    Device<Number> device = call.getDeviceFor(Number.class);
-                    assert tensors[ 0 ] == null;  // Creating a new tensor:
+            call -> {
+                Tsr<?>[] inputs = call.getTensors();
+                Device<Number> device = call.getDeviceFor(Number.class);
+                assert inputs[ 0 ] == null;  // Creating a new tensor:
 
-                    int[] shp = tensors[ 1 ].getNDConf().shape();
-                    Tsr<Double> output = Tsr.of( shp, 0.0 );
-                    output.setIsVirtual( false );
-                    try {
-                        device.store( output );
-                    } catch( Exception e ) {
-                        e.printStackTrace();
-                    }
-                    tensors[ 0 ] = output;
-
-                    return call;
+                int[] outShape = inputs[ 1 ].getNDConf().shape();
+                Class<Object> type = (Class<Object>) inputs[ 1 ].getValueClass();
+                Tsr output = Tsr.of( type, outShape, 0.0 );
+                output.setIsVirtual( false );
+                try {
+                    device.store( output );
+                } catch( Exception e ) {
+                    e.printStackTrace();
                 }
+                inputs[ 0 ] = output;
+
+                return call;
+            }
         );
     }
 

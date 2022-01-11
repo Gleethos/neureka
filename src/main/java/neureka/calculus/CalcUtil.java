@@ -86,7 +86,8 @@ public class CalcUtil
                     IntStream.range(0, nodes.length).mapToObj( i -> "I[" + i + "]" ).toArray(String[]::new)
             );
             return new FunctionBuilder( Neureka.get().backend() ).build( asStr, isDoingAD ).execute( tensors );
-        } else
+        }
+        else
             tensors = srcActivation( inputs, j, -1, 1, nodes );
 
         CalcUtil.recursiveExecution(
@@ -386,6 +387,7 @@ public class CalcUtil
             Tsr<?>[] inputs, int j, int d, int offset, Function[] src
     ) {
         int[] tempShape = null;
+        Class<?> tempType = null;
         Tsr<?>[] tensors = new Tsr[ src.length + offset ];
         for ( int i = offset; i < tensors.length; i++ ) {//constants need to be figured out!
             if ( !( src[ i - offset ] instanceof FunctionConstant ) ) {
@@ -401,14 +403,15 @@ public class CalcUtil
                                     : src[ i - offset ].executeDerive( inputs, d );
 
                 tempShape = ( tempShape == null ? tensors[ i ].getNDConf().shape() : tempShape );
+                tempType  = ( tempType  == null ? tensors[ i ].getValueClass()     : tempType  );
             }
         }
         for ( int i = offset; i < tensors.length; i++ ) {
             if ( tensors[ i ] == null )
                 tensors[ i ] =
                         ( j < 0 )
-                            ? Tsr.of( tempShape, ((FunctionConstant) src[ i - offset ]).value() )
-                            : Tsr.of( tempShape, src[ i - offset ].call(new double[]{}, j) );
+                            ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[ i - offset ]).value() )
+                            : Tsr.of( tempType, tempShape, src[ i - offset ].call(new double[]{}, j) );
         }
         return tensors;
     }

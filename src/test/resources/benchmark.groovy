@@ -59,7 +59,7 @@
          size = 1 * difficulty
          //-------------
          execute {
-            Tsr a = Tsr.of([size, size], 3..19).to(device)
+            Tsr a = Tsr.of([size, size], 3d..19d).to(device)
             measure "manual_convolution", {
                for ( int i; i < N; i++ ) {
                   Tsr rowconvol = a[1..-2, 0..-1] + a[0..-3, 0..-1] + a[2..-1, 0..-1]//(98, 100) (98, 100) (98, 100)
