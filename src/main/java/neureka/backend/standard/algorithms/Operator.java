@@ -20,36 +20,36 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
     public Operator( RecursiveExecutor finalExecutor ) {
         super("operator");
         setIsSuitableFor(
-                call -> {
-                    List<Integer> shape = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[ 1 ].shape() : call.getTensors()[ 0 ].shape();
-                    int size = shape.stream().reduce(1, ( x, y ) -> x * y );
-                    return call.validate()
-                            .allNotNull( t -> t.size() == size && shape.equals( t.shape() ) )
-                            .allNotNull( t -> t.getDataType().typeClassImplements( NumericType.class ) )
-                            .basicSuitability();
-                }
+            call -> {
+                List<Integer> shape = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[ 1 ].shape() : call.getTensors()[ 0 ].shape();
+                int size = shape.stream().reduce(1, ( x, y ) -> x * y );
+                return call.validate()
+                        .allNotNull( t -> t.size() == size && shape.equals( t.shape() ) )
+                        .allNotNull( t -> t.getDataType().typeClassImplements( NumericType.class ) )
+                        .basicSuitability();
+            }
         );
         setCanPerformBackwardADFor( call -> true );
         setCanPerformForwardADFor( call -> true );
         setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, finalExecutor ) );
         setCallPreparation(
-                call -> {
-                    Tsr<?>[] tsrs = call.getTensors();
-                    Device<Double> device = (Device<Double>) call.getDevice();
-                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr<Double> output = Tsr.of( shp, 0.0 );
-                        output.setIsVirtual( false );
-                        try {
-                            device.store( output );
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+            call -> {
+                Tsr<?>[] inputs = call.getTensors();
+                Device<Double> device = (Device<Double>) call.getDevice();
+                if ( inputs[ 0 ] == null ) // Creating a new tensor:
+                {
+                    int[] shp = inputs[ 1 ].getNDConf().shape();
+                    Tsr<Double> output = Tsr.of( shp, 0.0 );
+                    output.setIsVirtual( false );
+                    try {
+                        device.store( output );
+                    } catch( Exception e ) {
+                        e.printStackTrace();
                     }
-                    return call;
+                    inputs[ 0 ] = output;
                 }
+                return call;
+            }
         );
     }
 
@@ -57,16 +57,15 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         return Neureka.get().utility().readResource("kernels/operator_template.cl");
     }
 
-
     public static Functions.Builder<Fun> implementationForCPU() {
         return Functions.implementation(
-                (call, pairs) ->
-                        call.getDevice()
-                                .getExecutor()
-                                .threaded(
-                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                        _newWorkloadFor( call, pairs )
-                                )
+            (call, pairs) ->
+                call.getDevice()
+                    .getExecutor()
+                    .threaded(
+                        call.getTsrOfType( Number.class, 0 ).size(),
+                        _newWorkloadFor( call, pairs )
+                    )
         );
     }
 
