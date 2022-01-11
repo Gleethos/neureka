@@ -3049,6 +3049,15 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     .withShape( template.getNDConf().shape() );
     }
 
+    /**
+     *  This factory method produces a randomly populated tensor of the provided
+     *  type and shape using a hard coded default seed.
+     *
+     * @param valueTypeClass The type class of the values stored by the returned tensor.
+     * @param shape The shape of the tensor produced by this factory method.
+     * @param <V> The type parameter of the values stored by the returned tensor.
+     * @return A randomly filled tensor of the provided type.
+     */
     public static <V> Tsr<V> ofRandom( Class<V> valueTypeClass, int... shape ) {
         long seed = 8701252152903546L;
         return Tsr.of( valueTypeClass )
