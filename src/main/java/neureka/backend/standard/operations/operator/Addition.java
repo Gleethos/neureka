@@ -91,8 +91,13 @@ public class Addition extends AbstractOperation {
                                             Operator.implementationForCPU()
                                                     .with(Fun.F64F64ToF64.triple(
                                                             ( a, b ) -> a + b,
-                                                            ( a, b ) -> 1, // Deriving at input 0
-                                                            ( a, b ) -> 1  // deriving input 1
+                                                            ( a, b ) -> 1d, // Deriving at input 0
+                                                            ( a, b ) -> 1d  // deriving input 1
+                                                    ))
+                                                    .with(Fun.F32F32ToF32.triple(
+                                                            ( a, b ) -> a + b,
+                                                            ( a, b ) -> 1f, // Deriving at input 0
+                                                            ( a, b ) -> 1f  // deriving input 1
                                                     ))
                                                     .get()
                                     )

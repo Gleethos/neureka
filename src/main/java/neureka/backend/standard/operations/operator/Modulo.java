@@ -46,51 +46,57 @@ public class Modulo extends AbstractOperation {
                        .buildFunAlgorithm();
 
         setAlgorithm(
-                Operator.class,
-                operator.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(3)
-                            .andImplementation(
-                                Operator.implementationForCPU()
-                                        .with(Fun.F64F64ToF64.triple(
-                                            ( a, b ) -> a % b,
-                                            ( a, b ) -> 1 / b, // Deriving at input 0
-                                            ( a, b ) -> -(a / Math.pow(b, 2)) // deriving input 1
-                                        ))
-                                        .get()
-                            )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( operator.getKernelSource() )
-                                .activationSource( "output = ((int)input1) % ((int)input2);\n" )
-                                .differentiationSource(
-                                        "if ( d==0 ) {                                        \n" +
-                                        "    output = 1/input2;                               \n" +
-                                        "} else {                                             \n" +
-                                        "    output = -input2 / (float) pow(input1, 2.0f);    \n" +
-                                        "}"
-                                )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                            call.getDevice()
-                                                    .getKernel(call)
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getDerivativeIndex() )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
+            Operator.class,
+            operator.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(3)
+                    .andImplementation(
+                        Operator.implementationForCPU()
+                                .with(Fun.F64F64ToF64.triple(
+                                    ( a, b ) -> a % b,
+                                    ( a, b ) -> 1 / b, // Deriving at input 0
+                                    ( a, b ) -> -(a / Math.pow(b, 2)) // deriving input 1
+                                ))
+                                .with(Fun.F32F32ToF32.triple(
+                                        ( a, b ) -> a % b,
+                                        ( a, b ) -> 1f / b, // Deriving at input 0
+                                        ( a, b ) -> (float) -(a / Math.pow(b, 2)) // deriving input 1
+                                ))
+                                .get()
+                    )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation
+                    .compiler()
+                    .arity( 3 )
+                    .kernelSource( operator.getKernelSource() )
+                    .activationSource( "output = ((int)input1) % ((int)input2);\n" )
+                    .differentiationSource(
+                        "if ( d==0 ) {                                        \n" +
+                        "    output = 1/input2;                               \n" +
+                        "} else {                                             \n" +
+                        "    output = -input2 / (float) pow(input1, 2.0f);    \n" +
+                        "}"
+                    )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                            call.getDevice()
+                                .getKernel(call)
+                                .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
+                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                .pass( call.getDerivativeIndex() )
+                                .call( gwz );
+                        }
+                    )
+                    .build()
+            )
         );
 
 
@@ -101,14 +107,14 @@ public class Modulo extends AbstractOperation {
         Broadcast broadcast = new Broadcast((executionCall, executor) -> null)
             .setCanPerformBackwardADFor( call -> true )
             .setCanPerformForwardADFor(
-                    call -> {
-                        Tsr<?> last = null;
-                        for ( Tsr<?> t : call.getTensors() ) {
-                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                            last = t; // Note: shapes are cached!
-                        }
-                        return true;
+                call -> {
+                    Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
                     }
+                    return true;
+                }
             )
             .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
