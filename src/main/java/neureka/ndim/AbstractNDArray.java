@@ -572,8 +572,14 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
      *  because the exposed state can easily lead to broken tensors and exceptions...<br>
-     *  <br>
-     *  Use this in performance critical situations only.
+     *  <br><b>
+     *
+     *  Only use this if you know what you are doing and
+     *  performance is critical! <br>
+     *  </b>
+     *  (Like custom backend extensions for example)
+     *
+     *  <br><br>
      */
     public abstract Mutate getMutate();
 
@@ -598,7 +604,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          *  This method is an inline operation which changes the underlying data of this tensor.
          *  It converts the data types of the elements of this tensor to the specified type!<br>
          *  <br>
-         *  <b>WARNING : The use of this method is discouraged for the following reasons: </b><br>
+         *  <b>WARNING : The usage of this method is discouraged for the following reasons: </b><br>
          *  <br>
          *  1. Inline operations are inherently error-prone for most use cases. <br>
          *  2. This inline operation in particular has no safety net,
@@ -625,10 +631,20 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          *  data it is wrapping (or it is referencing on a {@link neureka.devices.Device}).<br>
          *  <br>
          * @param dataType The new {@link DataType} which ought to be set.
-         * @return The final instance type of this class which enables method chaining.
+         * @return The tensor with the new data type set.
          */
         <V> Tsr<V> setDataType( DataType<V> dataType );
 
+        /**
+         *  This method allows you to modify the data-layout of this {@link AbstractNDArray}.
+         *  Warning! The method should not be used unless absolutely necessary.
+         *  This is because it can cause unpredictable side effects especially for certain
+         *  operations expecting a particular data layout (like for example matrix multiplication).
+         *  <br>
+         *
+         * @param layout The layout of the data array (row or column major).
+         * @return The final instance type of this class which enables method chaining.
+         */
         Mutate toLayout( NDConfiguration.Layout layout );
 
     }
