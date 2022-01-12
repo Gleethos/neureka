@@ -1,7 +1,7 @@
 package neureka.backend.standard.operations.linear.internal;
 
 import neureka.Tsr;
-import neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizable;
+import neureka.backend.standard.operations.linear.internal.blas.MatMul;
 
 public class M64 {
 
@@ -24,7 +24,7 @@ public class M64 {
 
         M64 retVal = new M64(_rowCount, otherColCount, otherData);
 
-        Vectorizable
+        MatMul
             .operationForF64(_rowCount, otherColCount)
             .invoke(
                 retVal._data, _data, _colCount, matrix._data

@@ -1,11 +1,10 @@
 /*<#LICENSE#>*/
-package neureka.backend.standard.operations.linear.internal.operation.array;
+package neureka.backend.standard.operations.linear.internal.blas;
 
 import java.lang.reflect.Array;
 
 /**
  * The ?copy routines perform a vector-vector operation defined as y = x, where x and y are vectors.
- *
  */
 public final class COPY {
 

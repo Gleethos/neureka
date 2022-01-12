@@ -1,7 +1,5 @@
 package neureka.backend.standard.algorithms;
 
-import neureka.backend.api.Fun;
-
 public class FunPair<T extends Fun> implements FunArray<T> {
 
     private final Class<T> _type;

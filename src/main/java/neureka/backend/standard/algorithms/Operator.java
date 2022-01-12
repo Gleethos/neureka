@@ -3,7 +3,6 @@ package neureka.backend.standard.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Fun;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.RecursiveExecutor;
@@ -77,8 +76,8 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
             Functions<Fun> pairs
     ) {
 
-        FunArray<neureka.backend.api.Fun.F64F64ToF64> funF64 = pairs.get(Fun.F64F64ToF64.class);
-        FunArray<neureka.backend.api.Fun.F32F32ToF32> funF32 = pairs.get(Fun.F32F32ToF32.class);
+        FunArray<Fun.F64F64ToF64> funF64 = pairs.get(Fun.F64F64ToF64.class);
+        FunArray<Fun.F32F32ToF32> funF32 = pairs.get(Fun.F32F32ToF32.class);
         Class<?> typeClass = call.getTensors()[1].getValueClass();
         Class<?> rightTypeClass = call.getTensors()[2].getValueClass();
 
@@ -102,7 +101,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
     @Contract(pure = true)
     private static CPU.RangeWorkload _newWorkloadF64(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
-            neureka.backend.api.Fun.F64F64ToF64 operation
+            Fun.F64F64ToF64 operation
     ) {
         t1_src.setIsVirtual( false );
         t2_src.setIsVirtual( false );

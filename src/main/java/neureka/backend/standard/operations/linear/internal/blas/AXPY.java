@@ -1,5 +1,5 @@
 /*<#LICENSE#>*/
-package neureka.backend.standard.operations.linear.internal.operation.array;
+package neureka.backend.standard.operations.linear.internal.blas;
 
 /**
  * The ?axpy routines perform a vector-vector operation defined as y := a*x + y where: a is a scalar x and y

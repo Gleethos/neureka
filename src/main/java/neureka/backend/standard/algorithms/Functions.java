@@ -1,6 +1,5 @@
 package neureka.backend.standard.algorithms;
 
-import neureka.backend.api.Fun;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.host.CPU;
 

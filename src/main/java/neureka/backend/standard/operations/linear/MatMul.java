@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class MatMul extends AbstractOperation
 {
-    private static Logger _LOG = LoggerFactory.getLogger(MatMul.class);
+    private static final Logger _LOG = LoggerFactory.getLogger(MatMul.class);
 
     public MatMul()
     {
@@ -38,121 +38,123 @@ public class MatMul extends AbstractOperation
         );
 
         FunAlgorithm simpleMatMulAlgorithm =
-                        Algorithm.withName("simple_matmul")
-                                    .setIsSuitableFor(
-                                            call -> call.validate()
-                                                        .allNotNull( t -> Number.class.isAssignableFrom(t.getValueClass()) )
-                                                        .getEstimator()
-                                                            .goodIfAnyNonNull( t -> t.getNDConf() instanceof SimpleD2Configuration )
-                                                            .badIfAnyNonNull( t -> !( t.getNDConf() instanceof SimpleD2Configuration ) )
-                                                            .getEstimation()
-                                    )
-                                    .setCanPerformBackwardADFor( call -> true )
-                                    .setCanPerformForwardADFor( call -> false )
-                                    .setSupplyADAgentFor(
-                                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                                        {
-                                            if ( forward ) throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
+                        Algorithm
+                            .withName("simple_matmul")
+                            .setIsSuitableFor(
+                                call -> call.validate()
+                                            .allNotNull( t -> Number.class.isAssignableFrom(t.getValueClass()) )
+                                            .getEstimator()
+                                                .goodIfAnyNonNull( t -> t.getNDConf() instanceof SimpleD2Configuration )
+                                                .badIfAnyNonNull( t -> !( t.getNDConf() instanceof SimpleD2Configuration ) )
+                                                .getEstimation()
+                            )
+                            .setCanPerformBackwardADFor( call -> true )
+                            .setCanPerformForwardADFor( call -> false )
+                            .setSupplyADAgentFor(
+                                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                                {
+                                    if ( forward ) throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
 
-                                            Function matMul = Neureka.get().backend().getFunction().matMul();
-                                            Tsr<?>[] inputs = call.getTensors();
-                                            int d = ( 1 + call.getValOf( Arg.DerivIdx.class ) ) % 2;
-                                            Tsr<?> derivative = inputs[ d ].T().clone(); // We need to clone it to make it have a simple nd configuration...
-                                            derivative.to(call.getDevice());
-                                            return ADAgent.of( derivative )
-                                                            .setBackward( (node, error) -> {
-                                                                if ( d == 1 )
-                                                                    return matMul.execute( error, derivative );
-                                                                else
-                                                                    return matMul.execute( derivative, error );
-                                                            });
-                                        }
-                                    )
-                                    .setExecutionDispatcher(
-                                        ( caller, call ) -> {
-                                            if ( !caller.isFlat() )
-                                                return CalcUtil.defaultRecursiveExecution( caller, call );
+                                    Function matMul = Neureka.get().backend().getFunction().matMul();
+                                    Tsr<?>[] inputs = call.getTensors();
+                                    int d = ( 1 + call.getValOf( Arg.DerivIdx.class ) ) % 2;
+                                    Tsr<?> derivative = inputs[ d ].T().clone(); // We need to clone it to make it have a simple nd configuration...
+                                    derivative.to(call.getDevice());
+                                    return ADAgent.of( derivative )
+                                                    .setBackward( (node, error) -> {
+                                                        if ( d == 1 )
+                                                            return matMul.execute( error, derivative );
+                                                        else
+                                                            return matMul.execute( derivative, error );
+                                                    });
+                                }
+                            )
+                            .setExecutionDispatcher(
+                                ( caller, call ) -> {
+                                    if ( !caller.isFlat() )
+                                        return CalcUtil.defaultRecursiveExecution( caller, call );
 
-                                            Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
-                                            for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                                            ExecutionCall<Device<Object>> preparedCall = (ExecutionCall<Device<Object>>) call.getAlgorithm().prepare( call.withTensors(tensors) );
-                                            return call.getAlgorithm()
-                                                        .getImplementationFor(call.getDeviceFor(Object.class))
-                                                        .runAndGetFirstTensor(preparedCall);
+                                    Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
+                                    for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
+                                    ExecutionCall<Device<Object>> preparedCall = (ExecutionCall<Device<Object>>) call.getAlgorithm().prepare( call.withTensors(tensors) );
+                                    return call.getAlgorithm()
+                                                .getImplementationFor(call.getDeviceFor(Object.class))
+                                                .runAndGetFirstTensor(preparedCall);
+                                }
+                            )
+                            .setCallPreparation(
+                                call -> {
+                                    Tsr<?>[] tensors = call.getTensors();
+                                    Device<Number> device = call.getDeviceFor(Number.class);
+                                    if ( tensors[ 0 ] == null ) // Creating a new tensor:
+                                    {
+                                        Class<Number> type = (Class<Number>) tensors[1].getDataType().getJVMTypeClass();
+                                        int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };
+                                        Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 );
+                                        output.getMutate().toLayout(tensors[1].getNDConf().getLayout());
+                                        output.setIsVirtual( false );
+                                        try {
+                                            device.store( output );
+                                        } catch ( Exception e ) {
+                                            e.printStackTrace();
                                         }
-                                    )
-                                    .setCallPreparation(
-                                        call -> {
-                                            Tsr<?>[] tensors = call.getTensors();
-                                            Device<Number> device = call.getDeviceFor(Number.class);
-                                            if ( tensors[ 0 ] == null ) // Creating a new tensor:
-                                            {
-                                                Class<Number> type = (Class<Number>) tensors[1].getDataType().getJVMTypeClass();
-                                                int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };
-                                                Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 );
-                                                output.getMutate().toLayout(tensors[1].getNDConf().getLayout());
-                                                output.setIsVirtual( false );
-                                                try {
-                                                    device.store( output );
-                                                } catch ( Exception e ) {
-                                                    e.printStackTrace();
-                                                }
-                                                tensors[ 0 ] = output;
-                                            }
-                                            _autoClone( tensors );
-                                            return call;
-                                        }
-                                    )
-                                    .buildFunAlgorithm();
+                                        tensors[ 0 ] = output;
+                                    }
+                                    _autoClone( tensors );
+                                    return call;
+                                }
+                            )
+                            .buildFunAlgorithm();
 
         setAlgorithm(
-                simpleMatMulAlgorithm
-                        .setImplementationFor(
-                                CPU.class,
-                                CPUImplementation
-                                    .withArity(3)
-                                    .andImplementation( new SimpleMatMul() )
+            simpleMatMulAlgorithm
+                .setImplementationFor(
+                    CPU.class,
+                    CPUImplementation
+                        .withArity(3)
+                        .andImplementation( new SimpleMatMul() )
+                )
+                .setImplementationFor(
+                    OpenCLDevice.class,
+                    CLImplementation
+                        .fromSource()
+                        .arity( 3 )
+                        .kernelName( "simple_matMul" )
+                        .kernelSource(
+                                "__kernel void simple_matMul(                                          \n" +
+                                "       const int M, const int N, const int K,                        \n" +
+                                "       const __global float* A,                                      \n" +
+                                "       const __global float* B,                                      \n" +
+                                "       __global float* C                                             \n" +
+                                ") {                                                                  \n" +
+                                "    const int globalRow = get_global_id(0); // Row ID of C (0..M)    \n" +
+                                "    const int globalCol = get_global_id(1); // Col ID of C (0..N)    \n" +
+                                "                                                                     \n" +
+                                "    // Compute a single element (loop over K)                        \n" +
+                                "    float acc = 0.0f;                                                \n" +
+                                "    for ( int k = 0; k < K; k++ ) {                                  \n" +
+                                "        acc += A[k + globalRow*K] * B[globalCol + k*N];              \n" +
+                                "    }                                                                \n" +
+                                "    // Store the result                                              \n" +
+                                "    C[globalCol + globalRow*N] = acc;                                \n" +
+                                "}                                                                    \n"
                         )
-                        .setImplementationFor(
-                                OpenCLDevice.class,
-                                CLImplementation.fromSource()
-                                        .arity( 3 )
-                                        .kernelName( "simple_matMul" )
-                                        .kernelSource(
-                                                "__kernel void simple_matMul(                                          \n" +
-                                                "       const int M, const int N, const int K,                        \n" +
-                                                "       const __global float* A,                                      \n" +
-                                                "       const __global float* B,                                      \n" +
-                                                "       __global float* C                                             \n" +
-                                                ") {                                                                  \n" +
-                                                "    const int globalRow = get_global_id(0); // Row ID of C (0..M)    \n" +
-                                                "    const int globalCol = get_global_id(1); // Col ID of C (0..N)    \n" +
-                                                "                                                                     \n" +
-                                                "    // Compute a single element (loop over K)                        \n" +
-                                                "    float acc = 0.0f;                                                \n" +
-                                                "    for ( int k = 0; k < K; k++ ) {                                  \n" +
-                                                "        acc += A[k + globalRow*K] * B[globalCol + k*N];              \n" +
-                                                "    }                                                                \n" +
-                                                "    // Store the result                                              \n" +
-                                                "    C[globalCol + globalRow*N] = acc;                                \n" +
-                                                "}                                                                    \n"
-                                        )
-                                        .lambda( call -> {
-                                            int M = call.getTensors()[1].shape(0);
-                                            int N = call.getTensors()[2].shape(1);
-                                            int K = call.getTensors()[1].shape(1);
-                                            call.getDevice()
-                                                    .getKernel(call)
-                                                    .pass(M) // M
-                                                    .pass(N) // N
-                                                    .pass(K) // K
-                                                    .pass(call.getTsrOfType(Number.class, 1))
-                                                    .pass(call.getTsrOfType(Number.class, 2))
-                                                    .pass(call.getTsrOfType(Number.class, 0))
-                                                    .call(new long[]{M,N}, null);
-                                        } )
-                                        .build()
-                        )
+                        .lambda( call -> {
+                            int M = call.getTensors()[1].shape(0);
+                            int N = call.getTensors()[2].shape(1);
+                            int K = call.getTensors()[1].shape(1);
+                            call.getDevice()
+                                .getKernel(call)
+                                .pass(M) // M
+                                .pass(N) // N
+                                .pass(K) // K
+                                .pass(call.getTsrOfType(Number.class, 1))
+                                .pass(call.getTsrOfType(Number.class, 2))
+                                .pass(call.getTsrOfType(Number.class, 0))
+                                .call(new long[]{M,N}, null);
+                        } )
+                        .build()
+                )
         );
         /*
         // TODO: Non-simple tensors:
@@ -211,9 +213,8 @@ public class MatMul extends AbstractOperation
         StringBuilder reconstructed = new StringBuilder();
         for ( int i = 0; i < children.length; ++i ) {
             reconstructed.append( children[ i ] );
-            if ( i < children.length - 1 ) {
+            if ( i < children.length - 1 )
                 reconstructed.append(" @ ");
-            }
         }
         return "(" + reconstructed + ")";
     }

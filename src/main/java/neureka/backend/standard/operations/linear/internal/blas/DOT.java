@@ -1,5 +1,5 @@
 /*<#LICENSE#>*/
-package neureka.backend.standard.operations.linear.internal.operation.array;
+package neureka.backend.standard.operations.linear.internal.blas;
 
 /**
  * The ?dot routines perform a vector-vector reduction operation defined as Equation where xi and yi are

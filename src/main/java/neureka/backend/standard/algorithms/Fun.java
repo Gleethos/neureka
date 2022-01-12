@@ -1,8 +1,4 @@
-package neureka.backend.api;
-
-import neureka.backend.standard.algorithms.FunArray;
-import neureka.backend.standard.algorithms.FunPair;
-import neureka.backend.standard.algorithms.Operator;
+package neureka.backend.standard.algorithms;
 
 public interface Fun {
 

@@ -3,7 +3,7 @@ package neureka.backend.standard.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.backend.api.Fun;
+import neureka.backend.standard.algorithms.Fun;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.args.Arg;
