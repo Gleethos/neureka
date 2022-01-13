@@ -14,6 +14,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ *  The {@link NDAConstructor} is an <b>internal API</b> for receiving a wide range
+ *  of different inputs and using them to populate the fields
+ *  of freshly instantiated {@link neureka.Tsr} instances.
+ *  The existence of this class is a symptom of the fact that there
+ *  is a very large API for creating tensors in Neureka.
+ *  This means that all the code dealing with verifying and converting
+ *  API input (provided by various {@link neureka.Tsr#of} methods)
+ *  sits inside this class instead of polluting the already very large
+ *  {@link neureka.Tsr} class.
+ */
 public class NDAConstructor {
 
     private static final Logger _LOG = LoggerFactory.getLogger(NDAConstructor.class);
