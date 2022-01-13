@@ -1,6 +1,7 @@
 
    import neureka.Tsr
    import neureka.devices.Device
+   import testutility.Measure
 
    import java.nio.file.Files
    import java.nio.file.Paths
@@ -12,12 +13,9 @@
       {
          Map<String, List> map = [:]
          long time
-         double delta
+
          Closure measure = (String attribute_name, Closure c) -> {
-            time = System.nanoTime()
-            c()
-            delta = (System.nanoTime() - time) / 1_000_000_000
-            map[attribute_name] = [delta]
+            map[attribute_name] = [Measure.seconds(c)]
          }
          if ( conf.containsKey('custom_code') ) { // A benchmark for custom code is being performed!
             conf['custom_code'].each( pair -> measure( pair.key, {pair.value(iterations, difficulty)} ) )
@@ -29,15 +27,27 @@
          int N, size
 
          //==========================================================================#
-         // Matrix multiplication
+         // Convolutional Matrix Multiplication
          N = 1 * iterations
          size = 1 * difficulty
          //-------------
          execute {
             Tsr A = Tsr.of([size, size, 1], "apple").to(device)
             Tsr B = Tsr.of([1, size, size], "banana").to(device)
+            measure "convolutional_matrix_multiplication", {
+               for (int i=0; i < N; i++) tester("I[0] x I[1]" % [A, B])
+            }
+         }
+         //==========================================================================#
+         // Matrix multiplication
+         N = 1 * iterations
+         size = 1 * difficulty
+         //-------------
+         execute {
+            Tsr A = Tsr.of([size, size], "apple").to(device)
+            Tsr B = Tsr.of([size, size], "banana").to(device)
             measure "matrix_multiplication", {
-               for (int i=0; i < N; i++) tester("I[0]xI[1]" % [A, B])
+               for (int i=0; i < N; i++) tester("I[0] @ I[1]" % [A, B])
             }
          }
          //==========================================================================#
@@ -136,5 +146,6 @@
             asCSV.append("\n")
          }
       }
+      return result_map
    }
 

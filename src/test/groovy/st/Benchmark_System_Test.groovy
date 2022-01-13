@@ -64,22 +64,26 @@ class Benchmark_System_Test extends Specification
 
         and : 'A String instance for the result hash is being instantiated and the expected hash.'
             String hash = ""
-            String expected = "56b2eb74955e49cd777469c7dad0536e"
+            String expected = "13f4f656e8035b2668cc2ca88de4e118"
 
         when : 'The benchmark script is being called...'
-            session(
-                    configuration, null,
-                    CPU.get(),
-                    tsr -> {
-                        hash = (hash+tsr.toString()).md5()
-                    }
-            )
+            Map<String,List<Double>> result = session(
+                                    configuration, null,
+                                    CPU.get(),
+                                    tsr -> {
+                                        hash = (hash+tsr.toString()).md5()
+                                    }
+                            )
 
         then : 'The hash is as expected.'
             hash == expected
 
         and : 'No logging occurs because the benchmark does not render a scenario where a cache hit could occur.'
             0 * Neureka.get().backend().getFunctionCache()._log.debug(_)
+        and :
+            result.keySet().toList() == ["convolutional_matrix_multiplication", "matrix_multiplication", "vector_multiplication", "manual_convolution", "tensor_math", "iterations", "difficulty"]
+        and :
+            result.values().every { it.size() == 21 && it.every { it > 0 } }
 
         when : 'The cache logging is being reverted to the original state...'
             Neureka.get().backend().getFunctionCache()._log = oldLogger

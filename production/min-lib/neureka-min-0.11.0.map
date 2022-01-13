@@ -1361,14 +1361,14 @@ neureka.backend.standard.operations.linear.internal.M64 -> neureka.backend.stand
     40:40:double[] getData() -> getData
     45:51:java.lang.String toString() -> toString
     52:59:void lambda$toString$0(neureka.view.TsrStringSettings) -> a
-neureka.backend.standard.operations.linear.internal.operation.array.AXPY -> neureka.backend.standard.operations.linear.internal.operation.array.AXPY:
+neureka.backend.standard.operations.linear.internal.blas.AXPY -> neureka.backend.standard.operations.linear.internal.blas.AXPY:
     9:9:void <init>() -> <init>
     20:23:void invoke(double[],int,double,double[],int,int,int) -> invoke
     34:37:void invoke(float[],int,float,float[],int,int,int) -> invoke
-neureka.backend.standard.operations.linear.internal.operation.array.COPY -> neureka.backend.standard.operations.linear.internal.operation.array.COPY:
+neureka.backend.standard.operations.linear.internal.blas.COPY -> neureka.backend.standard.operations.linear.internal.blas.COPY:
     10:10:void <init>() -> <init>
     14:17:java.lang.Object[] copyOf(java.lang.Object[]) -> copyOf
-neureka.backend.standard.operations.linear.internal.operation.array.DOT -> neureka.backend.standard.operations.linear.internal.operation.array.DOT:
+neureka.backend.standard.operations.linear.internal.blas.DOT -> neureka.backend.standard.operations.linear.internal.blas.DOT:
     9:9:void <init>() -> <init>
     12:12:double invoke(double[],int,double[],int,int,int) -> invoke
     1021:1049:double unrolled04(double[],int,double[],int,int,int):21:49 -> invoke
@@ -1376,10 +1376,10 @@ neureka.backend.standard.operations.linear.internal.operation.array.DOT -> neure
     16:16:float invoke(float[],int,float[],int,int,int) -> invoke
     1054:1082:float unrolled04(float[],int,float[],int,int,int):54:82 -> invoke
     1054:1082:float invoke(float[],int,float[],int,int,int):16 -> invoke
-neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizable -> neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizable:
+neureka.backend.standard.operations.linear.internal.blas.MatMul -> neureka.backend.standard.operations.linear.internal.blas.MatMul:
     14:14:void <init>() -> <init>
-    38:59:neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizable$VectorOperationF32 operationForF32(long,long) -> operationForF32
-    65:102:neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizable$VectorOperationF64 operationForF64(long,long) -> operationForF64
+    38:59:neureka.backend.standard.operations.linear.internal.blas.MatMul$VectorOperationF32 operationForF32(long,long) -> operationForF32
+    65:102:neureka.backend.standard.operations.linear.internal.blas.MatMul$VectorOperationF64 operationForF64(long,long) -> operationForF64
     112:124:void full_F64_Mx1_CM(double[],double[],int,double[]) -> a
     132:145:void full_F64_Mx1_RM(double[],double[],int,double[]) -> b
     153:165:void full_F32_Mx1_CM(float[],float[],int,float[]) -> a
@@ -1414,9 +1414,9 @@ neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizabl
     306:306:void lambda$threaded_F32_MxN_RM$2(float[],float[],int,float[],int,int) -> a
     298:298:void lambda$threaded_F32_MxN_CM$1(float[],float[],int,float[],int,int) -> b
     290:290:void lambda$threaded_F64_MxN_CM$0(double[],double[],int,double[],int,int) -> b
-neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizable$VectorOperationF32 -> neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizable$VectorOperationF32:
+neureka.backend.standard.operations.linear.internal.blas.MatMul$VectorOperationF32 -> neureka.backend.standard.operations.linear.internal.blas.MatMul$VectorOperationF32:
     void invoke(float[],float[],int,float[]) -> invoke
-neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizable$VectorOperationF64 -> neureka.backend.standard.operations.linear.internal.operation.matrix.Vectorizable$VectorOperationF64:
+neureka.backend.standard.operations.linear.internal.blas.MatMul$VectorOperationF64 -> neureka.backend.standard.operations.linear.internal.blas.MatMul$VectorOperationF64:
     void invoke(double[],double[],int,double[]) -> invoke
 neureka.backend.standard.operations.operator.Addition -> neureka.backend.standard.operations.operator.Addition:
     neureka.backend.api.Operation$DefaultOperatorCreator _broadcastCreator -> a
