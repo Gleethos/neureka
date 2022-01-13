@@ -127,6 +127,13 @@ public class FunctionInput implements Function, GradientProvider
             return ( d == index() )
                 ? Tsr.of( tensors[ 0 ].shape(), 1.0 )
                 : Tsr.of( tensors[ 0 ].shape(), 0.0 );
+
+        if ( index() >= tensors.length )
+            throw new IllegalArgumentException(
+                "Function input '"+index()+"' not satisfied! " +
+                "Please supply at least "+(index()+1)+" input tensors."
+            );
+
         return _extract( tensors[ index() ] );
     }
 
