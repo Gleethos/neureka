@@ -36,10 +36,10 @@ class Calculus_Exception_Spec extends Specification {
         then :
             var exception = thrown(IllegalArgumentException)
         and :
-            exception.message == "Trying to instantiate an ExecutionCall " +
-                                 "with an arity of 1, which is not suitable to " +
-                                 "the targeted operation MatMul with  the expected " +
-                                 "arity of 2"
+            exception.message == "Trying to instantiate an 'ExecutionCall' " +
+                                 "with an arity of 1, which is not suitable for " +
+                                 "the targeted operation 'MatMul' with the expected " +
+                                 "arity of 2."
     }
 
 
