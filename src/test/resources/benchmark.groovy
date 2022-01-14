@@ -12,7 +12,6 @@
       def benchmark =  (int iterations, int difficulty) ->
       {
          Map<String, List> map = [:]
-         long time
 
          Closure measure = (String attribute_name, Closure c) -> {
             map[attribute_name] = [Measure.seconds(c)]
@@ -51,16 +50,15 @@
             }
          }
          //==========================================================================#
-         // Vector multiplication
+         // Vector multiplication (dot product)
          N = 1 * iterations
          size = 1 * difficulty**2
          //-------------
          execute {
             Tsr C = Tsr.of([size], "blueberry").to(device)
             Tsr D = Tsr.of([size], "grapefruit").to(device)
-            time = System.nanoTime()
             measure "vector_multiplication", {
-               for ( int i=0; i < N; i++) tester("I[0]xI[1]" % [C, D])
+               for ( int i = 0; i < N; i++ ) tester("I[0]xI[1]" % [C, D])
             }
          }
          //==========================================================================#
@@ -71,7 +69,7 @@
          execute {
             Tsr a = Tsr.of([size, size], 3d..19d).to(device)
             measure "manual_convolution", {
-               for ( int i; i < N; i++ ) {
+               for ( int i = 0; i < N; i++ ) {
                   Tsr rowconvol = a[1..-2, 0..-1] + a[0..-3, 0..-1] + a[2..-1, 0..-1]//(98, 100) (98, 100) (98, 100)
                   Tsr colconvol = rowconvol[0..-1, 1..-2] + rowconvol[0..-1, 0..-3] + rowconvol[0..-1, 2..-1] - 9 * a[1..-2, 1..-2]
                   tester(colconvol)
@@ -92,7 +90,7 @@
             Tsr t1 = Tsr.ofShape(dim).to(device)
             Tsr t2 = Tsr.ofShape(dim).to(device)
             measure "tensor_math", {
-               for ( int i; i < N; i++ ) {
+               for ( int i = 0; i < N; i++ ) {
                   Tsr v = t1 * 10
                   v = v * t2 / t1
                   v = v ** 0.5
@@ -105,8 +103,6 @@
          map["difficulty"] = [difficulty]
          //==========================================================================#
 
-         //Neureka.instance().settings().show()
-
          return map
       }
       // CORE BENCHMARK CODE END;
@@ -118,31 +114,31 @@
                  conf["iterations"],
                  conf["difficulty"]+(i-conf["difficulty"])*conf["intensifier"]
          )
-         result.each(k, v)->{
-            if (result_map[k]==null) result_map[k] = v
+         result.each( k, v ) -> {
+            if ( result_map[k]==null ) result_map[k] = v
             else result_map[k] += v
          }
       }
-      if(filename!=null){
+      if ( filename != null ) {
          BufferedWriter writer = Files.newBufferedWriter(Paths.get("docs/benchmarks/"+filename));
          writer.write("")
          writer.flush()
          File asCSV = new File("docs/benchmarks/"+filename)
          def ci = 0
          def rowSize = result_map.size()
-         result_map.each(k, v)->{
+         result_map.each( k, v )->{
             asCSV.append(k)
-            if(ci<rowSize-1) asCSV.append(",")
+            if ( ci < rowSize - 1 ) asCSV.append(",")
             ci++
          }
          asCSV.append("\n")
-         for(i in 1..conf["sample_size"]){
+         for ( i in 1..conf["sample_size"] ) {
             ci = 0
-            result_map.each((k, v)->{
+            result_map.each( k, v )->{
                asCSV.append(v[i-1])
-               if(ci<rowSize-1) asCSV.append(",")
+               if ( ci < rowSize - 1 ) asCSV.append(",")
                ci++
-            })
+            }
             asCSV.append("\n")
          }
       }

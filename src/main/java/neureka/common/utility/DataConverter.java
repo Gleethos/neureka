@@ -36,6 +36,7 @@ SOFTWARE.
 package neureka.common.utility;
 
 import neureka.Tsr;
+import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -266,7 +267,7 @@ public class DataConverter
             byte[] data = new byte[ _size ];
             IntStream.range( 0, _size )
                     .parallel()
-                    .forEach( i -> data[i] = source.apply(_access.map(i)).byteValue());
+                    .forEach( i -> data[i] = source.apply(_access.map(i)).byteValue() );
             return data;
         }
 
@@ -290,7 +291,7 @@ public class DataConverter
             double[] data = new double[ _size ];
             IntStream.range( 0, _size )
                     .parallel()
-                    .forEach( i -> data[i] = source.apply(_access.map(i)).doubleValue());
+                    .forEach( i -> data[i] = source.apply(_access.map(i)).doubleValue() );
             return data;
         }
 
@@ -298,7 +299,7 @@ public class DataConverter
             short[] data = new short[ _size ];
             IntStream.range( 0, _size )
                     .parallel()
-                    .forEach( i -> data[i] = source.apply(_access.map(i)).shortValue());
+                    .forEach( i -> data[i] = source.apply(_access.map(i)).shortValue() );
             return data;
         }
 
@@ -306,7 +307,7 @@ public class DataConverter
             Object[] data = new Object[ _size ];
             IntStream.range( 0, _size )
                     .parallel()
-                    .forEach( i -> data[i] = source.apply(_access.map(i)));
+                    .forEach( i -> data[i] = source.apply(_access.map(i)) );
             return data;
         }
 

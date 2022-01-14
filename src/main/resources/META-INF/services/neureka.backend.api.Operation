@@ -18,25 +18,11 @@ neureka.backend.standard.operations.indexer.Product
 
 # operator :
 neureka.backend.standard.operations.operator.Power
-neureka.backend.standard.operations.operator.PowerConv
-neureka.backend.standard.operations.operator.PowerLeftConv
-neureka.backend.standard.operations.operator.PowerRightConv
 neureka.backend.standard.operations.operator.Division
-neureka.backend.standard.operations.operator.DivisionConv
-neureka.backend.standard.operations.operator.DivisionLeftConv
-neureka.backend.standard.operations.operator.DivisionRightConv
 neureka.backend.standard.operations.operator.Multiplication
-neureka.backend.standard.operations.operator.MultiplicationLeftConv
-neureka.backend.standard.operations.operator.MultiplicationRightConv
 neureka.backend.standard.operations.operator.Modulo
 neureka.backend.standard.operations.operator.Subtraction
-neureka.backend.standard.operations.operator.SubtractionConv
-neureka.backend.standard.operations.operator.SubtractionLeftConv
-neureka.backend.standard.operations.operator.SubtractionRightConv
 neureka.backend.standard.operations.operator.Addition
-neureka.backend.standard.operations.operator.AdditionConv
-neureka.backend.standard.operations.operator.AdditionLeftConv
-neureka.backend.standard.operations.operator.AdditionRightConv
 
 # convolution :
 neureka.backend.standard.operations.linear.XConv

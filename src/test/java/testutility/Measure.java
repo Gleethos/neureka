@@ -17,10 +17,24 @@ public class Measure {
         return seconds(task) / 60d;
     }
 
+    /**
+     *  Use this to test performance and do some tuning.
+     */
     public static void main(String... args) {
 
-        System.out.println(seconds(_f32())+"s");
-        System.out.println(seconds(_f64())+"s");
+        //System.out.println(seconds(_f32())+"s");
+        //System.out.println(seconds(_f64())+"s");
+
+        int times = 150;
+
+        for ( int i = 0; i < times; i++ ) _map();
+
+        double average = 0;
+        for ( int i = 0; i < times; i++ ) average += seconds(_map());
+        average /= times;
+
+        System.out.println(average+"s");
+
     }
 
     private static Runnable _f32() {
@@ -37,6 +51,11 @@ public class Measure {
         Tsr<Double> c = Tsr.ofDoubles().withShape(40, 300, 200).andSeed("I am a happy seed! :D");
         Function f = Function.of("relu(i0+i1*3)*i2");
         return  ()-> f.call(a, b, c);
+    }
+
+    private static Runnable _map() {
+        Tsr<Double> a = Tsr.ofDoubles().withShape(40, 300, 200).andFill(-1d, 5d, 0.7d, 9d, -14.75d);
+        return  ()-> a.mapTo( Float.class, Double::floatValue );
     }
 
 }

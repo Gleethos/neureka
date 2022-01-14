@@ -2,10 +2,15 @@ package testutility;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.autograd.ADAgent;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
+import neureka.backend.standard.algorithms.Fun;
+import neureka.backend.standard.implementations.CPUImplementation;
+import neureka.calculus.CalcUtil;
+import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
@@ -216,9 +221,135 @@ public class UnitTester_Tensor extends UnitTester
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
-        Neureka.get().backend().getOperation(((char) 171) + "*")
-                .getAlgorithm(Broadcast.class)
-                .getImplementationFor( CPU.class )
+
+        Broadcast right = new Broadcast((executionCall, executor) -> null)
+                                .setCanPerformBackwardADFor( call -> true )
+                                .setCanPerformForwardADFor(
+                                        call -> {
+                                            Tsr<?> last = null;
+                                            for ( Tsr<?> t : call.getTensors() ) {
+                                                if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                                                last = t; // Note: shapes are cached!
+                                            }
+                                            return true;
+                                        }
+                                )
+                                .setSupplyADAgentFor(
+                                        (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                                        {
+                                            Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                                            Function mul = Neureka.get().backend().getFunction().mul();
+                                            if ( ctxDerivative != null ) {
+                                                return ADAgent.of( ctxDerivative )
+                                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                                                        .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
+                                            }
+                                            Tsr<?>[] inputs = call.getTensors();
+                                            int d = call.getDerivativeIndex();
+                                            if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                                            else
+                                            {
+                                                Tsr<?> derivative = f.executeDerive( inputs, d );
+                                                return ADAgent.of( derivative )
+                                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                                        .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
+                                            }
+                                        }
+                                )
+                                .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
+                                .setCallPreparation(
+                                        call -> {
+                                            Tsr<?>[] tsrs = call.getTensors();
+                                            int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
+                                            return
+                                                    ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on(call.getDevice());
+                                        }
+                                )
+                                .buildFunAlgorithm()
+                                .setImplementationFor(
+                                        CPU.class,
+                                        CPUImplementation
+                                                .withArity(3)
+                                                .andImplementation(
+                                                        Broadcast.implementationForCPU()
+                                                                .with(Fun.F64F64ToF64.triple(
+                                                                        ( a, b ) -> a * b,
+                                                                        ( a, b ) -> a * b,
+                                                                        ( a, b ) -> a * b
+                                                                ))
+                                                                .with(Fun.F32F32ToF32.triple(
+                                                                        ( a, b ) -> a * b,
+                                                                        ( a, b ) -> a * b,
+                                                                        ( a, b ) -> a * b
+                                                                ))
+                                                                .get()
+                                                )
+                                );
+
+        Broadcast left = new Broadcast((executionCall, executor) -> null)
+                                    .setCanPerformBackwardADFor( call -> true )
+                                    .setCanPerformForwardADFor(
+                                            call -> {
+                                                Tsr<?> last = null;
+                                                for ( Tsr<?> t : call.getTensors() ) {
+                                                    if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                                                    last = t; // Note: shapes are cached!
+                                                }
+                                                return true;
+                                            }
+                                    )
+                                    .setSupplyADAgentFor(
+                                            (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                                            {
+                                                Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                                                Function mul = Neureka.get().backend().getFunction().mul();
+                                                if ( ctxDerivative != null ) {
+                                                    return ADAgent.of( ctxDerivative )
+                                                            .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                                                            .setBackward( null );
+                                                }
+                                                Tsr<?>[] inputs = call.getTensors();
+                                                int d = call.getDerivativeIndex();
+                                                if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                                                else
+                                                {
+                                                    Tsr<?> derivative = f.executeDerive( inputs, d );
+                                                    return ADAgent.of( derivative )
+                                                            .setForward( ( node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                                            .setBackward( ( node, backwardError ) -> mul.execute( backwardError, derivative ) );
+                                                }
+                                            }
+                                    )
+                                    .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
+                                    .setCallPreparation(
+                                            call -> {
+                                                Tsr<?>[] tsrs = call.getTensors();
+                                                int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
+                                                return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on(call.getDevice());
+                                            }
+                                    )
+                                    .buildFunAlgorithm()
+                                    .setImplementationFor(
+                                            CPU.class,
+                                            CPUImplementation
+                                                    .withArity(3)
+                                                    .andImplementation(
+                                                            Broadcast.implementationForCPU()
+                                                                    .with(Fun.F64F64ToF64.triple(
+                                                                            ( a, b ) -> a * b,
+                                                                            ( a, b ) -> a * b,
+                                                                            ( a, b ) -> a * b
+                                                                    ))
+                                                                    .with(Fun.F32F32ToF32.triple(
+                                                                            ( a, b ) -> a * b,
+                                                                            ( a, b ) -> a * b,
+                                                                            ( a, b ) -> a * b
+                                                                    ))
+                                                                    .get()
+                                                    )
+                                    );
+
+        left.getImplementationFor( CPU.class )
                 .run(
                         ExecutionCall.of(
                                     Tsr.of(frstShp, frstData),
@@ -231,9 +362,8 @@ public class UnitTester_Tensor extends UnitTester
                             .forDeviceType(CPU.class)
                 );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
-        Neureka.get().backend().getOperation("*" + ((char) 187))
-                .getAlgorithm(Broadcast.class)
-                .getImplementationFor( CPU.class )
+
+        right.getImplementationFor( CPU.class )
                 .run(
                         ExecutionCall.of(
                                     Tsr.of(frstShp, frstData),

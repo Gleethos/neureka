@@ -94,7 +94,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         _tensors   = tensors;
         _algorithm = algorithm;
         int thisArity = _tensors.length;
-        if ( thisArity < Math.abs(_operation.getArity()) ) {
+        if ( _operation != null && thisArity < Math.abs(_operation.getArity()) ) {
             throw new IllegalArgumentException(
                     "Trying to instantiate an "+this.getClass().getSimpleName()+" with an arity " +
                             "of "+thisArity+", which is not suitable to the targeted operation " +

@@ -2823,28 +2823,28 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                             throw new IllegalArgumentException(failMessage);
 
                         if (typeClass == Double.class) newData = map.toDoubleArray(access);
-                        else if (typeClass == Integer.class) newData = map.toIntArray(access);
-                        else if (typeClass == Long.class) newData = map.toLongArray(access);
-                        else if (typeClass == Byte.class) newData = map.toByteArray(access);
-                        else if (typeClass == Float.class) newData = map.toFloatArray(access);
-                        else if (typeClass == Short.class) newData = map.toShortArray(access);
+                        else if ( typeClass == Integer.class ) newData = map.toIntArray(access);
+                        else if ( typeClass == Long.class    ) newData = map.toLongArray(access);
+                        else if ( typeClass == Byte.class    ) newData = map.toByteArray(access);
+                        else if ( typeClass == Float.class   ) newData = map.toFloatArray(access);
+                        else if ( typeClass == Short.class   ) newData = map.toShortArray(access);
                         else
                             throw new IllegalArgumentException(failMessage);
                     } else {
                         java.util.function.Function<Integer, Object> access = null;
-                        if (this.getValueClass() == Integer.class) {
+                        if ( this.getValueClass() == Integer.class ) {
                             int[] sourceData = (int[]) this.getData();
                             access = (i -> mapper.apply((V) Integer.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Double.class) {
+                        } else if ( this.getValueClass() == Double.class ) {
                             double[] sourceData = (double[]) this.getData();
                             access = (i -> mapper.apply((V) Double.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Float.class) {
+                        } else if ( this.getValueClass() == Float.class ) {
                             float[] sourceData = (float[]) this.getData();
                             access = (i -> mapper.apply((V) Float.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Short.class) {
+                        } else if ( this.getValueClass() == Short.class ) {
                             short[] sourceData = (short[]) this.getData();
                             access = (i -> mapper.apply((V) Short.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Byte.class) {
+                        } else if ( this.getValueClass() == Byte.class ) {
                             byte[] sourceData = (byte[]) this.getData();
                             access = (i -> mapper.apply((V) Byte.valueOf(sourceData[i])));
                         } else

@@ -41,10 +41,6 @@ class Calculus_Parsing_Spec extends Specification
             '($$(gaus(i0*()'                            || "gaus(I[0] * 0.0)"
             "rrlu(i0)"                                  || "relu(I[0])"
             "th(i0)*gas(i0+I1)"                         || "(tanh(I[0]) * gaus(I[0] + I[1]))"
-            "th(i0)dgus(i0+I1)"                         || "(tanh(I[0]) d gaus(I[0] + I[1]))"
-            "ijdguus(i0+I1)"                            || "(I[j] d gaus(I[0] + I[1]))"
-            "ijssumJs(i0+Ij)"                           || "(I[j] s sumJs(I[0] + I[j]))"
-            "i[0] d>> i[1] d>> I[2]"                    || "(I[0] d"+((char)187)+" I[1] d"+((char)187)+" I[2])"
             "dimtrim(I[0])"                             || "dimtrim(I[0])"
             "add(I[0], 3, 3/I[1])"                      || "(I[0] + 3.0 + (3.0 / I[1]))"
             "multiply(1, 4, -2, I[1])"                  || "(1.0 * 4.0 * -2.0 * I[1])"
@@ -67,7 +63,6 @@ class Calculus_Parsing_Spec extends Specification
 
         where : 'The following expressions and expected exception messages are being used :'
             equation                  || expected
-            "i[0] d>> i[1]"           || "The function/operation 'd"+((char)187)+"' expects 3 parameters, however 2 where given!"
             "softplus(I[0],I[1],I[2])"|| "The function/operation 'softplus' expects 1 parameters, however 3 where given!"
             "sig(I[0],I[1],I[2])"     || "The function/operation 'sig' expects 1 parameters, however 3 where given!"
             "sumjs(I[0],I[1],I[2])"   || "The function/operation 'sumJs' expects 1 parameters, however 3 where given!\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
