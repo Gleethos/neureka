@@ -167,6 +167,9 @@ public final class Neureka
         _INSTANCES.set(instance);
     }
 
+    /**
+     *  This allows you to configure Neureka using a Groovy DSL.
+     */
     public static Neureka configure( Object closure ) {
         Object o = SettingsLoader.tryGroovyClosureOn(closure, Neureka.get());
         if ( o instanceof String ) _VERSION = (String) o;
@@ -183,6 +186,9 @@ public final class Neureka
      */
     public Settings settings() { return _settings; }
 
+    /**
+     *  This allows you to configure Neureka using a Groovy DSL.
+     */
     public Settings settings(Object closure) {
         SettingsLoader.tryGroovyClosureOn( closure, _settings );
         return _settings;
@@ -264,6 +270,9 @@ public final class Neureka
         
         public Debug debug() { return _debug; }
 
+        /**
+         *  This allows you to configure Neureka using a Groovy DSL.
+         */
         public Debug debug(Object closure) {
             SettingsLoader.tryGroovyClosureOn(closure, _debug);
             return _debug;
@@ -271,6 +280,9 @@ public final class Neureka
 
         public AutoGrad autograd() { return _autograd; }
 
+        /**
+         *  This allows you to configure Neureka using a Groovy DSL.
+         */
         public AutoGrad autograd( Object closure ) {
             SettingsLoader.tryGroovyClosureOn( closure, _autograd );
             return _autograd;
@@ -285,6 +297,9 @@ public final class Neureka
 
         public NDim ndim() { return _ndim; }
 
+        /**
+         *  This allows you to configure Neureka using a Groovy DSL.
+         */
         public NDim ndim( Object closure ) {
             SettingsLoader.tryGroovyClosureOn( closure, _ndim );
             return _ndim;
@@ -292,6 +307,9 @@ public final class Neureka
 
         public DType dtype() { return _dtype; }
 
+        /**
+         *  This allows you to configure Neureka using a Groovy DSL.
+         */
         public DType dtype( Object closure ) {
             SettingsLoader.tryGroovyClosureOn( closure, _dtype );
             return _dtype;
@@ -486,6 +504,9 @@ public final class Neureka
             }
         }
 
+        /**
+         *  Settings for configuring how objects should be converted to {@link String} representations.
+         */
         public class View
         {
             private final TsrStringSettings _settings;
@@ -494,10 +515,19 @@ public final class Neureka
                 _settings = new TsrStringSettings(Settings.this::notModifiable);
             }
 
-            public void tensors( Object closure ) { SettingsLoader.tryGroovyClosureOn( closure, _settings ); }
-
+            /**
+             *  Settings for configuring how tensors should be converted to {@link String} representations.
+             */
             public TsrStringSettings getTensorSettings() { return _settings; }
 
+            /**
+             *  This allows you to provide a lambda to configure how tensors should be
+             *  converted to {@link String} instances.
+             *  The provided {@link Consumer} will receive a {@link TsrStringSettings} instance
+             *  which allows you to change various settings with the help of method chaining.
+             *
+             * @param should A consumer of the {@link TsrStringSettings} ready to be configured.
+             */
             public void tensors( Consumer<TsrStringSettings> should ) { should.accept(_settings); }
 
             public String toString() {
@@ -538,15 +568,37 @@ public final class Neureka
 
             private boolean _isAutoConvertingExternalDataToJVMTypes = true;
 
+            /**
+             *  The default data type is not relevant most of the time.
+             *  However, if a tensor is being constructed without providing a type class,
+             *  then this property will be used.
+             */
             public Class<?> getDefaultDataTypeClass() { return _defaultDataTypeClass; }
 
+            /**
+             *  The default data type is not relevant most of the time.
+             *  However, if a tensor is being constructed without providing a type class,
+             *  then this property will be used.
+             */
             public void setDefaultDataTypeClass( Class<?> dtype ) {
                 if ( notModifiable() ) return;
                 _defaultDataTypeClass = dtype;
             }
 
+            /**
+             *  This flag will determine if foreign data types will be converted into the next best fit (in terms of bits)
+             *  or if it should be converted into something that does not mess with the representation of the data.
+             *  For example an unsigned int can be converted bit-wise into a JVM int, or
+             *  it could be converted to a JVM long type in order to be compatible with JVM operations...
+             */
             public boolean getIsAutoConvertingExternalDataToJVMTypes() { return _isAutoConvertingExternalDataToJVMTypes; }
 
+            /**
+             *  This flag will determine if foreign data types will be converted into the next best fit (in terms of bits)
+             *  or if it should be converted into something that does not mess with the representation of the data.
+             *  For example an unsigned int can be converted bit-wise into a JVM int, or
+             *  it could be converted to a JVM long type in order to be compatible with JVM operations...
+             */
             public void setIsAutoConvertingExternalDataToJVMTypes( boolean autoConvert ) {
                 if ( notModifiable() ) return;
                 _isAutoConvertingExternalDataToJVMTypes = autoConvert;
@@ -590,7 +642,7 @@ public final class Neureka
         }
 
         /**
-         *  This method checks if a class addressed by it's name has been loaded into the runtime.
+         *  This method checks if a class addressed by its name has been loaded into the runtime.
          *
          * @param className The class whose presents ought to be checked.
          * @return The truth value determining if the class is present or not.

@@ -3014,6 +3014,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return TsrAsString.representing( this ).withConfig( config ).toString();
     }
 
+    /**
+     *  This allows you to provide a lambda to configure how this tensor should be
+     *  converted to {@link String} instances.
+     *  The provided {@link Consumer} will receive a {@link TsrStringSettings} instance
+     *  which allows you to change various settings with the help of method chaining.
+     *
+     * @param config A consumer of the {@link TsrStringSettings} ready to be configured.
+     */
     public String toString( Consumer<TsrStringSettings> config ) {
         TsrStringSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();
         config.accept(defaults);

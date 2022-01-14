@@ -22,11 +22,11 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 /**
- *  This is a utility class which helps with orchestrating the execution of classical operations
- *  from calculus like the operators '*', '-', '+', '/', as well as linear operations
+ *  This is a utility class which helps with orchestrating the execution of classical
+ *  mathematical operations like the operators '*', '-', '+', '/', as well as linear operations
  *  like matrix multiplication, broadcasting and convolution.
  *  This orchestration refers to the way an {@link ExecutionCall} alongside its caller, a {@link Function},
- *  should be handles to produce a correct result.
+ *  should be handled to produce a correct result.
  */
 public class CalcUtil
 {
@@ -298,7 +298,7 @@ public class CalcUtil
     /**
      *  The following method can be used to split one big execution call into many
      *  grouped execution calls which will be executed recursively.
-     *  This method receives a the call which ought to be broken down as well as two lambdas
+     *  This method receives a call which ought to be broken down as well as two lambdas
      *  which contain implementations to perform this task.
      *  The first lambda, namely {@param finalExecution}, will be called at the end of the
      *  recursion dive, whereas the second lambda {@param executor} will be called for
@@ -343,13 +343,6 @@ public class CalcUtil
             }
             else rollbacks[ i ] = t -> {};
         }
-        /* For the following operations with the correct arity RJAgent should do: ...
-            case ("s" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
-            case ("d" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
-            case ("p" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
-            case ("m" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
-            case ">": tsrs = new Tsr[]{tsrs[ 1 ], tsrs[ 0 ]};
-         */
         /*
             Below is the core lambda of recursive preprocessing
             which is defined for each Algorithm individually :
