@@ -96,11 +96,11 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         int thisArity = _tensors.length;
         if ( _operation != null && thisArity < Math.abs(_operation.getArity()) ) {
             throw new IllegalArgumentException(
-                    "Trying to instantiate an "+this.getClass().getSimpleName()+" with an arity " +
-                            "of "+thisArity+", which is not suitable to the targeted operation " +
-                            _operation.getClass().getSimpleName()+" with " +
-                            ( _operation.getArity() < 0 ? " a minimum " : " the expected " ) +
-                            "arity of "+Math.abs(_operation.getArity())
+                    "Trying to instantiate an '"+this.getClass().getSimpleName()+"' with an arity " +
+                    "of "+thisArity+", which is not suitable for the targeted operation '" +
+                    _operation.getClass().getSimpleName()+"' with" +
+                    ( _operation.getArity() < 0 ? " a minimum " : " the expected " ) +
+                    "arity of "+Math.abs(_operation.getArity()) + "."
             );
         }
     }
