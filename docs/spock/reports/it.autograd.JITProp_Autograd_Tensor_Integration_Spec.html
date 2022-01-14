@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Thu Jan 06 12:27:24 CET 2022 by danie</div>
+<div class='date-test-ran'>Created on Fri Jan 14 17:08:10 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>4.113 seconds</td>
+<td>0.375 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -486,6 +486,9 @@ a.toString().contains("(2.0):g:(36.0)")</pre>
 </td>
 <td>
 <pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
 Tsr a = Tsr.of(2).setRqsGradient(true)
 Tsr b = Tsr.of(-4)
 Tsr c = Tsr.of(3).setRqsGradient(true)
@@ -544,6 +547,8 @@ a.toString().contains("(38.0):g:(null)")</pre>
 <td>
 <pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
 Tsr a = Tsr.of(2).setRqsGradient(true)
 Tsr b = Tsr.of(-4)
 Tsr c = Tsr.of(3).setRqsGradient(true)

@@ -620,7 +620,7 @@ import java.util.stream.IntStream;
 
 <span class="fc" id="L621">    public static &lt;V&gt; Tsr&lt;V&gt; of( Class&lt;V&gt; typeClass, int[] shape, Object data ) { return new Tsr&lt;&gt;( shape, typeClass, data ); }</span>
 
-<span class="nc" id="L623">    public static &lt;V&gt; Tsr&lt;V&gt; of( Class&lt;V&gt; typeClass, List&lt;Integer&gt; shape, Object data ) { return new Tsr&lt;&gt;( shape.stream().mapToInt(i -&gt; i).toArray(), typeClass, data ); }</span>
+<span class="fc" id="L623">    public static &lt;V&gt; Tsr&lt;V&gt; of( Class&lt;V&gt; typeClass, List&lt;Integer&gt; shape, Object data ) { return new Tsr&lt;&gt;( shape.stream().mapToInt(i -&gt; i).toArray(), typeClass, data ); }</span>
 
     private Tsr( int[] shape, Class&lt;V&gt; typeClass, Object data )
 <span class="fc" id="L626">    {</span>
@@ -1056,12 +1056,12 @@ import java.util.stream.IntStream;
 <span class="nc" id="L1056">                throw exception;</span>
 <span class="fc" id="L1057">            }</span>
 <span class="fc bfc" id="L1058" title="All 2 branches covered.">            if ( isVirtual ) {</span>
-<span class="pc bpc" id="L1059" title="1 of 2 branches missed.">                if ( getData() != null ) _virtualize();</span>
+<span class="fc bfc" id="L1059" title="All 2 branches covered.">                if ( getData() != null ) _virtualize();</span>
             }
 <span class="fc" id="L1061">            else _actualize();</span>
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-<span class="pc bpc" id="L1064" title="1 of 2 branches missed.">            createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, getData() == null );</span>
+<span class="fc bfc" id="L1064" title="All 2 branches covered.">            createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, getData() == null );</span>
 <span class="fc bfc" id="L1065" title="All 2 branches covered.">            if ( isVirtual ) {</span>
 <span class="fc" id="L1066">                Relation&lt;V&gt; relation = get( Relation.class );</span>
 <span class="pc bpc" id="L1067" title="1 of 2 branches missed.">                if ( relation!=null )</span>
@@ -1511,7 +1511,7 @@ import java.util.stream.IntStream;
      * @param call The context object containing all relevant information that defines a call for tensor execution.
      * @return This very tensor instance. (factory pattern)
      */
-    public Tsr&lt;V&gt; incrementVersionBecauseOf( ExecutionCall&lt;?&gt; call ) {
+    private Tsr&lt;V&gt; _incrementVersionBecauseOf(ExecutionCall&lt;?&gt; call ) {
 <span class="fc bfc" id="L1515" title="All 2 branches covered.">        if ( Neureka.get().settings().autograd().isPreventingInlineOperations() ) {</span>
 <span class="fc" id="L1516">            _version++;</span>
 <span class="fc" id="L1517">            GraphNode&lt;?&gt; node = get( GraphNode.class );</span>
@@ -2729,8 +2729,8 @@ import java.util.stream.IntStream;
 <span class="fc" id="L2729">            else ( (double[]) getData())[ 0 ] = ( (Float) value ).doubleValue();</span>
 <span class="fc bfc" id="L2730" title="All 2 branches covered.">        } else if ( value instanceof Double ) {</span>
 <span class="fc" id="L2731">            this.setIsVirtual( true );</span>
-<span class="pc bpc" id="L2732" title="1 of 2 branches missed.">            if ( getData() instanceof double[] ) ( (double[]) getData())[ 0 ] = (Double) value;</span>
-<span class="nc" id="L2733">            else ( (float[]) getData() )[ 0 ] = ( (Double) value ).floatValue();</span>
+<span class="fc bfc" id="L2732" title="All 2 branches covered.">            if ( getData() instanceof double[] ) ( (double[]) getData())[ 0 ] = (Double) value;</span>
+<span class="fc" id="L2733">            else ( (float[]) getData() )[ 0 ] = ( (Double) value ).floatValue();</span>
 <span class="pc bpc" id="L2734" title="1 of 2 branches missed.">        } else if ( value instanceof Integer ) {</span>
 <span class="nc" id="L2735">            this.setIsVirtual( true );</span>
 <span class="nc" id="L2736">            ( (int[]) getData() )[ 0 ] = (Integer) value;</span>
@@ -2823,28 +2823,28 @@ import java.util.stream.IntStream;
 <span class="nc" id="L2823">                            throw new IllegalArgumentException(failMessage);</span>
 
 <span class="fc bfc" id="L2825" title="All 2 branches covered.">                        if (typeClass == Double.class) newData = map.toDoubleArray(access);</span>
-<span class="fc bfc" id="L2826" title="All 2 branches covered.">                        else if (typeClass == Integer.class) newData = map.toIntArray(access);</span>
-<span class="fc bfc" id="L2827" title="All 2 branches covered.">                        else if (typeClass == Long.class) newData = map.toLongArray(access);</span>
-<span class="fc bfc" id="L2828" title="All 2 branches covered.">                        else if (typeClass == Byte.class) newData = map.toByteArray(access);</span>
-<span class="fc bfc" id="L2829" title="All 2 branches covered.">                        else if (typeClass == Float.class) newData = map.toFloatArray(access);</span>
-<span class="pc bpc" id="L2830" title="1 of 2 branches missed.">                        else if (typeClass == Short.class) newData = map.toShortArray(access);</span>
+<span class="fc bfc" id="L2826" title="All 2 branches covered.">                        else if ( typeClass == Integer.class ) newData = map.toIntArray(access);</span>
+<span class="fc bfc" id="L2827" title="All 2 branches covered.">                        else if ( typeClass == Long.class    ) newData = map.toLongArray(access);</span>
+<span class="fc bfc" id="L2828" title="All 2 branches covered.">                        else if ( typeClass == Byte.class    ) newData = map.toByteArray(access);</span>
+<span class="fc bfc" id="L2829" title="All 2 branches covered.">                        else if ( typeClass == Float.class   ) newData = map.toFloatArray(access);</span>
+<span class="pc bpc" id="L2830" title="1 of 2 branches missed.">                        else if ( typeClass == Short.class   ) newData = map.toShortArray(access);</span>
                         else
 <span class="nc" id="L2832">                            throw new IllegalArgumentException(failMessage);</span>
 <span class="fc" id="L2833">                    } else {</span>
 <span class="fc" id="L2834">                        java.util.function.Function&lt;Integer, Object&gt; access = null;</span>
-<span class="fc bfc" id="L2835" title="All 2 branches covered.">                        if (this.getValueClass() == Integer.class) {</span>
+<span class="fc bfc" id="L2835" title="All 2 branches covered.">                        if ( this.getValueClass() == Integer.class ) {</span>
 <span class="fc" id="L2836">                            int[] sourceData = (int[]) this.getData();</span>
 <span class="fc" id="L2837">                            access = (i -&gt; mapper.apply((V) Integer.valueOf(sourceData[i])));</span>
-<span class="fc bfc" id="L2838" title="All 2 branches covered.">                        } else if (this.getValueClass() == Double.class) {</span>
+<span class="fc bfc" id="L2838" title="All 2 branches covered.">                        } else if ( this.getValueClass() == Double.class ) {</span>
 <span class="fc" id="L2839">                            double[] sourceData = (double[]) this.getData();</span>
 <span class="fc" id="L2840">                            access = (i -&gt; mapper.apply((V) Double.valueOf(sourceData[i])));</span>
-<span class="fc bfc" id="L2841" title="All 2 branches covered.">                        } else if (this.getValueClass() == Float.class) {</span>
+<span class="fc bfc" id="L2841" title="All 2 branches covered.">                        } else if ( this.getValueClass() == Float.class ) {</span>
 <span class="fc" id="L2842">                            float[] sourceData = (float[]) this.getData();</span>
 <span class="fc" id="L2843">                            access = (i -&gt; mapper.apply((V) Float.valueOf(sourceData[i])));</span>
-<span class="fc bfc" id="L2844" title="All 2 branches covered.">                        } else if (this.getValueClass() == Short.class) {</span>
+<span class="fc bfc" id="L2844" title="All 2 branches covered.">                        } else if ( this.getValueClass() == Short.class ) {</span>
 <span class="fc" id="L2845">                            short[] sourceData = (short[]) this.getData();</span>
 <span class="fc" id="L2846">                            access = (i -&gt; mapper.apply((V) Short.valueOf(sourceData[i])));</span>
-<span class="pc bpc" id="L2847" title="1 of 2 branches missed.">                        } else if (this.getValueClass() == Byte.class) {</span>
+<span class="pc bpc" id="L2847" title="1 of 2 branches missed.">                        } else if ( this.getValueClass() == Byte.class ) {</span>
 <span class="fc" id="L2848">                            byte[] sourceData = (byte[]) this.getData();</span>
 <span class="fc" id="L2849">                            access = (i -&gt; mapper.apply((V) Byte.valueOf(sourceData[i])));</span>
 <span class="fc" id="L2850">                        } else</span>
@@ -3014,26 +3014,39 @@ import java.util.stream.IntStream;
 <span class="fc" id="L3014">        return TsrAsString.representing( this ).withConfig( config ).toString();</span>
     }
 
+    /**
+     *  This allows you to provide a lambda to configure how this tensor should be
+     *  converted to {@link String} instances.
+     *  The provided {@link Consumer} will receive a {@link TsrStringSettings} instance
+     *  which allows you to change various settings with the help of method chaining.
+     *
+     * @param config A consumer of the {@link TsrStringSettings} ready to be configured.
+     * @return The {@link String} representation of this tensor.
+     */
     public String toString( Consumer&lt;TsrStringSettings&gt; config ) {
-<span class="fc" id="L3018">        TsrStringSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();</span>
-<span class="fc" id="L3019">        config.accept(defaults);</span>
-<span class="fc" id="L3020">        return TsrAsString.representing( this ).withConfig( defaults ).toString();</span>
+<span class="fc" id="L3027">        TsrStringSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();</span>
+<span class="fc" id="L3028">        config.accept(defaults);</span>
+<span class="fc" id="L3029">        return TsrAsString.representing( this ).withConfig( defaults ).toString();</span>
     }
 
 
     protected String _toString( String config )
     {
-<span class="fc" id="L3026">        return TsrAsString.representing( this ).withConfig( config ).toString();</span>
+<span class="fc" id="L3035">        return TsrAsString.representing( this ).withConfig( config ).toString();</span>
     }
 
     @Override
     public String toString()
     {
-<span class="fc bfc" id="L3032" title="All 2 branches covered.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
-<span class="fc" id="L3033">        return TsrAsString.representing( this ).byDefaults().toString();</span>
+<span class="fc bfc" id="L3041" title="All 2 branches covered.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
+<span class="fc" id="L3042">        return TsrAsString.representing( this ).byDefaults().toString();</span>
     }
 
-<span class="fc" id="L3036">    public int getVersion() { return _version; }</span>
+    /**
+     *  The version number is tracking how often this tensor has been mutated.
+     *  This is especially useful for checking the correcting of autp-grad!
+     */
+<span class="fc" id="L3049">    public int getVersion() { return _version; }</span>
 
     /**
      *  Use this factory method to instantiate a new tensor with the same data type, shape
@@ -3044,16 +3057,25 @@ import java.util.stream.IntStream;
      * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
      */
     public static &lt;V&gt; IterByOrIterFromOrAll&lt;V&gt; like( Tsr&lt;V&gt; template ) {
-<span class="nc" id="L3047">        return Tsr.of( (Class&lt;V&gt;) template.getDataType().getJVMTypeClass() )</span>
-<span class="nc" id="L3048">                    .on( template.getDevice() )</span>
-<span class="nc" id="L3049">                    .withShape( template.getNDConf().shape() );</span>
+<span class="nc" id="L3060">        return Tsr.of( (Class&lt;V&gt;) template.getDataType().getJVMTypeClass() )</span>
+<span class="nc" id="L3061">                    .on( template.getDevice() )</span>
+<span class="nc" id="L3062">                    .withShape( template.getNDConf().shape() );</span>
     }
 
+    /**
+     *  This factory method produces a randomly populated tensor of the provided
+     *  type and shape using a hard coded default seed.
+     *
+     * @param valueTypeClass The type class of the values stored by the returned tensor.
+     * @param shape The shape of the tensor produced by this factory method.
+     * @param &lt;V&gt; The type parameter of the values stored by the returned tensor.
+     * @return A randomly filled tensor of the provided type.
+     */
     public static &lt;V&gt; Tsr&lt;V&gt; ofRandom( Class&lt;V&gt; valueTypeClass, int... shape ) {
-<span class="fc" id="L3053">        long seed = 8701252152903546L;</span>
-<span class="fc" id="L3054">        return Tsr.of( valueTypeClass )</span>
-<span class="fc" id="L3055">                    .withShape( shape )</span>
-<span class="fc" id="L3056">                    .andSeed( seed );</span>
+<span class="fc" id="L3075">        long seed = 8701252152903546L;</span>
+<span class="fc" id="L3076">        return Tsr.of( valueTypeClass )</span>
+<span class="fc" id="L3077">                    .withShape( shape )</span>
+<span class="fc" id="L3078">                    .andSeed( seed );</span>
     }
 
     /**
@@ -3063,82 +3085,82 @@ import java.util.stream.IntStream;
      */
     public static class IO
     {
-<span class="nc" id="L3066">        public IO() { }</span>
+<span class="nc" id="L3088">        public IO() { }</span>
 
         public static double getFrom( Tsr&lt;?&gt; t, int i ) {
-<span class="pc bpc" id="L3069" title="2 of 4 branches missed.">            if ( t.isEmpty() || t.isUndefined() ) return 0;</span>
-<span class="fc bfc" id="L3070" title="All 2 branches covered.">            else if ( t.isVirtual() ) return t.getDataAs( double[].class )[ 0 ];</span>
-<span class="fc" id="L3071">            return t.getValueAs( double[].class )[ t.indexOfIndex( i ) ];</span>
+<span class="pc bpc" id="L3091" title="2 of 4 branches missed.">            if ( t.isEmpty() || t.isUndefined() ) return 0;</span>
+<span class="pc bpc" id="L3092" title="1 of 2 branches missed.">            else if ( t.isVirtual() ) return t.getDataAs( double[].class )[ 0 ];</span>
+<span class="nc" id="L3093">            return t.getValueAs( double[].class )[ t.indexOfIndex( i ) ];</span>
         }
 
         public static double getFrom( Tsr&lt;?&gt; t, int[] idx ) {
-<span class="fc" id="L3075">            t.setIsVirtual( false );</span>
-<span class="fc" id="L3076">            return t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ];</span>
+<span class="fc" id="L3097">            t.setIsVirtual( false );</span>
+<span class="fc" id="L3098">            return t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ];</span>
         }
 
         public static void setInto( Tsr&lt;?&gt; t, int i, double value ) {
-<span class="fc" id="L3080">            t.setIsVirtual( false );</span>
-<span class="fc" id="L3081">            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] = value;</span>
-<span class="fc" id="L3082">        }</span>
+<span class="fc" id="L3102">            t.setIsVirtual( false );</span>
+<span class="fc" id="L3103">            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] = value;</span>
+<span class="fc" id="L3104">        }</span>
 
         public static void setInto( Tsr&lt;?&gt; t, int[] idx, double value ) {
-<span class="fc" id="L3085">            t.setIsVirtual( false );</span>
-<span class="fc" id="L3086">            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] = value;</span>
-<span class="fc" id="L3087">        }</span>
+<span class="fc" id="L3107">            t.setIsVirtual( false );</span>
+<span class="fc" id="L3108">            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] = value;</span>
+<span class="fc" id="L3109">        }</span>
 
         public static void addInto( Tsr&lt;?&gt; t, int i, double value ) {
-<span class="fc" id="L3090">            t.setIsVirtual( false );</span>
-<span class="fc" id="L3091">            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] += value;</span>
-<span class="fc" id="L3092">        }</span>
+<span class="fc" id="L3112">            t.setIsVirtual( false );</span>
+<span class="fc" id="L3113">            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] += value;</span>
+<span class="fc" id="L3114">        }</span>
 
         public static void addInto( Tsr&lt;?&gt; t, int[] idx, double value ) {
-<span class="fc" id="L3095">            t.setIsVirtual( false );</span>
-<span class="fc" id="L3096">            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] += value;</span>
-<span class="fc" id="L3097">        }</span>
+<span class="fc" id="L3117">            t.setIsVirtual( false );</span>
+<span class="fc" id="L3118">            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] += value;</span>
+<span class="fc" id="L3119">        }</span>
 
         public static Tsr&lt;?&gt; addInto( Tsr&lt;?&gt; t, Tsr&lt;?&gt; source ) {
-<span class="pc bpc" id="L3100" title="3 of 4 branches missed.">            if ( t.isVirtual() &amp;&amp; source.isVirtual() )</span>
-<span class="nc" id="L3101">                t.getDataAs( double[].class )[ 0 ] += source.getDataAs( double[].class )[ 0 ];</span>
+<span class="pc bpc" id="L3122" title="3 of 4 branches missed.">            if ( t.isVirtual() &amp;&amp; source.isVirtual() )</span>
+<span class="nc" id="L3123">                t.getDataAs( double[].class )[ 0 ] += source.getDataAs( double[].class )[ 0 ];</span>
             else
-<span class="fc" id="L3103">                Neureka.get().backend().getFunction().addAssign().execute( t, source );</span>
-<span class="fc" id="L3104">            return</span>
+<span class="fc" id="L3125">                Neureka.get().backend().getFunction().addAssign().execute( t, source );</span>
+<span class="fc" id="L3126">            return</span>
                 source;
         }
 
         public static void subInto( Tsr&lt;?&gt; t, int i, double value ) {
-<span class="fc" id="L3109">            t.setIsVirtual( false );</span>
-<span class="fc" id="L3110">            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] -= value;</span>
-<span class="fc" id="L3111">        }</span>
+<span class="fc" id="L3131">            t.setIsVirtual( false );</span>
+<span class="fc" id="L3132">            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] -= value;</span>
+<span class="fc" id="L3133">        }</span>
 
         public static void subInto( Tsr&lt;?&gt; t, int[] idx, double value ) {
-<span class="fc" id="L3114">            t.setIsVirtual( false );</span>
-<span class="fc" id="L3115">            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] -= value;</span>
-<span class="fc" id="L3116">        }</span>
+<span class="fc" id="L3136">            t.setIsVirtual( false );</span>
+<span class="fc" id="L3137">            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] -= value;</span>
+<span class="fc" id="L3138">        }</span>
 
         public static void subInto( Tsr&lt;?&gt; t, Tsr&lt;?&gt; source ) {
-<span class="pc bpc" id="L3119" title="3 of 4 branches missed.">            if ( t.isVirtual() &amp;&amp; source.isVirtual() )</span>
-<span class="nc" id="L3120">                t.getDataAs( double[].class )[ 0 ] -= source.getDataAs( double[].class )[ 0 ];</span>
+<span class="pc bpc" id="L3141" title="3 of 4 branches missed.">            if ( t.isVirtual() &amp;&amp; source.isVirtual() )</span>
+<span class="nc" id="L3142">                t.getDataAs( double[].class )[ 0 ] -= source.getDataAs( double[].class )[ 0 ];</span>
             else
             {
-<span class="pc bpc" id="L3123" title="1 of 2 branches missed.">                if ( t.isVirtual() ) t.setIsVirtual( false );</span>
-<span class="fc" id="L3124">                int[] index = new int[ t.getNDConf().shape().length ];</span>
-<span class="fc" id="L3125">                int size = t.size();</span>
-<span class="fc bfc" id="L3126" title="All 2 branches covered.">                for ( int i = 0; i &lt; size; i++ ) {</span>
-<span class="fc" id="L3127">                    IO.subInto( t, index, IO.getFrom( source, index ) );</span>
-<span class="fc" id="L3128">                    NDConfiguration.Utility.increment( index, t.getNDConf().shape() );</span>
+<span class="pc bpc" id="L3145" title="1 of 2 branches missed.">                if ( t.isVirtual() ) t.setIsVirtual( false );</span>
+<span class="fc" id="L3146">                int[] index = new int[ t.getNDConf().shape().length ];</span>
+<span class="fc" id="L3147">                int size = t.size();</span>
+<span class="fc bfc" id="L3148" title="All 2 branches covered.">                for ( int i = 0; i &lt; size; i++ ) {</span>
+<span class="fc" id="L3149">                    IO.subInto( t, index, IO.getFrom( source, index ) );</span>
+<span class="fc" id="L3150">                    NDConfiguration.Utility.increment( index, t.getNDConf().shape() );</span>
                 }
             }
-<span class="fc" id="L3131">        }</span>
+<span class="fc" id="L3153">        }</span>
 
         public static void mulInto( Tsr&lt;?&gt; t, int i, double value ) {
-<span class="fc" id="L3134">            t.setIsVirtual( false );</span>
-<span class="fc" id="L3135">            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] *= value;</span>
-<span class="fc" id="L3136">        }</span>
+<span class="fc" id="L3156">            t.setIsVirtual( false );</span>
+<span class="fc" id="L3157">            t.getDataAs( double[].class )[ t.indexOfIndex( i ) ] *= value;</span>
+<span class="fc" id="L3158">        }</span>
 
         public static void mulInto( Tsr&lt;?&gt; t, int[] idx, double value ) {
-<span class="fc" id="L3139">            t.setIsVirtual( false );</span>
-<span class="fc" id="L3140">            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] *= value;</span>
-<span class="fc" id="L3141">        }</span>
+<span class="fc" id="L3161">            t.setIsVirtual( false );</span>
+<span class="fc" id="L3162">            t.getDataAs( double[].class )[ t.indexOfIndices( idx ) ] *= value;</span>
+<span class="fc" id="L3163">        }</span>
 
     }
 
@@ -3151,24 +3173,19 @@ import java.util.stream.IntStream;
      */
     @Override
     public Mutate getMutate() {
-<span class="fc" id="L3154">        return new Mutate() {</span>
+<span class="fc" id="L3176">        return new Mutate() {</span>
             @Override
-            public Mutate setNDConf( NDConfiguration configuration ) {
-<span class="fc" id="L3157">                Tsr.this._setNDConf( configuration );</span>
-<span class="fc" id="L3158">                return this;</span>
-            }
+<span class="fc" id="L3178">            public Mutate setNDConf( NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return this; }</span>
             @Override
-            public &lt;V&gt; Tsr&lt;V&gt; toType( Class&lt;V&gt; typeClass ) {
-<span class="fc" id="L3162">                return Tsr.this._toType( typeClass );</span>
-            }
+<span class="fc" id="L3180">            public &lt;V&gt; Tsr&lt;V&gt; toType( Class&lt;V&gt; typeClass ) { return Tsr.this._toType( typeClass ); }</span>
             @Override
-            public &lt;V&gt; Tsr&lt;V&gt; setDataType( DataType&lt;V&gt; dataType ) {
-<span class="fc" id="L3166">                return (Tsr&lt;V&gt;) Tsr.this._setDataType(dataType);</span>
-            }
+<span class="fc" id="L3182">            public &lt;V&gt; Tsr&lt;V&gt; setDataType( DataType&lt;V&gt; dataType ) { return (Tsr&lt;V&gt;) Tsr.this._setDataType(dataType); }</span>
             @Override
-            public Mutate toLayout(NDConfiguration.Layout layout) {
-<span class="fc" id="L3170">                Tsr.this._toLayout( layout );</span>
-<span class="fc" id="L3171">                return this;</span>
+<span class="fc" id="L3184">            public Mutate toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return this; }</span>
+            @Override
+            public Mutate incrementVersion( ExecutionCall&lt;?&gt; call ) {
+<span class="fc" id="L3187">                _incrementVersionBecauseOf( call );</span>
+<span class="fc" id="L3188">                return this;</span>
             }
         };
     }

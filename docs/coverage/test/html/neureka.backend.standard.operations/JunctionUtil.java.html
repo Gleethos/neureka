@@ -241,7 +241,7 @@ import org.slf4j.LoggerFactory;
     public static &lt;V&gt; Tsr&lt;V&gt; newTsrLike( Tsr&lt;V&gt; template, double value ) {
         //Tsr&lt;V&gt; t = (Tsr&lt;V&gt;) Tsr.like( (Tsr&lt;Number&gt;) template ).all( value );
         //t.setIsVirtual(false);
-<span class="fc" id="L244">        Tsr&lt;V&gt; t = (Tsr&lt;V&gt;) Tsr.of( template.getNDConf().shape(), value );</span>
+<span class="fc" id="L244">        Tsr&lt;V&gt; t = (Tsr&lt;V&gt;) Tsr.of( template.getValueClass(), template.getNDConf().shape(), value );</span>
 <span class="fc" id="L245">        t.setIsVirtual( false );</span>
 <span class="fc" id="L246">        t.setValue( value );</span>
         try {

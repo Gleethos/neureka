@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Thu Jan 06 12:27:33 CET 2022 by danie</div>
+<div class='date-test-ran'>Created on Fri Jan 14 17:08:15 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>4.668 seconds</td>
+<td>7.135 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -475,7 +475,7 @@ Neureka.get().backend().getFunctionCache()._log = Mock( Logger )</pre>
 <td></td>
 <td>
 <pre class='block-source'>String hash = ""
-String expected = "56b2eb74955e49cd777469c7dad0536e"</pre>
+String expected = "13f4f656e8035b2668cc2ca88de4e118"</pre>
 </td>
 </tr>
 <tr>
@@ -489,7 +489,7 @@ String expected = "56b2eb74955e49cd777469c7dad0536e"</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>session(
+<pre class='block-source'>Map&lt;String,List&lt;Double&gt;&gt; result = session(
         configuration, null,
         CPU.get(),
         tsr -&gt; {
@@ -524,6 +524,22 @@ String expected = "56b2eb74955e49cd777469c7dad0536e"</pre>
 <td></td>
 <td>
 <pre class='block-source'>0 * Neureka.get().backend().getFunctionCache()._log.debug(_)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>result.keySet().toList() == ["convolutional_matrix_multiplication", "matrix_multiplication", "vector_multiplication", "manual_convolution", "tensor_math", "iterations", "difficulty"]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>result.values().every { it.size() == 21 &amp;&amp; it.every { it &gt; 0 } }</pre>
 </td>
 </tr>
 <tr>

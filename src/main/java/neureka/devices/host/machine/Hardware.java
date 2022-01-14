@@ -453,8 +453,14 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * <code>new BasicMachine[] { SYSTEM, L3, L2, L1 }</code> or
      * <code>new BasicMachine[] { SYSTEM, L2, L1 }</code> or in worst case
      * <code>new BasicMachine[] { SYSTEM, L1 }</code>
+     *
+     * @param architecture The architecture code.
+     * @param levels The cache levels.
      */
-    public Hardware(final String architecture, final BasicMachine[] levels) {
+    public Hardware(
+            final String architecture,
+            final BasicMachine[] levels
+    ) {
 
         super(architecture, levels);
 

@@ -94,13 +94,13 @@ import java.util.stream.Stream;
 <span class="fc" id="L94">        _tensors   = tensors;</span>
 <span class="fc" id="L95">        _algorithm = algorithm;</span>
 <span class="fc" id="L96">        int thisArity = _tensors.length;</span>
-<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        if ( thisArity &lt; Math.abs(_operation.getArity()) ) {</span>
-<span class="nc" id="L98">            throw new IllegalArgumentException(</span>
-<span class="nc" id="L99">                    &quot;Trying to instantiate an &quot;+this.getClass().getSimpleName()+&quot; with an arity &quot; +</span>
-                            &quot;of &quot;+thisArity+&quot;, which is not suitable to the targeted operation &quot; +
-<span class="nc" id="L101">                            _operation.getClass().getSimpleName()+&quot; with &quot; +</span>
-<span class="nc bnc" id="L102" title="All 2 branches missed.">                            ( _operation.getArity() &lt; 0 ? &quot; a minimum &quot; : &quot; the expected &quot; ) +</span>
-<span class="nc" id="L103">                            &quot;arity of &quot;+Math.abs(_operation.getArity())</span>
+<span class="fc bfc" id="L97" title="All 4 branches covered.">        if ( _operation != null &amp;&amp; thisArity &lt; Math.abs(_operation.getArity()) ) {</span>
+<span class="fc" id="L98">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L99">                    &quot;Trying to instantiate an '&quot;+this.getClass().getSimpleName()+&quot;' with an arity &quot; +</span>
+                    &quot;of &quot;+thisArity+&quot;, which is not suitable for the targeted operation '&quot; +
+<span class="fc" id="L101">                    _operation.getClass().getSimpleName()+&quot;' with&quot; +</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">                    ( _operation.getArity() &lt; 0 ? &quot; a minimum &quot; : &quot; the expected &quot; ) +</span>
+<span class="fc" id="L103">                    &quot;arity of &quot;+Math.abs(_operation.getArity()) + &quot;.&quot;</span>
             );
         }
 <span class="fc" id="L106">    }</span>

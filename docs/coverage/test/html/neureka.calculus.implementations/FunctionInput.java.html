@@ -127,15 +127,22 @@ import java.util.List;
 <span class="fc bfc" id="L127" title="All 2 branches covered.">            return ( d == index() )</span>
 <span class="fc" id="L128">                ? Tsr.of( tensors[ 0 ].shape(), 1.0 )</span>
 <span class="fc" id="L129">                : Tsr.of( tensors[ 0 ].shape(), 0.0 );</span>
-<span class="fc" id="L130">        return _extract( tensors[ index() ] );</span>
+
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if ( index() &gt;= tensors.length )</span>
+<span class="fc" id="L132">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L133">                &quot;Function input '&quot;+index()+&quot;' not satisfied! &quot; +</span>
+<span class="fc" id="L134">                &quot;Please supply at least &quot;+(index()+1)+&quot; input tensors.&quot;</span>
+            );
+
+<span class="fc" id="L137">        return _extract( tensors[ index() ] );</span>
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-<span class="fc bfc" id="L136" title="All 2 branches covered.">    public String toString() { return &quot;I&quot; + ( this.providesGradient() ? &quot;g&quot; : &quot;&quot; ) + &quot;[&quot; + index() + &quot;]&quot;; }</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">    public String toString() { return &quot;I&quot; + ( this.providesGradient() ? &quot;g&quot; : &quot;&quot; ) + &quot;[&quot; + index() + &quot;]&quot;; }</span>
 
-<span class="fc bfc" id="L138" title="All 2 branches covered.">    public int index() { return ( this.providesGradient() ? ( Math.abs(_index) - 1 ) : _index ); }</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">    public int index() { return ( this.providesGradient() ? ( Math.abs(_index) - 1 ) : _index ); }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

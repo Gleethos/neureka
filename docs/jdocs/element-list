@@ -12,8 +12,7 @@ neureka.backend.standard.operations.function
 neureka.backend.standard.operations.indexer
 neureka.backend.standard.operations.linear
 neureka.backend.standard.operations.linear.internal
-neureka.backend.standard.operations.linear.internal.operation.array
-neureka.backend.standard.operations.linear.internal.operation.matrix
+neureka.backend.standard.operations.linear.internal.blas
 neureka.backend.standard.operations.operator
 neureka.backend.standard.operations.other
 neureka.calculus

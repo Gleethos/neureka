@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReLU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.operations.function</a> &gt; <span class="el_source">ReLU.java</span></div><h1>ReLU.java</h1><pre class="source lang-java linenums">package neureka.backend.standard.operations.function;
 
-import neureka.backend.api.ExecutionCall;
+import neureka.backend.standard.algorithms.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -8,7 +8,6 @@ import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
@@ -17,106 +16,96 @@ public final class ReLU extends AbstractOperation
 {
     public ReLU()
     {
-<span class="fc" id="L20">        super(</span>
+<span class="fc" id="L19">        super(</span>
                 new OperationBuilder()
-<span class="fc" id="L22">                        .setFunction(         &quot;relu&quot;    )</span>
-<span class="fc" id="L23">                        .setOperator(         &quot;relu&quot;    )</span>
-<span class="fc" id="L24">                        .setArity(            1        )</span>
-<span class="fc" id="L25">                        .setIsOperator(       false    )</span>
-<span class="fc" id="L26">                        .setIsIndexer(        false    )</span>
-<span class="fc" id="L27">                        .setIsDifferentiable( true     )</span>
-<span class="fc" id="L28">                        .setIsInline(         false    )</span>
+<span class="fc" id="L21">                        .setFunction(         &quot;relu&quot;    )</span>
+<span class="fc" id="L22">                        .setOperator(         &quot;relu&quot;    )</span>
+<span class="fc" id="L23">                        .setArity(            1        )</span>
+<span class="fc" id="L24">                        .setIsOperator(       false    )</span>
+<span class="fc" id="L25">                        .setIsIndexer(        false    )</span>
+<span class="fc" id="L26">                        .setIsDifferentiable( true     )</span>
+<span class="fc" id="L27">                        .setIsInline(         false    )</span>
         );
 
-<span class="fc" id="L31">        Activation operationAlgorithm = new Activation()</span>
-<span class="fc" id="L32">            .setSupplyADAgentFor(</span>
-                ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
-<span class="fc" id="L34">                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )</span>
-            )
-<span class="fc" id="L36">            .buildFunAlgorithm();</span>
+<span class="fc" id="L30">        Activation operationAlgorithm = new Activation()</span>
+<span class="fc" id="L31">            .setSupplyADAgentFor( getDefaultAlgorithm() )</span>
+<span class="fc" id="L32">            .buildFunAlgorithm();</span>
 
-<span class="fc" id="L38">        setAlgorithm(</span>
+<span class="fc" id="L34">        setAlgorithm(</span>
                 Activation.class,
-<span class="fc" id="L40">                operationAlgorithm.setImplementationFor(</span>
+<span class="fc" id="L36">                operationAlgorithm.setImplementationFor(</span>
                         CPU.class,
                         CPUImplementation
-<span class="fc" id="L43">                            .withArity(3)</span>
-<span class="fc" id="L44">                            .andImplementation(</span>
-                                call  -&gt;
-<span class="fc" id="L46">                                    call.getDevice()</span>
-<span class="fc" id="L47">                                       .getExecutor()</span>
-<span class="fc" id="L48">                                       .threaded(</span>
-<span class="fc" id="L49">                                           call.getTsrOfType( Number.class, 0 ).size(),</span>
-<span class="fc" id="L50">                                               Activation.newWorkloadFor(</span>
-                                                       call,
-                                                       new Activation.Fun&lt;&gt;(
-<span class="fc bfc" id="L53" title="All 2 branches covered.">                                                               x -&gt; (  x &gt;= 0 ? x : x * .01 ),</span>
-<span class="fc bfc" id="L54" title="All 2 branches covered.">                                                               x -&gt; (  x &gt;= 0 ? 1 :  .01    )</span>
-                                                       ),
-                                                       new Activation.Fun&lt;&gt;(
-<span class="fc bfc" id="L57" title="All 2 branches covered.">                                                               x -&gt; (  x &gt;= 0 ? x  : x * .01f ),</span>
-<span class="nc bnc" id="L58" title="All 2 branches missed.">                                                               x -&gt; (  x &gt;= 0 ? 1f : .01f     )</span>
-                                                       )
-                                               )
-                                       )
+<span class="fc" id="L39">                            .withArity(3)</span>
+<span class="fc" id="L40">                            .andImplementation(</span>
+<span class="fc" id="L41">                                    Activation.implementationForCPU()</span>
+<span class="fc" id="L42">                                        .with(Fun.F64ToF64.pair(</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">                                                x -&gt; (  x &gt;= 0 ? x : x * .01 ),</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">                                                x -&gt; (  x &gt;= 0 ? 1 :  .01    )</span>
+                                        ))
+<span class="fc" id="L46">                                        .with(Fun.F32ToF32.pair(</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">                                                x -&gt; (  x &gt;= 0 ? x  : x * .01f ),</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">                                                x -&gt; (  x &gt;= 0 ? 1f : .01f     )</span>
+                                        ))
+<span class="fc" id="L50">                                        .get()</span>
                             )
                 )
-<span class="fc" id="L64">                .setImplementationFor(</span>
+<span class="fc" id="L53">                .setImplementationFor(</span>
                         OpenCLDevice.class,
-<span class="fc" id="L66">                        CLImplementation.compiler()</span>
-<span class="fc" id="L67">                                .arity( 3 )</span>
-<span class="fc" id="L68">                                .kernelSource( operationAlgorithm.getKernelSource() )</span>
-<span class="fc" id="L69">                                .activationSource( &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot; )</span>
-<span class="fc" id="L70">                                .differentiationSource( &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot; )</span>
-<span class="fc" id="L71">                                .kernelPostfix( this.getFunction() )</span>
-<span class="fc" id="L72">                                .execution(</span>
+<span class="fc" id="L55">                        CLImplementation.compiler()</span>
+<span class="fc" id="L56">                                .arity( 3 )</span>
+<span class="fc" id="L57">                                .kernelSource( operationAlgorithm.getKernelSource() )</span>
+<span class="fc" id="L58">                                .activationSource( &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot; )</span>
+<span class="fc" id="L59">                                .differentiationSource( &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot; )</span>
+<span class="fc" id="L60">                                .kernelPostfix( this.getFunction() )</span>
+<span class="fc" id="L61">                                .execution(</span>
                                         call -&gt; {
-<span class="nc bnc" id="L74" title="All 2 branches missed.">                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L75" title="All 2 branches missed.">                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();</span>
-<span class="nc" id="L76">                                            call.getDevice().getKernel(call)</span>
-<span class="nc" id="L77">                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )</span>
-<span class="nc" id="L78">                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )</span>
-<span class="nc" id="L79">                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )</span>
-<span class="nc" id="L80">                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
-<span class="nc" id="L81">                                                    .call( gwz );</span>
-<span class="nc" id="L82">                                        }</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();</span>
+<span class="nc" id="L65">                                            call.getDevice().getKernel(call)</span>
+<span class="nc" id="L66">                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )</span>
+<span class="nc" id="L67">                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )</span>
+<span class="nc" id="L68">                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )</span>
+<span class="nc" id="L69">                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
+<span class="nc" id="L70">                                                    .call( gwz );</span>
+<span class="nc" id="L71">                                        }</span>
                                 )
-<span class="fc" id="L84">                                .build()</span>
+<span class="fc" id="L73">                                .build()</span>
                 )
         );
-<span class="fc" id="L87">    }</span>
+<span class="fc" id="L76">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L91">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L92" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;relu&quot; + expression;</span>
-<span class="fc" id="L93">        return &quot;relu&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="fc" id="L80">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L81" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;relu&quot; + expression;</span>
+<span class="fc" id="L82">        return &quot;relu&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L98">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L87">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="fc" id="L103">        return calculate(</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">                src[ 0 ].call( inputs, j ),</span>
+<span class="fc" id="L92">        return calculate(</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                src[ 0 ].call( inputs, j ),</span>
                 d &gt;= 0
-<span class="fc bfc" id="L106" title="All 2 branches covered.">        ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
     }
 
     @Contract(pure = true)
     public static double calculate(double input, boolean derive ) {
         double output;
-<span class="fc bfc" id="L112" title="All 2 branches covered.">        if ( !derive ) {</span>
-<span class="pc bpc" id="L113" title="1 of 2 branches missed.">            if ( input &gt;= 0 ) output = input;</span>
-<span class="fc" id="L114">            else output = input * 0.01;</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if ( !derive ) {</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">            if ( input &gt;= 0 ) output = input;</span>
+<span class="fc" id="L103">            else output = input * 0.01;</span>
         } else {
-<span class="pc bpc" id="L116" title="1 of 2 branches missed.">            if ( input &gt;= 0 ) output = 1;</span>
-<span class="fc" id="L117">            else output = 0.01;</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">            if ( input &gt;= 0 ) output = 1;</span>
+<span class="fc" id="L106">            else output = 0.01;</span>
         }
-<span class="fc" id="L119">        return output;</span>
+<span class="fc" id="L108">        return output;</span>
     }
 
 

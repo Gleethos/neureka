@@ -93,8 +93,8 @@ public final class F32 extends AbstractNumericType&lt;Float, float[], Float, flo
     {
 <span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if ( Byte.class.equals( from.getClass() ) )</span>
 <span class="nc" id="L95">            return ( (Byte) from ).floatValue();</span>
-<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        else if ( Integer.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L97">            return ( (Integer) from ).floatValue();</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        else if ( Integer.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L97">            return ( (Integer) from ).floatValue();</span>
 <span class="pc bpc" id="L98" title="1 of 2 branches missed.">        else if ( Double.class.equals( from.getClass() ) )</span>
 <span class="fc" id="L99">            return ( (Double) from ).floatValue();</span>
 <span class="nc bnc" id="L100" title="All 2 branches missed.">        else if ( Short.class.equals( from.getClass() ) )</span>

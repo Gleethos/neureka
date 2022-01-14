@@ -50,7 +50,6 @@ import neureka.Tsr;
  *  Besides the "Device" interface this interface is also extended by the FileHead interface
  *  which is an internal component of the FileDevice architecture...
  *
- * @param <V>
  */
 public interface Storage<V>
 {
@@ -60,6 +59,7 @@ public interface Storage<V>
      *  implementation and or final type.
      *  Classes like "OpenCLDevice" or "FileDevice" for example are tensor storages.
      *
+     * @param <T> A valid value type of the tensor which ought to be stored on this device.
      * @param tensor The tensor whose data ought to be stored.
      * @return A reference this object to allow for method chaining. (factory pattern)
      */

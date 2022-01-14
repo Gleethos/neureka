@@ -3021,6 +3021,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  which allows you to change various settings with the help of method chaining.
      *
      * @param config A consumer of the {@link TsrStringSettings} ready to be configured.
+     * @return The {@link String} representation of this tensor.
      */
     public String toString( Consumer<TsrStringSettings> config ) {
         TsrStringSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();

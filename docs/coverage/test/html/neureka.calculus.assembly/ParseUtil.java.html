@@ -73,7 +73,7 @@ import java.util.List;
 <span class="fc" id="L73">        String possibleOperation = exp.substring( i + 1, ii );</span>
 <span class="fc bfc" id="L74" title="All 2 branches covered.">        return ParseUtil.isAnOperation( possibleOperation )</span>
                 &amp;&amp;
-<span class="fc bfc" id="L76" title="All 4 branches covered.">               ( exp.charAt(i) == 'j' || !Character.isLetter(exp.charAt(i)) );</span>
+<span class="pc bpc" id="L76" title="1 of 4 branches missed.">               ( exp.charAt(i) == 'j' || !Character.isLetter(exp.charAt(i)) );</span>
     }
 
     @Contract( pure = true )

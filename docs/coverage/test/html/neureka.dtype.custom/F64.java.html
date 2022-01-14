@@ -98,10 +98,10 @@ public final class F64 extends AbstractNumericType&lt;Double, double[], Double, 
     public Double convertToHolder( Object from ) {
 <span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if ( Byte.class.equals( from.getClass() ) )</span>
 <span class="nc" id="L100">            return ( (Byte) from ).doubleValue();</span>
-<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        else if ( Integer.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L102">            return ( (Integer) from ).doubleValue();</span>
-<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        else if ( Double.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L104">            return ( (Double) from );</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        else if ( Integer.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L102">            return ( (Integer) from ).doubleValue();</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        else if ( Double.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L104">            return ( (Double) from );</span>
 <span class="pc bpc" id="L105" title="1 of 2 branches missed.">        else if ( Short.class.equals( from.getClass() ) )</span>
 <span class="nc" id="L106">            return ( (Short) from ).doubleValue();</span>
 <span class="pc bpc" id="L107" title="1 of 2 branches missed.">        else if ( Long.class.equals( from.getClass() ) )</span>

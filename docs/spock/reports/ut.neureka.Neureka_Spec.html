@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Thu Jan 06 12:27:38 CET 2022 by danie</div>
+<div class='date-test-ran'>Created on Fri Jan 14 17:08:28 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>6.100 seconds</td>
+<td>12.861 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -407,7 +407,7 @@ div.footer {
 <td>
 <pre class='block-source'>!Neureka.get().settings().isLocked()
 !Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads()
-Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()</pre>
+!Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()</pre>
 </td>
 </tr>
 <tr>
@@ -415,13 +415,13 @@ Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<div class='block-text'>One settings is changes to false...</div>
+<div class='block-text'>Once something is changes to false...</div>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = true</pre>
 </td>
 </tr>
 <tr>
@@ -435,8 +435,8 @@ Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>!Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
-Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
+!Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()</pre>
 </td>
 </tr>
 <tr>
@@ -450,7 +450,7 @@ Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.version()=="0.11.0"</pre>
+<pre class='block-source'>Neureka.version()=="0.12.0"</pre>
 </td>
 </tr>
 <tr>
@@ -594,19 +594,19 @@ def get = { getter(Neureka.get().settings()) }</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
+<td class='ex-value'>false</td>
 <td class='ex-value'>&lt;executable&gt;</td>
 <td class='ex-value'>&lt;executable&gt;</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
+<td class='ex-value'>false</td>
 <td class='ex-value'>&lt;executable&gt;</td>
 <td class='ex-value'>&lt;executable&gt;</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>true</td>
+<td class='ex-value'>false</td>
 <td class='ex-value'>&lt;executable&gt;</td>
 <td class='ex-value'>&lt;executable&gt;</td>
 <td class='ex-result'>OK</td>
@@ -744,7 +744,7 @@ map['instance 2'] != null</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>CPU[coreCount=32]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -756,19 +756,19 @@ map['instance 2'] != null</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>JITProp@154922907[finished=0,pending=0,isDone=false]</td>
+<td class='ex-value'>JITProp@1139255218[finished=0,pending=0,isDone=false]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Neureka[settings=Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=true,isApplyingGradientWhenTensorIsUsed=true,isApplyingGradientWhenRequested=true],view=Neureka.Settings.View[tensors=neureka.view.TsrStringSettings@7d2a074a],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false],utility=neureka.Neureka$Utility@36475ce9,backend=BackendContext[size=41]]</td>
+<td class='ex-value'>Neureka[settings=Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false],view=Neureka.Settings.View[tensors=neureka.view.TsrStringSettings@4c285741],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false],utility=neureka.Neureka$Utility@5c945ce8,backend=BackendContext[size=27]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=true,isApplyingGradientWhenTensorIsUsed=true,isApplyingGradientWhenRequested=true],view=Neureka.Settings.View[tensors=neureka.view.TsrStringSettings@7d2a074a],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false]</td>
+<td class='ex-value'>Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false],view=Neureka.Settings.View[tensors=neureka.view.TsrStringSettings@4c285741],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=true,isApplyingGradientWhenTensorIsUsed=true,isApplyingGradientWhenRequested=true]</td>
+<td class='ex-value'>Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -784,27 +784,27 @@ map['instance 2'] != null</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Neureka.Settings.View[tensors=neureka.view.TsrStringSettings@7d2a074a]</td>
+<td class='ex-value'>Neureka.Settings.View[tensors=neureka.view.TsrStringSettings@4c285741]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Functions[dimTrim=dimtrim(I[0]),idy=(I[0] &lt;- I[1]),conv=(I[0] x I[1]),plus=(I[0] + I[1]),plusAssign=(I[0] &lt;- (I[0] + I[1])),minus=(I[0] - I[1]),minusAssign=(I[0] &lt;- (I[0] - I[1])),div=(I[0] / I[1]),divAssign=(I[0] &lt;- (I[0] / I[1])),pow=(I[0] ^ I[1]),powAssign=(I[0] &lt;- (I[0] ^ I[1])),mul=(I[0] * I[1]),mulAssign=(I[0] &lt;- (I[0] * I[1])),add=(I[0] + I[1]),addAssign=(I[0] &lt;- (I[0] + I[1])),mod=(I[0] % I[1]),modAssign=(I[0] &lt;- (I[0] % I[1])),neg=(-1.0 * I[0]),matMul=(I[0] @ I[1]),$jacocoData=[Z@3250b5fe]</td>
+<td class='ex-value'>Functions[dimTrim=dimtrim(I[0]),idy=(I[0] &lt;- I[1]),conv=(I[0] x I[1]),plus=(I[0] + I[1]),plusAssign=(I[0] &lt;- (I[0] + I[1])),minus=(I[0] - I[1]),minusAssign=(I[0] &lt;- (I[0] - I[1])),div=(I[0] / I[1]),divAssign=(I[0] &lt;- (I[0] / I[1])),pow=(I[0] ^ I[1]),powAssign=(I[0] &lt;- (I[0] ^ I[1])),mul=(I[0] * I[1]),mulAssign=(I[0] &lt;- (I[0] * I[1])),add=(I[0] + I[1]),addAssign=(I[0] &lt;- (I[0] + I[1])),mod=(I[0] % I[1]),modAssign=(I[0] &lt;- (I[0] % I[1])),neg=(-1.0 * I[0]),matMul=(I[0] @ I[1]),$jacocoData=[Z@5e9983f7]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Functions[dimTrim=dimtrim(I[0]),idy=(I[0] &lt;- I[1]),conv=(I[0] x I[1]),plus=(I[0] + I[1]),plusAssign=(I[0] &lt;- (I[0] + I[1])),minus=(I[0] - I[1]),minusAssign=(I[0] &lt;- (I[0] - I[1])),div=(I[0] / I[1]),divAssign=(I[0] &lt;- (I[0] / I[1])),pow=(I[0] ^ I[1]),powAssign=(I[0] &lt;- (I[0] ^ I[1])),mul=(I[0] * I[1]),mulAssign=(I[0] &lt;- (I[0] * I[1])),add=(I[0] + I[1]),addAssign=(I[0] &lt;- (I[0] + I[1])),mod=(I[0] % I[1]),modAssign=(I[0] &lt;- (I[0] % I[1])),neg=(-1.0 * I[0]),matMul=(I[0] @ I[1]),$jacocoData=[Z@3250b5fe]</td>
+<td class='ex-value'>Functions[dimTrim=dimtrim(I[0]),idy=(I[0] &lt;- I[1]),conv=(I[0] x I[1]),plus=(I[0] + I[1]),plusAssign=(I[0] &lt;- (I[0] + I[1])),minus=(I[0] - I[1]),minusAssign=(I[0] &lt;- (I[0] - I[1])),div=(I[0] / I[1]),divAssign=(I[0] &lt;- (I[0] / I[1])),pow=(I[0] ^ I[1]),powAssign=(I[0] &lt;- (I[0] ^ I[1])),mul=(I[0] * I[1]),mulAssign=(I[0] &lt;- (I[0] * I[1])),add=(I[0] + I[1]),addAssign=(I[0] &lt;- (I[0] + I[1])),mod=(I[0] % I[1]),modAssign=(I[0] &lt;- (I[0] % I[1])),neg=(-1.0 * I[0]),matMul=(I[0] @ I[1]),$jacocoData=[Z@5e9983f7]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>BackendContext[size=41]</td>
+<td class='ex-value'>BackendContext[size=27]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>FunctionCache[size=49]</td>
+<td class='ex-value'>FunctionCache[size=0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>ExecutionCall[device=CPU[coreCount=32],derivativeIndex=-1,operation=Addition@2ce14529[identifier='add',operator='+'],tensors=[..1..],j=-1, algorithm=?,context=[-1, -1]]</td>
+<td class='ex-value'>ExecutionCall[device=CPU[coreCount=12],derivativeIndex=-1,operation=Addition@2dacb818[identifier='add',operator='+'],tensors=[..1..],j=-1, algorithm=?,context=[-1, -1]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -812,11 +812,11 @@ map['instance 2'] != null</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>GraphNode@68c56f2d[parents=[?, ?],function=(I[0] * I[1]),shape=?]</td>
+<td class='ex-value'>GraphNode@3af120ba[parents=[?, ?],function=(I[0] * I[1]),shape=?]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>GraphLock@391ccf5b[owner=(I[0] * (3.0 / 2.0))]</td>
+<td class='ex-value'>GraphLock@71285550[owner=(I[0] * (3.0 / 2.0))]</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -867,15 +867,15 @@ map['instance 2'] != null</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>CLContext@7313071d[platforms=[OpenCLPlatform@5b3cf5ce[pid=cl_platform_id[0x7ffa3f98a490],context=cl_context[0x29219862020]kernels=[..39..]]]]</td>
+<td class='ex-value'>CLContext@15826983[platforms=[OpenCLPlatform@12d5bf03[pid=cl_platform_id[0x24584a1d700],context=cl_context[0x24583868c00]kernels=[..37..]],OpenCLPlatform@774113b5[pid=cl_platform_id[0x24583af4f10],context=cl_context[0x24585f326f0]kernels=[..37..]]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLPlatform@5b3cf5ce[pid=cl_platform_id[0x7ffa3f98a490],context=cl_context[0x29219862020]kernels=[..39..]]</td>
+<td class='ex-value'>OpenCLPlatform@12d5bf03[pid=cl_platform_id[0x24584a1d700],context=cl_context[0x24583868c00]kernels=[..37..]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2921d2c0bf0],platform=OpenCLPlatform@5b3cf5ce[pid=cl_platform_id[0x7ffa3f98a490],context=cl_context[0x29219862020]kernels=[..39..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x24584a1f730],platform=OpenCLPlatform@12d5bf03[pid=cl_platform_id[0x24584a1d700],context=cl_context[0x24583868c00]kernels=[..37..]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -948,167 +948,111 @@ map['instance 2'] != null</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>Absolute@53676c86[identifier='abs',operator='abs']</td>
+<td class='ex-value'>Absolute@1349ba83[identifier='abs',operator='abs']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Cosinus@1613d74b[identifier='cos',operator='cos']</td>
+<td class='ex-value'>Cosinus@ff3e05a[identifier='cos',operator='cos']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Gaussian@126c92de[identifier='gaus',operator='gaus']</td>
+<td class='ex-value'>Gaussian@1d2636df[identifier='gaus',operator='gaus']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Identity@349d2577[identifier='idy',operator='idy']</td>
+<td class='ex-value'>Identity@146b8aa[identifier='idy',operator='idy']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Quadratic@42810221[identifier='quad',operator='quad']</td>
+<td class='ex-value'>Quadratic@683471c7[identifier='quad',operator='quad']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>ReLU@1dd53e34[identifier='relu',operator='relu']</td>
+<td class='ex-value'>ReLU@90456ae[identifier='relu',operator='relu']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Sigmoid@1da39a45[identifier='sig',operator='sig']</td>
+<td class='ex-value'>Sigmoid@4f47c79[identifier='sig',operator='sig']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Sinus@51b1d0b0[identifier='sin',operator='sin']</td>
+<td class='ex-value'>Sinus@264f6b44[identifier='sin',operator='sin']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Softplus@46ce62c7[identifier='softplus',operator='softplus']</td>
+<td class='ex-value'>Softplus@5c14d996[identifier='softplus',operator='softplus']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Tanh@7cfe61f6[identifier='tanh',operator='tanh']</td>
+<td class='ex-value'>Tanh@562a01be[identifier='tanh',operator='tanh']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Logarithm@788bd262[identifier='ln',operator='ln']</td>
+<td class='ex-value'>Logarithm@33fd0b43[identifier='ln',operator='ln']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Summation@69c594e7[identifier='sumJs',operator='sumJs']</td>
+<td class='ex-value'>Summation@1a18455f[identifier='sumJs',operator='sumJs']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Product@538f18c3[identifier='prodJs',operator='prodJs']</td>
+<td class='ex-value'>Product@26658e89[identifier='prodJs',operator='prodJs']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Power@6bcf9976[identifier='power',operator='^']</td>
+<td class='ex-value'>Power@77bee943[identifier='power',operator='^']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>PowerConv@20b8ecc3[identifier='power_conv',operator='p']</td>
+<td class='ex-value'>Division@4a653f4b[identifier='divide',operator='/']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>PowerLeftConv@53d9f0c3[identifier='power_conv_left',operator='«p']</td>
+<td class='ex-value'>Multiplication@6da574d6[identifier='multiply',operator='*']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>PowerRightConv@43780c8f[identifier='power_conv_right',operator='p»']</td>
+<td class='ex-value'>Modulo@11f56e1e[identifier='modulo',operator='%']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Division@5ea8cd30[identifier='divide',operator='/']</td>
+<td class='ex-value'>Subtraction@49063388[identifier='subtract',operator='-']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>DivisionConv@32c6f814[identifier='divide_conv',operator='d']</td>
+<td class='ex-value'>Addition@2dacb818[identifier='add',operator='+']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>DivisionLeftConv@53e5563[identifier='division_conv_left',operator='«d']</td>
+<td class='ex-value'>XConv@2011d160[identifier='mul_conv',operator='x']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>DivisionRightConv@4a8562a3[identifier='div_conv_right',operator='d»']</td>
+<td class='ex-value'>XConvLeft@50462ec7[identifier='inv_convolve_mul_left',operator='«x']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Multiplication@40999ba4[identifier='multiply',operator='*']</td>
+<td class='ex-value'>XConvRight@210d3147[identifier='inv_convolve_mul_right',operator='x»']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>MultiplicationLeftConv@7982ab0a[identifier='mul_conv_left',operator='«*']</td>
+<td class='ex-value'>MatMul@3dc9ff63[identifier='matMul',operator='@']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>MultiplicationRightConv@1b852a9[identifier='mul_conv_right',operator='*»']</td>
+<td class='ex-value'>DimTrim@893c7c9[identifier='dimtrim',operator='dimtrim']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Modulo@16e7de3d[identifier='modulo',operator='%']</td>
+<td class='ex-value'>Reshape@9c25245[identifier='reshape',operator=',']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>Subtraction@1df9fff8[identifier='subtract',operator='-']</td>
+<td class='ex-value'>CopyLeft@3ff96ff[identifier='left_inline',operator='&lt;']</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>SubtractionConv@5cd836bf[identifier='sub_conv',operator='s']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>SubtractionLeftConv@539b1df4[identifier='sub_conv_left',operator='«s']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>SubtractionRightConv@1ef3e7cf[identifier='sub_conv_right',operator='s»']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>Addition@2ce14529[identifier='add',operator='+']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>AdditionConv@20df5c64[identifier='add_conv',operator='a']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>AdditionLeftConv@333886a5[identifier='add_conv_left',operator='«a']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>AdditionRightConv@5743d120[identifier='add_conv_right',operator='a»']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>XConv@7d757334[identifier='mul_conv',operator='x']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>XConvLeft@5223c0b4[identifier='inv_convolve_mul_left',operator='«x']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>XConvRight@77cf7d8f[identifier='inv_convolve_mul_right',operator='x»']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>MatMul@2e0f5d88[identifier='matMul',operator='@']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>DimTrim@2d6a9c0[identifier='dimtrim',operator='dimtrim']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>Reshape@36b5212e[identifier='reshape',operator=',']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>CopyLeft@488b9e80[identifier='left_inline',operator='&lt;']</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>CopyRight@a7edac[identifier='inject_right',operator='&gt;']</td>
+<td class='ex-value'>CopyRight@554dc7a7[identifier='inject_right',operator='&gt;']</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -1116,7 +1060,7 @@ map['instance 2'] != null</pre>
 </div>
 </td>
 <td>
-<div class='spec-status'>41/41 passed</div>
+<div class='spec-status'>27/27 passed</div>
 </td>
 </tr>
 </tbody>

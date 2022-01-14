@@ -478,7 +478,9 @@ public final class Neureka
              *  This signal comes in the form of a "request" flag which marks a tensor as <b>allowed to
              *  be updated by its gradient</b>. This request can be dispatched to a {@link Tsr}
              *  by setting {@link Tsr#setGradientApplyRequested(boolean)} to {@code true}.<br>
-             */
+             *
+             * @return The truth value determining if gradients should be applied upon request.
+             **/
             public boolean isApplyingGradientWhenRequested() { return _isApplyingGradientWhenRequested; }
 
             /**
