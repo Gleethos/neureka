@@ -376,9 +376,9 @@ public final class Neureka
         public class AutoGrad // Auto-Grad/Differentiation
         {
             private boolean _isPreventingInlineOperations = true;
-            private boolean _isRetainingPendingErrorForJITProp = true;
-            private boolean _isApplyingGradientWhenTensorIsUsed = true;
-            private boolean _isApplyingGradientWhenRequested = true;
+            private boolean _isRetainingPendingErrorForJITProp = false;
+            private boolean _isApplyingGradientWhenTensorIsUsed = false;
+            private boolean _isApplyingGradientWhenRequested = false;
 
             /**
              *  Inline operations are operations where the data of a tensor passed into an operation

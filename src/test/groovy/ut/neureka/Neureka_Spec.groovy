@@ -83,14 +83,14 @@ class Neureka_Spec extends Specification
         expect : 'Important settings have their expected states.'
             !Neureka.get().settings().isLocked()
             !Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads()
-            Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
+            !Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
 
-        when : 'One settings is changes to false...'
-            Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
+        when : 'Once something is changes to false...'
+            Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = true
 
         then : 'This setting change applies!'
-            !Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
-            Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()
+            Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
+            !Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()
 
         and : 'The version number is as expected!'
             Neureka.version()=="0.11.0"//version
@@ -131,9 +131,9 @@ class Neureka_Spec extends Specification
             false | { Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}      | { Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}
             false | { Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}     | { Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}
             true  | { Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}       | { Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}
-            true  | { Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}  | { Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}
-            true  | { Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()} | { Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}
-            true  | { Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}    | { Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}
+            false | { Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}  | { Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}
+            false | { Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()} | { Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}
+            false | { Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}    | { Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}
     }
 
 

@@ -11,9 +11,9 @@ Neureka.configure {
 
         autograd {
             it.isPreventingInlineOperations = true
-            it.isRetainingPendingErrorForJITProp = true
-            it.isApplyingGradientWhenTensorIsUsed = true
-            it.isApplyingGradientWhenRequested = true
+            it.isRetainingPendingErrorForJITProp = false
+            it.isApplyingGradientWhenTensorIsUsed = false
+            it.isApplyingGradientWhenRequested = false
         }
 
         view { 

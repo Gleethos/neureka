@@ -76,8 +76,7 @@ class Autograd_Explained extends Specification
         """
 
         given : """
-                Because (by default) Neureka is not too eager when it comes to backpropagation
-                we have to set the following flags :
+                The following flag states enable regular auto-grad (should also be the default):
             """
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)

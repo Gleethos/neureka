@@ -8,7 +8,6 @@ import spock.lang.Specification
 
 class Tensor_Indexing_Integration_Spec extends Specification
 {
-
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
@@ -33,6 +32,8 @@ class Tensor_Indexing_Integration_Spec extends Specification
         given : 'The following library configuration is being used.'
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+            Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
 
         when : 'The following calculations are being executed...'
             Tsr i_a = Tsr.of([2, 1], [
@@ -98,6 +99,8 @@ class Tensor_Indexing_Integration_Spec extends Specification
         given :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+            Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
 
         when :
             Tsr i_a = Tsr.of([2, 1], [1d, 2d])

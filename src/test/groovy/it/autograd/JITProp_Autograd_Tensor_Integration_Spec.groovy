@@ -78,6 +78,9 @@ class JITProp_Autograd_Tensor_Integration_Spec extends Specification
     {
         given :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+            Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
             Tsr a = Tsr.of(2).setRqsGradient(true)
             Tsr b = Tsr.of(-4)
             Tsr c = Tsr.of(3).setRqsGradient(true)
@@ -103,6 +106,8 @@ class JITProp_Autograd_Tensor_Integration_Spec extends Specification
         given :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+            Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
             Tsr a = Tsr.of(2).setRqsGradient(true)
             Tsr b = Tsr.of(-4)
             Tsr c = Tsr.of(3).setRqsGradient(true)
