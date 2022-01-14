@@ -20,8 +20,8 @@ import java.io.IOException;
 /**
  *  This class is one of many extensions of the {@link AbstractFileHead} which
  *  is therefore ultimately an implementation of the {@link neureka.devices.file.FileHead} interface.
- *  Like other {@link neureka.devices.file.FileHead} implementations this class represents a file
- *  of a given type, in this case it represents a CSV file.
+ *  Like other {@link neureka.devices.file.FileHead} implementations of this class represents a file
+ *  of a given type, in this case it represents a JPEG file.
  */
 public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
 {
