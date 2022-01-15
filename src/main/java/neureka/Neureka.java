@@ -345,6 +345,7 @@ public final class Neureka
         public class Debug
         {
             private boolean _isKeepingDerivativeTargetPayloads = false;
+            private boolean _isDeletingIntermediateTensors = true;
 
             /**
              * Every derivative is calculated with respect to some graph node.
@@ -381,6 +382,31 @@ public final class Neureka
             public void setIsKeepingDerivativeTargetPayloads( boolean keep ) {
                 if ( notModifiable() ) return;
                 _isKeepingDerivativeTargetPayloads = keep;
+            }
+
+            /**
+             * {@link neureka.calculus.Function} instances will produce hidden intermediate results
+             * when executing an array of inputs.
+             * These tensors might not always be used for backpropagation,
+             * which means they will be deleted if possible.
+             * Tensors are not deleted of they are leave tensors (They are created by the user or require gradients)
+             * or they are angle points between forward- and reverse-mode-AutoDiff!
+             * This flag should not be modified in production! (memory leak)
+             */
+            public boolean isDeletingIntermediateTensors() { return _isDeletingIntermediateTensors; }
+
+            /**
+             * {@link neureka.calculus.Function} instances will produce hidden intermediate results
+             * when executing an array of inputs.
+             * These tensors might not always be used for backpropagation,
+             * which means they will be deleted if possible.
+             * Tensors are not deleted of they are leave tensors (They are created by the user or require gradients)
+             * or they are angle points between forward- and reverse-mode-AutoDiff!
+             * This flag should not be modified in production! (memory leak)
+             */
+            public void setIsDeletingIntermediateTensors( boolean delete ) {
+                if ( notModifiable() ) return;
+                _isDeletingIntermediateTensors = delete;
             }
 
             public String toString() {

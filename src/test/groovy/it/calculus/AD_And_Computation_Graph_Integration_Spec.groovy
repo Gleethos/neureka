@@ -58,6 +58,7 @@ class AD_And_Computation_Graph_Integration_Spec extends Specification{
             assert na.isLeave()
             assert na.function==null
             assert na.getMode() == 1
+        and : 'We expect the partial derivative to be cleaned up! (size == 0)'
             assert na.size()==0
             assert na.getNodeID()==1
             assert !na.getLock().isLocked()

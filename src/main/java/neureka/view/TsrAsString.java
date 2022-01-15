@@ -107,8 +107,8 @@ public final class TsrAsString
         };
     }
 
-    private TsrAsString( Tsr<?> tensor, TsrStringSettings settings ) {
-
+    private TsrAsString( Tsr<?> tensor, TsrStringSettings settings )
+    {
         if ( tensor.getNDConf() != null )
             _shape = tensor.getNDConf().shape();
         else
@@ -248,7 +248,8 @@ public final class TsrAsString
     }
 
     public String toString() {
-        if ( _tensor.isEmpty() ) return "empty";
+        if ( _tensor.isDeleted() ) return "deleted";
+        else if ( _tensor.isEmpty() ) return "empty";
         else if ( _tensor.isUndefined() ) return "undefined";
         _asStr = new StringBuilder();
         String base      = ( !_isMultiline ? ""   : "\n" + "    "      );

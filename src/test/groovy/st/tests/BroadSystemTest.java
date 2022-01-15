@@ -233,46 +233,15 @@ public class BroadSystemTest
                 }
         );
         //=====================
-        tensor1 = Tsr.of(new int[]{1}, new double[]{2});//-2*4 = 8 | *3 = -24
-        tensor1.setRqsGradient(true);
-        tester.testTensorAutoGrad(
-                new Tsr[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
-                "(-3*(2*(i0*-1)))*(-1*i0)",
-                new String[]{
-                        "[1]:(-24.0); ",
-                        "=>d|[ [1]:(12.0) ]|:" +
-                                "t{ [1]:(-2.0); " +
-                                     "=>d|[ [1]:(-1.0) ]|:" +
-                                     "t{ [1]:(2.0) } " +
-                                "}",
-                        "=>d|[ [1]:(-2.0) ]|:" +
-                                "t{ [1]:(12.0); " +
-                                    "=>d|[ [1]:(6.0) ]|:" +
-                                    "t{ [1]:(2.0) } " +
-                                "}"
-                }
-        );
-        result = Tsr.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
-        GraphNode<Double> node = (GraphNode) result.get( GraphNode.class );
-        String asString = node.toString("gnv");
-        tester.testContains(
-                asString,
-                new String[]{
-                        "[1]:(-24.0)",
-                        "[1]:(12.0)",
-                        "[1]:(2.0)",
-                        "[1]:(-3.0)",
-                        "(-1.0 * I[0])",
-                        "(I[0] * -1.0)",
-                        "(I[0] * I[1])",
-                        "LEAVE RQS GRADIENT"
-                },
-                "Testing 'toString' of GraphNode");
-        //---
-        //======================
-        //TESTING INVERSE:
-        ///=================
-        //---
+        _subTest(tester);
+        //=====================
+        _subTest2(tester);
+        //=====================
+
+
+        // TESTING INVERSE:
+        //=================
+
         tensor1 = Tsr.of(new int[]{2, 3}, new double[]{
                 0, 0, 0,
                 0, 0, 0,
@@ -535,5 +504,96 @@ public class BroadSystemTest
         return true;
     }
 
+    private static void _subTest(UnitTester_Tensor tester) {
+
+        Neureka.get().settings().debug().setIsDeletingIntermediateTensors(false);
+
+        Tsr<Double> tensor1 = Tsr.of(new int[]{1}, new double[]{2});//-2*4 = 8 | *3 = -24
+        tensor1.setRqsGradient(true);
+        tester.testTensorAutoGrad(
+                new Tsr[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
+                "(-3*(2*(i0*-1)))*(-1*i0)",
+                new String[]{
+                        "[1]:(-24.0); ",
+                        "=>d|[ [1]:(12.0) ]|:" +
+                                "t{ [1]:(-2.0); " +
+                                "=>d|[ [1]:(-1.0) ]|:" +
+                                "t{ [1]:(2.0) } " +
+                                "}",
+                        "=>d|[ [1]:(-2.0) ]|:" +
+                                "t{ [1]:(12.0); " +
+                                "=>d|[ [1]:(6.0) ]|:" +
+                                "t{ [1]:(2.0) } " +
+                                "}"
+                }
+        );
+
+        Neureka.get().settings().debug().setIsDeletingIntermediateTensors(true);
+
+
+        tensor1 = Tsr.of(new int[]{1}, new double[]{2});//-2*4 = 8 | *3 = -24
+        tensor1.setRqsGradient(true);
+        tester.testTensorAutoGrad(
+                new Tsr[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
+                "(-3*(2*(i0*-1)))*(-1*i0)",
+                new String[]{
+                        "[1]:(-24.0); ",
+                        "=>d|[ [1]:(12.0) ]|:" +
+                                "t{ deleted }",
+                        "=>d|[ [1]:(-2.0) ]|:" +
+                                "t{ [1]:(12.0); " +
+                                "=>d|[ [1]:(6.0) ]|:" +
+                                "t{ [1]:(2.0) } " +
+                                "}"
+                }
+        );
+
+    }
+
+
+    private static void _subTest2(UnitTester_Tensor tester) {
+
+        Neureka.get().settings().debug().setIsDeletingIntermediateTensors(false);
+        Tsr<Double> tensor1 = Tsr.of(new int[]{1}, new double[]{2});//-2*4 = 8 | *3 = -24
+        tensor1.setRqsGradient(true);
+        Tsr<?> result = Tsr.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
+        GraphNode<Double> node = (GraphNode) result.get( GraphNode.class );
+        String asString = node.toString("gnv");
+        System.out.println(asString);
+        tester.testContains(
+                asString,
+                new String[]{
+                        "[1]:(-24.0)",
+                        "[1]:(12.0)",
+                        "[1]:(2.0)",
+                        "[1]:(-3.0)",
+                        "(-1.0 * I[0])",
+                        "(I[0] * -1.0)",
+                        "(I[0] * I[1])",
+                        "LEAVE RQS GRADIENT",
+                        "(I[0] * I[1]) => [1]:(-4.0)"
+                },
+                "Testing 'toString' of GraphNode");
+        Neureka.get().settings().debug().setIsDeletingIntermediateTensors(true);
+        result = Tsr.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
+        node = (GraphNode) result.get( GraphNode.class );
+        asString = node.toString("gnv");
+        System.out.println(asString);
+        tester.testContains(
+                asString,
+                new String[]{
+                        "[1]:(-24.0)",
+                        "[1]:(12.0)",
+                        "[1]:(2.0)",
+                        "[1]:(-3.0)",
+                        "(-1.0 * I[0])",
+                        "(I[0] * -1.0)",
+                        "(I[0] * I[1])",
+                        "LEAVE RQS GRADIENT",
+                        "deleted",
+                        "(I[0] * -1.0) => deleted, type='BRANCH'"
+                },
+                "Testing 'toString' of GraphNode");
+    }
 
 }

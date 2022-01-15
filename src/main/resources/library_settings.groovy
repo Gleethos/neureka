@@ -7,6 +7,7 @@ Neureka.configure {
 
         debug {
             it.isKeepingDerivativeTargetPayloads = false
+            it.isDeletingIntermediateTensors = true
         }
 
         autograd {

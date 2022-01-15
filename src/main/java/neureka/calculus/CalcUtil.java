@@ -71,21 +71,31 @@ public class CalcUtil
         assert call.getValOf( Arg.DerivIdx.class ) == -1;
 
         Tsr<?>[] tensors;
-        if ( operation.isIndexer() ) tensors = new Tsr[ 1 + inputs.length ];
-        else tensors = new Tsr[ 1 + nodes.length ];
+        if ( operation.isIndexer() )
+            tensors = new Tsr[ 1 + inputs.length ];
+        else
+            tensors = new Tsr[ 1 + nodes.length ];
 
-        if ( operation.isIndexer() ) {
-            for ( int i = 1; i < tensors.length; i++ ) tensors[ i ] = nodes[ 0 ].execute( inputs, i - 1 );
-        } else if (
+        if ( operation.isIndexer() )
+            for ( int i = 1; i < tensors.length; i++ )
+                tensors[ i ] = nodes[ 0 ].execute( inputs, i - 1 );
+        else
+            if (
                 !isFlat && j < 0 && (
-                        operation.isOperator() || operation.supportsAlgorithm(Activation.class)
+                    operation.isOperator()
+                            ||
+                    operation.supportsAlgorithm(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
             tensors = srcActivation(inputs, j, -1, 0, nodes);
             String asStr = operation.stringify(
                     IntStream.range(0, nodes.length).mapToObj( i -> "I[" + i + "]" ).toArray(String[]::new)
             );
-            return new FunctionBuilder( Neureka.get().backend() ).build( asStr, isDoingAD ).execute( tensors );
+            Tsr<?> result = new FunctionBuilder( Neureka.get().backend() ).build( asStr, isDoingAD ).execute( tensors );
+            for ( int i = 1; i < tensors.length; i++ ) {
+                _deleteIfNotIn( inputs, tensors[ i ] );
+            }
+            return result;
         }
         else
             tensors = srcActivation( inputs, j, -1, 1, nodes );
@@ -223,7 +233,13 @@ public class CalcUtil
                                 .on( device ),
                         null
                 );
+                for ( int i = 1; i < tensors.length; i++ ) {
+                    _deleteIfNotIn( inputs, tensors[ i ] );
+                }
             } // done!
+
+            _delete( inner );
+
             return tensors[ 0 ];
         };
 
@@ -247,6 +263,21 @@ public class CalcUtil
         return out;
     }
 
+    private static void _deleteIfNotIn(Tsr<?>[] array, Tsr<?> tensor ) {
+        if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {
+            for (int i = 1; i < array.length; i++) {
+                if (array[i] == tensor) return;
+            }
+            if (!tensor.isDeleted()) tensor.delete();
+        }
+    }
+
+    private static void _delete( Tsr<?> tensor ) {
+        if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {
+            if (!tensor.isDeleted()) tensor.delete();
+        }
+    }
+
     public static void recursiveExecution(
             ExecutionCall<? extends Device<?>> executionCall,
             RecursiveExecutor executor
@@ -259,39 +290,39 @@ public class CalcUtil
             );
         }
         _recursiveReductionOf(
-                executionCall,
-                call -> {
-                    for ( Tsr<?> t : call.getTensors() ) {
-                        if ( t == null ) throw new IllegalArgumentException(
-                                "Device arguments may not be null!\n" +
-                                        "One or more tensor arguments within the given ExecutionCall instance is null."
-                        );
-                    }
-                    call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of( call.getTensors() )
-                                                                    .andArgs( Arg.DerivIdx.of( call.getValOf( Arg.DerivIdx.class ) ) )
-                                                                    .running( call.getOperation() )
-                                                                    .on( call.getDevice() )
-                                                                    .forDeviceType( call.getDevice().getClass() );
-                    Device<?> device = call.getDevice();
-                    device.approve( call );
-                    call.getTensors()[ 0 ].setIsVirtual( false );
+            executionCall,
+            call -> {
+                for ( Tsr<?> t : call.getTensors() ) {
+                    if ( t == null ) throw new IllegalArgumentException(
+                            "Device arguments may not be null!\n" +
+                                    "One or more tensor arguments within the given ExecutionCall instance is null."
+                    );
+                }
+                call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of( call.getTensors() )
+                                                                .andArgs( Arg.DerivIdx.of( call.getValOf( Arg.DerivIdx.class ) ) )
+                                                                .running( call.getOperation() )
+                                                                .on( call.getDevice() )
+                                                                .forDeviceType( call.getDevice().getClass() );
+                Device<?> device = call.getDevice();
+                device.approve( call );
+                call.getTensors()[ 0 ].setIsVirtual( false );
 
-                    Algorithm<?> algorithm = call.getAlgorithm();
-                    if ( algorithm == null ) {
-                        String message = Messages.Devices.couldNotFindSuitableAlgorithmFor( device.getClass() );
+                Algorithm<?> algorithm = call.getAlgorithm();
+                if ( algorithm == null ) {
+                    String message = Messages.Devices.couldNotFindSuitableAlgorithmFor( device.getClass() );
+                    _LOG.error( message );
+                    throw new IllegalStateException( message );
+                } else {
+                    ImplementationFor<Device<?>> implementation = algorithm.getImplementationFor( device );
+                    if ( implementation == null ) {
+                        String message = Messages.Devices.couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
                         _LOG.error( message );
                         throw new IllegalStateException( message );
-                    } else {
-                        ImplementationFor<Device<?>> implementation = algorithm.getImplementationFor( device );
-                        if ( implementation == null ) {
-                            String message = Messages.Devices.couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
-                            _LOG.error( message );
-                            throw new IllegalStateException( message );
-                        }
-                        else implementation.run( (ExecutionCall<Device<?>>) call );
                     }
-                },
-                executor
+                    else implementation.run( (ExecutionCall<Device<?>>) call );
+                }
+            },
+            executor
         );
     }
 

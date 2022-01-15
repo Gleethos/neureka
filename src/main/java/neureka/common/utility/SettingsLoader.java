@@ -68,27 +68,28 @@ public class SettingsLoader
             properties.load( stream );
             Neureka.Settings s = instance.settings();
             new TypeChecker( properties )
-                    .checkAndAssign("debug.isKeepingDerivativeTargetPayloads"      , Boolean.class, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)                     )//~= false
-                    .checkAndAssign("autograd.isPreventingInlineOperations"        , Boolean.class, v -> s.autograd().setIsPreventingInlineOperations(v)                       )//~= true
-                    .checkAndAssign("autograd.isRetainingPendingErrorForJITProp"   , Boolean.class, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)                  )//~= true
-                    .checkAndAssign("autograd.isApplyingGradientWhenTensorIsUsed"  , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)                 )//~= true
-                    .checkAndAssign("autograd.isApplyingGradientWhenRequested"     , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenRequested(v)                    )//~= true
-                    .checkAndAssign("view.tensors.HAVE_ROW_LIMIT_OF"    , Integer.class, v -> s.view().getTensorSettings().setRowLimit(v)                              )//~= 50,
-                    .checkAndAssign("view.tensors.BE_COMPACT"           , Boolean.class, v -> s.view().getTensorSettings().setIsScientific(v)                              )//~= true,
-                    .checkAndAssign("view.tensors.BE_FORMATTED"         , Boolean.class, v -> s.view().getTensorSettings().setIsMultiline(v)                        )//~= true,
-                    .checkAndAssign("view.tensors.haveGradients"        , Boolean.class, v -> s.view().getTensorSettings().setHasGradient(v)                        )//~= true,
-                    .checkAndAssign("view.tensors.haveSlimNumbers"      , Boolean.class, v -> s.view().getTensorSettings().setHasSlimNumbers(v)              )//~= false,
-                    .checkAndAssign("view.tensors.cellSize"             , Integer.class, v -> s.view().getTensorSettings().setCellSize(v)                             )//~= 6,
-                    .checkAndAssign("view.tensors.haveValue"            , Boolean.class, v -> s.view().getTensorSettings().setHasValue(v)                           )//~= true,
-                    .checkAndAssign("view.tensors.haveGraph"            , Boolean.class, v -> s.view().getTensorSettings().setHasRecursiveGraph(v)                  )//~= false,
-                    .checkAndAssign("view.tensors.haveDerivatives"      , Boolean.class, v -> s.view().getTensorSettings().setHasDerivatives(v)                           )//~= false,
-                    .checkAndAssign("view.tensors.HAVE_SHAPE"           , Boolean.class, v -> s.view().getTensorSettings().setHasShape(v)                                 )//~= true,
-                    .checkAndAssign("view.tensors.areCellBound"         , Boolean.class, v -> s.view().getTensorSettings().setIsCellBound(v)                              )//~= false
-                    .checkAndAssign("view.tensors.postfix"              , String.class,  v -> s.view().getTensorSettings().setPostfix(v)                                  )//~= ""
-                    .checkAndAssign("view.tensors.prefix"               , String.class,  v -> s.view().getTensorSettings().setPrefix(v)                                  )//~= ""
-                    .checkAndAssign("view.tensors.indent"               , String.class,  v -> s.view().getTensorSettings().setIndent(v)                                 )//~= ""
-                    .checkAndAssign("view.tensors.LEGACY"               , Boolean.class, v -> s.view().getTensorSettings().setIsLegacy(v)                                 )//~= ""
-                    .checkAndAssign("ndim.isOnlyUsingDefaultNDConfiguration"       , Boolean.class, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )//~= false
+                    .checkAndAssign("debug.isKeepingDerivativeTargetPayloads"      , Boolean.class, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)                     )
+                    .checkAndAssign("debug.isDeletingIntermediateTensors"          , Boolean.class, v -> s.debug().setIsDeletingIntermediateTensors(v)                         )
+                    .checkAndAssign("autograd.isPreventingInlineOperations"        , Boolean.class, v -> s.autograd().setIsPreventingInlineOperations(v)                       )
+                    .checkAndAssign("autograd.isRetainingPendingErrorForJITProp"   , Boolean.class, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)                  )
+                    .checkAndAssign("autograd.isApplyingGradientWhenTensorIsUsed"  , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)                 )
+                    .checkAndAssign("autograd.isApplyingGradientWhenRequested"     , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenRequested(v)                    )
+                    .checkAndAssign("view.tensors.rowLimit"                        , Integer.class, v -> s.view().getTensorSettings().setRowLimit(v)                           )
+                    .checkAndAssign("view.tensors.areScientific"                   , Boolean.class, v -> s.view().getTensorSettings().setIsScientific(v)                       )
+                    .checkAndAssign("view.tensors.areMultiline"                    , Boolean.class, v -> s.view().getTensorSettings().setIsMultiline(v)                        )
+                    .checkAndAssign("view.tensors.haveGradients"                   , Boolean.class, v -> s.view().getTensorSettings().setHasGradient(v)                        )
+                    .checkAndAssign("view.tensors.haveSlimNumbers"                 , Boolean.class, v -> s.view().getTensorSettings().setHasSlimNumbers(v)                     )
+                    .checkAndAssign("view.tensors.cellSize"                        , Integer.class, v -> s.view().getTensorSettings().setCellSize(v)                           )
+                    .checkAndAssign("view.tensors.haveValue"                       , Boolean.class, v -> s.view().getTensorSettings().setHasValue(v)                           )
+                    .checkAndAssign("view.tensors.haveGraph"                       , Boolean.class, v -> s.view().getTensorSettings().setHasRecursiveGraph(v)                  )
+                    .checkAndAssign("view.tensors.haveDerivatives"                 , Boolean.class, v -> s.view().getTensorSettings().setHasDerivatives(v)                     )
+                    .checkAndAssign("view.tensors.hasShape"                        , Boolean.class, v -> s.view().getTensorSettings().setHasShape(v)                           )
+                    .checkAndAssign("view.tensors.areCellBound"                    , Boolean.class, v -> s.view().getTensorSettings().setIsCellBound(v)                        )
+                    .checkAndAssign("view.tensors.postfix"                         , String.class,  v -> s.view().getTensorSettings().setPostfix(v)                            )
+                    .checkAndAssign("view.tensors.prefix"                          , String.class,  v -> s.view().getTensorSettings().setPrefix(v)                             )
+                    .checkAndAssign("view.tensors.indent"                          , String.class,  v -> s.view().getTensorSettings().setIndent(v)                             )
+                    .checkAndAssign("view.tensors.legacy"                          , Boolean.class, v -> s.view().getTensorSettings().setIsLegacy(v)                           )
+                    .checkAndAssign("ndim.isOnlyUsingDefaultNDConfiguration"       , Boolean.class, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )
                     .checkAndAssign("dtype.defaultDataTypeClass"                   , Class.class,   v -> s.dtype().setDefaultDataTypeClass(v)                                  )
                     .checkAndAssign("dtype.isAutoConvertingExternalDataToJVMTypes" , Boolean.class, v -> s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                );
 

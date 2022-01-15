@@ -170,7 +170,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private static final int IS_OUTSOURCED_MASK      = 2;
     private static final int IS_VIRTUAL_MASK         = 4;
     private static final int GRADIENT_APPLY_RQD_MASK = 8;
-    private static final int WAS_DELETED_MASK        = 18;
+    private static final int IS_DELETED_MASK        = 18;
 
     /**
      *  This integer represents the version of the data (accessible through {@link #getData()})
@@ -1189,7 +1189,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The truth value which determines if {@link #delete()} was called on this tensor,
      *         making it in essence an empty shell void of any references to data.
      */
-    public boolean isDeleted() { return ( _flags & WAS_DELETED_MASK ) == WAS_DELETED_MASK; }
+    public boolean isDeleted() { return ( _flags & IS_DELETED_MASK ) == IS_DELETED_MASK; }
 
     /**
      *  Although tensors will be garbage collected when they are not strongly referenced,
@@ -1204,6 +1204,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> delete()
     {
+        if ( isDeleted() ) return this;
+
         forComponent( GraphNode.class, n -> {
             if ( n.isUsedAsDerivative() ) {
                 String message = "Cannot delete a tensor which is used as derivative by the AD computation graph!";
@@ -1214,10 +1216,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         forComponent( Device.class, device -> device.free( this ) );
         _setData( null );
         _setNDConf( null );
-        _flags = -1;
+        _flags = 0;
         forComponent( Tsr.class, Tsr::delete );
         _deleteComponents();
-        if ( !isDeleted() ) _flags += IS_OUTSOURCED_MASK;
+        _flags += IS_DELETED_MASK;
+
         return this;
     }
 
@@ -1557,7 +1560,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         tensor._setData( null );
         tensor._setDataType( null );
         tensor._setNDConf( null );
-        tensor._flags = -1;
+        tensor._flags = 0;
         return this;
     }
 
@@ -3011,6 +3014,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public String toString( TsrStringSettings config ) {
+        if ( this.isDeleted() ) return "deleted";
+        else if ( this.isEmpty() ) return "empty";
+        else if ( this.isUndefined() ) return "undefined";
         return TsrAsString.representing( this ).withConfig( config ).toString();
     }
 
@@ -3024,6 +3030,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The {@link String} representation of this tensor.
      */
     public String toString( Consumer<TsrStringSettings> config ) {
+        if ( this.isDeleted() ) return "deleted";
         TsrStringSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();
         config.accept(defaults);
         return TsrAsString.representing( this ).withConfig( defaults ).toString();
@@ -3032,6 +3039,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     protected String _toString( String config )
     {
+        if ( this.isDeleted() ) return "deleted";
+        else if ( this.isEmpty() ) return "empty";
+        else if ( this.isUndefined() ) return "undefined";
         return TsrAsString.representing( this ).withConfig( config ).toString();
     }
 
@@ -3039,6 +3049,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public String toString()
     {
         if ( this.isDeleted() ) return "deleted";
+        else if ( this.isEmpty() ) return "empty";
+        else if ( this.isUndefined() ) return "undefined";
         return TsrAsString.representing( this ).byDefaults().toString();
     }
 

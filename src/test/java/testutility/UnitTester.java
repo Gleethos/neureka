@@ -77,13 +77,12 @@ public class UnitTester
         }
     }
 
-    protected boolean assertStringContains(String name, String result, String expected){
+    protected void assertStringContains(String name, String result, String expected){
         _assertion_count++;
         if(result.contains(expected)) {
             println(BAR +"  ["+name+"]:("+result+") "+((result.length()>22)?"\n"+ BAR +"    contains   -> test successful!"+"\n"+ BAR +" ":"contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test successful!"));
             _positive_assertions = (_positive_assertions <0)? _positive_assertions : _positive_assertions +1;
             println(BAR + LINE);
-            return true;
         } else {
             println(BAR +"  ["+name+"]:("+result+") "
                 +((result.length()>22)
@@ -92,7 +91,6 @@ public class UnitTester
             _positive_assertions = (_positive_assertions <0)? _positive_assertions -1:-1;
             println(BAR + LINE);
             failSession();
-            return false;
         }
     }
 
@@ -117,7 +115,7 @@ public class UnitTester
         }
     }
 
-    protected boolean assertIsEqual(String result, String expected){
+    protected void assertIsEqual(String result, String expected){
         _assertion_count++;
         if(result.equals(expected)) {
             println(BAR +"  [result]:("+result+") "+((result.length()>22)
@@ -125,14 +123,12 @@ public class UnitTester
                     :"==")+" [expected]:("+expected+") -> test successful.");
             _positive_assertions = (_positive_assertions <0)? _positive_assertions : _positive_assertions +1;
             println(BAR + LINE);
-            return true;
         } else {
             println(BAR +"  [result]:("+result+") "+((result.length()>22)
                     ?"\n"+ BAR +"    =|=  "+"\n"+ BAR +" "
                     :"=|=")+" [expected]:("+expected+") -> test failed!");
             _positive_assertions = (_positive_assertions <0)? _positive_assertions -1:-1;
             println(BAR + LINE);
-            return false;
         }
     }
 
