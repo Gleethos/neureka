@@ -30,7 +30,7 @@ public class FunctionConstant implements Function
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public boolean isFlat() { return  false; }
+	public boolean isFlat() { return  true; }
 
 	@Override
 	public boolean isDoingAD() { return false; }

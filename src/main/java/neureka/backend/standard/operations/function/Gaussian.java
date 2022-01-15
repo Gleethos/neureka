@@ -47,11 +47,11 @@ public final class Gaussian extends AbstractOperation
         .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
         .setCallPreparation(
             call -> {
-                Tsr<?>[] tsrs = call.getTensors();
+                Tsr<?>[] inputs = call.getTensors();
                 Device device = call.getDevice();
-                if ( tsrs[ 0 ] == null ) // Creating a new tensor:
+                if ( inputs[ 0 ] == null ) // Creating a new tensor:
                 {
-                    int[] shp = tsrs[ 1 ].getNDConf().shape();
+                    int[] shp = inputs[ 1 ].getNDConf().shape();
                 Tsr<?> output = Tsr.of( shp, 0.0 );
                 output.setIsVirtual( false );
                 try {
@@ -59,7 +59,7 @@ public final class Gaussian extends AbstractOperation
                 } catch( Exception e ) {
                     e.printStackTrace();
                 }
-                tsrs[ 0 ] = output;
+                inputs[ 0 ] = output;
                 }
                 return call;
             }
@@ -93,13 +93,13 @@ public final class Gaussian extends AbstractOperation
                     .kernelSource( operationAlgorithm.getKernelSource() )
                     .activationSource(
                         "output =\n" +
-                                "    (float)pow(\n" +
-                                "        (float)M_E,\n" +
-                                "        -(float)pow(\n" +
-                                "            (float)input,\n" +
-                                "            (float)2\n" +
-                                "        )\n" +
-                                "    );\n"
+                        "    (float)pow(\n" +
+                        "        (float)M_E,\n" +
+                        "        -(float)pow(\n" +
+                        "            (float)input,\n" +
+                        "            (float)2\n" +
+                        "        )\n" +
+                        "    );\n"
                     )
                     .differentiationSource(
                         "output = 1 / (1 + (float)pow((float)M_E, -input));\n"

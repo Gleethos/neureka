@@ -31,7 +31,7 @@ public class FunctionVariable implements Function, GradientProvider {
     public boolean providesGradient() { return _providesGradient; }
 
     @Override
-    public boolean isFlat() { return false; }
+    public boolean isFlat() { return true; }
 
     @Override
     public boolean isDoingAD() { return false; }
