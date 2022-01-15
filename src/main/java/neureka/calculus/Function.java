@@ -172,14 +172,27 @@ public interface Function
     //------------------------------------------------------------------------------------------------------------------
 
 
-    default <T, D extends Device<T>> Tsr<T> call(Call.Builder<T, D> call ) { return (Tsr<T>) execute( call.get() ); };
-    default <T, D extends Device<T>> Tsr<T> invoke(Call.Builder<T, D> call ) { return (Tsr<T>) execute( call.get() ); }
+    default <T, D extends Device<T>> Tsr<T> call(Call.Builder<T, D> call ) {
+        Tsr<T> result = (Tsr<T>) execute( call.get() );
+        result.getMutate().setIsIntermediate(false);
+        return result;
+    }
+    default <T, D extends Device<T>> Tsr<T> invoke(Call.Builder<T, D> call ) {
+        Tsr<T> result = (Tsr<T>) execute( call.get() );
+        result.getMutate().setIsIntermediate(false);
+        return result;
+    }
     default Tsr<?> execute( Call<?> call ) {
         List<Arg> args = call.allMetaArgs();
         if ( call.getDevice() != null ) args.add(Arg.TargetDevice.of((Device<?>) call.getDevice()));
         Arg<?>[] argArray = new Arg[args.size()];
         for ( int i = 0; i < argArray.length; i++ ) argArray[i] = args.get(i);
-        return callWith(argArray).execute(call.getTensors());
+        Tsr<?> result = callWith(argArray).execute(call.getTensors());
+        if ( call.validate().any( t -> t == result ).isValid() )
+            assert !result.isIntermediate();
+        else
+            assert result.isIntermediate();
+        return result;
     };
 
     interface CallOptions {
@@ -198,8 +211,20 @@ public interface Function
        };
     }
 
-    default <T> Tsr<T> call(   Args arguments, Tsr<T>... tensors ) { return (Tsr<T>) execute( arguments, tensors ); }
-    default <T> Tsr<T> invoke( Args arguments, Tsr<T>... tensors ) { return (Tsr<T>) execute( arguments, tensors ); }
+    default <T> Tsr<T> call(   Args arguments, Tsr<T>... tensors ) {
+        Tsr<T> result = (Tsr<T>) execute( arguments, tensors );
+        if ( result != null )
+            return result.getMutate().setIsIntermediate(false);
+        else
+            return null;
+    }
+    default <T> Tsr<T> invoke( Args arguments, Tsr<T>... tensors ) {
+        Tsr<T> result = (Tsr<T>) execute( arguments, tensors );
+        if ( result != null )
+            return result.getMutate().setIsIntermediate(false);
+        else
+            return null;
+    }
     Tsr<?> execute( Args arguments, Tsr<?>... tensors );
 
     default Tsr<?> execute( Tsr<?>... inputs ) { return execute( inputs, -1 ); }
@@ -217,16 +242,43 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
 
-    default <T> Tsr<T> call( Tsr<T>[] inputs, int j )   { return (Tsr<T>) execute( inputs, j ); }
+    default <T> Tsr<T> call( Tsr<T>[] inputs, int j )   {
+        Tsr<T> result = (Tsr<T>) execute( inputs, j );
+        if ( result != null )
+            return result.getMutate().setIsIntermediate(false);
+        else
+            return null;
+    }
+
     default <T> Tsr<T> invoke( Tsr<T>[] inputs, int j ) { return call( inputs, j );             }
 
-    default <T> Tsr<T> call( Tsr<T>... inputs )   { return (Tsr<T>) execute( inputs ); }
+    default <T> Tsr<T> call( Tsr<T>... inputs )   {
+        Tsr<T> result = (Tsr<T>) execute( inputs );
+        if ( result != null )
+            return result.getMutate().setIsIntermediate(false);
+        else
+            return null;
+    }
+
     default <T> Tsr<T> invoke( Tsr<T>... inputs ) { return call( inputs );             }
 
     //------------------------------------------------------------------------------------------------------------------
 
-    default <T> Tsr<T> derive( Tsr<T>[] inputs, int d, int j ) { return (Tsr<T>) executeDerive( inputs, d, j ); }
-    default <T> Tsr<T> derive( Tsr<T>[] inputs, int d )        { return (Tsr<T>) executeDerive( inputs, d ); }
+    default <T> Tsr<T> derive( Tsr<T>[] inputs, int d, int j ) {
+        Tsr<T> result = (Tsr<T>) executeDerive( inputs, d, j );
+        if ( result != null )
+            return result.getMutate().setIsIntermediate(false);
+        else
+            return null;
+    }
+
+    default <T> Tsr<T> derive( Tsr<T>[] inputs, int d ) {
+        Tsr<T> result = (Tsr<T>) executeDerive( inputs, d );
+        if ( result != null )
+            return result.getMutate().setIsIntermediate(false);
+        else
+            return null;
+    }
 
     //---
 

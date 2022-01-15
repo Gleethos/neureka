@@ -120,7 +120,7 @@ public class Reshape extends AbstractOperation
                         AbstractNDArray.Utility.Stringify.strConf( newReshape ) + ":(I[ 0 ])",
                         doesAD
                 );
-                tensors[ i ] = f.call( tensors[ i ] );
+                tensors[ i ] = f.execute( tensors[ i ] );
             }
         }
 

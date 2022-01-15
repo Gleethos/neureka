@@ -13,7 +13,6 @@ import spock.lang.Specification
 
 class Optimizer_Spec extends Specification
 {
-
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
@@ -39,14 +38,14 @@ class Optimizer_Spec extends Specification
     {
         given :
             def data = Tsr.of([8, 4], [ // a-b*c
-                                          1,  2,  2, -3,
-                                          3, -1, -1, 4,
-                                         -1, -2, -3, -7,
-                                         -2, -3,  4, 10,
-                                          4,  5, -1, 9,
-                                          6,  2, 3, 0,
-                                          7,  3, 2, 1,
-                                         -4, -4, 2, 4
+                                          1d,  2d,  2d, -3d,
+                                          3d, -1d, -1d,  4d,
+                                         -1d, -2d, -3d, -7d,
+                                         -2d, -3d,  4d,  10d,
+                                          4d,  5d, -1d,  9d,
+                                          6d,  2d,  3d,  0d,
+                                          7d,  3d,  2d,  1d,
+                                         -4d, -4d,  2d,  4d
 
             ])
             def X = data[0..-1, 0..2].T()

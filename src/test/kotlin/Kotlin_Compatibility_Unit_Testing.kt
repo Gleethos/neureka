@@ -178,7 +178,6 @@ Kotlin_Compatibility_Unit_Testing {
                         .andWhere { i, index -> index.sum().toFloat()/i  }
 
         // Then :
-        print(t.toString())
         assert(t.toString() == """
                                         §:(
                                            (

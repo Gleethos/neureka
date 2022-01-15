@@ -14,6 +14,8 @@ import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 /**
  *  This is the base class for implementations of the {@link Algorithm} interface.
  *  The class implements a basic component system, as is implicitly expected by said interface.
@@ -140,7 +142,19 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     @Override
     public ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
-        return _instantiateNewTensorsForExecutionIn.prepare( call );
+        if ( call != null ) {
+            Tsr<?>[] inputs = call.getTensors().clone();
+            ExecutionCall<? extends Device<?>> prepared = _instantiateNewTensorsForExecutionIn.prepare(call);
+            Arrays.stream(prepared.getTensors())
+                    .filter(
+                            out -> Arrays.stream(inputs)
+                                    .noneMatch(in -> in == out)
+                    )
+                    .forEach(t -> t.getMutate().setIsIntermediate(true));
+
+            return prepared;
+        }
+        else return null;
     }
 
     //---

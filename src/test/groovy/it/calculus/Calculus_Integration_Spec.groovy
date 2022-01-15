@@ -46,9 +46,8 @@ class Calculus_Integration_Spec extends Specification
             Function f = new FunctionBuilder( Neureka.get().backend() ).build(equation, true) // TODO : test with 'doAD' : false!
 
         and : 'The result is being calculated by invoking the Function instance.'
-            Tsr<?> result = ( index != null )
-                ? f.derive( inputs, index )
-                : f.call(   inputs        )
+            Tsr<?> result = ( index != null ) ? f.derive( inputs, index ) : f.call(   inputs        )
+
             List<Double> value = ( index != null )
                                     ? (result.getValueAs( double[].class ) as List<Double>)
                                     : (result.getValueAs( double[].class ) as List<Double>)
@@ -112,8 +111,8 @@ class Calculus_Integration_Spec extends Specification
     }
 
 
-    def 'The "DimTrim" operation works forward as well as backward!'(){
-
+    def 'The "DimTrim" operation works forward as well as backward!'()
+    {
         given :
             Tsr t = Tsr.of([1, 1, 3, 2, 1], 8d).setRqsGradient(true)
 
@@ -130,6 +129,36 @@ class Calculus_Integration_Spec extends Specification
             back == trimmed
         and :
             t.getGradient().toString() == "(1x1x3x2x1):[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"
+    }
+
+    def 'Executed tensors are intermediate tensors.'() {
+
+        given :
+            var fun = Function.of('i0 * relu(i0) + 1')
+        and :
+            var t = Tsr.of(1f, -5f, -3f, 2f, 8f)
+        expect :
+            t.valueClass == Float
+            fun.toString() == "((I[0] * relu(I[0])) + 1.0)"
+
+        when :
+            var result1 = fun.call(t)
+            var result2 = fun.invoke(t)
+            var result3 = fun.execute(t)
+
+        then :
+            !result1.isIntermediate()
+        and :
+            !result2.isIntermediate()
+        and :
+            result3.isIntermediate()
+        and :
+            result1.toString() == "(5):[2.0, 1.25, 1.09E0, 5.0, 65.0]"
+            result2.toString() == "(5):[2.0, 1.25, 1.09E0, 5.0, 65.0]"
+            result3.toString() == "(5):[2.0, 1.25, 1.09E0, 5.0, 65.0]"
+
+
+
     }
 
 

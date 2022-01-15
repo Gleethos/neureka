@@ -160,17 +160,18 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  The bits of this integer are used to encode various states which a tensor can have.
      *  These bits are flipped by bitmasks which are defined below.
      */
-    private int _flags = 0;
+    private byte _flags = 0;
 
     /**
      *  The following fields are bit masks used to store true / false values
      *  in a targeted bit inside the {@link #_flags} variable.
      */
-    private static final int RQS_GRADIENT_MASK       = 1;
-    private static final int IS_OUTSOURCED_MASK      = 2;
-    private static final int IS_VIRTUAL_MASK         = 4;
-    private static final int GRADIENT_APPLY_RQD_MASK = 8;
-    private static final int IS_DELETED_MASK        = 18;
+    private static final byte RQS_GRADIENT_MASK       = 1;
+    private static final byte IS_OUTSOURCED_MASK      = 2;
+    private static final byte IS_VIRTUAL_MASK         = 4;
+    private static final byte GRADIENT_APPLY_RQD_MASK = 8;
+    private static final byte IS_DELETED_MASK         = 16;
+    private static final byte IS_INTERMEDIATE_MASK    = 32;
 
     /**
      *  This integer represents the version of the data (accessible through {@link #getData()})
@@ -939,6 +940,31 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
     }
 
+    /**
+     *  Intermediate tensors are internal non-user tensors which may be eligible
+     *  for deletion when further consumed by a {@link Function}.
+     *  For the casual user of Neureka, this flag should always be false!
+     *
+     * @return The truth value determining if this tensor is not a user tensor but an internal
+     *         tensor which may be eligible for deletion by {@link Function}s consuming it.
+     */
+    public boolean isIntermediate() { return ( _flags & IS_INTERMEDIATE_MASK ) == IS_INTERMEDIATE_MASK; }
+
+    /**
+     *  Intermediate tensors are internal non-user tensors which may be eligible
+     *  for deletion when further consumed by a {@link Function}.
+     *  For the casual user of Neureka, this flag should always be false!
+     *
+     * @param isIntermediate The truth value determining if this tensor is not a user tensor but an internal
+     *                       tensor which may be eligible for deletion by {@link Function}s consuming it.
+     */
+    protected void _setIsIntermediate( boolean isIntermediate ) {
+        if ( isIntermediate() != isIntermediate ) {
+            if ( isIntermediate ) _flags += IS_INTERMEDIATE_MASK;
+            else                  _flags -= IS_INTERMEDIATE_MASK;
+        }
+    }
+
     /*
     ---------------------------------------------
         §(2.1) : SOURCE LOCATION (DEVICE)  :
@@ -1548,7 +1574,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensor The tensor whose identity should be stolen.
      * @return This very tensor instance in order to enable method chaining.
      */
-    @Deprecated( since = "0.7" ) // This ought to be removed due to the fact that tensor instantiation is now factory method based.
     protected Tsr<V> _become( Tsr<V> tensor )
     {
         if ( tensor == null ) return this;
@@ -3184,20 +3209,25 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Use this in performance critical situations only.
      */
     @Override
-    public Mutate getMutate() {
-        return new Mutate() {
+    public Mutate<V> getMutate() {
+        return new Mutate<V>() {
             @Override
-            public Mutate setNDConf( NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return this; }
+            public Mutate<V> setNDConf( NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return this; }
             @Override
             public <V> Tsr<V> toType( Class<V> typeClass ) { return Tsr.this._toType( typeClass ); }
             @Override
             public <V> Tsr<V> setDataType( DataType<V> dataType ) { return (Tsr<V>) Tsr.this._setDataType(dataType); }
             @Override
-            public Mutate toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return this; }
+            public Mutate<V> toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return this; }
             @Override
-            public Mutate incrementVersion( ExecutionCall<?> call ) {
+            public Mutate<V> incrementVersion( ExecutionCall<?> call ) {
                 _incrementVersionBecauseOf( call );
                 return this;
+            }
+            @Override
+            public Tsr<V> setIsIntermediate( boolean isIntermediate ) {
+                _setIsIntermediate( isIntermediate );
+                return Tsr.this;
             }
         };
     }

@@ -10,6 +10,7 @@ import neureka.backend.api.Operation
 import neureka.backend.api.Algorithm
 import neureka.calculus.implementations.FunctionNode
 import neureka.calculus.implementations.FunctionInput
+import neureka.ndim.AbstractNDArray
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
@@ -35,6 +36,7 @@ class Backend_Extension_Spec extends Specification
 
         and : 'A mock tensor which is the expected output'
             Tsr output = Mock(Tsr)
+            var mutate = Mock(AbstractNDArray.Mutate)
 
         and : 'A mocked operation implementation.'
             def implementation = Mock(Algorithm)
@@ -53,6 +55,8 @@ class Backend_Extension_Spec extends Specification
         then : 'The custom call hook should be accessed as outlined below.'
             (1.._) * type.getAlgorithmFor(_) >> implementation
             (1.._) * implementation.dispatch(_,_) >> output
+            (1.._) * output.getMutate() >> mutate
+            (1.._) * mutate.setIsIntermediate(false) >> output
 
         and : 'The mocked output tensor never returns the mock device because our custom call hook replaces execution.'
             0 * output.getDevice() >> Mock(Device)
@@ -84,6 +88,7 @@ class Backend_Extension_Spec extends Specification
             Tsr input = Mock(Tsr)
             GraphNode node = Mock(GraphNode)
             def ndc = Mock(NDConfiguration)
+            var mutate = Mock(AbstractNDArray.Mutate)
 
         and : 'A mocked operation implementation.'
             def implementation = Mock(Algorithm)
@@ -105,6 +110,8 @@ class Backend_Extension_Spec extends Specification
             (1.._) * type.isInline() >> false
             (1.._) * type.getAlgorithmFor(_) >> implementation
             (1.._) * implementation.dispatch(_,_) >> output
+            (1.._) * output.getMutate() >> mutate
+            (1.._) * mutate.setIsIntermediate(false) >> output
 
         and : 'The GraphNode instance which will be created as tensor component interacts as follows.'
             (1.._) * input.get( GraphNode.class ) >> node

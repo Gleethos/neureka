@@ -39,6 +39,7 @@ package neureka.ndim;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.calculus.Function;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.utility.DataConverter;
 import neureka.devices.Device;
@@ -592,7 +593,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *  because the exposed state can easily lead to broken tensors and exceptions...<br>
      *  <br>
      */
-    public interface Mutate {
+    public interface Mutate<T> {
         /**
          *  This method sets the NDConfiguration of this NDArray.
          *  Therefore, it should not be used lightly as it can cause major internal inconsistencies.
@@ -659,6 +660,16 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          * @return This very tensor instance. (factory pattern)
          */
         Mutate incrementVersion( ExecutionCall<?> call );
+
+        /**
+         *  Intermediate tensors are internal non-user tensors which may be eligible
+         *  for deletion when further consumed by a {@link Function}.
+         *  For the casual user of Neureka, this flag should always be false!
+         *
+         * @param isIntermediate The truth value determining if this tensor is not a user tensor but an internal
+         *                       tensor which may be eligible for deletion by {@link Function}s consuming it.
+         */
+        Tsr<T> setIsIntermediate( boolean isIntermediate );
 
     }
 
