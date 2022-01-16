@@ -6,17 +6,32 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-public class CheckedExecutor {
+/**
+ *  This class simply analyses how a lambda may or may not mutate the contents of a given
+ *  array of tensors, in order determine if the mutation is valid.
+ *  This validity refers to the {@link Tsr#isIntermediate()} flag, whose state should
+ *  adhere to strict rule in order to allow for safe deletion of tensors.
+ *  The lambda wrapped by this may be a {@link neureka.calculus.Function} call or a lower level
+ *  procedure defined a {@link neureka.backend.api.Algorithm} implementation.
+ *  <br><br>
+ *  <b>Warning! This is an internal class. Do not depend on it.</b>
+ */
+public class ResultValidator {
 
     private final Tsr<?> _result;
     private final boolean _wronglyIntermediate;
     private final boolean _wronglyNonIntermediate;
 
-    public static CheckedExecutor forInputs(Tsr<?>[] inputs, Supplier<Tsr<?>> execution ) {
-        return new CheckedExecutor( inputs, execution );
+    /**
+     * @param inputs The inputs used by the {@link Supplier} implementation to provide a result.
+     * @param resultProvider The callback providing the result which ought to be validated.
+     * @return The {@link ResultValidator} which ought to validate the provided result.
+     */
+    public static ResultValidator forInputs(Tsr<?>[] inputs, Supplier<Tsr<?>> resultProvider ) {
+        return new ResultValidator( inputs, resultProvider );
     }
 
-    private CheckedExecutor(Tsr<?>[] tensors, Supplier<Tsr<?>> execution ) {
+    private ResultValidator(Tsr<?>[] tensors, Supplier<Tsr<?>> execution ) {
         /*
             Now before calling the function we will do a snapshot of the inputs
             in order to later on verify the output validity with respect
@@ -74,14 +89,23 @@ public class CheckedExecutor {
         _result = result;
     }
 
+    /**
+     * @return Is {@code true} if the result tensor is wrongfully flagged as intermediate (see {@link Tsr#isIntermediate()}).
+     */
     public boolean isWronglyIntermediate() {
         return _wronglyIntermediate;
     }
 
+    /**
+     * @return Is {@code true} if the result tensor is wrongfully flagged as non-intermediate (see {@link Tsr#isIntermediate()}).
+     */
     public boolean isWronglyNonIntermediate() {
         return _wronglyNonIntermediate;
     }
 
+    /**
+     * @return The result tensor returned by the {@link Supplier} lambda passed to this {@link ResultValidator}.
+     */
     public Tsr<?> getResult() {
         return _result;
     }

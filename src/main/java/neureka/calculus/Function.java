@@ -41,7 +41,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Call;
 import neureka.backend.api.Operation;
-import neureka.backend.standard.CheckedExecutor;
+import neureka.backend.standard.ResultValidator;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
 import neureka.calculus.assembly.FunctionBuilder;
@@ -184,6 +184,9 @@ public interface Function
         return result;
     }
 
+    /**
+     *  <br>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+     */
     default Tsr<?> execute( Call<?> call ) {
         /*
             In order to dispatch the user call to the backend we need to
@@ -200,6 +203,9 @@ public interface Function
     interface CallOptions {
         <T> Tsr<T> call( Tsr<T>... tensors );
         <T> Tsr<T> invoke( Tsr<T>... tensors );
+        /**
+         *  <br>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+         */
         Tsr<?> execute( Tsr<?>... tensors );
     }
 
@@ -211,7 +217,7 @@ public interface Function
            @SafeVarargs @Override public final <T> Tsr<T> invoke(  Tsr<T>... tensors ) { return (Tsr<T>) this.execute( tensors ); }
            @Override public Tsr<?> execute( Tsr<?>... tensors )
            {
-               CheckedExecutor checker = CheckedExecutor.forInputs( tensors, ()->Function.this.execute( arguments, tensors ) );
+               ResultValidator checker = ResultValidator.forInputs( tensors, ()->Function.this.execute( arguments, tensors ) );
                if ( checker.isWronglyIntermediate() ) {
                    throw new IllegalStateException(
                            "Output of function '" + Function.this + "' " +
@@ -250,11 +256,28 @@ public interface Function
         else
             return null;
     }
+
+    /**
+     *  <br>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+     */
     Tsr<?> execute( Args arguments, Tsr<?>... tensors );
 
+    /**
+     *  <br>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+     */
     default Tsr<?> execute( Tsr<?>... inputs ) { return execute( inputs, -1 ); }
+
+    /**
+     *  <br>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+     */
     default Tsr<?> execute( Tsr<?>[] inputs, int j ) { return callWith(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j))).execute(inputs); }
+    /**
+     *  <br>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+     */
     default Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return callWith(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j))).execute(inputs); }
+    /**
+     *  <br>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+     */
     default Tsr<?> executeDerive( Tsr<?>[] inputs, int index ) { return executeDerive( inputs, index, -1 ); }
 
     //------------------------------------------------------------------------------------------------------------------
