@@ -128,7 +128,7 @@ public class FunctionNode implements Function
     }
 
 
-    private Tsr<?> _execute(ExecutionCall<? extends Device<?>> call )
+    private Tsr<?> _execute( ExecutionCall<? extends Device<?>> call )
     {
         Tsr<?> alternative = call.getAlgorithm().dispatch( this, call );
         if ( alternative != null ) return alternative;
@@ -215,7 +215,7 @@ public class FunctionNode implements Function
             return commit( inputs, function, activation );
         }
         GraphLock lock =  untracked.get( GraphNode.class ).getLock();
-        attachGraph(inputs, function, lock);
+        attachGraph( inputs, function, lock );
         return activation.get();
     }
 

@@ -41,6 +41,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Call;
 import neureka.backend.api.Operation;
+import neureka.backend.standard.CheckedExecutor;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
 import neureka.calculus.assembly.FunctionBuilder;
@@ -171,29 +172,30 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
 
+    default <T, D extends Device<T>> Tsr<T> call( Call.Builder<T, D> call ) {
+        Tsr<T> result = (Tsr<T>) execute( call.get() );
+        result.getMutate().setIsIntermediate(false);
+        return result;
+    }
 
-    default <T, D extends Device<T>> Tsr<T> call(Call.Builder<T, D> call ) {
+    default <T, D extends Device<T>> Tsr<T> invoke( Call.Builder<T, D> call ) {
         Tsr<T> result = (Tsr<T>) execute( call.get() );
         result.getMutate().setIsIntermediate(false);
         return result;
     }
-    default <T, D extends Device<T>> Tsr<T> invoke(Call.Builder<T, D> call ) {
-        Tsr<T> result = (Tsr<T>) execute( call.get() );
-        result.getMutate().setIsIntermediate(false);
-        return result;
-    }
+
     default Tsr<?> execute( Call<?> call ) {
+        /*
+            In order to dispatch the user call to the backend we need to
+            convert the call to a format compatible with the backend!
+            For that we simply need a list of arguments and tensors.
+         */
         List<Arg> args = call.allMetaArgs();
         if ( call.getDevice() != null ) args.add(Arg.TargetDevice.of((Device<?>) call.getDevice()));
         Arg<?>[] argArray = new Arg[args.size()];
         for ( int i = 0; i < argArray.length; i++ ) argArray[i] = args.get(i);
-        Tsr<?> result = callWith(argArray).execute(call.getTensors());
-        if ( call.validate().any( t -> t == result ).isValid() )
-            assert !result.isIntermediate();
-        else
-            assert result.isIntermediate();
-        return result;
-    };
+        return callWith(argArray).execute(call.getTensors());
+    }
 
     interface CallOptions {
         <T> Tsr<T> call( Tsr<T>... tensors );
@@ -205,21 +207,44 @@ public interface Function
 
     default CallOptions callWith( Args arguments ) {
        return new CallOptions() {
-           @SafeVarargs @Override public final <T> Tsr<T> call(    Tsr<T>... tensors ) { return Function.this.call( arguments, tensors ); }
-           @SafeVarargs @Override public final <T> Tsr<T> invoke(  Tsr<T>... tensors ) { return Function.this.invoke( arguments, tensors ); }
-           @Override              public final     Tsr<?> execute( Tsr<?>... tensors ) { return Function.this.execute( arguments, tensors ); }
+           @SafeVarargs @Override public final <T> Tsr<T> call(    Tsr<T>... tensors ) { return (Tsr<T>) this.execute( tensors ); }
+           @SafeVarargs @Override public final <T> Tsr<T> invoke(  Tsr<T>... tensors ) { return (Tsr<T>) this.execute( tensors ); }
+           @Override public Tsr<?> execute( Tsr<?>... tensors )
+           {
+               CheckedExecutor checker = CheckedExecutor.forInputs( tensors, ()->Function.this.execute( arguments, tensors ) );
+               if ( checker.isWronglyIntermediate() ) {
+                   throw new IllegalStateException(
+                           "Output of function '" + Function.this + "' " +
+                           (Function.this.getOperation() != null ? "(" + Function.this.getOperation().getFunction() + ") " : "") +
+                           "is marked as intermediate result, despite the fact " +
+                           "that it is a member of the input array. " +
+                           "Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged " +
+                           "as 'intermediate', because they are not eligible for deletion!"
+                   );
+               }
+               if ( checker.isWronglyNonIntermediate() ) {
+                   throw new IllegalStateException(
+                           "Output of function '" + Function.this + "' " +
+                           (Function.this.getOperation() != null ? "(" + Function.this.getOperation().getFunction() + ") " : "") +
+                           "is neither marked as intermediate result nor a member of the input array. " +
+                           "Tensors instantiated by operations in the backend are expected to be flagged " +
+                           "as 'intermediate' in order to be eligible for deletion!"
+                   );
+               }
+               return checker.getResult();
+           }
        };
     }
 
-    default <T> Tsr<T> call(   Args arguments, Tsr<T>... tensors ) {
-        Tsr<T> result = (Tsr<T>) execute( arguments, tensors );
+    default <T> Tsr<T> call( Args arguments, Tsr<T>... tensors ) {
+        Tsr<T> result = callWith( arguments ).call( tensors );
         if ( result != null )
             return result.getMutate().setIsIntermediate(false);
         else
             return null;
     }
     default <T> Tsr<T> invoke( Args arguments, Tsr<T>... tensors ) {
-        Tsr<T> result = (Tsr<T>) execute( arguments, tensors );
+        Tsr<T> result = callWith( arguments ).invoke( tensors );
         if ( result != null )
             return result.getMutate().setIsIntermediate(false);
         else
@@ -228,8 +253,8 @@ public interface Function
     Tsr<?> execute( Args arguments, Tsr<?>... tensors );
 
     default Tsr<?> execute( Tsr<?>... inputs ) { return execute( inputs, -1 ); }
-    default Tsr<?> execute( Tsr<?>[] inputs, int j ) { return execute(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j)), inputs); }
-    default Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return execute(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j)), inputs); }
+    default Tsr<?> execute( Tsr<?>[] inputs, int j ) { return callWith(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j))).execute(inputs); }
+    default Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return callWith(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j))).execute(inputs); }
     default Tsr<?> executeDerive( Tsr<?>[] inputs, int index ) { return executeDerive( inputs, index, -1 ); }
 
     //------------------------------------------------------------------------------------------------------------------

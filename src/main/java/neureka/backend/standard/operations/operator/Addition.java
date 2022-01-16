@@ -185,14 +185,6 @@ public class Addition extends AbstractOperation {
                                             .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
                                             .buildFunAlgorithm();
 
-        ScalarOperatorCreator<PrimaryF64NDFun> scalarCreator =
-                (inputs, value, d) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] + value;
-                    else
-                        return t1Idx -> 1;
-                };
- 
         setAlgorithm(
             scalarization.setImplementationFor(
                 CPU.class,
@@ -202,9 +194,9 @@ public class Addition extends AbstractOperation {
                         call -> {
                             assert call.getTensors().length == 3;
                             if ( call.getDerivativeIndex() == 0 )
-                                call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d );
+                                call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d ).getMutate().setIsIntermediate( true );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d );
+                                call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d ).getMutate().setIsIntermediate( true );
                             else {
                                 Scalarization.implementationForCPU()
                                     .with(Fun.F64F64ToF64.triple(
@@ -236,9 +228,9 @@ public class Addition extends AbstractOperation {
                         call -> {
                             assert call.getTensors().length == 3;
                             if ( call.getDerivativeIndex() == 0 )
-                                call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d );
+                                call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d ).getMutate().setIsIntermediate( true );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d );
+                                call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d ).getMutate().setIsIntermediate( true );
                             else {
                                 int gwz = call.getTsrOfType(Number.class, 0).size();
                                 float value = call.getTsrOfType(Number.class, 2).getValueAt(0).floatValue();

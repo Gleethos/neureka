@@ -40,7 +40,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
                 {
                     int[] shape = inputs[ 1 ].getNDConf().shape();
                     Class<Object> type = (Class<Object>) inputs[ 1 ].getValueClass();
-                    Tsr<Object> output = Tsr.of(type).withShape(shape).all( 0.0 );
+                    Tsr<Object> output = Tsr.of(type).withShape(shape).all( 0.0 ).getMutate().setIsIntermediate( true );
                     output.setIsVirtual( false );
                     try {
                         device.store( output );

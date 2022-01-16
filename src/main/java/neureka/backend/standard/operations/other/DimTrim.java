@@ -140,7 +140,7 @@ public class DimTrim extends AbstractOperation
         if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
             throw new IllegalArgumentException("Column major not yet supported for shape trimming!");
 
-        tensor = ( newTsr ? tensor.getAt( new ArrayList<>() ) : tensor );
+        tensor = ( newTsr ? tensor.getAt( new ArrayList<>() ).getMutate().setIsIntermediate( true ) : tensor );
         List<Integer> newShape = new ArrayList<>();
         List<Integer> newTranslation = new ArrayList<>();
         List<Integer> newIdxmap = new ArrayList<>();

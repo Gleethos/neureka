@@ -125,8 +125,8 @@ public class FunctionInput implements Function, GradientProvider
         int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );
         if ( d >= 0 )
             return ( d == index() )
-                ? Tsr.of( tensors[ 0 ].shape(), 1.0 )
-                : Tsr.of( tensors[ 0 ].shape(), 0.0 );
+                ? Tsr.of( tensors[ 0 ].shape(), 1.0 ).getMutate().setIsIntermediate( true )
+                : Tsr.of( tensors[ 0 ].shape(), 0.0 ).getMutate().setIsIntermediate( true );
 
         if ( index() >= tensors.length )
             throw new IllegalArgumentException(

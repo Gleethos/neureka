@@ -81,7 +81,7 @@ public class Reshape extends AbstractOperation
     public static Tsr<?> reshaped( Tsr<?> tensor, int[] newForm, boolean newTsr )
     {
         Tsr<?> parent = tensor;
-        tensor = (newTsr) ? tensor.getAt( new ArrayList<>() ) : tensor;
+        tensor = (newTsr) ? tensor.getAt( new ArrayList<>() ).getMutate().setIsIntermediate( true ) : tensor;
         NDConfiguration newNDC = tensor.getNDConf().newReshaped( newForm );
         AbstractNDArray.Utility.Indexing.shpCheck( newNDC.shape(), tensor );
         tensor.getMutate().setNDConf( newNDC );

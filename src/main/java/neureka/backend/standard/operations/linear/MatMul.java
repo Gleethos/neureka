@@ -58,7 +58,7 @@ public class MatMul extends AbstractOperation
                                     Function matMul = Neureka.get().backend().getFunction().matMul();
                                     Tsr<?>[] inputs = call.getTensors();
                                     int d = ( 1 + call.getValOf( Arg.DerivIdx.class ) ) % 2;
-                                    Tsr<?> derivative = inputs[ d ].T().clone(); // We need to clone it to make it have a simple nd configuration...
+                                    Tsr<?> derivative = inputs[ d ].T().clone().getMutate().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                                     derivative.to(call.getDevice());
                                     return ADAgent.of( derivative )
                                                     .setBackward( (node, error) -> {
@@ -90,7 +90,7 @@ public class MatMul extends AbstractOperation
                                     {
                                         Class<Number> type = (Class<Number>) tensors[1].getDataType().getJVMTypeClass();
                                         int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };
-                                        Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 );
+                                        Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).getMutate().setIsIntermediate( true );
                                         output.getMutate().toLayout(tensors[1].getNDConf().getLayout());
                                         output.setIsVirtual( false );
                                         try {
@@ -198,7 +198,7 @@ public class MatMul extends AbstractOperation
         for ( int i = 0; i < tensors.length; i++ ) {
             if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {
                 _LOG.warn("Auto cloning a tensor which does not have a simple ND configuration...");
-                tensors[i] = tensors[i].clone();
+                tensors[i] = tensors[i].clone().getMutate().setIsIntermediate( true );
                 /*
                     The user should do cloning explicitly because using slices
                     will cause the backend to perform aut cloning every time the

@@ -2391,9 +2391,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         .getFunction()
                         .idy()
                         .call(
-                                (Tsr<V>) Tsr.of(this.shape(), 0.0), this
+                            (Tsr<V>) Tsr.of(this.shape(), 0.0).getMutate().setIsIntermediate( this.isIntermediate() ), this
                         )
                         .to( this.getDevice() );
+
     }
 
 

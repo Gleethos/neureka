@@ -60,7 +60,12 @@ public class ConvUtil {
                                         (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative )
                                     )
                                     .setBackward(
-                                        (node, error) -> deConv.execute( error, derivative, Tsr.of(shape, 0) )
+                                        (node, error) ->
+                                                deConv.execute(
+                                                        error,
+                                                        derivative,
+                                                        Tsr.of(shape, 0).getMutate().setIsIntermediate( true )
+                                                )
                                     );
                         }
                 )
@@ -72,7 +77,7 @@ public class ConvUtil {
                                 Tsr<?>[] inputs = call.getTensors();
                                 Tsr<?>[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
                                 tsrs[ 0 ] = (call.getValOf( Arg.DerivIdx.class ) < 0)
-                                        ? Tsr.ofShape(Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()))
+                                        ? Tsr.ofShape(Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape())).getMutate().setIsIntermediate( true )
                                         : null;
 
                                 for (Tsr<?> t : tsrs) if ( t != null ) t.setIsVirtual( false );
@@ -106,7 +111,7 @@ public class ConvUtil {
                             if ( tensors[ 0 ] == null ) // Creating a new tensor:
                             {
                                 int[] shp = Tsr.Utility.Indexing.shpOfCon(tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape());
-                                Tsr<Double> output = Tsr.of( shp, 0.0 );
+                                Tsr<Double> output = Tsr.of( shp, 0.0 ).getMutate().setIsIntermediate( true );
                                 output.setIsVirtual( false );
                                 try {
                                     device.store( output );

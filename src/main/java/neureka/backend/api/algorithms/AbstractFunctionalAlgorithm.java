@@ -7,6 +7,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.*;
+import neureka.backend.standard.CheckedExecutor;
 import neureka.calculus.Function;
 import neureka.calculus.RecursiveExecutor;
 import neureka.calculus.implementations.FunctionNode;
@@ -132,7 +133,26 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     @Override
     public Tsr<?> dispatch( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
-        return _handleInsteadOfDevice.dispatch( caller, call );
+        if ( call == null ) return _handleInsteadOfDevice.dispatch( caller, call );
+        CheckedExecutor checker = CheckedExecutor.forInputs( call.getTensors(), ()->_handleInsteadOfDevice.dispatch( caller, call ) );
+        if ( checker.isWronglyIntermediate() ) {
+            throw new IllegalStateException(
+                    "Output of algorithm '" + this.getName() + "' " +
+                    "is marked as intermediate result, despite the fact " +
+                    "that it is a member of the input array. " +
+                    "Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged " +
+                    "as 'intermediate', because they are not eligible for deletion!"
+            );
+        }
+        if ( checker.isWronglyNonIntermediate() ) {
+            throw new IllegalStateException(
+                    "Output of algorithm '" + this.getName() + "' " +
+                    "is neither marked as intermediate result nor a member of the input array. " +
+                    "Tensors instantiated by operations in the backend are expected to be flagged " +
+                    "as 'intermediate' in order to be eligible for deletion!"
+            );
+        }
+        return checker.getResult();
     }
 
     /**

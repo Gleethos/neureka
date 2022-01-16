@@ -52,7 +52,7 @@ public final class Gaussian extends AbstractOperation
                 if ( inputs[ 0 ] == null ) // Creating a new tensor:
                 {
                     int[] shp = inputs[ 1 ].getNDConf().shape();
-                Tsr<?> output = Tsr.of( shp, 0.0 );
+                Tsr<?> output = Tsr.of( shp, 0.0 ).getMutate().setIsIntermediate( true );
                 output.setIsVirtual( false );
                 try {
                     device.store( output );

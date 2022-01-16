@@ -46,7 +46,7 @@ class Calculus_Integration_Spec extends Specification
             Function f = new FunctionBuilder( Neureka.get().backend() ).build(equation, true) // TODO : test with 'doAD' : false!
 
         and : 'The result is being calculated by invoking the Function instance.'
-            Tsr<?> result = ( index != null ) ? f.derive( inputs, index ) : f.call(   inputs        )
+            Tsr<?> result = ( index != null ) ? f.derive( inputs, index ) : f.call( inputs )
 
             List<Double> value = ( index != null )
                                     ? (result.getValueAs( double[].class ) as List<Double>)

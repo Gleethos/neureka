@@ -142,7 +142,9 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
         if ( tensors[ 0 ] == null ) // Creating a new tensor:
         {
             int[] shp = tensors[ 1 ].getNDConf().shape();
-            Tsr<Object> output = (Tsr<Object>) Tsr.of( tensors[ 1 ].getDataType(), shp );
+            Tsr<Object> output = (Tsr<Object>) Tsr.of( tensors[ 1 ].getDataType(), shp )
+                                                    .getMutate()
+                                                    .setIsIntermediate(true);
             output.setIsVirtual( false );
             try {
                 device.store( output );

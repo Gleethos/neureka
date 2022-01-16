@@ -26,7 +26,7 @@ class Backend_Extension_Spec extends Specification
         """
     }
 
-    def 'Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.'(){
+    def 'Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.'() {
 
         given : 'A new mock operation type is being created.'
             def type = Mock(Operation)
@@ -57,6 +57,7 @@ class Backend_Extension_Spec extends Specification
             (1.._) * implementation.dispatch(_,_) >> output
             (1.._) * output.getMutate() >> mutate
             (1.._) * mutate.setIsIntermediate(false) >> output
+            (1.._) * output.isIntermediate() >> true
 
         and : 'The mocked output tensor never returns the mock device because our custom call hook replaces execution.'
             0 * output.getDevice() >> Mock(Device)
@@ -112,6 +113,7 @@ class Backend_Extension_Spec extends Specification
             (1.._) * implementation.dispatch(_,_) >> output
             (1.._) * output.getMutate() >> mutate
             (1.._) * mutate.setIsIntermediate(false) >> output
+            (1.._) * output.isIntermediate() >> true
 
         and : 'The GraphNode instance which will be created as tensor component interacts as follows.'
             (1.._) * input.get( GraphNode.class ) >> node

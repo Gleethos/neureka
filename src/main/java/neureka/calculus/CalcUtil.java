@@ -434,8 +434,8 @@ public class CalcUtil
             if ( tensors[ i ] == null )
                 tensors[ i ] =
                         ( j < 0 )
-                            ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[ i - offset ]).value() )
-                            : Tsr.of( tempType, tempShape, src[ i - offset ].call(new double[]{}, j) );
+                            ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[ i - offset ]).value() ).getMutate().setIsIntermediate( true )
+                            : Tsr.of( tempType, tempShape, src[ i - offset ].call(new double[]{}, j) ).getMutate().setIsIntermediate( true );
         }
         return tensors;
     }
