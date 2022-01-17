@@ -5,26 +5,26 @@ import java.util.stream.Collectors;
 
 public class Functions {
 
-    Function dimTrim;
-    Function idy;
-    Function conv;
-    Function plus;
-    Function plusAssign;
-    Function minus;
-    Function minusAssign;
-    Function div;
-    Function divAssign;
-    Function pow;
-    Function powAssign;
-    Function mul;
-    Function mulAssign;
-    Function add;
-    Function addAssign;
-    Function mod;
-    Function modAssign;
-    Function neg;
+    private final Function dimTrim;
+    private final Function idy;
+    private final Function conv;
+    private final Function plus;
+    private final Function plusAssign;
+    private final Function minus;
+    private final Function minusAssign;
+    private final Function div;
+    private final Function divAssign;
+    private final Function pow;
+    private final Function powAssign;
+    private final Function mul;
+    private final Function mulAssign;
+    private final Function add;
+    private final Function addAssign;
+    private final Function mod;
+    private final Function modAssign;
+    private final Function neg;
 
-    Function matMul;
+    private final Function matMul;
 
     public Functions( boolean doingAD ) {
         dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
