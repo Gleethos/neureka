@@ -343,7 +343,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             )
 
         where:
-            device << [Device.find('gpu'), CPU.get() ]
+            device << [CPU.get(),Device.find('gpu')]
     }
 
 

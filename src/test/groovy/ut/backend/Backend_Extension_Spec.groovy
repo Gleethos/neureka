@@ -116,7 +116,8 @@ class Backend_Extension_Spec extends Specification
             (1.._) * output.isIntermediate() >> true
 
         and : 'The GraphNode instance which will be created as tensor component interacts as follows.'
-            (1.._) * input.get( GraphNode.class ) >> node
+            (1.._) * input.getGraphNode() >> node
+            (0.._) * input.get(GraphNode) >> node
             (1.._) * node.getLock() >> Mock(GraphLock)
             (1.._) * input.getDevice() >> Mock(Device) // Device is being queried for execution...
             _ * type.getOperator() >> 'test_identifier'

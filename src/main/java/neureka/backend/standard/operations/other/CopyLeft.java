@@ -44,10 +44,7 @@ public class CopyLeft extends AbstractOperation {
                 )
                 .setCanPerformBackwardADFor( call -> false )
                 .setCanPerformForwardADFor( call -> false )
-                .setSupplyADAgentFor(
-                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                )
+                .setSupplyADAgentFor( getDefaultAlgorithm() )
                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
                 .setCallPreparation(
                         call ->
@@ -116,10 +113,7 @@ public class CopyLeft extends AbstractOperation {
         Activation activation = new Activation()
             .setCanPerformBackwardADFor( call -> false )
             .setCanPerformForwardADFor( call -> false )
-            .setSupplyADAgentFor(
-                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                        getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-            )
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
             .setCallPreparation(
                     call ->

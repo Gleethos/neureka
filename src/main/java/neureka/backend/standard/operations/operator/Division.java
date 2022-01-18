@@ -42,10 +42,7 @@ public class Division extends AbstractOperation
         // DEFAULT OPERATION :
 
         Operator operator = new Operator(JunctionUtil::forDivisionsOrModuli)
-                                   .setSupplyADAgentFor(
-                                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                                                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                                    )
+                                   .setSupplyADAgentFor( getDefaultAlgorithm() )
                                     .buildFunAlgorithm();
 
         setAlgorithm(

@@ -64,7 +64,7 @@ public class ConvUtil {
                                                 deConv.execute(
                                                         error,
                                                         derivative,
-                                                        Tsr.of(shape, 0).getMutate().setIsIntermediate( true )
+                                                        Tsr.of(shape, 0).getMutate().setIsIntermediate( false )
                                                 )
                                     );
                         }

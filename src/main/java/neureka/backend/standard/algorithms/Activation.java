@@ -136,8 +136,9 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
         else if ( typeClass == Float.class )
         {
             Fun.F32ToF32 fun = funs.get(Fun.F32ToF32.class).get(d);
+            assert fun != null;
             float[] t0_value = (float[]) t0_drn.getData();
-            float[] t1_value = (float[]) t1_src.getData();
+            float[] t1_value = t1_src.getDataAs(float[].class);
             if ( noSlices )
                 workload = (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);

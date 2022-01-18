@@ -16,7 +16,6 @@ import java.util.function.Supplier
 
 class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
 {
-
     def setupSpec()
     {
         reportHeader """
@@ -130,9 +129,9 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             (1..2) * function.getOperation() >> type
             (0.._) * type.isDifferentiable() >> true
             (1.._) * type.isInline() >> true
-            1 * inputs[0].get( GraphNode.class ) >> inputsNodeMock
-            1 * inputs[1].get( GraphNode.class ) >> null
-            0 * inputs[2].get( GraphNode.class ) >> null
+            1 * inputs[0].getGraphNode() >> inputsNodeMock
+            1 * inputs[1].getGraphNode() >> null
+            0 * inputs[2].getGraphNode() >> null
             0 * context.allowsForward() >> true
     }
 
@@ -170,9 +169,9 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             (1.._) * function.getOperation() >> type
             (0.._) * type.isDifferentiable() >> true
             (1.._) * type.isInline() >> true
-            1 * inputs[0].get( GraphNode.class ) >> inputsNodeMock
-            1 * inputs[1].get( GraphNode.class ) >> inputsNodeMock
-            1 * inputs[2].get( GraphNode.class ) >> otherInputsNodeMock
+            1 * inputs[0].getGraphNode() >> inputsNodeMock
+            1 * inputs[1].getGraphNode() >> inputsNodeMock
+            1 * inputs[2].getGraphNode() >> otherInputsNodeMock
             0 * context.allowsForward() >> true
     }
 
@@ -207,9 +206,9 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             0 * payload.getDevice() >> device
             0 * payload.to( _ )
             0 * device.cleaning( payload, _ )
-            1 * inputs[0].get( GraphNode.class ) >> inputsNodeMock
-            0 * inputs[1].get( GraphNode.class ) >> inputsNodeMock
-            0 * inputs[2].get( GraphNode.class ) >> inputsNodeMock
+            1 * inputs[0].getGraphNode() >> inputsNodeMock
+            0 * inputs[1].getGraphNode() >> inputsNodeMock
+            0 * inputs[2].getGraphNode() >> inputsNodeMock
             0 * inputsNodeMock.getMode() >> -2
             1 * inputsNodeMock.usesAD() >> true
             0 * inputs[0].rqsGradient() >> true

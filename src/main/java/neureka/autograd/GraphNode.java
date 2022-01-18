@@ -228,7 +228,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             }
             GraphLock foundLock = null;
             for ( int i = 0; i < inputs.length; i++ ) {
-                GraphNode<V> child = inputs[ i ].get( GraphNode.class );
+                GraphNode<V> child = (GraphNode<V>) inputs[ i ].getGraphNode();
                 if ( child == null ) throw new IllegalStateException(
                         "Input tensor at index '" + i + "' did not return a GraphNode instance." +
                                 "Input tensors of a new GraphNode must be part of the computation graph!"
@@ -248,7 +248,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     );
                 }
             }
-            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].get( GraphNode.class ).getLock() );
+            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].getGraphNode().getLock() );
         }
         else
             throw new IllegalArgumentException(
@@ -267,7 +267,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private void _construct( Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call, GraphLock lock )
     {
-        Tsr<Object>[] inputs = ( call == null ) ? null : (Tsr<Object>[]) call.getTensors();
+        Tsr<V>[] inputs = ( call == null ) ? null : (Tsr<V>[]) call.getTensors();
         if ( output == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
         _payloadReferenceVersion = output.getVersion();
         if ( !function.isDoingAD() ) return; // Only functions with AutoDiff enabled create computation graph!
@@ -283,7 +283,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             _function = function;
             _parents = new GraphNode[ inputs.length ];
             for ( int i = 0; i < inputs.length; i++ ) {
-                _parents[ i ] = inputs[ i ].get( GraphNode.class );
+                _parents[ i ] = inputs[ i ].getGraphNode();
                 if ( _parents[ i ] == null ) {
                     throw new IllegalStateException(
                             "Input tensors of a new graph-node must contain leave graph-nodes!"
@@ -302,14 +302,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
         }
         /* Returning if the above cannot form an AutoDiff computation graph! : */
         if ( inputs == null || !function.isFlat() ) return; // Leave nodes have!
-        for ( Tsr<Object> t : inputs ) if ( t.equals(output) ) return; // Output must be a unique tensor for AD!
+        for ( Tsr<V> t : inputs ) if ( t.equals(output) ) return; // Output must be a unique tensor for AD!
 
         if ( this.usesAD() && function.isFlat() ) {
             /* Preparing for back propagation: */
             if ( this.usesForwardAD() )
             {
                 for ( int i = 0; i < inputs.length; i++ ) {
-                    GraphNode<V> srcNode = inputs[ i ].get( GraphNode.class );
+                    GraphNode<V> srcNode = inputs[ i ].getGraphNode();
                     if ( srcNode.usesAD() ) {
                         if (
                                 srcNode.size() == 0 && this.size() == 0
@@ -364,7 +364,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 }
             } else if ( this.usesReverseAD() ) {
                 for ( int i = 0; i < inputs.length; i++ ) {
-                    GraphNode<V> srcNode = inputs[ i ].get( GraphNode.class );
+                    GraphNode<V> srcNode = inputs[ i ].getGraphNode();
                     if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {
                         this.put(
                                 srcNode,
@@ -406,7 +406,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         int[] modes = new int[ inputs.length ];
         int inputMode = 0;
         for ( int i = 0; i < inputs.length; i++ ) {
-            GraphNode<V> node = inputs[ i ].get( GraphNode.class ); // Not null checked in constructor!
+            GraphNode<V> node = inputs[ i ].getGraphNode(); // Not null checked in constructor!
             modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.getMode();
             inputMode += ( modes[ i ] != 0) ? 1 : 0;
         }
@@ -678,7 +678,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         _deleteDerivativesRecursively();// Cleanup after back-propagation!
     }
 
-    private void _backwardJIT(Tsr<V> error, GraphNode<V> source ) {
+    private void _backwardJIT( Tsr<V> error, GraphNode<V> source ) {
         _reliesOnJustInTimeProp = false; // JITProp is currently being handled in this method. Afterwards it is not relying on it anymore!
         _migrateAndOrApplyError( error, payload -> {
             JITProp<V> jit = payload.get( JITProp.class );//Get JIT-Prop node.
@@ -803,8 +803,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public void forEachBackward( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
         if ( _targetsToAgents == null ) return;
+        error.getMutate().setIsIntermediate( false );
         _targetsToAgents.forEach( (t, agents ) -> {
-            for ( ADAgent a : agents ) action.accept( t, a.backward( t, error ) );
+            for ( ADAgent a : agents )
+                action.accept( t, a.backward( t, error ) );
         });
     }
 

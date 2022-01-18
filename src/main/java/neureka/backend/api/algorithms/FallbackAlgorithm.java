@@ -123,10 +123,12 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
         }
-        Tsr<?> localDerivative = function.executeDerive( call.getTensors(), call.getDerivativeIndex() );
+        Tsr<?> localDerivative = CalcUtil.keep( call.getTensors(), () -> function.executeDerive( call.getTensors(), call.getDerivativeIndex() ) );
+        localDerivative.getMutate().setIsIntermediate( false );
         return ADAgent.of( localDerivative )
                       .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, localDerivative ) )
                       .setBackward( (node, backwardError ) -> mul.execute( backwardError, localDerivative ) );
+        // TODO: Maybe delete local derivative??
     }
 
     @Override

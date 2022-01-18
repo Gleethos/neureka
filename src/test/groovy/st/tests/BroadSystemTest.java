@@ -29,27 +29,51 @@ public class BroadSystemTest
         z.backward(Tsr.of(new int[]{2, 2}, 1));
         tester.testTensor(x, new String[]{"[2x2]:(-1.0, 2.0, -3.0, 3.0):g:(-3.0, -3.0, -3.0, -3.0)"});
         //---
-        x = Tsr.of(new int[]{1}, 0.1).setRqsGradient(true);
-        Function tanh = new FunctionBuilder( Neureka.get().backend() ).build("tanh(i0)", true);
-        Function tenxx = new FunctionBuilder( Neureka.get().backend() ).build("i0*100", true);
-        z = tenxx.call( tanh.call( x ) );
-        tester.testTensor(z, new String[]{"[1]:(9.95037E0)"});
-        Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
-        z.backward(Tsr.of(new int[]{1}, 1));
-        tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0099E0)"});
-        tester.testTensor(z, new String[]{"[1]:(9.95037E0); ->d[1]:(99.0099E0)"});
+        {
+            Neureka.get().settings().debug().setIsDeletingIntermediateTensors(false);
+            x = Tsr.of(new int[]{1}, 0.1).setRqsGradient(true);
+            Function tanh = new FunctionBuilder(Neureka.get().backend()).build("tanh(i0)", true);
+            Function tenxx = new FunctionBuilder(Neureka.get().backend()).build("i0*100", true);
+            z = tenxx.call(tanh.call(x));
+            tester.testTensor(z, new String[]{"[1]:(9.95037E0)"});
+            Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
+            z.backward(Tsr.of(new int[]{1}, 1));
+            tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0099E0)"});
+            tester.testTensor(z, new String[]{"[1]:(9.95037E0); ->d[1]:(99.0099E0)"});
+            tester.testContains(
+                    z.toString("dgc"),
+                    new String[]{"[1]:(9.95037E0); ->d[1]:(99.0099E0)"},
+                    "test double formatting"
+            );
+            tester.testContains(
+                    Tsr.of(3).toString("dgc"),
+                    new String[]{"[1]:(3.0)"},
+                    "test FP formatting"
+            );
+        }
+        {
+            Neureka.get().settings().debug().setIsDeletingIntermediateTensors(true);
+            x = Tsr.of(new int[]{1}, 0.1).setRqsGradient(true);
+            Function tanh = new FunctionBuilder(Neureka.get().backend()).build("tanh(i0)", true);
+            Function tenxx = new FunctionBuilder(Neureka.get().backend()).build("i0*100", true);
+            z = tenxx.call(tanh.call(x));
+            tester.testTensor(z, new String[]{"[1]:(9.95037E0)"});
+            Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
+            z.backward(Tsr.of(new int[]{1}, 1));
+            tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0099E0)"});
+            tester.testTensor(z, new String[]{"[1]:(9.95037E0); ->ddeleted"});
+            tester.testContains(
+                    z.toString("dgc"),
+                    new String[]{"[1]:(9.95037E0); ->ddelete"},
+                    "test double formatting"
+            );
+            tester.testContains(
+                    Tsr.of(3).toString("dgc"),
+                    new String[]{"[1]:(3.0)"},
+                    "test FP formatting"
+            );
+        }
         Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
-        //---
-        tester.testContains(
-                z.toString("dgc"),
-                new String[]{"[1]:(9.95037E0); ->d[1]:(99.0099E0)"},
-                "test double formatting"
-        );
-        tester.testContains(
-                Tsr.of(3).toString("dgc"),
-                new String[]{"[1]:(3.0)"},
-                "test FP formatting"
-        );
         //---
         Tsr<Double> tensor1 = Tsr.of(3).setRqsGradient(true);
         Tsr<Double> tensor2 = Tsr.of(-4);
@@ -559,7 +583,6 @@ public class BroadSystemTest
         Tsr<?> result = Tsr.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
         GraphNode<Double> node = (GraphNode) result.get( GraphNode.class );
         String asString = node.toString("gnv");
-        System.out.println(asString);
         tester.testContains(
                 asString,
                 new String[]{
@@ -578,7 +601,6 @@ public class BroadSystemTest
         result = Tsr.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
         node = (GraphNode) result.get( GraphNode.class );
         asString = node.toString("gnv");
-        System.out.println(asString);
         tester.testContains(
                 asString,
                 new String[]{

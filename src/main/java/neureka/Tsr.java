@@ -89,6 +89,7 @@ import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.operations.other.Reshape;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.composition.Component;
@@ -1206,7 +1207,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     --------------------------------------------
     */
 
-    /**
+    /**delete()
      *  This will check if the {@link #delete()} method was previously called on this tensor.
      *  This means that any references inside the tensor will be null
      *  as well as that the tensor data was freed on every device,
@@ -1231,7 +1232,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public Tsr<V> delete()
     {
         if ( isDeleted() ) return this;
-
         forComponent( GraphNode.class, n -> {
             if ( n.isUsedAsDerivative() ) {
                 String message = "Cannot delete a tensor which is used as derivative by the AD computation graph!";
@@ -1486,12 +1486,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
      */
-    public GraphNode<V> getGraphNode() { return get( GraphNode.class ); }
+    public GraphNode<V> getGraphNode() { _guardGet("graph node"); return get( GraphNode.class ); }
 
     /**
      * @return An instance of the {@link NDFrame} component if present.
      */
-    public NDFrame<V> frame() { return get( NDFrame.class ); }
+    public NDFrame<V> frame() { _guardGet("graph node"); return get( NDFrame.class ); }
 
 
     /*
@@ -1676,7 +1676,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The tensor on which this method was called. (factory pattern)
      */
     public Tsr<V> backward( double value ) {
-        backward( new Tsr<>( getNDConf().shape(), value ) );
+        backward((Tsr<V>) Tsr.of( this.getValueClass(), getNDConf().shape(), (Object) value ));
         return this;
     }
 
@@ -2386,15 +2386,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     @Override
     public Tsr<V> clone() {
-        return Neureka.get()
-                        .backend()
-                        .getFunction()
-                        .idy()
-                        .call(
-                            (Tsr<V>) Tsr.of(this.shape(), 0.0).getMutate().setIsIntermediate( this.isIntermediate() ), this
-                        )
-                        .to( this.getDevice() );
-
+        Function cloner = Neureka.get().backend().getFunction().idy();
+        boolean thisIsIntermediate = this.isIntermediate();
+        _setIsIntermediate(false);
+        Tsr<V> clone = cloner.call((Tsr<V>) Tsr.of(this.getValueClass(), this.shape(), 0.0), this).to( this.getDevice() );
+        clone.getMutate().setIsIntermediate( thisIsIntermediate );
+        _setIsIntermediate(thisIsIntermediate);
+        return clone;
     }
 
 
@@ -2893,13 +2891,20 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param error The error gradient which ought to be added to the gradient of this tensor.
      * @return This very tensor instance to enable method chaining.
      */
-    public Tsr<V> addToGradient(Tsr<V> error ) {
+    public Tsr<V> addToGradient( Tsr<V> error ) {
+        _guardSet("gradient");
         if (
                 !forComponent(
                     Tsr.class,
                         gradient ->
                         this.set(
-                                Neureka.get().backend().getFunction().plusAssign().call(gradient, error)
+                            CalcUtil.keep( gradient, error, () ->
+                                Neureka.get()
+                                        .backend()
+                                        .getFunction()
+                                        .plusAssign()
+                                        .call(gradient, error)
+                            )
                         )
                 )
         ) set( error ).forComponent( Device.class, device -> {
@@ -3211,6 +3216,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     @Override
     public Mutate<V> getMutate() {
+        _guardGet("mutate");
         return new Mutate<V>() {
             @Override
             public Mutate<V> setNDConf( NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return this; }

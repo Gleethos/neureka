@@ -96,6 +96,7 @@ class Autograd_Explained extends Specification
 
         and : 'Because "y" was created as a result of a default operation, it now has a graph node as component.'
             y.has( GraphNode.class )
+            println("---")
 
         when : 'We do more computations on "y" ...'
             def z = y * y * 3

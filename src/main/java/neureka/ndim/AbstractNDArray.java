@@ -462,24 +462,24 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     /**
      * @return The number of dimensions of this tensor / nd-array.
      */
-    public int rank() { return _NDConf.rank(); }
+    public int rank() { _guardGet("rank"); return _NDConf.rank(); }
 
     /**
      * @return A list of the dimensions of this tensor / array.
      */
-    public List<Integer> shape() { return _asList(_NDConf.shape()); }
+    public List<Integer> shape() { _guardGet("shape"); return _asList(_NDConf.shape()); }
 
     public int shape( int i ) { return _NDConf.shape()[ i ]; }
 
-    public List<Integer> indicesMap() { return _asList(_NDConf.indicesMap()); }
+    public List<Integer> indicesMap() { _guardGet("indices map"); return _asList(_NDConf.indicesMap()); }
 
-    public List<Integer> translation() { return _asList(_NDConf.translation()); }
+    public List<Integer> translation() { _guardGet("translation"); return _asList(_NDConf.translation()); }
 
-    public List<Integer> spread() { return _asList(_NDConf.spread()); }
+    public List<Integer> spread() { _guardGet("spread"); return _asList(_NDConf.spread()); }
 
-    public List<Integer> offset() { return _asList(_NDConf.offset()); }
+    public List<Integer> offset() { _guardGet("offset"); return _asList(_NDConf.offset()); }
 
-    public int size() { return NDConfiguration.Utility.szeOfShp(_NDConf.shape()); }
+    public int size() { _guardGet("size"); return NDConfiguration.Utility.szeOfShp(_NDConf.shape()); }
 
     private static List<Integer> _asList( int[] array ) {
         List<Integer> intList = new ArrayList<>( array.length );

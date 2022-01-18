@@ -117,7 +117,7 @@ public class Multiplication extends AbstractOperation
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> derivative = f.executeDerive( inputs, d );
+                            Tsr<?> derivative = CalcUtil.keep( inputs, () -> f.executeDerive( inputs, d ) );
                             return ADAgent.of( derivative )
                                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );

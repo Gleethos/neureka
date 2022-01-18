@@ -220,7 +220,9 @@ public class FunctionNode implements Function
     }
 
     private static Tsr<?> commit(
-            Tsr<?>[] inputs, Function function, Supplier<Tsr<?>> activation
+            Tsr<?>[] inputs,
+            Function function,
+            Supplier<Tsr<?>> activation
     ) {
         Reshape.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
 

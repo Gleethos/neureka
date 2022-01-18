@@ -49,12 +49,12 @@ class Calculus_Function_Spec extends Specification {
     {
         given :
             var fun1 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                                    return tensors[0].mutate.setIsIntermediate( true ) // This should fail!
-                                })
+                return tensors[0]
+            })
         and :
             var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                                    return tensors[0]
-                                })
+                return tensors[0].mutate.setIsIntermediate( true ) // This should fail!
+            })
 
         and :
             var a = Tsr.of(3)
@@ -66,12 +66,12 @@ class Calculus_Function_Spec extends Specification {
         when :
             caller(a, b, fun1)
         then :
-            thrown(IllegalStateException)
+            noExceptionThrown()
 
         when :
             caller(a, b, fun2)
         then :
-            noExceptionThrown()
+            thrown(IllegalStateException)
 
         where :
             caller << [
