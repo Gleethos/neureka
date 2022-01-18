@@ -88,19 +88,25 @@ package neureka;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.other.Reshape;
-import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.composition.Component;
+import neureka.common.utility.DataConverter;
+import neureka.common.utility.ListReader;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.F32;
 import neureka.dtype.custom.F64;
+import neureka.fluent.building.TensorBuilder;
 import neureka.fluent.building.states.IterByOrIterFromOrAll;
+import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 import neureka.fluent.building.states.WithShapeOrScalarOrVectorOnDevice;
+import neureka.fluent.slicing.SliceBuilder;
+import neureka.fluent.slicing.SmartSlicer;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
@@ -110,14 +116,8 @@ import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import neureka.optimization.Optimizer;
-import neureka.common.utility.DataConverter;
-import neureka.common.utility.ListReader;
-import neureka.view.TsrStringSettings;
 import neureka.view.TsrAsString;
-import neureka.fluent.building.TensorBuilder;
-import neureka.fluent.building.states.WithShapeOrScalarOrVector;
-import neureka.fluent.slicing.SliceBuilder;
-import neureka.fluent.slicing.SmartSlicer;
+import neureka.view.TsrStringSettings;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
@@ -2898,7 +2898,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     Tsr.class,
                         gradient ->
                         this.set(
-                            CalcUtil.keep( gradient, error, () ->
+                            MemUtil.keep( gradient, error, () ->
                                 Neureka.get()
                                         .backend()
                                         .getFunction()

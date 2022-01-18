@@ -7,7 +7,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.*;
-import neureka.backend.standard.ResultValidator;
+import neureka.backend.standard.memory.MemValidator;
 import neureka.calculus.Function;
 import neureka.calculus.RecursiveExecutor;
 import neureka.calculus.implementations.FunctionNode;
@@ -134,7 +134,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     public Tsr<?> dispatch( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         if ( call == null ) return _handleInsteadOfDevice.dispatch( caller, call );
-        ResultValidator checker = ResultValidator.forInputs( call.getTensors(), ()->_handleInsteadOfDevice.dispatch( caller, call ) );
+        MemValidator checker = MemValidator.forInputs( call.getTensors(), ()->_handleInsteadOfDevice.dispatch( caller, call ) );
         if ( checker.isWronglyIntermediate() ) {
             throw new IllegalStateException(
                     "Output of algorithm '" + this.getName() + "' " +

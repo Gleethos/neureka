@@ -39,10 +39,10 @@ package neureka.calculus;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.GraphNode;
 import neureka.backend.api.Call;
 import neureka.backend.api.Operation;
-import neureka.backend.standard.ResultValidator;
+import neureka.backend.standard.memory.MemUtil;
+import neureka.backend.standard.memory.MemValidator;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
 import neureka.calculus.assembly.FunctionBuilder;
@@ -218,8 +218,8 @@ public interface Function
            @SafeVarargs @Override public final <T> Tsr<T> invoke(  Tsr<T>... tensors ) { return (Tsr<T>) this.execute( tensors ); }
            @Override public Tsr<?> execute( Tsr<?>... tensors )
            {
-               ResultValidator checker = ResultValidator.forInputs( tensors, ()->Function.this.execute( arguments, tensors ) );
-               if ( checker.isWronglyIntermediate() ) {
+               MemValidator validation = MemValidator.forInputs( tensors, ()->Function.this.execute( arguments, tensors ) );
+               if ( validation.isWronglyIntermediate() ) {
                    throw new IllegalStateException(
                            "Output of function '" + Function.this + "' " +
                            (Function.this.getOperation() != null ? "(" + Function.this.getOperation().getFunction() + ") " : "") +
@@ -229,7 +229,7 @@ public interface Function
                            "as 'intermediate', because they are not eligible for deletion!"
                    );
                }
-               if ( checker.isWronglyNonIntermediate() ) {
+               if ( validation.isWronglyNonIntermediate() ) {
                    throw new IllegalStateException(
                            "Output of function '" + Function.this + "' " +
                            (Function.this.getOperation() != null ? "(" + Function.this.getOperation().getFunction() + ") " : "") +
@@ -238,26 +238,8 @@ public interface Function
                            "as 'intermediate' in order to be eligible for deletion!"
                    );
                }
-               /*
-                    When we are purely in the JVM world, then the garbage
-                    collector will take care of freeing our memory...
-                    However, this is not really practical when storing references to native memory,
-                    because the garbage collector is slow, which is especially a problem
-                    when tensors are accumulating on devices like a GPU having limited memory.
-                    Therefore, we should delete as many tensors as possible
-                    to aid the garbage collector.
-                */
-               if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {
-                   for ( Tsr<?> t : tensors ) {
-                       // Tensors flagged as 'intermediate' will automatically deleted!
-                       if (!t.isDeleted() && t.isIntermediate()) {
-                           GraphNode<?> node = t.getGraphNode();
-                           if (node == null || !node.isUsedAsDerivative())
-                               t.delete();
-                       }
-                   }
-               }
-               return checker.getResult();
+               MemUtil.autoDelete( tensors );
+               return validation.getResult();
            }
        };
     }

@@ -6,6 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.standard.implementations.CPUImplementation;
+import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.linear.MatMul;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
@@ -123,7 +124,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
         }
-        Tsr<?> localDerivative = CalcUtil.keep( call.getTensors(), () -> function.executeDerive( call.getTensors(), call.getDerivativeIndex() ) );
+        Tsr<?> localDerivative = MemUtil.keep( call.getTensors(), () -> function.executeDerive( call.getTensors(), call.getDerivativeIndex() ) );
         localDerivative.getMutate().setIsIntermediate( false );
         return ADAgent.of( localDerivative )
                       .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, localDerivative ) )

@@ -7,6 +7,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
 import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
@@ -17,13 +18,9 @@ import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  *  This is a utility class which helps with orchestrating the execution of classical
@@ -96,7 +93,7 @@ public class CalcUtil
                     IntStream.range(0, nodes.length).mapToObj( i -> "I[" + i + "]" ).toArray(String[]::new)
             );
             Tsr<?>[] finalTensors = tensors;
-            Tsr<?> result = keep( tensors, ()-> new FunctionBuilder( Neureka.get().backend() ).build( asStr, isDoingAD ).execute(finalTensors) );
+            Tsr<?> result = MemUtil.keep( tensors, ()-> new FunctionBuilder( Neureka.get().backend() ).build( asStr, isDoingAD ).execute(finalTensors) );
             for ( int i = 1; i < tensors.length; i++ ) {
                 _deleteIfNotIn( inputs, tensors[ i ] );
             }
@@ -117,30 +114,6 @@ public class CalcUtil
             _LOG.debug("Executing operation '"+operation.getFunction()+"' did not yield a proper return value.");
 
         return ( tensors[ 0 ] == null ? tensors[ 1 ] : tensors[ 0 ] );
-    }
-
-    /**
-     *  This method makes sure that the provided tensors do not get deleted!
-     */
-    public static <T> T keep( Tsr<?>[] tensors, Supplier<T> during ) {
-        List<Tsr<?>> doNotDelete = Arrays.stream(tensors).filter(Tsr::isIntermediate).collect(Collectors.toList());
-        doNotDelete.forEach( t -> t.getMutate().setIsIntermediate( false ) );
-        T result = during.get();
-        // After having calculated the result we allow deletion of the provided tensors again:
-        doNotDelete.forEach( t -> t.getMutate().setIsIntermediate( true ) );
-        return result;
-    }
-
-    /**
-     *  This method makes sure that the provided tensors do not get deleted!
-     */
-    public static <T> T keep( Tsr<?> a, Tsr<?> b, Supplier<T> during ) {
-        List<Tsr<?>> doNotDelete = Stream.of(a, b).filter(Tsr::isIntermediate).collect(Collectors.toList());
-        doNotDelete.forEach( t -> t.getMutate().setIsIntermediate( false ) );
-        T result = during.get();
-        // After having calculated the result we allow deletion of the provided tensors again:
-        doNotDelete.forEach( t -> t.getMutate().setIsIntermediate( true ) );
-        return result;
     }
 
     /**
@@ -182,7 +155,7 @@ public class CalcUtil
     ) {
         Supplier<Tsr<?>> actor = () -> {
             Tsr<?>[] inputs = call.getTensors();
-            return keep( inputs, () -> {
+            return MemUtil.keep( inputs, () -> {
                 Device<?> device = call.getDevice();
                 int d = call.getValOf( Arg.DerivIdx.class );
                 int j = call.getJ();
@@ -442,7 +415,7 @@ public class CalcUtil
     public static Tsr<?>[] srcActivation(
             Tsr<?>[] inputs, int j, int d, int offset, Function[] src
     ) {
-        return CalcUtil.keep( inputs, () -> {
+        return MemUtil.keep( inputs, () -> {
             int[] tempShape = null;
             Class<?> tempType = null;
             Tsr<?>[] tensors = new Tsr[ src.length + offset ];

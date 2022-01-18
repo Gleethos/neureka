@@ -1,4 +1,4 @@
-package neureka.backend.standard;
+package neureka.backend.standard.memory;
 
 import neureka.Tsr;
 
@@ -7,16 +7,16 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 /**
- *  This class simply analyses how a lambda may or may not mutate the contents of a given
- *  array of tensors, in order determine if the mutation is valid.
+ *  This class validates the states of tensors with respect to memory management
+ *  before and after a lambda executes a function or some kind of algorithm on said tensors.
  *  This validity refers to the {@link Tsr#isIntermediate()} flag, whose state should
- *  adhere to strict rule in order to allow for safe deletion of tensors.
+ *  adhere to strict rules in order to allow for safe deletion of tensors.
  *  The lambda wrapped by this may be a {@link neureka.calculus.Function} call or a lower level
  *  procedure defined a {@link neureka.backend.api.Algorithm} implementation.
  *  <br><br>
  *  <b>Warning! This is an internal class. Do not depend on it.</b>
  */
-public class ResultValidator {
+public class MemValidator {
 
     private final Tsr<?> _result;
     private final boolean _wronglyIntermediate;
@@ -25,13 +25,13 @@ public class ResultValidator {
     /**
      * @param inputs The inputs used by the {@link Supplier} implementation to provide a result.
      * @param resultProvider The callback providing the result which ought to be validated.
-     * @return The {@link ResultValidator} which ought to validate the provided result.
+     * @return The {@link MemValidator} which ought to validate the provided result.
      */
-    public static ResultValidator forInputs(Tsr<?>[] inputs, Supplier<Tsr<?>> resultProvider ) {
-        return new ResultValidator( inputs, resultProvider );
+    public static MemValidator forInputs(Tsr<?>[] inputs, Supplier<Tsr<?>> resultProvider ) {
+        return new MemValidator( inputs, resultProvider );
     }
 
-    private ResultValidator(Tsr<?>[] tensors, Supplier<Tsr<?>> execution ) {
+    private MemValidator( Tsr<?>[] tensors, Supplier<Tsr<?>> execution ) {
         /*
             Now before calling the function we will do a snapshot of the inputs
             in order to later on verify the output validity with respect
@@ -65,13 +65,8 @@ public class ResultValidator {
 
                 boolean resultWasIntermediate = ( resultIsInputGradient ? gradIntermediates[positionInInput] : areIntermediates[positionInInput] );
 
-                if ( result.isIntermediate() && !resultWasIntermediate ) {
-                    _wronglyIntermediate = true;
-                    _wronglyNonIntermediate = false;
-                } else {
-                    _wronglyIntermediate = false;
-                    _wronglyNonIntermediate = false;
-                }
+                _wronglyIntermediate = result.isIntermediate() && !resultWasIntermediate;
+                _wronglyNonIntermediate = false;
             } else if ( !result.isIntermediate() ) {
                 _wronglyIntermediate = false;
                 _wronglyNonIntermediate = true;
@@ -104,7 +99,7 @@ public class ResultValidator {
     }
 
     /**
-     * @return The result tensor returned by the {@link Supplier} lambda passed to this {@link ResultValidator}.
+     * @return The result tensor returned by the {@link Supplier} lambda passed to this {@link MemValidator}.
      */
     public Tsr<?> getResult() {
         return _result;

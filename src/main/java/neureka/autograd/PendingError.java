@@ -2,7 +2,7 @@ package neureka.autograd;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.CalcUtil;
+import neureka.backend.standard.memory.MemUtil;
 import neureka.calculus.assembly.FunctionBuilder;
 
 public final class PendingError<ValType>
@@ -17,7 +17,7 @@ public final class PendingError<ValType>
 
     public void accumulate( Tsr<?> error ) {
         Tsr[] inputs = new Tsr[]{ _accumulatedError, error };
-        CalcUtil.keep( inputs, () -> {
+        MemUtil.keep( inputs, () -> {
                     new FunctionBuilder(
                                 Neureka.get().backend()
                             )

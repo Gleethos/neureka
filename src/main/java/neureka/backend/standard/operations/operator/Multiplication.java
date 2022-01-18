@@ -4,14 +4,15 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.standard.algorithms.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
+import neureka.backend.standard.algorithms.Fun;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.CPUImplementation;
+import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
@@ -117,7 +118,7 @@ public class Multiplication extends AbstractOperation
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> derivative = CalcUtil.keep( inputs, () -> f.executeDerive( inputs, d ) );
+                            Tsr<?> derivative = MemUtil.keep( inputs, () -> f.executeDerive( inputs, d ) );
                             return ADAgent.of( derivative )
                                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
