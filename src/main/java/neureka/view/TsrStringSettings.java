@@ -2,6 +2,10 @@ package neureka.view;
 
 import java.util.function.Supplier;
 
+/**
+ *  This is simply a mutable container for configuring how {@link neureka.Tsr}
+ *  instances ought to be converted to {@link String}s.
+ */
 public class TsrStringSettings {
 
     private final Supplier<Boolean> _notModifyable;
@@ -49,6 +53,12 @@ public class TsrStringSettings {
         return this;
     }
 
+    /**
+     *  This method takes the provided {@link TsrStringSettings} instance
+     *  and copies its state in {@code this} {@link TsrStringSettings} instance.
+     *
+     * @param other The {@link TsrStringSettings} which ought to be read from.
+     */
     private void _imposeOn( TsrStringSettings other ) {
         other._cellSize = _cellSize;
         other._rowLimit = _rowLimit;
@@ -66,66 +76,130 @@ public class TsrStringSettings {
         other._legacy = _legacy;
     }
 
+    /**
+     *  A cell size refers to the number of characters reserved to
+     *  the {@link String} representation of a single element.
+     *  This property only becomes relevant when the {@link #getIsCellBound()}
+     *  flag is set. This will then cause the width of the cell to be always
+     *  of the specified size.
+     *
+     * @return The width of the cell in terms of numbers of characters.
+     */
     public int getCellSize() {
         return _cellSize;
     }
 
+    /**
+     *  A cell size refers to the number of characters reserved to
+     *  the {@link String} representation of a single element.
+     *  This property only becomes relevant when the {@link #getIsCellBound()}
+     *  flag is set. This will then cause the width of the cell to be always
+     *  of the specified size.
+     *
+     * @param cellSize The width of the cell in terms of numbers of characters.
+     */
     public TsrStringSettings setCellSize( int cellSize ) {
         if ( _notModifyable.get() ) return this;
         _cellSize = cellSize;
         return this;
     }
 
+    /**
+     *  Very large tensors with a rank larger than 1 might take a lot
+     *  of vertical space when converted to a {@link String}.
+     *  This property is the maximum number of
+     *  matrix rows printed. It determines at which point the number of
+     *  rows ought to be pruned.
+     *
+     * @return The maximum number of rows in the {@link String} representation of the tensor.
+     */
     public int getRowLimit() {
         return _rowLimit;
     }
 
+
+    /**
+     *  Very large tensors with a rank larger than 1 might take a lot
+     *  of vertical space when converted to a {@link String}.
+     *  This property is the maximum number of
+     *  matrix rows printed. It determines at which point the number of
+     *  rows ought to be pruned.
+     *
+     * @param shortage The maximum number of rows in the {@link String} representation of the tensor.
+     */
     public TsrStringSettings setRowLimit( int shortage ) {
         if ( _notModifyable.get() ) return this;
         _rowLimit = shortage;
         return this;
     }
 
+    /**
+     * @return The truth value determining if the tensor should also print its gradient.
+     */
     public boolean getHasGradient() {
         return _hasGradient;
     }
 
+    /**
+     * @param hasGradient The truth value determining if the tensor should also print its gradient.
+     */
     public TsrStringSettings setHasGradient( boolean hasGradient ) {
         if ( _notModifyable.get() ) return this;
         _hasGradient = hasGradient;
         return this;
     }
 
+    /**
+     * @return The truth value determining if numeric values should be formatted in scientific notation.
+     */
     public boolean getIsScientific() {
         return _isScientific;
     }
 
+    /**
+     * @param isScientific The truth value determining if numeric values should be formatted in scientific notation.
+     */
     public TsrStringSettings setIsScientific( boolean isScientific ) {
         if ( _notModifyable.get() ) return this;
         _isScientific = isScientific;
         return this;
     }
 
+    /**
+     * @return The truth value determining if the tensor should be printed in one line or across multiple lines.
+     */
     public boolean getIsMultiline() {
         return _multiline;
     }
 
+    /**
+     * @param isMultiline The truth value determining if the tensor should be printed in one line or across multiple lines.
+     */
     public TsrStringSettings setIsMultiline( boolean isMultiline ) {
         if ( _notModifyable.get() ) return this;
         _multiline = isMultiline;
         return this;
     }
 
+    /**
+     * @return The truth value determining if numbers should be formatted more compactly (1.0 -> 1).
+     */
     public boolean getHasSlimNumbers() {
         return _haveSlimNumbers;
     }
 
+    /**
+     * @param haveSlimNumbers The truth value determining if numbers should be formatted more compactly (1.0 -> 1).
+     */
     public TsrStringSettings setHasSlimNumbers( boolean haveSlimNumbers ) {
         if ( _notModifyable.get() ) return this;
         _haveSlimNumbers = haveSlimNumbers;
         return this;
     }
 
+    /**
+     * @return The truth value determining if the values of the tensor should be included in the {@link String} representation.
+     */
     public boolean getHasValue() {
         return _hasValue;
     }
