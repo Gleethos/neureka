@@ -137,6 +137,8 @@ class Tensor_Operation_Integration_Spec extends Specification
 
         then : 'The resulting tensor (toString) will contain the expected String.'
             c.toString().contains(expected)
+        and :
+            c.valueClass == type
 
         where :
             type   | code                               || expected
