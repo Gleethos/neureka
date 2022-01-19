@@ -624,10 +624,18 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, Object data ) { return new Tsr<>( shape.stream().mapToInt(i -> i).toArray(), typeClass, data ); }
 
+    /**
+     *
+     * @param shape
+     * @param typeClass
+     * @param data An array of values or a single scalar value.
+     */
     private Tsr( int[] shape, Class<V> typeClass, Object data )
     {
         _setDataType( DataType.of( typeClass ) );
         createConstructionAPI().configureFromNewShape( shape, false, false );
+        if ( data != null && Number.class.isAssignableFrom(data.getClass()) && typeClass != data.getClass() )
+            data = DataConverter.instance().convert( data, typeClass );
         setValue( data );
     }
 

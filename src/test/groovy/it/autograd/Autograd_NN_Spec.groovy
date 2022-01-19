@@ -159,32 +159,42 @@ class Autograd_NN_Spec extends Specification
 
 
     def 'Autograd works in a simple convolutional dot product based feed forward neural network.'(
-            boolean useIteratorBasedIndexing
+            Class<?> type
     ) {
         given :
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
-            def X = Tsr.of(
-                [[0.6667, 1.0000],
-                 [0.3333, 0.5556],
-                 [1.0000, 0.6667]]
-            )
-            def y = Tsr.of(
-                    [[0.9200],
-                     [1.0000],
-                     [0.8900]]
-            )
-            def sig = Function.of("sig(I[0])")
-            def W1 = Tsr.of(
-                    [[-1.1843,  0.0146, -1.4647],
-                     [-1.4020, -1.0129,  0.6256]]
-            ).setRqsGradient(true)
-            def W2 = Tsr.of(
-                    [[ 1.8095],
-                     [-0.4269],
-                     [-1.1110]]
-            ).setRqsGradient(true)
+            var X = Tsr.of(
+                                [[0.6667, 1.0000],
+                                 [0.3333, 0.5556],
+                                 [1.0000, 0.6667]]
+                            )
+                            .mutate.toType(type)
+
+            var y = Tsr.of(
+                                [[0.9200],
+                                 [1.0000],
+                                 [0.8900]]
+                            )
+                            .mutate.toType(type)
+
+            var sig = Function.of("sig(I[0])")
+
+            var W1 = Tsr.of(
+                                [[-1.1843,  0.0146, -1.4647],
+                                 [-1.4020, -1.0129,  0.6256]]
+                            )
+                            .setRqsGradient(true)
+                            .mutate.toType(type)
+
+            var W2 = Tsr.of(
+                                [[ 1.8095],
+                                 [-0.4269],
+                                 [-1.1110]]
+                            )
+                            .setRqsGradient(true)
+                            .mutate.toType(type)
 
             def W1s = []
             def z1s = []
@@ -279,7 +289,7 @@ class Autograd_NN_Spec extends Specification
 ]
 """)
         where :
-            useIteratorBasedIndexing << [true, false]
+            type << [Double]
 
     }
 

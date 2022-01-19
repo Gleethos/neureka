@@ -38,7 +38,7 @@ class Tensor_Operation_Integration_Spec extends Specification
     }
 
     def 'Test "x-mul" operator produces expected results. (Not on device)'(
-            String expected
+            Class<?> type, String expected
     ) {
         reportInfo """
             The 'x' operator performs convolution on the provided operands.
@@ -49,32 +49,25 @@ class Tensor_Operation_Integration_Spec extends Specification
         and: 'Tensor legacy view is set to true.'
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
         and: 'Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].'
-            //Same test again but this time with reversed indexing:
-            def x = Tsr.of(
-                new int[]{2, 3, 1},
-                new double[]{
-                        3,  2, -1, //<=- Format of legacy : false
-                        -2,  2,  4
-                        /* Format otherwise :
-                             3,  2,
-                            -1, -2,
-                             2,  4
-                         */
-                }
-            );
-            def y = Tsr.of(
-                new int[]{1, 3, 2},
-                new double[]{
-                        4, -1,
-                        3,  2,
-                        3, -1
-                })
-            /*
-                15, 2,
-                10, 2
-            */
+            var x = Tsr.of(new int[]{2, 3, 1},
+                                new double[]{
+                                        3,  2, -1,
+                                        -2,  2,  4
+                                }
+                            )
+                            .mutate.toType(type)
+
+            var y = Tsr.of(new int[]{1, 3, 2},
+                                    new double[]{
+                                            4, -1,
+                                            3,  2,
+                                            3, -1
+                                    }
+                                )
+                                .mutate.toType(type)
+
         when : 'The x-mul result is being instantiated by passing a simple equation to the tensor constructor.'
-            def z = Tsr.of("I0xi1", x, y)
+            var z = Tsr.of("I0xi1", x, y)
         then: 'The result contains the expected String.'
             z.toString().contains(expected)
 
@@ -84,7 +77,9 @@ class Tensor_Operation_Integration_Spec extends Specification
             z.toString().contains(expected)
 
         where :
-            expected << ["[2x1x2]:(15.0, 2.0, 10.0, 2.0)"]
+            type   || expected
+            Double || "[2x1x2]:(15.0, 2.0, 10.0, 2.0)"
+            Float  || "[2x1x2]:(15.0, 2.0, 10.0, 2.0)"
     }
 
 
@@ -123,27 +118,36 @@ class Tensor_Operation_Integration_Spec extends Specification
     }
 
     def 'New method "asFunction" of String added at runtime is callable by groovy and also works.'(
-            String code, String expected
+            Class<?> type, String code, String expected
     ) {
-        given :
-            Tsr a = Tsr.of([1,2], [3, 2])
-            Tsr b = Tsr.of([2,1], [-1, 4])
+        given : 'We create two tensors and convert them to a desired type.'
+            var a = Tsr.of([1,2], [3d, 2d]).mutate.toType(type)
+            var b = Tsr.of([2,1], [-1f, 4f]).mutate.toType(type)
+        and : 'We prepare bindings for the Groovy shell.'
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
 
+        expect : 'The tensors have the type...'
+            a.valueClass == type
+            b.valueClass == type
+
         when : 'The groovy code is being evaluated.'
-            Tsr c = new GroovyShell(binding).evaluate((code)) as Tsr
+            var c = new GroovyShell(binding).evaluate((code)) as Tsr
 
         then : 'The resulting tensor (toString) will contain the expected String.'
             c.toString().contains(expected)
 
         where :
-            code                                       || expected
-            '"I[0]xI[1]".asFunction()([a, b])'         || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
-            '"I[0]xI[1]"[a, b]'                        || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
-            '"i0 x i1"%[a, b]'                         || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
-            '"i0"%a'                                   || "(1x2):[3.0, 2.0]"
+            type   | code                               || expected
+            Double | '"I[0]xI[1]".asFunction()([a, b])' || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
+            Double | '"I[0]xI[1]"[a, b]'                || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
+            Double | '"i0 x i1"%[a, b]'                 || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
+            Double | '"i0"%a'                           || "(1x2):[3.0, 2.0]"
+            Float  | '"I[0]xI[1]".asFunction()([a, b])' || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
+            Float  | '"I[0]xI[1]"[a, b]'                || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
+            Float  | '"i0 x i1"%[a, b]'                 || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
+            Float  | '"i0"%a'                           || "(1x2):[3.0, 2.0]"
     }
 
     def 'New operator methods added to "SDK-types" at runtime are callable by groovy and also work.'(

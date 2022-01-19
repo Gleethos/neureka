@@ -76,8 +76,15 @@ public class ConvUtil {
 
                                 Tsr<?>[] inputs = call.getTensors();
                                 Tsr<?>[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
-                                tsrs[ 0 ] = (call.getValOf( Arg.DerivIdx.class ) < 0)
-                                        ? Tsr.ofShape(Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape())).getMutate().setIsIntermediate( true )
+                                tsrs[ 0 ] =
+                                    (call.getValOf( Arg.DerivIdx.class ) < 0)
+                                        ? Tsr.of(
+                                                inputs[0].getValueClass(),
+                                                Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()),
+                                                0
+                                            )
+                                            .getMutate()
+                                            .setIsIntermediate( true )
                                         : null;
 
                                 for (Tsr<?> t : tsrs) if ( t != null ) t.setIsVirtual( false );
