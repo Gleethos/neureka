@@ -83,38 +83,48 @@ class Tensor_Operation_Integration_Spec extends Specification
     }
 
 
-    def 'The "dot" operation reshapes and produces valid "x" operation result.'()
+    def 'The "dot" operation reshapes and produces valid "x" operation result.'( Class<?> type )
     {
         given : 'Two multi-dimensional tensors.'
-            def a = Tsr.of([1, 4, 4, 1   ], 4d..12d)
-            def b = Tsr.of([1, 3, 5, 2, 1], -5d..3d)
+            var a = Tsr.of([1, 4, 4, 1   ], 4f..12f).mutate.toType(type)
+            var b = Tsr.of([1, 3, 5, 2, 1], -5d..3d).mutate.toType(type)
 
         when : 'The "dot" method is being called on "a" receiving "b"...'
-            Tsr c = a.convDot(b)
+            var c = a.convDot(b)
 
         then : 'The result tensor contains the expected shape.'
             c.toString().contains("(4x2x5x2)")
+        and :
+            c.valueClass == type
+
+        where :
+            type << [Double, Float]
     }
 
 
     def 'The "matMul" operation produces the expected result.'(
-            Double[] A, Double[] B, int M, int K, int N, double[] expectedC
+            Class<?> type, Double[] A, Double[] B, int M, int K, int N, double[] expectedC
     ) {
         given : 'Two 2-dimensional tensors.'
-            Tsr a = Tsr.of(Double.class).withShape(M, K).andFill(A)
-            Tsr b = Tsr.of(Double.class).withShape(K, N).andFill(B)
+            var a = Tsr.of(Double.class).withShape(M, K).andFill(A).mutate.toType(type)
+            var b = Tsr.of(Double.class).withShape(K, N).andFill(B).mutate.toType(type)
 
         when : 'The "matMul" method is being called on "a" receiving "b"...'
-            Tsr c = a.matMul(b)
+            var c = a.matMul(b)
 
         then : 'The result tensor contains the expected shape and values.'
             c.toString() == "(${M}x${N}):$expectedC"
+        and :
+            c.valueClass == type
 
         where : 'We use the following data and matrix dimensions!'
-            A            | B                  | M | K | N || expectedC
-            [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 1, 0, 0, 1 ]
-            [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
-            [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
+            type   | A            | B                  | M | K | N || expectedC
+            Double | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 1, 0, 0, 1 ]
+            Double | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
+            Double | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
+            Float  | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 1, 0, 0, 1 ]
+            Float  | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
+            Float  | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
     }
 
     def 'New method "asFunction" of String added at runtime is callable by groovy and also works.'(
