@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.linear;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
+import neureka.backend.standard.algorithms.Fun;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.operations.ConvUtil;
@@ -13,7 +14,6 @@ import neureka.devices.opencl.OpenCLDevice;
 
 public class XConv extends AbstractOperation
 {
-
     public XConv()
     {
         super(
@@ -27,69 +27,54 @@ public class XConv extends AbstractOperation
                         .setIsInline(         false       )
         );
 
-        DefaultOperatorCreator<TertiaryF64NDFun> convolutionNDICreator =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    double[] t2_val = inputs[ 2 ].getDataAs( double[].class );
-                    if ( d < 0 ) {
-                        return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
-                    } else {
-                        return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if ( d == 0 ) return t2_val[t2Idx.i()];
-                            else return t1_val[ t1Idx.i() ];
-                        };
-                    }
-                };
-
-        Convolution convolution = ConvUtil.getConv();//.createDeconvolutionFor( this.getOperator() );
+        Convolution convolution = ConvUtil.getConv();
 
         setAlgorithm(
-                Convolution.class,
-                convolution
-                        .setImplementationFor(
-                                CPU.class,
-                                CPUImplementation
-                                    .withArity(3)
-                                    .andImplementation(
-                                        call ->
-                                                call.getDevice().getExecutor()
-                                                        .threaded(
-                                                                call.getTsrOfType( Number.class, 0 ).size(),
-                                                                ( start, end ) ->
-                                                                        Convolution.convolve (
-                                                                                call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                                call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                                convolutionNDICreator.create(
-                                                                                        call.getTensors(),
-                                                                                        -1//call.getValOf( Arg.DerivIdx.class )
-                                                                                )
-                                                                        )
-                                                        )
-                                    )
+            Convolution.class,
+            convolution
+                .setImplementationFor(
+                    CPU.class,
+                    CPUImplementation
+                        .withArity(3)
+                        .andImplementation(
+                            Convolution.implementationForCPU()
+                                    .with(Fun.F64F64ToF64.triple(
+                                            ( a, b ) -> a * b,
+                                            ( a, b ) -> b, // Deriving at input 0
+                                            ( a, b ) -> a  // deriving input 1
+                                    ))
+                                    .with(Fun.F32F32ToF32.triple(
+                                            ( a, b ) -> a * b,
+                                            ( a, b ) -> b, // Deriving at input 0
+                                            ( a, b ) -> a  // deriving input 1
+                                    ))
+                                    .get()
                         )
-                        .setImplementationFor(
-                            OpenCLDevice.class,
-                            CLImplementation.compiler()
-                                    .arity( 3 )
-                                    .kernelSource( convolution.getKernelSource() )
-                                    .activationSource( "value = src1 * src2;\n" )
-                                    .differentiationSource( "value += handle * drain;\n" )
-                                    .kernelPostfix( this.getFunction() )
-                                    .execution(
-                                            call -> {
-                                                int offset = ( call.getTsrOfType( Number.class, 0 ) != null ) ? 0 : 1;
-                                                int gwz = ( call.getTsrOfType( Number.class, 0 ) != null ) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                                call.getDevice().getKernel(call)
-                                                        .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                        .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                        .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
-                                                        .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                        .pass( call.getValOf( Arg.DerivIdx.class ) ) //call.getValOf( Arg.DerivIdx.class )
-                                                        .call( gwz );
-                                            }
-                                    )
-                                    .build()
-                        )
+                )
+                .setImplementationFor(
+                    OpenCLDevice.class,
+                    CLImplementation.compiler()
+                            .arity( 3 )
+                            .kernelSource( convolution.getKernelSource() )
+                            .activationSource( "value = src1 * src2;\n" )
+                            .differentiationSource( "value += handle * drain;\n" )
+                            .kernelPostfix( this.getFunction() )
+                            .execution(
+                                call -> {
+                                    int offset = ( call.getTsrOfType( Number.class, 0 ) != null ) ? 0 : 1;
+                                    int gwz = ( call.getTsrOfType( Number.class, 0 ) != null ) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                    call.getDevice()
+                                        .getKernel(call)
+                                        .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                        .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                        .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
+                                        .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                        .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                        .call( gwz );
+                                }
+                            )
+                            .build()
+                )
         );
 
     }

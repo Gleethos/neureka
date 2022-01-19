@@ -45,7 +45,8 @@ import neureka.devices.Device;
 
 
 /**
- *   This class is the middle layer of the 3 tier abstraction architecture of this backend. <br>
+ *   This class is the middle layer of the 3 tier compositional abstraction architecture of this backend, which
+ *   consists of {@link Operation}s, {@link Algorithm}s and {@link ImplementationFor}. <br>
  *
  *   Conceptually an implementation of the {@link Algorithm} interface represents "a sub-kind of operation" for
  *   an instance of an implementation of the {@link Operation} interface. <br>
