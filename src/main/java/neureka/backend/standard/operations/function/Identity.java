@@ -20,89 +20,88 @@ import org.jetbrains.annotations.Contract;
 
 public final class Identity extends AbstractOperation
 {
-
     public Identity()
     {
         super(
-                new OperationBuilder()
-                        .setFunction(         "idy"    )
-                        .setOperator(         "idy"    )
-                        .setArity(            1        )
-                        .setIsOperator(       false    )
-                        .setIsIndexer(        false    )
-                        .setIsDifferentiable( true     )
-                        .setIsInline(         false    )
+            new OperationBuilder()
+                    .setFunction(         "idy"    )
+                    .setOperator(         "idy"    )
+                    .setArity(            1        )
+                    .setIsOperator(       false    )
+                    .setIsIndexer(        false    )
+                    .setIsDifferentiable( true     )
+                    .setIsInline(         false    )
         );
 
         Activation operationAlgorithm = new Activation()
         .setCanPerformBackwardADFor( call -> true )
         .setCanPerformForwardADFor(
-                call -> {
-                    Tsr<?> last = null;
-                    for ( Tsr<?> t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
+            call -> {
+                Tsr<?> last = null;
+                for ( Tsr<?> t : call.getTensors() ) {
+                    if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                    last = t; // Note: shapes are cached!
                 }
+                return true;
+            }
         )
         .setSupplyADAgentFor( getDefaultAlgorithm() )
         .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
         .setCallPreparation(
-                call -> {
-                    Tsr<?>[] tensors = call.getTensors();
-                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
-                    return ExecutionCall.of(tensors[offset], tensors[1+offset])
-                                        .andArgs(Arg.DerivIdx.of(-1))
-                                        .running(Neureka.get().backend().getOperation("idy"))
-                                        .on(call.getDevice());
-                }
+            call -> {
+                Tsr<?>[] tensors = call.getTensors();
+                int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
+                return ExecutionCall.of(tensors[offset], tensors[1+offset])
+                                    .andArgs(Arg.DerivIdx.of(-1))
+                                    .running(Neureka.get().backend().getOperation("idy"))
+                                    .on(call.getDevice());
+            }
         )
         .buildFunAlgorithm();
 
         setAlgorithm(
-                Activation.class,
-                operationAlgorithm.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(2)
-                            .andImplementation(
-                                Activation.implementationForCPU()
-                                        .with(Fun.F64ToF64.pair(
-                                                x -> x,
-                                                x -> 1
-                                        ) )
-                                        .with(Fun.F32ToF32.pair(
-                                                x -> x,
-                                                x -> 1
-                                        ))
-                                        .get()
-                            )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 2 )
-                                .kernelSource( operationAlgorithm.getKernelSource() )
-                                .activationSource( "output = input;\n" )
-                                .differentiationSource( "output = input;\n" )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                            // Drain tensor needs to be 'actual'! :
-                                            if (!call.getTsrOfType( Number.class, offset + 1).isVirtual()) call.getTsrOfType( Number.class, offset).setIsVirtual( false );
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
+            Activation.class,
+            operationAlgorithm.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(2)
+                    .andImplementation(
+                        Activation.implementationForCPU()
+                            .with(Fun.F64ToF64.pair(
+                                    x -> x,
+                                    x -> 1
+                            ) )
+                            .with(Fun.F32ToF32.pair(
+                                    x -> x,
+                                    x -> 1
+                            ))
+                            .get()
+                    )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation.compiler()
+                    .arity( 2 )
+                    .kernelSource( operationAlgorithm.getKernelSource() )
+                    .activationSource( "output = input;\n" )
+                    .differentiationSource( "output = input;\n" )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                            // Drain tensor needs to be 'actual'! :
+                            if (!call.getTsrOfType( Number.class, offset + 1).isVirtual()) call.getTsrOfType( Number.class, offset).setIsVirtual( false );
+                            call.getDevice().getKernel(call)
+                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                    .call( gwz );
+                        }
+                    )
+                    .build()
+            )
         );
 
         Scalarization scalarization = new Scalarization()
@@ -141,51 +140,51 @@ public final class Identity extends AbstractOperation
             .buildFunAlgorithm();
 
         setAlgorithm(
-                Scalarization.class,
-                scalarization.setImplementationFor(
-                    CPU.class,
-                    CPUImplementation
-                        .withArity(2)
-                        .andImplementation(
-                            Scalarization.implementationForCPU()
-                                .with(Fun.F64F64ToF64.triple(
+            Scalarization.class,
+            scalarization.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(2)
+                    .andImplementation(
+                        Scalarization.implementationForCPU()
+                            .with(Fun.F64F64ToF64.triple(
+                                ( a, b ) -> b,
+                                ( a, b ) -> b, // Deriving at input 0
+                                ( a, b ) -> b // deriving input 1
+                            ))
+                            .with(Fun.F32F32ToF32.triple(
                                     ( a, b ) -> b,
                                     ( a, b ) -> b, // Deriving at input 0
                                     ( a, b ) -> b // deriving input 1
-                                ))
-                                .with(Fun.F32F32ToF32.triple(
-                                        ( a, b ) -> b,
-                                        ( a, b ) -> b, // Deriving at input 0
-                                        ( a, b ) -> b // deriving input 1
-                                ))
-                                .get()
-                        )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 2 )
-                                .kernelSource( scalarization.getKernelSource() )
-                                .activationSource( "output = value;\n" )
-                                .differentiationSource( "output = value;\n" )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            Tsr<Number> t = call.getTsrOfType( Number.class, 0 );
-                                            int gwz = t.size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf(t)
-                                                    .passAllOf(t)
-                                                    .pass((float)call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ])
-                                                    .pass(t.rank())
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
+                            ))
+                            .get()
+                    )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation.compiler()
+                    .arity( 2 )
+                    .kernelSource( scalarization.getKernelSource() )
+                    .activationSource( "output = value;\n" )
+                    .differentiationSource( "output = value;\n" )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            Tsr<Number> t = call.getTsrOfType( Number.class, 0 );
+                            int gwz = t.size();
+                            call.getDevice()
+                                .getKernel(call)
+                                .passAllOf(t)
+                                .passAllOf(t)
+                                .pass((float)call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ])
+                                .pass(t.rank())
+                                .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                .call( gwz );
+                        }
+                    )
+                    .build()
+            )
         );
-
 
     }
 

@@ -17,54 +17,53 @@ import org.jetbrains.annotations.Contract;
 
 public final class Gaussian extends AbstractOperation
 {
-
     public Gaussian()
     {
         super(
-                new OperationBuilder()
-                        .setFunction(         "gaus"    )
-                        .setOperator(         "gaus"    )
-                        .setArity(            1         )
-                        .setIsOperator(       false     )
-                        .setIsIndexer(        false     )
-                        .setIsDifferentiable( true      )
-                        .setIsInline(         false     )
+            new OperationBuilder()
+                    .setFunction(         "gaus"    )
+                    .setOperator(         "gaus"    )
+                    .setArity(            1         )
+                    .setIsOperator(       false     )
+                    .setIsIndexer(        false     )
+                    .setIsDifferentiable( true      )
+                    .setIsInline(         false     )
         );
 
         Activation operationAlgorithm = new Activation()
             .setCanPerformBackwardADFor( call -> true )
             .setCanPerformForwardADFor(
-                    call -> {
-                        Tsr<?> last = null;
-                    for ( Tsr<?> t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
-                    }
+                call -> {
+                    Tsr<?> last = null;
+                for ( Tsr<?> t : call.getTensors() ) {
+                    if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                    last = t; // Note: shapes are cached!
+                }
+                return true;
+                }
             )
             .setSupplyADAgentFor( getDefaultAlgorithm() )
-        .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
-        .setCallPreparation(
-            call -> {
-                Tsr<?>[] inputs = call.getTensors();
-                Device device = call.getDevice();
-                if ( inputs[ 0 ] == null ) // Creating a new tensor:
-                {
-                    int[] shp = inputs[ 1 ].getNDConf().shape();
-                Tsr<?> output = Tsr.of( shp, 0.0 ).getMutate().setIsIntermediate( true );
-                output.setIsVirtual( false );
-                try {
-                    device.store( output );
-                } catch( Exception e ) {
-                    e.printStackTrace();
+            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
+            .setCallPreparation(
+                call -> {
+                    Tsr<?>[] inputs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( inputs[ 0 ] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = inputs[ 1 ].getNDConf().shape();
+                    Tsr<?> output = Tsr.of( shp, 0.0 ).getMutate().setIsIntermediate( true );
+                    output.setIsVirtual( false );
+                    try {
+                        device.store( output );
+                    } catch( Exception e ) {
+                        e.printStackTrace();
+                    }
+                    inputs[ 0 ] = output;
+                    }
+                    return call;
                 }
-                inputs[ 0 ] = output;
-                }
-                return call;
-            }
-        )
-        .buildFunAlgorithm();
+            )
+            .buildFunAlgorithm();
 
         setAlgorithm(
             Activation.class,
@@ -109,12 +108,13 @@ public final class Gaussian extends AbstractOperation
                         call -> {
                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                            call.getDevice().getKernel(call)
-                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                    .call( gwz );
+                            call.getDevice()
+                                .getKernel(call)
+                                .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                .call( gwz );
                         }
                     )
                     .build()

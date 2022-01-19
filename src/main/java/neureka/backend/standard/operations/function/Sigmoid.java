@@ -17,14 +17,14 @@ public final class Sigmoid extends AbstractOperation
     public Sigmoid()
     {
         super(
-                new OperationBuilder()
-                        .setFunction(         "sig"    )
-                        .setOperator(         "sig"    )
-                        .setArity(            1        )
-                        .setIsOperator(       false    )
-                        .setIsIndexer(        false    )
-                        .setIsDifferentiable( true     )
-                        .setIsInline(         false    )
+            new OperationBuilder()
+                .setFunction(         "sig"    )
+                .setOperator(         "sig"    )
+                .setArity(            1        )
+                .setIsOperator(       false    )
+                .setIsIndexer(        false    )
+                .setIsDifferentiable( true     )
+                .setIsInline(         false    )
         );
 
         Activation operationAlgorithm = new Activation()
@@ -33,46 +33,46 @@ public final class Sigmoid extends AbstractOperation
 
 
         setAlgorithm(
-                Activation.class,
-                operationAlgorithm.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(3)
-                            .andImplementation(
-                                Activation.implementationForCPU()
-                                    .with(Fun.F64ToF64.pair(
-                                        x -> calculate( x, false ),
-                                        x -> calculate( x, true )
-                                    ))
-                                    .with(Fun.F32ToF32.pair(
-                                        x -> (float) calculate( x, false ),
-                                        x -> (float) calculate( x, true )
-                                    ))
-                                    .get()
-                            )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( operationAlgorithm.getKernelSource() )
-                                .activationSource( "output = 1 / (1 + (float)pow((float)M_E, -input));\n" )
-                                .differentiationSource( "output = input * (1 - input);\n" )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
+            Activation.class,
+            operationAlgorithm.setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                    .withArity(3)
+                    .andImplementation(
+                        Activation.implementationForCPU()
+                            .with(Fun.F64ToF64.pair(
+                                x -> calculate( x, false ),
+                                x -> calculate( x, true )
+                            ))
+                            .with(Fun.F32ToF32.pair(
+                                x -> (float) calculate( x, false ),
+                                x -> (float) calculate( x, true )
+                            ))
+                            .get()
+                    )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation.compiler()
+                    .arity( 3 )
+                    .kernelSource( operationAlgorithm.getKernelSource() )
+                    .activationSource( "output = 1 / (1 + (float)pow((float)M_E, -input));\n" )
+                    .differentiationSource( "output = input * (1 - input);\n" )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                            call.getDevice().getKernel(call)
+                                .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                .call( gwz );
+                        }
+                    )
+                    .build()
+            )
         );
     }
 

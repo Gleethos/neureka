@@ -17,14 +17,14 @@ public final class ReLU extends AbstractOperation
     public ReLU()
     {
         super(
-                new OperationBuilder()
-                        .setFunction(         "relu"    )
-                        .setOperator(         "relu"    )
-                        .setArity(            1        )
-                        .setIsOperator(       false    )
-                        .setIsIndexer(        false    )
-                        .setIsDifferentiable( true     )
-                        .setIsInline(         false    )
+            new OperationBuilder()
+                    .setFunction(         "relu"    )
+                    .setOperator(         "relu"    )
+                    .setArity(            1        )
+                    .setIsOperator(       false    )
+                    .setIsIndexer(        false    )
+                    .setIsDifferentiable( true     )
+                    .setIsInline(         false    )
         );
 
         Activation operationAlgorithm = new Activation()
@@ -32,46 +32,46 @@ public final class ReLU extends AbstractOperation
             .buildFunAlgorithm();
 
         setAlgorithm(
-                Activation.class,
-                operationAlgorithm.setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                            .withArity(3)
-                            .andImplementation(
-                                    Activation.implementationForCPU()
-                                        .with(Fun.F64ToF64.pair(
-                                                x -> (  x >= 0 ? x : x * .01 ),
-                                                x -> (  x >= 0 ? 1 :  .01    )
-                                        ))
-                                        .with(Fun.F32ToF32.pair(
-                                                x -> (  x >= 0 ? x  : x * .01f ),
-                                                x -> (  x >= 0 ? 1f : .01f     )
-                                        ))
-                                        .get()
-                            )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( operationAlgorithm.getKernelSource() )
-                                .activationSource( "if (input >= 0) {  output = input; } else { output = input * (float)0.01; }\n" )
-                                .differentiationSource( "if (input >= 0) { output = (float)1; } else { output = (float)0.01; }\n" )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
+            Activation.class,
+            operationAlgorithm.setImplementationFor(
+                    CPU.class,
+                    CPUImplementation
+                        .withArity(3)
+                        .andImplementation(
+                                Activation.implementationForCPU()
+                                    .with(Fun.F64ToF64.pair(
+                                            x -> (  x >= 0 ? x : x * .01 ),
+                                            x -> (  x >= 0 ? 1 :  .01    )
+                                    ))
+                                    .with(Fun.F32ToF32.pair(
+                                            x -> (  x >= 0 ? x  : x * .01f ),
+                                            x -> (  x >= 0 ? 1f : .01f     )
+                                    ))
+                                    .get()
+                        )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation.compiler()
+                    .arity( 3 )
+                    .kernelSource( operationAlgorithm.getKernelSource() )
+                    .activationSource( "if (input >= 0) {  output = input; } else { output = input * (float)0.01; }\n" )
+                    .differentiationSource( "if (input >= 0) { output = (float)1; } else { output = (float)0.01; }\n" )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                            call.getDevice().getKernel(call)
+                                .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                .call( gwz );
+                        }
+                    )
+                    .build()
+            )
         );
     }
 
