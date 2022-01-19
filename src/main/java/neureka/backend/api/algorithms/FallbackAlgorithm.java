@@ -8,7 +8,7 @@ import neureka.backend.api.Operation;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.linear.MatMul;
-import neureka.calculus.CalcUtil;
+import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;

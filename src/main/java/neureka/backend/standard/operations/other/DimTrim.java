@@ -9,7 +9,7 @@ import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
-import neureka.calculus.CalcUtil;
+import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;

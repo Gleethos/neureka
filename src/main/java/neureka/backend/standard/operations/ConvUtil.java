@@ -6,7 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.operations.other.Reshape;
-import neureka.calculus.CalcUtil;
+import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;

@@ -1,4 +1,4 @@
-package neureka.calculus;
+package neureka.calculus.internal;
 
 import neureka.Neureka;
 import neureka.Tsr;
@@ -9,6 +9,7 @@ import neureka.backend.api.Operation;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.JunctionUtil;
+import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionConstant;

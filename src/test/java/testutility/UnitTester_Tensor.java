@@ -9,7 +9,7 @@ import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.Fun;
 import neureka.backend.standard.implementations.CPUImplementation;
-import neureka.calculus.CalcUtil;
+import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;

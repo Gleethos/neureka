@@ -14,7 +14,7 @@ import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.JunctionUtil;
-import neureka.calculus.CalcUtil;
+import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;

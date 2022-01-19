@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
-import neureka.calculus.CalcUtil
+import neureka.calculus.internal.CalcUtil
 import neureka.devices.Device
 import neureka.devices.file.FileDevice
 import neureka.devices.host.CPU

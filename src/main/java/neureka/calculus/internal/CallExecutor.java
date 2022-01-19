@@ -1,4 +1,4 @@
-package neureka.calculus;
+package neureka.calculus.internal;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;

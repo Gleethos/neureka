@@ -10,7 +10,7 @@ import neureka.backend.api.Operation
 import neureka.backend.api.BackendContext
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate
 import neureka.backend.standard.implementations.CPUImplementation
-import neureka.calculus.CalcUtil
+import neureka.calculus.internal.CalcUtil
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device

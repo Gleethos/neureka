@@ -161,15 +161,17 @@ public class Functions {
 
     @Override
     public String toString() {
-        String state = Arrays.stream(this.getClass().getDeclaredFields())
-                                .map( field -> {
-                                    try {
-                                        return field.getName()+"="+field.get(this).toString()+"";
-                                    } catch (IllegalAccessException e) {
-                                        return field.getName()+"=?";
-                                    }
-                                })
-                                .collect(Collectors.joining(","));
+        String state =
+                Arrays.stream(this.getClass().getDeclaredFields())
+                      .map( field -> {
+                          try {
+                              return field.getName()+"="+field.get(this).toString()+"";
+                          } catch (IllegalAccessException e) {
+                              return field.getName()+"=?";
+                          }
+                      })
+                      .collect(Collectors.joining(","));
+
         return this.getClass().getSimpleName()+"["+state+"]";
     }
 

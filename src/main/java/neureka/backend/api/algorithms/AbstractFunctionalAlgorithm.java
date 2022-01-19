@@ -9,7 +9,7 @@ import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.*;
 import neureka.backend.standard.memory.MemValidator;
 import neureka.calculus.Function;
-import neureka.calculus.RecursiveExecutor;
+import neureka.calculus.internal.RecursiveExecutor;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 import org.slf4j.Logger;

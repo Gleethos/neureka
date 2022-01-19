@@ -8,10 +8,9 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CPUImplementation;
-import neureka.calculus.CalcUtil;
+import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterators.NDIterator;
 
