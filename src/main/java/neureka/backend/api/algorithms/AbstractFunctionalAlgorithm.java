@@ -40,7 +40,6 @@ import java.util.Arrays;
 public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extends AbstractBaseAlgorithm<C>
 {
     private static final Logger _LOG = LoggerFactory.getLogger( AbstractFunctionalAlgorithm.class );
-
     /*
         Consider the following lambdas as effectively immutable because this
         class will warn us if any field variable is set for a second time.

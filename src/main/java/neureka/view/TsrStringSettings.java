@@ -204,16 +204,25 @@ public class TsrStringSettings {
         return _hasValue;
     }
 
+    /**
+     * @param hasValue The truth value determining if the values of the tensor should be included in the {@link String} representation.
+     */
     public TsrStringSettings setHasValue( boolean hasValue ) {
         if ( _notModifyable.get() ) return this;
         _hasValue = hasValue;
         return this;
     }
 
+    /**
+     * @return The truth value determining if the tensor should have its shape included in the {@link String}.
+     */
     public boolean getHasShape() {
         return _hasShape;
     }
 
+    /**
+     * @param hasShape The truth value determining if the tensor should have its shape included in the {@link String}.
+     */
     public TsrStringSettings setHasShape( boolean hasShape ) {
         if ( _notModifyable.get() ) return this;
         _hasShape = hasShape;
@@ -270,20 +279,44 @@ public class TsrStringSettings {
         return this;
     }
 
+    /**
+     * @return The indent step for a single level of nesting for
+     *         {@link String} representation where
+     *         the {@link #getIsMultiline()} is set to {@code true}.
+     */
     public String getIndent() {
         return _indent;
     }
 
+    /**
+     * @param indent The indent step for a single level of nesting for
+     *               {@link String} representation where
+     *               the {@link #getIsMultiline()} is set to {@code true}.
+     */
     public TsrStringSettings setIndent( String indent ) {
         if ( _notModifyable.get() ) return this;
         _indent = indent;
         return this;
     }
 
+    /**
+     *  This flag determines the usage of bracket types,
+     *  where {@code "[1x3]:(1, 2, 3)"} would be the legacy version
+     *  of {@code "(1x3):[1, 2, 3]"}.
+     *
+     * @return The truth value determining the type of brackets used.
+     */
     public boolean getIsLegacy() {
         return _legacy;
     }
 
+    /**
+     *  This flag determines the usage of bracket types,
+     *  where {@code "[1x3]:(1, 2, 3)"} would be the legacy version
+     *  of {@code "(1x3):[1, 2, 3]"}.
+     *
+     * @param legacy The truth value determining the type of brackets used.
+     */
     public TsrStringSettings setIsLegacy( boolean legacy ) {
         if ( _notModifyable.get() ) return this;
         _legacy = legacy;

@@ -2,13 +2,15 @@ package neureka.backend.standard.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
+public class Convolution extends AbstractFunctionalAlgorithm<Convolution>
 {
 
     public Convolution() {
@@ -25,21 +27,57 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         return Neureka.get().utility().readResource("kernels/convolution_template.cl");
     }
 
-    @Contract(pure = true)
-    public static void convolve (
-            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
-            int d, int i, int end,
-            Operation.TertiaryF64NDFun operation
-    ) {
-        if ( d < 0 ) _convolve(t0_drn, t1_src, t2_src, i, end, operation);
-        else _deConvolve(t0_drn, t1_src, t2_src, i, end, operation);
+
+    public static Functions.Builder<Fun> implementationForCPU() {
+        return Functions.implementation(
+                (call, pairs) ->
+                        call.getDevice()
+                                .getExecutor()
+                                .threaded(
+                                        call.getTsrOfType( Number.class, 0 ).size(),
+                                        _newWorkloadFor( call, pairs )
+                                )
+        );
     }
 
+
+    private static CPU.RangeWorkload _newWorkloadFor(
+            ExecutionCall<CPU> call,
+            Functions<Fun> pairs
+    ) {
+        Tsr<Number> t0_drn = call.getTsrOfType( Number.class, 0 );
+        Tsr<Number> t1_src = call.getTsrOfType( Number.class, 1 );
+        Tsr<Number> t2_src = call.getTsrOfType( Number.class, 2 );
+
+        Class<?> typeClass = t0_drn.getValueClass();
+
+        int d = call.getDerivativeIndex();
+        CPU.RangeWorkload workload = null;
+
+        if ( typeClass == Double.class ) {
+            Fun.F64F64ToF64 operation = pairs.get( Fun.F64F64ToF64.class ).get( -1 );
+            if ( d < 0 )
+                workload = (i, end) -> _convolve64( t0_drn, t1_src, t2_src, i, end, operation );
+            else
+                workload = (i, end) -> _deConvolve64( t0_drn, t1_src, t2_src, i, end, operation );
+        }
+        else if ( typeClass == Float.class ) {
+            Fun.F32F32ToF32 operation = pairs.get( Fun.F32F32ToF32.class ).get( -1 );
+            //workload = (i, end) -> _broadcastF32( t0_drn, t1_src, t2_src, d, i, end, operation );
+        }
+
+        if ( workload == null )
+            throw new IllegalArgumentException("");
+        else
+            return workload;
+    }
+
+
     @Contract(pure = true)
-    public static void _convolve (
+    public static void _convolve64(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int i, int end,
-            Operation.TertiaryF64NDFun operation
+            Fun.F64F64ToF64 operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
@@ -48,6 +86,8 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         int rank = t0Idx.rank();
 
         double[] t0_value = t0_drn.getDataAs( double[].class );
+        double[] t1_value = t1_src.getDataAs( double[].class );
+        double[] t2_value = t2_src.getDataAs( double[].class );
 
         while ( i < end )
         {//increment on drain accordingly:
@@ -73,7 +113,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
             while ( running ) {
                 ri = ( ri == rank ) ? 0 : ri;
                 if ( !incrementing ) {
-                    value += operation.execute( t0Idx, t1Idx, t2Idx );
+                    value += operation.invoke( t1_value[t1Idx.i()], t2_value[t2Idx.i()] );
                     incrementing = true;
                     ri = 0;
                 } else { // incrementing:
@@ -106,10 +146,11 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
 
     }
 
-    private static void _deConvolve(
+
+    private static void _deConvolve64(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int i, int end,
-            Operation.TertiaryF64NDFun operation
+            Fun.F64F64ToF64 operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
@@ -118,6 +159,8 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         int rank = t0Idx.rank();
 
         double[] t0_value = t0_drn.getDataAs( double[].class );
+        double[] t1_value = t1_src.getDataAs( double[].class );
+        double[] t2_value = t2_src.getDataAs( double[].class );
 
         // Incrementing if 'i>0' so that all indexes match:
         for ( int ii = 0; ii < i; ii++ ) {
@@ -126,14 +169,14 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                 if ( t2Idx.get( ri ) == t2Idx.shape( ri ) ) {
                     t1Idx.set( ri, t0Idx.get( ri ) );
                     t2Idx.set( ri, 0 );
-                } else {
+                }
+                else
                     t1Idx.set(
                             ri ,
                             t0Idx.shape( ri ) > t1Idx.shape( ri )
-                                ? (t0Idx.get( ri ) - t2Idx.get( ri ))
-                                : (t0Idx.get( ri ) + t2Idx.get( ri ))
-                    );
-                }
+                                    ? (t0Idx.get( ri ) - t2Idx.get( ri ))
+                                    : (t0Idx.get( ri ) + t2Idx.get( ri ))
+                        );
                 ri++;
             }
         }
@@ -145,12 +188,12 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                 if ( t2Idx.get( ri ) == t2Idx.shape( ri ) ) {//setting 0
                     t1Idx.set( ri, t0Idx.get( ri ) );
                     t2Idx.set( ri, 0 );
-                } else {
-                    t1Idx.set( ri, (t0Idx.shape( ri ) > t1Idx.shape( ri ))
-                            ? (t0Idx.get( ri ) - t2Idx.get( ri ))
-                            : (t0Idx.get( ri ) + t2Idx.get( ri ))
-                    );
                 }
+                else
+                    t1Idx.set( ri, (t0Idx.shape( ri ) > t1Idx.shape( ri ))
+                                    ? (t0Idx.get( ri ) - t2Idx.get( ri ))
+                                    : (t0Idx.get( ri ) + t2Idx.get( ri ))
+                            );
                 ri++;
             }
             //----------
@@ -161,10 +204,10 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                 ri = ( ri == rank ? 0 : ri );
                 if ( !incrementing ) {// := testing for match and applying operation:
                     boolean isMatch = true;
-                    for ( int rii = 0; rii < rank; rii++ ) {
+                    for ( int rii = 0; rii < rank; rii++ )
                         isMatch = (t1Idx.get( rii ) < t1Idx.shape( rii ) && t1Idx.get( rii ) >= 0) && isMatch;
-                    }
-                    value += (isMatch) ? operation.execute( t0Idx, t1Idx, t2Idx ) : 0;
+
+                    value += (isMatch) ? operation.invoke( t1_value[t1Idx.i()], t2_value[t2Idx.i()] ) : 0;
                     incrementing = true;
                     ri = 0;
                 } else { // incrementing:
@@ -179,9 +222,9 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                             t1Idx.set(
                                     ri,
                                     t0Idx.shape( ri ) > t1Idx.shape( ri )
-                                        ? (t0Idx.get( ri ) - t2Idx.get( ri ))
-                                        : (t0Idx.get( ri ) + t2Idx.get( ri ))
-                            );
+                                            ? (t0Idx.get( ri ) - t2Idx.get( ri ))
+                                            : (t0Idx.get( ri ) + t2Idx.get( ri ))
+                                );
                             incrementing = false;
                         }
                     } else ri++;
