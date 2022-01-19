@@ -286,8 +286,6 @@ class Autograd_NN_Spec extends Specification
     }
 
 
-
-
     def 'Autograd works in a simple convolutional dot product and float based feed forward neural network.'() {
         given :
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
@@ -417,16 +415,17 @@ class Autograd_NN_Spec extends Specification
 
 
 
-    def 'Autograd work for simple matrix multiplications.'() {
+    def 'Autograd work for simple matrix multiplications.'( Class<?> type ) {
 
         given :
-            def a = Tsr.of([2, 3], -1d..4d).setRqsGradient(true)
-            def b = Tsr.of([3, 1], [-4d, -2d, 0d]).setRqsGradient(true)
+            var a = Tsr.of([2, 3], -1f..4f).setRqsGradient(true).mutate.toType(type)
+            var b = Tsr.of([3, 1], [-4d, -2d, 0d]).setRqsGradient(true).mutate.toType(type)
 
         when :
-            def c = a.matMul(b)
-
+            var c = a.matMul(b)
         then :
+            c.valueClass == type
+        and :
             a.toString() == "(2x3):[" +
                                 "-1.0, 0.0, 1.0, " +
                                 "2.0, 3.0, 4.0" +
@@ -444,11 +443,15 @@ class Autograd_NN_Spec extends Specification
             cStr.contains "->d(1x3):[-4.0, -2.0, 0.0]"
 
         when :
-            c.backward(Tsr.of(c.shape(), [-1d, 1d])) // (2x1):[-1, 1]
+            c.backward(Tsr.of(c.shape(), [-1d, 1d]).mutate.toType(type)) // (2x1):[-1, 1]
 
         then :
             a.toString() == "(2x3):[-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]:g:[4.0, 2.0, 0.0, -4.0, -2.0, 0.0]"
             b.toString() == "(3x1):[-4.0, -2.0, 0.0]:g:[3.0, 3.0, 3.0]"
+
+        where :
+            type << [Double, Float]
+
     }
 
 
