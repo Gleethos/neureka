@@ -389,13 +389,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
     public static Tsr<Object> of( List<Object> conf ) {
-        boolean isMatrix = conf.stream()
-                                .allMatch( e ->
-                                        e instanceof List &&
-                                                ((List<Object>) e).stream().noneMatch( v -> v instanceof List)
-                                );
+        boolean isDoubleMatrix = conf.stream()
+                                        .allMatch( e ->
+                                                e instanceof List
+                                                        &&
+                                                ((List<Object>) e).stream().noneMatch( v -> !(v instanceof Double) )
+                                        );
 
-        if ( isMatrix )
+        if ( isDoubleMatrix )
             return new Tsr<>( conf );
 
         List<Integer> growingShape = new ArrayList<>();
