@@ -86,7 +86,7 @@ class Autograd_Tensor_Integration_Spec extends Specification
             x.toString().contains("-16.0")
     }
 
-    def 'Second-Test "x-mul" autograd behaviour. (Not on device)'()
+    def 'Second-Test "x-mul" autograd behaviour. (Not on device)'( Class<?> type )
     {
         given : 'Gradient auto apply for tensors in ue is set to false.'
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
@@ -116,51 +116,57 @@ class Autograd_Tensor_Integration_Spec extends Specification
 
         when : z.backward(Tsr.of(new int[]{2, 2}, 1))
         then : y.toString().contains("[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)")
-        //---
+
         when :
-        //--- again but now reverse: (outcome should not change...)
-        x = Tsr.of(
-                new int[]{3, 3},
-                new double[]{
-                        1, 2, 5,
-                        -1, 4, -2,
-                        -2, 3, 4,
-                }
-        )
-        y = Tsr.of(
-                new int[]{2, 2},
-                new double[]{
-                        -1, 3,
-                        2, 3,
-                }).setRqsGradient(true)
+            // again but now reverse: (outcome should not change...)
+            x = Tsr.of(
+                        new int[]{3, 3},
+                        new double[]{
+                                1, 2, 5,
+                                -1, 4, -2,
+                                -2, 3, 4,
+                        }
+                ).mutate.toType(type)
+            y = Tsr.of(
+                    new int[]{2, 2},
+                    new double[]{
+                            -1, 3,
+                            2, 3,
+                    }).setRqsGradient(true).mutate.toType(type)
 
         then : y.toString().contains(":g:(null)")
         when : z = Tsr.of("I0xi1", y, x)
         then : z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)")
+        and : z.valueClass == type
 
         when : z = Tsr.of(y, "x", x)
         then : z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)")
+        and : z.valueClass == type
 
         when : z.backward(Tsr.of(new int[]{2, 2}, 1))
         then : y.toString().contains("[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)")
         //====
         when :
-        x = Tsr.of(new int[]{1}, 3)
-        Tsr b = Tsr.of(new int[]{1}, -5)
-        Tsr w = Tsr.of(new int[]{1}, -2)
-        z = Tsr.of("I0*i1*i2", x, b, w)
+            x = Tsr.of(new int[]{1}, 3).mutate.toType(type)
+            Tsr b = Tsr.of(new int[]{1}, -5).mutate.toType(type)
+            Tsr w = Tsr.of(new int[]{1}, -2).mutate.toType(type)
+            z = Tsr.of("I0*i1*i2", x, b, w)
         then : z.toString().contains("[1]:(30.0)")
+        and : z.valueClass == type
 
         when :
-        x = Tsr.of(new int[]{1}, 4).setRqsGradient(true)
-        b = Tsr.of(new int[]{1}, 0.5)
-        w = Tsr.of(new int[]{1}, 0.5)
-        y = Tsr.of("(2^i0^i1^i2^2", x, b, w)
+            x = Tsr.of(new int[]{1}, 4).setRqsGradient(true).mutate.toType(type)
+            b = Tsr.of(new int[]{1}, 0.5).mutate.toType(type)
+            w = Tsr.of(new int[]{1}, 0.5).mutate.toType(type)
+            y = Tsr.of("(2^i0^i1^i2^2", x, b, w)
         then :
             y.toString().contains("[1]:(4.0);")
             y.toString().contains(" ->d[1]:(1.38629E0)")
-        //===
-        //TODO: add tests using more then 1 function and check if the graph is being built correctly!
+        and : y.valueClass == type
+            //TODO: add tests using more then 1 function and check if the graph is being built correctly!
+        where :
+            type << [Double, Float]
+
     }
 
     def 'A tensor used as derivative within a computation graph will throw exception when trying to deleting it.'()
