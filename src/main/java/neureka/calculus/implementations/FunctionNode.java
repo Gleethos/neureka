@@ -65,12 +65,6 @@ public class FunctionNode implements Function
 
     //------------------------------------------------------------------------------------------------------------------
 
-    @Override
-    public Function newBuild( String expression ) {
-        return new FunctionBuilder( Neureka.get().backend() ).build( expression, true );
-    }
-
-    //---
 
     @Override
     public String toString()

@@ -94,12 +94,10 @@ public interface Function
      * @return A {@link Function} instance created based on the provided {@link String}, ready to receive inputs and execute on them.
      */
     static Function of( String expression, boolean doAD ) {
-        return new FunctionBuilder( Neureka.get().backend() ).build(expression, doAD);
+        return new FunctionBuilder( Neureka.get().backend() ).build( expression, doAD );
     }
 
     //------------------------------------------------------------------------------------------------------------------
-
-    Function newBuild( String expression );
 
     /**
      *  Only branch {@link Function}s can do autograd / 'Auto-Differentiation', meaning functions

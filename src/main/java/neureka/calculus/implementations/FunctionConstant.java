@@ -23,9 +23,26 @@ import java.util.List;
  */
 public class FunctionConstant implements Function
 {
-	private double _value;
+	private final double _value;
 
 	public double value() { return _value; }
+
+	public FunctionConstant(String expression)
+	{
+		StringBuilder number = new StringBuilder();
+		for ( int i = 0; i < expression.length(); i++ )
+		{
+			if (
+					Character.isDigit(expression.charAt( i ))
+							|| expression.charAt( i ) == '.'
+							|| expression.charAt( i ) == '-'
+							|| expression.charAt( i ) == '+'
+			) {
+				number.append( expression.charAt( i ) );
+			}
+		}
+		_value = Double.parseDouble( number.toString() );
+	}
 
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -46,25 +63,6 @@ public class FunctionConstant implements Function
 
 	@Override
 	public List<Function> getSubFunctions() { return new ArrayList<>(); }
-
-	@Override
-	public Function newBuild( String expression )
-	{	
-		StringBuilder number = new StringBuilder();
-		for ( int i = 0; i < expression.length(); i++ )
-		{
-			if (
-					Character.isDigit(expression.charAt( i ))
-					|| expression.charAt( i ) == '.'
-					|| expression.charAt( i ) == '-'
-					|| expression.charAt( i ) == '+'
-			) {
-				number.append( expression.charAt( i ) );
-			}
-		}
-		_value = Double.parseDouble( number.toString() );
-		return this;
-	}
 
 	//------------------------------------------------------------------------------------------------------------------
 

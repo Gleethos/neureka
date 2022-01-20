@@ -21,7 +21,6 @@ public class DummyFunction implements Function {
         return implementation.apply( arguments, tensors.clone() );
     }
 
-    @Override public Function newBuild(String expression) { throw new IllegalAccessError("NOT PART OF THE TEST"); }
     @Override public boolean isDoingAD() { throw new IllegalAccessError("NOT PART OF THE TEST"); }
     @Override public boolean isFlat() { throw new IllegalAccessError("NOT PART OF THE TEST"); }
     @Override public Operation getOperation() { return null; }

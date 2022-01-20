@@ -26,7 +26,11 @@ import java.util.List;
  */
 public class FunctionVariable implements Function, GradientProvider {
 
-    private boolean _providesGradient = false;
+    private final boolean _providesGradient;
+
+    public FunctionVariable( String equation ) {
+        _providesGradient = equation.contains("g");
+    }
 
     public boolean providesGradient() { return _providesGradient; }
 
@@ -49,12 +53,6 @@ public class FunctionVariable implements Function, GradientProvider {
     public List<Function> getSubFunctions() { return new ArrayList<>(); }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    @Override
-    public Function newBuild( final String equation ) {
-        if ( equation.contains( "g" ) ) _providesGradient = true;
-        return this;
-    }
 
     @Override
     public double call( final double[] inputs, int j ) {

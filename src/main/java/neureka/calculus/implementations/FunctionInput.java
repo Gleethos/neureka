@@ -30,7 +30,31 @@ import java.util.List;
  */
 public class FunctionInput implements Function, GradientProvider
 {
-    private int _index;
+    private final int _index;
+
+    public static Function of(String equation) {
+        if ( equation.charAt( 0 ) == '-' )
+            return new FunctionBuilder( Neureka.get().backend() )
+                    .build(
+                            equation.substring(1)+"*-1",
+                            true
+                    ); // TODO: This might be false!
+        int number = 0;
+        for ( int i = 0; i < equation.length(); ++i) {
+            if ( equation.charAt( i ) <= '9' && equation.charAt( i ) >= '0' ) {
+                number *= 10;
+                number += Integer.parseInt(equation.charAt( i ) + "");
+            }
+        }
+        if ( equation.contains("g") ) {
+            number = -( number + 1 );
+        }
+        return new FunctionInput(number);
+    }
+
+    private FunctionInput( int number ) {
+        _index = number;
+    }
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -57,29 +81,6 @@ public class FunctionInput implements Function, GradientProvider
     public List<Function> getSubFunctions() { return new ArrayList<>(); }
 
     //------------------------------------------------------------------------------------------------------------------
-
-    @Override
-    public Function newBuild( final String equation ) {
-
-        if ( equation.charAt( 0 ) == '-' )
-            return new FunctionBuilder( Neureka.get().backend() )
-                                        .build(
-                                                equation.substring(1)+"*-1",
-                                                true
-                                        ); // TODO: This might be false!
-        int number = 0;
-        for ( int i = 0; i < equation.length(); ++i) {
-            if ( equation.charAt( i ) <= '9' && equation.charAt( i ) >= '0' ) {
-                number *= 10;
-                number += Integer.parseInt(equation.charAt( i ) + "");
-            }
-        }
-        _index = number;
-        if ( equation.contains("g") ) {
-            _index = -( _index + 1 );
-        }
-        return this;
-    }
 
     private Tsr<?> _extract( Tsr<?> t )
     {

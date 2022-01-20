@@ -103,7 +103,7 @@ public class FunctionBuilder
                 .replace("->", ">");
 
         if ( expression.equals("") )
-            return new FunctionConstant().newBuild("0");
+            return new FunctionConstant("0");
 
         expression = ParseUtil.unpackAndCorrect(expression);
         List<String> foundOperations = new ArrayList<>();
@@ -228,9 +228,9 @@ public class FunctionBuilder
         //---
         String component = ParseUtil.unpackAndCorrect( foundComponent );
 
-        if ( _constantPattern.matcher( component ).matches()   ) return new FunctionConstant().newBuild( component );
-        else if ( _inputPattern.matcher( component ).find()    ) return new FunctionInput()   .newBuild( component );
-        else if ( _variablePattern.matcher( component ).find() ) return new FunctionVariable().newBuild( component );
+        if ( _constantPattern.matcher( component ).matches()   ) return new FunctionConstant( component );
+        else if ( _inputPattern.matcher( component ).find()    ) return FunctionInput.of( component );
+        else if ( _variablePattern.matcher( component ).find() ) return new FunctionVariable( component );
         else if ( component.startsWith("-") ) {
             component = "-1 * "+component.substring(1);
             return _build(component, doAD);
