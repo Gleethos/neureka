@@ -86,7 +86,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     private Object _data;
 
     /**
-     * @return The truth value determining if the {@link Tsr#delete42_666()} method has been called oin this instance.
+     * @return The truth value determining if the {@link Unsafe#delete()} method has been called oin this instance.
      */
     public abstract boolean isDeleted();
 
@@ -583,7 +583,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *
      *  <br><br>
      */
-    public abstract Unsafe getUnsafe();
+    public abstract Unsafe<V> getUnsafe();
 
     /**
      *  Tensors should be considered immutable, however sometimes it
@@ -601,7 +601,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          * @param configuration The new NDConfiguration instance which ought to be set.
          * @return The final instance type of this class which enables method chaining.
          */
-        Unsafe setNDConf(NDConfiguration configuration );
+        Unsafe<T> setNDConf(NDConfiguration configuration );
         /**
          *  This method is an inline operation which changes the underlying data of this tensor.
          *  It converts the data types of the elements of this tensor to the specified type!<br>
@@ -647,7 +647,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          * @param layout The layout of the data array (row or column major).
          * @return The final instance type of this class which enables method chaining.
          */
-        Unsafe toLayout(NDConfiguration.Layout layout );
+        Unsafe<T> toLayout(NDConfiguration.Layout layout );
 
         /**
          *  This method is responsible for incrementing
@@ -659,7 +659,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          * @param call The context object containing all relevant information that defines a call for tensor execution.
          * @return This very tensor instance. (factory pattern)
          */
-        Unsafe incrementVersion(ExecutionCall<?> call );
+        Unsafe<T> incrementVersion(ExecutionCall<?> call );
 
         /**
          *  Intermediate tensors are internal non-user tensors which may be eligible

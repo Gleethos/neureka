@@ -1216,13 +1216,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     --------------------------------------------
     */
 
-    /**delete()
-     *  This will check if the {@link #delete42_666()} method was previously called on this tensor.
+    /**
+     *  This will check if the {@link #_delete()} method was previously called on this tensor.
      *  This means that any references inside the tensor will be null
      *  as well as that the tensor data was freed on every device,
      *  meaning that what was previously referenced was most likely garbage collected...
      *
-     * @return The truth value which determines if {@link #delete42_666()} was called on this tensor,
+     * @return The truth value which determines if {@link #_delete()} was called on this tensor,
      *         making it in essence an empty shell void of any references to data.
      */
     public boolean isDeleted() { return ( _flags & IS_DELETED_MASK ) == IS_DELETED_MASK; }
@@ -1231,7 +1231,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Although tensors will be garbage collected when they are not strongly referenced,
      *  there is also the option to manually free up the tensor and its associated data.
      *  This is especially useful when tensors are stored on a device like the OpenCLDevice.
-     *  In that case calling the "{@link Tsr#delete42_666()}" method will free the memory reserved for this tensor.
+     *  In that case calling the "{@link Tsr#_delete()}" method will free the memory reserved for this tensor.
      *  This manual memory freeing through this method can be faster than waiting for
      *  the garbage collector to kick in... <br>
      *  <br>
@@ -3228,7 +3228,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _guardGet("mutate");
         return new Unsafe<V>() {
             @Override
-            public Unsafe<V> setNDConf(NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return this; }
+            public Unsafe setNDConf(NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return this; }
             @Override
             public <V> Tsr<V> toType( Class<V> typeClass ) { return Tsr.this._toType( typeClass ); }
             @Override
