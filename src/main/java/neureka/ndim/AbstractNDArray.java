@@ -178,6 +178,10 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         return (C) this;
     }
 
+    /**
+     * @param data The data object which ought to be set for this array.
+     *             This will be the same instance returned by {@link #getData()}.
+     */
     protected void _setData( Object data )
     {
         _guardSet("data object");

@@ -201,6 +201,11 @@ public interface Function
         return callWith(argArray).execute(call.getTensors());
     }
 
+    /**
+     *  An API for calling a {@link Function} after having specified
+     *  a set of {@link Arg} instances through the {@link #callWith(Args)}
+     *  method.
+     */
     interface CallOptions {
         <T> Tsr<T> call( Tsr<T>... tensors );
         <T> Tsr<T> invoke( Tsr<T>... tensors );
@@ -210,8 +215,20 @@ public interface Function
         Tsr<?> execute( Tsr<?>... tensors );
     }
 
+    /**
+     * @param arguments A set of arguments you want to supply to this function for further
+     *                  control over the execution.
+     *
+     * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
+     */
     default CallOptions callWith( Arg<?>... arguments ) { return callWith( Args.of( arguments ) ); }
 
+    /**
+     * @param arguments A set of arguments you want to supply to this function for further
+     *                  control over the execution.
+     *
+     * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
+     */
     default CallOptions callWith( Args arguments ) {
        return new CallOptions() {
            @SafeVarargs @Override public final <T> Tsr<T> call(    Tsr<T>... tensors ) { return (Tsr<T>) this.execute( tensors ); }
@@ -251,6 +268,7 @@ public interface Function
         else
             return null;
     }
+
     default <T> Tsr<T> invoke( Args arguments, Tsr<T>... tensors ) {
         Tsr<T> result = callWith( arguments ).invoke( tensors );
         if ( result != null )

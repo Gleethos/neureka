@@ -2966,7 +2966,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  <br>
      *  <b>WARNING : The use of this method is discouraged for the following reasons: </b><br>
      *  <br>
-     *  1. Inline operations are inherently error prone for most use cases. <br>
+     *  1. Inline operations are inherently error-prone for most use cases. <br>
      *  2. This inline operation in particular has no safety net,
      *     meaning that there is no implementation of version mismatch detection
      *     like there is for those operations present in the standard operation backend...
