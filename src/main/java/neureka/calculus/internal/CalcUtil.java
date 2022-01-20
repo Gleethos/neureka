@@ -274,13 +274,13 @@ public class CalcUtil
             for (int i = 1; i < array.length; i++) {
                 if (array[i] == tensor) return;
             }
-            if (!tensor.isDeleted()) tensor.delete();
+            if (!tensor.isDeleted()) tensor.getUnsafe().delete();
         }
     }
 
     private static void _delete( Tsr<?> tensor ) {
         if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {
-            if (!tensor.isDeleted()) tensor.delete();
+            if (!tensor.isDeleted()) tensor.getUnsafe().delete();
         }
     }
 

@@ -173,8 +173,8 @@ public class JunctionUtil
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
                                 );
-                if ( d == 0 ) a.delete();
-                b.delete();
+                if ( d == 0 ) a.getUnsafe().delete();
+                b.getUnsafe().delete();
             }
             return alternative;
         } else

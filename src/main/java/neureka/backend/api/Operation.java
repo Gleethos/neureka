@@ -249,11 +249,11 @@ public interface Operation
             Tsr<?>[] newTensors = new Tsr[ tensors.length - offset ];
             newTensors[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true );
             if ( !tensors[ 1 ].has( GraphNode.class ) && tensors[ 1 ] != tensors[ 0 ] ) {//Deleting intermediate results!
-                tensors[ 1 ].delete();
+                tensors[ 1 ].getUnsafe().delete();
                 tensors[ 1 ] = null;
             }
             if (!tensors[ 2 ].has( GraphNode.class ) && tensors[ 2 ] != tensors[ 0 ]) {//Deleting intermediate results!
-                tensors[ 2 ].delete();
+                tensors[ 2 ].getUnsafe().delete();
                 tensors[ 2 ] = null;
             }
             System.arraycopy( tensors, 1 + offset, newTensors, 1, tensors.length - 1 - offset );

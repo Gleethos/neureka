@@ -87,7 +87,7 @@ public class Power extends AbstractOperation
                                                             .on( device )
                                         );
                         tensors[ 0 ] = reduction[ 0 ];
-                        exp.delete();
+                        exp.getUnsafe().delete();
                     } else {
 
                         alternative = traverse.execute(
@@ -116,8 +116,8 @@ public class Power extends AbstractOperation
                             );
                         tensors[ 0 ] = reduction[ 0 ];
 
-                        inner.delete();
-                        exp.delete();
+                        inner.getUnsafe().delete();
+                        exp.getUnsafe().delete();
                     }
                 }
             }

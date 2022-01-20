@@ -92,8 +92,8 @@ class Cross_Device_Spec extends Specification
             )
 
         cleanup:
-            product.delete()
-            tensor1.delete()
+            product.getUnsafe().delete()
+            tensor1.getUnsafe().delete()
             //tensor2.delete() // TODO: FIX EXCEPTION!
 
 

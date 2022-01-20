@@ -181,7 +181,7 @@ class Autograd_Tensor_Integration_Spec extends Specification
             Tsr c = a.convDot(b)
 
         and : 'One tries to delete tensor "b"...'
-            b.delete()
+            b.getUnsafe().delete()
 
         then : 'An exception is being thrown.'
             def exception = thrown(IllegalStateException)

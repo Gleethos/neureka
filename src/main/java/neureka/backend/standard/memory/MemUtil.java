@@ -33,7 +33,7 @@ public class MemUtil {
                 if ( !t.isDeleted() && t.isIntermediate() ) {
                     GraphNode<?> node = t.getGraphNode();
                     if ( node == null || !node.isUsedAsDerivative() )
-                        t.delete();
+                        t.getUnsafe().delete();
                 }
             }
         }

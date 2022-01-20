@@ -86,7 +86,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     private Object _data;
 
     /**
-     * @return The truth value determining if the {@link Tsr#delete()} method has been called oin this instance.
+     * @return The truth value determining if the {@link Tsr#delete42_666()} method has been called oin this instance.
      */
     public abstract boolean isDeleted();
 
@@ -670,6 +670,20 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          *                       tensor which may be eligible for deletion by {@link Function}s consuming it.
          */
         Tsr<T> setIsIntermediate( boolean isIntermediate );
+
+
+        /**
+         *  Although tensors will be garbage collected when they are not strongly referenced,
+         *  there is also the option to manually free up the tensor and its associated data in a native environment.
+         *  This is especially useful when tensors are stored on a device like the {@link neureka.devices.opencl.OpenCLDevice}.
+         *  In that case calling this method will free the memory reserved for this tensor on the device.
+         *  This manual memory freeing through this method can be faster than waiting for
+         *  the garbage collector to kick in at a latr point in time... <br>
+         *  <br>
+         *
+         * @return This very tensor instance to allow for method chaining.
+         */
+        Tsr<T> delete();
 
     }
 

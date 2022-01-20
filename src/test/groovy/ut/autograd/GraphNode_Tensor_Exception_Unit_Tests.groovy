@@ -47,7 +47,7 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
             1 * node.update(_) >> true
 
         when : 'We try to delete the tensor...'
-            t.delete()
+            t.getUnsafe().delete()
 
         then : 'The graph node object will return true for "isUsedAsDerivative()" inside the tensor...'
             1 * node.isUsedAsDerivative() >> true
