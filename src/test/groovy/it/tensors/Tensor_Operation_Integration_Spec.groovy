@@ -163,12 +163,12 @@ class Tensor_Operation_Integration_Spec extends Specification
     }
 
     def 'New operator methods added to "SDK-types" at runtime are callable by groovy and also work.'(
-            String code, String expected
+            Class<?> type, String code, String expected
     ) {
         given :
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
-            Tsr a = Tsr.of(5d)
-            Tsr b = Tsr.of(3d)
+            Neureka.get().settings().view().tensors({it.hasSlimNumbers=true})
+            Tsr a = Tsr.of(5d).unsafe.toType(type)
+            Tsr b = Tsr.of(3f).unsafe.toType(type)
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
@@ -177,22 +177,34 @@ class Tensor_Operation_Integration_Spec extends Specification
             Tsr c = new GroovyShell(binding).evaluate((code)) as Tsr
 
         then : 'The resulting tensor (toString) will contain the expected String.'
-            c.toString().contains(expected)
+            c.toString().endsWith("[$expected]")
 
         where :
-            code       || expected
-            '(2+a)'    || "7.0"
-            '(2*b)'    || "6.0"
-            '(6/b)'    || "2.0"
-            '(2^b)'    || "8.0"
-            '(2**b)'   || "8.0"
-            '(4-a)'    || "-1.0"
-            '(2.0+a)'  || "7.0"
-            '(2.0*b)'  || "6.0"
-            '(6.0/b)'  || "2.0"
-            '(2.0^b)'  || "8.0"
-            '(2.0**b)' || "8.0"
-            '(4.0-a)'  || "-1.0"
+            type   | code       || expected
+            Double | '(2+a)'    || "7"
+            Double | '(2*b)'    || "6"
+            Double | '(6/b)'    || "2"
+            Double | '(2^b)'    || "8"
+            Double | '(2**b)'   || "8"
+            Double | '(4-a)'    || "-1"
+            Double | '(2.0+a)'  || "7"
+            Double | '(2.0*b)'  || "6"
+            Double | '(6.0/b)'  || "2"
+            Double | '(2.0^b)'  || "8"
+            Double | '(2.0**b)' || "8"
+            Double | '(4.0-a)'  || "-1"
+            Float  | '(2+a)'    || "7"
+            Float  | '(2*b)'    || "6"
+            Float  | '(6/b)'    || "2"
+            Float  | '(2^b)'    || "8"
+            Float  | '(2**b)'   || "8"
+            Float  | '(4-a)'    || "-1"
+            Float  | '(2.0+a)'  || "7"
+            Float  | '(2.0*b)'  || "6"
+            Float  | '(6.0/b)'  || "2"
+            Float  | '(2.0^b)'  || "8"
+            Float  | '(2.0**b)' || "8"
+            Float  | '(4.0-a)'  || "-1"
 
     }
 
