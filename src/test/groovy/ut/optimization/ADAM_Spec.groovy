@@ -96,12 +96,12 @@ class ADAM_Spec extends Specification
             t.toString().contains( expected )
 
         where : 'The following expressions, inputs and expected String results are being used :'
-            expression                                 | inputs                  || expected
-            "( 1 - I[0]) * I[1]"                       | [0.9, -3]               || "(1):[-0.29999E0]"
-            "I[0] * I[1] + (1 - I[2]) * I[3]"          | [0.9, 0, 0.9, -3]       || "(1):[-0.29999E0]" //-> I[0] below
-            "I[0] / ( 1 - I[1] )"                      | [-0.3, 0.9]             || "(1):[-3.0]" //-> I[2] below below!
-            "I[0] ^ 0.5 + I[1]"                        | [9, 1e-7]               || "(1):[3.0]"
-            "I[0] - I[1] * I[2] /( I[3] ^ 0.5 + I[4] )"| [0, 0.01, -3, 9, 1e-7 ] || "(1):[0.00999E0]"
+            expression                                 | inputs                       || expected
+            "( 1 - I[0]) * I[1]"                       | [0.9d, -3d]                  || "(1):[-0.29999E0]"
+            "I[0] * I[1] + (1 - I[2]) * I[3]"          | [0.9d, 0d, 0.9d, -3d]        || "(1):[-0.29999E0]" //-> I[0] below
+            "I[0] / ( 1 - I[1] )"                      | [-0.3d, 0.9d]                || "(1):[-3.0]" //-> I[2] below below!
+            "I[0] ^ 0.5 + I[1]"                        | [9d, 1e-7d]                  || "(1):[3.0]"
+            "I[0] - I[1] * I[2] /( I[3] ^ 0.5 + I[4] )"| [0d, 0.01d, -3d, 9d, 1e-7d ] || "(1):[0.00999E0]"
     }
 
 

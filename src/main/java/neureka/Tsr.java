@@ -235,19 +235,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     {
         if ( args == null || args.length == 0 ) return new Tsr<>();
         if ( args.length == 1 ) {
-            if ( args[ 0 ] instanceof BigDecimal ) {
-                Tsr<T> t = new Tsr<>();
-                t.createConstructionAPI()._constructAllF64( new int[]{ 1 }, ( (BigDecimal) args[ 0 ] ).doubleValue());
-                return t;
-            } else if ( args[ 0 ] instanceof Integer ) {
-                Tsr<T> t = new Tsr<>();
-                t.createConstructionAPI()._constructAllF64( new int[]{ 1 }, ( (Integer) args[ 0 ] ).doubleValue() );
-                return t;
-            } else {
+            Tsr<T> t = new Tsr<>();
+            boolean success = t.createConstructionAPI().constructAllFromOne( new int[]{ 1 }, args[ 0 ] );
+            if ( !success ) {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
                 _LOG.error( message );
                 throw new IllegalArgumentException( message );
             }
+            return t;
         }
         args[ 0 ] = ( args[ 0 ] instanceof ArrayList ) ? ( (List<?>) args[ 0 ] ).toArray() : args[ 0 ];
         args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (List<?>) args[ 1 ] ).toArray() : args[ 1 ];
@@ -261,7 +256,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
                 Tsr<T> t = new Tsr<>();
                 args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
-                t.createConstructionAPI()._constructAllF64( (int[]) args[ 0 ], (Double) args[ 1 ] );
+                t.createConstructionAPI().constructAllFromOne( (int[]) args[ 0 ], args[ 1 ] );
                 return t;
             } else {
                 Tsr<T> t = new Tsr<>();
@@ -399,20 +394,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         if ( isDoubleMatrix )
             return new Tsr<>( conf );
 
-        List<Integer> growingShape = new ArrayList<>();
-        List<Object> growingData = new ArrayList<>();
-        ListReader reader = new ListReader(
-                                    conf,
-                                    0,
-                                    growingData,
-                                    growingShape,
-                                    o -> ( o instanceof Number ? ((Number)o).doubleValue() : o )
-                                );
-        return (Tsr<Object>) Tsr.of(
-                                DataType.of(reader.getType()),
-                                growingShape.stream().mapToInt(i -> i).toArray(),
-                                growingData.toArray()
-                            );
+        ListReader.Result result = ListReader.read( conf, o -> ( o instanceof Number ? ((Number)o).doubleValue() : o ) );
+        return (Tsr<Object>)
+                    Tsr.of(
+                            DataType.of(result.getType()),
+                            result.getShape().stream().mapToInt(i -> i).toArray(),
+                            result.getData().toArray()
+                        );
     }
 
     /**
@@ -518,7 +506,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public static Tsr<Double> of( double value ) { return new Tsr<>(value); }
 
-    private Tsr( double value ) { createConstructionAPI()._constructAllF64( new int[]{ 1 }, value ); }
+    private Tsr( double value ) { createConstructionAPI().constructAllFromOne( new int[]{ 1 }, value ); }
 
     /**
      *  Constructs a vector of floats based on the provided array.
@@ -606,7 +594,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public static Tsr<Double> of( int[] shape, double value ) { return new Tsr<>( shape, value ); }
 
-    private Tsr( int[] shape, double value ) { createConstructionAPI()._constructAllF64( shape, value ); }
+    private Tsr( int[] shape, double value ) { createConstructionAPI().constructAllFromOne( shape, value ); }
 
     public static Tsr<Double> of( int[] shape, double[] value ) { return new Tsr<>( shape, value ); }
 
@@ -798,13 +786,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     expression,
                     true
             );
-        else
+        else {
             return _constructFunctional(
                     null,
-                    inputs.stream().map( args -> _of(args) ).toArray( Tsr[]::new ),
+                    inputs.stream().map(args -> _of(args)).toArray(Tsr[]::new),
                     expression,
                     true
             );
+        }
     }
 
     /**

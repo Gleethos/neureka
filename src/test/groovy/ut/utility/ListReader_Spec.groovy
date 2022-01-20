@@ -20,22 +20,17 @@ class ListReader_Spec extends Specification
     def 'The ListReader can interpret nested lists resembling a matrix into a shape list and value list.'()
     {
         given : 'We have a nested list whose structure resembles a matrix!'
-            def data = [
+            var data = [
                     [1, 2, 3],
                     [4, 5, 6]
             ]
-        and : 'An empty shape list.'
-            def shape = []
-        and : 'An empty list as a target for the flattened data.'
-            def flattened = []
-
-        when : 'We use the reader to fill the 2 lists defined above...'
-            new ListReader(data, 0, flattened, shape, (o) -> o)
+        when : 'We use the reader to internally fill 2 lists representing shape and data...'
+            var result = ListReader.read(data, (o)->o)
 
         then : 'The shape list will have the shape of the "matrix".'
-            shape == [2, 3]
+            result.shape == [2, 3]
         and : 'The flattened data is as expected!'
-            flattened == [1, 2, 3, 4, 5, 6]
+            result.data == [1, 2, 3, 4, 5, 6]
     }
 
     def 'The ListReader can interpret nested lists resembling a 3D tensor into a shape list and value list.'()
@@ -50,35 +45,25 @@ class ListReader_Spec extends Specification
                                     [4, 5, 6, -3]
                             ]
                         ]
-        and : 'An empty shape list.'
-            def shape = []
-        and : 'An empty list as a target for the flattened data.'
-            def flattened = []
-
-        when : 'We use the reader to fill the 2 lists defined above...'
-            new ListReader(data, 0, flattened, shape, (o) -> o)
+        when : 'We use the reader to internally fill 2 lists representing shape and data...'
+            var result = ListReader.read(data, (o)->o)
 
         then : 'The shape list will have the shape of the "tensor".'
-            shape == [2, 2, 4]
+            result.shape == [2, 2, 4]
         and : 'The flattened data is as expected!'
-            flattened == [1, 2, 3, 0, 4, 5, 6, -1, 1, 2, 3, -2, 4, 5, 6, -3]
+            result.data == [1, 2, 3, 0, 4, 5, 6, -1, 1, 2, 3, -2, 4, 5, 6, -3]
     }
 
     def 'The ListReader can interpret nested lists into a shape list and value list.'(
             Object data, List<Integer> expectedShape, List<Object> expectedData
     ) {
-        given : 'An empty shape list.'
-            def shape = []
-        and : 'An empty list as a target for the flattened data.'
-            def flattened = []
-
-        when : 'We use the reader to fill the 2 lists defined above...'
-            new ListReader(data, 0, flattened, shape, (o) -> o)
+        when : 'We use the reader to internally fill 2 lists representing shape and data...'
+            var result = ListReader.read(data, (o)->o)
 
         then : 'The shape list will have the shape of the "matrix".'
-            shape == expectedShape
+            result.shape == expectedShape
         and : 'The flattened data is as expected!'
-            flattened == expectedData
+            result.data == expectedData
 
         where :
             data            || expectedShape | expectedData

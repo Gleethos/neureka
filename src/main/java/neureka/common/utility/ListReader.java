@@ -1,5 +1,6 @@
 package neureka.common.utility;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -17,7 +18,11 @@ public class ListReader {
     private final List<ListReader> _readers;
     private final int _size;
 
-    public ListReader(
+    public static Result read( List<Object> data, Function<Object, Object> valueFilter ) {
+        return new Result( data, valueFilter );
+    }
+
+    private ListReader(
             Object data,
             int depth,
             List<Object> growingData,
@@ -89,5 +94,30 @@ public class ListReader {
         else return false;
     }
 
+    public static class Result {
+
+        private final List<Integer> _growingShape = new ArrayList<>();
+        private final List<Object> _growingData = new ArrayList<>();
+        private final Class<?> _type;
+
+        private Result(Object data, Function<Object, Object> valueFilter
+        ) {
+            ListReader reader = new ListReader(
+                                        data,
+                                    0,
+                                        this._growingData,
+                                        this._growingShape,
+                                        valueFilter
+                                    );
+            this._type = reader._type;
+        }
+
+        public Class<?> getType() { return _type; }
+
+        public List<Integer> getShape() { return _growingShape; }
+
+        public List<Object> getData() { return _growingData; }
+
+    }
 
 }

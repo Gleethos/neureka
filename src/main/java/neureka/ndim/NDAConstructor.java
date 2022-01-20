@@ -102,7 +102,7 @@ public class NDAConstructor {
         }
 
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
-            if ( _constructAllFromOne( shape, data ) ) return;
+            if ( constructAllFromOne( shape, data ) ) return;
 
         _API.setType( dataType );
         configureFromNewShape( shape, false, false );
@@ -118,7 +118,7 @@ public class NDAConstructor {
         return NDAConstructor.optimizeObjectArray(dataType, data, size);
     }
 
-    public boolean _constructAllFromOne(int[] shape, Object data) {
+    public boolean constructAllFromOne( int[] shape, Object data ) {
         if ( data instanceof Double    ) { _constructAllF64( shape, (Double)    data ); return true; }
         if ( data instanceof Float     ) { _constructAllF32( shape, (Float)     data ); return true; }
         if ( data instanceof Integer   ) { _constructAllI32( shape, (Integer)   data ); return true; }
@@ -127,10 +127,13 @@ public class NDAConstructor {
         if ( data instanceof Long      ) { _constructAllI64( shape, (Long)      data ); return true; }
         if ( data instanceof Boolean   ) { _constructAllBool( shape, (Boolean)  data ); return true; }
         if ( data instanceof Character ) { _constructAllChar( shape, (Character)data ); return true; }
+        if ( Number.class.isAssignableFrom( data.getClass() ) ) {
+            _constructAllF64( shape, ((Number)data).doubleValue() ); return true;
+        }
         return false;
     }
 
-    public void _constructAllF64( int[] shape, double value ) {
+    private void _constructAllF64( int[] shape, double value ) {
         _constructAll( shape, F64.class );
         ( (double[]) _API.getData())[ 0 ] = value;
     }
