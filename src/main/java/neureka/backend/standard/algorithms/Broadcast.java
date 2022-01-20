@@ -162,8 +162,8 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         assert t2_src != null;
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src, NDIterator.NonVirtual.TRUE );
-        t0Idx.set( t0_drn.IndicesOfIndex( i ) );
-        t1Idx.set( t0_drn.IndicesOfIndex( i ) );
+        t0Idx.set( t0_drn.indicesOfIndex( i ) );
+        t1Idx.set( t0_drn.indicesOfIndex( i ) );
         NDIterator t2Idx = NDIterator.of( t2_src, NDIterator.NonVirtual.TRUE );
         double[] t0_value = t0_drn.getDataAs( double[].class );
         double[] t1_value = t1_src.getDataAs( double[].class );
@@ -263,8 +263,8 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         assert t2_src != null;
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src, NDIterator.NonVirtual.TRUE );
-        t0Idx.set( t0_drn.IndicesOfIndex( i ) );
-        t1Idx.set( t0_drn.IndicesOfIndex( i ) );
+        t0Idx.set( t0_drn.indicesOfIndex( i ) );
+        t1Idx.set( t0_drn.indicesOfIndex( i ) );
         NDIterator t2Idx = NDIterator.of( t2_src, NDIterator.NonVirtual.TRUE );
         float[] t0_value = t0_drn.getDataAs( float[].class );
         float[] t1_value = t1_src.getDataAs( float[].class );

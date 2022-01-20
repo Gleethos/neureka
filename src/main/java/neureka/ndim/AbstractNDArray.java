@@ -422,7 +422,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      * @param index The virtual index of the tensor having this configuration.
      * @return The position of the (virtually) targeted element represented as an array of axis indices.
      */
-    public int[] IndicesOfIndex( int index ) { return _NDConf.indicesOfIndex( index ); }
+    public int[] indicesOfIndex( int index ) { return _NDConf.indicesOfIndex( index ); }
 
     /**
      *  This is a convenience method identical to {@code tensor.getNDConf().indexOfIndices(indices)}.

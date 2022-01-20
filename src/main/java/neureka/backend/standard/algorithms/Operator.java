@@ -120,9 +120,9 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator t1Idx = NDIterator.of(t1_src);
                 NDIterator t2Idx = NDIterator.of(t2_src);
-                t0Idx.set(t0_drn.IndicesOfIndex(i));
-                t1Idx.set(t1_src.IndicesOfIndex(i));
-                t2Idx.set(t2_src.IndicesOfIndex(i));
+                t0Idx.set(t0_drn.indicesOfIndex(i));
+                t1Idx.set(t1_src.indicesOfIndex(i));
+                t2Idx.set(t2_src.indicesOfIndex(i));
                 while ( i < end ) {//increment on drain accordingly:
                     //setInto _value in drn:
                     t0_value[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);
@@ -158,9 +158,9 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator t1Idx = NDIterator.of(t1_src);
                 NDIterator t2Idx = NDIterator.of(t2_src);
-                t0Idx.set(t0_drn.IndicesOfIndex(i));
-                t1Idx.set(t1_src.IndicesOfIndex(i));
-                t2Idx.set(t2_src.IndicesOfIndex(i));
+                t0Idx.set(t0_drn.indicesOfIndex(i));
+                t1Idx.set(t1_src.indicesOfIndex(i));
+                t2Idx.set(t2_src.indicesOfIndex(i));
                 while ( i < end ) {//increment on drain accordingly:
                     //setInto _value in drn:
                     t0_value[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);

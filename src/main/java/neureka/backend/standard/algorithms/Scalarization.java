@@ -92,8 +92,8 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
-                t0Idx.set(t0_drn.IndicesOfIndex(i));
-                srcIdx.set(src.IndicesOfIndex(i));
+                t0Idx.set(t0_drn.indicesOfIndex(i));
+                srcIdx.set(src.indicesOfIndex(i));
                 while (i < end) // increment on drain accordingly:
                 {
                     // setInto _value in drn:
@@ -114,8 +114,8 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
-                t0Idx.set(t0_drn.IndicesOfIndex(i));
-                srcIdx.set(src.IndicesOfIndex(i));
+                t0Idx.set(t0_drn.indicesOfIndex(i));
+                srcIdx.set(src.indicesOfIndex(i));
                 while (i < end) // increment on drain accordingly:
                 {
                     // setInto _value in drn:

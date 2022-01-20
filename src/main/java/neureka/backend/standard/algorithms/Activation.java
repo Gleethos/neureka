@@ -97,8 +97,8 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
                 workload = (i, end) -> {
                     NDIterator t0Idx = NDIterator.of(t0_drn);
                     NDIterator t1Idx = NDIterator.of(t1_src);
-                    t0Idx.set(t0_drn.IndicesOfIndex(i));
-                    t1Idx.set(t0_drn.IndicesOfIndex(i));
+                    t0Idx.set(t0_drn.indicesOfIndex(i));
+                    t1Idx.set(t0_drn.indicesOfIndex(i));
                     while (i < end) { // increment on drain accordingly:
                         //setInto _value in drn:
                         t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);
@@ -120,8 +120,8 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
                     workload = (i, end) -> {
                         NDIterator t0Idx = NDIterator.of(t0_drn);
                         NDIterator t1Idx = NDIterator.of(t1_src);
-                        t0Idx.set(t0_drn.IndicesOfIndex(i));
-                        t1Idx.set(t0_drn.IndicesOfIndex(i));
+                        t0Idx.set(t0_drn.indicesOfIndex(i));
+                        t1Idx.set(t0_drn.indicesOfIndex(i));
                         while (i < end) { // increment on drain accordingly:
                             //setInto _value in drn:
                             t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);
@@ -147,8 +147,8 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
                 workload = (i, end) -> {
                     NDIterator t0Idx = NDIterator.of( t0_drn );
                     NDIterator t1Idx = NDIterator.of( t1_src );
-                    t0Idx.set( t0_drn.IndicesOfIndex( i ) );
-                    t1Idx.set( t0_drn.IndicesOfIndex( i ) );
+                    t0Idx.set( t0_drn.indicesOfIndex( i ) );
+                    t1Idx.set( t0_drn.indicesOfIndex( i ) );
                     while ( i < end ) { // increment on drain accordingly:
                         //setInto _value in drn:
                         t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);

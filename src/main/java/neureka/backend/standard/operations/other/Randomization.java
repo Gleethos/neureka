@@ -73,8 +73,8 @@ public class Randomization extends AbstractOperation
                                                     {
                                                         NDIterator t0Idx = NDIterator.of( call.getTsrOfType( Number.class, 0 ) );
                                                         NDIterator srcIdx = NDIterator.of( call.getTsrOfType( Number.class, 1 ) );
-                                                        t0Idx.set( call.getTsrOfType( Number.class, 0 ).IndicesOfIndex( i ) );
-                                                        srcIdx.set( call.getTsrOfType( Number.class, 1 ).IndicesOfIndex( i ) );
+                                                        t0Idx.set( call.getTsrOfType( Number.class, 0 ).indicesOfIndex( i ) );
+                                                        srcIdx.set( call.getTsrOfType( Number.class, 1 ).indicesOfIndex( i ) );
                                                         double[] t0_value = call.getTsrOfType( Number.class, 0 ).getDataAs( double[].class );
                                                         while ( i < end ) // increment on drain accordingly:
                                                         {
