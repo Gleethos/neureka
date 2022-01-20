@@ -117,13 +117,6 @@ public final class Product extends AbstractOperation {
         //______________
         // ACTIVATION :
 
-        DefaultOperatorCreator<TertiaryF64NDFun> activationCreator =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].getDataAs( double[].class );
-                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
-                    else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
-                };
-
         Activation activation = new Activation()
         .setCanPerformBackwardADFor( call -> true )
         .setCanPerformForwardADFor( call -> true )

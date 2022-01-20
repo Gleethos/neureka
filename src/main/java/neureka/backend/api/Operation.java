@@ -46,14 +46,14 @@ import neureka.calculus.Function;
 import neureka.ndim.iterators.NDIterator;
 
 /**
- *  This interface is part of the backend API and it embodies the top layer of the 3 tier backend architecture.
+ *  This interface is part of the backend API, and it embodies the top layer of the 3 tier backend architecture.
  *  It represents broad and high level requests for execution which might be executed differently depending
  *  on the provided {@link ExecutionCall} arguments.
  *  An {@link Operation} implementation ought to consist of a component system
  *  containing multiple {@link Algorithm} instances, which themselves ought to contain device specific implementations
  *  capable of processing {@link ExecutionCall} instances, or rather their state. <br><br>
  *
- *  Besides the component system, there is also the definition for how its supposed to integrate into
+ *  Other than the component system, there is also the definition for how It's supposed to integrate into
  *  the {@link neureka.calculus} package in order to serve as part of an {@link Function} AST.
  *  This means that the operation should have a function name
  *  and optionally also an operator in the form of {@link String} instances.
@@ -63,25 +63,6 @@ import neureka.ndim.iterators.NDIterator;
 public interface Operation
 {
     static OperationBuilder builder() { return new OperationBuilder(); }
-
-    @FunctionalInterface
-    interface TertiaryF64NDFun { double execute(NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx ); }
-
-    @FunctionalInterface
-    interface SecondaryF64NDFun { double execute(NDIterator t0Idx, NDIterator t1Idx ); }
-
-    @FunctionalInterface
-    interface PrimaryF64NDFun { double execute(NDIterator t0Idx ); }
-
-    //---
-
-    @FunctionalInterface
-    interface DefaultOperatorCreator<T> {  T create( Tsr<?>[] inputs, int d ); }
-    @FunctionalInterface
-    interface ScalarOperatorCreator<T>
-    {  T create( Tsr<?>[] inputs, double scalar, int d ); }
-
-    //==================================================================================================================
 
     Algorithm<?>[] getAllAlgorithms();
 
@@ -106,8 +87,6 @@ public interface Operation
      * @return the function name which serves as identifier when parsing {@link Function} instances.
      */
     String getFunction();
-
-    //==================================================================================================================
 
     /**
      *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.
@@ -149,11 +128,7 @@ public interface Operation
      */
     <T extends Algorithm<T>> boolean supportsAlgorithm( Class<T> type );
 
-    //==================================================================================================================
-
     String stringify( String[] children );
-
-    //==================================================================================================================
 
     /**
      *  {@link Operation} implementations and {@link Function} implementations are in a tight relationship
@@ -169,8 +144,6 @@ public interface Operation
      * @return The derivative as a {@link String} which should be parsable into yet another AST.
      */
     String asDerivative( Function[] children, int derivationIndex );
-
-    //==================================================================================================================
 
     String getOperator();
 
@@ -248,7 +221,6 @@ public interface Operation
      * @return The result of the calculation.
      */
     double calculate( double[] inputs, int j, int d, Function[] src );
-
 
     /**
      *  This static utility class contains simple methods used for creating slices of plain old

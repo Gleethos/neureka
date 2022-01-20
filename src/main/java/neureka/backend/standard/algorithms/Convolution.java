@@ -43,7 +43,7 @@ public class Convolution extends AbstractFunctionalAlgorithm<Convolution>
 
     private static CPU.RangeWorkload _newWorkloadFor(
             ExecutionCall<CPU> call,
-            Functions<Fun> pairs
+            Functions<Fun> funs
     ) {
         Tsr<Number> t0_drn = call.getTsrOfType( Number.class, 0 );
         Tsr<Number> t1_src = call.getTsrOfType( Number.class, 1 );
@@ -55,14 +55,14 @@ public class Convolution extends AbstractFunctionalAlgorithm<Convolution>
         CPU.RangeWorkload workload = null;
 
         if ( typeClass == Double.class ) {
-            Fun.F64F64ToF64 operation = pairs.get( Fun.F64F64ToF64.class ).get( -1 );
+            Fun.F64F64ToF64 operation = funs.get( Fun.F64F64ToF64.class ).get( -1 );
             if ( d < 0 )
                 workload = (i, end) -> _convolve64( t0_drn, t1_src, t2_src, i, end, operation );
             else
                 workload = (i, end) -> _deConvolve64( t0_drn, t1_src, t2_src, i, end, operation );
         }
         else if ( typeClass == Float.class ) {
-            Fun.F32F32ToF32 operation = pairs.get( Fun.F32F32ToF32.class ).get( -1 );
+            Fun.F32F32ToF32 operation = funs.get( Fun.F32F32ToF32.class ).get( -1 );
             if ( d < 0 )
                 workload = (i, end) -> _convolve32( t0_drn, t1_src, t2_src, i, end, operation );
             else
@@ -139,11 +139,11 @@ public class Convolution extends AbstractFunctionalAlgorithm<Convolution>
                         } else incrementing = false;
                     } else ri++;
                 }
-            }//setInto value in drn:
+            }
+            //set value in drn:
             t0_value[ t0Idx.i() ] = value;
             //increment on drain:
             t0Idx.increment();
-            //NDConfiguration.Utility.increment(t0Idx, t0Shp);
             i++;
         }
 
