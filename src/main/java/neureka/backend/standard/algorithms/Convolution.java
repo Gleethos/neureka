@@ -12,13 +12,13 @@ import org.jetbrains.annotations.Contract;
 
 public class Convolution extends AbstractFunctionalAlgorithm<Convolution>
 {
-
     public Convolution() {
         super("convolution");
-        setIsSuitableFor( call ->
+        setIsSuitableFor(
+            call ->
                 call.validate()
-                .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                .basicSuitability()
+                    .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
+                    .basicSuitability()
         );
     }
 
@@ -30,14 +30,14 @@ public class Convolution extends AbstractFunctionalAlgorithm<Convolution>
 
     public static Functions.Builder<Fun> implementationForCPU() {
         return Functions.implementation(
-                (call, pairs) ->
-                        call.getDevice()
+                    (call, pairs) ->
+                            call.getDevice()
                                 .getExecutor()
                                 .threaded(
                                         call.getTsrOfType( Number.class, 0 ).size(),
                                         _newWorkloadFor( call, pairs )
                                 )
-        );
+                );
     }
 
 
@@ -77,7 +77,7 @@ public class Convolution extends AbstractFunctionalAlgorithm<Convolution>
 
 
     @Contract(pure = true)
-    public static void _convolve64(
+    private static void _convolve64(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int i, int end,
             Fun.F64F64ToF64 operation
@@ -244,9 +244,8 @@ public class Convolution extends AbstractFunctionalAlgorithm<Convolution>
 
     // ---
 
-
     @Contract(pure = true)
-    public static void _convolve32(
+    private static void _convolve32(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int i, int end,
             Fun.F32F32ToF32 operation
