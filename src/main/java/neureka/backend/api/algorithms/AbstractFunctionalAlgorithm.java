@@ -72,7 +72,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     }
 
     /**
-     *  The {@link ForwardADPredicate} lambda received by this method checks if forward mode auto differentiation
+     *  The {@link ForwardADPredicate} lambda implemented by this method checks if forward mode auto differentiation
      *  can be performed for a given {@link ExecutionCall}.
      *  The analyzer returns a boolean truth value.
      */
@@ -94,7 +94,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     }
 
     /**
-     *  The functional interface received by this method ought to return a new instance
+     *  This method returns a new instance
      *  of the {@link ADAgent} class responsible for performing automatic differentiation
      *  both for forward and backward mode differentiation. <br>
      *  Therefore an {@link ADAgent} exposes 2 different procedures. <br>
@@ -110,7 +110,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     }
 
     /**
-     *  This method receives an {@link ExecutionDispatcher} lambda which
+     *  This method implements the {@link ExecutionDispatcher} lambda which
      *  is the final execution procedure responsible for electing an {@link neureka.backend.api.ImplementationFor}
      *  the chosen {@link Device} in a given {@link ExecutionCall}.
      *  However, the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
@@ -155,6 +155,8 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     }
 
     /**
+     *  Preparing refers to instantiating output tensors for the provided {@link ExecutionCall}.
+     *  
      * @param call The execution call which needs to be prepared for execution.
      * @return The prepared {@link ExecutionCall} instance.
      */
@@ -176,8 +178,10 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
         else return null;
     }
 
-    //---
-
+    /**
+     * @return A new concrete implementation of the {@link AbstractFunctionalAlgorithm} which
+     *         is fully built and ready to be used as an {@link Operation} component.
+     */
     public C buildFunAlgorithm() {
         if (
             _isSuitableFor == null ||
@@ -196,6 +200,10 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
         return (C) this;
     }
 
+    /**
+     *  This method ensures that this algorithm was fully supplied with all the
+     *  required lambdas...
+     */
     private void _checkReadiness() {
         if ( !_isFullyBuilt ) {
             throw new IllegalStateException(
@@ -230,10 +238,12 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     }
 
     /**
-     *  The {@link SuitabilityPredicate}
+     *  The {@link SuitabilityPredicate} received by this method 
      *  checks if a given instance of an {@link ExecutionCall} is
      *  suitable to be executed in {@link neureka.backend.api.ImplementationFor} instances
      *  residing in this {@link Algorithm} as components.
+     *  The lambda will be called by the {@link #isSuitableFor(ExecutionCall)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
      *
      * @return This very instance to enable method chaining.
      */
@@ -245,6 +255,9 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     /**
      *  A {@link ForwardADPredicate} lambda checks if this
      *  {@link Algorithm} can perform forward AD for a given {@link ExecutionCall}.
+     *  The lambda will be called by the {@link #canPerformForwardADFor(ExecutionCall)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
+     *
      *
      * @param canPerformForwardADFor The lambda which evaluates if a provided {@link ExecutionCall} can be forward propagated.
      * @return This very instance to enable method chaining.
@@ -257,6 +270,9 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     /**
      *  A {@link BackwardADPredicate} lambda checks if this
      *  {@link Algorithm} can perform backward AD for a given {@link ExecutionCall}.
+     *  The lambda will be called by the {@link #canPerformBackwardADFor(ExecutionCall)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
+     *
      *
      * @return This very instance to enable method chaining.
      */
@@ -268,6 +284,9 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     /**
      *  This method receives a {@link neureka.backend.api.algorithms.fun.ADAgentSupplier} which will supply
      *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
+     *  The lambda will be called by the {@link #supplyADAgentFor(Function, ExecutionCall, boolean)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
+     *
      *
      * @return This very instance to enable method chaining.
      */
@@ -278,7 +297,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
 
     /**
      *  The {@link ExecutionDispatcher} lambda
-     *  is the most ipoortant procedure within an {@link Algorithm}, which is responsible for
+     *  is the most important procedure within an {@link Algorithm}, which is responsible for
      *  electing an {@link neureka.backend.api.ImplementationFor}
      *  the chosen {@link Device} in a given {@link ExecutionCall} passed to the {@link ExecutionDispatcher}.
      *  However, the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
@@ -292,6 +311,9 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  a fairly suitable {@link Device} assigned to a given {@link neureka.backend.api.Algorithm},
      *  one can simply ignore it and find a custom one which fits the contents of the given
      *  {@link ExecutionCall} instance better.
+     *  The lambda passed to this will be called by the {@link #dispatch(FunctionNode, ExecutionCall)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
+     *
      */
     public AbstractFunctionalAlgorithm<C> setExecutionDispatcher(ExecutionDispatcher handleInsteadOfDevice ) {
         _handleInsteadOfDevice = _checked(handleInsteadOfDevice, _handleInsteadOfDevice, ExecutionDispatcher.class);
@@ -309,6 +331,8 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  Element-wise operations for example will require the creation of an output tensor
      *  with the shape of the provided input tensors, whereas the execution of a
      *  linear operation like for example a broadcast operation will require a very different approach...
+     *  The lambda passed to this will be called by the {@link #prepare(ExecutionCall)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
      */
     public AbstractFunctionalAlgorithm<C> setCallPreparation( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
         _instantiateNewTensorsForExecutionIn = _checked(instantiateNewTensorsForExecutionIn, _instantiateNewTensorsForExecutionIn, ExecutionPreparation.class);
