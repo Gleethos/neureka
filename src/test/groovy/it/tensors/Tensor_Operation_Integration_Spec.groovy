@@ -55,7 +55,7 @@ class Tensor_Operation_Integration_Spec extends Specification
                                         -2,  2,  4
                                 }
                             )
-                            .mutate.toType(type)
+                            .unsafe.toType(type)
 
             var y = Tsr.of(new int[]{1, 3, 2},
                                     new double[]{
@@ -64,7 +64,7 @@ class Tensor_Operation_Integration_Spec extends Specification
                                             3, -1
                                     }
                                 )
-                                .mutate.toType(type)
+                                .unsafe.toType(type)
 
         when : 'The x-mul result is being instantiated by passing a simple equation to the tensor constructor.'
             var z = Tsr.of("I0xi1", x, y)
@@ -86,8 +86,8 @@ class Tensor_Operation_Integration_Spec extends Specification
     def 'The "dot" operation reshapes and produces valid "x" operation result.'( Class<?> type )
     {
         given : 'Two multi-dimensional tensors.'
-            var a = Tsr.of([1, 4, 4, 1   ], 4f..12f).mutate.toType(type)
-            var b = Tsr.of([1, 3, 5, 2, 1], -5d..3d).mutate.toType(type)
+            var a = Tsr.of([1, 4, 4, 1   ], 4f..12f).unsafe.toType(type)
+            var b = Tsr.of([1, 3, 5, 2, 1], -5d..3d).unsafe.toType(type)
 
         when : 'The "dot" method is being called on "a" receiving "b"...'
             var c = a.convDot(b)
@@ -106,8 +106,8 @@ class Tensor_Operation_Integration_Spec extends Specification
             Class<?> type, Double[] A, Double[] B, int M, int K, int N, double[] expectedC
     ) {
         given : 'Two 2-dimensional tensors.'
-            var a = Tsr.of(Double.class).withShape(M, K).andFill(A).mutate.toType(type)
-            var b = Tsr.of(Double.class).withShape(K, N).andFill(B).mutate.toType(type)
+            var a = Tsr.of(Double.class).withShape(M, K).andFill(A).unsafe.toType(type)
+            var b = Tsr.of(Double.class).withShape(K, N).andFill(B).unsafe.toType(type)
 
         when : 'The "matMul" method is being called on "a" receiving "b"...'
             var c = a.matMul(b)
@@ -131,8 +131,8 @@ class Tensor_Operation_Integration_Spec extends Specification
             Class<?> type, String code, String expected
     ) {
         given : 'We create two tensors and convert them to a desired type.'
-            var a = Tsr.of([1,2], [3d, 2d]).mutate.toType(type)
-            var b = Tsr.of([2,1], [-1f, 4f]).mutate.toType(type)
+            var a = Tsr.of([1,2], [3d, 2d]).unsafe.toType(type)
+            var b = Tsr.of([2,1], [-1f, 4f]).unsafe.toType(type)
         and : 'We prepare bindings for the Groovy shell.'
             Binding binding = new Binding()
             binding.setVariable('a', a)
@@ -386,8 +386,8 @@ class Tensor_Operation_Integration_Spec extends Specification
             Tsr<Double> a = Tsr.of(aShape, 1d..5d).setRqsGradient(!whichGrad).to(Device.find(device))
             Tsr<Double> b = Tsr.of(bShape, 8d..9d).setRqsGradient(whichGrad).to(Device.find(device))
         and :
-            a.mutate.toType(type)
-            b.mutate.toType(type)
+            a.unsafe.toType(type)
+            b.unsafe.toType(type)
         and :
             String wShape = ( whichGrad ? bShape : aShape ).join("x")
             Tsr    w      = ( whichGrad ? b      : a      )
@@ -403,7 +403,7 @@ class Tensor_Operation_Integration_Spec extends Specification
             w.toString({it.hasSlimNumbers = true}) == "[$wShape]:($wValue):g:(null)"
 
         when :
-            c.backward(Tsr.of([2, 2], [5, -2, 7, 3]).mutate.toType(type))
+            c.backward(Tsr.of([2, 2], [5, -2, 7, 3]).unsafe.toType(type))
         then :
             w.toString({it.hasSlimNumbers = true}) == "[$wShape]:($wValue):g:($wGradient)"
 

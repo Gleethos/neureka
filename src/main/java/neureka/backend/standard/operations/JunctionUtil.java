@@ -90,7 +90,7 @@ public class JunctionUtil
             } else {
                 Tsr<?>[] reduction = Operation.Utility.without(tensors, 1+d);
                 if ( reduction.length > 2 ) {
-                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? tensors[ 1 ].clone().getMutate().setIsIntermediate( true ) : reduction[ 0 ];
+                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];
                     alternative = goDeeperWith.execute(
                             ExecutionCall.of(reduction)
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
@@ -135,7 +135,7 @@ public class JunctionUtil
                 Tsr<?> a;
                 if ( d > 1 ) {
                     Tsr<?>[] reduction = Operation.Utility.subset(tensors, 1, 1, d+1);
-                    reduction[ 0 ] = tensors[ 1 ].clone().getMutate().setIsIntermediate( true );
+                    reduction[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true );
                     alternative = goDeeperWith.execute(
                                         ExecutionCall.of(reduction)
                                                         .andArgs(Arg.DerivIdx.of(-1))
@@ -229,7 +229,7 @@ public class JunctionUtil
                                 );
                 tensors[ 0 ] = reduction[ 0 ];
             }
-            else tensors[ 0 ] = tensors[ 1 ].clone().getMutate().setIsIntermediate( true ).setValue( d == 0 || thisIsForAddition ? 1f : -1f );
+            else tensors[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true ).setValue( d == 0 || thisIsForAddition ? 1f : -1f );
 
             return alternative;
         }
@@ -242,7 +242,7 @@ public class JunctionUtil
         //Tsr<V> t = (Tsr<V>) Tsr.like( (Tsr<Number>) template ).all( value );
         //t.setIsVirtual(false);
         Tsr<V> t = (Tsr<V>) Tsr.of( template.getValueClass(), template.getNDConf().shape(), value )
-                                .getMutate()
+                                .getUnsafe()
                                 .setIsIntermediate( true );
         t.setIsVirtual( false );
         t.setValue( value );

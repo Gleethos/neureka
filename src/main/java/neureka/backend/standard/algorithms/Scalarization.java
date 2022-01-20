@@ -40,7 +40,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
 
                 int[] outShape = inputs[ 1 ].getNDConf().shape();
                 Class<Object> type = (Class<Object>) inputs[ 1 ].getValueClass();
-                Tsr output = Tsr.of( type, outShape, 0.0 ).getMutate().setIsIntermediate( true );
+                Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );
                 output.setIsVirtual( false );
                 try {
                     device.store( output );

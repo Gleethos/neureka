@@ -2399,7 +2399,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         boolean thisIsIntermediate = this.isIntermediate();
         _setIsIntermediate(false);
         Tsr<V> clone = cloner.call((Tsr<V>) Tsr.of(this.getValueClass(), this.shape(), 0.0), this).to( this.getDevice() );
-        clone.getMutate().setIsIntermediate( thisIsIntermediate );
+        clone.getUnsafe().setIsIntermediate( thisIsIntermediate );
         _setIsIntermediate(thisIsIntermediate);
         return clone;
     }
@@ -3224,19 +3224,19 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Use this in performance critical situations only.
      */
     @Override
-    public Mutate<V> getMutate() {
+    public Unsafe<V> getUnsafe() {
         _guardGet("mutate");
-        return new Mutate<V>() {
+        return new Unsafe<V>() {
             @Override
-            public Mutate<V> setNDConf( NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return this; }
+            public Unsafe<V> setNDConf(NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return this; }
             @Override
             public <V> Tsr<V> toType( Class<V> typeClass ) { return Tsr.this._toType( typeClass ); }
             @Override
             public <V> Tsr<V> setDataType( DataType<V> dataType ) { return (Tsr<V>) Tsr.this._setDataType(dataType); }
             @Override
-            public Mutate<V> toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return this; }
+            public Unsafe<V> toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return this; }
             @Override
-            public Mutate<V> incrementVersion( ExecutionCall<?> call ) {
+            public Unsafe<V> incrementVersion(ExecutionCall<?> call ) {
                 _incrementVersionBecauseOf( call );
                 return this;
             }

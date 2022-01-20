@@ -29,8 +29,8 @@ class Backend_Algorithm_AD_Spec extends Specification
             def function = Mock(Function)
             def derivative = Mock(Tsr)
             function.executeDerive(*_) >> derivative
-            def mutate = Mock(AbstractNDArray.Mutate)
-            derivative.getMutate() >> mutate
+            def mutate = Mock(AbstractNDArray.Unsafe)
+            derivative.getUnsafe() >> mutate
 
         and : 'A mock ExecutionCall.'
             def call = Mock(ExecutionCall)
@@ -80,10 +80,10 @@ class Backend_Algorithm_AD_Spec extends Specification
         and : 'A mock Function.'
             def function = Mock(Function)
             def derivative = Mock(Tsr)
-            def mutate = Mock(AbstractNDArray.Mutate)
+            def mutate = Mock(AbstractNDArray.Unsafe)
             function.derive(*_) >> derivative
             function.executeDerive(*_) >> derivative
-            derivative.getMutate() >> mutate
+            derivative.getUnsafe() >> mutate
 
         and : 'A mock ExecutionCall.'
             def call = Mock(ExecutionCall)

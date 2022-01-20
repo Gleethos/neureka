@@ -305,8 +305,8 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         AbstractNDArray<C, ?> nda = this;
         return new NDAConstructor(
                     new NDAConstructor.API() {
-                        @Override public void setType( DataType<?> type        ) { nda.getMutate().setDataType( type ); }
-                        @Override public void setConf( NDConfiguration conf    ) { nda.getMutate().setNDConf(   conf ); }
+                        @Override public void setType( DataType<?> type        ) { nda.getUnsafe().setDataType( type ); }
+                        @Override public void setConf( NDConfiguration conf    ) { nda.getUnsafe().setNDConf(   conf ); }
                         @Override public void setData( Object o                ) { nda._setData(      o  ); }
                         @Override public void allocate( int size               ) { nda._allocate(   size ); }
                         @Override public Object getData()                        { return nda.getData();    }
@@ -573,7 +573,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     /**
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
-     *  because the exposed state can easily lead to broken tensors and exceptions...<br>
+     *  because the exposed state can easily lead to broken tensors and exceptional situations!<br>
      *  <br><b>
      *
      *  Only use this if you know what you are doing and
@@ -583,7 +583,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *
      *  <br><br>
      */
-    public abstract Mutate getMutate();
+    public abstract Unsafe getUnsafe();
 
     /**
      *  Tensors should be considered immutable, however sometimes it
@@ -593,7 +593,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *  because the exposed state can easily lead to broken tensors and exceptions...<br>
      *  <br>
      */
-    public interface Mutate<T> {
+    public interface Unsafe<T> {
         /**
          *  This method sets the NDConfiguration of this NDArray.
          *  Therefore, it should not be used lightly as it can cause major internal inconsistencies.
@@ -601,7 +601,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          * @param configuration The new NDConfiguration instance which ought to be set.
          * @return The final instance type of this class which enables method chaining.
          */
-        Mutate setNDConf( NDConfiguration configuration );
+        Unsafe setNDConf(NDConfiguration configuration );
         /**
          *  This method is an inline operation which changes the underlying data of this tensor.
          *  It converts the data types of the elements of this tensor to the specified type!<br>
@@ -647,7 +647,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          * @param layout The layout of the data array (row or column major).
          * @return The final instance type of this class which enables method chaining.
          */
-        Mutate toLayout( NDConfiguration.Layout layout );
+        Unsafe toLayout(NDConfiguration.Layout layout );
 
         /**
          *  This method is responsible for incrementing
@@ -659,7 +659,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          * @param call The context object containing all relevant information that defines a call for tensor execution.
          * @return This very tensor instance. (factory pattern)
          */
-        Mutate incrementVersion( ExecutionCall<?> call );
+        Unsafe incrementVersion(ExecutionCall<?> call );
 
         /**
          *  Intermediate tensors are internal non-user tensors which may be eligible

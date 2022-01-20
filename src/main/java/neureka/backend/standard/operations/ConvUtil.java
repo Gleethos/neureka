@@ -64,7 +64,7 @@ public class ConvUtil {
                                                 deConv.execute(
                                                         error,
                                                         derivative,
-                                                        Tsr.of(shape, 0).getMutate().setIsIntermediate( false )
+                                                        Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )
                                                 )
                                     );
                         }
@@ -83,7 +83,7 @@ public class ConvUtil {
                                                 Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()),
                                                 0
                                             )
-                                            .getMutate()
+                                            .getUnsafe()
                                             .setIsIntermediate( true )
                                         : null;
 
@@ -118,7 +118,7 @@ public class ConvUtil {
                             if ( tensors[ 0 ] == null ) // Creating a new tensor:
                             {
                                 int[] shp = Tsr.Utility.Indexing.shpOfCon(tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape());
-                                Tsr<Double> output = Tsr.of( shp, 0.0 ).getMutate().setIsIntermediate( true );
+                                Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                                 output.setIsVirtual( false );
                                 try {
                                     device.store( output );

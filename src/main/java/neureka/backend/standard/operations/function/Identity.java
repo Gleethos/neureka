@@ -125,7 +125,7 @@ public final class Identity extends AbstractOperation
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr<?> output = Tsr.of( shp, 0.0 ).getMutate().setIsIntermediate( true );
+                        Tsr<?> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                         output.setIsVirtual( false );
                         try {
                             device.store( output );

@@ -18,7 +18,7 @@ class Calculus_Function_Spec extends Specification {
             var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
                                             var outputs = [Tsr.of(1)]
                                             tensors.length.times { outputs.add(tensors[it]) }
-                                            return outputs[0].mutate.setIsIntermediate(true)
+                                            return outputs[0].unsafe.setIsIntermediate(true)
                                         })
         and :
             var a = Tsr.of(3)
@@ -53,7 +53,7 @@ class Calculus_Function_Spec extends Specification {
             })
         and :
             var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                return tensors[0].mutate.setIsIntermediate( true ) // This should fail!
+                return tensors[0].unsafe.setIsIntermediate( true ) // This should fail!
             })
 
         and :
@@ -86,7 +86,7 @@ class Calculus_Function_Spec extends Specification {
     {
         given :
             var fun = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                                        return Tsr.of(42f).mutate.setIsIntermediate(true)
+                                        return Tsr.of(42f).unsafe.setIsIntermediate(true)
                                     })
 
         and :

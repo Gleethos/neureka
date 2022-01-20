@@ -243,7 +243,7 @@ class Tensor_IO_Spec extends Specification
             !x.rqsGradient()
             x.size()==1
 
-        when : x.mutate.toType( Float.class )
+        when : x.unsafe.toType( Float.class )
         then : x.value instanceof float[]
 
         when :
@@ -266,13 +266,13 @@ class Tensor_IO_Spec extends Specification
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
             Tsr x = Tsr.of(3)
 
-        when : x.mutate.toType( Float.class )
+        when : x.unsafe.toType( Float.class )
         then :
             x.getValue() instanceof float[]
             x.data instanceof float[]
             x.getValueAs( float[].class )[ 0 ]==3.0f
 
-        when : x.mutate.toType( Double.class )
+        when : x.unsafe.toType( Double.class )
         then :
             x.getValue() instanceof double[]
             x.data instanceof double[]

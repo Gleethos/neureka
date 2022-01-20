@@ -36,7 +36,7 @@ class Backend_Extension_Spec extends Specification
 
         and : 'A mock tensor which is the expected output'
             Tsr output = Mock(Tsr)
-            var mutate = Mock(AbstractNDArray.Mutate)
+            var mutate = Mock(AbstractNDArray.Unsafe)
 
         and : 'A mocked operation implementation.'
             def implementation = Mock(Algorithm)
@@ -55,7 +55,7 @@ class Backend_Extension_Spec extends Specification
         then : 'The custom call hook should be accessed as outlined below.'
             (1.._) * type.getAlgorithmFor(_) >> implementation
             (1.._) * implementation.dispatch(_,_) >> output
-            (1.._) * output.getMutate() >> mutate
+            (1.._) * output.getUnsafe() >> mutate
             (1.._) * mutate.setIsIntermediate(false) >> output
             (1.._) * output.isIntermediate() >> true
 
@@ -89,7 +89,7 @@ class Backend_Extension_Spec extends Specification
             Tsr input = Mock(Tsr)
             GraphNode node = Mock(GraphNode)
             def ndc = Mock(NDConfiguration)
-            var mutate = Mock(AbstractNDArray.Mutate)
+            var mutate = Mock(AbstractNDArray.Unsafe)
 
         and : 'A mocked operation implementation.'
             def implementation = Mock(Algorithm)
@@ -111,7 +111,7 @@ class Backend_Extension_Spec extends Specification
             (1.._) * type.isInline() >> false
             (1.._) * type.getAlgorithmFor(_) >> implementation
             (1.._) * implementation.dispatch(_,_) >> output
-            (1.._) * output.getMutate() >> mutate
+            (1.._) * output.getUnsafe() >> mutate
             (1.._) * mutate.setIsIntermediate(false) >> output
             (1.._) * output.isIntermediate() >> true
 

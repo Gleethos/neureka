@@ -150,7 +150,7 @@ public final class Product extends AbstractOperation {
                                 Tsr<?> derivative = f.executeDerive( inputs, d );
                                 return ADAgent.of( derivative )
                                         .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
-                                        .setBackward( (t, error) -> deConv.execute( error, derivative, Tsr.of(t.getPayload().shape(), 0).getMutate().setIsIntermediate( true ) ) );
+                                        .setBackward( (t, error) -> deConv.execute( error, derivative, Tsr.of(t.getPayload().shape(), 0).getUnsafe().setIsIntermediate( true ) ) );
                             }
                             else
                             {
@@ -170,7 +170,7 @@ public final class Product extends AbstractOperation {
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr<Double> output = Tsr.of( shp, 0.0 ).getMutate().setIsIntermediate( true );
+                        Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                         output.setIsVirtual( false );
                         try {
                             device.store( output );

@@ -171,7 +171,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
                             out -> Arrays.stream(inputs)
                                     .noneMatch(in -> in == out)
                     )
-                    .forEach(t -> t.getMutate().setIsIntermediate(true));
+                    .forEach(t -> t.getUnsafe().setIsIntermediate(true));
 
             return prepared;
         }

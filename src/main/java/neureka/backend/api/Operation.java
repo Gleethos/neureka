@@ -43,7 +43,6 @@ import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.calculus.Function;
-import neureka.ndim.iterators.NDIterator;
 
 /**
  *  This interface is part of the backend API, and it embodies the top layer of the 3 tier backend architecture.
@@ -248,7 +247,7 @@ public interface Operation
 
         public static Tsr<?>[] offsetted( Tsr<?>[] tensors, int offset ) {
             Tsr<?>[] newTensors = new Tsr[ tensors.length - offset ];
-            newTensors[ 0 ] = tensors[ 1 ].clone().getMutate().setIsIntermediate( true );
+            newTensors[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true );
             if ( !tensors[ 1 ].has( GraphNode.class ) && tensors[ 1 ] != tensors[ 0 ] ) {//Deleting intermediate results!
                 tensors[ 1 ].delete();
                 tensors[ 1 ] = null;

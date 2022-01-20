@@ -42,7 +42,7 @@ class Tensor_Delete_Exception_Spec extends Specification
             t.isDeleted()
 
         when : 'Trying to access the NDConfiguration instance...'
-            t.mutate.setNDConf(null)
+            t.unsafe.setNDConf(null)
 
         then : 'This should lead to a descriptive exception.'
             def exception = thrown(IllegalAccessError)
@@ -113,7 +113,7 @@ class Tensor_Delete_Exception_Spec extends Specification
             t.isDeleted()
 
         when : 'Trying to access the DataType instance...'
-            t.mutate.setDataType(DataType.of(Float.class))
+            t.unsafe.setDataType(DataType.of(Float.class))
 
         then : 'This should lead to a descriptive exception.'
             def exception = thrown(IllegalAccessError)

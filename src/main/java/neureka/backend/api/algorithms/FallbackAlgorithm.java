@@ -125,7 +125,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
         }
         Tsr<?> localDerivative = MemUtil.keep( call.getTensors(), () -> function.executeDerive( call.getTensors(), call.getDerivativeIndex() ) );
-        localDerivative.getMutate().setIsIntermediate( false );
+        localDerivative.getUnsafe().setIsIntermediate( false );
         return ADAgent.of( localDerivative )
                       .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, localDerivative ) )
                       .setBackward( (node, backwardError ) -> mul.execute( backwardError, localDerivative ) );
@@ -146,7 +146,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
         {
             int[] shp = tensors[ 1 ].getNDConf().shape();
             Tsr<Object> output = (Tsr<Object>) Tsr.of( tensors[ 1 ].getDataType(), shp )
-                                                    .getMutate()
+                                                    .getUnsafe()
                                                     .setIsIntermediate(true);
             output.setIsVirtual( false );
             try {

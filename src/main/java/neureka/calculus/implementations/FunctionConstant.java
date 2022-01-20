@@ -87,7 +87,7 @@ public class FunctionConstant implements Function
 						tensors[ 0 ].shape(),
 						0.0
 					)
-					.getMutate()
+					.getUnsafe()
 					.setIsIntermediate( true );
 		}
 		return Tsr.of(
@@ -95,7 +95,7 @@ public class FunctionConstant implements Function
 					tensors[ 0 ].shape(),
 					_value
 				)
-				.getMutate()
+				.getUnsafe()
 				.setIsIntermediate( true );
 	}
 

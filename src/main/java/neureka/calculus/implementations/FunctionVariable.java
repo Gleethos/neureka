@@ -82,9 +82,9 @@ public class FunctionVariable implements Function, GradientProvider {
         int j = ( arguments.has(Arg.VarIdx.class)   ? arguments.valOf(Arg.VarIdx.class)   : -1 );
         if ( d >= 0 ) {
             if ( j < 0 ) {
-                return Tsr.of( tensors[ 0 ].shape(), 1.0 ).getMutate().setIsIntermediate( true );
+                return Tsr.of( tensors[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true );
             }
-            return ( j != d ) ? Tsr.of( tensors[ 0 ].shape(), 0.0 ).getMutate().setIsIntermediate( true ) : executeDerive( tensors, d );
+            return ( j != d ) ? Tsr.of( tensors[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true ) : executeDerive( tensors, d );
         }
         if ( j < 0 ) {
             StringBuilder exp = new StringBuilder("I[ 0 ]");

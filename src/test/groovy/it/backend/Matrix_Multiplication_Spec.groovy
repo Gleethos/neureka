@@ -15,8 +15,8 @@ class Matrix_Multiplication_Spec extends Specification {
         and :
             def dataLayout = layout == 'ROW' ? NDConfiguration.Layout.ROW_MAJOR : NDConfiguration.Layout.COLUMN_MAJOR
         and :
-            a.mutate.toLayout( dataLayout )
-            b.mutate.toLayout( dataLayout )
+            a.unsafe.toLayout( dataLayout )
+            b.unsafe.toLayout( dataLayout )
         expect :
             a.NDConf.layout == dataLayout
             b.NDConf.layout == dataLayout

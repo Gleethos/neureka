@@ -44,10 +44,10 @@ public class MemUtil {
      */
     public static <T> T keep(Tsr<?>[] tensors, Supplier<T> during ) {
         List<Tsr<?>> doNotDelete = Arrays.stream(tensors).filter(Tsr::isIntermediate).collect(Collectors.toList());
-        doNotDelete.forEach( t -> t.getMutate().setIsIntermediate( false ) );
+        doNotDelete.forEach( t -> t.getUnsafe().setIsIntermediate( false ) );
         T result = during.get();
         // After having calculated the result we allow deletion of the provided tensors again:
-        doNotDelete.forEach( t -> t.getMutate().setIsIntermediate( true ) );
+        doNotDelete.forEach( t -> t.getUnsafe().setIsIntermediate( true ) );
         return result;
     }
 
@@ -56,10 +56,10 @@ public class MemUtil {
      */
     public static <T> T keep( Tsr<?> a, Tsr<?> b, Supplier<T> during ) {
         List<Tsr<?>> doNotDelete = Stream.of(a, b).filter(Tsr::isIntermediate).collect(Collectors.toList());
-        doNotDelete.forEach( t -> t.getMutate().setIsIntermediate( false ) );
+        doNotDelete.forEach( t -> t.getUnsafe().setIsIntermediate( false ) );
         T result = during.get();
         // After having calculated the result we allow deletion of the provided tensors again:
-        doNotDelete.forEach( t -> t.getMutate().setIsIntermediate( true ) );
+        doNotDelete.forEach( t -> t.getUnsafe().setIsIntermediate( true ) );
         return result;
     }
 

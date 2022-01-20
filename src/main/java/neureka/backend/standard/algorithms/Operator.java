@@ -40,7 +40,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
                     int[] outShape = inputs[ 1 ].getNDConf().shape();
 
                     Class<Object> type = (Class<Object>) inputs[ 1 ].getValueClass();
-                    Tsr<Object> output = Tsr.of( type ).withShape( outShape ).all( 0.0 ).getMutate().setIsIntermediate( true );
+                    Tsr<Object> output = Tsr.of( type ).withShape( outShape ).all( 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
                     try {
                         device.store( output );

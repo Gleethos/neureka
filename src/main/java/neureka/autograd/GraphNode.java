@@ -803,7 +803,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public void forEachBackward( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
         if ( _targetsToAgents == null ) return;
-        error.getMutate().setIsIntermediate( false );
+        error.getUnsafe().setIsIntermediate( false );
         _targetsToAgents.forEach( (t, agents ) -> {
             for ( ADAgent a : agents )
                 action.accept( t, a.backward( t, error ) );

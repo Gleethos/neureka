@@ -156,7 +156,7 @@ public final class Summation extends AbstractOperation
                                                     deConv.execute(
                                                                 error,
                                                                 derivative,
-                                                                Tsr.of(t.getPayload().shape(), 0) ).getMutate().setIsIntermediate( true )
+                                                                Tsr.of(t.getPayload().shape(), 0) ).getUnsafe().setIsIntermediate( true )
                                         );
                     }
                     else
@@ -177,7 +177,7 @@ public final class Summation extends AbstractOperation
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr<Double> output = Tsr.of( shp, 0.0 ).getMutate().setIsIntermediate( true );
+                        Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                         output.setIsVirtual( false );
                         try {
                             device.store( output );

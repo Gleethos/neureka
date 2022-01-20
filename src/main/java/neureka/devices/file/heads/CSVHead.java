@@ -81,7 +81,7 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
             e.printStackTrace();
         }
         tensor.setIsOutsourced( true );
-        tensor.getMutate().setDataType( DataType.of( String.class ) );
+        tensor.getUnsafe().setDataType( DataType.of( String.class ) );
     }
 
     public CSVHead(

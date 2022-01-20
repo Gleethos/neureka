@@ -91,7 +91,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                         outShape[ i ] = ( s1[ i ] == 1 ? s2[ i ] : s1[ i ] );
 
                     Class<Object> type = (Class<Object>) inputs[ 1 ].getValueClass();
-                    Tsr<?> output = Tsr.of(type).withShape(outShape).all( 0.0 ).getMutate().setIsIntermediate( true );
+                    Tsr<?> output = Tsr.of(type).withShape(outShape).all( 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
                     try {
                         device.store( output );
