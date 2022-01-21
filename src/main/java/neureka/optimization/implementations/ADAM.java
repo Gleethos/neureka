@@ -41,25 +41,27 @@ import neureka.optimization.Optimizer;
 
 public class ADAM<V> implements Optimizer<V> {
 
-    // VARIABLES...
+    // Constants:
     private final Tsr<V> a;
     private final Tsr<V> b1;
     private final Tsr<V> b2;
     private final Tsr<V> e;
-    Tsr<V> m;
-    Tsr<V> v;
+
+    // Variables:
+    private Tsr<V> m;
+    private Tsr<V> v;
 
     public ADAM(Tsr<V> target) {
         int[] shape = target.getNDConf().shape();
-        m  = (Tsr<V>) Tsr.of(shape, 0);
-        v  = (Tsr<V>) Tsr.of(shape, 0);
-        a  = (Tsr<V>) Tsr.of(shape, 0.01); // Step size!
-        b1 = (Tsr<V>) Tsr.of(shape, 0.9);
-        b2 = (Tsr<V>) Tsr.of(shape, 0.999);
-        e  = (Tsr<V>) Tsr.of(shape, 1e-7);
+        m  = (Tsr<V>) Tsr.of(target.getValueClass(), shape, 0);
+        v  = (Tsr<V>) Tsr.of(target.getValueClass(), shape, 0);
+        a  = (Tsr<V>) Tsr.of(target.getValueClass(), shape, 0.01); // Step size!
+        b1 = (Tsr<V>) Tsr.of(target.getValueClass(), shape, 0.9);
+        b2 = (Tsr<V>) Tsr.of(target.getValueClass(), shape, 0.999);
+        e  = (Tsr<V>) Tsr.of(target.getValueClass(), shape, 1e-7);
     }
 
-    private Tsr<V> _optimize(Tsr<V> w) {
+    private Tsr<V> _optimize( Tsr<V> w ) {
         Tsr<V> g = w.getGradient();
         m = Tsr.of(b1, "*", m, " + ( 1-", b1, ") *", g);
         v = Tsr.of(b2, "*", v, " + ( 1-", b2, ") * (", g,"^2 )");
@@ -67,11 +69,14 @@ public class ADAM<V> implements Optimizer<V> {
         Tsr<V> vh = Tsr.of(v, "/(1-", b2, ")");
         Tsr<V> newg = Tsr.of("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
         Neureka.get().backend().getFunction().idy().call(g, newg);
+        mh.getUnsafe().delete();
+        vh.getUnsafe().delete();
+        newg.getUnsafe().delete();
         return g;
     }
 
     @Override
-    public Tsr<V> optimize(Tsr<V> w) {
+    public Tsr<V> optimize( Tsr<V> w ) {
         return _optimize(w);
     }
 
