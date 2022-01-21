@@ -39,6 +39,14 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.optimization.Optimizer;
 
+/**
+ *  ADAM (short for Adaptive Moment Estimation) is an adaptive learning rate optimization algorithm that utilises both
+ *  momentum and scaling, combining the benefits of RMSProp and SGD with respect to Momentum.
+ *  The optimizer is designed to be appropriate for non-stationary
+ *  objectives and problems with very noisy and/or sparse gradients.
+ *
+ * @param <V> The value type parameter of the tensor whose gradients are being optimized.
+ */
 public class ADAM<V> implements Optimizer<V> {
 
     // Constants:
