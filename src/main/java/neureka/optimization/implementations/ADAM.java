@@ -56,8 +56,8 @@ public class ADAM<V> implements Optimizer<V> {
     private final Tsr<V> e;
 
     // Variables:
-    private Tsr<V> m;
-    private Tsr<V> v;
+    private Tsr<V> m; // Momentum
+    private Tsr<V> v; // Velocity
 
     public ADAM(Tsr<V> target) {
         int[] shape = target.getNDConf().shape();
