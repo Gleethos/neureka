@@ -760,9 +760,32 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
 
     /**
-     *  This factory method allows for the creation and execution of Function instances
+     *  This factory method allows for the creation and execution of {@link Function} instances
      *  without actually instantiating them manually,
-     *  where the result will then become this very tensor. <br><br>
+     *  where the result will then be returned by this factory method. <br><br>
+     *  The passed {@link String} will be parsed into a {@link Function} AST which will be cached
+     *  using the expression as key in case it will be used in future constructor calls
+     *  like this one, or elsewhere...
+     *  The created / retrieved {@link Function} will then be called with the supplied input list
+     *  in order to trigger an execution.
+     *  The result of which will be used for the population of the fields of this
+     *  very instance.                                                                      <br>
+     *  An example would be the following :                                                 <br>
+     * <ul>
+     *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) / I[1]", 12f, -6.34f )'</i></li>
+     * </ul>
+     *
+     * @param expression A String which will be used for parsing a Function AST.
+     * @param inputs An array of inputs which can be tensors or numeric types.
+     */
+    public static <V extends Number> Tsr<V> of( String expression, V... inputs ) {
+        return Tsr.of( expression, Arrays.asList(inputs) );
+    }
+
+    /**
+     *  This factory method allows for the creation and execution of {@link Function} instances
+     *  without actually instantiating them manually,
+     *  where the result will then be returned by this factory method. <br><br>
      *  The passed {@link String} will be parsed into a {@link Function} AST which will be cached
      *  using the expression as key in case it will be used in future constructor calls
      *  like this one, or elsewhere...

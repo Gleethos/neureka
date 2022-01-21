@@ -88,12 +88,17 @@ class ADAM_Spec extends Specification
 
 
     def 'Equations used by ADAM return expected result.' (
-            String expression, List<Object> inputs, String expected
+            String expression, Double[] inputs, String expected
     ) {
-        when : 'A new tensor is being created from the given equation and array of input tensors...'
-            def t = Tsr.of( expression, inputs )
-        then : '...this produces the expected result String.'
-            t.toString().contains( expected )
+        given : 'We create tensors given an equation and array or list of input tensors...'
+            var t1 = Tsr.of( expression, inputs )
+            var t2 = Tsr.of( expression, inputs as Float[] )
+            var t3 = Tsr.of( expression, inputs as List<Object> )
+
+        expect : '...this produces the expected result String.'
+            t1.toString().contains( expected )
+            t2.toString().contains( expected.replace(".29999", ".30000") )
+            t3.toString().contains( expected )
 
         where : 'The following expressions, inputs and expected String results are being used :'
             expression                                 | inputs                       || expected
