@@ -40,6 +40,17 @@ import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.optimization.Optimizer;
 
+/**
+ * Stochastic Gradient Descent is an iterative optimization technique
+ * that uses the gradient of a weight variable to adjust said variable,
+ * in order to reduce the error used to calculate said gradient.
+ * This simple stochastic gradient descent algorithm does not
+ * optimize the gradient based on previous gradients (network forward and backward passes)
+ * but simply applies the gradient value based on each example within
+ * the training dataset.
+ *
+ * @param <V> The value type parameter of the tensor whose gradients are being optimized.
+ */
 public class SGD<V> implements Optimizer<V>
 {
     private final double _learningRate;
