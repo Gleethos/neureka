@@ -1,11 +1,8 @@
 # Code Conventions #
 
-The code of this project deviates slightly from official or common coding conventions
-as one would recognize them in typical Java code.
-These deviations boil down to just 3 simple rules which were chosen purposefully and are 
-in no way to be mistaken with arbitrariness, or a lack of thought.
-To the contrary, the code of this project borrows carefully chosen conventions which are standard
-practice in other languages, namely : C#, C++ and Python.
+The code in this project adheres to 3 simple
+code convention rules which were chosen to maximize
+readability.
 
 ---
 
