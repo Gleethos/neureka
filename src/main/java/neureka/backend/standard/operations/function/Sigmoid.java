@@ -34,20 +34,16 @@ public final class Sigmoid extends AbstractOperation
             Activation.class,
             operationAlgorithm.setImplementationFor(
                 CPU.class,
-                CPUImplementation
-                    .withArity(3)
-                    .andImplementation(
-                        Activation.implementationForCPU()
-                            .with(Fun.F64ToF64.pair(
-                                x -> calculate( x, false ),
-                                x -> calculate( x, true )
-                            ))
-                            .with(Fun.F32ToF32.pair(
-                                x -> (float) calculate( x, false ),
-                                x -> (float) calculate( x, true )
-                            ))
-                            .get()
-                    )
+                Activation.implementationForCPU()
+                    .with(Fun.F64ToF64.pair(
+                        x -> calculate( x, false ),
+                        x -> calculate( x, true )
+                    ))
+                    .with(Fun.F32ToF32.pair(
+                        x -> (float) calculate( x, false ),
+                        x -> (float) calculate( x, true )
+                    ))
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

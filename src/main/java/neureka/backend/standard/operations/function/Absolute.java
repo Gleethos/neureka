@@ -33,20 +33,16 @@ public final class Absolute extends AbstractOperation
             Activation.class,
             operationAlgorithm.setImplementationFor(
                 CPU.class,
-                CPUImplementation
-                    .withArity(3)
-                    .andImplementation(
-                        Activation.implementationForCPU()
-                            .with(Fun.F64ToF64.pair(
-                                    x -> Math.abs( x ),
-                                    x -> ( x < 0 ) ? -1 : 1 )
-                            )
-                            .with(Fun.F32ToF32.pair(
-                                    x -> Math.abs( x ),
-                                    x -> ( x < 0 ) ? -1 : 1 )
-                            )
-                            .get()
+                Activation.implementationForCPU()
+                    .with(Fun.F64ToF64.pair(
+                            x -> Math.abs( x ),
+                            x -> ( x < 0 ) ? -1 : 1 )
                     )
+                    .with(Fun.F32ToF32.pair(
+                            x -> Math.abs( x ),
+                            x -> ( x < 0 ) ? -1 : 1 )
+                    )
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

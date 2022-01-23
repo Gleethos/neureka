@@ -67,20 +67,16 @@ public final class Gaussian extends AbstractOperation
             Activation.class,
             operationAlgorithm.setImplementationFor(
                 CPU.class,
-                CPUImplementation
-                    .withArity(3)
-                    .andImplementation(
-                        Activation.implementationForCPU()
-                                .with(Fun.F64ToF64.pair(
-                                    x -> Math.pow(Math.E, -Math.pow(x, 2)),
-                                    x -> -2 * x * Math.pow(Math.E, -Math.pow(x, 2))
-                                ))
-                                .with(Fun.F32ToF32.pair(
-                                    x -> (float) Math.pow(Math.E, -Math.pow(x, 2)),
-                                    x -> (float) (-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
-                                ))
-                                .get()
-                    )
+                Activation.implementationForCPU()
+                        .with(Fun.F64ToF64.pair(
+                            x -> Math.pow(Math.E, -Math.pow(x, 2)),
+                            x -> -2 * x * Math.pow(Math.E, -Math.pow(x, 2))
+                        ))
+                        .with(Fun.F32ToF32.pair(
+                            x -> (float) Math.pow(Math.E, -Math.pow(x, 2)),
+                            x -> (float) (-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
+                        ))
+                        .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

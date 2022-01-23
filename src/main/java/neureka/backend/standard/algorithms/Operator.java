@@ -60,14 +60,15 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
 
     public static Functions.Builder<Fun> implementationForCPU() {
         return Functions.implementation(
-            (call, pairs) ->
-                call.getDevice()
-                    .getExecutor()
-                    .threaded(
-                        call.getTsrOfType( Number.class, 0 ).size(),
-                        _newWorkloadFor( call, pairs )
-                    )
-        );
+                3,
+                (call, pairs) ->
+                    call.getDevice()
+                        .getExecutor()
+                        .threaded(
+                            call.getTsrOfType( Number.class, 0 ).size(),
+                            _newWorkloadFor( call, pairs )
+                        )
+            );
     }
 
 

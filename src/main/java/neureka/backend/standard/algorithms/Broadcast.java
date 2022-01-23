@@ -111,6 +111,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
 
     public static Functions.Builder<Fun> implementationForCPU() {
         return Functions.implementation(
+                3,
                 (call, pairs) ->
                     call.getDevice()
                         .getExecutor()

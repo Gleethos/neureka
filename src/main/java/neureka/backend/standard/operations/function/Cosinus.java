@@ -33,20 +33,16 @@ public final class Cosinus extends AbstractOperation
             Activation.class,
             operationAlgorithm.setImplementationFor(
                 CPU.class,
-                CPUImplementation
-                    .withArity(3)
-                    .andImplementation(
-                        Activation.implementationForCPU()
-                            .with(Fun.F64ToF64.pair(
-                                    x -> Math.cos(x),
-                                    x -> -Math.sin(x)
-                            ) )
-                            .with(Fun.F32ToF32.pair(
-                                    x -> (float) Math.cos(x),
-                                    x -> (float) -Math.sin(x)
-                            ))
-                            .get()
-                    )
+                Activation.implementationForCPU()
+                    .with(Fun.F64ToF64.pair(
+                            x -> Math.cos(x),
+                            x -> -Math.sin(x)
+                    ) )
+                    .with(Fun.F32ToF32.pair(
+                            x -> (float) Math.cos(x),
+                            x -> (float) -Math.sin(x)
+                    ))
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

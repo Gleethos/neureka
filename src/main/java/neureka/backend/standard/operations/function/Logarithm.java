@@ -33,20 +33,16 @@ public final class Logarithm extends AbstractOperation
             Activation.class,
             operationAlgorithm.setImplementationFor(
                 CPU.class,
-                CPUImplementation
-                    .withArity(3)
-                    .andImplementation(
-                        Activation.implementationForCPU()
-                            .with(Fun.F64ToF64.pair(
-                                    x -> Math.log(x),
-                                    x -> 1d / x
-                            ))
-                            .with(Fun.F32ToF32.pair(
-                                    x -> (float) Math.log(x),
-                                    x -> 1f / x
-                            ))
-                            .get()
-                    )
+                Activation.implementationForCPU()
+                    .with(Fun.F64ToF64.pair(
+                            x -> Math.log(x),
+                            x -> 1d / x
+                    ))
+                    .with(Fun.F32ToF32.pair(
+                            x -> (float) Math.log(x),
+                            x -> 1f / x
+                    ))
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

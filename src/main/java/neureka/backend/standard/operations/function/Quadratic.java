@@ -32,20 +32,16 @@ public final class Quadratic extends AbstractOperation
             Activation.class,
             operationAlgorithm.setImplementationFor(
                 CPU.class,
-                CPUImplementation
-                    .withArity(3)
-                    .andImplementation(
-                        Activation.implementationForCPU()
-                            .with(Fun.F64ToF64.pair(
-                                    x -> x * x,
-                                    x -> 2 * x
-                            ))
-                            .with(Fun.F32ToF32.pair(
-                                    x -> x * x,
-                                    x -> 2 * x
-                            ))
-                            .get()
-                    )
+                Activation.implementationForCPU()
+                    .with(Fun.F64ToF64.pair(
+                            x -> x * x,
+                            x -> 2 * x
+                    ))
+                    .with(Fun.F32ToF32.pair(
+                            x -> x * x,
+                            x -> 2 * x
+                    ))
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,
