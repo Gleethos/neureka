@@ -17,47 +17,47 @@ import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
-public class CopyLeft extends AbstractOperation {
-
+public class CopyLeft extends AbstractOperation
+{
     public CopyLeft() {
         super(
-                new OperationBuilder()
-                        .setFunction(         "left_inline"    )
-                        .setOperator(         "<"        )
-                        .setArity(            -2         )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( false       )
-                        .setIsInline(         true      )
+            new OperationBuilder()
+                    .setFunction(         "left_inline"    )
+                    .setOperator(         "<"        )
+                    .setArity(            -2         )
+                    .setIsOperator(       true       )
+                    .setIsIndexer(        false      )
+                    .setIsDifferentiable( false       )
+                    .setIsInline(         true      )
         );
 
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor(
-                        call ->
-                        {
-                            if ( call.getTsrOfType( Number.class, 1 ).isVirtual() || call.getTsrOfType( Number.class, 1 ).size() == 1 )
-                                return SuitabilityPredicate.GOOD;
-                            else
-                                return SuitabilityPredicate.UNSUITABLE;
-                        }
+                    call ->
+                    {
+                        if ( call.getTsrOfType( Number.class, 1 ).isVirtual() || call.getTsrOfType( Number.class, 1 ).size() == 1 )
+                            return SuitabilityPredicate.GOOD;
+                        else
+                            return SuitabilityPredicate.UNSUITABLE;
+                    }
                 )
                 .setCanPerformBackwardADFor( call -> false )
                 .setCanPerformForwardADFor( call -> false )
                 .setSupplyADAgentFor( getDefaultAlgorithm() )
                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
                 .setCallPreparation(
-                        call ->
-                        {
-                            Tsr<?>[] tensors = call.getTensors();
-                            int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
-                            call.getTsrOfType( Number.class, offset).getUnsafe().incrementVersion(call);
-                            call.getTsrOfType( Number.class, offset).setIsVirtual( false );
-                            return
-                                    ExecutionCall.of(tensors[offset], tensors[1+offset])
-                                                    .andArgs(Arg.DerivIdx.of(-1))
-                                                    .running(this)
-                                                    .on( call.getDevice() );
-                        }
+                    call ->
+                    {
+                        Tsr<?>[] tensors = call.getTensors();
+                        int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
+                        call.getTsrOfType( Number.class, offset).getUnsafe().incrementVersion(call);
+                        call.getTsrOfType( Number.class, offset).setIsVirtual( false );
+                        return
+                            ExecutionCall.of(tensors[offset], tensors[1+offset])
+                                            .andArgs(Arg.DerivIdx.of(-1))
+                                            .running(this)
+                                            .on( call.getDevice() );
+                    }
                 )
                 .buildFunAlgorithm();
 
@@ -111,47 +111,47 @@ public class CopyLeft extends AbstractOperation {
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
             .setCallPreparation(
-                    call ->
-                    {
-                        Tsr<?>[] tensors = call.getTensors();
-                        int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
-                        call.getTsrOfType( Number.class, offset).getUnsafe().incrementVersion(call);
-                        return ExecutionCall.of(tensors[offset], tensors[1+offset])
-                                            .andArgs(Arg.DerivIdx.of(-1))
-                                            .running(Neureka.get().backend().getOperation("idy"))
-                                            .on(call.getDevice());
-                    }
+                call ->
+                {
+                    Tsr<?>[] tensors = call.getTensors();
+                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
+                    call.getTsrOfType( Number.class, offset).getUnsafe().incrementVersion(call);
+                    return ExecutionCall.of(tensors[offset], tensors[1+offset])
+                                        .andArgs(Arg.DerivIdx.of(-1))
+                                        .running(Neureka.get().backend().getOperation("idy"))
+                                        .on(call.getDevice());
+                }
             )
             .buildFunAlgorithm();
 
         setAlgorithm(
-                Activation.class,
-                activation
-                    .setImplementationFor(
-                        CPU.class,
-                        CPUImplementation
-                                .withArity(2)
-                                .andImplementation(
-                                        call ->
-                                        {
-                                            call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
-                                            Neureka.get().backend().getOperation("idy")
-                                                    .getAlgorithm( Activation.class )
-                                                    .getImplementationFor( CPU.class )
-                                                    .run(call);
-                                        }
-                                )
-                    )
-                    .setImplementationFor(
-                        OpenCLDevice.class,
-                        call -> {
-                            call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
-                            Neureka.get().backend().getOperation("idy")
-                                    .getAlgorithm(Activation.class)
-                                    .getImplementationFor( OpenCLDevice.class )
-                                    .run(call);
-                        }
+            Activation.class,
+            activation
+                .setImplementationFor(
+                    CPU.class,
+                    CPUImplementation
+                        .withArity(2)
+                        .andImplementation(
+                            call ->
+                            {
+                                call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
+                                Neureka.get().backend().getOperation("idy")
+                                        .getAlgorithm( Activation.class )
+                                        .getImplementationFor( CPU.class )
+                                        .run(call);
+                            }
+                        )
                 )
+                .setImplementationFor(
+                    OpenCLDevice.class,
+                    call -> {
+                        call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
+                        Neureka.get().backend().getOperation("idy")
+                                .getAlgorithm(Activation.class)
+                                .getImplementationFor( OpenCLDevice.class )
+                                .run(call);
+                    }
+            )
         );
     }
 

@@ -15,9 +15,17 @@ import java.util.stream.Stream;
 public class ListReader {
 
     private final Class<?> _type;
-    private final List<ListReader> _readers;
     private final int _size;
 
+    /**
+     *  Reads the provided data and turns it into a {@link Result} object,
+     *  containing a flattened list of the data alongside its
+     *  shape and data type.
+     *
+     * @param data A list of data elements or nested lists with an arbitrary degree of nesting.
+     * @param valueFilter A filter for the elements in the provided data list.
+     * @return The result object containing data, data type and shape information.
+     */
     public static Result read( List<Object> data, Function<Object, Object> valueFilter ) {
         return new Result( data, valueFilter );
     }
@@ -30,6 +38,7 @@ public class ListReader {
             Function<Object, Object> valueFilter
     ) {
 
+        List<ListReader> readers;
         if ( data instanceof List ) {
             List<Object> list = ((List<Object>) data).stream()
                                                     .map( valueFilter )
@@ -41,23 +50,20 @@ public class ListReader {
                 throw new IllegalArgumentException(message);
             }
             if ( growingShape.size() == depth ) growingShape.add(list.size());
-            _readers = list.stream()
+            readers = list.stream()
                            .map( o -> new ListReader( o, depth + 1, growingData, growingShape, valueFilter ) )
                            .collect(Collectors.toList());
 
-            _type = _findType(_readers);
-            _size = _findSize(_readers, depth);
+            _type = _findType(readers);
+            _size = _findSize(readers, depth);
         }
         else
         {
             _type = ( data == null ? null : data.getClass() );
             _size = 1;
-            _readers = null;
             growingData.add( data );
         }
     }
-
-    public Class<?> getType() { return _type; }
 
     private Class<?> _findType( List<ListReader> readers ) {
         Supplier<Stream<Class<?>>> types = () -> readers.stream().map(r -> r._type );
@@ -90,8 +96,7 @@ public class ListReader {
     private boolean _isLeave(Object o) {
         if ( o == null ) return true;
         boolean isList = o instanceof List;
-        if ( isList && ( (List) o ).isEmpty() ) return true;
-        else return false;
+        return isList && ((List) o).isEmpty();
     }
 
     public static class Result {
