@@ -4,10 +4,8 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Fun;
-import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
@@ -52,25 +50,9 @@ public final class Tanh extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                CLImplementation.compiler()
-                    .arity( 3 )
-                    .kernelSource( operationAlgorithm.getKernelSource() )
-                    .activationSource( "output = input/pow(1+pow(input, 2.0f), 0.5f);\n" )
-                    .differentiationSource( "output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n" )
-                    .kernelPostfix( this.getFunction() )
-                    .execution(
-                        call -> {
-                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                            call.getDevice().getKernel(call)
-                                .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                .call( gwz );
-                        }
-                    )
-                    .build()
+                    Activation.implementationForGPU( this.getFunction() )
+                            .with( "output = input/pow(1+pow(input, 2.0f), 0.5f);\n" )
+                            .and( "output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n" )
             )
         );
 

@@ -4,6 +4,8 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.standard.implementations.CLImplementation;
+import neureka.calculus.args.Arg;
 import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
@@ -58,6 +60,33 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
         return Neureka.get().utility().readResource("kernels/activation_template.cl");
     }
 
+    public static WithForward<String> implementationForGPU(String postfix ) {
+        return
+            forward ->
+                backward ->
+                    CLImplementation
+                        .compiler()
+                        .arity( 2 )
+                        .kernelSource( Neureka.get().utility().readResource("kernels/activation_template.cl") )
+                        .activationSource( forward )
+                        .differentiationSource( backward )
+                        .kernelPostfix( postfix )
+                        .execution(
+                            call -> {
+                                int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                // Drain tensor needs to be 'actual'! :
+                                if (!call.getTsrOfType( Number.class, offset + 1).isVirtual()) call.getTsrOfType( Number.class, offset).setIsVirtual( false );
+                                call.getDevice().getKernel(call)
+                                        .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                        .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                        .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                        .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                        .call( gwz );
+                            }
+                        )
+                        .build();
+    }
 
     public static Functions.Builder<Fun> implementationForCPU() {
         return Functions.implementation(

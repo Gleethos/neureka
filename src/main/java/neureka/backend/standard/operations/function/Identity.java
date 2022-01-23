@@ -80,27 +80,9 @@ public final class Identity extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                CLImplementation.compiler()
-                    .arity( 2 )
-                    .kernelSource( operationAlgorithm.getKernelSource() )
-                    .activationSource( "output = input;\n" )
-                    .differentiationSource( "output = input;\n" )
-                    .kernelPostfix( this.getFunction() )
-                    .execution(
-                        call -> {
-                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                            // Drain tensor needs to be 'actual'! :
-                            if (!call.getTsrOfType( Number.class, offset + 1).isVirtual()) call.getTsrOfType( Number.class, offset).setIsVirtual( false );
-                            call.getDevice().getKernel(call)
-                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                    .call( gwz );
-                        }
-                    )
-                    .build()
+                Activation.implementationForGPU( this.getFunction() )
+                          .with( "output = input;\n" )
+                          .and( "output = input;\n" )
             )
         );
 
