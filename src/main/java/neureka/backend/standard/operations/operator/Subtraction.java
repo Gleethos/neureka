@@ -107,22 +107,18 @@ public class Subtraction extends AbstractOperation
             Scalarization.class,
             scalarization.setImplementationFor(
                 CPU.class,
-                CPUImplementation
-                    .withArity(3)
-                    .andImplementation(
-                        Scalarization.implementationForCPU()
-                                .with(Fun.F64F64ToF64.triple(
-                                        ( a, b ) -> a - b,
-                                        ( a, b ) ->  1, // Deriving at input 0
-                                        ( a, b ) -> -1 // deriving input 1
-                                ))
-                                .with(Fun.F32F32ToF32.triple(
-                                        ( a, b ) -> a - b,
-                                        ( a, b ) ->  1, // Deriving at input 0
-                                        ( a, b ) -> -1 // deriving input 1
-                                ))
-                                .get()
-                    )
+                Scalarization.implementationForCPU()
+                        .with(Fun.F64F64ToF64.triple(
+                                ( a, b ) -> a - b,
+                                ( a, b ) ->  1, // Deriving at input 0
+                                ( a, b ) -> -1 // deriving input 1
+                        ))
+                        .with(Fun.F32F32ToF32.triple(
+                                ( a, b ) -> a - b,
+                                ( a, b ) ->  1, // Deriving at input 0
+                                ( a, b ) -> -1 // deriving input 1
+                        ))
+                        .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

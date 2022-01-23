@@ -63,20 +63,16 @@ public final class Identity extends AbstractOperation
             Activation.class,
             operationAlgorithm.setImplementationFor(
                 CPU.class,
-                CPUImplementation
-                    .withArity(2)
-                    .andImplementation(
-                        Activation.implementationForCPU()
-                            .with(Fun.F64ToF64.pair(
-                                    x -> x,
-                                    x -> 1
-                            ) )
-                            .with(Fun.F32ToF32.pair(
-                                    x -> x,
-                                    x -> 1
-                            ))
-                            .get()
-                    )
+                Activation.implementationForCPU()
+                    .with(Fun.F64ToF64.pair(
+                            x -> x,
+                            x -> 1
+                    ) )
+                    .with(Fun.F32ToF32.pair(
+                            x -> x,
+                            x -> 1
+                    ))
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

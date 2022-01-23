@@ -191,21 +191,15 @@ public final class Summation extends AbstractOperation
                 Activation.class,
                 activation.setImplementationFor(
                         CPU.class,
-                        CPUImplementation
-                            .withArity(3)
-                            .andImplementation(
-                                    Activation.implementationForCPU()
-                                              .with(Fun.F64ToF64.pair(
-                                                      x -> x,
-                                                      x -> x
-                                              ))
-                                              .with(Fun.F32ToF32.pair(
-                                                      x -> x,
-                                                      x -> x
-                                              )).get()
-
-
-                            )
+                        Activation.implementationForCPU()
+                                  .with(Fun.F64ToF64.pair(
+                                          x -> x,
+                                          x -> x
+                                  ))
+                                  .with(Fun.F32ToF32.pair(
+                                          x -> x,
+                                          x -> x
+                                  )).get()
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
