@@ -107,11 +107,6 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         );
     }
 
-    public String getKernelSource() {
-        return Neureka.get().utility().readResource("kernels/broadcast_template.cl");
-    }
-
-
     public static WithForward<String> implementationForGPU( String postfix ) {
         return
             forward ->

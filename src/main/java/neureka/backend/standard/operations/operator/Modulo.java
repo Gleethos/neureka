@@ -64,34 +64,15 @@ public class Modulo extends AbstractOperation {
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                CLImplementation
-                    .compiler()
-                    .arity( 3 )
-                    .kernelSource( operator.getKernelSource() )
-                    .activationSource( "output = ((int)input1) % ((int)input2);\n" )
-                    .differentiationSource(
-                        "if ( d==0 ) {                                        \n" +
-                        "    output = 1/input2;                               \n" +
-                        "} else {                                             \n" +
-                        "    output = -input2 / (float) pow(input1, 2.0f);    \n" +
-                        "}"
-                    )
-                    .kernelPostfix( this.getFunction() )
-                    .execution(
-                        call -> {
-                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                            call.getDevice()
-                                .getKernel(call)
-                                .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
-                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                .pass( call.getDerivativeIndex() )
-                                .call( gwz );
-                        }
-                    )
-                    .build()
+                Operator.implementationForGPU( this.getFunction() )
+                        .with( "output = ((int)input1) % ((int)input2);\n" )
+                        .and(
+                                "if ( d==0 ) {                                        \n" +
+                                        "    output = 1/input2;                               \n" +
+                                        "} else {                                             \n" +
+                                        "    output = -input2 / (float) pow(input1, 2.0f);    \n" +
+                                        "}"
+                        )
             )
         );
 

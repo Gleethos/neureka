@@ -100,27 +100,9 @@ public class Addition extends AbstractOperation {
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    CLImplementation.compiler()
-                            .arity( 3 )
-                            .kernelSource( operator.getKernelSource() )
-                            .activationSource( "output = input1 + input2;\n" )
-                            .differentiationSource( "output = 1;\n" )
-                            .kernelPostfix( this.getFunction() )
-                            .execution(
-                                    call -> {
-                                        int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                        int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                        call.getDevice()
-                                                .getKernel(call)
-                                                .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
-                                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                .pass( call.getDerivativeIndex() )
-                                                .call( gwz );
-                                    }
-                            )
-                            .build()
+                    Operator.implementationForGPU( this.getFunction() )
+                                    .with( "output = input1 + input2;\n" )
+                                    .and( "output = 1;\n" )
             )
         );
 
