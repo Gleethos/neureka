@@ -155,32 +155,15 @@ public class Modulo extends AbstractOperation {
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                CLImplementation.compiler()
-                        .arity( 3 )
-                        .kernelSource( broadcast.getKernelSource() )
-                        .activationSource( "value = ((int)src1) % ((int)src2);\n" )
-                        .differentiationSource(
+                Broadcast.implementationForGPU( this.getFunction() )
+                        .with( "value = ((int)src1) % ((int)src2);\n" )
+                        .and(
                                 "if ( d == 0 ) {\n" +
-                                "    value += (1/handle) * drain;\n" +//TODO: this is probably wrong!
-                                "} else {\n" +
-                                "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
-                                "}"
+                                        "    value += (1/handle) * drain;\n" +//TODO: this is probably wrong!
+                                        "} else {\n" +
+                                        "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
+                                        "}"
                         )
-                        .kernelPostfix( this.getFunction() )
-                        .execution(
-                            call -> {
-                                int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                call.getDevice().getKernel(call)
-                                        .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                        .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                        .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
-                                        .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                        .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                        .call( gwz );
-                            }
-                        )
-                        .build()
             )
         );
 

@@ -213,26 +213,9 @@ public class Subtraction extends AbstractOperation
                     )
                     .setImplementationFor(
                             OpenCLDevice.class,
-                            CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( broadcast.getKernelSource() )
-                                .activationSource( "value += src1 - src2;\n" )
-                                .differentiationSource( "value += src1 + src2 * -((d * 2) -1);\n" )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            assert call.getTensors().length == 3;
-                                            int gwz = call.getTsrOfType( Number.class, 0 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf( call.getTsrOfType( Number.class,  0 ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class,  1 ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class,  2 ) )
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
+                            Broadcast.implementationForGPU( this.getFunction() )
+                                    .with( "value += src1 - src2;\n" )
+                                    .and( "value += src1 + src2 * -((d * 2) -1);\n" )
                     )
                 );
     }
