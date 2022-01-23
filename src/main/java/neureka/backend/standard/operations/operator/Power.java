@@ -255,7 +255,7 @@ public class Power extends AbstractOperation
                 CLImplementation
                     .compiler()
                     .arity( 3 )
-                    .kernelSource( scalarization.getKernelSource() )
+                    .kernelSource( scalarization. getKernelSource() )
                     .activationSource( "output = pow( input1, value );" )
                     .differentiationSource(
                         "if ( d == 0 ) {                                      \n" +

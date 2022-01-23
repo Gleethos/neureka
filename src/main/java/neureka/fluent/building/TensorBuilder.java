@@ -116,7 +116,13 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
     }
 
     @Override
-    public IterByOrIterFromOrAll<V> withShape( int... shape ) { _shape = shape; return this; }
+    public IterByOrIterFromOrAll<V> withShape( int... shape ) {
+        if ( shape == null )
+            throw new IllegalArgumentException("Cannot instantiate a tensor with shape 'null'!");
+        if ( shape.length == 0 )
+            throw new IllegalArgumentException("Cannot instantiate a tensor without shape arguments.");
+        _shape = shape; return this;
+    }
 
     @Override
     public Tsr<V> vector( Object[] values ) { return Tsr.of( _dataType, new int[]{ values.length }, values ).to( _device ); }

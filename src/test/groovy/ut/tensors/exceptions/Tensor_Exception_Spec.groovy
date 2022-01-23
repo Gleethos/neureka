@@ -12,10 +12,10 @@ import spock.lang.Title
 @Narrative('''
 
     This specification covers the behavior of the $Tsr class in
-    exceptional scenarious which are contrary to its intended use.
+    exceptional scenarios which are contrary to its intended use.
     The purpose of this is to assert that the $Tsr class will provide
-    useful feedback to a user to explain that a missuse of its API
-    occurred so that the user can correct this missuse.
+    useful feedback to a user to explain that a misuse of its API
+    occurred so that the user can correct this misuse.
 
 ''')
 class Tensor_Exception_Spec extends Specification
@@ -112,6 +112,26 @@ class Tensor_Exception_Spec extends Specification
                     "which is larger than the target shape '3' at the same index!",
                     _
             )
+    }
+
+    def 'Building a tensor with 0 shape arguments throws an exception.'() {
+
+        when :
+            var t = Tsr.ofInts().withShape().all(0)
+
+        then :
+            thrown(IllegalArgumentException)
+
+    }
+
+    def 'Building a tensor with "null" as shape argument throws an exception.'() {
+
+        when :
+            var t = Tsr.ofInts().withShape(null).all(0)
+
+        then :
+            thrown(IllegalArgumentException)
+
     }
 
 }
