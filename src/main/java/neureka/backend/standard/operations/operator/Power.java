@@ -131,22 +131,18 @@ public class Power extends AbstractOperation
         setAlgorithm(Operator.class,
             operator.setImplementationFor(
                 CPU.class,
-                CPUImplementation
-                    .withArity(3)
-                    .andImplementation(
-                        Operator.implementationForCPU()
-                                .with(Fun.F64F64ToF64.triple(
-                                        ( a, b ) -> Math.pow( a, b ),
-                                        ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
-                                        ( a, b ) -> Math.pow( a, b ) * Math.log( a ) // deriving input 1
-                                ))
-                                .with(Fun.F32F32ToF32.triple(
-                                        ( a, b ) -> (float) Math.pow( a, b ),
-                                        ( a, b ) -> (float) (b * Math.pow( a, b - 1 )), // Deriving at input 0
-                                        ( a, b ) -> (float) (Math.pow( a, b ) * Math.log( a )) // deriving input 1
-                                ))
-                                .get()
-                    )
+                Operator.implementationForCPU()
+                        .with(Fun.F64F64ToF64.triple(
+                                ( a, b ) -> Math.pow( a, b ),
+                                ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
+                                ( a, b ) -> Math.pow( a, b ) * Math.log( a ) // deriving input 1
+                        ))
+                        .with(Fun.F32F32ToF32.triple(
+                                ( a, b ) -> (float) Math.pow( a, b ),
+                                ( a, b ) -> (float) (b * Math.pow( a, b - 1 )), // Deriving at input 0
+                                ( a, b ) -> (float) (Math.pow( a, b ) * Math.log( a )) // deriving input 1
+                        ))
+                        .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

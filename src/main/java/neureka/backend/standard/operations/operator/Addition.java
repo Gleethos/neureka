@@ -82,50 +82,46 @@ public class Addition extends AbstractOperation {
                                     .buildFunAlgorithm();
 
         setAlgorithm(
-                operator
-                        .setImplementationFor(
-                            CPU.class,
-                                CPUImplementation
-                                    .withArity(3)
-                                    .andImplementation(
-                                            Operator.implementationForCPU()
-                                                    .with(Fun.F64F64ToF64.triple(
-                                                            ( a, b ) -> a + b,
-                                                            ( a, b ) -> 1d, // Deriving at input 0
-                                                            ( a, b ) -> 1d  // deriving input 1
-                                                    ))
-                                                    .with(Fun.F32F32ToF32.triple(
-                                                            ( a, b ) -> a + b,
-                                                            ( a, b ) -> 1f, // Deriving at input 0
-                                                            ( a, b ) -> 1f  // deriving input 1
-                                                    ))
-                                                    .get()
-                                    )
-                        )
-                        .setImplementationFor(
-                            OpenCLDevice.class,
-                            CLImplementation.compiler()
-                                    .arity( 3 )
-                                    .kernelSource( operator.getKernelSource() )
-                                    .activationSource( "output = input1 + input2;\n" )
-                                    .differentiationSource( "output = 1;\n" )
-                                    .kernelPostfix( this.getFunction() )
-                                    .execution(
-                                            call -> {
-                                                int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                                int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                                call.getDevice()
-                                                        .getKernel(call)
-                                                        .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                        .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                        .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
-                                                        .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                        .pass( call.getDerivativeIndex() )
-                                                        .call( gwz );
-                                            }
-                                    )
-                                    .build()
+            operator
+                .setImplementationFor(
+                    CPU.class,
+                    Operator.implementationForCPU()
+                            .with(Fun.F64F64ToF64.triple(
+                                    ( a, b ) -> a + b,
+                                    ( a, b ) -> 1d, // Deriving at input 0
+                                    ( a, b ) -> 1d  // deriving input 1
+                            ))
+                            .with(Fun.F32F32ToF32.triple(
+                                    ( a, b ) -> a + b,
+                                    ( a, b ) -> 1f, // Deriving at input 0
+                                    ( a, b ) -> 1f  // deriving input 1
+                            ))
+                            .get()
                 )
+                .setImplementationFor(
+                    OpenCLDevice.class,
+                    CLImplementation.compiler()
+                            .arity( 3 )
+                            .kernelSource( operator.getKernelSource() )
+                            .activationSource( "output = input1 + input2;\n" )
+                            .differentiationSource( "output = 1;\n" )
+                            .kernelPostfix( this.getFunction() )
+                            .execution(
+                                    call -> {
+                                        int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                        int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                        call.getDevice()
+                                                .getKernel(call)
+                                                .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                                .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                                .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
+                                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                                .pass( call.getDerivativeIndex() )
+                                                .call( gwz );
+                                    }
+                            )
+                            .build()
+            )
         );
 
         //________________

@@ -50,22 +50,18 @@ public class Division extends AbstractOperation
             operator
                 .setImplementationFor(
                     CPU.class,
-                    CPUImplementation
-                        .withArity(3)
-                        .andImplementation(
-                            Operator.implementationForCPU()
-                                    .with(Fun.F64F64ToF64.triple(
-                                            ( a, b ) -> a / b,
-                                            ( a, b ) -> 1 / b, // Deriving at input 0
-                                            ( a, b ) -> -( a / Math.pow( b, 2 ) ) // deriving input 1
-                                    ))
-                                    .with(Fun.F32F32ToF32.triple(
-                                            ( a, b ) -> a / b,
-                                            ( a, b ) -> 1f / b, // Deriving at input 0
-                                            ( a, b ) -> (float) -( a / Math.pow( b, 2 ) ) // deriving input 1
-                                    ))
-                                    .get()
-                        )
+                    Operator.implementationForCPU()
+                            .with(Fun.F64F64ToF64.triple(
+                                    ( a, b ) -> a / b,
+                                    ( a, b ) -> 1 / b, // Deriving at input 0
+                                    ( a, b ) -> -( a / Math.pow( b, 2 ) ) // deriving input 1
+                            ))
+                            .with(Fun.F32F32ToF32.triple(
+                                    ( a, b ) -> a / b,
+                                    ( a, b ) -> 1f / b, // Deriving at input 0
+                                    ( a, b ) -> (float) -( a / Math.pow( b, 2 ) ) // deriving input 1
+                            ))
+                            .get()
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
