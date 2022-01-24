@@ -70,11 +70,14 @@ This context information is composed of the following: <br>
 
 - `Args` : Operation specific meta arguments. 
 
-- `Algorithm` : A fitting algorithm specifically chosen for the above. 
+Once instantiated, the `ExecutionCall` will expose another
+attribute chosen based on the above, namely it will choose a fitting
+`Algorithm` instance among all algorithm in the targeted `Operation`!
 
-Instances of this class are being routed through this three tier <br>
-architecture for final execution on instances of the 
-`ImplementationFor<TargetDeice extends Device>` interface! <br>
+Execution calls will be routed from an operation to a fitting algorithm<br>
+and be executed an instance of the 
+`ImplementationFor<TargetDeice extends Device>` interface!
+(which is as mentioned earlier an algorithm component) <br>
 
 ## Algorithm ##
 
