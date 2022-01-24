@@ -72,10 +72,10 @@ This context information is composed of the following: <br>
 
 Once instantiated, the `ExecutionCall` will expose another
 attribute chosen based on the above, namely it will choose a fitting
-`Algorithm` instance among all algorithm in the targeted `Operation`!
+`Algorithm` instance among all algorithms in the targeted `Operation`!
 
 Execution calls will be routed from an operation to a fitting algorithm<br>
-and be executed an instance of the 
+and then be executed on an instance of the 
 `ImplementationFor<TargetDeice extends Device>` interface!
 (which is as mentioned earlier an algorithm component) <br>
 
