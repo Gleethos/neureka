@@ -182,14 +182,14 @@ public class TsrStringSettings {
     }
 
     /**
-     * @return The truth value determining if numbers should be formatted more compactly (1.0 -> 1).
+     * @return The truth value determining if numbers should be formatted more compactly (1.0 to 1).
      */
     public boolean getHasSlimNumbers() {
         return _haveSlimNumbers;
     }
 
     /**
-     * @param haveSlimNumbers The truth value determining if numbers should be formatted more compactly (1.0 -> 1).
+     * @param haveSlimNumbers The truth value determining if numbers should be formatted more compactly (1.0 to 1).
      */
     public TsrStringSettings setHasSlimNumbers( boolean haveSlimNumbers ) {
         if ( _notModifyable.get() ) return this;

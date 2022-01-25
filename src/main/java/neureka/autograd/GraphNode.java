@@ -799,12 +799,13 @@ public class GraphNode<V> implements Component<Tsr<V>>
     }
 
     /**
+     * @param error The error which ought to be passed to the {@link ADAgent}s.
      * @param action A lambda action providing derivative and target node as parameter.
      */
     public void forEachBackward( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
         if ( _targetsToAgents == null ) return;
         error.getUnsafe().setIsIntermediate( false );
-        _targetsToAgents.forEach( (t, agents ) -> {
+        _targetsToAgents.forEach( ( t, agents ) -> {
             for ( ADAgent a : agents )
                 action.accept( t, a.backward( t, error ) );
         });
