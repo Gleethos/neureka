@@ -563,8 +563,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * This method is called by the JITProp component.
      * A pending should only ever be retrieved from a GraphNode once because
-     * afterwards the accumulated error is about to be backpropagated.
-     * Therefore this method nulls the reference when returning the PendingError instance.
+     * afterwards the accumulated error is about to be back-propagated.
+     * Therefore, this method nulls the reference when returning the PendingError instance.
      * @return Returns an instance of the PendingError class containing a error accumulation.
      */
     public PendingError<V> getAndRemovePendingError() {
@@ -576,7 +576,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * This method is the entry-point for the back-propagation process.
      * It sets up a key/value map which stores nodes and their intermediate error accumulations.
-     * Accumulations occurs inside the private '_backward' method which traverses the computation graph
+     * Accumulation occurs inside the private '_backward' method which traverses the computation graph
      * recursively, halts when errors can be accumulated, adds a PendingError and returns to the method below!
      * Here all the nodes and error values will then be carried (propagated) to the gradients!
      *
@@ -591,7 +591,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             pendingNodes.forEach( n -> {
                 if ( !n._pendingError.isFullyAccumulated() ) {
                     _LOG.error(
-                            "Pending error in graph node '"+n.toString()+"' has not received expected accumulation. " +
+                            "Pending error in graph node '"+ n +"' has not received expected accumulation. " +
                             ""
                     );
                 }
@@ -628,7 +628,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         pendingNodes.add( this );
                     } else _pendingError.accumulate( error );
                     return;
-                    /* Backprop will be continued later! This node is being remembered in 'PendingError'
+                    /* Back-prop will be continued later! This node is being remembered in 'PendingError'
                        NOTE: Multiple AutoDiff paths leading to one node in history will be accumulated first! (performance)
                              This optimization is a light version of JITProp. JITProp builds on this!
                     */
@@ -695,7 +695,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
               If among these components is the one that issued this very
               traverse we are in at this moment, then this pending error at this node will later on
               be continued to be propagated.
-              Otherwise it makes sense to accumulate errors further and wait for JIT-Prop traversing!
+              Otherwise, it makes sense to accumulate errors further and wait for JIT-Prop traversing!
              */
             return; // This node will continue its propagation via a JIT-Prop component later!
         }

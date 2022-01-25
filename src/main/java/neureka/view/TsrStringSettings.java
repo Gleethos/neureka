@@ -117,7 +117,6 @@ public class TsrStringSettings {
         return _rowLimit;
     }
 
-
     /**
      *  Very large tensors with a rank larger than 1 might take a lot
      *  of vertical space when converted to a {@link String}.
@@ -229,10 +228,19 @@ public class TsrStringSettings {
         return this;
     }
 
+    /**
+     * @return The truth value determining if the {@link String} representation of the
+     *         tensor should have its computation graph attached (if present).
+     */
     public boolean getHasRecursiveGraph() {
         return _hasRecursiveGraph;
     }
 
+    /**
+     * @param hasRecursiveGraph
+     *         The truth value determining if the {@link String} representation of the
+     *         tensor should have its computation graph attached (if present).
+     */
     public TsrStringSettings setHasRecursiveGraph( boolean hasRecursiveGraph ) {
         if ( _notModifyable.get() ) return this;
         _hasRecursiveGraph = hasRecursiveGraph;
@@ -259,20 +267,32 @@ public class TsrStringSettings {
         return this;
     }
 
+    /**
+     * @return The {@link String} which will be prepended at the beginning of a {@link neureka.Tsr} string representation.
+     */
     public String getPrefix() {
         return _prefix;
     }
 
+    /**
+     * @param prefix The {@link String} which will be prepended at the beginning of a {@link neureka.Tsr} string representation.
+     */
     public TsrStringSettings setPrefix( String prefix ) {
         if ( _notModifyable.get() ) return this;
         _prefix = prefix;
         return this;
     }
 
+    /**
+     * @return The {@link String} which will be appended at the end of a {@link neureka.Tsr} string representation.
+     */
     public String getPostfix() {
         return _postfix;
     }
 
+    /**
+     * @param postfix The {@link String} which will be appended at the end of a {@link neureka.Tsr} string representation.
+     */
     public TsrStringSettings setPostfix( String postfix ) {
         if ( _notModifyable.get() ) return this;
         _postfix = postfix;
@@ -323,7 +343,10 @@ public class TsrStringSettings {
         return this;
     }
 
-
+    /**
+     * @param modes A {@link String} in which letters will be translated to settings.
+     * @return A {@link TsrStringSettings} configuration based on the provided modes.
+     */
     public TsrStringSettings with( String modes )
     {
         if ( modes == null || modes.trim().isEmpty() )
