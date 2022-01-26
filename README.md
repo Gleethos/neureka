@@ -32,6 +32,7 @@
 
 - [Neureka with Java](docs/markdown/java_example.md) :coffee:
 - [Neureka with Groovy](docs/markdown/groovy_example.md) :star:
+- [Javadocs](https://gleethos.github.io/neureka/jdocs/index.html) :book:
 
 ---
 
