@@ -233,7 +233,7 @@ public class OpenCLPlatform {
     public String toString() {
         return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
                     "pid=" + _pid + "," +
-                    "context="+_context +
+                    "context="+_context + "," +
                     "kernels=[.."+_kernels.size()+"..]" +
                 "]";
     }
