@@ -50,17 +50,22 @@ public class Modulo extends AbstractOperation {
             operator.setImplementationFor(
                 CPU.class,
                 Operator.implementationForCPU()
-                        .with(Fun.F64F64ToF64.triple(
-                            ( a, b ) -> a % b,
-                            ( a, b ) -> 1 / b, // Deriving at input 0
-                            ( a, b ) -> -(a / Math.pow(b, 2)) // deriving input 1
-                        ))
-                        .with(Fun.F32F32ToF32.triple(
-                                ( a, b ) -> a % b,
-                                ( a, b ) -> 1f / b, // Deriving at input 0
-                                ( a, b ) -> (float) -(a / Math.pow(b, 2)) // deriving input 1
-                        ))
-                        .get()
+                    .with(Fun.F64F64ToF64.triple(
+                        ( a, b ) -> a % b,
+                        ( a, b ) -> 1 / b, // Deriving at input 0
+                        ( a, b ) -> -(a / Math.pow(b, 2)) // deriving input 1
+                    ))
+                    .with(Fun.F32F32ToF32.triple(
+                        ( a, b ) -> a % b,
+                        ( a, b ) -> 1f / b, // Deriving at input 0
+                        ( a, b ) -> (float) -(a / Math.pow(b, 2)) // deriving input 1
+                    ))
+                    .with(Fun.I32I32ToI32.triple(
+                        ( a, b ) -> a % b,
+                        ( a, b ) -> 1 / b, // Deriving at input 0
+                        ( a, b ) -> (int) Math.round(-a / Math.pow(b, 2)) // deriving input 1
+                    ))
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

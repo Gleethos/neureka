@@ -53,17 +53,22 @@ public class Multiplication extends AbstractOperation
             operator.setImplementationFor(
                 CPU.class,
                 Operator.implementationForCPU()
-                        .with(Fun.F64F64ToF64.triple(
-                                ( a, b ) -> a * b,
-                                ( a, b ) -> b, // Deriving at input 0
-                                ( a, b ) -> a  // deriving input 1
-                        ))
-                        .with(Fun.F32F32ToF32.triple(
-                                ( a, b ) -> a * b,
-                                ( a, b ) -> b, // Deriving at input 0
-                                ( a, b ) -> a  // deriving input 1
-                        ))
-                        .get()
+                    .with(Fun.F64F64ToF64.triple(
+                        ( a, b ) -> a * b,
+                        ( a, b ) -> b, // Deriving at input 0
+                        ( a, b ) -> a  // deriving input 1
+                    ))
+                    .with(Fun.F32F32ToF32.triple(
+                        ( a, b ) -> a * b,
+                        ( a, b ) -> b, // Deriving at input 0
+                        ( a, b ) -> a  // deriving input 1
+                    ))
+                    .with(Fun.I32I32ToI32.triple(
+                            ( a, b ) -> a * b,
+                            ( a, b ) -> b, // Deriving at input 0
+                            ( a, b ) -> a  // deriving input 1
+                    ))
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

@@ -132,17 +132,22 @@ public class Power extends AbstractOperation
             operator.setImplementationFor(
                 CPU.class,
                 Operator.implementationForCPU()
-                        .with(Fun.F64F64ToF64.triple(
-                                ( a, b ) -> Math.pow( a, b ),
-                                ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
-                                ( a, b ) -> Math.pow( a, b ) * Math.log( a ) // deriving input 1
-                        ))
-                        .with(Fun.F32F32ToF32.triple(
-                                ( a, b ) -> (float) Math.pow( a, b ),
-                                ( a, b ) -> (float) (b * Math.pow( a, b - 1 )), // Deriving at input 0
-                                ( a, b ) -> (float) (Math.pow( a, b ) * Math.log( a )) // deriving input 1
-                        ))
-                        .get()
+                    .with(Fun.F64F64ToF64.triple(
+                        ( a, b ) -> Math.pow( a, b ),
+                        ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
+                        ( a, b ) -> Math.pow( a, b ) * Math.log( a ) // deriving input 1
+                    ))
+                    .with(Fun.F32F32ToF32.triple(
+                        ( a, b ) -> (float) Math.pow( a, b ),
+                        ( a, b ) -> (float) (b * Math.pow( a, b - 1 )), // Deriving at input 0
+                        ( a, b ) -> (float) (Math.pow( a, b ) * Math.log( a )) // deriving input 1
+                    ))
+                    .with(Fun.I32I32ToI32.triple(
+                        ( a, b ) -> (int) Math.round(Math.pow( a, b )),
+                        ( a, b ) -> (int) Math.round(b * Math.pow( a, b - 1 )), // Deriving at input 0
+                        ( a, b ) -> (int) Math.round(Math.pow( a, b ) * Math.log( a )) // deriving input 1
+                    ))
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

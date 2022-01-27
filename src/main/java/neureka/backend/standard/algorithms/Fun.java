@@ -45,4 +45,12 @@ public interface Fun {
         }
     }
 
+    interface I32I32ToI32 extends Fun {
+        int invoke( int x, int y );
+
+        static FunArray<I32I32ToI32> triple(I32I32ToI32 activation, I32I32ToI32 derivation1, I32I32ToI32 derivation2 ) {
+            return new Operator.FunTriple<>( activation, derivation1, derivation2 );
+        }
+    }
+
 }
