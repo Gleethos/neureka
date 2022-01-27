@@ -171,8 +171,13 @@ public class Addition extends AbstractOperation {
                                         ( a, b ) ->  1, // Deriving at input 0
                                         ( a, b ) ->  1 // deriving input 1
                                    ))
-                                    .get()
-                                    .run( call );
+                                   .with(Fun.I32I32ToI32.triple(
+                                        ( a, b ) -> a + b,
+                                        ( a, b ) ->  1, // Deriving at input 0
+                                        ( a, b ) ->  1 // deriving input 1
+                                   ))
+                                   .get()
+                                   .run( call );
                                 }
                             }
                         )

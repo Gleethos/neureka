@@ -162,18 +162,23 @@ public class Multiplication extends AbstractOperation
                                 call.getTensors()[0] = call.getTensors()[1].shallowCopy().getUnsafe().setIsIntermediate( true );
                             else
                                 Scalarization.implementationForCPU()
-                                        .with(Fun.F64F64ToF64.triple(
-                                            ( a, b ) -> a * b,
-                                            ( a, b ) -> b, // Deriving at input 0
-                                            ( a, b ) -> a  // deriving input 1
-                                        ))
-                                        .with(Fun.F32F32ToF32.triple(
-                                                ( a, b ) -> a * b,
-                                                ( a, b ) -> b, // Deriving at input 0
-                                                ( a, b ) -> a  // deriving input 1
-                                        ))
-                                        .get()
-                                        .run( call );
+                                    .with(Fun.F64F64ToF64.triple(
+                                        ( a, b ) -> a * b,
+                                        ( a, b ) -> b, // Deriving at input 0
+                                        ( a, b ) -> a  // deriving input 1
+                                    ))
+                                    .with(Fun.F32F32ToF32.triple(
+                                        ( a, b ) -> a * b,
+                                        ( a, b ) -> b, // Deriving at input 0
+                                        ( a, b ) -> a  // deriving input 1
+                                    ))
+                                    .with(Fun.I32I32ToI32.triple(
+                                        ( a, b ) -> a * b,
+                                        ( a, b ) -> b, // Deriving at input 0
+                                        ( a, b ) -> a  // deriving input 1
+                                    ))
+                                    .get()
+                                    .run( call );
                         }
                     )
             )

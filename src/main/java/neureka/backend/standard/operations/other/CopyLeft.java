@@ -66,17 +66,22 @@ public class CopyLeft extends AbstractOperation
             scalarization.setImplementationFor(
                 CPU.class,
                 Scalarization.implementationForCPU()
-                        .with(Fun.F64F64ToF64.triple(
-                            ( a, b ) -> b,
-                            null,
-                            null
-                        ))
-                        .with(Fun.F32F32ToF32.triple(
-                            ( a, b ) -> b,
-                            null,
-                            null
-                        ))
-                        .get()
+                    .with(Fun.F64F64ToF64.triple(
+                        ( a, b ) -> b,
+                        null,
+                        null
+                    ))
+                    .with(Fun.F32F32ToF32.triple(
+                        ( a, b ) -> b,
+                        null,
+                        null
+                    ))
+                    .with(Fun.F32F32ToF32.triple(
+                        ( a, b ) -> b,
+                        null,
+                        null
+                    ))
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

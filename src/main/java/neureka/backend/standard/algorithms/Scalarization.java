@@ -129,6 +129,28 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                 }
             };
         }
+        if ( typeClass == Integer.class ) {
+            int value = call.getTsrOfType(Number.class, 1 + offset).getDataAs(int[].class)[0];
+            Fun.I32I32ToI32 operation = functions.get(Fun.I32I32ToI32.class).get(call.getDerivativeIndex());
+            int[] t0_value = t0_drn.getDataAs(int[].class);
+            int[] t1_value = src.getDataAs(int[].class);
+            workload = ( i, end ) -> {
+                NDIterator t0Idx = NDIterator.of(t0_drn);
+                NDIterator srcIdx = NDIterator.of(src);
+                t0Idx.set(t0_drn.indicesOfIndex(i));
+                srcIdx.set(src.indicesOfIndex(i));
+                while (i < end) // increment on drain accordingly:
+                {
+                    // setInto _value in drn:
+                    t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);
+                    // increment on drain:
+                    t0Idx.increment();
+                    srcIdx.increment();
+                    //NDConfiguration.Utility.increment(t0Idx, t0Shp);
+                    i++;
+                }
+            };
+        }
 
         if ( workload == null )
             throw new IllegalArgumentException("");
