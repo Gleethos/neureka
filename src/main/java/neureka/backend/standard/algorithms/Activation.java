@@ -189,6 +189,32 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
                     }
                 };
         }
+        else if ( typeClass == Integer.class )
+        {
+            Fun.I32ToI32 fun = funs.get(Fun.I32ToI32.class).get(d);
+            assert fun != null;
+            int[] t0_value = (int[]) t0_drn.getData();
+            int[] t1_value = t1_src.getDataAs(int[].class);
+            if ( noSlices )
+                workload = (start, end) -> {
+                    for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);
+                };
+            else
+                workload = (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of( t0_drn );
+                    NDIterator t1Idx = NDIterator.of( t1_src );
+                    t0Idx.set( t0_drn.indicesOfIndex( i ) );
+                    t1Idx.set( t0_drn.indicesOfIndex( i ) );
+                    while ( i < end ) { // increment on drain accordingly:
+                        //setInto _value in drn:
+                        t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);
+                        //increment on drain:
+                        t0Idx.increment();
+                        t1Idx.increment();
+                        i++;
+                    }
+                };
+        }
 
         if ( workload == null ) {
             throw new IllegalArgumentException(

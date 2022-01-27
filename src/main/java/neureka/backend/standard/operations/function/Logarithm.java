@@ -35,12 +35,16 @@ public final class Logarithm extends AbstractOperation
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(
-                            x -> Math.log(x),
-                            x -> 1d / x
+                        x -> Math.log(x),
+                        x -> 1d / x
                     ))
                     .with(Fun.F32ToF32.pair(
-                            x -> (float) Math.log(x),
-                            x -> 1f / x
+                        x -> (float) Math.log(x),
+                        x -> 1f / x
+                    ))
+                    .with(Fun.I32ToI32.pair(
+                            x -> (int) Math.round(Math.log(x)),
+                            x -> (int) Math.round( 1d / x )
                     ))
                     .get()
             )

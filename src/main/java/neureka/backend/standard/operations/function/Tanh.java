@@ -35,12 +35,16 @@ public final class Tanh extends AbstractOperation
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(
-                            x -> x / Math.pow(1d + Math.pow(x, 2d), 0.5d),
-                            x -> 1 - Math.pow(x / Math.pow(1 + Math.pow(x, 2), .5), 2)
+                        x -> x / Math.pow(1d + Math.pow(x, 2d), 0.5d),
+                        x -> 1 - Math.pow(x / Math.pow(1 + Math.pow(x, 2), .5), 2)
                     ))
                     .with(Fun.F32ToF32.pair(
-                           x -> (float) (x / Math.pow(1f + Math.pow(x, 2f), .5f)),
-                           x -> (float) (1f - Math.pow(x / Math.pow(1 + Math.pow(x, 2f), .5f), 2f))
+                        x -> (float) (x / Math.pow(1f + Math.pow(x, 2f), .5f)),
+                        x -> (float) (1f - Math.pow(x / Math.pow(1 + Math.pow(x, 2f), .5f), 2f))
+                    ))
+                    .with(Fun.I32ToI32.pair(
+                        x -> (int) Math.round(x / Math.pow(1d + Math.pow(x, 2d), .5d)),
+                        x -> (int) Math.round(1d - Math.pow(x / Math.pow(1 + Math.pow(x, 2d), .5d), 2d))
                     ))
                     .get()
             )

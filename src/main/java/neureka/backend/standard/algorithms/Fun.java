@@ -18,6 +18,14 @@ public interface Fun {
         }
     }
 
+    interface I32ToI32 extends Fun {
+        int invoke( int x );
+
+        static FunArray<I32ToI32> pair( I32ToI32 activation, I32ToI32 derivation ) {
+            return new FunPair<>( activation, derivation );
+        }
+    }
+
     //...
 
 

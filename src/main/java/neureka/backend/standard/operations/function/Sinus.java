@@ -73,15 +73,18 @@ public final class Sinus extends AbstractOperation
             operationAlgorithm.setImplementationFor(
                 CPU.class,
                 Activation.implementationForCPU()
-                        .with(Fun.F64ToF64.pair(
-                                x -> Math.sin(x),
-                                x -> Math.cos(x)
-                        ) )
-                        .with(Fun.F32ToF32.pair(
-                                x -> (float) Math.sin(x),
-                                x -> (float) Math.cos(x)
-                        )
-                    )
+                    .with(Fun.F64ToF64.pair(
+                        x -> Math.sin(x),
+                        x -> Math.cos(x)
+                    ))
+                    .with(Fun.F32ToF32.pair(
+                        x -> (float) Math.sin(x),
+                        x -> (float) Math.cos(x)
+                    ))
+                    .with(Fun.I32ToI32.pair(
+                        x -> (int) Math.round(Math.sin(x)),
+                        x -> (int) Math.round(Math.cos(x))
+                    ))
                     .get()
             )
             .setImplementationFor(

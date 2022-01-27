@@ -35,12 +35,16 @@ public final class ReLU extends AbstractOperation
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(
-                            x -> (  x >= 0 ? x : x * .01 ),
-                            x -> (  x >= 0 ? 1 :  .01    )
+                        x -> (  x >= 0 ? x : x * .01 ),
+                        x -> (  x >= 0 ? 1 :  .01    )
                     ))
                     .with(Fun.F32ToF32.pair(
-                            x -> (  x >= 0 ? x  : x * .01f ),
-                            x -> (  x >= 0 ? 1f : .01f     )
+                        x -> (  x >= 0 ? x  : x * .01f ),
+                        x -> (  x >= 0 ? 1f : .01f     )
+                    ))
+                    .with(Fun.I32ToI32.pair(
+                        x -> (int) Math.round(  x >= 0 ? x : ((double) x) * .01d ),
+                        x -> ( x >= 0 ? 1 : 0 )
                     ))
                     .get()
             )

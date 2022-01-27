@@ -43,6 +43,10 @@ public final class Sigmoid extends AbstractOperation
                         x -> (float) calculate( x, false ),
                         x -> (float) calculate( x, true )
                     ))
+                    .with(Fun.I32ToI32.pair(
+                        x -> (int) Math.round(calculate( x, false )),
+                        x -> (int) Math.round(calculate( x, true  ))
+                    ))
                     .get()
             )
             .setImplementationFor(

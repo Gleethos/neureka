@@ -76,6 +76,10 @@ public final class Gaussian extends AbstractOperation
                             x -> (float) Math.pow(Math.E, -Math.pow(x, 2)),
                             x -> (float) (-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
                         ))
+                        .with(Fun.F32ToF32.pair(
+                            x -> (int) Math.round(Math.pow(Math.E, -Math.pow(x, 2))),
+                            x -> (int) Math.round(-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
+                        ))
                         .get()
             )
             .setImplementationFor(

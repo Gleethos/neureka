@@ -170,14 +170,18 @@ public final class Product extends AbstractOperation {
                         CPU.class,
                         Activation.implementationForCPU()
                             .with(Fun.F64ToF64.pair(
-                                    x -> x,
-                                    x -> x
+                                x -> x,
+                                x -> x
                             ))
                             .with(Fun.F32ToF32.pair(
-                                    x -> x,
-                                    x -> x
-                            )
-                            ).get()
+                                x -> x,
+                                x -> x
+                            ))
+                            .with(Fun.I32ToI32.pair(
+                                x -> x,
+                                x -> x
+                            ))
+                            .get()
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,

@@ -151,11 +151,11 @@ public final class Summation extends AbstractOperation
         .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
         .setCallPreparation(
                 call -> {
-                    Tsr<?>[] tsrs = call.getTensors();
+                    Tsr<?>[] tensors = call.getTensors();
                     Device<Number> device = call.getDeviceFor(Number.class);
-                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:
+                    if ( tensors[ 0 ] == null ) // Creating a new tensor:
                     {
-                        int[] shp = tsrs[ 1 ].getNDConf().shape();
+                        int[] shp = tensors[ 1 ].getNDConf().shape();
                         Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                         output.setIsVirtual( false );
                         try {
@@ -163,7 +163,7 @@ public final class Summation extends AbstractOperation
                         } catch( Exception e ) {
                             e.printStackTrace();
                         }
-                        tsrs[ 0 ] = output;
+                        tensors[ 0 ] = output;
                     }
                     return call;
                 }
@@ -171,44 +171,50 @@ public final class Summation extends AbstractOperation
         .buildFunAlgorithm();
 
         setAlgorithm(
-                Activation.class,
-                activation.setImplementationFor(
-                        CPU.class,
-                        Activation.implementationForCPU()
-                                  .with(Fun.F64ToF64.pair(
-                                          x -> x,
-                                          x -> x
-                                  ))
-                                  .with(Fun.F32ToF32.pair(
-                                          x -> x,
-                                          x -> x
-                                  )).get()
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( activation.getKernelSource() )
-                                .activationSource( "output = input;" )
-                                .differentiationSource( "output = 1;" )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = ( call.getTsrOfType( Number.class, 0 ) != null ) ? 0 : 1;
-                                            int gwz =
-                                                    ( call.getTsrOfType( Number.class, 0 ) != null )
-                                                            ? call.getTsrOfType( Number.class, 0 ).size()
-                                                            : call.getTsrOfType( Number.class, 1 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
+            Activation.class,
+            activation.setImplementationFor(
+                    CPU.class,
+                    Activation.implementationForCPU()
+                        .with(Fun.F64ToF64.pair(
+                                x -> x,
+                                x -> x
+                        ))
+                        .with(Fun.F32ToF32.pair(
+                                x -> x,
+                                x -> x
+                        ))
+                        .with(Fun.I32ToI32.pair(
+                                x -> x,
+                                x -> x
+                        ))
+                        .get()
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation
+                    .compiler()
+                    .arity( 3 )
+                    .kernelSource( activation.getKernelSource() )
+                    .activationSource( "output = input;" )
+                    .differentiationSource( "output = 1;" )
+                    .kernelPostfix( this.getFunction() )
+                    .execution(
+                        call -> {
+                            int offset = ( call.getTsrOfType( Number.class, 0 ) != null ) ? 0 : 1;
+                            int gwz =
+                                    ( call.getTsrOfType( Number.class, 0 ) != null )
+                                            ? call.getTsrOfType( Number.class, 0 ).size()
+                                            : call.getTsrOfType( Number.class, 1 ).size();
+                            call.getDevice().getKernel(call)
+                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                    .call( gwz );
+                        }
+                    )
+                    .build()
+            )
         );
 
     }

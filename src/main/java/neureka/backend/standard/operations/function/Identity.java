@@ -65,12 +65,16 @@ public final class Identity extends AbstractOperation
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(
-                            x -> x,
-                            x -> 1
+                        x -> x,
+                        x -> 1
                     ) )
                     .with(Fun.F32ToF32.pair(
-                            x -> x,
-                            x -> 1
+                        x -> x,
+                        x -> 1
+                    ))
+                    .with(Fun.I32ToI32.pair(
+                        x -> x,
+                        x -> 1
                     ))
                     .get()
             )

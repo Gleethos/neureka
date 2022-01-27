@@ -34,12 +34,16 @@ public final class Quadratic extends AbstractOperation
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(
-                            x -> x * x,
-                            x -> 2 * x
+                        x -> x * x,
+                        x -> 2 * x
                     ))
                     .with(Fun.F32ToF32.pair(
-                            x -> x * x,
-                            x -> 2 * x
+                        x -> x * x,
+                        x -> 2 * x
+                    ))
+                    .with(Fun.I32ToI32.pair(
+                        x -> x * x,
+                        x -> 2 * x
                     ))
                     .get()
             )

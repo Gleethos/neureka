@@ -38,14 +38,18 @@ public final class Softplus extends AbstractOperation
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(
-                            x -> Math.log(1d + Math.pow(Math.E, x)),
-                            x -> 1d / (1d + Math.pow(Math.E, -x))
-                        )
-                    )
+                        x -> Math.log(1d + Math.pow(Math.E, x)),
+                        x -> 1d / (1d + Math.pow(Math.E, -x))
+                    ))
                     .with(Fun.F32ToF32.pair(
-                            x -> (float) Math.log(1 + Math.pow(Math.E, x)),
-                            x -> (float) (1f / (1f + Math.pow(Math.E, -x)))
-                    )).get()
+                        x -> (float) Math.log(1 + Math.pow(Math.E, x)),
+                        x -> (float) (1f / (1f + Math.pow(Math.E, -x)))
+                    ))
+                    .with(Fun.I32ToI32.pair(
+                        x -> (int) Math.round(Math.log(1 + Math.pow(Math.E, x))),
+                        x -> (int) Math.round(1d / (1d + Math.pow(Math.E, -x)))
+                    ))
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

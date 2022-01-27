@@ -35,13 +35,17 @@ public final class Absolute extends AbstractOperation
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(
-                            x -> Math.abs( x ),
-                            x -> ( x < 0 ) ? -1 : 1 )
-                    )
+                        x -> Math.abs( x ),
+                        x -> ( x < 0 ? -1 : 1 )
+                    ))
                     .with(Fun.F32ToF32.pair(
                             x -> Math.abs( x ),
-                            x -> ( x < 0 ) ? -1 : 1 )
-                    )
+                            x -> ( x < 0 ? -1 : 1 )
+                    ))
+                    .with(Fun.I32ToI32.pair(
+                            x -> Math.abs( x ),
+                            x -> ( x < 0 ? -1 : 1 )
+                    ))
                     .get()
             )
             .setImplementationFor(

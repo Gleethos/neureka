@@ -35,12 +35,16 @@ public final class Cosinus extends AbstractOperation
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(
-                            x -> Math.cos(x),
-                            x -> -Math.sin(x)
-                    ) )
+                        x -> Math.cos(x),
+                        x -> -Math.sin(x)
+                    ))
                     .with(Fun.F32ToF32.pair(
-                            x -> (float) Math.cos(x),
-                            x -> (float) -Math.sin(x)
+                        x -> (float) Math.cos(x),
+                        x -> (float) -Math.sin(x)
+                    ))
+                    .with(Fun.I32ToI32.pair(
+                        x -> (int) Math.cos(x),
+                        x -> (int) -Math.sin(x)
                     ))
                     .get()
             )
