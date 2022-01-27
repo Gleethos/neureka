@@ -32,6 +32,7 @@
 
 - [Neureka with Java](docs/markdown/java_example.md) :coffee:
 - [Neureka with Groovy](docs/markdown/groovy_example.md) :star:
+- [Javadocs](https://gleethos.github.io/neureka/jdocs/index.html) :book:
 
 ---
 
@@ -109,7 +110,7 @@ dependencies {
 ...or by using a custom commit hash instead:
 ```
 dependencies {
-	implementation 'com.github.Gleethos:neureka:4ee488c'//Any commit hash...
+	implementation 'com.github.Gleethos:neureka:40782f5'//Any commit hash...
 }
 ```
 ---
