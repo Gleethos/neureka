@@ -166,7 +166,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      * @param dataType The new {@link DataType} which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    protected C _setDataType(DataType<?> dataType )
+    protected C _setDataType( DataType<?> dataType )
     {
         _guardSet("data type");
         if ( _data != null ) {

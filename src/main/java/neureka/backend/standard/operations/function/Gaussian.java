@@ -42,25 +42,6 @@ public final class Gaussian extends AbstractOperation
             )
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
-            .setCallPreparation(
-                call -> {
-                    Tsr<?>[] inputs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( inputs[ 0 ] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = inputs[ 1 ].getNDConf().shape();
-                    Tsr<?> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
-                    output.setIsVirtual( false );
-                    try {
-                        device.store( output );
-                    } catch( Exception e ) {
-                        e.printStackTrace();
-                    }
-                    inputs[ 0 ] = output;
-                    }
-                    return call;
-                }
-            )
             .buildFunAlgorithm();
 
         setAlgorithm(
@@ -68,36 +49,36 @@ public final class Gaussian extends AbstractOperation
             operationAlgorithm.setImplementationFor(
                 CPU.class,
                 Activation.implementationForCPU()
-                        .with(Fun.F64ToF64.pair(
-                            x -> Math.pow(Math.E, -Math.pow(x, 2)),
-                            x -> -2 * x * Math.pow(Math.E, -Math.pow(x, 2))
-                        ))
-                        .with(Fun.F32ToF32.pair(
-                            x -> (float) Math.pow(Math.E, -Math.pow(x, 2)),
-                            x -> (float) (-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
-                        ))
-                        .with(Fun.F32ToF32.pair(
-                            x -> (int) Math.round(Math.pow(Math.E, -Math.pow(x, 2))),
-                            x -> (int) Math.round(-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
-                        ))
-                        .get()
+                    .with(Fun.F64ToF64.pair(
+                        x -> Math.pow(Math.E, -Math.pow(x, 2)),
+                        x -> -2 * x * Math.pow(Math.E, -Math.pow(x, 2))
+                    ))
+                    .with(Fun.F32ToF32.pair(
+                        x -> (float) Math.pow(Math.E, -Math.pow(x, 2)),
+                        x -> (float) (-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
+                    ))
+                    .with(Fun.I32ToI32.pair(
+                        x -> (int) Math.round(Math.pow(Math.E, -Math.pow(x, 2))),
+                        x -> (int) Math.round(-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
+                    ))
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,
                     Activation.implementationForGPU( this.getFunction() )
-                            .with(
-                                    "output =\n" +
-                                            "    (float)pow(\n" +
-                                            "        (float)M_E,\n" +
-                                            "        -(float)pow(\n" +
-                                            "            (float)input,\n" +
-                                            "            (float)2\n" +
-                                            "        )\n" +
-                                            "    );\n"
-                            )
-                            .and(
-                                    "output = 1 / (1 + (float)pow((float)M_E, -input));\n"
-                            )
+                        .with(
+                                "output =\n" +
+                                        "    (float)pow(\n" +
+                                        "        (float)M_E,\n" +
+                                        "        -(float)pow(\n" +
+                                        "            (float)input,\n" +
+                                        "            (float)2\n" +
+                                        "        )\n" +
+                                        "    );\n"
+                        )
+                        .and(
+                                "output = 1 / (1 + (float)pow((float)M_E, -input));\n"
+                        )
             )
         );
     }
