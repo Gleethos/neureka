@@ -1598,7 +1598,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     protected Tsr<V> _become( Tsr<V> tensor )
     {
         if ( tensor == null ) return this;
-        this._setDataType( tensor.getDataType() );
+        _setDataType( tensor.getDataType() );
         _setData( tensor.getData() );
         _setNDConf( tensor.getNDConf() );
         _flags = tensor._flags;
