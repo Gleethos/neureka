@@ -54,11 +54,10 @@ class Tensor_State_Spec extends Specification
     def 'A tensor can be instantiated from a target type and nested lists.'(
             Class<Object> type, List<Object> list, List<Integer> shape, Object expected
     ) {
-
         given : 'We instantiate a tensor based on a target type and a list of things.'
             var t = Tsr.of(type, list)
 
-        expect :
+        expect : 'The tensor has the targeted type, shape and data array!'
             t.valueClass == type
             t.shape() == shape
             t.data == expected
@@ -69,6 +68,7 @@ class Tensor_State_Spec extends Specification
             Float  | [5, -4]     || [2]      | [5, -4] as float[]
             Byte   | [3, 4]      || [2]      | [3, 4] as byte[]
             Byte   | [[3], [4]]  || [2, 1]   | [3, 4] as byte[]
+            String | [['3', '4']]|| [1, 2]   | ['3', '4'] as String[]
 
     }
 
