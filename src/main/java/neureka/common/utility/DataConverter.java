@@ -160,6 +160,7 @@ public class DataConverter
 
         _set( Double.class, Float.class,   Double::floatValue );
         _set( Double.class, Integer.class, Double::intValue );
+        _set( Double.class, Byte.class,    Double::byteValue );
 
         _set( Float[].class,     float[].class,   Utility::objFloatsToPrimFloats );
         _set( Integer[].class,   int[].class,     Utility::objIntsToPrimInts );
@@ -214,6 +215,8 @@ public class DataConverter
     public <T> T convert( Object from, Class<T> to ) {
         if ( from == null ) return null;
         if ( from.getClass() == to ) return (T) from;
+        if ( to == String.class && from != null ) return (T) from.toString();
+
         Map<Class, Conversion> fromSpecific = _converters.get( from.getClass() );
         if ( fromSpecific == null ) {
             String fromName = from.getClass().getSimpleName();

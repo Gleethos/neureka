@@ -51,6 +51,27 @@ class Tensor_State_Spec extends Specification
         })
     }
 
+    def 'A tensor can be instantiated from a target type and nested lists.'(
+            Class<Object> type, List<Object> list, List<Integer> shape, Object expected
+    ) {
+
+        given : 'We instantiate a tensor based on a target type and a list of things.'
+            var t = Tsr.of(type, list)
+
+        expect :
+            t.valueClass == type
+            t.shape() == shape
+            t.data == expected
+
+        where :
+            type   | list        || shape    | expected
+            Double | [1,2,1]     || [3]      | [1, 2, 1] as double[]
+            Float  | [5, -4]     || [2]      | [5, -4] as float[]
+            Byte   | [3, 4]      || [2]      | [3, 4] as byte[]
+            Byte   | [[3], [4]]  || [2, 1]   | [3, 4] as byte[]
+
+    }
+
     def 'Tensors as String can be formatted on an entry based level.'()
     {
         given : 'A new tensor of rank 2 storing Strings:'

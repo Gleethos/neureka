@@ -377,31 +377,52 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
-     *  This factory method will turn a list of either nested lists of values into a {@link Tsr}
+     *  This factory method will turn a list of values or nested lists of values into a {@link Tsr}
      *  instance with the corresponding rank and shape.
      *
      * @param conf A list of either values or nested lists which are themselves either or.
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
     public static Tsr<Object> of( List<Object> conf ) {
+        return of( (Class<Object>) null, conf );
+    }
+
+    /**
+     *  This factory method will turn a list of values or nested lists of values into a {@link Tsr}
+     *  instance with the corresponding rank and shape and whose values
+     *  are of the provided type.
+     *
+     * @param targetType The type of the tensor produced by this factory method.
+     * @param conf A list of either values or nested lists which are themselves either or.
+     * @param <T> The type parameter of the tensor returned by this factoy method.
+     * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
+     */
+    public static <T> Tsr<T> of( Class<T> targetType, List<Object> conf ) {
         boolean isDoubleMatrix = conf.stream()
-                                        .allMatch( e ->
-                                                e instanceof List
-                                                        &&
-                                                ((List<Object>) e).stream().noneMatch( v -> !(v instanceof Double) )
-                                        );
+                .allMatch( e ->
+                        e instanceof List
+                                &&
+                                ((List<Object>) e).stream().noneMatch( v -> !(v instanceof Double) )
+                );
 
         if ( isDoubleMatrix )
             return new Tsr<>( conf );
 
         ListReader.Result result = ListReader.read( conf, o -> ( o instanceof Number ? ((Number)o).doubleValue() : o ) );
-        return (Tsr<Object>)
-                    Tsr.of(
-                            DataType.of(result.getType()),
-                            result.getShape().stream().mapToInt(i -> i).toArray(),
-                            result.getData().toArray()
-                        );
+        Class resultType;
+        Object[] resultData;
+        int[] shape = result.getShape().stream().mapToInt(i -> i).toArray();
+        if ( targetType == null ) {
+            resultType = result.getType();
+            resultData = result.getData().toArray();
+        } else {
+            DataConverter converter = DataConverter.instance();
+            resultType = targetType;
+            resultData = result.getData().parallelStream().map( v -> converter.convert(v, targetType) ).toArray();
+        }
+        return Tsr.of( DataType.of(resultType), shape, resultData );
     }
+
 
     /**
      * @param axesSizes A list of numbers which will be interpreted as shape array.
@@ -609,24 +630,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _constructAndAllocate( shape, true );
     }
 
-    public static <V> Tsr<V> of( Class<V> typeClass, int[] shape, Object data ) { return new Tsr<>( shape, typeClass, data ); }
+    public static <V> Tsr<V> of( Class<V> typeClass, int[] shape, Object data ) { return of( DataType.of(typeClass), shape, data ); }
 
-    public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, Object data ) { return new Tsr<>( shape.stream().mapToInt(i -> i).toArray(), typeClass, data ); }
-
-    /**
-     *
-     * @param shape
-     * @param typeClass
-     * @param data An array of values or a single scalar value.
-     */
-    private Tsr( int[] shape, Class<V> typeClass, Object data )
-    {
-        _setDataType( DataType.of( typeClass ) );
-        createConstructionAPI().configureFromNewShape( shape, false, false );
-        if ( data != null && Number.class.isAssignableFrom(data.getClass()) && typeClass != data.getClass() )
-            data = DataConverter.instance().convert( data, typeClass );
-        setValue( data );
-    }
+    public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, Object data ) { return of( DataType.of(typeClass), shape.stream().mapToInt(i -> i).toArray(), data ); }
 
     public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, List<V> data ) {
         return Tsr.of(
