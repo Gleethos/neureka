@@ -38,42 +38,43 @@ public class MemValidator {
             to the 'intermediate' flag.
         */
         Tsr<?>[] inputs = tensors.clone();
-        Boolean[] areIntermediates  = Arrays.stream(tensors).map(Tsr::isIntermediate).toArray(Boolean[]::new);
-        Boolean[] gradIntermediates = Arrays.stream(tensors).map( t -> (t.hasGradient() && t.getGradient().isIntermediate()) ).toArray(Boolean[]::new);
+        Boolean[] areIntermediates = Arrays.stream(tensors).map(Tsr::isIntermediate).toArray(Boolean[]::new);
+        Boolean[] gradIntermediates = Arrays.stream(tensors).map(t -> (t.hasGradient() && t.getGradient().isIntermediate())).toArray(Boolean[]::new);
         /*
             Finally, we dispatch the call to the function implementation to get as result!
         */
         Tsr<?> result = execution.get();
         /*
+            Now on to validation!
+            First we check if the function executed successfully:
+        */
+        if ( result == null )
+            throw new IllegalStateException("Failed to execute function!");
+        /*
             After that we analyse the validity of the result
             with respect to memory safety!
             We expect internally created tensors to be flagged as 'intermediate':
-        */
-        if ( result != null ) {
-            /*
-                First we check if the result tensor was created inside the function or not:
-             */
-            boolean resultIsInputGradient = Arrays.stream(tensors).anyMatch( t -> t.getGradient() == result );
-            boolean resultIsInputMember = Arrays.stream(tensors).anyMatch( t -> t == result );
+            First we check if the result tensor was created inside the function or not:
+         */
+        boolean resultIsInputGradient = Arrays.stream( tensors ).anyMatch( t -> t.getGradient() == result );
+        boolean resultIsInputMember = Arrays.stream( tensors ).anyMatch( t -> t == result );
+        /*
+            Then we check if this is valid with respect to the "isIntermediate" flag:
+         */
+        if ( resultIsInputMember || resultIsInputGradient ) {
+            int positionInInput;
+            if ( resultIsInputGradient )
+                positionInInput = IntStream.range(0, inputs.length).filter(i -> inputs[i].getGradient() == result).findFirst().getAsInt();
+            else
+                positionInInput = IntStream.range(0, inputs.length).filter(i -> inputs[i] == result).findFirst().getAsInt();
 
-            if ( resultIsInputMember || resultIsInputGradient ) {
-                int positionInInput;
-                if ( resultIsInputGradient )
-                    positionInInput = IntStream.range(0, inputs.length).filter(i -> inputs[i].getGradient() == result ).findFirst().getAsInt();
-                else
-                    positionInInput = IntStream.range(0, inputs.length).filter( i -> inputs[i] == result ).findFirst().getAsInt();
+            boolean resultWasIntermediate = (resultIsInputGradient ? gradIntermediates[positionInInput] : areIntermediates[positionInInput]);
 
-                boolean resultWasIntermediate = ( resultIsInputGradient ? gradIntermediates[positionInInput] : areIntermediates[positionInInput] );
-
-                _wronglyIntermediate = result.isIntermediate() && !resultWasIntermediate;
-                _wronglyNonIntermediate = false;
-            } else if ( !result.isIntermediate() ) {
-                _wronglyIntermediate = false;
-                _wronglyNonIntermediate = true;
-            } else {
-                _wronglyIntermediate = false;
-                _wronglyNonIntermediate = false;
-            }
+            _wronglyIntermediate = result.isIntermediate() && !resultWasIntermediate;
+            _wronglyNonIntermediate = false;
+        } else if ( !result.isIntermediate() ) {
+            _wronglyIntermediate = false;
+            _wronglyNonIntermediate = true;
         } else {
             _wronglyIntermediate = false;
             _wronglyNonIntermediate = false;

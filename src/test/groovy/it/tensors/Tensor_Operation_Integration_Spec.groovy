@@ -514,11 +514,11 @@ class Tensor_Operation_Integration_Spec extends Specification
         when :
             y.backward(Tsr.of(1))
         and :
-            Tsr t1 = Tsr.of( "Ig[0]", [y] )
             Tsr t2 = Tsr.of( "Ig[0]", [x] )
+            Tsr t1 = Tsr.of( "Ig[0]", [y] ) // The input does not have a gradient!
 
         then :
-            t1 == null
+            thrown(IllegalArgumentException)
         and :
             t2.toString() == "[1]:(-8.0)"
         and :
@@ -537,9 +537,11 @@ class Tensor_Operation_Integration_Spec extends Specification
             trs[0] = y
         and :
             fun = new FunctionBuilder( Neureka.get().backend() ).build("Ig[0]", false)
+        and :
+            fun(trs)
 
         then :
-            fun(trs) == null
+            thrown(IllegalArgumentException)
     }
 
 

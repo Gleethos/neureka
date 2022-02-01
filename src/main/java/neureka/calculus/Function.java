@@ -261,18 +261,12 @@ public interface Function
 
     default <T> Tsr<T> call( Args arguments, Tsr<T>... tensors ) {
         Tsr<T> result = callWith( arguments ).call( tensors );
-        if ( result != null )
-            return result.getUnsafe().setIsIntermediate(false);
-        else
-            return null;
+        return result.getUnsafe().setIsIntermediate(false);
     }
 
     default <T> Tsr<T> invoke( Args arguments, Tsr<T>... tensors ) {
         Tsr<T> result = callWith( arguments ).invoke( tensors );
-        if ( result != null )
-            return result.getUnsafe().setIsIntermediate(false);
-        else
-            return null;
+        return result.getUnsafe().setIsIntermediate(false);
     }
 
     /**
@@ -310,20 +304,14 @@ public interface Function
 
     default <T> Tsr<T> call( Tsr<T>[] inputs, int j )   {
         Tsr<T> result = (Tsr<T>) execute( inputs, j );
-        if ( result != null )
-            return result.getUnsafe().setIsIntermediate(false);
-        else
-            return null;
+        return result.getUnsafe().setIsIntermediate(false);
     }
 
     default <T> Tsr<T> invoke( Tsr<T>[] inputs, int j ) { return call( inputs, j );             }
 
     default <T> Tsr<T> call( Tsr<T>... inputs )   {
         Tsr<T> result = (Tsr<T>) execute( inputs );
-        if ( result != null )
-            return result.getUnsafe().setIsIntermediate(false);
-        else
-            return null;
+        return result.getUnsafe().setIsIntermediate(false);
     }
 
     default <T> Tsr<T> invoke( Tsr<T>... inputs ) { return call( inputs );             }
@@ -332,18 +320,12 @@ public interface Function
 
     default <T> Tsr<T> derive( Tsr<T>[] inputs, int d, int j ) {
         Tsr<T> result = (Tsr<T>) executeDerive( inputs, d, j );
-        if ( result != null )
-            return result.getUnsafe().setIsIntermediate(false);
-        else
-            return null;
+        return result.getUnsafe().setIsIntermediate(false);
     }
 
     default <T> Tsr<T> derive( Tsr<T>[] inputs, int d ) {
         Tsr<T> result = (Tsr<T>) executeDerive( inputs, d );
-        if ( result != null )
-            return result.getUnsafe().setIsIntermediate(false);
-        else
-            return null;
+        return result.getUnsafe().setIsIntermediate(false);
     }
 
     //---

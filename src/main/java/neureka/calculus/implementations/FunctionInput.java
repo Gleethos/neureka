@@ -93,7 +93,10 @@ public class FunctionInput implements Function, GradientProvider
                 }
                 return gradient;
             }
-            return null;
+            throw new IllegalArgumentException(
+                    "The provided tensor does not require gradients, this function input however " +
+                    "expects to receive such tensors (gradient receivers)."
+            );
         }
         return t;
     }
