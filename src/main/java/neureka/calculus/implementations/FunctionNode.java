@@ -1,6 +1,5 @@
 package neureka.calculus.implementations;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
@@ -11,7 +10,6 @@ import neureka.backend.standard.operations.other.Reshape;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
-import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import org.slf4j.Logger;
@@ -109,12 +107,18 @@ public class FunctionNode implements Function
                             Autograd-Graph will be generated below for the new GraphNode:
                             only flat functions can be executed directly                         */
 
-                        if ( d < 0 && _isDoingAD )
-                            return new GraphNode<>(
-                                        this,
-                                        call,
-                                        () -> _execute( call )
-                                    ).getPayload();
+                        if ( d < 0 && _isDoingAD ) {
+                            Tsr[] ref = {null};
+                            new GraphNode<>(
+                                    this,
+                                    call,
+                                    () -> { // This is a bit of a hack... TODO: fix
+                                        ref[0] = _execute(call);
+                                        return ref[0];
+                                    }
+                            );
+                            return ref[0];
+                        }
                     }
                     return _execute( call );
                 }
