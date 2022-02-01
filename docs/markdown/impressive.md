@@ -14,8 +14,8 @@ implementation in both Neureka and Numpy!
 ```groovy
 var X = Tsr.of(Double, [[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1] ])
 var y = Tsr.of(Double, [[0,1,1,0]]).T()
-var W1 = (Tsr.ofRandom(Double, 3,4) - 1) * 2
-var W2 = (Tsr.ofRandom(Double, 4,1) - 1) * 2
+var W1 = Tsr.ofRandom(Double, 3,4) * 2 - 1
+var W2 = Tsr.ofRandom(Double, 4,1) * 2 - 1
 60_000.times {
     var l1 = Tsr.of('sig(',X.matMul(W1),')')
     var l2 = Tsr.of('sig(',l1.matMul(W2),')')
