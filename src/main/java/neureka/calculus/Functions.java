@@ -25,6 +25,7 @@ public class Functions {
     private final Function neg;
 
     private final Function matMul;
+    private final Function transpose2D;
 
     public Functions( boolean doingAD ) {
         dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
@@ -46,6 +47,7 @@ public class Functions {
         modAssign = Function.of( "I[ 0 ]<-(I[ 0 ]%I[ 1 ])",   doingAD );
         neg = Function.of( "(-1*I[ 0 ])",                     doingAD );
         matMul = Function.of("I[0] @ I[1]",                   doingAD );
+        transpose2D = Function.of("[1, 0]:(I[0])",            doingAD );
     }
 
 
@@ -158,6 +160,8 @@ public class Functions {
     }
 
     public Function matMul() { return this.matMul; }
+
+    public Function transpose2D() { return transpose2D; }
 
     @Override
     public String toString() {

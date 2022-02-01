@@ -91,6 +91,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.other.Reshape;
 import neureka.calculus.Function;
+import neureka.calculus.Functions;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
@@ -2178,6 +2179,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> T() // Transposed!
     {
+        if ( this.rank() == 1 ) return this;
+        else if ( this.rank() == 2 ) {
+            return Neureka.get().backend().getFunction().transpose2D().call(this);
+        }
         StringBuilder operation = new StringBuilder();
         for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( ( i == 0 ) ? "" : ", " );
         operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
@@ -2193,11 +2198,19 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return A scalar tensor which is the mean value of all values of this very tensor.
      */
     public Tsr<V> mean() {
-        Tsr<V> ones = new Tsr<>( this.getNDConf().shape(), 1 );
-        assert ones != null;
-        Tsr<V> sum = Neureka.get().backend().getAutogradFunction().conv().call( this, ones );
-        assert sum != null;
-        return Neureka.get().backend().getAutogradFunction().div().call( sum, new Tsr<>( this.size() ) );
+        Functions functions = Neureka.get().backend().getAutogradFunction();
+        Tsr<V> ones = (Tsr<V>) Tsr.of( this.getValueClass(), this.getNDConf().shape(), (Object) 1 );
+        Tsr<V> sum = functions.conv().call( this, ones );
+        if ( !ones.has(GraphNode.class) || !ones.getGraphNode().isUsedAsDerivative() )
+            ones.getUnsafe().delete();
+        if ( sum == null )
+            throw new IllegalStateException(
+                    "Failed to calculate sum using convolution! Shapes: "+
+                    Arrays.toString(this.getNDConf().shape())+"x"+Arrays.toString(ones.getNDConf().shape())
+            );
+        Tsr<V> result = functions.div().call( sum, Tsr.of( (Class<V>) this.getValueClass(), new int[]{1}, this.size() ) );
+        sum.getUnsafe().delete();
+        return result;
     }
 
     /**

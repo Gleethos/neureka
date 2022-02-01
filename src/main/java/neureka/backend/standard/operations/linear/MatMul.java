@@ -197,7 +197,7 @@ public class MatMul extends AbstractOperation
     private static void _autoClone( Tsr<?>[] tensors ) {
         for ( int i = 0; i < tensors.length; i++ ) {
             if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {
-                _LOG.warn("Auto cloning a tensor which does not have a simple ND configuration...");
+                _LOG.debug("Auto cloning a tensor which does not have a simple ND configuration...");
                 tensors[i] = tensors[i].clone().getUnsafe().setIsIntermediate( true );
                 /*
                     The user should do cloning explicitly because using slices

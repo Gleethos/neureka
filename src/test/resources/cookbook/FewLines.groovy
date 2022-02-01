@@ -13,17 +13,32 @@ for j in xrange(60000):
     syn1 += l1.T.dot(l2_delta)
     syn0 += X.T.dot(l1_delta)
 */
-
-var X = Tsr.of(Double, [[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1] ])
-var y = Tsr.of(Double, [[0,1,1,0]]).T()
-var syn0 = (Tsr.ofRandom(Double, 3,4) - 1) * 2
-var syn1 = (Tsr.ofRandom(Double, 4,1) - 1) * 2
-60000.times {
-    var l1 = Tsr.of('sig(',X.matMul(syn0),')')
-    var l2 = Tsr.of('sig(',l1.matMul(syn1),')')
-    var l2_delta = (y - l2)*(l2*(-l2+1))
-    var l1_delta = l2_delta.dot(syn1.T()) * (l1 * (-l1+1))
-    syn1 += l1.T().matMul(l2_delta)
-    syn0 += X.T().matMul(l1_delta)
+var version_1 = {
+    var X = Tsr.of(Double, [[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]])
+    var y = Tsr.of(Double, [[0, 1, 1, 0]]).T()
+    var syn0 = (Tsr.ofRandom(Double, 3, 4) - 1) * 2
+    var syn1 = (Tsr.ofRandom(Double, 4, 1) - 1) * 2
+    60_000.times {
+        var l1 = Tsr.of('sig(', X.matMul(syn0), ')')
+        var l2 = Tsr.of('sig(', l1.matMul(syn1), ')')
+        var l2_delta = (y - l2) * (l2 * (-l2 + 1))
+        var l1_delta = l2_delta.matMul(syn1.T()) * (l1 * (-l1 + 1))
+        syn1 += l1.T().matMul(l2_delta)
+        syn0 += X.T().matMul(l1_delta)
+    }
 }
 
+var version_2 = {
+    var X = Tsr.of(Double, [[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]])
+    var y = Tsr.of(Double, [[0, 1, 1, 0]]).T()
+    var syn0 = ((Tsr.ofRandom(Double, 3, 4) - 1) * 2).setRqsGradient(true)
+    var syn1 = ((Tsr.ofRandom(Double, 4, 1) - 1) * 2).setRqsGradient(true)
+    60_000.times {
+        var l1 = Tsr.of('sig(', X.matMul(syn0), ')')
+        var l2 = Tsr.of('sig(', l1.matMul(syn1), ')')
+        ((y - l2)**2).mean().backward()
+        println (((y - l2)**2).mean())
+    }
+}
+
+version_2()
