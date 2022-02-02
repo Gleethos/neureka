@@ -9,76 +9,68 @@ import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
-import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.framing.Relation;
 import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.NDConfiguration;
 
-import java.util.ArrayList;
-
 public class Reshape extends AbstractOperation
 {
-
     public Reshape()
     {
         super(
-                new OperationBuilder()
-                        .setFunction(         "reshape"    )
-                        .setOperator(         ","        )
-                        .setArity(            -1         )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( true       )
-                        .setIsInline(         false      )
+            new OperationBuilder()
+                .setFunction(         "reshape"  )
+                .setOperator(         ","        )
+                .setArity(            -1         )
+                .setIsOperator(       true       )
+                .setIsIndexer(        false      )
+                .setIsDifferentiable( true       )
+                .setIsInline(         false      )
         );
-
-        FunAlgorithm implementation =
-                Algorithm.withName( "reshape" )
-                            .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
-                            .setCanPerformBackwardADFor( call -> true )
-                            .setCanPerformForwardADFor( call -> false )
-                            .setSupplyADAgentFor(
-                                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                                {
-                                    //Tsr ctxDerivative = (Tsr)call.findAndGet(Argument.Derivative.class);
-                                    if ( forward ) {
-                                        throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-                                    }
-                                    return ADAgent.of( null )
-                                                    .setForward( (t, derivative ) -> new FunctionBuilder( Neureka.get().backend() ).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
-                                                    .setBackward( (t, error ) -> new FunctionBuilder( Neureka.get().backend() ).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
-                                }
-                            )
-                            .setExecutionDispatcher(
-                                ( caller, call ) ->
-                                {
-                                    Tsr<?>[] inputs = CalcUtil.srcActivation( call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );
-                                    int[] newForm = new int[ inputs.length - 1 ];
-                                    for ( int i = 0; i < inputs.length - 1; i++ ) {
-                                        newForm[ i ] = (int) Tsr.IO.getFrom( inputs[ i ], 0 );
-                                    }
-                                    if ( call.getValOf( Arg.DerivIdx.class ) >= 0 ) {//reverse reshape:
-                                        newForm = invert( newForm );
-                                    }
-                                    Tsr<?> t = inputs[ inputs.length - 1 ];
-                                    return reshaped( t, newForm, true );
-                                }
-                            )
-                            .setCallPreparation( call -> call)
-                            .buildFunAlgorithm();
-
         setAlgorithm(
-                FunAlgorithm.class,
-                implementation
+            FunAlgorithm.class,
+            Algorithm
+                .withName( "reshape" )
+                .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
+                .setCanPerformBackwardADFor( call -> true )
+                .setCanPerformForwardADFor( call -> false )
+                .setSupplyADAgentFor(
+                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                    {
+                        if ( forward )
+                            throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
+
+                        return ADAgent.of( null )
+                                .setForward( (t, derivative ) -> new FunctionBuilder( Neureka.get().backend() ).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
+                                .setBackward( (t, error ) -> new FunctionBuilder( Neureka.get().backend() ).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
+                    }
+                )
+                .setExecutionDispatcher(
+                    ( caller, call ) ->
+                    {
+                        Tsr<?>[] inputs = CalcUtil.srcActivation( call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );
+                        int[] newForm = new int[ inputs.length - 1 ];
+                        for ( int i = 0; i < inputs.length - 1; i++ )
+                            newForm[ i ] = (int) Tsr.IO.getFrom( inputs[ i ], 0 );
+
+                        if ( call.getValOf( Arg.DerivIdx.class ) >= 0 ) //reverse reshape:
+                            newForm = invert( newForm );
+
+                        return _reshaped( inputs[ inputs.length - 1 ], newForm, true );
+                    }
+                )
+                .setCallPreparation( call -> call )
+                .buildFunAlgorithm()
         );
 
     }
 
-    public static Tsr<?> reshaped( Tsr<?> tensor, int[] newForm, boolean newTsr )
+    private static Tsr<?> _reshaped( Tsr<?> tensor, int[] newForm, boolean newTsr )
     {
         Tsr<?> parent = tensor;
         tensor = newTsr ? tensor.shallowCopy().getUnsafe().setIsIntermediate( true ) : tensor;
@@ -149,8 +141,7 @@ public class Reshape extends AbstractOperation
     @Override
     public String stringify( String[] children ) {
         java.util.function.Function<String, Boolean> isConstantNumeric =
-                s ->
-                {
+                s -> {
                     try {
                         Double.parseDouble(s);
                         return true;
@@ -165,16 +156,15 @@ public class Reshape extends AbstractOperation
                                 ? children[ i ].split("\\.")[ 0 ]
                                 : children[ i ]
                 ).append(")");
-            } else {
+            } else
                 reconstructed.append(
                         ( isConstantNumeric.apply( children[ i ] ) )
                                 ? children[ i ].split("\\.")[ 0 ]
                                 : children[ i ]
                 );
-            }
-            if ( i < children.length - 2 ) {
+
+            if ( i < children.length - 2 )
                 reconstructed.append(",");
-            }
         }
         return "(" + reconstructed + ")";
     }
