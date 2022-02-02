@@ -30,10 +30,32 @@
 
 ### Take a quick look ###
 
+<table>
+    <tr>
+	<th>Impress me!</th>
+	<th>Show me more</th>
+	<th>Boring Documentation</th>
+    </tr> 
+    <tr>
+<td> 
+
+- [A Neural Network in 11 Lines of Code!](docs/markdown/impressive.md)
+
+</td>
+<td>
+
 - [Neureka with Java](docs/markdown/java_example.md) :coffee:
 - [Neureka with Groovy](docs/markdown/groovy_example.md) :star:
-- [A Neural Network in 11 lines of Code!](docs/markdown/impressive.md)
+		
+</td>
+<td>
+
 - [Javadocs](https://gleethos.github.io/neureka/jdocs/index.html) :book:
+
+</td>
+    </tr>
+</table>
+
 
 ---
 
