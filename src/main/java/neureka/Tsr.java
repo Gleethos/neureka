@@ -3148,6 +3148,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      *  This factory method produces a randomly populated tensor of the provided
      *  type and shape using a hard coded default seed.
+     *  If the provided type class is representing a
+     *  floating point number type (like {@link Double} or {@link Float}) then the random numbers will
+     *  be gaussian ("normally") distributed values with mean {@code 0.0} and standard
+     *  deviation {@code 1.0}.
      *
      * @param valueTypeClass The type class of the values stored by the returned tensor.
      * @param shape The shape of the tensor produced by this factory method.
