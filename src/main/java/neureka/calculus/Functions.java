@@ -5,163 +5,166 @@ import java.util.stream.Collectors;
 
 public class Functions {
 
-    private final Function dimTrim;
-    private final Function idy;
-    private final Function conv;
-    private final Function plus;
-    private final Function plusAssign;
-    private final Function minus;
-    private final Function minusAssign;
-    private final Function div;
-    private final Function divAssign;
-    private final Function pow;
-    private final Function powAssign;
-    private final Function mul;
-    private final Function mulAssign;
-    private final Function add;
-    private final Function addAssign;
-    private final Function mod;
-    private final Function modAssign;
-    private final Function neg;
+    private final Function _dimTrim;
+    private final Function _idy;
+    private final Function _conv;
+    private final Function _plus;
+    private final Function _plusAssign;
+    private final Function _minus;
+    private final Function _minusAssign;
+    private final Function _div;
+    private final Function _divAssign;
+    private final Function _pow;
+    private final Function _powAssign;
+    private final Function _mul;
+    private final Function _mulAssign;
+    private final Function _add;
+    private final Function _addAssign;
+    private final Function _mod;
+    private final Function _modAssign;
+    private final Function _neg;
 
-    private final Function matMul;
-    private final Function transpose2D;
+    private final Function _matMul;
+    private final Function _transpose2D;
 
     public Functions( boolean doingAD ) {
-        dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
-        idy = Function.of( "I[ 0 ]<-I[ 1 ]",                  doingAD );
-        conv = Function.of( "I[ 0 ]xI[ 1 ]",                  doingAD );
-        plus = Function.of( "(I[ 0 ]+I[ 1 ])",                doingAD );
-        plusAssign = Function.of( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])",  doingAD );
-        minus = Function.of( "(I[ 0 ]-I[ 1 ])",               doingAD );
-        minusAssign = Function.of( "I[ 0 ]<-(I[ 0 ]-I[ 1 ])", doingAD );
-        div = Function.of( "(I[ 0 ]/I[ 1 ])",                 doingAD );
-        divAssign = Function.of( "I[ 0 ]<-(I[ 0 ]/I[ 1 ])",   doingAD );
-        pow = Function.of( "(I[ 0 ]^I[ 1 ])",                 doingAD );
-        powAssign = Function.of( "I[ 0 ]<-(I[ 0 ]^I[ 1 ])",   doingAD );
-        mul = Function.of( "I[ 0 ]*I[ 1 ]",                   doingAD );
-        mulAssign = Function.of( "I[ 0 ]<-(I[ 0 ]*I[ 1 ])",   doingAD );
-        add = Function.of( "I[ 0 ]+I[ 1 ]",                   doingAD );
-        addAssign = Function.of( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])",   doingAD );
-        mod = Function.of( "(I[ 0 ]%I[ 1 ])",                 doingAD );
-        modAssign = Function.of( "I[ 0 ]<-(I[ 0 ]%I[ 1 ])",   doingAD );
-        neg = Function.of( "(-1*I[ 0 ])",                     doingAD );
-        matMul = Function.of("I[0] @ I[1]",                   doingAD );
-        transpose2D = Function.of("[1, 0]:(I[0])",            doingAD );
+        _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
+        _idy = Function.of( "I[ 0 ]<-I[ 1 ]",                  doingAD );
+        _conv = Function.of( "I[ 0 ]xI[ 1 ]",                  doingAD );
+        _plus = Function.of( "(I[ 0 ]+I[ 1 ])",                doingAD );
+        _plusAssign = Function.of( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])",  doingAD );
+        _minus = Function.of( "(I[ 0 ]-I[ 1 ])",               doingAD );
+        _minusAssign = Function.of( "I[ 0 ]<-(I[ 0 ]-I[ 1 ])", doingAD );
+        _div = Function.of( "(I[ 0 ]/I[ 1 ])",                 doingAD );
+        _divAssign = Function.of( "I[ 0 ]<-(I[ 0 ]/I[ 1 ])",   doingAD );
+        _pow = Function.of( "(I[ 0 ]^I[ 1 ])",                 doingAD );
+        _powAssign = Function.of( "I[ 0 ]<-(I[ 0 ]^I[ 1 ])",   doingAD );
+        _mul = Function.of( "I[ 0 ]*I[ 1 ]",                   doingAD );
+        _mulAssign = Function.of( "I[ 0 ]<-(I[ 0 ]*I[ 1 ])",   doingAD );
+        _add = Function.of( "I[ 0 ]+I[ 1 ]",                   doingAD );
+        _addAssign = Function.of( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])",   doingAD );
+        _mod = Function.of( "(I[ 0 ]%I[ 1 ])",                 doingAD );
+        _modAssign = Function.of( "I[ 0 ]<-(I[ 0 ]%I[ 1 ])",   doingAD );
+        _neg = Function.of( "(-1*I[ 0 ])",                     doingAD );
+        _matMul = Function.of("I[0] @ I[1]",                   doingAD );
+        _transpose2D = Function.of("[1, 0]:(I[0])",            doingAD );
     }
 
+    public Function getDimTrim() { return _dimTrim; }
 
-    public Function getDimTrim() { return this.dimTrim; }
+    public Function getIdy() { return _idy; }
 
-    public Function getIdy() { return this.idy; }
+    public Function getConv() { return _conv; }
 
-    public Function getConv() { return this.conv; }
+    public Function getPlus() { return _plus; }
 
-    public Function getPlus() { return this.plus; }
+    public Function getPlusAssign() { return _plusAssign; }
 
-    public Function getPlusAssign() { return this.plusAssign; }
+    public Function getMinus() { return _minus; }
 
-    public Function getMinus() { return this.minus; }
+    public Function getMinusAssign() { return _minusAssign; }
 
-    public Function getMinusAssign() { return this.minusAssign; }
+    public Function getDiv() { return _div; }
 
-    public Function getDiv() { return this.div; }
+    public Function getDivAssign() { return _divAssign; }
 
-    public Function getDivAssign() { return this.divAssign; }
+    public Function getPow() { return _pow; }
 
-    public Function getPow() { return this.pow; }
+    public Function getPowAssign() { return _powAssign; }
 
-    public Function getPowAssign() { return this.powAssign; }
+    public Function getMul() { return _mul; }
 
-    public Function getMul() { return this.mul; }
+    public Function getMulAssign() { return _mulAssign; }
 
-    public Function getMulAssign() { return this.mulAssign; }
+    public Function getAdd() { return _add; }
 
-    public Function getAdd() { return this.add; }
+    public Function getAddAssign() { return _addAssign; }
 
-    public Function getAddAssign() { return this.addAssign; }
+    public Function getMod() { return _mod; }
 
-    public Function getMod() { return this.mod; }
+    public Function getModAssign() { return _modAssign; }
 
-    public Function getModAssign() { return this.modAssign; }
+    public Function getNeg() { return _neg; }
 
-    public Function getNeg() { return this.neg; }
+    public Function getMatMul() { return _matMul; }
+
+    public Function getTranspose2D() { return _transpose2D; }
 
     public Function dimTrim() {
-        return this.dimTrim;
+        return _dimTrim;
     }
 
     public Function idy() {
-        return this.idy;
+        return _idy;
     }
 
     public Function conv() {
-        return this.conv;
+        return _conv;
     }
 
     public Function plus() {
-        return this.plus;
+        return _plus;
     }
 
     public Function plusAssign() {
-        return this.plusAssign;
+        return _plusAssign;
     }
 
     public Function minus() {
-        return this.minus;
+        return _minus;
     }
 
     public Function minusAssign() {
-        return this.minusAssign;
+        return _minusAssign;
     }
 
     public Function div() {
-        return this.div;
+        return _div;
     }
 
     public Function divAssign() {
-        return this.divAssign;
+        return _divAssign;
     }
 
     public Function pow() {
-        return this.pow;
+        return _pow;
     }
 
     public Function powAssign() {
-        return this.powAssign;
+        return _powAssign;
     }
 
     public Function mul() {
-        return this.mul;
+        return _mul;
     }
 
     public Function mulAssign() {
-        return this.mulAssign;
+        return _mulAssign;
     }
 
     public Function add() {
-        return this.add;
+        return _add;
     }
 
     public Function addAssign() {
-        return this.addAssign;
+        return _addAssign;
     }
 
     public Function mod() {
-        return this.mod;
+        return _mod;
     }
 
     public Function modAssign() {
-        return this.modAssign;
+        return _modAssign;
     }
 
     public Function neg() {
-        return this.neg;
+        return _neg;
     }
 
-    public Function matMul() { return this.matMul; }
+    public Function matMul() { return _matMul; }
 
-    public Function transpose2D() { return transpose2D; }
+    public Function transpose2D() { return _transpose2D; }
 
     @Override
     public String toString() {

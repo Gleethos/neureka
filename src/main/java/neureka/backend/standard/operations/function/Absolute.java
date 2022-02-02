@@ -24,14 +24,11 @@ public final class Absolute extends AbstractOperation
                 .setIsDifferentiable( true    )
                 .setIsInline(         false   )
         );
-
-        Activation operationAlgorithm = new Activation()
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
-            .buildFunAlgorithm();
-
         setAlgorithm(
-            Activation.class,
-            operationAlgorithm.setImplementationFor(
+            new Activation()
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .buildFunAlgorithm()
+            .setImplementationFor(
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(
@@ -50,9 +47,9 @@ public final class Absolute extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                    Activation.implementationForGPU( this.getFunction() )
-                            .with( "output = fabs( input );\n" )
-                            .and( "output = ( input < 0 ) ? -1 : 1;\n" )
+                Activation.implementationForGPU( this.getFunction() )
+                        .with( "output = fabs( input );\n" )
+                        .and( "output = ( input < 0 ) ? -1 : 1;\n" )
             )
         );
     }
@@ -82,7 +79,6 @@ public final class Absolute extends AbstractOperation
         if ( !derive ) return Math.abs( input );
         else return ( input < 0 ) ? -1 : 1;
     }
-
 
 
 }

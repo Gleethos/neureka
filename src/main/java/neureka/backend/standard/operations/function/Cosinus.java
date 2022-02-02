@@ -24,37 +24,34 @@ public final class Cosinus extends AbstractOperation
                 .setIsDifferentiable( true   )
                 .setIsInline(         false  )
         );
-
-        Activation operationAlgorithm = new Activation()
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
-            .buildFunAlgorithm();
-
         setAlgorithm(
-            Activation.class,
-            operationAlgorithm.setImplementationFor(
-                CPU.class,
-                Activation.implementationForCPU()
-                    .with(Fun.F64ToF64.pair(
-                        x -> Math.cos(x),
-                        x -> -Math.sin(x)
-                    ))
-                    .with(Fun.F32ToF32.pair(
-                        x -> (float) Math.cos(x),
-                        x -> (float) -Math.sin(x)
-                    ))
-                    .with(Fun.I32ToI32.pair(
-                        x -> (int) Math.cos(x),
-                        x -> (int) -Math.sin(x)
-                    ))
-                    .get()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
+            new Activation()
+                .setSupplyADAgentFor( getDefaultAlgorithm() )
+                .buildFunAlgorithm()
+                .setImplementationFor(
+                    CPU.class,
+                    Activation.implementationForCPU()
+                        .with(Fun.F64ToF64.pair(
+                            x -> Math.cos(x),
+                            x -> -Math.sin(x)
+                        ))
+                        .with(Fun.F32ToF32.pair(
+                            x -> (float) Math.cos(x),
+                            x -> (float) -Math.sin(x)
+                        ))
+                        .with(Fun.I32ToI32.pair(
+                            x -> (int) Math.cos(x),
+                            x -> (int) -Math.sin(x)
+                        ))
+                        .get()
+                )
+                .setImplementationFor(
+                    OpenCLDevice.class,
                     Activation.implementationForGPU( this.getFunction() )
                             .with( "output = cos( input );\n" )
                             .and( "output = -sin( input );\n" )
-            )
-        );
+                )
+            );
     }
 
     @Override
