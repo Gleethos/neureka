@@ -2331,7 +2331,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param indices The index array of the element which should be returned.
      * @return An element located at the provided index.
      */
-    public V getAt( int... indices ) { return getDataAt( getNDConf().indexOfIndices( indices ) ); }
+    public Tsr<V> getAt( int... indices ) { return getAt( Arrays.stream( indices ).mapToObj( i->i ).toArray() ); }
 
     /**
      *  The following method enables the creation of tensor slices which access

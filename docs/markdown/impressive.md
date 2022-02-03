@@ -58,7 +58,7 @@ of building a neural network automated for you!
 You simply specify which tensors require gradients,
 and then you send the error values through the `backward`
 method to your weights (and their gradients).
-After each pass you tell you weights to apply their gradients.
+After each pass you tell your weights to apply their gradients.
 Done!
 
 <table>

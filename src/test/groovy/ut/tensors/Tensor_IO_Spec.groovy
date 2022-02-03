@@ -360,16 +360,17 @@ class Tensor_IO_Spec extends Specification
                     1.0d, -1.0d
             ])
 
-        when : Tsr.IO.addInto(t, v)
+        when : t += v
         then : t.toString().contains("[2x2]:(2.0, 3.0, 3.0, 6.0)")
 
-        when : Tsr.IO.addInto(t, 2, 3.0)
+        when :
+            t.setValueAt( 2, 3.0 as double )
         then : t.toString().contains("[2x2]:(2.0, 3.0, 6.0, 6.0)")
 
         when :
             int[] indices = new int[2]
             indices[1] = 1
-            Tsr.IO.addInto(t, indices, -9.0)
+            t.setValueAt(t.indexOfIndices(indices), -9.0)
         then :
             t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 6.0)")
             Tsr.IO.getFrom(t, indices)==-6.0d

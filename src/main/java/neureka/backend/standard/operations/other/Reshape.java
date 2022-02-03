@@ -56,7 +56,7 @@ public class Reshape extends AbstractOperation
                         Tsr<?>[] inputs = CalcUtil.srcActivation( call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );
                         int[] newForm = new int[ inputs.length - 1 ];
                         for ( int i = 0; i < inputs.length - 1; i++ )
-                            newForm[ i ] = (int) Tsr.IO.getFrom( inputs[ i ], 0 );
+                            newForm[ i ] = ( (Number) inputs[ i ].getValueAt( 0 ) ).intValue();
 
                         if ( call.getValOf( Arg.DerivIdx.class ) >= 0 ) //reverse reshape:
                             newForm = invert( newForm );
