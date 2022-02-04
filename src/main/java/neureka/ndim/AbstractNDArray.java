@@ -134,8 +134,8 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     /**
      * @return The type class of individual value items within this {@link Tsr} instance.
      */
-    public Class<?> getValueClass() {
-        _guardGet("data type class"); return ( _dataType != null ? _dataType.getJVMTypeClass() : null );
+    public Class<V> getValueClass() {
+        _guardGet("data type class"); return ( _dataType != null ? (Class<V>) _dataType.getJVMTypeClass() : null );
     }
 
     /**
