@@ -51,9 +51,7 @@ import neureka.ndim.config.types.ColumnMajorNDConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -67,7 +65,7 @@ import java.util.List;
  * @param <C> The type of the concrete class extending this abstract class (currently the {@link Tsr} class).
  * @param <V> The value type of the individual items stored within this nd-array.
  */
-public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> implements Iterable<V>
+public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> implements Iterable<V>, NDimensional
 {
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
@@ -111,6 +109,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     /**
      * @return The {@link NDConfiguration} implementation instance of this {@link Tsr} storing dimensionality information.
      */
+    @Override
     public NDConfiguration getNDConf() { _guardGet("ND-Configuration"); return _NDConf; }
 
     /**
@@ -398,45 +397,6 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     *  This is a convenience method identical to {@code tensor.getNDConf().indexOfIndex(i)}.
-     *  Use this to calculate the true index for an element in the data array (data array index)
-     *  based on a provided "virtual index", or "value array index".
-     *  This virtual index may be different from the true index depending on the type of nd-array,
-     *  like for example if the nd-array is
-     *  a slice of another larger nd-array, or if it is in fact a reshaped version of another nd-array.
-     *  The basis for performing this translation is expressed by individual implementations of
-     *  this {@link NDConfiguration} interface, which contain everything
-     *  needed to treat a given block of data as a nd-array!
-     *
-     * @param index The virtual index of the tensor having this configuration.
-     * @return The true index which targets the actual data within the underlying data array of an nd-array / tensor.
-     */
-    public int indexOfIndex( int index ) { return _NDConf.indexOfIndex( index ); }
-
-    /**
-     *  This is a convenience method identical to {@code tensor.getNDConf().IndicesOfIndex(i)}.
-     *  Use this to calculates the axis indices for an element in the nd-array array
-     *  based on a provided "virtual index".
-     *  The resulting index defines the position of the element for every axis.
-     *
-     * @param index The virtual index of the tensor having this configuration.
-     * @return The position of the (virtually) targeted element represented as an array of axis indices.
-     */
-    public int[] indicesOfIndex( int index ) { return _NDConf.indicesOfIndex( index ); }
-
-    /**
-     *  This is a convenience method identical to {@code tensor.getNDConf().indexOfIndices(indices)}.
-     *  Use this to calculates the true index for an element in the data array
-     *  based on a provided index array.
-     *
-     * @param indices The indices for every axis of a given nd-array.
-     * @return The true index targeting the underlying data array of a given nd-array.
-     */
-    public int indexOfIndices( int[] indices ) { return _NDConf.indexOfIndices(indices); }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
      *  This method sets the NDConfiguration of this NDArray.
      *  Therefore, it should not be used lightly as it can cause major internal inconsistencies.
      *
@@ -462,34 +422,6 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     }
 
     //---
-
-    /**
-     * @return The number of dimensions of this tensor / nd-array.
-     */
-    public int rank() { _guardGet("rank"); return _NDConf.rank(); }
-
-    /**
-     * @return A list of the dimensions of this tensor / array.
-     */
-    public List<Integer> shape() { _guardGet("shape"); return _asList(_NDConf.shape()); }
-
-    public int shape( int i ) { return _NDConf.shape()[ i ]; }
-
-    public List<Integer> indicesMap() { _guardGet("indices map"); return _asList(_NDConf.indicesMap()); }
-
-    public List<Integer> translation() { _guardGet("translation"); return _asList(_NDConf.translation()); }
-
-    public List<Integer> spread() { _guardGet("spread"); return _asList(_NDConf.spread()); }
-
-    public List<Integer> offset() { _guardGet("offset"); return _asList(_NDConf.offset()); }
-
-    public int size() { _guardGet("size"); return NDConfiguration.Utility.szeOfShp(_NDConf.shape()); }
-
-    private static List<Integer> _asList( int[] array ) {
-        List<Integer> intList = new ArrayList<>( array.length );
-        for ( int i : array ) intList.add( i );
-        return intList;
-    }
 
     /**
      *  Static utility methods for the NDArray.

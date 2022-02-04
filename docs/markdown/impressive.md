@@ -13,16 +13,16 @@ implementation in both Neureka and Numpy!
 
 ```groovy
 var X = Tsr.of(Double, [[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1] ])
-var y = Tsr.of(Double, [[0,1,1,0]]).T()
+var y = Tsr.of(Double, [[0,1,1,0]]).T
 var W1 = Tsr.ofRandom(Double, 3,4)
 var W2 = Tsr.ofRandom(Double, 4,1)
 60_000.times {
     var l1 = Tsr.of('sig(',X.matMul(W1),')')
     var l2 = Tsr.of('sig(',l1.matMul(W2),')')
     var l2_delta = (y - l2)*(l2*(-l2+1))
-    var l1_delta = l2_delta.matMul(W2.T()) * (l1 * (-l1+1))
-    W2 += l1.T().matMul(l2_delta)
-    W1 += X.T().matMul(l1_delta)
+    var l1_delta = l2_delta.matMul(W2.T) * (l1 * (-l1+1))
+    W2 += l1.T.matMul(l2_delta)
+    W1 += X.T.matMul(l1_delta)
 }
 ```
  
@@ -71,10 +71,10 @@ Done!
 
 ```groovy
 var X = Tsr.of(Double, [[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]])
-var y = Tsr.of(Double, [[0, 1, 1, 0]]).T()
+var y = Tsr.of(Double, [[0, 1, 1, 0]]).T
 var W1 = Tsr.ofRandom(Double, 3, 4).setRqsGradient(true)
 var W2 = Tsr.ofRandom(Double, 4, 1).setRqsGradient(true)
-60.times {
+60_000.times {
     var l2 = Tsr.of('sig(',Tsr.of('sig(',X.matMul(W1),')').matMul(W2),')')
     l2.backward(y - l2) // Back-propagating the error!
     W1.applyGradient(); W2.applyGradient()

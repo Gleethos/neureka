@@ -2188,7 +2188,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     /**
      *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
-     *  Internally this method constructs a new reshape function which will be able to transform as expected.
      *
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
@@ -2202,6 +2201,16 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( ( i == 0 ) ? "" : ", " );
         operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
         return _constructFunctional(null, new Tsr[]{this}, operation.toString(), true);
+    }
+
+    /**
+     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
+     *  It is and alias method to the {@link #T()} method...
+     *
+     * @return A new transposed tensor with the same underlying data as this tensor.
+     */
+    public Tsr<V> getT() { // Trannsposed
+        return this.T();
     }
 
     /**
@@ -2223,7 +2232,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     "Failed to calculate sum using convolution! Shapes: "+
                     Arrays.toString(this.getNDConf().shape())+"x"+Arrays.toString(ones.getNDConf().shape())
             );
-        Tsr<V> result = functions.div().call( sum, Tsr.of( (Class<V>) this.getValueClass(), new int[]{1}, this.size() ) );
+        Tsr<V> result = functions.div().call( sum, Tsr.of( this.getValueClass(), new int[]{1}, this.size() ) );
         sum.getUnsafe().delete();
         return result;
     }
