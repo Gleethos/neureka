@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 14 17:08:29 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 04 16:08:41 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,13 +329,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>6</td>
-<td>6</td>
+<td>7</td>
+<td>7</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.131 seconds</td>
+<td>0.096 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -364,6 +364,9 @@ div.footer {
 <tbody>
 <ul id='toc'>
 <li>
+<a href='#-169597074' class='feature-toc-pass'>A tensor can be instantiated from a target type and nested lists.</a>
+</li>
+<li>
 <a href='#-1740871423' class='feature-toc-pass'>Tensors as String can be formatted on an entry based level.</a>
 </li>
 <li>
@@ -382,6 +385,105 @@ div.footer {
 <a href='#-734513534' class='feature-toc-pass'>Tensor created from shape and datatype has expected state.</a>
 </li>
 </ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-169597074'>
+<span>A tensor can be instantiated from a target type and nested lists.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We instantiate a tensor based on a target type and a list of things.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var t = Tsr.of(type, list)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The tensor has the targeted type, shape and data array!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.valueClass == type
+t.shape() == shape
+t.data == expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>list</th>
+<th class='ex-header'>shape</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>[1, 2, 1]</td>
+<td class='ex-value'>[3]</td>
+<td class='ex-value'>[1.0, 2.0, 1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>[5, -4]</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>[5.0, -4.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>[3, 4]</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>[3, 4]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>[[3], [4]]</td>
+<td class='ex-value'>[2, 1]</td>
+<td class='ex-value'>[3, 4]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.String</td>
+<td class='ex-value'>[[3, 4]]</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>[3, 4]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>5/5 passed</div>
+</td>
+</tr>
 <tr>
 <td colspan='10'>
 <div class='feature-description' id='-1740871423'>

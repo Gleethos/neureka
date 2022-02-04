@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 14 17:08:35 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 04 16:08:10 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.015 seconds</td>
+<td>0.035 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -391,7 +391,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = Tsr.of(-2).delete()</pre>
+<pre class='block-source'>Tsr t = Tsr.of(-2).getUnsafe().delete()</pre>
 </td>
 </tr>
 <tr>
@@ -429,7 +429,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = Tsr.of(new int[]{1, 2}, -2..4).delete()</pre>
+<pre class='block-source'>Tsr t = Tsr.of(new int[]{1, 2}, -2..4).getUnsafe().delete()</pre>
 </td>
 </tr>
 <tr>
@@ -496,7 +496,7 @@ exception.message == "Trying to access the ND-Configuration of an already delete
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = Tsr.of(new int[]{1, 2}, -2..4).delete()</pre>
+<pre class='block-source'>Tsr t = Tsr.of(new int[]{1, 2}, -2..4).getUnsafe().delete()</pre>
 </td>
 </tr>
 <tr>
@@ -524,7 +524,7 @@ exception.message == "Trying to access the ND-Configuration of an already delete
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>t.mutate.setNDConf(null)</pre>
+<pre class='block-source'>t.unsafe.setNDConf(null)</pre>
 </td>
 </tr>
 <tr>
@@ -539,7 +539,7 @@ exception.message == "Trying to access the ND-Configuration of an already delete
 <td></td>
 <td>
 <pre class='block-source'>def exception = thrown(IllegalAccessError)
-exception.message == "Trying to set the ND-Configuration of an already deleted tensor."</pre>
+exception.message == "Trying to access the mutate of an already deleted tensor."</pre>
 </td>
 </tr>
 <tr>
@@ -563,7 +563,7 @@ exception.message == "Trying to set the ND-Configuration of an already deleted t
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = Tsr.of(new int[]{2, 1}, -3..2).delete()</pre>
+<pre class='block-source'>Tsr t = Tsr.of(new int[]{2, 1}, -3..2).getUnsafe().delete()</pre>
 </td>
 </tr>
 <tr>
@@ -630,7 +630,7 @@ exception.message == "Trying to access the data object of an already deleted ten
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = Tsr.of(new int[]{2}, -3..2).delete()</pre>
+<pre class='block-source'>Tsr t = Tsr.of(new int[]{2}, -3..2).getUnsafe().delete()</pre>
 </td>
 </tr>
 <tr>
@@ -697,7 +697,7 @@ exception.message == "Trying to modify the data object of an already deleted ten
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = Tsr.of(new int[]{2, 1}, -3..2).delete()</pre>
+<pre class='block-source'>Tsr t = Tsr.of(new int[]{2, 1}, -3..2).getUnsafe().delete()</pre>
 </td>
 </tr>
 <tr>
@@ -764,7 +764,7 @@ exception.message == "Trying to access the data type of an already deleted tenso
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = Tsr.of(new int[]{2, 1}, -3..2).delete()</pre>
+<pre class='block-source'>Tsr t = Tsr.of(new int[]{2, 1}, -3..2).getUnsafe().delete()</pre>
 </td>
 </tr>
 <tr>
@@ -792,7 +792,7 @@ exception.message == "Trying to access the data type of an already deleted tenso
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>t.mutate.setDataType(DataType.of(Float.class))</pre>
+<pre class='block-source'>t.unsafe.setDataType(DataType.of(Float.class))</pre>
 </td>
 </tr>
 <tr>
@@ -807,7 +807,7 @@ exception.message == "Trying to access the data type of an already deleted tenso
 <td></td>
 <td>
 <pre class='block-source'>def exception = thrown(IllegalAccessError)
-exception.message == "Trying to set the data type of an already deleted tensor."</pre>
+exception.message == "Trying to access the mutate of an already deleted tensor."</pre>
 </td>
 </tr>
 </tbody>

@@ -444,7 +444,7 @@ import static org.jocl.CL.*;
 
         // When tensors get stored on this device,
         // they are implicitly converted to a float tensor:
-<span class="fc" id="L447">        tensor.getMutate().toType( F32.class );</span>
+<span class="fc" id="L447">        tensor.getUnsafe().toType( F32.class );</span>
 <span class="fc" id="L448">    }</span>
 
     private cl_tsr.cl_config _writeNDConfig( NDConfiguration ndc ) {

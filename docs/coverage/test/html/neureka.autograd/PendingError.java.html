@@ -2,6 +2,7 @@
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.standard.memory.MemUtil;
 import neureka.calculus.assembly.FunctionBuilder;
 
 public final class PendingError&lt;ValType&gt;
@@ -9,32 +10,38 @@ public final class PendingError&lt;ValType&gt;
     private int _toBeReceived;
     private final Tsr&lt;ValType&gt; _accumulatedError;
 
-<span class="fc" id="L12">    public PendingError( Tsr&lt;ValType&gt; error, int toBeReceived ) {</span>
-<span class="fc" id="L13">        _toBeReceived = toBeReceived;</span>
-<span class="fc" id="L14">        _accumulatedError = error;</span>
-<span class="fc" id="L15">    }</span>
+<span class="fc" id="L13">    public PendingError( Tsr&lt;ValType&gt; error, int toBeReceived ) {</span>
+<span class="fc" id="L14">        _toBeReceived = toBeReceived;</span>
+<span class="fc" id="L15">        _accumulatedError = error;</span>
+<span class="fc" id="L16">    }</span>
 
     public void accumulate( Tsr&lt;?&gt; error ) {
-<span class="fc" id="L18">        new FunctionBuilder( Neureka.get().backend() ).build(</span>
-                &quot;I[ 0 ]&lt;-(I[ 0 ]+I[ 1 ])&quot;, false
-<span class="fc" id="L20">        ).call( new Tsr[]{ _accumulatedError, error } );</span>
-<span class="fc" id="L21">        _toBeReceived--;</span>
-<span class="fc" id="L22">    }</span>
+<span class="fc" id="L19">        Tsr[] inputs = new Tsr[]{ _accumulatedError, error };</span>
+<span class="fc" id="L20">        MemUtil.keep( inputs, () -&gt; {</span>
+<span class="fc" id="L21">                    new FunctionBuilder(</span>
+<span class="fc" id="L22">                                Neureka.get().backend()</span>
+                            )
+<span class="fc" id="L24">                            .build(&quot;I[ 0 ] &lt;- (I[ 0 ] + I[ 1 ])&quot;, false)</span>
+<span class="fc" id="L25">                            .call(inputs);</span>
+<span class="fc" id="L26">                    return null;</span>
+                });
+<span class="fc" id="L28">        _toBeReceived--;</span>
+<span class="fc" id="L29">    }</span>
 
     public boolean isFullyAccumulated() {
-<span class="fc bfc" id="L25" title="All 2 branches covered.">        return _toBeReceived == 0;</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        return _toBeReceived == 0;</span>
     }
 
     public String toString() {
-<span class="nc" id="L29">        return this.getClass().getSimpleName()+&quot;[toBeReceived=&quot; + _toBeReceived + &quot;,accumulatedError=&quot; + _accumulatedError + &quot;]&quot;;</span>
+<span class="nc" id="L36">        return this.getClass().getSimpleName()+&quot;[toBeReceived=&quot; + _toBeReceived + &quot;,accumulatedError=&quot; + _accumulatedError + &quot;]&quot;;</span>
     }
 
     public int getToBeReceived() {
-<span class="nc" id="L33">        return _toBeReceived;</span>
+<span class="nc" id="L40">        return _toBeReceived;</span>
     }
 
     public Tsr&lt;ValType&gt; getAccumulatedError() {
-<span class="fc" id="L37">        return _accumulatedError;</span>
+<span class="fc" id="L44">        return _accumulatedError;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

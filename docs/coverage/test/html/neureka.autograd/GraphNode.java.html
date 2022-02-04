@@ -228,7 +228,7 @@ import java.util.stream.Collectors;
             }
 <span class="fc" id="L229">            GraphLock foundLock = null;</span>
 <span class="fc bfc" id="L230" title="All 2 branches covered.">            for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
-<span class="fc" id="L231">                GraphNode&lt;V&gt; child = inputs[ i ].get( GraphNode.class );</span>
+<span class="fc" id="L231">                GraphNode&lt;V&gt; child = (GraphNode&lt;V&gt;) inputs[ i ].getGraphNode();</span>
 <span class="fc bfc" id="L232" title="All 2 branches covered.">                if ( child == null ) throw new IllegalStateException(</span>
                         &quot;Input tensor at index '&quot; + i + &quot;' did not return a GraphNode instance.&quot; +
                                 &quot;Input tensors of a new GraphNode must be part of the computation graph!&quot;
@@ -248,7 +248,7 @@ import java.util.stream.Collectors;
                     );
                 }
             }
-<span class="fc" id="L251">            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].get( GraphNode.class ).getLock() );</span>
+<span class="fc" id="L251">            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].getGraphNode().getLock() );</span>
 <span class="fc" id="L252">        }</span>
         else
 <span class="fc" id="L254">            throw new IllegalArgumentException(</span>
@@ -267,7 +267,7 @@ import java.util.stream.Collectors;
      */
     private void _construct( Tsr&lt;V&gt; output, Function function, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, GraphLock lock )
     {
-<span class="fc bfc" id="L270" title="All 2 branches covered.">        Tsr&lt;Object&gt;[] inputs = ( call == null ) ? null : (Tsr&lt;Object&gt;[]) call.getTensors();</span>
+<span class="fc bfc" id="L270" title="All 2 branches covered.">        Tsr&lt;V&gt;[] inputs = ( call == null ) ? null : (Tsr&lt;V&gt;[]) call.getTensors();</span>
 <span class="fc bfc" id="L271" title="All 2 branches covered.">        if ( output == null ) throw new NullPointerException( &quot;The supplied payload Tsr must no be null!&quot; );</span>
 <span class="fc" id="L272">        _payloadReferenceVersion = output.getVersion();</span>
 <span class="pc bpc" id="L273" title="1 of 2 branches missed.">        if ( !function.isDoingAD() ) return; // Only functions with AutoDiff enabled create computation graph!</span>
@@ -283,7 +283,7 @@ import java.util.stream.Collectors;
 <span class="fc" id="L283">            _function = function;</span>
 <span class="fc" id="L284">            _parents = new GraphNode[ inputs.length ];</span>
 <span class="fc bfc" id="L285" title="All 2 branches covered.">            for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
-<span class="fc" id="L286">                _parents[ i ] = inputs[ i ].get( GraphNode.class );</span>
+<span class="fc" id="L286">                _parents[ i ] = inputs[ i ].getGraphNode();</span>
 <span class="pc bpc" id="L287" title="1 of 2 branches missed.">                if ( _parents[ i ] == null ) {</span>
 <span class="nc" id="L288">                    throw new IllegalStateException(</span>
                             &quot;Input tensors of a new graph-node must contain leave graph-nodes!&quot;
@@ -302,14 +302,14 @@ import java.util.stream.Collectors;
         }
         /* Returning if the above cannot form an AutoDiff computation graph! : */
 <span class="fc bfc" id="L304" title="All 4 branches covered.">        if ( inputs == null || !function.isFlat() ) return; // Leave nodes have!</span>
-<span class="fc bfc" id="L305" title="All 4 branches covered.">        for ( Tsr&lt;Object&gt; t : inputs ) if ( t.equals(output) ) return; // Output must be a unique tensor for AD!</span>
+<span class="fc bfc" id="L305" title="All 4 branches covered.">        for ( Tsr&lt;V&gt; t : inputs ) if ( t.equals(output) ) return; // Output must be a unique tensor for AD!</span>
 
 <span class="pc bpc" id="L307" title="1 of 4 branches missed.">        if ( this.usesAD() &amp;&amp; function.isFlat() ) {</span>
             /* Preparing for back propagation: */
 <span class="fc bfc" id="L309" title="All 2 branches covered.">            if ( this.usesForwardAD() )</span>
             {
 <span class="fc bfc" id="L311" title="All 2 branches covered.">                for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
-<span class="fc" id="L312">                    GraphNode&lt;V&gt; srcNode = inputs[ i ].get( GraphNode.class );</span>
+<span class="fc" id="L312">                    GraphNode&lt;V&gt; srcNode = inputs[ i ].getGraphNode();</span>
 <span class="fc bfc" id="L313" title="All 2 branches covered.">                    if ( srcNode.usesAD() ) {</span>
 <span class="fc" id="L314">                        if (</span>
 <span class="pc bpc" id="L315" title="1 of 4 branches missed.">                                srcNode.size() == 0 &amp;&amp; this.size() == 0</span>
@@ -364,7 +364,7 @@ import java.util.stream.Collectors;
                 }
 <span class="pc bpc" id="L365" title="1 of 2 branches missed.">            } else if ( this.usesReverseAD() ) {</span>
 <span class="fc bfc" id="L366" title="All 2 branches covered.">                for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
-<span class="fc" id="L367">                    GraphNode&lt;V&gt; srcNode = inputs[ i ].get( GraphNode.class );</span>
+<span class="fc" id="L367">                    GraphNode&lt;V&gt; srcNode = inputs[ i ].getGraphNode();</span>
 <span class="pc bpc" id="L368" title="1 of 4 branches missed.">                    if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {</span>
 <span class="fc" id="L369">                        this.put(</span>
                                 srcNode,
@@ -406,7 +406,7 @@ import java.util.stream.Collectors;
 <span class="fc" id="L406">        int[] modes = new int[ inputs.length ];</span>
 <span class="fc" id="L407">        int inputMode = 0;</span>
 <span class="fc bfc" id="L408" title="All 2 branches covered.">        for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
-<span class="fc" id="L409">            GraphNode&lt;V&gt; node = inputs[ i ].get( GraphNode.class ); // Not null checked in constructor!</span>
+<span class="fc" id="L409">            GraphNode&lt;V&gt; node = inputs[ i ].getGraphNode(); // Not null checked in constructor!</span>
 <span class="fc bfc" id="L410" title="All 2 branches covered.">            modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.getMode();</span>
 <span class="fc bfc" id="L411" title="All 2 branches covered.">            inputMode += ( modes[ i ] != 0) ? 1 : 0;</span>
         }
@@ -563,8 +563,8 @@ import java.util.stream.Collectors;
     /**
      * This method is called by the JITProp component.
      * A pending should only ever be retrieved from a GraphNode once because
-     * afterwards the accumulated error is about to be backpropagated.
-     * Therefore this method nulls the reference when returning the PendingError instance.
+     * afterwards the accumulated error is about to be back-propagated.
+     * Therefore, this method nulls the reference when returning the PendingError instance.
      * @return Returns an instance of the PendingError class containing a error accumulation.
      */
     public PendingError&lt;V&gt; getAndRemovePendingError() {
@@ -576,7 +576,7 @@ import java.util.stream.Collectors;
     /**
      * This method is the entry-point for the back-propagation process.
      * It sets up a key/value map which stores nodes and their intermediate error accumulations.
-     * Accumulations occurs inside the private '_backward' method which traverses the computation graph
+     * Accumulation occurs inside the private '_backward' method which traverses the computation graph
      * recursively, halts when errors can be accumulated, adds a PendingError and returns to the method below!
      * Here all the nodes and error values will then be carried (propagated) to the gradients!
      *
@@ -589,9 +589,9 @@ import java.util.stream.Collectors;
 <span class="fc" id="L589">            pendingNodes.forEach( n -&gt; n._carryPendingBackPropToGradients( pendingNodes ) );</span>
         } else {
 <span class="fc" id="L591">            pendingNodes.forEach( n -&gt; {</span>
-<span class="fc bfc" id="L592" title="All 2 branches covered.">                if ( !n._pendingError.isFullyAccumulated() ) {</span>
-<span class="fc" id="L593">                    _LOG.error(</span>
-<span class="fc" id="L594">                            &quot;Pending error in graph node '&quot;+n.toString()+&quot;' has not received expected accumulation. &quot; +</span>
+<span class="pc bpc" id="L592" title="1 of 2 branches missed.">                if ( !n._pendingError.isFullyAccumulated() ) {</span>
+<span class="nc" id="L593">                    _LOG.error(</span>
+                            &quot;Pending error in graph node '&quot;+ n +&quot;' has not received expected accumulation. &quot; +
                             &quot;&quot;
                     );
                 }
@@ -628,7 +628,7 @@ import java.util.stream.Collectors;
 <span class="fc" id="L628">                        pendingNodes.add( this );</span>
 <span class="fc" id="L629">                    } else _pendingError.accumulate( error );</span>
 <span class="fc" id="L630">                    return;</span>
-                    /* Backprop will be continued later! This node is being remembered in 'PendingError'
+                    /* Back-prop will be continued later! This node is being remembered in 'PendingError'
                        NOTE: Multiple AutoDiff paths leading to one node in history will be accumulated first! (performance)
                              This optimization is a light version of JITProp. JITProp builds on this!
                     */
@@ -678,7 +678,7 @@ import java.util.stream.Collectors;
 <span class="fc" id="L678">        _deleteDerivativesRecursively();// Cleanup after back-propagation!</span>
 <span class="fc" id="L679">    }</span>
 
-    private void _backwardJIT(Tsr&lt;V&gt; error, GraphNode&lt;V&gt; source ) {
+    private void _backwardJIT( Tsr&lt;V&gt; error, GraphNode&lt;V&gt; source ) {
 <span class="fc" id="L682">        _reliesOnJustInTimeProp = false; // JITProp is currently being handled in this method. Afterwards it is not relying on it anymore!</span>
 <span class="fc" id="L683">        _migrateAndOrApplyError( error, payload -&gt; {</span>
 <span class="fc" id="L684">            JITProp&lt;V&gt; jit = payload.get( JITProp.class );//Get JIT-Prop node.</span>
@@ -695,7 +695,7 @@ import java.util.stream.Collectors;
               If among these components is the one that issued this very
               traverse we are in at this moment, then this pending error at this node will later on
               be continued to be propagated.
-              Otherwise it makes sense to accumulate errors further and wait for JIT-Prop traversing!
+              Otherwise, it makes sense to accumulate errors further and wait for JIT-Prop traversing!
              */
 <span class="nc" id="L700">            return; // This node will continue its propagation via a JIT-Prop component later!</span>
         }
@@ -799,42 +799,45 @@ import java.util.stream.Collectors;
 <span class="fc" id="L799">    }</span>
 
     /**
+     * @param error The error which ought to be passed to the {@link ADAgent}s.
      * @param action A lambda action providing derivative and target node as parameter.
      */
     public void forEachBackward( Tsr&lt;V&gt; error, BiConsumer&lt;GraphNode&lt;V&gt;, Tsr&lt;V&gt;&gt; action ) {
-<span class="fc bfc" id="L805" title="All 2 branches covered.">        if ( _targetsToAgents == null ) return;</span>
-<span class="fc" id="L806">        _targetsToAgents.forEach( (t, agents ) -&gt; {</span>
-<span class="fc bfc" id="L807" title="All 2 branches covered.">            for ( ADAgent a : agents ) action.accept( t, a.backward( t, error ) );</span>
-<span class="fc" id="L808">        });</span>
-<span class="fc" id="L809">    }</span>
+<span class="fc bfc" id="L806" title="All 2 branches covered.">        if ( _targetsToAgents == null ) return;</span>
+<span class="fc" id="L807">        error.getUnsafe().setIsIntermediate( false );</span>
+<span class="fc" id="L808">        _targetsToAgents.forEach( ( t, agents ) -&gt; {</span>
+<span class="fc bfc" id="L809" title="All 2 branches covered.">            for ( ADAgent a : agents )</span>
+<span class="fc" id="L810">                action.accept( t, a.backward( t, error ) );</span>
+<span class="fc" id="L811">        });</span>
+<span class="fc" id="L812">    }</span>
 
     /**
      * @param action
      */
     public void forEachTarget( Consumer&lt;GraphNode&lt;V&gt;&gt; action ) {
-<span class="fc bfc" id="L815" title="All 2 branches covered.">        if ( _targetsToAgents == null ) return;</span>
-<span class="fc" id="L816">        _targetsToAgents.forEach( (t, o ) -&gt; action.accept( t ) );</span>
-<span class="fc" id="L817">    }</span>
+<span class="fc bfc" id="L818" title="All 2 branches covered.">        if ( _targetsToAgents == null ) return;</span>
+<span class="fc" id="L819">        _targetsToAgents.forEach( (t, o ) -&gt; action.accept( t ) );</span>
+<span class="fc" id="L820">    }</span>
 
     /**
      * @param action The action which ought to be applied to each target {@link GraphNode} / {@link ADAgent} pair.
      */
     public void forEachTargetAgentPair( BiConsumer&lt;GraphNode&lt;V&gt;, ADAgent&gt; action ) {
-<span class="pc bpc" id="L823" title="1 of 2 branches missed.">        if ( _targetsToAgents == null ) return;</span>
-<span class="fc" id="L824">        _targetsToAgents</span>
-<span class="fc" id="L825">                .forEach(</span>
+<span class="pc bpc" id="L826" title="1 of 2 branches missed.">        if ( _targetsToAgents == null ) return;</span>
+<span class="fc" id="L827">        _targetsToAgents</span>
+<span class="fc" id="L828">                .forEach(</span>
                     ( targetNode, agents ) -&gt;
-<span class="fc" id="L827">                        agents.forEach(</span>
-<span class="fc" id="L828">                            a -&gt; action.accept( targetNode, a )</span>
+<span class="fc" id="L830">                        agents.forEach(</span>
+<span class="fc" id="L831">                            a -&gt; action.accept( targetNode, a )</span>
                         )
                 );
-<span class="fc" id="L831">    }</span>
+<span class="fc" id="L834">    }</span>
 
 
     /**
      * @return Checks if this node stores target / AD-action (usually derivatives) pairs.
      */
-<span class="pc bpc" id="L837" title="3 of 4 branches missed.">    public boolean hasDerivatives() { return _targetsToAgents != null &amp;&amp; _targetsToAgents.size() &gt; 0; }</span>
+<span class="pc bpc" id="L840" title="3 of 4 branches missed.">    public boolean hasDerivatives() { return _targetsToAgents != null &amp;&amp; _targetsToAgents.size() &gt; 0; }</span>
 
     /**
      *  This is the getter for an important {@link GraphNode} property which
@@ -864,7 +867,7 @@ import java.util.stream.Collectors;
      *
      * @return The differentiation mode represented as an integer which encodes 3 distinct states.
      */
-<span class="fc" id="L867">    public int getMode() { return _mode; }</span>
+<span class="fc" id="L870">    public int getMode() { return _mode; }</span>
 
     /**
      * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
@@ -878,104 +881,104 @@ import java.util.stream.Collectors;
      * All nodes between a Pending-Error and those requiring gradients will
      * be marked with '_relies_on_JIPProp=true'!
      */
-<span class="fc" id="L881">    public boolean isReliesOnJustInTimeProp() { return _reliesOnJustInTimeProp; }</span>
+<span class="fc" id="L884">    public boolean isReliesOnJustInTimeProp() { return _reliesOnJustInTimeProp; }</span>
 
-<span class="nc" id="L883">    public PendingError&lt;V&gt; getPendingError() { return _pendingError; }</span>
+<span class="nc" id="L886">    public PendingError&lt;V&gt; getPendingError() { return _pendingError; }</span>
 
-<span class="fc" id="L885">    public boolean isUsedAsDerivative() { return _isUsedAsDerivative; }</span>
+<span class="fc" id="L888">    public boolean isUsedAsDerivative() { return _isUsedAsDerivative; }</span>
 
-<span class="fc" id="L887">    public Function getFunction() { return _function; }</span>
+<span class="fc" id="L890">    public Function getFunction() { return _function; }</span>
 
-<span class="fc" id="L889">    public GraphNode&lt;V&gt;[] getParents() { return _parents; }</span>
+<span class="fc" id="L892">    public GraphNode&lt;V&gt;[] getParents() { return _parents; }</span>
 
-<span class="fc" id="L891">    public int getPayloadReferenceVersion() { return _payloadReferenceVersion; }</span>
+<span class="fc" id="L894">    public int getPayloadReferenceVersion() { return _payloadReferenceVersion; }</span>
 
-<span class="fc" id="L893">    public GraphLock getLock() { return _lock; }</span>
+<span class="fc" id="L896">    public GraphLock getLock() { return _lock; }</span>
 
-<span class="fc" id="L895">    public List&lt;WeakReference&lt;GraphNode&lt;V&gt;&gt;&gt; getChildren() { return _children; }</span>
+<span class="fc" id="L898">    public List&lt;WeakReference&lt;GraphNode&lt;V&gt;&gt;&gt; getChildren() { return _children; }</span>
 
     /**
      * @return The long Node-ID (Used for caching to avoid redundant computation within one computation graph)
      */
-<span class="fc" id="L900">    public long getNodeID() { return _nodeID; }</span>
+<span class="fc" id="L903">    public long getNodeID() { return _nodeID; }</span>
 
     /**
      * @return Returns the type of the node as descriptive String in capital letters.
      */
     public String type() {
-<span class="fc" id="L906">        String type = &quot;&quot;;</span>
-<span class="fc bfc" id="L907" title="All 2 branches covered.">        if ( this.isLeave() ) type += &quot;LEAVE&quot;;</span>
-<span class="fc" id="L908">        else type += &quot;BRANCH&quot;;</span>
-<span class="pc bpc" id="L909" title="1 of 2 branches missed.">        if ( getPayload() == null ) type = type + &quot; DELETED&quot;;</span>
-<span class="fc bfc" id="L910" title="All 2 branches covered.">        else if ( getPayload().rqsGradient() ) type += &quot; RQS GRADIENT&quot;;</span>
-<span class="fc" id="L911">        return type;</span>
+<span class="fc" id="L909">        String type = &quot;&quot;;</span>
+<span class="fc bfc" id="L910" title="All 2 branches covered.">        if ( this.isLeave() ) type += &quot;LEAVE&quot;;</span>
+<span class="fc" id="L911">        else type += &quot;BRANCH&quot;;</span>
+<span class="pc bpc" id="L912" title="1 of 2 branches missed.">        if ( getPayload() == null ) type = type + &quot; DELETED&quot;;</span>
+<span class="fc bfc" id="L913" title="All 2 branches covered.">        else if ( getPayload().rqsGradient() ) type += &quot; RQS GRADIENT&quot;;</span>
+<span class="fc" id="L914">        return type;</span>
     }
 
     @Override
-<span class="fc" id="L915">    public String toString() { return toString( &quot;&quot; ); }</span>
+<span class="fc" id="L918">    public String toString() { return toString( &quot;&quot; ); }</span>
 
     /**
      * @param m Stands for 'mode' and is expected to contain certain letters which are used as settings.
      * @return Returns a String representation of this node.
      */
     public String toString( String m ) {
-<span class="fc" id="L922">        Tsr&lt;?&gt; payload = getPayload();</span>
-<span class="fc bfc" id="L923" title="All 2 branches covered.">        if ( m.equals(&quot;&quot;) ) {</span>
-<span class="fc" id="L924">            return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
-<span class="fc bfc" id="L925" title="All 2 branches covered.">                        &quot;parents=[&quot; + Arrays.stream(_parents).map(GraphNode::getPayload).map(t -&gt; (t==null ? &quot;?&quot; : t.shape().stream().map(Object::toString).collect(Collectors.joining(&quot;x&quot;)))).collect(Collectors.joining(&quot;, &quot;)) + &quot;],&quot; +</span>
-<span class="fc" id="L926">                        &quot;function=&quot; + _function.toString() + &quot;,&quot; +</span>
-<span class="fc bfc" id="L927" title="All 2 branches covered.">                        &quot;shape=&quot; + (payload != null ? payload.shape().stream().map(Object::toString).collect(Collectors.joining(&quot;x&quot;)) : &quot;?&quot; ) +</span>
+<span class="fc" id="L925">        Tsr&lt;?&gt; payload = getPayload();</span>
+<span class="fc bfc" id="L926" title="All 2 branches covered.">        if ( m.equals(&quot;&quot;) ) {</span>
+<span class="fc" id="L927">            return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
+<span class="fc bfc" id="L928" title="All 2 branches covered.">                        &quot;parents=[&quot; + Arrays.stream(_parents).map(GraphNode::getPayload).map(t -&gt; (t==null ? &quot;?&quot; : t.shape().stream().map(Object::toString).collect(Collectors.joining(&quot;x&quot;)))).collect(Collectors.joining(&quot;, &quot;)) + &quot;],&quot; +</span>
+<span class="fc" id="L929">                        &quot;function=&quot; + _function.toString() + &quot;,&quot; +</span>
+<span class="pc bpc" id="L930" title="1 of 2 branches missed.">                        &quot;shape=&quot; + (payload != null ? payload.shape().stream().map(Object::toString).collect(Collectors.joining(&quot;x&quot;)) : &quot;?&quot; ) +</span>
                     &quot;]&quot;;
         }
-<span class="fc bfc" id="L930" title="All 2 branches covered.">        if ( m.contains( &quot;g&quot; ) ) {</span>
-<span class="fc" id="L931">            String flags = m.replace( &quot;g&quot;, &quot;&quot; );</span>
-<span class="fc" id="L932">            return &quot;]&gt; LOCK: &quot; + getLock() + &quot; |&gt; GRAPH:\n]\n&quot; + _toString( &quot;]    0&quot;, true, flags ) + &quot;\n]\n]|END|&gt;&quot;;</span>
+<span class="fc bfc" id="L933" title="All 2 branches covered.">        if ( m.contains( &quot;g&quot; ) ) {</span>
+<span class="fc" id="L934">            String flags = m.replace( &quot;g&quot;, &quot;&quot; );</span>
+<span class="fc" id="L935">            return &quot;]&gt; LOCK: &quot; + getLock() + &quot; |&gt; GRAPH:\n]\n&quot; + _toString( &quot;]    0&quot;, true, flags ) + &quot;\n]\n]|END|&gt;&quot;;</span>
         }
-<span class="fc bfc" id="L934" title="All 2 branches covered.">        String nid = this.getClass().getSimpleName() + ( m.contains( &quot;n&quot; ) ? &quot;#&quot; + Long.toHexString( getNodeID() ) : &quot;&quot; );</span>
-<span class="pc bpc" id="L935" title="1 of 2 branches missed.">        if ( m.contains( &quot;v&quot; ) ) {</span>
-<span class="fc" id="L936">            return &quot; &quot; + nid + &quot;[ &quot;</span>
-<span class="fc bfc" id="L937" title="All 2 branches covered.">                    + ( _function == null ? &quot;&quot; : _function + &quot; =&gt; &quot; )</span>
+<span class="fc bfc" id="L937" title="All 2 branches covered.">        String nid = this.getClass().getSimpleName() + ( m.contains( &quot;n&quot; ) ? &quot;#&quot; + Long.toHexString( getNodeID() ) : &quot;&quot; );</span>
+<span class="pc bpc" id="L938" title="1 of 2 branches missed.">        if ( m.contains( &quot;v&quot; ) ) {</span>
+<span class="fc" id="L939">            return &quot; &quot; + nid + &quot;[ &quot;</span>
+<span class="fc bfc" id="L940" title="All 2 branches covered.">                    + ( _function == null ? &quot;&quot; : _function + &quot; =&gt; &quot; )</span>
                     + (
-<span class="pc bpc" id="L939" title="1 of 2 branches missed.">                            payload == null</span>
-<span class="nc" id="L940">                                ? &quot;?&quot;</span>
-<span class="fc" id="L941">                                : payload.toString(</span>
-<span class="fc" id="L942">                                    settings -&gt; settings</span>
-<span class="fc" id="L943">                                                .setRowLimit(  3  )</span>
-<span class="fc" id="L944">                                                .setIsScientific(  true   )</span>
-<span class="fc" id="L945">                                                .setIsMultiline(  false  )</span>
-<span class="fc" id="L946">                                                .setHasGradient(  false    )</span>
-<span class="fc" id="L947">                                                .setCellSize(  1  )</span>
-<span class="fc" id="L948">                                                .setHasValue( true )</span>
-<span class="fc" id="L949">                                                .setHasRecursiveGraph( false   )</span>
-<span class="fc" id="L950">                                                .setHasDerivatives(  false      )</span>
-<span class="fc" id="L951">                                                .setHasShape( true            )</span>
-<span class="fc" id="L952">                                                .setIsCellBound(  false       )</span>
-<span class="fc" id="L953">                                                .setPostfix(  &quot;&quot;      )</span>
-<span class="fc" id="L954">                                                .setPrefix(  &quot;&quot;      )</span>
-<span class="fc" id="L955">                                                .setHasSlimNumbers(  false      )</span>
+<span class="pc bpc" id="L942" title="1 of 2 branches missed.">                            payload == null</span>
+<span class="nc" id="L943">                                ? &quot;?&quot;</span>
+<span class="fc" id="L944">                                : payload.toString(</span>
+<span class="fc" id="L945">                                    settings -&gt; settings</span>
+<span class="fc" id="L946">                                                .setRowLimit(  3  )</span>
+<span class="fc" id="L947">                                                .setIsScientific(  true   )</span>
+<span class="fc" id="L948">                                                .setIsMultiline(  false  )</span>
+<span class="fc" id="L949">                                                .setHasGradient(  false    )</span>
+<span class="fc" id="L950">                                                .setCellSize(  1  )</span>
+<span class="fc" id="L951">                                                .setHasValue( true )</span>
+<span class="fc" id="L952">                                                .setHasRecursiveGraph( false   )</span>
+<span class="fc" id="L953">                                                .setHasDerivatives(  false      )</span>
+<span class="fc" id="L954">                                                .setHasShape( true            )</span>
+<span class="fc" id="L955">                                                .setIsCellBound(  false       )</span>
+<span class="fc" id="L956">                                                .setPostfix(  &quot;&quot;      )</span>
+<span class="fc" id="L957">                                                .setPrefix(  &quot;&quot;      )</span>
+<span class="fc" id="L958">                                                .setHasSlimNumbers(  false      )</span>
                                 )
-<span class="fc" id="L957">                    ) + &quot;, type='&quot; + this.type() + &quot;'&quot; +</span>
+<span class="fc" id="L960">                    ) + &quot;, type='&quot; + this.type() + &quot;'&quot; +</span>
                     &quot;] &quot;;
         } else
-<span class="nc" id="L960">            return</span>
+<span class="nc" id="L963">            return</span>
                     &quot;[&quot; + nid + &quot;]:( &quot; + (
-<span class="nc bnc" id="L962" title="All 2 branches missed.">                            ( payload == null )</span>
-<span class="nc" id="L963">                                    ? &quot;NULL&quot;</span>
-<span class="nc" id="L964">                                    : payload.toString(</span>
-<span class="nc" id="L965">                                        settings -&gt; settings</span>
-<span class="nc" id="L966">                                             .setRowLimit(  3  )</span>
-<span class="nc" id="L967">                                             .setIsScientific(  true   )</span>
-<span class="nc" id="L968">                                             .setIsMultiline(  false  )</span>
-<span class="nc" id="L969">                                             .setHasGradient(  false    )</span>
-<span class="nc" id="L970">                                             .setCellSize(  1  )</span>
-<span class="nc" id="L971">                                             .setHasValue( true )</span>
-<span class="nc" id="L972">                                             .setHasRecursiveGraph( false   )</span>
-<span class="nc" id="L973">                                             .setHasDerivatives(  false      )</span>
-<span class="nc" id="L974">                                             .setHasShape( true            )</span>
-<span class="nc" id="L975">                                             .setIsCellBound(  false       )</span>
-<span class="nc" id="L976">                                             .setPostfix(  &quot;&quot;      )</span>
-<span class="nc" id="L977">                                             .setPrefix(  &quot;&quot;      )</span>
-<span class="nc" id="L978">                                             .setHasSlimNumbers(  false      )</span>
+<span class="nc bnc" id="L965" title="All 2 branches missed.">                            ( payload == null )</span>
+<span class="nc" id="L966">                                    ? &quot;NULL&quot;</span>
+<span class="nc" id="L967">                                    : payload.toString(</span>
+<span class="nc" id="L968">                                        settings -&gt; settings</span>
+<span class="nc" id="L969">                                             .setRowLimit(  3  )</span>
+<span class="nc" id="L970">                                             .setIsScientific(  true   )</span>
+<span class="nc" id="L971">                                             .setIsMultiline(  false  )</span>
+<span class="nc" id="L972">                                             .setHasGradient(  false    )</span>
+<span class="nc" id="L973">                                             .setCellSize(  1  )</span>
+<span class="nc" id="L974">                                             .setHasValue( true )</span>
+<span class="nc" id="L975">                                             .setHasRecursiveGraph( false   )</span>
+<span class="nc" id="L976">                                             .setHasDerivatives(  false      )</span>
+<span class="nc" id="L977">                                             .setHasShape( true            )</span>
+<span class="nc" id="L978">                                             .setIsCellBound(  false       )</span>
+<span class="nc" id="L979">                                             .setPostfix(  &quot;&quot;      )</span>
+<span class="nc" id="L980">                                             .setPrefix(  &quot;&quot;      )</span>
+<span class="nc" id="L981">                                             .setHasSlimNumbers(  false      )</span>
                                     )
                     ) + &quot; )&quot;;
     }
@@ -991,20 +994,20 @@ import java.util.stream.Collectors;
      * @return A indented multi-line tree-like String representation of the computation graph.
      */
     private String _toString( String deep, boolean isLast, String flags ) {
-<span class="fc bfc" id="L994" title="All 2 branches covered.">        String delimiter = ( isLast ? (&quot;    &quot;) : (&quot;|   &quot;) );</span>
-<span class="fc bfc" id="L995" title="All 2 branches covered.">        String arrow = ( (char) 187 ) + &quot;&quot; + ( _parents != null ? String.valueOf( _parents.length ) : &quot;0&quot; ) + ( (char) 187 );</span>
-<span class="fc" id="L996">        StringBuilder asString = new StringBuilder( deep + arrow + toString( flags ) );</span>
-<span class="fc" id="L997">        deep = deep.substring( 0, deep.length() - 1 );</span>
-<span class="fc bfc" id="L998" title="All 2 branches covered.">        if ( _parents != null ) {</span>
-<span class="fc bfc" id="L999" title="All 2 branches covered.">            asString.append( &quot;\n&quot; ).append( deep ).append( isLast ? &quot;   \\\n&quot; : &quot;|  \\\n&quot; );</span>
-<span class="fc bfc" id="L1000" title="All 2 branches covered.">            for ( int i = 0; i &lt; _parents.length; i++ ) {</span>
-<span class="fc bfc" id="L1001" title="All 2 branches covered.">                boolean last = ( i == _parents.length - 1 );</span>
-<span class="fc bfc" id="L1002" title="All 2 branches covered.">                asString.append( i != 0 ? deep + delimiter + &quot;|\n&quot; : &quot;&quot; );</span>
-<span class="fc" id="L1003">                asString.append( _parents[ i ]._toString(deep + delimiter + i, last, flags) ).append( &quot;\n&quot; );</span>
+<span class="fc bfc" id="L997" title="All 2 branches covered.">        String delimiter = ( isLast ? (&quot;    &quot;) : (&quot;|   &quot;) );</span>
+<span class="fc bfc" id="L998" title="All 2 branches covered.">        String arrow = ( (char) 187 ) + &quot;&quot; + ( _parents != null ? String.valueOf( _parents.length ) : &quot;0&quot; ) + ( (char) 187 );</span>
+<span class="fc" id="L999">        StringBuilder asString = new StringBuilder( deep + arrow + toString( flags ) );</span>
+<span class="fc" id="L1000">        deep = deep.substring( 0, deep.length() - 1 );</span>
+<span class="fc bfc" id="L1001" title="All 2 branches covered.">        if ( _parents != null ) {</span>
+<span class="fc bfc" id="L1002" title="All 2 branches covered.">            asString.append( &quot;\n&quot; ).append( deep ).append( isLast ? &quot;   \\\n&quot; : &quot;|  \\\n&quot; );</span>
+<span class="fc bfc" id="L1003" title="All 2 branches covered.">            for ( int i = 0; i &lt; _parents.length; i++ ) {</span>
+<span class="fc bfc" id="L1004" title="All 2 branches covered.">                boolean last = ( i == _parents.length - 1 );</span>
+<span class="fc bfc" id="L1005" title="All 2 branches covered.">                asString.append( i != 0 ? deep + delimiter + &quot;|\n&quot; : &quot;&quot; );</span>
+<span class="fc" id="L1006">                asString.append( _parents[ i ]._toString(deep + delimiter + i, last, flags) ).append( &quot;\n&quot; );</span>
             }
-<span class="fc" id="L1005">            asString = new StringBuilder( asString.substring( 0, asString.length() - 1 ) );</span>
+<span class="fc" id="L1008">            asString = new StringBuilder( asString.substring( 0, asString.length() - 1 ) );</span>
         }
-<span class="fc" id="L1007">        return asString.toString();</span>
+<span class="fc" id="L1010">        return asString.toString();</span>
     }
 
 }

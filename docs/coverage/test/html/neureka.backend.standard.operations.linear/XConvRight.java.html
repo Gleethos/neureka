@@ -10,20 +10,20 @@ public class XConvRight extends AbstractOperation {
 
     public XConvRight() {
 <span class="fc" id="L12">        super(</span>
-                new OperationBuilder()
-<span class="fc" id="L14">                        .setFunction(         &quot;inv_convolve_mul_right&quot;    )</span>
-<span class="fc" id="L15">                        .setOperator(         &quot;x&quot; + ((char) 187)         )</span>
-<span class="fc" id="L16">                        .setArity(            3                         )</span>
-<span class="fc" id="L17">                        .setIsOperator(       true        )</span>
-<span class="fc" id="L18">                        .setIsIndexer(        false       )</span>
-<span class="fc" id="L19">                        .setIsDifferentiable( false       )</span>
-<span class="fc" id="L20">                        .setIsInline(         false       )</span>
+            new OperationBuilder()
+<span class="fc" id="L14">                    .setFunction(         &quot;inv_convolve_mul_right&quot;    )</span>
+<span class="fc" id="L15">                    .setOperator(         &quot;x&quot; + ((char) 187)         )</span>
+<span class="fc" id="L16">                    .setArity(            3                         )</span>
+<span class="fc" id="L17">                    .setIsOperator(       true        )</span>
+<span class="fc" id="L18">                    .setIsIndexer(        false       )</span>
+<span class="fc" id="L19">                    .setIsDifferentiable( false       )</span>
+<span class="fc" id="L20">                    .setIsInline(         false       )</span>
         );
 <span class="fc" id="L22">        setAlgorithm( Convolution.class, ConvUtil.getConv() );</span>
 <span class="fc" id="L23">    }</span>
 
     @Override
-    public String stringify(String[] children) {
+    public String stringify( String[] children ) {
 <span class="fc" id="L27">        StringBuilder reconstructed = new StringBuilder();</span>
 <span class="fc bfc" id="L28" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
 <span class="fc" id="L29">            reconstructed.append( children[ i ] );</span>
@@ -35,7 +35,7 @@ public class XConvRight extends AbstractOperation {
     }
 
     @Override
-    public String asDerivative(Function[] children, int derivationIndex) {
+    public String asDerivative( Function[] children, int derivationIndex ) {
 <span class="nc" id="L39">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 

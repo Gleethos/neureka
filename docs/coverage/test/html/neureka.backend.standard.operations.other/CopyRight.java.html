@@ -7,7 +7,7 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.implementations.CPUImplementation;
-import neureka.calculus.CalcUtil;
+import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -32,88 +32,84 @@ public class CopyRight extends AbstractOperation {
 <span class="fc" id="L32">        Activation activation = new Activation()</span>
 <span class="pc" id="L33">        .setCanPerformBackwardADFor( call -&gt; false )</span>
 <span class="pc" id="L34">        .setCanPerformForwardADFor( call -&gt; false )</span>
-<span class="fc" id="L35">        .setSupplyADAgentFor(</span>
-            ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
-<span class="fc" id="L37">                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )</span>
+<span class="fc" id="L35">        .setSupplyADAgentFor( getDefaultAlgorithm() )</span>
+<span class="fc" id="L36">        .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)</span>
+<span class="fc" id="L37">        .setCallPreparation(</span>
+            call -&gt; {
+<span class="fc" id="L39">                Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">                int offset = ( tensors[ 0 ] == null ) ? 1 : 0;</span>
+<span class="fc" id="L41">                return ExecutionCall.of(tensors[1+offset], tensors[offset])</span>
+<span class="fc" id="L42">                                        .andArgs( Arg.DerivIdx.of( -1 ) )</span>
+<span class="fc" id="L43">                                        .running( Neureka.get().backend().getOperation(&quot;idy&quot;) ) // This routes to another operation!</span>
+<span class="fc" id="L44">                                        .on( call.getDevice() );</span>
+            }
         )
-<span class="fc" id="L39">        .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)</span>
-<span class="fc" id="L40">        .setCallPreparation(</span>
-                call -&gt; {
-<span class="fc" id="L42">                    Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;</span>
-<span class="fc" id="L44">                    return</span>
-<span class="fc" id="L45">                            ExecutionCall.of(tensors[1+offset], tensors[offset])</span>
-<span class="fc" id="L46">                                            .andArgs( Arg.DerivIdx.of( -1 ) )</span>
-<span class="fc" id="L47">                                            .running( Neureka.get().backend().getOperation(&quot;idy&quot;) ) // This routes to another operation!</span>
-<span class="fc" id="L48">                                            .on( call.getDevice() );</span>
-                }
-        )
-<span class="fc" id="L51">        .buildFunAlgorithm();</span>
+<span class="fc" id="L47">        .buildFunAlgorithm();</span>
 
-<span class="fc" id="L53">        setAlgorithm(</span>
-                activation
-<span class="fc" id="L55">                    .setImplementationFor(</span>
-                        CPU.class,
-                        CPUImplementation
-<span class="fc" id="L58">                            .withArity(2)</span>
-<span class="fc" id="L59">                            .andImplementation(</span>
-                                call -&gt; {
-<span class="nc" id="L61">                                    int offset = 1;</span>
-<span class="nc" id="L62">                                    Tsr&lt;?&gt;[] args = { call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)};</span>
-<span class="nc" id="L63">                                    ExecutionCall&lt;CPU&gt; newCall =</span>
-<span class="nc" id="L64">                                            ExecutionCall.of(args)</span>
-<span class="nc" id="L65">                                                            .andArgs(Arg.DerivIdx.of(-1))</span>
-<span class="nc" id="L66">                                                            .running(call.getOperation())</span>
-<span class="nc" id="L67">                                                            .on( call.getDevice() )</span>
-<span class="nc" id="L68">                                                            .forDeviceType(CPU.class);</span>
-<span class="nc" id="L69">                                    Neureka.get().backend().getOperation(&quot;idy&quot;)</span>
-<span class="nc" id="L70">                                            .getAlgorithm(Activation.class)</span>
-<span class="nc" id="L71">                                            .getImplementationFor( CPU.class )</span>
-<span class="nc" id="L72">                                            .run(newCall);</span>
-<span class="nc" id="L73">                                    call.getTensors()[0] = args[1];</span>
-<span class="nc" id="L74">                                }</span>
-                            )
-                )
-<span class="fc" id="L77">                .setImplementationFor(</span>
-                        OpenCLDevice.class,
-                        call -&gt; {
-<span class="nc" id="L80">                            int offset = 1;</span>
-<span class="nc" id="L81">                            Tsr&lt;?&gt;[] args = { call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)};</span>
-<span class="nc" id="L82">                            ExecutionCall&lt;OpenCLDevice&gt; newCall = ExecutionCall.of(args)</span>
-<span class="nc" id="L83">                                                                                .andArgs(Arg.DerivIdx.of( -1 ))</span>
-<span class="nc" id="L84">                                                                                .running(call.getOperation())</span>
-<span class="nc" id="L85">                                                                                .on( call.getDevice() )</span>
-<span class="nc" id="L86">                                                                                .forDeviceType(OpenCLDevice.class);</span>
-<span class="nc" id="L87">                            Neureka.get().backend().getOperation(&quot;idy&quot;)</span>
-<span class="nc" id="L88">                                    .getAlgorithm(Activation.class)</span>
-<span class="nc" id="L89">                                    .getImplementationFor( OpenCLDevice.class )</span>
-<span class="nc" id="L90">                                    .run(newCall);</span>
-<span class="nc" id="L91">                            call.getTensors()[0] = args[1];</span>
-<span class="nc" id="L92">                        }</span>
-                )
+<span class="fc" id="L49">        setAlgorithm(</span>
+            activation
+<span class="fc" id="L51">                .setImplementationFor(</span>
+                    CPU.class,
+                    CPUImplementation
+<span class="fc" id="L54">                        .withArity(2)</span>
+<span class="fc" id="L55">                        .andImplementation(</span>
+                            call -&gt; {
+<span class="nc" id="L57">                                int offset = 1;</span>
+<span class="nc" id="L58">                                Tsr&lt;?&gt;[] args = { call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)};</span>
+<span class="nc" id="L59">                                ExecutionCall&lt;CPU&gt; newCall =</span>
+<span class="nc" id="L60">                                        ExecutionCall.of(args)</span>
+<span class="nc" id="L61">                                                        .andArgs(Arg.DerivIdx.of(-1))</span>
+<span class="nc" id="L62">                                                        .running(call.getOperation())</span>
+<span class="nc" id="L63">                                                        .on( call.getDevice() )</span>
+<span class="nc" id="L64">                                                        .forDeviceType(CPU.class);</span>
+<span class="nc" id="L65">                                Neureka.get().backend().getOperation(&quot;idy&quot;)</span>
+<span class="nc" id="L66">                                        .getAlgorithm(Activation.class)</span>
+<span class="nc" id="L67">                                        .getImplementationFor( CPU.class )</span>
+<span class="nc" id="L68">                                        .run(newCall);</span>
+<span class="nc" id="L69">                                call.getTensors()[0] = args[1];</span>
+<span class="nc" id="L70">                            }</span>
+                        )
+            )
+<span class="fc" id="L73">            .setImplementationFor(</span>
+                OpenCLDevice.class,
+                call -&gt; {
+<span class="nc" id="L76">                    int offset = 1;</span>
+<span class="nc" id="L77">                    Tsr&lt;?&gt;[] args = { call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)};</span>
+<span class="nc" id="L78">                    ExecutionCall&lt;OpenCLDevice&gt; newCall = ExecutionCall.of(args)</span>
+<span class="nc" id="L79">                                                                        .andArgs(Arg.DerivIdx.of( -1 ))</span>
+<span class="nc" id="L80">                                                                        .running(call.getOperation())</span>
+<span class="nc" id="L81">                                                                        .on( call.getDevice() )</span>
+<span class="nc" id="L82">                                                                        .forDeviceType(OpenCLDevice.class);</span>
+<span class="nc" id="L83">                    Neureka.get().backend().getOperation(&quot;idy&quot;)</span>
+<span class="nc" id="L84">                            .getAlgorithm(Activation.class)</span>
+<span class="nc" id="L85">                            .getImplementationFor( OpenCLDevice.class )</span>
+<span class="nc" id="L86">                            .run(newCall);</span>
+<span class="nc" id="L87">                    call.getTensors()[0] = args[1];</span>
+<span class="nc" id="L88">                }</span>
+            )
         );
-<span class="fc" id="L95">    }</span>
+<span class="fc" id="L91">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L99">        StringBuilder reconstructed = new StringBuilder();</span>
-<span class="fc bfc" id="L100" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
-<span class="fc" id="L101">            reconstructed.append( children[ i ] );</span>
-<span class="fc bfc" id="L102" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
-<span class="fc" id="L103">                reconstructed.append(&quot; -&gt; &quot;);</span>
+<span class="fc" id="L95">        StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
+<span class="fc" id="L97">            reconstructed.append( children[ i ] );</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
+<span class="fc" id="L99">                reconstructed.append(&quot; -&gt; &quot;);</span>
             }
         }
-<span class="fc" id="L106">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+<span class="fc" id="L102">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L111">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L107">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L116">            return src[ 0 ].call( inputs, j );</span>
+<span class="nc" id="L112">            return src[ 0 ].call( inputs, j );</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

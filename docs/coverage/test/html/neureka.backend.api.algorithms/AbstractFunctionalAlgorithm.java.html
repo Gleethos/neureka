@@ -7,12 +7,15 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.*;
+import neureka.backend.standard.memory.MemValidator;
 import neureka.calculus.Function;
-import neureka.calculus.RecursiveExecutor;
+import neureka.calculus.internal.RecursiveExecutor;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 /**
  *  This is the base class for implementations of the {@link Algorithm} interface.
@@ -36,8 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractFunctionalAlgorithm&lt;C extends Algorithm&lt;C&gt;&gt; extends AbstractBaseAlgorithm&lt;C&gt;
 {
-<span class="fc" id="L39">    private static final Logger _LOG = LoggerFactory.getLogger( AbstractFunctionalAlgorithm.class );</span>
-
+<span class="fc" id="L42">    private static final Logger _LOG = LoggerFactory.getLogger( AbstractFunctionalAlgorithm.class );</span>
     /*
         Consider the following lambdas as effectively immutable because this
         class will warn us if any field variable is set for a second time.
@@ -52,10 +54,10 @@ public abstract class AbstractFunctionalAlgorithm&lt;C extends Algorithm&lt;C&gt
     /*
         This flag will ensure that we can warn the user that the state has been illegally modified.
      */
-<span class="fc" id="L55">    private boolean _isFullyBuilt = false;</span>
+<span class="fc" id="L57">    private boolean _isFullyBuilt = false;</span>
 
 
-<span class="fc" id="L58">    public AbstractFunctionalAlgorithm( String name ) { super(name); }</span>
+<span class="fc" id="L60">    public AbstractFunctionalAlgorithm( String name ) { super(name); }</span>
 
     /**
      *  The {@link SuitabilityPredicate} checks if a given instance of an {@link ExecutionCall} is
@@ -65,19 +67,19 @@ public abstract class AbstractFunctionalAlgorithm&lt;C extends Algorithm&lt;C&gt
      */
     @Override
     public float isSuitableFor( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
-<span class="fc" id="L68">        _checkReadiness();</span>
-<span class="fc" id="L69">        return _isSuitableFor.isSuitableFor(call);</span>
+<span class="fc" id="L70">        _checkReadiness();</span>
+<span class="fc" id="L71">        return _isSuitableFor.isSuitableFor(call);</span>
     }
 
     /**
-     *  The {@link ForwardADPredicate} lambda received by this method checks if forward mode auto differentiation
+     *  The {@link ForwardADPredicate} lambda implemented by this method checks if forward mode auto differentiation
      *  can be performed for a given {@link ExecutionCall}.
      *  The analyzer returns a boolean truth value.
      */
     @Override
     public boolean canPerformForwardADFor( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
-<span class="fc" id="L79">        _checkReadiness();</span>
-<span class="fc" id="L80">        return _canPerformForwardADFor.canPerformForwardADFor(call);</span>
+<span class="fc" id="L81">        _checkReadiness();</span>
+<span class="fc" id="L82">        return _canPerformForwardADFor.canPerformForwardADFor(call);</span>
     }
 
     /**
@@ -87,12 +89,12 @@ public abstract class AbstractFunctionalAlgorithm&lt;C extends Algorithm&lt;C&gt
      */
     @Override
     public boolean canPerformBackwardADFor( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
-<span class="fc" id="L90">        _checkReadiness();</span>
-<span class="fc" id="L91">        return _canPerformBackwardADFor.canPerformBackwardADFor( call );</span>
+<span class="fc" id="L92">        _checkReadiness();</span>
+<span class="fc" id="L93">        return _canPerformBackwardADFor.canPerformBackwardADFor( call );</span>
     }
 
     /**
-     *  The functional interface received by this method ought to return a new instance
+     *  This method returns a new instance
      *  of the {@link ADAgent} class responsible for performing automatic differentiation
      *  both for forward and backward mode differentiation. &lt;br&gt;
      *  Therefore an {@link ADAgent} exposes 2 different procedures. &lt;br&gt;
@@ -103,12 +105,12 @@ public abstract class AbstractFunctionalAlgorithm&lt;C extends Algorithm&lt;C&gt
      */
     @Override
     public ADAgent supplyADAgentFor(Function function, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) {
-<span class="fc" id="L106">        _checkReadiness();</span>
-<span class="fc" id="L107">        return _supplyADAgentFor.supplyADAgentFor(function, call, forward );</span>
+<span class="fc" id="L108">        _checkReadiness();</span>
+<span class="fc" id="L109">        return _supplyADAgentFor.supplyADAgentFor(function, call, forward );</span>
     }
 
     /**
-     *  This method receives an {@link ExecutionDispatcher} lambda which
+     *  This method implements the {@link ExecutionDispatcher} lambda which
      *  is the final execution procedure responsible for electing an {@link neureka.backend.api.ImplementationFor}
      *  the chosen {@link Device} in a given {@link ExecutionCall}.
      *  However, the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
@@ -129,24 +131,59 @@ public abstract class AbstractFunctionalAlgorithm&lt;C extends Algorithm&lt;C&gt
      */
     @Override
     public Tsr&lt;?&gt; dispatch( FunctionNode caller, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
-<span class="fc" id="L132">        _checkReadiness();</span>
-<span class="fc" id="L133">        return _handleInsteadOfDevice.dispatch( caller, call );</span>
+<span class="fc" id="L134">        _checkReadiness();</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if ( call == null ) return _handleInsteadOfDevice.dispatch( caller, call );</span>
+<span class="fc" id="L136">        MemValidator checker = MemValidator.forInputs( call.getTensors(), ()-&gt;_handleInsteadOfDevice.dispatch( caller, call ) );</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        if ( checker.isWronglyIntermediate() ) {</span>
+<span class="nc" id="L138">            throw new IllegalStateException(</span>
+<span class="nc" id="L139">                    &quot;Output of algorithm '&quot; + this.getName() + &quot;' &quot; +</span>
+                    &quot;is marked as intermediate result, despite the fact &quot; +
+                    &quot;that it is a member of the input array. &quot; +
+                    &quot;Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged &quot; +
+                    &quot;as 'intermediate', because they are not eligible for deletion!&quot;
+            );
+        }
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if ( checker.isWronglyNonIntermediate() ) {</span>
+<span class="nc" id="L147">            throw new IllegalStateException(</span>
+<span class="nc" id="L148">                    &quot;Output of algorithm '&quot; + this.getName() + &quot;' &quot; +</span>
+                    &quot;is neither marked as intermediate result nor a member of the input array. &quot; +
+                    &quot;Tensors instantiated by operations in the backend are expected to be flagged &quot; +
+                    &quot;as 'intermediate' in order to be eligible for deletion!&quot;
+            );
+        }
+<span class="fc" id="L154">        return checker.getResult();</span>
     }
 
     /**
+     *  Preparing refers to instantiating output tensors for the provided {@link ExecutionCall}.
+     *  
      * @param call The execution call which needs to be prepared for execution.
      * @return The prepared {@link ExecutionCall} instance.
      */
     @Override
     public ExecutionCall&lt;? extends Device&lt;?&gt;&gt; prepare( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
-<span class="fc" id="L142">        _checkReadiness();</span>
-<span class="fc" id="L143">        return _instantiateNewTensorsForExecutionIn.prepare( call );</span>
+<span class="fc" id="L165">        _checkReadiness();</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if ( call != null ) {</span>
+<span class="fc" id="L167">            Tsr&lt;?&gt;[] inputs = call.getTensors().clone();</span>
+<span class="fc" id="L168">            ExecutionCall&lt;? extends Device&lt;?&gt;&gt; prepared = _instantiateNewTensorsForExecutionIn.prepare(call);</span>
+<span class="fc" id="L169">            Arrays.stream(prepared.getTensors())</span>
+<span class="fc" id="L170">                    .filter(</span>
+<span class="fc" id="L171">                            out -&gt; Arrays.stream(inputs)</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">                                    .noneMatch(in -&gt; in == out)</span>
+                    )
+<span class="fc" id="L174">                    .forEach(t -&gt; t.getUnsafe().setIsIntermediate(true));</span>
+
+<span class="fc" id="L176">            return prepared;</span>
+        }
+<span class="fc" id="L178">        else return null;</span>
     }
 
-    //---
-
+    /**
+     * @return A new concrete implementation of the {@link AbstractFunctionalAlgorithm} which
+     *         is fully built and ready to be used as an {@link Operation} component.
+     */
     public C buildFunAlgorithm() {
-<span class="pc bpc" id="L149" title="5 of 12 branches missed.">        if (</span>
+<span class="pc bpc" id="L186" title="5 of 12 branches missed.">        if (</span>
             _isSuitableFor == null ||
             _canPerformForwardADFor == null ||
             _canPerformBackwardADFor == null ||
@@ -154,23 +191,27 @@ public abstract class AbstractFunctionalAlgorithm&lt;C extends Algorithm&lt;C&gt
             _handleInsteadOfDevice == null ||
             _instantiateNewTensorsForExecutionIn == null
         ) {
-<span class="fc" id="L157">            throw new IllegalStateException(</span>
-<span class="fc" id="L158">                    &quot;Instance '&quot;+getClass().getSimpleName()+&quot;' incomplete!&quot;</span>
+<span class="fc" id="L194">            throw new IllegalStateException(</span>
+<span class="fc" id="L195">                    &quot;Instance '&quot;+getClass().getSimpleName()+&quot;' incomplete!&quot;</span>
             );
         }
 
-<span class="fc" id="L162">        _isFullyBuilt = true;</span>
-<span class="fc" id="L163">        return (C) this;</span>
+<span class="fc" id="L199">        _isFullyBuilt = true;</span>
+<span class="fc" id="L200">        return (C) this;</span>
     }
 
+    /**
+     *  This method ensures that this algorithm was fully supplied with all the
+     *  required lambdas...
+     */
     private void _checkReadiness() {
-<span class="fc bfc" id="L167" title="All 2 branches covered.">        if ( !_isFullyBuilt ) {</span>
-<span class="fc" id="L168">            throw new IllegalStateException(</span>
-<span class="fc" id="L169">                &quot;Trying use an instance of '&quot;+this.getClass().getSimpleName()+&quot;' with name '&quot; + getName() + &quot;' &quot; +</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        if ( !_isFullyBuilt ) {</span>
+<span class="fc" id="L209">            throw new IllegalStateException(</span>
+<span class="fc" id="L210">                &quot;Trying use an instance of '&quot;+this.getClass().getSimpleName()+&quot;' with name '&quot; + getName() + &quot;' &quot; +</span>
                 &quot;which was not fully built!&quot;
             );
         }
-<span class="fc" id="L173">    }</span>
+<span class="fc" id="L214">    }</span>
 
     /**
      *  Neureka is supposed to be extremely modular and in a sense its backend should be &quot;hackable&quot; to a degree.
@@ -183,69 +224,80 @@ public abstract class AbstractFunctionalAlgorithm&lt;C extends Algorithm&lt;C&gt
      * @return The checked thing.
      */
     private &lt;T&gt; T _checked( T newState, T current, Class&lt;T&gt; type ) {
-<span class="fc bfc" id="L186" title="All 2 branches covered.">        if ( _isFullyBuilt ) {</span>
-<span class="fc" id="L187">            _LOG.warn(</span>
-<span class="fc" id="L188">                &quot;Implementation '&quot; + type.getSimpleName() + &quot;' in algorithm '&quot;+this+&quot;' was modified! &quot; +</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        if ( _isFullyBuilt ) {</span>
+<span class="fc" id="L228">            _LOG.warn(</span>
+<span class="fc" id="L229">                &quot;Implementation '&quot; + type.getSimpleName() + &quot;' in algorithm '&quot;+this+&quot;' was modified! &quot; +</span>
                 &quot;Please consider only modifying the standard backend state of Neureka for experimental reasons.&quot;
             );
-<span class="pc bpc" id="L191" title="1 of 4 branches missed.">        } else if ( current != null &amp;&amp; newState == null ) {</span>
-<span class="nc" id="L192">            throw new IllegalArgumentException(</span>
-<span class="nc" id="L193">                &quot;Trying set an already specified implementation of lambda '&quot;+current.getClass().getSimpleName()+&quot;' to null!&quot;</span>
+<span class="pc bpc" id="L232" title="1 of 4 branches missed.">        } else if ( current != null &amp;&amp; newState == null ) {</span>
+<span class="nc" id="L233">            throw new IllegalArgumentException(</span>
+<span class="nc" id="L234">                &quot;Trying set an already specified implementation of lambda '&quot;+current.getClass().getSimpleName()+&quot;' to null!&quot;</span>
             );
         }
-<span class="fc" id="L196">        return newState;</span>
+<span class="fc" id="L237">        return newState;</span>
     }
 
     /**
-     *  The {@link SuitabilityPredicate}
+     *  The {@link SuitabilityPredicate} received by this method 
      *  checks if a given instance of an {@link ExecutionCall} is
      *  suitable to be executed in {@link neureka.backend.api.ImplementationFor} instances
      *  residing in this {@link Algorithm} as components.
+     *  The lambda will be called by the {@link #isSuitableFor(ExecutionCall)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
      *
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm&lt;C&gt; setIsSuitableFor( SuitabilityPredicate isSuitableFor ) {
-<span class="fc" id="L208">        _isSuitableFor = _checked(isSuitableFor, _isSuitableFor, SuitabilityPredicate.class);</span>
-<span class="fc" id="L209">        return this;</span>
+<span class="fc" id="L251">        _isSuitableFor = _checked(isSuitableFor, _isSuitableFor, SuitabilityPredicate.class);</span>
+<span class="fc" id="L252">        return this;</span>
     }
 
     /**
      *  A {@link ForwardADPredicate} lambda checks if this
      *  {@link Algorithm} can perform forward AD for a given {@link ExecutionCall}.
+     *  The lambda will be called by the {@link #canPerformForwardADFor(ExecutionCall)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
+     *
      *
      * @param canPerformForwardADFor The lambda which evaluates if a provided {@link ExecutionCall} can be forward propagated.
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm&lt;C&gt; setCanPerformForwardADFor( ForwardADPredicate canPerformForwardADFor ) {
-<span class="fc" id="L220">        _canPerformForwardADFor = _checked(canPerformForwardADFor, _canPerformForwardADFor, ForwardADPredicate.class);</span>
-<span class="fc" id="L221">        return this;</span>
+<span class="fc" id="L266">        _canPerformForwardADFor = _checked(canPerformForwardADFor, _canPerformForwardADFor, ForwardADPredicate.class);</span>
+<span class="fc" id="L267">        return this;</span>
     }
 
     /**
      *  A {@link BackwardADPredicate} lambda checks if this
      *  {@link Algorithm} can perform backward AD for a given {@link ExecutionCall}.
+     *  The lambda will be called by the {@link #canPerformBackwardADFor(ExecutionCall)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
+     *
      *
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm&lt;C&gt; setCanPerformBackwardADFor( BackwardADPredicate canPerformBackwardADFor ) {
-<span class="fc" id="L231">        _canPerformBackwardADFor = _checked(canPerformBackwardADFor, _canPerformBackwardADFor, BackwardADPredicate.class);</span>
-<span class="fc" id="L232">        return this;</span>
+<span class="fc" id="L280">        _canPerformBackwardADFor = _checked(canPerformBackwardADFor, _canPerformBackwardADFor, BackwardADPredicate.class);</span>
+<span class="fc" id="L281">        return this;</span>
     }
 
     /**
      *  This method receives a {@link neureka.backend.api.algorithms.fun.ADAgentSupplier} which will supply
      *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
+     *  The lambda will be called by the {@link #supplyADAgentFor(Function, ExecutionCall, boolean)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
+     *
      *
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm&lt;C&gt; setSupplyADAgentFor( ADAgentSupplier supplyADAgentFor ) {
-<span class="fc" id="L242">        _supplyADAgentFor = _checked(supplyADAgentFor, _supplyADAgentFor, ADAgentSupplier.class);</span>
-<span class="fc" id="L243">        return this;</span>
+<span class="fc" id="L294">        _supplyADAgentFor = _checked(supplyADAgentFor, _supplyADAgentFor, ADAgentSupplier.class);</span>
+<span class="fc" id="L295">        return this;</span>
     }
 
     /**
      *  The {@link ExecutionDispatcher} lambda
-     *  is the most ipoortant procedure within an {@link Algorithm}, which is responsible for
+     *  is the most important procedure within an {@link Algorithm}, which is responsible for
      *  electing an {@link neureka.backend.api.ImplementationFor}
      *  the chosen {@link Device} in a given {@link ExecutionCall} passed to the {@link ExecutionDispatcher}.
      *  However, the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
@@ -259,10 +311,13 @@ public abstract class AbstractFunctionalAlgorithm&lt;C extends Algorithm&lt;C&gt
      *  a fairly suitable {@link Device} assigned to a given {@link neureka.backend.api.Algorithm},
      *  one can simply ignore it and find a custom one which fits the contents of the given
      *  {@link ExecutionCall} instance better.
+     *  The lambda passed to this will be called by the {@link #dispatch(FunctionNode, ExecutionCall)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
+     *
      */
     public AbstractFunctionalAlgorithm&lt;C&gt; setExecutionDispatcher(ExecutionDispatcher handleInsteadOfDevice ) {
-<span class="fc" id="L264">        _handleInsteadOfDevice = _checked(handleInsteadOfDevice, _handleInsteadOfDevice, ExecutionDispatcher.class);</span>
-<span class="fc" id="L265">        return this;</span>
+<span class="fc" id="L319">        _handleInsteadOfDevice = _checked(handleInsteadOfDevice, _handleInsteadOfDevice, ExecutionDispatcher.class);</span>
+<span class="fc" id="L320">        return this;</span>
     }
 
     /**
@@ -276,10 +331,12 @@ public abstract class AbstractFunctionalAlgorithm&lt;C extends Algorithm&lt;C&gt
      *  Element-wise operations for example will require the creation of an output tensor
      *  with the shape of the provided input tensors, whereas the execution of a
      *  linear operation like for example a broadcast operation will require a very different approach...
+     *  The lambda passed to this will be called by the {@link #prepare(ExecutionCall)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
      */
     public AbstractFunctionalAlgorithm&lt;C&gt; setCallPreparation( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
-<span class="fc" id="L281">        _instantiateNewTensorsForExecutionIn = _checked(instantiateNewTensorsForExecutionIn, _instantiateNewTensorsForExecutionIn, ExecutionPreparation.class);</span>
-<span class="fc" id="L282">        return this;</span>
+<span class="fc" id="L338">        _instantiateNewTensorsForExecutionIn = _checked(instantiateNewTensorsForExecutionIn, _instantiateNewTensorsForExecutionIn, ExecutionPreparation.class);</span>
+<span class="fc" id="L339">        return this;</span>
     }
 
 }

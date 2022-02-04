@@ -40,31 +40,42 @@ import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.optimization.Optimizer;
 
+/**
+ * Stochastic Gradient Descent is an iterative optimization technique
+ * that uses the gradient of a weight variable to adjust said variable,
+ * in order to reduce the error used to calculate said gradient.
+ * This simple stochastic gradient descent algorithm does not
+ * optimize the gradient based on previous gradients (network forward and backward passes)
+ * but simply applies the gradient value based on each example within
+ * the training dataset.
+ *
+ * @param &lt;V&gt; The value type parameter of the tensor whose gradients are being optimized.
+ */
 public class SGD&lt;V&gt; implements Optimizer&lt;V&gt;
 {
     private final double _learningRate;
     private final Function _function;
 
     public SGD( double leaningRate )
-<span class="nc" id="L49">    {</span>
-<span class="nc" id="L50">        _learningRate = leaningRate;</span>
-<span class="nc" id="L51">        _function = Function.of(&quot;I[ 0 ] &lt;- (-1 * (I[ 0 ] - &quot;+leaningRate+&quot;))&quot;, false);</span>
-<span class="nc" id="L52">    }</span>
+<span class="nc" id="L60">    {</span>
+<span class="nc" id="L61">        _learningRate = leaningRate;</span>
+<span class="nc" id="L62">        _function = Function.of(&quot;I[ 0 ] &lt;- (-1 * (I[ 0 ] - &quot;+leaningRate+&quot;))&quot;, false);</span>
+<span class="nc" id="L63">    }</span>
 
     @Override
     public Tsr&lt;V&gt; optimize( Tsr&lt;V&gt; w ) {
-<span class="nc" id="L56">        Tsr&lt;V&gt; g = w.getGradient();</span>
-<span class="nc" id="L57">        return Neureka.get().backend().getFunction().idy().call( _function.call( g ) );</span>
+<span class="nc" id="L67">        Tsr&lt;V&gt; g = w.getGradient();</span>
+<span class="nc" id="L68">        return Neureka.get().backend().getFunction().idy().call( _function.call( g ) );</span>
     }
 
     public double learningRate() {
-<span class="nc" id="L61">        return _learningRate;</span>
+<span class="nc" id="L72">        return _learningRate;</span>
     }
 
     @Override
     public boolean update( OwnerChangeRequest&lt;Tsr&lt;V&gt;&gt; changeRequest ) {
-<span class="nc" id="L66">        changeRequest.executeChange();</span>
-<span class="nc" id="L67">        return true;</span>
+<span class="nc" id="L77">        changeRequest.executeChange();</span>
+<span class="nc" id="L78">        return true;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

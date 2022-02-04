@@ -62,7 +62,7 @@ plugins {
 compileJava { options.encoding = "UTF-8" } // Allows for '"' characters in comments for example...
 
 String PROJECT = "neureka"
-String VERSION = "0.12.0"
+String VERSION = "0.13.0"
 String GROUP_ID = "com.github.gleethos"
 String BASENAME = "neureka"
 
@@ -178,10 +178,10 @@ dependencies {
     testImplementation "org.codehaus.groovy:groovy:3.0.8"
     testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0")
     testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
-    testImplementation 'com.athaydes:spock-reports:2.1.1-groovy-3.0'//, { transitive = false }
+    testImplementation 'com.athaydes:spock-reports:2.2.0-groovy-3.0'//, { transitive = false }
 
-    testImplementation 'org.slf4j:slf4j-api:1.7.32'  // LOGGING
-    testRuntimeClasspath 'org.slf4j:slf4j-simple:1.7.32'
+    testImplementation 'org.slf4j:slf4j-api:1.7.35'  // LOGGING
+    testRuntimeClasspath 'org.slf4j:slf4j-simple:1.7.35'
 
     testRuntimeOnly group: 'net.bytebuddy', name: 'byte-buddy', version: '1.11.15' // allows mocking of classes (in addition to interfaces)
     testRuntimeOnly group: 'org.objenesis', name: 'objenesis', version: '3.2'      // allows mocking of classes without default constructor (together with ByteBuddy or CGLIB)

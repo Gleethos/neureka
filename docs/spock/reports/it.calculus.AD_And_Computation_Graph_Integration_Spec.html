@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 14 17:08:08 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 04 16:07:59 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.584 seconds</td>
+<td>0.661 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -411,8 +411,21 @@ assert a.toString().contains("[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0,
 assert b.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
 assert na.isLeave()
 assert na.function==null
-assert na.getMode() == 1
-assert na.size()==0
+assert na.getMode() == 1</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We expect the partial derivative to be cleaned up! (size == 0)</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>assert na.size()==0
 assert na.getNodeID()==1
 assert !na.getLock().isLocked()
 assert !nb.isLeave()

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 14 17:08:06 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 04 16:07:56 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>6.265 seconds</td>
+<td>6.290 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -714,13 +714,13 @@ new double[]{
                 -1, 4, -2,
                 -2, 3, 4,
         }
-)
+).unsafe.toType(type)
 y = Tsr.of(
 new int[]{2, 2},
 new double[]{
         -1, 3,
         2, 3,
-}).setRqsGradient(true)</pre>
+}).setRqsGradient(true).unsafe.toType(type)</pre>
 </td>
 </tr>
 <tr>
@@ -749,6 +749,14 @@ new double[]{
 </tr>
 <tr>
 <td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>z.valueClass == type</pre>
+</td>
+</tr>
+<tr>
+<td>
 <div class='block-kind'>When:</div>
 </td>
 <td>
@@ -761,6 +769,14 @@ new double[]{
 </td>
 <td>
 <pre class='block-source'>z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>z.valueClass == type</pre>
 </td>
 </tr>
 <tr>
@@ -784,9 +800,9 @@ new double[]{
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>x = Tsr.of(new int[]{1}, 3)
-Tsr b = Tsr.of(new int[]{1}, -5)
-Tsr w = Tsr.of(new int[]{1}, -2)
+<pre class='block-source'>x = Tsr.of(new int[]{1}, 3).unsafe.toType(type)
+Tsr b = Tsr.of(new int[]{1}, -5).unsafe.toType(type)
+Tsr w = Tsr.of(new int[]{1}, -2).unsafe.toType(type)
 z = Tsr.of("I0*i1*i2", x, b, w)</pre>
 </td>
 </tr>
@@ -800,12 +816,20 @@ z = Tsr.of("I0*i1*i2", x, b, w)</pre>
 </tr>
 <tr>
 <td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>z.valueClass == type</pre>
+</td>
+</tr>
+<tr>
+<td>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>x = Tsr.of(new int[]{1}, 4).setRqsGradient(true)
-b = Tsr.of(new int[]{1}, 0.5)
-w = Tsr.of(new int[]{1}, 0.5)
+<pre class='block-source'>x = Tsr.of(new int[]{1}, 4).setRqsGradient(true).unsafe.toType(type)
+b = Tsr.of(new int[]{1}, 0.5).unsafe.toType(type)
+w = Tsr.of(new int[]{1}, 0.5).unsafe.toType(type)
 y = Tsr.of("(2^i0^i1^i2^2", x, b, w)</pre>
 </td>
 </tr>
@@ -816,6 +840,43 @@ y = Tsr.of("(2^i0^i1^i2^2", x, b, w)</pre>
 <td>
 <pre class='block-source'>y.toString().contains("[1]:(4.0);")
 y.toString().contains(" -&gt;d[1]:(1.38629E0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>y.valueClass == type</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
 </td>
 </tr>
 <tr>
@@ -881,7 +942,7 @@ y.toString().contains(" -&gt;d[1]:(1.38629E0)")</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>b.delete()</pre>
+<pre class='block-source'>b.getUnsafe().delete()</pre>
 </td>
 </tr>
 <tr>

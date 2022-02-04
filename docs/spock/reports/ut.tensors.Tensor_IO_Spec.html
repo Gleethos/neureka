@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 14 17:08:27 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 04 16:08:43 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.344 seconds</td>
+<td>0.103 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -851,12 +851,12 @@ t.getValueAs( double[].class ).length==2</pre>
 <td>
 <pre class='block-source'>def t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})
 def t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})
-def t1_indices = t1.IndicesOfIndex(5)
+def t1_indices = t1.indicesOfIndex(5)
 Tsr t2 = Function.of(" [ 1, 0 ]:( I[0] ) ")(t1)
 def t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})
-def t2_idx = t2.IndicesOfIndex(7)
-def t1_ioi_3 = t1.indexOfIndices(t1.IndicesOfIndex(7))
-def t2_ioi_2 =  t2.indexOfIndices(t2.IndicesOfIndex(7))</pre>
+def t2_idx = t2.indicesOfIndex(7)
+def t1_ioi_3 = t1.indexOfIndices(t1.indicesOfIndex(7))
+def t2_ioi_2 =  t2.indexOfIndices(t2.indicesOfIndex(7))</pre>
 </td>
 </tr>
 <tr>
@@ -1046,7 +1046,7 @@ x.size()==1</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>x.mutate.toType( Float.class )</pre>
+<pre class='block-source'>x.unsafe.toType( Float.class )</pre>
 </td>
 </tr>
 <tr>
@@ -1108,7 +1108,7 @@ Tsr x = Tsr.of(3)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>x.mutate.toType( Float.class )</pre>
+<pre class='block-source'>x.unsafe.toType( Float.class )</pre>
 </td>
 </tr>
 <tr>
@@ -1126,7 +1126,7 @@ x.getValueAs( float[].class )[ 0 ]==3.0f</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>x.mutate.toType( Double.class )</pre>
+<pre class='block-source'>x.unsafe.toType( Double.class )</pre>
 </td>
 </tr>
 <tr>
@@ -1479,7 +1479,7 @@ def v = Tsr.of([2, 2], [
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr.IO.addInto(t, v)</pre>
+<pre class='block-source'>t += v</pre>
 </td>
 </tr>
 <tr>
@@ -1495,7 +1495,7 @@ def v = Tsr.of([2, 2], [
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr.IO.addInto(t, 2, 3.0)</pre>
+<pre class='block-source'>t.setValueAt( 2, 6.0 as double )</pre>
 </td>
 </tr>
 <tr>
@@ -1513,7 +1513,7 @@ def v = Tsr.of([2, 2], [
 <td>
 <pre class='block-source'>int[] indices = new int[2]
 indices[1] = 1
-Tsr.IO.addInto(t, indices, -9.0)</pre>
+t.setValueAt(t.indexOfIndices(indices), -6.0 as double)</pre>
 </td>
 </tr>
 <tr>
@@ -1522,7 +1522,7 @@ Tsr.IO.addInto(t, indices, -9.0)</pre>
 </td>
 <td>
 <pre class='block-source'>t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 6.0)")
-Tsr.IO.getFrom(t, indices)==-6.0d</pre>
+t.getValueAt(indices) ==-6.0d</pre>
 </td>
 </tr>
 <tr>
@@ -1531,7 +1531,7 @@ Tsr.IO.getFrom(t, indices)==-6.0d</pre>
 </td>
 <td>
 <pre class='block-source'>indices[0] = 1
-Tsr.IO.mulInto(t, indices, -1d)</pre>
+t[indices].timesAssign(-1d)</pre>
 </td>
 </tr>
 <tr>
@@ -1547,7 +1547,7 @@ Tsr.IO.mulInto(t, indices, -1d)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr.IO.mulInto(t, 3, -2d)</pre>
+<pre class='block-source'>t[3].timesAssign(-2d)</pre>
 </td>
 </tr>
 <tr>
@@ -1563,7 +1563,7 @@ Tsr.IO.mulInto(t, indices, -1d)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr.IO.setInto(t, indices, 0d)</pre>
+<pre class='block-source'>t[indices] = 0d</pre>
 </td>
 </tr>
 <tr>
@@ -1579,7 +1579,7 @@ Tsr.IO.mulInto(t, indices, -1d)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr.IO.setInto(t, 2, 99d)</pre>
+<pre class='block-source'>t[2] = 99d</pre>
 </td>
 </tr>
 <tr>
@@ -1595,7 +1595,7 @@ Tsr.IO.mulInto(t, indices, -1d)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr.IO.subInto(t, 2, 99d)</pre>
+<pre class='block-source'>t[2].minusAssign(99d)</pre>
 </td>
 </tr>
 <tr>
@@ -1631,7 +1631,7 @@ Tsr.IO.mulInto(t, indices, -1d)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr.IO.subInto(t, indices, -9d)</pre>
+<pre class='block-source'>t[indices].minusAssign(-9d)</pre>
 </td>
 </tr>
 <tr>
@@ -1653,7 +1653,7 @@ Tsr.IO.mulInto(t, indices, -1d)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr.IO.subInto(t, Tsr.of([2, 2], [1d, 2d, 3d, 4d]))</pre>
+<pre class='block-source'>t -= Tsr.of([2, 2], [1d, 2d, 3d, 4d])</pre>
 </td>
 </tr>
 <tr>
@@ -1679,7 +1679,7 @@ Tsr.IO.mulInto(t, indices, -1d)</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>def t = Tsr.of(type).withShape(shape).andFill(data)</pre>
+<pre class='block-source'>var t = Tsr.of(type).withShape(shape).andFill(data)</pre>
 </td>
 </tr>
 <tr>

@@ -2666,11 +2666,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Individual entries for value items in this tensor can be set
      *  via this method.
      *
-     * @param i The scalar index targeting a specific value position within this tensor
+     * @param index The scalar index targeting a specific value position within this tensor
      *          which ought to be replaced by the one provided by the second parameter
      *          of this method.
      *
-     * @param o The item which ought to be placed at the targeted position.
+     * @param value The item which ought to be placed at the targeted position.
      * @return This very tensor in order to enable method chaining...
      */
     public Tsr<V> putAt( int index, V value ) {
@@ -2681,7 +2681,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  This method enables assigning a provided tensor to be a subset of this tensor!
      *  It takes a key which is used to configure a slice
      *  sharing the same underlying data as the original tensor.
-     *  This slice is then used to assign the second argument {@param value} to it.
+     *  This slice is then used to assign the second argument {@code value} to it.
      *  The usage of this method is especially powerful when used in Groovy. <br>
      *  The following code illustrates this very well:
      *  <pre>{@code

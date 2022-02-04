@@ -7,6 +7,7 @@ neureka.backend.api.implementations
 neureka.backend.api.operations
 neureka.backend.standard.algorithms
 neureka.backend.standard.implementations
+neureka.backend.standard.memory
 neureka.backend.standard.operations
 neureka.backend.standard.operations.function
 neureka.backend.standard.operations.indexer
@@ -19,6 +20,7 @@ neureka.calculus
 neureka.calculus.args
 neureka.calculus.assembly
 neureka.calculus.implementations
+neureka.calculus.internal
 neureka.common.composition
 neureka.common.utility
 neureka.devices

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 14 17:08:36 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 04 16:08:10 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.009 seconds</td>
+<td>0.029 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -376,7 +376,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def data = [
+<pre class='block-source'>var data = [
     [1,  2,  3],
     [4, "5", 6]
 ]</pre>
@@ -384,50 +384,28 @@ div.footer {
 </tr>
 <tr>
 <td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
-<div class='block-text'>An empty shape list.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>def shape = []</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
-<div class='block-text'>An empty list as a target for the flattened data.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>def flattened = []</pre>
-</td>
-</tr>
-<tr>
-<td>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<div class='block-text'>We use the reader to fill the 2 lists defined above...</div>
+<div class='block-text'>We use the reader to internally fill 2 lists representing shape and data...</div>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>new ListReader(data, 0, flattened, shape, (o)-&gt;o)</pre>
+<pre class='block-source'>var result = ListReader.read(data, (o)-&gt;o)</pre>
 </td>
 </tr>
 <tr>
 <td>
 <div class='block-kind'>Then:</div>
 </td>
+<td>
+<div class='block-text'>However this leads to an exception because of type incoherence!</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>def exception = thrown(IllegalArgumentException)
 exception.message == "Type inconsistency encountered. Not all leave elements are of the same type!\n" +
@@ -455,7 +433,7 @@ exception.message == "Type inconsistency encountered. Not all leave elements are
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def data = [
+<pre class='block-source'>var data = [
     [1,  2,  3],
     [4, 5, 6, 7]
 ]</pre>
@@ -463,44 +441,16 @@ exception.message == "Type inconsistency encountered. Not all leave elements are
 </tr>
 <tr>
 <td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
-<div class='block-text'>An empty shape list.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>def shape = []</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
-<div class='block-text'>An empty list as a target for the flattened data.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>def flattened = []</pre>
-</td>
-</tr>
-<tr>
-<td>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<div class='block-text'>We use the reader to fill the 2 lists defined above...</div>
+<div class='block-text'>We use the reader to internally fill 2 lists representing shape and data...</div>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>new ListReader(data, 0, flattened, shape, (o)-&gt;o)</pre>
+<pre class='block-source'>var result = ListReader.read(data, (o)-&gt;o)</pre>
 </td>
 </tr>
 <tr>

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 14 17:08:26 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 04 16:08:42 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,23 +329,23 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>4</td>
-<td>4</td>
+<td>6</td>
+<td>6</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.035 seconds</td>
+<td>0.018 seconds</td>
 </tr>
 </tbody>
 </table>
 </div>
 <pre class='title'>Tensors Exception Behavior</pre>
 <pre class='narrative'>This specification covers the behavior of the $Tsr class in
-    exceptional scenarious which are contrary to its intended use.
+    exceptional scenarios which are contrary to its intended use.
     The purpose of this is to assert that the $Tsr class will provide
-    useful feedback to a user to explain that a missuse of its API
-    occurred so that the user can correct this missuse.</pre>
+    useful feedback to a user to explain that a misuse of its API
+    occurred so that the user can correct this misuse.</pre>
 <div class='spec-headers'>
 <div class='spec-header'>
                 <h2> Tensors Exception Behavior </h2>
@@ -375,6 +375,12 @@ div.footer {
 </li>
 <li>
 <a href='#-1457990519' class='feature-toc-pass'>Out of dimension bound causes descriptive exception!</a>
+</li>
+<li>
+<a href='#-1060873962' class='feature-toc-pass'>Building a tensor with 0 shape arguments throws an exception.</a>
+</li>
+<li>
+<a href='#-1788686402' class='feature-toc-pass'>Building a tensor with "null" as shape argument throws an exception.</a>
 </li>
 </ul>
 <tr>
@@ -614,6 +620,58 @@ exception.message == "java.lang.IllegalArgumentException: " +
         "which is larger than the target shape '3' at the same index!",
         _
 )</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1060873962'>
+<span>Building a tensor with 0 shape arguments throws an exception.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>var t = Tsr.ofInts().withShape().all(0)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>thrown(IllegalArgumentException)</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1788686402'>
+<span>Building a tensor with "null" as shape argument throws an exception.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>var t = Tsr.ofInts().withShape(null).all(0)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>thrown(IllegalArgumentException)</pre>
 </td>
 </tr>
 </tbody>

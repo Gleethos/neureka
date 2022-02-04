@@ -9,7 +9,7 @@ import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
-import neureka.calculus.CalcUtil;
+import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
@@ -121,7 +121,7 @@ import java.util.List;
 <span class="fc" id="L121">            newSpread.add( 0 );</span>
 <span class="fc" id="L122">            newOffset.add( 0 );</span>
         }
-<span class="fc" id="L124">        tensor.getMutate()</span>
+<span class="fc" id="L124">        tensor.getUnsafe()</span>
 <span class="fc" id="L125">              .setNDConf(</span>
 <span class="fc" id="L126">                AbstractNDC.construct(</span>
 <span class="fc" id="L127">                        newShape.stream().mapToInt( i -&gt; i ).toArray(),</span>
@@ -140,7 +140,7 @@ import java.util.List;
 <span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )</span>
 <span class="nc" id="L141">            throw new IllegalArgumentException(&quot;Column major not yet supported for shape trimming!&quot;);</span>
 
-<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        tensor = ( newTsr ? tensor.getAt( new ArrayList&lt;&gt;() ) : tensor );</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        tensor = ( newTsr ? tensor.getAt( new ArrayList&lt;&gt;() ).getUnsafe().setIsIntermediate( true ) : tensor );</span>
 <span class="fc" id="L144">        List&lt;Integer&gt; newShape = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L145">        List&lt;Integer&gt; newTranslation = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L146">        List&lt;Integer&gt; newIdxmap = new ArrayList&lt;&gt;();</span>
@@ -158,7 +158,7 @@ import java.util.List;
 <span class="fc" id="L158">            newSpread.add( tensor.getNDConf().spread( i ) );</span>
 <span class="fc" id="L159">            newOffset.add( tensor.getNDConf().offset( i ) );</span>
         }
-<span class="fc" id="L161">        tensor.getMutate()</span>
+<span class="fc" id="L161">        tensor.getUnsafe()</span>
 <span class="fc" id="L162">              .setNDConf(</span>
 <span class="fc" id="L163">                AbstractNDC.construct(</span>
 <span class="fc" id="L164">                        newShape.stream().mapToInt( i -&gt; i ).toArray(),</span>

@@ -174,10 +174,10 @@ public final class DataType&lt;Type&gt;
 <span class="fc bfc" id="L174" title="All 2 branches covered.">            if ( ( (float[]) value ).length == size ) return value;</span>
 <span class="fc" id="L175">            newValue = new float[size];</span>
 <span class="fc" id="L176">            Arrays.fill( (float[]) newValue, ( (float[]) value )[ 0 ] );</span>
-<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        } else if ( getTypeClass() == I32.class ) {</span>
-<span class="nc bnc" id="L178" title="All 2 branches missed.">            if ( ( (int[]) value ).length == size ) return value;</span>
-<span class="nc" id="L179">            newValue = new int[ size ];</span>
-<span class="nc" id="L180">            Arrays.fill( (int[]) newValue, ( (int[]) value )[ 0 ] );</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        } else if ( getTypeClass() == I32.class ) {</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">            if ( ( (int[]) value ).length == size ) return value;</span>
+<span class="fc" id="L179">            newValue = new int[ size ];</span>
+<span class="fc" id="L180">            Arrays.fill( (int[]) newValue, ( (int[]) value )[ 0 ] );</span>
 <span class="pc bpc" id="L181" title="1 of 2 branches missed.">        } else if ( getTypeClass() == I16.class ) {</span>
 <span class="nc bnc" id="L182" title="All 2 branches missed.">            if ( ( (short[]) value ).length == size ) return value;</span>
 <span class="nc" id="L183">            newValue = new short[ size ];</span>

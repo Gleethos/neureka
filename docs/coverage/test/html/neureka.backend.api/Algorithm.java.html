@@ -45,7 +45,8 @@ import neureka.devices.Device;
 
 
 /**
- *   This class is the middle layer of the 3 tier abstraction architecture of this backend. &lt;br&gt;
+ *   This class is the middle layer of the 3 tier compositional abstraction architecture of this backend, which
+ *   consists of {@link Operation}s, {@link Algorithm}s and {@link ImplementationFor}. &lt;br&gt;
  *
  *   Conceptually an implementation of the {@link Algorithm} interface represents &quot;a sub-kind of operation&quot; for
  *   an instance of an implementation of the {@link Operation} interface. &lt;br&gt;
@@ -66,7 +67,7 @@ extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSu
      * @return A new {@link FunAlgorithm} with the provided name.
      */
     static FunAlgorithm withName(String name) {
-<span class="fc" id="L69">        return new FunAlgorithm(name);</span>
+<span class="fc" id="L70">        return new FunAlgorithm(name);</span>
     }
 
     /**
@@ -119,7 +120,7 @@ extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSu
      * @return The implementation for the passed device type class.
      */
     default &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( D device ) {
-<span class="fc" id="L122">        return (ImplementationFor&lt;D&gt;) getImplementationFor(device.getClass());</span>
+<span class="fc" id="L123">        return (ImplementationFor&lt;D&gt;) getImplementationFor(device.getClass());</span>
     }
 
 

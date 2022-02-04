@@ -115,7 +115,7 @@ public interface Subscriptable<V> {
      *  This method enables assigning a provided tensor to be a subset of this tensor!
      *  It takes a key which is used to configure a slice
      *  sharing the same underlying data as the original tensor.
-     *  This slice is then used to assign the second argument {@param value} to it.
+     *  This slice is then used to assign the second argument {@code value} to it.
      *  The usage of this method is especially powerful when used in Groovy. <br>
      *  The following code illustrates this very well:
      *  <pre>{@code

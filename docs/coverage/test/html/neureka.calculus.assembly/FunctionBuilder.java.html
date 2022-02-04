@@ -103,7 +103,7 @@ import java.util.stream.IntStream;
 <span class="fc" id="L103">                .replace(&quot;-&gt;&quot;, &quot;&gt;&quot;);</span>
 
 <span class="fc bfc" id="L105" title="All 2 branches covered.">        if ( expression.equals(&quot;&quot;) )</span>
-<span class="fc" id="L106">            return new FunctionConstant().newBuild(&quot;0&quot;);</span>
+<span class="fc" id="L106">            return new FunctionConstant(&quot;0&quot;);</span>
 
 <span class="fc" id="L108">        expression = ParseUtil.unpackAndCorrect(expression);</span>
 <span class="fc" id="L109">        List&lt;String&gt; foundOperations = new ArrayList&lt;&gt;();</span>
@@ -228,9 +228,9 @@ import java.util.stream.IntStream;
         //---
 <span class="fc" id="L229">        String component = ParseUtil.unpackAndCorrect( foundComponent );</span>
 
-<span class="fc bfc" id="L231" title="All 2 branches covered.">        if ( _constantPattern.matcher( component ).matches()   ) return new FunctionConstant().newBuild( component );</span>
-<span class="fc bfc" id="L232" title="All 2 branches covered.">        else if ( _inputPattern.matcher( component ).find()    ) return new FunctionInput()   .newBuild( component );</span>
-<span class="fc bfc" id="L233" title="All 2 branches covered.">        else if ( _variablePattern.matcher( component ).find() ) return new FunctionVariable().newBuild( component );</span>
+<span class="fc bfc" id="L231" title="All 2 branches covered.">        if ( _constantPattern.matcher( component ).matches()   ) return new FunctionConstant( component );</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        else if ( _inputPattern.matcher( component ).find()    ) return FunctionInput.of( component );</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        else if ( _variablePattern.matcher( component ).find() ) return new FunctionVariable( component );</span>
 <span class="fc bfc" id="L234" title="All 2 branches covered.">        else if ( component.startsWith(&quot;-&quot;) ) {</span>
 <span class="fc" id="L235">            component = &quot;-1 * &quot;+component.substring(1);</span>
 <span class="fc" id="L236">            return _build(component, doAD);</span>

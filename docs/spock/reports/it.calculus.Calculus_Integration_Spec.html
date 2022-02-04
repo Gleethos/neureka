@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 14 17:08:08 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 04 16:08:01 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,13 +329,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>3</td>
-<td>3</td>
+<td>4</td>
+<td>4</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.331 seconds</td>
+<td>0.799 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -365,6 +365,9 @@ div.footer {
 </li>
 <li>
 <a href='#-1746585669' class='feature-toc-pass'>The "DimTrim" operation works forward as well as backward!</a>
+</li>
+<li>
+<a href='#-1926018792' class='feature-toc-pass'>Executed tensors are intermediate tensors.</a>
 </li>
 </ul>
 <tr>
@@ -397,9 +400,7 @@ Function f = new FunctionBuilder( Neureka.get().backend() ).build(equation, true
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr&lt;?&gt; result = ( index != null )
-? f.derive( inputs, index )
-: f.call(   inputs        )
+<pre class='block-source'>Tsr&lt;?&gt; result = ( index != null ) ? f.derive( inputs, index ) : f.call( inputs )
 List&lt;Double&gt; value = ( index != null )
 ? (result.getValueAs( double[].class ) as List&lt;Double&gt;)
 : (result.getValueAs( double[].class ) as List&lt;Double&gt;)</pre>
@@ -425,7 +426,7 @@ value == expected.values().first()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>result.shape() == expected.keySet().first()</pre>
+<pre class='block-source'>result.shape == expected.keySet().first()</pre>
 </td>
 </tr>
 <tr>
@@ -777,6 +778,85 @@ r.toString().contains("[2x3x4]:(1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0
 </td>
 <td>
 <pre class='block-source'>t.getGradient().toString() == "(1x1x3x2x1):[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1926018792'>
+<span>Executed tensors are intermediate tensors.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>var fun = Function.of('i0 * relu(i0) + 1')</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>var t = Tsr.of(1f, -5f, -3f, 2f, 8f)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>t.valueClass == Float
+fun.toString() == "((I[0] * relu(I[0])) + 1.0)"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>var result1 = fun.call(t)
+var result2 = fun.invoke(t)
+var result3 = fun.execute(t)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>!result1.isIntermediate()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>!result2.isIntermediate()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>result3.isIntermediate()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>result1.toString() == "(5):[2.0, 1.25, 1.09E0, 5.0, 65.0]"
+result2.toString() == "(5):[2.0, 1.25, 1.09E0, 5.0, 65.0]"
+result3.toString() == "(5):[2.0, 1.25, 1.09E0, 5.0, 65.0]"</pre>
 </td>
 </tr>
 </tbody>

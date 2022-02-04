@@ -10,7 +10,7 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.CPUImplementation;
-import neureka.calculus.CalcUtil;
+import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -58,7 +58,7 @@ public class MatMul extends AbstractOperation
 <span class="fc" id="L58">                                    Function matMul = Neureka.get().backend().getFunction().matMul();</span>
 <span class="fc" id="L59">                                    Tsr&lt;?&gt;[] inputs = call.getTensors();</span>
 <span class="fc" id="L60">                                    int d = ( 1 + call.getValOf( Arg.DerivIdx.class ) ) % 2;</span>
-<span class="fc" id="L61">                                    Tsr&lt;?&gt; derivative = inputs[ d ].T().clone(); // We need to clone it to make it have a simple nd configuration...</span>
+<span class="fc" id="L61">                                    Tsr&lt;?&gt; derivative = inputs[ d ].T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...</span>
 <span class="fc" id="L62">                                    derivative.to(call.getDevice());</span>
 <span class="fc" id="L63">                                    return ADAgent.of( derivative )</span>
 <span class="fc" id="L64">                                                    .setBackward( (node, error) -&gt; {</span>
@@ -90,8 +90,8 @@ public class MatMul extends AbstractOperation
                                     {
 <span class="fc" id="L91">                                        Class&lt;Number&gt; type = (Class&lt;Number&gt;) tensors[1].getDataType().getJVMTypeClass();</span>
 <span class="fc" id="L92">                                        int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };</span>
-<span class="fc" id="L93">                                        Tsr&lt;Number&gt; output = Tsr.of( type ).withShape( shp ).all( 0 );</span>
-<span class="fc" id="L94">                                        output.getMutate().toLayout(tensors[1].getNDConf().getLayout());</span>
+<span class="fc" id="L93">                                        Tsr&lt;Number&gt; output = Tsr.of( type ).withShape( shp ).all( 0 ).getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L94">                                        output.getUnsafe().toLayout(tensors[1].getNDConf().getLayout());</span>
 <span class="fc" id="L95">                                        output.setIsVirtual( false );</span>
                                         try {
 <span class="fc" id="L97">                                            device.store( output );</span>
@@ -197,8 +197,8 @@ public class MatMul extends AbstractOperation
     private static void _autoClone( Tsr&lt;?&gt;[] tensors ) {
 <span class="fc bfc" id="L198" title="All 2 branches covered.">        for ( int i = 0; i &lt; tensors.length; i++ ) {</span>
 <span class="fc bfc" id="L199" title="All 2 branches covered.">            if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {</span>
-<span class="fc" id="L200">                _LOG.warn(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
-<span class="fc" id="L201">                tensors[i] = tensors[i].clone();</span>
+<span class="fc" id="L200">                _LOG.debug(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
+<span class="fc" id="L201">                tensors[i] = tensors[i].clone().getUnsafe().setIsIntermediate( true );</span>
                 /*
                     The user should do cloning explicitly because using slices
                     will cause the backend to perform aut cloning every time the

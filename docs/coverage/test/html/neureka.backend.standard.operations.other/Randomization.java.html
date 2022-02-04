@@ -8,10 +8,9 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CPUImplementation;
-import neureka.calculus.CalcUtil;
+import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterators.NDIterator;
 
@@ -22,102 +21,102 @@ public class Randomization extends AbstractOperation
 
     public Randomization()
     {
-<span class="nc" id="L25">        super(</span>
+<span class="nc" id="L24">        super(</span>
                 new OperationBuilder()
-<span class="nc" id="L27">                        .setFunction(         &quot;random&quot;   )</span>
-<span class="nc" id="L28">                        .setOperator(         &quot;rand&quot;     )</span>
-<span class="nc" id="L29">                        .setArity(            1          )</span>
-<span class="nc" id="L30">                        .setIsOperator(       true       )</span>
-<span class="nc" id="L31">                        .setIsIndexer(        false      )</span>
-<span class="nc" id="L32">                        .setIsDifferentiable( false      )</span>
-<span class="nc" id="L33">                        .setIsInline(         true       )</span>
+<span class="nc" id="L26">                        .setFunction(         &quot;random&quot;   )</span>
+<span class="nc" id="L27">                        .setOperator(         &quot;rand&quot;     )</span>
+<span class="nc" id="L28">                        .setArity(            1          )</span>
+<span class="nc" id="L29">                        .setIsOperator(       true       )</span>
+<span class="nc" id="L30">                        .setIsIndexer(        false      )</span>
+<span class="nc" id="L31">                        .setIsDifferentiable( false      )</span>
+<span class="nc" id="L32">                        .setIsInline(         true       )</span>
         );
 
-<span class="nc" id="L36">        Scalarization scalarization = new Scalarization()</span>
-<span class="nc" id="L37">        .setCanPerformBackwardADFor( call -&gt; true )</span>
-<span class="nc" id="L38">        .setCanPerformForwardADFor(</span>
+<span class="nc" id="L35">        Scalarization scalarization = new Scalarization()</span>
+<span class="nc" id="L36">        .setCanPerformBackwardADFor( call -&gt; true )</span>
+<span class="nc" id="L37">        .setCanPerformForwardADFor(</span>
                 call -&gt; {
-<span class="nc bnc" id="L40" title="All 2 branches missed.">                    if ( call.getOperation().supports(Convolution.class) ) return false;</span>
-<span class="nc bnc" id="L41" title="All 2 branches missed.">                    if ( call.getOperation().getOperator().equals(&quot;,&quot;)   ) return false;</span>
-<span class="nc" id="L42">                    Tsr&lt;?&gt; last = null;</span>
-<span class="nc bnc" id="L43" title="All 2 branches missed.">                    for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
-<span class="nc bnc" id="L44" title="All 4 branches missed.">                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
-<span class="nc" id="L45">                        last = t; // Note: shapes are cached!</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">                    if ( call.getOperation().supports(Convolution.class) ) return false;</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">                    if ( call.getOperation().getOperator().equals(&quot;,&quot;)   ) return false;</span>
+<span class="nc" id="L41">                    Tsr&lt;?&gt; last = null;</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">                    for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
+<span class="nc bnc" id="L43" title="All 4 branches missed.">                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
+<span class="nc" id="L44">                        last = t; // Note: shapes are cached!</span>
                     }
-<span class="nc" id="L47">                    return true;</span>
+<span class="nc" id="L46">                    return true;</span>
                 }
         )
-<span class="nc" id="L50">        .setSupplyADAgentFor( getDefaultAlgorithm() )</span>
-<span class="nc" id="L51">        .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)</span>
-<span class="nc" id="L52">        .setCallPreparation(</span>
+<span class="nc" id="L49">        .setSupplyADAgentFor( getDefaultAlgorithm() )</span>
+<span class="nc" id="L50">        .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)</span>
+<span class="nc" id="L51">        .setCallPreparation(</span>
                 call -&gt; {
-<span class="nc" id="L54">                    Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
-<span class="nc bnc" id="L55" title="All 2 branches missed.">                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;</span>
-<span class="nc" id="L56">                    return</span>
-<span class="nc" id="L57">                            ExecutionCall.of(tensors[offset], tensors[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation(&quot;idy&quot;)).on(call.getDevice());</span>
+<span class="nc" id="L53">                    Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;</span>
+<span class="nc" id="L55">                    return</span>
+<span class="nc" id="L56">                            ExecutionCall.of(tensors[offset], tensors[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation(&quot;idy&quot;)).on(call.getDevice());</span>
                 }
         )
-<span class="nc" id="L60">        .buildFunAlgorithm();</span>
+<span class="nc" id="L59">        .buildFunAlgorithm();</span>
 
-<span class="nc" id="L62">        setAlgorithm(</span>
+<span class="nc" id="L61">        setAlgorithm(</span>
                 Scalarization.class,
-<span class="nc" id="L64">                scalarization.setImplementationFor(</span>
+<span class="nc" id="L63">                scalarization.setImplementationFor(</span>
                         CPU.class,
                         CPUImplementation
-<span class="nc" id="L67">                            .withArity(3)</span>
-<span class="nc" id="L68">                            .andImplementation(</span>
-<span class="nc" id="L69">                                call -&gt; call.getDevice().getExecutor()</span>
-<span class="nc" id="L70">                                        .threaded(</span>
-<span class="nc" id="L71">                                                call.getTsrOfType( Number.class, 0 ).size(),</span>
+<span class="nc" id="L66">                            .withArity(3)</span>
+<span class="nc" id="L67">                            .andImplementation(</span>
+<span class="nc" id="L68">                                call -&gt; call.getDevice().getExecutor()</span>
+<span class="nc" id="L69">                                        .threaded(</span>
+<span class="nc" id="L70">                                                call.getTsrOfType( Number.class, 0 ).size(),</span>
                                                 ( i, end ) -&gt; {
-<span class="nc" id="L73">                                                    double value = call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ];</span>
+<span class="nc" id="L72">                                                    double value = call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ];</span>
                                                     {
-<span class="nc" id="L75">                                                        NDIterator t0Idx = NDIterator.of( call.getTsrOfType( Number.class, 0 ) );</span>
-<span class="nc" id="L76">                                                        NDIterator srcIdx = NDIterator.of( call.getTsrOfType( Number.class, 1 ) );</span>
-<span class="nc" id="L77">                                                        t0Idx.set( call.getTsrOfType( Number.class, 0 ).IndicesOfIndex( i ) );</span>
-<span class="nc" id="L78">                                                        srcIdx.set( call.getTsrOfType( Number.class, 1 ).IndicesOfIndex( i ) );</span>
-<span class="nc" id="L79">                                                        double[] t0_value = call.getTsrOfType( Number.class, 0 ).getDataAs( double[].class );</span>
-<span class="nc bnc" id="L80" title="All 2 branches missed.">                                                        while ( i &lt; end ) // increment on drain accordingly:</span>
+<span class="nc" id="L74">                                                        NDIterator t0Idx = NDIterator.of( call.getTsrOfType( Number.class, 0 ) );</span>
+<span class="nc" id="L75">                                                        NDIterator srcIdx = NDIterator.of( call.getTsrOfType( Number.class, 1 ) );</span>
+<span class="nc" id="L76">                                                        t0Idx.set( call.getTsrOfType( Number.class, 0 ).indicesOfIndex( i ) );</span>
+<span class="nc" id="L77">                                                        srcIdx.set( call.getTsrOfType( Number.class, 1 ).indicesOfIndex( i ) );</span>
+<span class="nc" id="L78">                                                        double[] t0_value = call.getTsrOfType( Number.class, 0 ).getDataAs( double[].class );</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">                                                        while ( i &lt; end ) // increment on drain accordingly:</span>
                                                         {
-<span class="nc" id="L82">                                                            int sum = 0;</span>
-<span class="nc" id="L83">                                                            int[] indices = srcIdx.get();</span>
-<span class="nc bnc" id="L84" title="All 2 branches missed.">                                                            for ( int index : indices ) sum += index;</span>
-<span class="nc" id="L85">                                                            Random dice = new Random();</span>
-<span class="nc" id="L86">                                                            dice.setSeed( Double.doubleToLongBits( value + sum ) );</span>
+<span class="nc" id="L81">                                                            int sum = 0;</span>
+<span class="nc" id="L82">                                                            int[] indices = srcIdx.get();</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">                                                            for ( int index : indices ) sum += index;</span>
+<span class="nc" id="L84">                                                            Random dice = new Random();</span>
+<span class="nc" id="L85">                                                            dice.setSeed( Double.doubleToLongBits( value + sum ) );</span>
                                                             // setInto _value in drn:
-<span class="nc" id="L88">                                                            t0_value[ t0Idx.i() ] = dice.nextGaussian();</span>
+<span class="nc" id="L87">                                                            t0_value[ t0Idx.i() ] = dice.nextGaussian();</span>
                                                             // increment on drain:
-<span class="nc" id="L90">                                                            t0Idx.increment();</span>
-<span class="nc" id="L91">                                                            srcIdx.increment();</span>
+<span class="nc" id="L89">                                                            t0Idx.increment();</span>
+<span class="nc" id="L90">                                                            srcIdx.increment();</span>
                                                             //NDConfiguration.Utility.increment(t0Idx, t0Shp);
-<span class="nc" id="L93">                                                            i++;</span>
-<span class="nc" id="L94">                                                        }</span>
+<span class="nc" id="L92">                                                            i++;</span>
+<span class="nc" id="L93">                                                        }</span>
                                                     }
-<span class="nc" id="L96">                                                }</span>
+<span class="nc" id="L95">                                                }</span>
                                         )
                         )
                 )
         );
 
-<span class="nc" id="L102">    }</span>
+<span class="nc" id="L101">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="nc" id="L106">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="nc bnc" id="L107" title="All 4 branches missed.">        if (expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')') {</span>
-<span class="nc" id="L108">            return &quot;rand&quot; + expression;</span>
+<span class="nc" id="L105">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="nc bnc" id="L106" title="All 4 branches missed.">        if (expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')') {</span>
+<span class="nc" id="L107">            return &quot;rand&quot; + expression;</span>
         }
-<span class="nc" id="L110">        return &quot;rand&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="nc" id="L109">        return &quot;rand&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L115">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L114">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L120">            return src[ 0 ].call( inputs, j );</span>
+<span class="nc" id="L119">            return src[ 0 ].call( inputs, j );</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

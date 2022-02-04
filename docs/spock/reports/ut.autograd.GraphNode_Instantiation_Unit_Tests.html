@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 14 17:08:32 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 04 16:08:13 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.013 seconds</td>
+<td>0.048 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -520,9 +520,9 @@ result.usesReverseAD()</pre>
 1 * payload.getDevice() &gt;&gt; device
 1 * payload.set( _ )
 1 * device.cleaning( payload, _ )
-4 * inputs[0].get( GraphNode.class ) &gt;&gt; inputsNodeMock
-3 * inputs[1].get( GraphNode.class ) &gt;&gt; inputsNodeMock
-3 * inputs[2].get( GraphNode.class ) &gt;&gt; inputsNodeMock
+4 * inputs[0].getGraphNode() &gt;&gt; inputsNodeMock
+3 * inputs[1].getGraphNode() &gt;&gt; inputsNodeMock
+3 * inputs[2].getGraphNode() &gt;&gt; inputsNodeMock
 1 * inputsNodeMock.getMode() &gt;&gt; -2
 1 * inputs[0].rqsGradient() &gt;&gt; true
 1 * inputs[1].rqsGradient() &gt;&gt; false
