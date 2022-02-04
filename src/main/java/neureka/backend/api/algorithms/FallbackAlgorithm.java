@@ -83,7 +83,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                                 for ( int ii = 1; ii < call.getTensors().length; ii++ ) {
                                                     b.append(call.getTsrOfType( Object.class, ii ).getValueAt(i));
                                                 }
-                                                call.getTsrOfType( Object.class, 0 ).setAt(i, b.toString());
+                                                setAt( call.getTsrOfType( Object.class, 0 ), i, b.toString() );
                                             }
                                         }
                                     );
@@ -185,10 +185,14 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                             for ( int ii = 0; ii < inputs.length; ii++ ) {
                                 inputs[ ii ] = call.getTsrOfType( Object.class, 1 + ii ).getValueAt(i);
                             }
-                            call.getTsrOfType( Object.class, 0 ).setAt(i, _tryExecute(finalMethod, inputs, 0));
+                            setAt( call.getTsrOfType( Object.class, 0 ), i, _tryExecute(finalMethod, inputs, 0));
                         }
                     }
             );
+    }
+
+    private static void setAt( Tsr<Object> t, int i, Object o ) {
+        t.setDataAt( t.getNDConf().indexOfIndex( i ), o );
     }
 
     private static Object _tryExecute( Method m, Object[] args, int offset ) {

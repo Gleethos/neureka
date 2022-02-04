@@ -57,7 +57,7 @@ class ADAM_Spec extends Specification
 
         expect : 'The following state emerges:'
             w.toString().contains(g.toString())
-            w.shape().hashCode()==g.shape().hashCode()
+            w.shape.hashCode()==g.shape.hashCode()
             w.translation().hashCode()==g.translation().hashCode()
             w.indicesMap().hashCode()==g.indicesMap().hashCode()
             w.spread().hashCode()==g.spread().hashCode()

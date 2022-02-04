@@ -56,7 +56,7 @@ class Calculus_Integration_Spec extends Specification
             value == expected.values().first()
 
         and : 'The shape is as expected as well : '
-            result.shape() == expected.keySet().first()
+            result.shape == expected.keySet().first()
 
         // Todo: unrecognized operation throws exception that is not recursion error
         where :

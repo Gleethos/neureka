@@ -6,10 +6,9 @@ import neureka.fluent.slicing.states.AxisOrGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *  This class is responsible for receiving any input and trying to interpret it so that a
@@ -45,6 +44,20 @@ public class SmartSlicer {
                 List<String> strList = new ArrayList<>(((String[]) range).length);
                 strList.addAll(Arrays.asList((String[]) range));
                 rangeList.add(strList);
+                stepsList.add(1);
+            }
+            else if ( Iterable.class.isAssignableFrom( range.getClass() ) ) {
+                Iterable<Object> iterableRange = (Iterable<Object>)  range;
+                Iterator<Object> iterator = iterableRange.iterator();
+                Object first = iterator.next();
+                Object last = null;
+                while (iterator.hasNext() ) {
+                    last = iterator.next();
+                }
+                if ( last == null ) last = first;
+                if ( first instanceof Number ) first = ((Number) first).intValue();
+                if ( last instanceof Number ) last = ((Number) last).intValue();
+                rangeList.add(Stream.of( first, last ).collect(Collectors.toList()));
                 stepsList.add(1);
             }
             else {
@@ -118,7 +131,7 @@ public class SmartSlicer {
                         .axis( i )
                         .from( first )
                         .to( last )
-                        .step( stepsList.get( i ) );
+                        .step( stepsList.isEmpty() ? 1 : stepsList.get( i ) );
 
         }
         return sliceBuilder.get();

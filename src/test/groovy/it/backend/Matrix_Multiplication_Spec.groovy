@@ -25,7 +25,7 @@ class Matrix_Multiplication_Spec extends Specification {
             Tsr<?> c = a.matMul(b)
 
         then :
-            c.shape() == [M,N]
+            c.shape == [M,N]
         and :
             c.value == expectedC
 

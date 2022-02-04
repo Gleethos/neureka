@@ -2355,6 +2355,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param indices The index array of the element which should be returned.
      * @return An element located at the provided index.
      */
+    @Override
     public Tsr<V> getAt( int... indices ) { return getAt( Arrays.stream( indices ).mapToObj( i->i ).toArray() ); }
 
     /**
@@ -2365,6 +2366,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param args An arbitrary number of arguments which can be used for slicing.
      * @return A slice tensor created based on the passed keys.
      */
+    @Override
     public Tsr<V> getAt( Object... args ) {
         List<Object> argsList = Arrays.asList( args );
         return getAt( argsList );
@@ -2378,6 +2380,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param i The index of the value item which should be returned as a tensor instance.
      * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
+    @Override
     public Tsr<V> getAt( int i ) { return getAt( indicesOfIndex(i) ); }
 
     /**
@@ -2402,29 +2405,24 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public V getValueAt( int... indices ) { return getDataAt( getNDConf().indexOfIndices( indices ) ); }
 
     /**
-     *  Individual entries for value items in this tensor can be set
-     *  via this method.
+     *  This getter method creates and returns a slice of the original tensor.
+     *  The returned slice is a scalar tensor wrapping a single value element which
+     *  is being targeted by the provided integer index.
      *
-     * @param i The scalar index targeting a specific value position within this tensor
-     *          which ought to be replaced by the one provided by the second parameter
-     *          of this method.
-     *
-     * @param o The item which ought to be placed at the targeted position.
-     * @return This very tensor in order to enable method chaining...
+     * @param i The index of the value item which should be returned as a tensor instance.
+     * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
-    public Tsr<V> setAt( int i, V o ) {
-        setDataAt( getNDConf().indexOfIndex( i ), o );
-        return this;
-    }
-
-    public Tsr<V> getAt( double i ) {
-        return getAt( Collections.singletonList( getNDConf().indicesOfIndex( (int) Math.floor(i) ) ).toArray() );
-    }
-
-    public Tsr<V> getAt(BigDecimal i ) {
+    @Override
+    public Tsr<V> getAt( Number i ) {
         return getAt( Collections.singletonList( getNDConf().indicesOfIndex( (i).intValue() ) ).toArray() );
     }
 
+    /**
+     *
+     * @param rangToStrides
+     * @return
+     */
+    @Override
     public Tsr<V> getAt(Map<?,Integer> rangToStrides )
     {
         if ( rangToStrides == null ) return this;
@@ -2448,18 +2446,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return getAt( ranges.toArray() );
     }
 
-    @Override
-    public Tsr<V> clone() {
-        Function cloner = Neureka.get().backend().getFunction().idy();
-        boolean thisIsIntermediate = this.isIntermediate();
-        _setIsIntermediate(false);
-        Tsr<V> clone = cloner.call((Tsr<V>) Tsr.of(this.getValueClass(), this.shape(), 0.0), this).to( this.getDevice() );
-        clone.getUnsafe().setIsIntermediate( thisIsIntermediate );
-        _setIsIntermediate(thisIsIntermediate);
-        return clone;
-    }
-
-
     /**
      *  This method enables tensor slicing!
      *  It takes a key of various types and configures a slice
@@ -2468,6 +2454,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param key This object might be a wide range of objects including maps, lists or arrays...
      * @return A slice tensor or scalar value.
      */
+    @Override
     public Tsr<V> getAt( Object key ) {
         if ( key == null ) return this;
         if ( key instanceof Object[] && ((Object[]) key).length == 0 ) key = new ArrayList<>();
@@ -2497,15 +2484,26 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             boolean hasScale = false;
             for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
             return SmartSlicer.slice(
-                                    ( allInt ) ? new Object[]{ _intArray( (Object[]) key ) } : (Object[]) key,
-                                this,
-                                    this::_sliceOf
-                                );
+                    ( allInt ) ? new Object[]{ _intArray( (Object[]) key ) } : (Object[]) key,
+                    this,
+                    this::_sliceOf
+            );
         } else {
             String message = "Cannot create tensor slice from key of type '" + key.getClass().getName() + "'!";
             _LOG.error( message );
             throw new IllegalArgumentException( message );
         }
+    }
+
+    @Override
+    public Tsr<V> clone() {
+        Function cloner = Neureka.get().backend().getFunction().idy();
+        boolean thisIsIntermediate = this.isIntermediate();
+        _setIsIntermediate(false);
+        Tsr<V> clone = cloner.call((Tsr<V>) Tsr.of(this.getValueClass(), this.shape(), 0.0), this).to( this.getDevice() );
+        clone.getUnsafe().setIsIntermediate( thisIsIntermediate );
+        _setIsIntermediate(thisIsIntermediate);
+        return clone;
     }
 
     /**
@@ -2664,21 +2662,42 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return this;
     }
 
+    /**
+     *  Individual entries for value items in this tensor can be set
+     *  via this method.
+     *
+     * @param i The scalar index targeting a specific value position within this tensor
+     *          which ought to be replaced by the one provided by the second parameter
+     *          of this method.
+     *
+     * @param o The item which ought to be placed at the targeted position.
+     * @return This very tensor in order to enable method chaining...
+     */
     public Tsr<V> putAt( int index, V value ) {
         return putAt( indicesOfIndex(index), value );
     }
 
     /**
-     *  This method enables injecting slices of tensor to be assigned into this tensor!
+     *  This method enables assigning a provided tensor to be a subset of this tensor!
      *  It takes a key which is used to configure a slice
-     *  tensor sharing the same underlying data as the original tensor.
-     *  This slice is then used to assign the second argument to it, namely
-     *  the "value" argument.
+     *  sharing the same underlying data as the original tensor.
+     *  This slice is then used to assign the second argument {@param value} to it.
+     *  The usage of this method is especially powerful when used in Groovy. <br>
+     *  The following code illustrates this very well:
+     *  <pre>{@code
+     *      a[[[0..0]:1, [0..0]:1, [0..3]:2]] = b
+     *  }</pre>
+     *  Here a single argument with the format '[i..j]:k' is equivalent
+     *  to pythons 'i:j:k' syntax for indexing! (numpy)                            <br>
+     *  i... start indexAlias.                                                      <br>
+     *  j... end indexAlias. (inclusive!)                                           <br>
+     *  k... step size.                                                             <br>
      *
      * @param key This object is a map defining a stride and a targeted index or range of indices...
      * @return A slice tensor or scalar value.
      */
-    public Tsr<V> putAt(Map<?,Integer> key, Tsr<V> value ) {
+    @Override
+    public Tsr<V> putAt( Map<?,Integer> key, Tsr<V> value ) {
         _putAtCheckFor( value );
         Tsr<V> slice = ( key == null ) ? this : getAt( key );
         return _putAt( slice, value );

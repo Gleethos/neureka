@@ -443,7 +443,7 @@ class Autograd_NN_Spec extends Specification
             cStr.contains "->d(1x3):[-4.0, -2.0, 0.0]"
 
         when :
-            c.backward(Tsr.of(c.shape(), [-1d, 1d]).unsafe.toType(type)) // (2x1):[-1, 1]
+            c.backward(Tsr.of(c.shape, [-1d, 1d]).unsafe.toType(type)) // (2x1):[-1, 1]
 
         then :
             a.toString() == "(2x3):[-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]:g:[4.0, 2.0, 0.0, -4.0, -2.0, 0.0]"

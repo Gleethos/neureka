@@ -132,6 +132,66 @@ Kotlin_Compatibility_Unit_Testing {
         }
     }
 
+
+    @Test
+    fun we_can_use_the_subscription_operator_to_slice_tensors() {
+
+        // Given :
+        val t : Tsr<ComplexNumber> = Tsr.of(
+                        DataType.of(ComplexNumber::class.java),
+                        intArrayOf(2, 3, 4),
+                        { _, i -> ComplexNumber( i[0].toDouble(), i[1].toDouble() + i[2].toDouble()/10 ) }
+                    )
+
+        // When :
+        val e1 = t[1, 2, 0]
+        val e2 = t[0, 1, 2]
+        val e3 = t[16]
+
+        // Then :
+        assert(e1.toString() == "(1x1x1):[1.0+2.0i]")
+        assert(e2.toString() == "(1x1x1):[0.0+1.2i]")
+        assert(e3.toString() == "(1x1x1):[1.0+1.0i]")
+
+        // When :
+        val slice = t[0..1, 2..2, 1..3]
+
+        // Then :
+        assert(
+            t.toString({ it.isMultiline = true }).trim() == """
+            (2x3x4):[
+               [
+                  [ 0.0+0.0i, 0.0+0.1i, 0.0+0.2i, 0.0+0.3i ],
+                  [ 0.0+1.0i, 0.0+1.1i, 0.0+1.2i, 0.0+1.3i ],
+                  [ 0.0+2.0i, 0.0+2.1i, 0.0+2.2i, 0.0+2.3i ]
+               ],
+               [
+                  [ 1.0+0.0i, 1.0+0.1i, 1.0+0.2i, 1.0+0.3i ],
+                  [ 1.0+1.0i, 1.0+1.1i, 1.0+1.2i, 1.0+1.3i ],
+                  [ 1.0+2.0i, 1.0+2.1i, 1.0+2.2i, 1.0+2.3i ]
+               ]
+            ]
+            """
+            .trimIndent()
+        )
+        // And :
+        assert(
+            slice.toString({ it.isMultiline = true }) ==
+            """
+                (2x1x3):[
+                   [
+                      [ 0.0+2.1i, 0.0+2.2i, 0.0+2.3i ]
+                   ],
+                   [
+                      [ 1.0+2.1i, 1.0+2.2i, 1.0+2.3i ]
+                   ]
+                ]
+            """
+            .trimIndent()
+        )
+
+    }
+
     @Test
     fun convenience_methods_in_function_API_are_consistent() {
 
@@ -233,7 +293,6 @@ Kotlin_Compatibility_Unit_Testing {
                ]
             ]""".trimIndent())
     }
-
 
 
     @Test
