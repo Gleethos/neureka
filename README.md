@@ -34,7 +34,7 @@
     <tr>
 	<th>Impress me!</th>
 	<th>Show me more</th>
-	<th>Boring Documentation</th>
+	<th>Documentation</th>
     </tr> 
     <tr>
 <td> 
