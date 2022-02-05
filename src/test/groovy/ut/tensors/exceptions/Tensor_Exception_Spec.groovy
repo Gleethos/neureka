@@ -63,14 +63,12 @@ class Tensor_Exception_Spec extends Specification
     def 'Passing an invalid object into Tsr constructor causes descriptive exception.'()
     {
         when : 'A tensor is being instantiated with a nonsensical parameter.'
-            Tsr.of( new Scanner( System.in ) )
+            Tsr.ofRandom(Scanner.class, 2, 4)
         then : 'An exception is being thrown which tells us about it.'
             def exception = thrown(IllegalArgumentException)
             exception.message.contains(
-                    "Cannot create tensor from argument of type 'java.util.Scanner'!"
+                    "Could not create a random tensor for type 'class java.util.Scanner'!"
             )
-        and : 'The logger logs the exception message!'
-            1 * Tsr._LOG.error( "Cannot create tensor from argument of type 'java.util.Scanner'!" )
     }
 
 

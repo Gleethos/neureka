@@ -190,6 +190,60 @@ Kotlin_Compatibility_Unit_Testing {
             .trimIndent()
         )
 
+        // When :
+        t[intArrayOf(1, 2, 0)] = ComplexNumber(42.0, 666.0)
+        t[intArrayOf(0, 1, 2)] = ComplexNumber(73.0, 666.0)
+        t[16] = ComplexNumber(42.0, 24.0)
+
+        // Then :
+        assert(e1.toString() == "(1x1x1):[42.0+666.0i]")
+        assert(e2.toString() == "(1x1x1):[73.0+666.0i]")
+        assert(e3.toString() == "(1x1x1):[42.0+24.0i]")
+
+        // When :
+        slice.minusAssign( slice * ComplexNumber(-4.0, -2.0) )
+
+        // Then :
+        assert(
+            t.toString({ it.isMultiline = true }).trim() == """
+                (2x3x4):[
+                   [
+                      [ 0.0+0.0i, 0.0+0.1i, 0.0+0.2i, 0.0+0.3i ],
+                      [ 0.0+1.0i, 0.0+1.1i, 73.0+666.0i, 0.0+1.3i ],
+                      [ 0.0+2.0i, -4.2+10.5i, -4.4+11.0i, -4.6+11.5i ]
+                   ],
+                   [
+                      [ 1.0+0.0i, 1.0+0.1i, 1.0+0.2i, 1.0+0.3i ],
+                      [ 42.0+24.0i, 1.0+1.1i, 1.0+1.2i, 1.0+1.3i ],
+                      [ 42.0+666.0i, 0.7999999999999998+12.5i, 0.5999999999999996+13.0i, 0.40000000000000036+13.5i ]
+                   ]
+                ]
+            """
+            .trimIndent()
+        )
+
+        // When :
+        Neureka.get().backend().function.idy(slice, slice - ComplexNumber(-1.0,2.0))
+
+        // Then :
+        assert(
+            t.toString({ it.isMultiline = true }).trim() == """
+                (2x3x4):[
+                   [
+                      [ 0.0+0.0i, 0.0+0.1i, 0.0+0.2i, 0.0+0.3i ],
+                      [ 0.0+1.0i, 0.0+1.1i, 73.0+666.0i, 0.0+1.3i ],
+                      [ 0.0+2.0i, -3.2+8.5i, -3.4000000000000004+9.0i, -3.5999999999999996+9.5i ]
+                   ],
+                   [
+                      [ 1.0+0.0i, 1.0+0.1i, 1.0+0.2i, 1.0+0.3i ],
+                      [ 42.0+24.0i, 1.0+1.1i, 1.0+1.2i, 1.0+1.3i ],
+                      [ 42.0+666.0i, 1.7999999999999998+10.5i, 1.5999999999999996+11.0i, 1.4000000000000004+11.5i ]
+                   ]
+                ]
+            """
+            .trimIndent()
+        )
+
     }
 
     @Test

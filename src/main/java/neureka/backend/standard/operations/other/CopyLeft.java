@@ -16,6 +16,7 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
+import neureka.dtype.NumericType;
 
 public class CopyLeft extends AbstractOperation
 {
@@ -33,9 +34,8 @@ public class CopyLeft extends AbstractOperation
 
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor(
-                    call ->
-                    {
-                        if ( call.getTsrOfType( Number.class, 1 ).isVirtual() || call.getTsrOfType( Number.class, 1 ).size() == 1 )
+                    call -> {
+                        if ( call.getTensors()[ 1 ].isVirtual() || call.getTensors()[ 1 ].size() == 1 )
                             return SuitabilityPredicate.GOOD;
                         else
                             return SuitabilityPredicate.UNSUITABLE;
@@ -50,8 +50,8 @@ public class CopyLeft extends AbstractOperation
                     {
                         Tsr<?>[] tensors = call.getTensors();
                         int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
-                        call.getTsrOfType( Number.class, offset).getUnsafe().incrementVersion(call);
-                        call.getTsrOfType( Number.class, offset).setIsVirtual( false );
+                        call.getTensors()[ offset ].getUnsafe().incrementVersion(call);
+                        call.getTensors()[ offset ].setIsVirtual( false );
                         return
                             ExecutionCall.of(tensors[offset], tensors[1+offset])
                                             .andArgs(Arg.DerivIdx.of(-1))
@@ -80,6 +80,11 @@ public class CopyLeft extends AbstractOperation
                         ( a, b ) -> b,
                         null,
                         null
+                    ))
+                    .with(Fun.ObjObjToObj.triple(
+                            ( a, b ) -> b,
+                            null, // Deriving at input 0
+                            null // deriving input 1
                     ))
                     .get()
             )
@@ -111,6 +116,11 @@ public class CopyLeft extends AbstractOperation
         );
 
         Activation activation = new Activation()
+            .setIsSuitableFor(
+                    call -> call.validate()
+                            .allNotNull( t -> t.getDataType().typeClassImplements(Object.class) )
+                            .basicSuitability()
+            )
             .setCanPerformBackwardADFor( call -> false )
             .setCanPerformForwardADFor( call -> false )
             .setSupplyADAgentFor( getDefaultAlgorithm() )
@@ -120,7 +130,7 @@ public class CopyLeft extends AbstractOperation
                 {
                     Tsr<?>[] tensors = call.getTensors();
                     int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
-                    call.getTsrOfType( Number.class, offset).getUnsafe().incrementVersion(call);
+                    call.getTensors()[ offset ].getUnsafe().incrementVersion(call);
                     return ExecutionCall.of(tensors[offset], tensors[1+offset])
                                         .andArgs(Arg.DerivIdx.of(-1))
                                         .running(Neureka.get().backend().getOperation("idy"))
@@ -137,9 +147,8 @@ public class CopyLeft extends AbstractOperation
                     CPUImplementation
                         .withArity(2)
                         .andImplementation(
-                            call ->
-                            {
-                                call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
+                            call -> {
+                                call.getTensors()[ 0 ].setIsVirtual( false );
                                 Neureka.get().backend().getOperation("idy")
                                         .getAlgorithm( Activation.class )
                                         .getImplementationFor( CPU.class )

@@ -26,7 +26,7 @@ public class Functions<F extends Fun> {
             if ( type.isAssignableFrom( p.getType() ) )
                 return (FunArray<T>) p;
 
-        throw new IllegalArgumentException("");
+        throw new IllegalArgumentException("Function of type '"+type.getSimpleName()+"' not found!");
     }
 
     public static class Builder<F extends Fun>

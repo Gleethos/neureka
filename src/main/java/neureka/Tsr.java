@@ -2418,12 +2418,24 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
+     *  This method is most useful when used in Groovy
+     *  where defining maps is done through square brackets,
+     *  making it possible to slice tensors like so: <br>
+     *  <pre>{@code
+     *      var b = a[[[0..0]:1, [0..0]:1, [0..3]:2]]
+     *  }</pre>
+     *  Here a single argument with the format '[i..j]:k' is equivalent
+     *  to Pythons 'i:j:k' syntax for indexing! (numpy)                            <br>
+     *  i... start indexAlias.                                                      <br>
+     *  j... end indexAlias. (inclusive!)                                           <br>
+     *  k... step size.
      *
-     * @param rangToStrides
-     * @return
+     * @param rangToStrides A map where the keys define where axes should be sliced and values which define the strides for the specific axis.
+     * @return A tensor slice with an offset based on the provided map keys and
+     *         strides based on the provided map values.
      */
     @Override
-    public Tsr<V> getAt(Map<?,Integer> rangToStrides )
+    public Tsr<V> getAt( Map<?,Integer> rangToStrides )
     {
         if ( rangToStrides == null ) return this;
         // ...not a simple slice... Advanced:
@@ -2645,36 +2657,26 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param key This object is a list defining a targeted index or range of indices...
      * @return A slice tensor or scalar value.
      */
+    @Override
     public Tsr<V> putAt( List<?> key, Tsr<V> value ) {
         _putAtCheckFor( value );
         Tsr<V> slice = ( key == null ) ? this : getAt( key );
         return _putAt( slice, value );
     }
 
-    public Tsr<V> putAt( List<?> indices, V value ) {
-        return this.putAt( indices, Tsr.of( this.getValueClass(), shape(), value ) );
-    }
-
+    @Override
     public Tsr<V> putAt( int[] indices, V value ) {
+        if ( indices == null )
+            throw new IllegalArgumentException( "Provided indices are null!" );
+        if ( indices.length > this.rank() ) {
+            int[] correct = new int[rank()];
+            System.arraycopy( indices, 0, correct, 0, indices.length );
+            indices = correct;
+        }
         Tsr<V> source = Tsr.of( this.getValueClass(), shape(), value );
         Tsr<V> slice = getAt( Arrays.stream( indices ).mapToObj( i -> i ).collect(Collectors.toList()) );
         Neureka.get().backend().getFunction().idy().call(slice, source);
         return this;
-    }
-
-    /**
-     *  Individual entries for value items in this tensor can be set
-     *  via this method.
-     *
-     * @param index The scalar index targeting a specific value position within this tensor
-     *          which ought to be replaced by the one provided by the second parameter
-     *          of this method.
-     *
-     * @param value The item which ought to be placed at the targeted position.
-     * @return This very tensor in order to enable method chaining...
-     */
-    public Tsr<V> putAt( int index, V value ) {
-        return putAt( indicesOfIndex(index), value );
     }
 
     /**
@@ -2711,7 +2713,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
     }
 
-    private Tsr<V> _putAt(Tsr<V> slice, Tsr<V> value )
+    private Tsr<V> _putAt( Tsr<V> slice, Tsr<V> value )
     {
         boolean valueIsDeviceVisitor = false;
         if ( slice.isOutsourced() && !value.isOutsourced() ) {

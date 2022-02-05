@@ -67,7 +67,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                     call.getDevice()
                         .getExecutor()
                         .threaded(
-                            call.getTsrOfType( Number.class, 0 ).size(),
+                            call.getTensors()[ 0 ].size(),
                             _workloadFor( call, pairs )
                         )
         );
@@ -134,6 +134,28 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             Fun.I32I32ToI32 operation = functions.get(Fun.I32I32ToI32.class).get(call.getDerivativeIndex());
             int[] t0_value = t0_drn.getDataAs(int[].class);
             int[] t1_value = src.getDataAs(int[].class);
+            workload = ( i, end ) -> {
+                NDIterator t0Idx = NDIterator.of(t0_drn);
+                NDIterator srcIdx = NDIterator.of(src);
+                t0Idx.set(t0_drn.indicesOfIndex(i));
+                srcIdx.set(src.indicesOfIndex(i));
+                while (i < end) // increment on drain accordingly:
+                {
+                    // setInto _value in drn:
+                    t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);
+                    // increment on drain:
+                    t0Idx.increment();
+                    srcIdx.increment();
+                    //NDConfiguration.Utility.increment(t0Idx, t0Shp);
+                    i++;
+                }
+            };
+        }
+        if ( t0_drn.getData().getClass() == Object[].class ) {
+            Object value = call.getTensors()[ 1 + offset ].getDataAs(Object[].class)[0];
+            Fun.ObjObjToObj operation = functions.get(Fun.ObjObjToObj.class).get(call.getDerivativeIndex());
+            Object[] t0_value = t0_drn.getDataAs(Object[].class);
+            Object[] t1_value = src.getDataAs(Object[].class);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);

@@ -65,7 +65,7 @@ import java.util.Arrays;
  * @param <C> The type of the concrete class extending this abstract class (currently the {@link Tsr} class).
  * @param <V> The value type of the individual items stored within this nd-array.
  */
-public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> implements Iterable<V>, NDimensional, Subscriptable<V>
+public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> implements NDArrayAPI<V>
 {
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
@@ -133,6 +133,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     /**
      * @return The type class of individual value items within this {@link Tsr} instance.
      */
+    @Override
     public Class<V> getValueClass() {
         _guardGet("data type class"); return ( _dataType != null ? (Class<V>) _dataType.getJVMTypeClass() : null );
     }

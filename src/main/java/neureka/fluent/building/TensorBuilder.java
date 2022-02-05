@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static neureka.ndim.AbstractNDArray._LOG;
+
 /**
  *  This class exposes a fluent builder API for creating {@link Tsr} instances.
  *  An simple example would be:
@@ -92,27 +94,35 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
     public Tsr<V> all( V value ) { return Tsr.of( _dataType, _shape, value ).to( _device ); }
 
     @Override
-    public Tsr<V> andSeed(Object seed) {
+    public Tsr<V> andSeed( Object seed ) {
         Class<V> type = (Class<V>) _dataType.getJVMTypeClass();
         Class<?> seedType = seed.getClass();
         int size = NDConfiguration.Utility.szeOfShp( _shape );
-        if ( type == Double.class && seedType == Long.class )
-            return (Tsr<V>) Tsr.of(
+        try {
+            if (type == Double.class && seedType == Long.class)
+                return (Tsr<V>) Tsr.of(
                                 Double.class,
                                 _shape,
-                                DataConverter.Utility.newSeededDoubleArray( (Long) seed, size )
-                            )
-                            .to( _device );
+                                DataConverter.Utility.newSeededDoubleArray((Long) seed, size)
+                        )
+                        .to(_device);
 
-        else if ( type == Float.class && seedType == Long.class )
-            return (Tsr<V>) Tsr.of(
+            else if (type == Float.class && seedType == Long.class)
+                return (Tsr<V>) Tsr.of(
                                 Float.class,
                                 _shape,
-                                DataConverter.Utility.newSeededFloatArray( (Long) seed, size )
-                            )
-                            .to( _device );
-        else
-            return Tsr.of( type, _shape, seed.toString() ).to( _device );
+                                DataConverter.Utility.newSeededFloatArray((Long) seed, size)
+                        )
+                        .to(_device);
+            else
+                return Tsr.of(type, _shape, seed.toString()).to(_device);
+        } catch ( Exception e ) {
+            IllegalArgumentException exception =  new IllegalArgumentException(
+                 "Could not create a random tensor for type '"+type+"'!"
+            );
+            _LOG.error( exception.getMessage(), e );
+            throw exception;
+        }
     }
 
     @Override

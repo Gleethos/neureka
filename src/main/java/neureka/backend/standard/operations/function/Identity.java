@@ -76,6 +76,10 @@ public final class Identity extends AbstractOperation
                         x -> x,
                         x -> 1
                     ))
+                    .with(Fun.ObjToObj.pair(
+                        x -> x,
+                        null
+                    ))
                     .get()
             )
             .setImplementationFor(

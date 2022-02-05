@@ -26,6 +26,21 @@ public interface Fun {
         }
     }
 
+    interface ObjToObj extends Fun {
+        Object invoke( Object x );
+
+        static FunArray<ObjToObj> pair( ObjToObj activation, ObjToObj derivation ) {
+            return new FunPair<>( activation, derivation );
+        }
+    }
+
+    interface ObjObjToObj extends Fun {
+        Object invoke( Object x, Object y );
+
+        static FunArray<ObjObjToObj> triple( ObjObjToObj activation, ObjObjToObj derivation, ObjObjToObj derivation2 ) {
+            return new Operator.FunTriple<>( activation, derivation, derivation2 );
+        }
+    }
     //...
 
 

@@ -139,6 +139,10 @@ public final class DataType<Type>
         return null;
     }
 
+    /**
+     * @param interfaceClass The type class which ought to be checked for compatibility.
+     * @return True if the provided type is a sub-type of the type represented by this instance.
+     */
     public boolean typeClassImplements( Class<?> interfaceClass ) {
         return interfaceClass.isAssignableFrom(_typeClass);
     }

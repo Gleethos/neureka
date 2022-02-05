@@ -129,6 +129,8 @@ public class NDAConstructor {
         if ( data instanceof Character ) { _constructAllChar( shape, (Character)data ); return true; }
         if ( Number.class.isAssignableFrom( data.getClass() ) ) {
             _constructAllF64( shape, ((Number)data).doubleValue() ); return true;
+        } else if ( !data.getClass().isArray() ) {
+            _constructAll( shape, data ); return true;
         }
         return false;
     }
@@ -171,6 +173,11 @@ public class NDAConstructor {
     private void _constructAllChar( int[] shape, char value ) {
         _constructAll( shape, Character.class );
         ( (char[]) _API.getData())[ 0 ] = value;
+    }
+
+    private void _constructAll( int[] shape, Object value ) {
+        _constructAll( shape, value.getClass() );
+        ( (Object[]) _API.getData())[ 0 ] = value;
     }
 
     private void _constructAll( int[] shape, Class<?> typeClass ) {

@@ -95,7 +95,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
                                 call.getDevice()
                                     .getExecutor()
                                     .threaded(
-                                            call.getTsrOfType( Number.class, 0 ).size(),
+                                            call.getTensors()[ 0 ].size(),
                                             _newWorkloadFor(call, pairs)
                                     )
                         );

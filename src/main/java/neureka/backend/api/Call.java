@@ -94,9 +94,9 @@ public class Call<D> {
             Class<?> tensorTypeClass = tensors[ i ].getValueClass();
             if ( !valueTypeClass.isAssignableFrom(tensorTypeClass) ) {
                 throw new IllegalArgumentException(
-                        "The item value type of the tensor stored at parameter position '"+i+"' is " +
-                                "'"+tensorTypeClass.getSimpleName()+"' and is not a sub-type of the provided " +
-                                "type '"+valueTypeClass.getSimpleName()+"'."
+                    "The item value type of the tensor stored at parameter position '"+i+"' is " +
+                    "'"+tensorTypeClass.getSimpleName()+"' and is not a sub-type of the provided " +
+                    "type '"+valueTypeClass.getSimpleName()+"'."
                 );
             }
         }
