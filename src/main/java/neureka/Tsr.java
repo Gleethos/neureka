@@ -2480,7 +2480,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             return shallowCopy();
         }
 
-        key = ( key instanceof List ) ? ((List<?>) key).toArray() : key;
+        key = ( key instanceof List ? ((List<?>) key).toArray() : key );
 
         if ( key instanceof Object[] ) {
             boolean allInt = true;
@@ -2507,12 +2507,21 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
     }
 
+    /**
+     *  If this tensor stores value types then this method will
+     *  essentially produce a deep copy of this tensor.
+     *  If the stored elements are reference types on the other hand,
+     *  then the resulting clone may not be treated as a deep copy,
+     *  especially if elements are mutable objects.
+     *
+     * @return A deep copy of this tensor.
+     */
     @Override
     public Tsr<V> clone() {
         Function cloner = Neureka.get().backend().getFunction().idy();
         boolean thisIsIntermediate = this.isIntermediate();
         _setIsIntermediate(false);
-        Tsr<V> clone = cloner.call((Tsr<V>) Tsr.of(this.getValueClass(), this.shape(), 0.0), this).to( this.getDevice() );
+        Tsr<V> clone = cloner.call( Tsr.of(this.getValueClass(), this.shape(), 0.0), this ).to( this.getDevice() );
         clone.getUnsafe().setIsIntermediate( thisIsIntermediate );
         _setIsIntermediate(thisIsIntermediate);
         return clone;
