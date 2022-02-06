@@ -696,7 +696,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      *  This factory method allows the creation of tensors with an additional initialization
      *  lambda for filling the underlying data array with desired values.
-     *  Besides regular numeric types it is also possible to initialize the
+     *  Other than regular numeric types it is also possible to initialize the
      *  tensor with regular Objects like String instances or custom data types like complex
      *  numbers for example... <br>
      *  Therefore the constructor requires not only a shape as argument but also
@@ -812,19 +812,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public static <V> Tsr<V> of( String expression, List<? extends Object> inputs ) {
         if ( inputs.stream().allMatch( e -> e instanceof Tsr ) )
-            return _constructFunctional(
-                    null,
-                    inputs.stream().toArray( Tsr[]::new ),
-                    expression,
-                    true
-            );
+            return Function.of( expression, true ).call( inputs.stream().toArray( Tsr[]::new ) );
         else {
-            return _constructFunctional(
-                    null,
-                    inputs.stream().map(args -> _of(args)).toArray(Tsr[]::new),
-                    expression,
-                    true
-            );
+            return Function.of( expression, true ).call(  inputs.stream().map(args -> _of(args)).toArray(Tsr[]::new) );
         }
     }
 
@@ -846,7 +836,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param expression The expression describing operations applied to the provided tensor.
      */
     public static <V> Tsr<V> of( String expression, Tsr<V> tensor ) {
-        return _constructFunctional(null, new Tsr[]{tensor}, expression, true);
+        return  Function.of( expression, true ).call( tensor );
     }
 
     /**
@@ -867,7 +857,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     @SafeVarargs
     public static <V> Tsr<V> of( String expression, Tsr<V>... tensors ) {
-        return _constructFunctional( null, tensors, expression, true );
+        return Function.of( expression, true ).call( tensors );
     }
 
     /**
@@ -895,35 +885,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     @SafeVarargs
     public static <V> Tsr<V> of( String expression, boolean doAD, Tsr<V>... tensors ) {
-        return _constructFunctional( null, tensors, expression, doAD );
+        return Function.of( expression, doAD ).call( tensors );
     }
-
-    /**
-     *  In essence tensors are merely fancy wrappers for some form of array of any type...
-     *  This wrapper usually stays the same for a given data array.
-     *  However, sometimes a tensor changes its identity, or rather the underlying
-     *  data changes the wrapping tensor instance.
-     *
-     *  This change currently only happens when tensors are being instantiated by
-     *  passing inputs and a math expression to its constructor.
-     *  This triggers the creation of a Function instance and execution on the provided
-     *  input tensors. In that case the output tensor will be created somewhere
-     *  along the execution call stack, however the result is expected to be
-     *  stored within the tensor whose constructor initialized all of this.
-     *  In that case this tensor will rip out the guts of the resulting output
-     *  tensor and stuff onto its own field variables. <br>
-     *  <br>
-     *
-     * @param tensors The tensors which will be passed to the function.
-     * @param expression The expression defining a function.
-     * @param doAD The flag which will enable or disable autograd for the instantiated Function.
-     */
-    private static <V> Tsr<V> _constructFunctional( Tsr<V> drain, Tsr<V>[] tensors, String expression, boolean doAD )
-    {
-        if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return drain;
-        return Function.of(expression, doAD).call( tensors );
-    }
-
 
     /*==================================================================================================================
     |
@@ -1018,40 +981,40 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         if ( isOutsourced )
             _setData( null );
         else if (
-                !forComponent(
-                        Device.class,
-                        device -> {
-                            try {
-                                if ( device.has( this ) ) device.restore( this );
-                            } catch ( Exception exception ) {
-                                _LOG.error(
-                                        "Tensor could not be restored from device component when trying to migrate it back to RAM.",
-                                        exception
-                                );
-                                throw exception;
-                            }
-                            this.remove( Device.class );
-                            forComponent(
-                                    Tsr.class,
-                                    gradient ->
-                                            ( (Tsr<V>) gradient ).forComponent(
-                                                    Device.class,
-                                                    gradDevice -> {
-                                                        try {
-                                                            if ( gradDevice.has( gradient ) ) gradDevice.restore( gradient );
-                                                        }
-                                                        catch ( Exception exception ) {
-                                                            _LOG.error(
-                                                                    "Gradient could not be restored from device component when trying to migrate it back to RAM.",
-                                                                    exception
-                                                            );
-                                                            throw exception;
-                                                        }
-                                                        gradient.remove( Device.class );
-                                                    })
-                            );
-                        }
-                ) && getData() == null
+            !forComponent(
+                Device.class,
+                device -> {
+                    try {
+                        if ( device.has( this ) ) device.restore( this );
+                    } catch ( Exception exception ) {
+                        _LOG.error(
+                            "Tensor could not be restored from device component when trying to migrate it back to RAM.",
+                            exception
+                        );
+                        throw exception;
+                    }
+                    this.remove( Device.class );
+                    forComponent(
+                        Tsr.class,
+                        gradient ->
+                            ( (Tsr<V>) gradient ).forComponent(
+                                Device.class,
+                                gradDevice -> {
+                                    try {
+                                        if ( gradDevice.has( gradient ) ) gradDevice.restore( gradient );
+                                    }
+                                    catch ( Exception exception ) {
+                                        _LOG.error(
+                                                "Gradient could not be restored from device component when trying to migrate it back to RAM.",
+                                                exception
+                                        );
+                                        throw exception;
+                                    }
+                                    gradient.remove( Device.class );
+                                })
+                    );
+                }
+            ) && getData() == null
         ) {
             _setIsVirtual( true );
             _allocate( 1 ); // Only a single value representing the rest.
@@ -1385,7 +1348,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param device The {@link Device} which should host this {@link Tsr} as well as be added to its components list.
      * @return This very class to enable method chaining.
      */
-    public Tsr<V> to(Device<?> device ){ super._set(device); return this; }
+    public Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
 
     /*==================================================================================================================
     |
@@ -2200,7 +2163,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         StringBuilder operation = new StringBuilder();
         for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( ( i == 0 ) ? "" : ", " );
         operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
-        return _constructFunctional(null, new Tsr[]{this}, operation.toString(), true);
+        return Function.of( operation.toString(), true ).call( this );
     }
 
     /**
@@ -2520,10 +2483,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public Tsr<V> clone() {
         Function cloner = Neureka.get().backend().getFunction().idy();
         boolean thisIsIntermediate = this.isIntermediate();
-        _setIsIntermediate(false);
-        Tsr<V> clone = cloner.call( Tsr.of(this.getValueClass(), this.shape(), 0.0), this ).to( this.getDevice() );
+        _setIsIntermediate( false );
+        Tsr<V> clone = cloner.call( Tsr.of( this.getValueClass(), this.shape(), 0.0 ), this ).to( this.getDevice() );
         clone.getUnsafe().setIsIntermediate( thisIsIntermediate );
-        _setIsIntermediate(thisIsIntermediate);
+        _setIsIntermediate( thisIsIntermediate );
         return clone;
     }
 
@@ -2564,7 +2527,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         subset._setDataType( this.getDataType() );
         subset._setData( this.getData() );
         int[] newTranslation = getNDConf().translation();
-        int[] newIdxmap = this.getNDConf().getLayout().newTranslationFor( newShape );
+        int[] newIndicesMap = this.getNDConf().getLayout().newTranslationFor( newShape );
 
         for ( int i = 0; i < this.rank(); i++ )
             newSpread[ i ] = ( newSpread[i] == 0 ) ? 1 : newSpread[ i ];
@@ -2628,7 +2591,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 AbstractNDC.construct(
                         newShape,
                         newTranslation,
-                        newIdxmap,
+                        newIndicesMap,
                         newSpread,
                         newOffset,
                         NDConfiguration.Layout.ROW_MAJOR
@@ -2736,7 +2699,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             valueIsDeviceVisitor = true;
         }
         if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become( value ); // TODO: Rethink this a little
-        else return _constructFunctional( null, new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
+        else Function.of( "I[ 0 ] <- I[ 1 ]", false ).call(  slice, value  );
         try {
             if ( valueIsDeviceVisitor ) value.get( Device.class ).restore( value );
         } catch ( Exception exception ) {
