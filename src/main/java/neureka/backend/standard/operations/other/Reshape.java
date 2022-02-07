@@ -75,7 +75,7 @@ public class Reshape extends AbstractOperation
         Tsr<?> parent = tensor;
         tensor = newTsr ? tensor.shallowCopy().getUnsafe().setIsIntermediate( true ) : tensor;
         NDConfiguration newNDC = tensor.getNDConf().newReshaped( newForm );
-        AbstractNDArray.Utility.Indexing.shpCheck( newNDC.shape(), tensor );
+        AbstractNDArray.Utility.Indexing.shapeCheck( newNDC.shape(), tensor );
         tensor.getUnsafe().setNDConf( newNDC );
         if ( newTsr ) {
             Relation r = parent.get( Relation.class );

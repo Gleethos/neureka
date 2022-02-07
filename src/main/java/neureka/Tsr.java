@@ -1934,7 +1934,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  with the provided double scalar added to all elements of this {@link Tsr}.
      *
      *  The shapes of this tensor is irrelevant as the provided value will
-     *  simply be broadcastet to any possible shape.
+     *  simply be broadcasted to any possible shape.
      *
      * @param value The right operand of the addition.
      * @return The sum between this instance as the left and the passed double as right operand.

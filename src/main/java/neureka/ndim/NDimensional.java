@@ -45,7 +45,7 @@ public interface NDimensional {
     /**
      * @return The number of elements stored inside the tensor.
      */
-    default int size() { return NDConfiguration.Utility.szeOfShp(getNDConf().shape()); }
+    default int size() { return NDConfiguration.Utility.sizeOfShape(getNDConf().shape()); }
 
     /**
      *  This is a convenience method identical to {@code tensor.getNDConf().indexOfIndex(i)}.

@@ -58,7 +58,7 @@ public class NDAConstructor {
     {
         NDConfiguration.Layout layout = NDConfiguration.Layout.ROW_MAJOR;
         _API.setIsVirtual( makeVirtual );
-        int size = NDConfiguration.Utility.szeOfShp( newShape );
+        int size = NDConfiguration.Utility.sizeOfShape( newShape );
         if ( size == 0 ) {
             String shape = Arrays.stream( newShape ).mapToObj( String::valueOf ).collect( Collectors.joining( "x" ) );
             String message = "The provided shape '"+shape+"' must not contain zeros. Dimensions lower than 1 are not possible.";
@@ -86,7 +86,7 @@ public class NDAConstructor {
     }
 
     public void tryConstructing( int[] shape, DataType<?> dataType, Object data ) {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
+        int size = NDConfiguration.Utility.sizeOfShape( shape );
         if ( data instanceof List<?> ) {
             List<?> range = (List<?>) data;
             data = range.toArray();// TODO: This is probably wrong!
@@ -181,7 +181,7 @@ public class NDAConstructor {
     }
 
     private void _constructAll( int[] shape, Class<?> typeClass ) {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
+        int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( typeClass ) );
         configureFromNewShape( shape, size > 1, true );
     }
@@ -220,7 +220,7 @@ public class NDAConstructor {
 
     public void constructForDoubles( int[] shape, double[] value )
     {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
+        int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( F64.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
@@ -232,7 +232,7 @@ public class NDAConstructor {
 
     public void constructForFloats( int[] shape, float[] value )
     {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
+        int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( F32.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
@@ -243,7 +243,7 @@ public class NDAConstructor {
 
     public void constructForInts( int[] shape, int[] value )
     {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
+        int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( I32.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
@@ -254,7 +254,7 @@ public class NDAConstructor {
 
     public void constructForShorts( int[] shape, short[] value )
     {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
+        int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( I16.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
@@ -265,7 +265,7 @@ public class NDAConstructor {
 
     public void constructForBooleans( int[] shape, boolean[] value )
     {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
+        int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( Boolean.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
@@ -276,7 +276,7 @@ public class NDAConstructor {
 
     public void constructForBytes( int[] shape, byte[] value )
     {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
+        int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( I8.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
@@ -287,7 +287,7 @@ public class NDAConstructor {
 
     public void constructForLongs( int[] shape, long[] value )
     {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
+        int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( I64.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
@@ -298,7 +298,7 @@ public class NDAConstructor {
 
     public <V> void constructSeeded( Class<V> valueType, int[] shape, Object seed ) {
         _API.setType( DataType.of(valueType) );
-        int size = NDConfiguration.Utility.szeOfShp( shape );
+        int size = NDConfiguration.Utility.sizeOfShape( shape );
 
         if ( valueType == Double.class )
             _API.setData( DataConverter.Utility.seededDoubleArray( new double[size], seed.toString() ) );

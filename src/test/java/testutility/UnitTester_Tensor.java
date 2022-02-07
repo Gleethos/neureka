@@ -147,7 +147,7 @@ public class UnitTester_Tensor extends UnitTester
     ){
         printSessionStart("Test tensor indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
-        double[] rsltData = new double[NDConfiguration.Utility.szeOfShp(drnMxd)];
+        double[] rsltData = new double[NDConfiguration.Utility.sizeOfShape(drnMxd)];
         Neureka.get().backend().getOperation("x")
                 .getAlgorithm(Convolution.class)
                 .getImplementationFor( CPU.class )
@@ -194,7 +194,7 @@ public class UnitTester_Tensor extends UnitTester
     public int testTensBroadcast(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
-        double[] rsltData = new double[NDConfiguration.Utility.szeOfShp(drnMxd)];
+        double[] rsltData = new double[NDConfiguration.Utility.sizeOfShape(drnMxd)];
 
         Neureka.get().backend().getOperation("*")
                 .getAlgorithm(Broadcast.class)

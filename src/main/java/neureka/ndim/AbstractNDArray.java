@@ -168,7 +168,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      */
     protected C _setDataType( DataType<?> dataType )
     {
-        _guardSet("data type");
+        _guardSet( "data type" );
         if ( _data != null ) {
             String message = "Data type of tensor can only be set when data attribute is null!\n" +
                              "This is due to construction-consistency reasons.\n";
@@ -184,7 +184,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      */
     protected void _setData( Object data )
     {
-        _guardSet("data object");
+        _guardSet( "data object" );
         if ( _dataType == null ) {
             String message = "Trying to set data in a tensor which does not have a DataTyp instance.";
             _LOG.error( message );
@@ -207,9 +207,9 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         CPU.JVMExecutor executor = CPU.get().getExecutor();
         Object data = getData();
         if ( data instanceof double[] )
-            executor.threaded( ( (double[]) data ).length, (start, end) -> {
+            executor.threaded( ( (double[]) data ).length, ( start, end ) -> {
                 for (int i = start; i < end; i++)
-                    ((double[]) data)[i] = (double) initializer.init(i, _NDConf.indicesOfIndex(i));
+                    ( (double[]) data )[i] = (double) initializer.init(i, _NDConf.indicesOfIndex(i));
             });
         else if ( data instanceof float[] )
             executor.threaded( ( (float[]) data ).length, (start, end) -> {
@@ -293,7 +293,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     /**
      *  The internal implementation handling {@link #setIsVirtual(boolean)}.
      */
-    protected abstract void _setIsVirtual(boolean isVirtual);
+    protected abstract void _setIsVirtual( boolean isVirtual );
 
     /**
      *  The {@link AbstractNDArray} is in essence a precursor class to the {@link Tsr} which encapsulates
@@ -314,7 +314,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
                         @Override public void setData( Object o                ) { nda._setData(      o  ); }
                         @Override public void allocate( int size               ) { nda._allocate(   size ); }
                         @Override public Object getData()                        { return nda.getData();    }
-                        @Override public void setIsVirtual(  boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
+                        @Override public void setIsVirtual( boolean isVirtual )  { nda._setIsVirtual( isVirtual ); }
                     }
                 );
     }
@@ -328,7 +328,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  <br>
      */
-    protected void _virtualize() { _data = _dataType.virtualize(_data); }
+    protected void _virtualize() { _data = _dataType.virtualize( _data ); }
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. <br>
@@ -340,14 +340,15 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
      *  size of the nd-array type... <br>
      */
-    protected void _actualize() { _data = _dataType.actualize(_data, this.size() ); }
+    protected void _actualize() { _data = _dataType.actualize( _data, this.size() ); }
 
     protected Object _convertedDataOfType( Class<?> typeClass )
     {
         DataType<?> newDT = DataType.of( typeClass );
         if (
-                newDT.typeClassImplements( NumericType.class ) &&
-                        getDataType().typeClassImplements( NumericType.class )
+            newDT.typeClassImplements( NumericType.class )
+                    &&
+            getDataType().typeClassImplements( NumericType.class )
         ) {
             NumericType<?,Object, ?, Object> targetType  = (NumericType<?, Object,?, Object>) newDT.getTypeClassInstance();
             return targetType.readForeignDataFrom( iterator(), this.size() );
@@ -404,7 +405,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      * @param ndConfiguration The new NDConfiguration instance which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    protected C _setNDConf(NDConfiguration ndConfiguration )
+    protected C _setNDConf( NDConfiguration ndConfiguration )
     {
         _guardSet( "ND-Configuration" );
         if ( _NDConf != null && ndConfiguration != null ) {
@@ -446,15 +447,15 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         public static class Indexing
         {
             @Contract(pure = true)
-            public static void shpCheck( int[] newShp, Tsr<?> t ) {
-                if ( NDConfiguration.Utility.szeOfShp(newShp) != t.size() ) {
+            public static void shapeCheck( int[] newShp, Tsr<?> t ) {
+                if ( NDConfiguration.Utility.sizeOfShape( newShp ) != t.size() ) {
                     throw new IllegalArgumentException(
-                            "New shape does not match tensor size!" +
-                                    " (" +
-                                        Utility.Stringify.strConf(newShp) +
-                                        ((NDConfiguration.Utility.szeOfShp(newShp) < t.size()) ? "<" : ">") +
-                                        Utility.Stringify.strConf(t.getNDConf().shape()) + "" +
-                                    ")"
+                        "New shape does not match tensor size!" +
+                        " (" +
+                            Utility.Stringify.strConf( newShp ) +
+                            ((NDConfiguration.Utility.sizeOfShape( newShp ) < t.size()) ? "<" : ">") +
+                            Utility.Stringify.strConf(t.getNDConf().shape()) + "" +
+                        ")"
                     );
                 }
             }
@@ -479,25 +480,26 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
                 int[] rsA = new int[ newSize ];
                 int[] rsB = new int[ newSize ];
                 for( int i = 0; i <newSize; i++ ) {
-                    if (i<=lastIndexOfA) rsA[ i ] = i; else rsA[ i ] = -1;
-                    if (i>=lastIndexOfA) rsB[ i ] = i-lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
+                    if ( i <= lastIndexOfA ) rsA[ i ] = i; else rsA[ i ] = -1;
+                    if ( i >= lastIndexOfA ) rsB[ i ] = i - lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
                 }
                 return new int[][]{ rsA, rsB };
             }
 
             @Contract(pure = true)
             public static int[] shpOfCon( int[] shp1, int[] shp2 ) {
-                int[] shape = new int[(shp1.length + shp2.length) / 2];
-                for ( int i = 0; i < shp1.length && i < shp2.length; i++) shape[ i ] = Math.abs(shp1[ i ] - shp2[ i ]) + 1;
+                int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
+                for ( int i = 0; i < shp1.length && i < shp2.length; i++ )
+                    shape[ i ] = Math.abs( shp1[ i ] - shp2[ i ] ) + 1;
                 return shape;
             }
 
             @Contract(pure = true)
             public static int[] shpOfBrc( int[] shp1, int[] shp2 ) {
-                int[] shape = new int[(shp1.length + shp2.length) / 2];
+                int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
                 for ( int i = 0; i < shp1.length && i < shp2.length; i++ ) {
-                    shape[ i ] = Math.max(shp1[ i ], shp2[ i ]);
-                    if (Math.min(shp1[ i ], shp2[ i ])!=1&&Math.max(shp1[ i ], shp2[ i ])!=shape[ i ]) {
+                    shape[ i ] = Math.max( shp1[ i ], shp2[ i ] );
+                    if ( Math.min(shp1[ i ], shp2[ i ]) != 1 && Math.max( shp1[ i ], shp2[ i ] ) != shape[ i ] ) {
                         throw new IllegalStateException("Broadcast not possible. Shapes do not match!");
                     }
                 }
@@ -538,7 +540,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          * @param configuration The new NDConfiguration instance which ought to be set.
          * @return The final instance type of this class which enables method chaining.
          */
-        Unsafe<T> setNDConf(NDConfiguration configuration );
+        Unsafe<T> setNDConf( NDConfiguration configuration );
         /**
          *  This method is an inline operation which changes the underlying data of this tensor.
          *  It converts the data types of the elements of this tensor to the specified type!<br>
@@ -584,7 +586,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          * @param layout The layout of the data array (row or column major).
          * @return The final instance type of this class which enables method chaining.
          */
-        Unsafe<T> toLayout(NDConfiguration.Layout layout );
+        Unsafe<T> toLayout( NDConfiguration.Layout layout );
 
         /**
          *  This method is responsible for incrementing
@@ -596,7 +598,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
          * @param call The context object containing all relevant information that defines a call for tensor execution.
          * @return This very tensor instance. (factory pattern)
          */
-        Unsafe<T> incrementVersion(ExecutionCall<?> call );
+        Unsafe<T> incrementVersion( ExecutionCall<?> call );
 
         /**
          *  Intermediate tensors are internal non-user tensors which may be eligible

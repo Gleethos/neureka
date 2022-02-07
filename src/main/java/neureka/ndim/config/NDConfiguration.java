@@ -47,23 +47,23 @@ public interface NDConfiguration
 
         @Contract(pure = true)
         public int[] newTranslationFor( int[] shape ) {
-            int[] tln = new int[ shape.length ];
+            int[] translation = new int[ shape.length ];
             int prod = 1;
             if ( this == COLUMN_MAJOR ) {
-                for ( int i = 0; i < tln.length; i++ ) {
-                    tln[ i ] = prod;
+                for ( int i = 0; i < translation.length; i++ ) {
+                    translation[ i ] = prod;
                     prod *= shape[ i ];
                 }
             } else if ( this == ROW_MAJOR ) {
-                for (int i = tln.length - 1; i >= 0; i--) {
-                    tln[i] = prod;
+                for ( int i = translation.length - 1; i >= 0; i-- ) {
+                    translation[i] = prod;
                     prod *= shape[i];
                 }
             }
             else
                 throw new IllegalStateException("Unknown data layout!");
 
-            return tln;
+            return translation;
         }
 
         @Contract(pure = true)
@@ -236,21 +236,21 @@ public interface NDConfiguration
      */
     default boolean isSimple() {
         int[] simpleTranslation = this.getLayout().newTranslationFor( this.shape() );
-        return Arrays.equals(this.translation(), simpleTranslation)
+        return Arrays.equals( this.translation(), simpleTranslation )
                 &&
-               IntStream.range(0, this.rank()).allMatch( i -> this.spread(i) == 1 )
+               IntStream.range( 0, this.rank() ).allMatch( i -> this.spread(i) == 1 )
                 &&
-               Arrays.equals(this.indicesMap(), simpleTranslation )
+               Arrays.equals( this.indicesMap(), simpleTranslation )
                 &&
-               IntStream.range(0, this.rank()).allMatch( i -> this.offset(i) == 0 );
+               IntStream.range( 0, this.rank() ).allMatch( i -> this.offset(i) == 0 );
     }
 
     default IndexToIndexFunction getIndexToIndexAccessPattern() {
         NDConfiguration nda = this;
-        return (nda::indexOfIndex);
+        return nda::indexOfIndex;
     }
 
-    interface IndexToIndexFunction { int map(int i); }
+    interface IndexToIndexFunction { int map( int i ); }
 
     /**
      *  This utility class provides static methods which are helpful
@@ -260,15 +260,14 @@ public interface NDConfiguration
     class Utility
     {
         @Contract(pure = true)
-        public static int[] rearrange(int[] array, int[] ptr) {
-            int[] newShp = new int[ptr.length];
-            for ( int i = 0; i < ptr.length; i++ ) {
-                if (ptr[ i ] < 0) newShp[ i ] = Math.abs(ptr[ i ]);
-                else if (ptr[ i ] >= 0) newShp[ i ] = array[ptr[ i ]];
+        public static int[] rearrange( int[] array, int[] pointers ) {
+            int[] newShp = new int[ pointers.length ];
+            for ( int i = 0; i < pointers.length; i++ ) {
+                if ( pointers[ i ] < 0 ) newShp[ i ] = Math.abs( pointers[ i ] );
+                else if ( pointers[ i ] >= 0 ) newShp[ i ] = array[ pointers[ i ] ];
             }
             return newShp;
         }
-
 
         @Contract(pure = true)
         public static void increment( int[] indices, int[] shape ) {
@@ -292,12 +291,11 @@ public interface NDConfiguration
         }
 
         @Contract(pure = true)
-        public static int szeOfShp( int[] shape ) {
+        public static int sizeOfShape( int[] shape ) {
             int size = 1;
             for ( int i : shape ) size *= i;
             return size;
         }
-
 
     }
 

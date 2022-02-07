@@ -97,7 +97,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
     public Tsr<V> andSeed( Object seed ) {
         Class<V> type = (Class<V>) _dataType.getJVMTypeClass();
         Class<?> seedType = seed.getClass();
-        int size = NDConfiguration.Utility.szeOfShp( _shape );
+        int size = NDConfiguration.Utility.sizeOfShape( _shape );
         try {
             if (type == Double.class && seedType == Long.class)
                 return (Tsr<V>) Tsr.of(
