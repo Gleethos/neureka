@@ -108,8 +108,6 @@ import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 import neureka.fluent.building.states.WithShapeOrScalarOrVectorOnDevice;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.SmartSlicer;
-import neureka.fluent.slicing.states.AxisOrGet;
-import neureka.fluent.slicing.states.FromOrAt;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
@@ -124,7 +122,6 @@ import neureka.view.TsrStringSettings;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -354,9 +351,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         Class<V> typeClass = (Class<V>) Object.class;
         if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
         return Tsr.of(
-                        DataType.of(typeClass),
-                        shape.stream().mapToInt(Number::intValue).toArray(),
-                        value
+                    DataType.of(typeClass),
+                    shape.stream().mapToInt(Number::intValue).toArray(),
+                    value
                 );
     }
 
@@ -373,9 +370,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         Class<V> typeClass = (Class<V>) Object.class;
         if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
         return Tsr.of(
-                        DataType.of(typeClass),
-                        shape,
-                        value
+                    DataType.of(typeClass),
+                    shape,
+                    value
                 );
     }
 
@@ -401,12 +398,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
     public static <T> Tsr<T> of( Class<T> targetType, List<Object> conf ) {
-        boolean isDoubleMatrix = conf.stream()
-                .allMatch( e ->
-                        e instanceof List
-                                &&
-                                ((List<Object>) e).stream().noneMatch( v -> !(v instanceof Double) )
-                );
+        boolean isDoubleMatrix =
+                            conf.stream()
+                                .allMatch( e ->
+                                    e instanceof List
+                                            &&
+                                    ((List<Object>) e).stream().allMatch( v -> v instanceof Double )
+                                );
 
         if ( isDoubleMatrix )
             return new Tsr<>( conf );
