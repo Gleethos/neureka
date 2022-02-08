@@ -18,15 +18,15 @@ public class MemUtil {
     private MemUtil() {}
 
     public static void autoDelete( Tsr<?>... tensors ) {
-                       /*
-                    When we are purely in the JVM world, then the garbage
-                    collector will take care of freeing our memory,
-                    and we don't really have a saying in when something gets collected...
-                    However, this is different for native memory (for example the GPU memory)!
-                    In that case we can manually free up the data array of a tensor.
-                    The code below will delete intermediate tensors which are expected
-                    to be no longer used.
-                */
+        /*
+             When we are purely in the JVM world, then the garbage
+             collector will take care of freeing our memory,
+             and we don't really have a saying in when something gets collected...
+             However, this is different for native memory (for example the GPU memory)!
+             In that case we can manually free up the data array of a tensor.
+             The code below will delete intermediate tensors which are expected
+             to be no longer used.
+        */
         if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {
             for ( Tsr<?> t : tensors ) {
                 // Tensors flagged as 'intermediate' will automatically be deleted!
@@ -42,7 +42,7 @@ public class MemUtil {
     /**
      *  This method makes sure that the provided tensors do not get deleted!
      */
-    public static <T> T keep(Tsr<?>[] tensors, Supplier<T> during ) {
+    public static <T> T keep( Tsr<?>[] tensors, Supplier<T> during ) {
         List<Tsr<?>> doNotDelete = Arrays.stream(tensors).filter(Tsr::isIntermediate).collect(Collectors.toList());
         doNotDelete.forEach( t -> t.getUnsafe().setIsIntermediate( false ) );
         T result = during.get();

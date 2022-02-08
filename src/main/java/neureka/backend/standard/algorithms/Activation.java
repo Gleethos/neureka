@@ -4,6 +4,8 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.standard.algorithms.internal.Fun;
+import neureka.backend.standard.algorithms.internal.WithForward;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.args.Arg;
 import neureka.calculus.internal.CalcUtil;

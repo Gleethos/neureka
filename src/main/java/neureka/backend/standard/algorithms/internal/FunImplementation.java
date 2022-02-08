@@ -1,6 +1,7 @@
-package neureka.backend.standard.algorithms;
+package neureka.backend.standard.algorithms.internal;
 
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.standard.algorithms.Functions;
 import neureka.devices.host.CPU;
 
 public interface FunImplementation<F extends Fun> {

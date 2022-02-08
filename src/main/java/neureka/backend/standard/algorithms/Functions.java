@@ -2,6 +2,10 @@ package neureka.backend.standard.algorithms;
 
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.implementations.AbstractImplementationFor;
+import neureka.backend.standard.algorithms.internal.Fun;
+import neureka.backend.standard.algorithms.internal.FunArray;
+import neureka.backend.standard.algorithms.internal.FunImplementation;
+import neureka.backend.standard.algorithms.internal.FunPair;
 import neureka.devices.host.CPU;
 
 import java.util.ArrayList;

@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
+import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
@@ -95,7 +96,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                 NDIterator srcIdx = NDIterator.of(src);
                 t0Idx.set(t0_drn.indicesOfIndex(i));
                 srcIdx.set(src.indicesOfIndex(i));
-                while (i < end) // increment on drain accordingly:
+                while ( i < end ) // increment on drain accordingly:
                 {
                     // setInto _value in drn:
                     t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);

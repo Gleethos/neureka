@@ -67,16 +67,15 @@ public class CalcUtil
             final boolean isDoingAD,
             final RecursiveExecutor executor
     ) {
-        Tsr<?>[] inputs = call.getTensors();
+        Tsr<?>[]  inputs = call.getTensors();
         Device<?> device = call.getDevice();
         int j = call.getJ();
         assert call.getValOf( Arg.DerivIdx.class ) == -1;
 
-        Tsr<?>[] tensors;
-        if ( operation.isIndexer() )
-            tensors = new Tsr[ 1 + inputs.length ];
-        else
-            tensors = new Tsr[ 1 + nodes.length ];
+        Tsr<?>[] tensors =
+                    operation.isIndexer()
+                        ? new Tsr[ 1 + inputs.length ]
+                        :  new Tsr[ 1 + nodes.length ];
 
         if ( operation.isIndexer() )
             for ( int i = 1; i < tensors.length; i++ )
@@ -89,15 +88,17 @@ public class CalcUtil
                     operation.supportsAlgorithm(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-            tensors =  srcActivation(inputs, j, -1, 0, nodes);
+            tensors =  srcActivation( inputs, j, -1, 0, nodes );
             String asStr = operation.stringify(
-                    IntStream.range(0, nodes.length).mapToObj( i -> "I[" + i + "]" ).toArray(String[]::new)
-            );
+                                                IntStream.range( 0, nodes.length )
+                                                         .mapToObj( i -> "I[" + i + "]" )
+                                                         .toArray(String[]::new)
+                                            );
             Tsr<?>[] finalTensors = tensors;
-            Tsr<?> result = MemUtil.keep( tensors, ()-> new FunctionBuilder( Neureka.get().backend() ).build( asStr, isDoingAD ).execute(finalTensors) );
-            for ( int i = 1; i < tensors.length; i++ ) {
+            Tsr<?> result = MemUtil.keep( tensors, () -> new FunctionBuilder( Neureka.get().backend() ).build( asStr, isDoingAD ).execute(finalTensors) );
+            for ( int i = 1; i < tensors.length; i++ )
                 _deleteIfNotIn( inputs, tensors[ i ] );
-            }
+
             return result;
         }
         else
@@ -109,7 +110,7 @@ public class CalcUtil
                         .running( operation )
                         .on( device ),
                 executor
-        );
+            );
 
         if ( tensors[ 0 ] == null ) // TODO: Fix this for 'left_inline'!!!
             _LOG.debug("Executing operation '"+operation.getFunction()+"' did not yield a proper return value.");
@@ -131,7 +132,9 @@ public class CalcUtil
     private static int _indexOfFoundDerivative( Tsr<?>[] tensors )
     {
         boolean allVirtual = true;
-        for ( Tsr<?> t : tensors ) if ( t != null && !t.isVirtual() ) allVirtual = false;
+        for ( Tsr<?> t : tensors )
+            if ( t != null && !t.isVirtual() ) allVirtual = false;
+
         if ( allVirtual ) {
             int index = -1;
             for ( int i = 0; i < tensors.length; i++ ) {
@@ -171,17 +174,16 @@ public class CalcUtil
                 // first derive source!
                 // like so:
                 if ( operation.isIndexer() ) {
-                    for ( int i = 1; i < tensors.length; i++ ) {
+                    for ( int i = 1; i < tensors.length; i++ )
                         tensors[ i ] = nodes[ 0 ].executeDerive( inputs, d, i - 1 );
-                    }
-                } else {
-                    for ( int i = 1; i < tensors.length; i++ ) {
-                        tensors[ i ] =
-                                ( j >= 0 )
-                                        ? nodes[ i - 1 ].executeDerive( inputs, d, j )
-                                        : nodes[ i - 1 ].executeDerive( inputs, d );
-                    }
                 }
+                else
+                    for ( int i = 1; i < tensors.length; i++ )
+                        tensors[ i ] =
+                                    j >= 0
+                                        ? nodes[ i - 1 ].executeDerive( inputs, d, j )
+                                        : nodes[ i - 1 ].executeDerive( inputs, d    );
+
                 //...then add them all together! (is possible because of linearity...)
                 Tsr<?> inner;
                 if ( tensors.length > 2 ) {// Optimization: Finds index of "1.0" among otherwise all "0.0" virtual tensors!
@@ -203,22 +205,23 @@ public class CalcUtil
 
                 tensors[ 0 ] = null;
                 //...then activate (No differentiation!) the source like so:
-                if ( operation.isIndexer() ) { // Indexer pass an index j of course!
-                    for ( int i = 1; i < tensors.length; i++ ) {
+                if ( operation.isIndexer() ) // Indexer pass an index j of course!
+                    for ( int i = 1; i < tensors.length; i++ )
                         tensors[ i ] = nodes[ 0 ].execute( inputs, i - 1 ); // i - 1 := j
-                    }
-                } else {
-                    for ( int i = 1; i < tensors.length; i++ ) {
-                        tensors[ i ] = ( j >= 0 ) ? nodes[ i - 1 ].execute( inputs, j ) : nodes[ i - 1 ].execute( inputs );
-                    }
-                }
+                else
+                    for ( int i = 1; i < tensors.length; i++ )
+                        tensors[ i ] =
+                                j >= 0
+                                    ? nodes[ i - 1 ].execute( inputs, j )
+                                    : nodes[ i - 1 ].execute( inputs );
+
                 //...get derivative index within src list:
-                for ( int i = 0; i < nodes.length; i++ ) {
+                for ( int i = 0; i < nodes.length; i++ )
                     if ( nodes[ i ].dependsOn( d ) && !operation.isIndexer() ) {
                         d = i;
                         break;
                     }
-                }
+
                 // Use those tensors for the outer derivative:
                 CalcUtil.recursiveExecution(
                         ExecutionCall.of( tensors )
@@ -238,10 +241,10 @@ public class CalcUtil
                                     .on( device ),
                             null
                     );
-                    for ( int i = 1; i < tensors.length; i++ ) {
+                    for ( int i = 1; i < tensors.length; i++ )
                         _deleteIfNotIn( inputs, tensors[ i ] );
-                    }
-                } // done!
+                }
+                // done!
 
                 _delete( inner );
 
@@ -253,7 +256,7 @@ public class CalcUtil
         int d = call.getValOf( Arg.DerivIdx.class );
         Tsr<?> out = null;
         for ( int i = 0; i < nodes.length; i++ ) { // constants need to be figured out!
-            int di = ( nodes[ i ].dependsOn( d ) ) ? i : -1;
+            int di = ( nodes[ i ].dependsOn( d ) ? i : -1 );
             if ( di >= 0 ) {
                 if ( out == null ) out = actor.get();
                 else
@@ -271,9 +274,9 @@ public class CalcUtil
 
     private static void _deleteIfNotIn(Tsr<?>[] array, Tsr<?> tensor ) {
         if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {
-            for (int i = 1; i < array.length; i++) {
+            for ( int i = 1; i < array.length; i++ )
                 if (array[i] == tensor) return;
-            }
+
             if (!tensor.isDeleted()) tensor.getUnsafe().delete();
         }
     }
@@ -371,14 +374,15 @@ public class CalcUtil
                 }
 
                 rollbacks[ i ] = tensor -> {
-                    try {
-                        device.restore( tensor );
-                    } catch ( Exception e ) {
-                        e.printStackTrace();
-                    }
-                };
+                                        try {
+                                            device.restore( tensor );
+                                        } catch ( Exception e ) {
+                                            e.printStackTrace();
+                                        }
+                                    };
             }
-            else rollbacks[ i ] = t -> {};
+            else
+                rollbacks[ i ] = t -> {};
         }
         /*
             Below is the core lambda of recursive preprocessing
@@ -398,13 +402,14 @@ public class CalcUtil
                             .andArgs( Arg.DerivIdx.of(d) )
                             .running( type )
                             .on( device )
-            );
+                );
         }
         else return result;
 
-        for ( int i = 0; i < tensors.length; i++ ) {
-            if ( tensors[ i ] != null && !tensors[ i ].isUndefined() ) rollbacks[ i ].accept(tensors[ i ]);
-        }
+        for ( int i = 0; i < tensors.length; i++ )
+            if ( tensors[ i ] != null && !tensors[ i ].isUndefined() )
+                rollbacks[ i ].accept(tensors[ i ]);
+
         return tensors[ 0 ];
     }
 
@@ -424,12 +429,12 @@ public class CalcUtil
                 if ( !( src[ i - offset ] instanceof FunctionConstant ) ) {
                     if ( d < 0 ) // Not deriving this!
                         tensors[ i ] =
-                                ( j >= 0 )
+                                    j >= 0
                                         ? src[ i - offset ].execute( inputs, j )
                                         : src[ i - offset ].execute( inputs );
                     else // ...deriving at specified index...
                         tensors[ i ] =
-                                ( j >= 0 )
+                                    j >= 0
                                         ? src[ i - offset ].executeDerive( inputs, d, j )
                                         : src[ i - offset ].executeDerive( inputs, d );
 
@@ -437,16 +442,14 @@ public class CalcUtil
                     tempType  = ( tempType  == null ? tensors[ i ].getValueClass()     : tempType  );
                 }
             }
-            for ( int i = offset; i < tensors.length; i++ ) {
+            for ( int i = offset; i < tensors.length; i++ )
                 if ( tensors[ i ] == null )
                     tensors[ i ] =
-                            ( j < 0 )
+                                j < 0
                                     ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[ i - offset ]).value() ).getUnsafe().setIsIntermediate( true )
                                     : Tsr.of( tempType, tempShape, src[ i - offset ].call(new double[]{}, j) ).getUnsafe().setIsIntermediate( true );
-            }
             return tensors;
         });
-
     }
 
 

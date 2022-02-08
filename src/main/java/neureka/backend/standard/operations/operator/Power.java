@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.standard.algorithms.Fun;
+import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
@@ -13,7 +13,6 @@ import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.internal.RecursiveExecutor;
@@ -154,11 +153,11 @@ public class Power extends AbstractOperation
                 Operator.implementationForGPU( this.getFunction() )
                         .with( "output = pow(input1, input2);" )
                         .and(
-                                "if ( d == 0 ) {                                    \n" +
-                                        "    output = input2 * pow(input1, input2-1.0f);  \n" +
-                                        "} else {                                         \n" +
-                                        "    output = pow(input1, input2) * log(input1);  \n" +
-                                        "}"
+                            "if ( d == 0 ) {                                    \n" +
+                                    "    output = input2 * pow(input1, input2-1.0f);  \n" +
+                                    "} else {                                         \n" +
+                                    "    output = pow(input1, input2) * log(input1);  \n" +
+                                    "}"
                         )
             )
         );
@@ -217,11 +216,11 @@ public class Power extends AbstractOperation
                 Broadcast.implementationForGPU( this.getFunction() )
                         .with( "value += pow(src1, src2);" )
                         .and(
-                                "if ( d == 0 ) {\n" +
-                                        "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
-                                        "} else {\n" +
-                                        "    value += (pow(target, handle) * log(handle)) * drain;\n" +
-                                        "}"
+                            "if ( d == 0 ) {\n" +
+                            "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
+                            "} else {\n" +
+                            "    value += (pow(target, handle) * log(handle)) * drain;\n" +
+                            "}"
                         )
             )
         );
@@ -325,23 +324,23 @@ public class Power extends AbstractOperation
         String bAsStr = b.toString();
         String first = "";
         if (aDerivable) {
-            String aAsDeriv = a.getDerivative(derivationIndex).toString();
-            if ( !aAsDeriv.equals("0.0") ) {
+            String aAsDerivative = a.getDerivative(derivationIndex).toString();
+            if ( !aAsDerivative.equals("0.0") ) {
                 first = ("( "+ bAsStr +" * "+ aAsStr + " ^ (" + bAsStr + " - 1) )");
-                if (!aAsDeriv.equals("1.0")) first = aAsDeriv + " * " + first;
+                if (!aAsDerivative.equals("1.0")) first = aAsDerivative + " * " + first;
             }
         }
-        String bAsDeriv = "";
-        if (bDerivable) bAsDeriv = b.getDerivative(derivationIndex).toString();
-        if ( !bAsDeriv.isEmpty() && !bAsDeriv.equals("1.0") ) bAsDeriv += " * ";
-        else bAsDeriv = "";
+        String bAsDerivative = "";
+        if (bDerivable) bAsDerivative = b.getDerivative(derivationIndex).toString();
+        if ( !bAsDerivative.isEmpty() && !bAsDerivative.equals("1.0") ) bAsDerivative += " * ";
+        else bAsDerivative = "";
         String second = "";
         if ( bDerivable ) second = "(ln("+aAsStr+") * "+aAsStr+" ^ "+bAsStr+")";
         String result;
-        if ( !first.trim().isEmpty() && !second.trim().isEmpty() ) result = bAsDeriv+"("+first+" + "+second+")";
-        else if (!first.trim().isEmpty()) result = bAsDeriv + "("+first+")";
-        else if (!second.trim().isEmpty()) result = bAsDeriv + "(" +second + ")";
-        else result = bAsDeriv;
+        if ( !first.trim().isEmpty() && !second.trim().isEmpty() ) result = bAsDerivative+"("+first+" + "+second+")";
+        else if (!first.trim().isEmpty()) result = bAsDerivative + "("+first+")";
+        else if (!second.trim().isEmpty()) result = bAsDerivative + "(" +second + ")";
+        else result = bAsDerivative;
         return result;
     }
 

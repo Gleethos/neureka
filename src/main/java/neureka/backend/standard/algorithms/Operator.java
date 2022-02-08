@@ -4,6 +4,9 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.standard.algorithms.internal.Fun;
+import neureka.backend.standard.algorithms.internal.FunArray;
+import neureka.backend.standard.algorithms.internal.WithForward;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.internal.RecursiveExecutor;
@@ -55,7 +58,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         );
     }
 
-    public static WithForward<String> implementationForGPU( String postfix ) {
+    public static WithForward<String> implementationForGPU(String postfix ) {
         return
             forward ->
                 backward ->

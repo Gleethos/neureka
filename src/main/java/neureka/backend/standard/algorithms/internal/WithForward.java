@@ -1,4 +1,4 @@
-package neureka.backend.standard.algorithms;
+package neureka.backend.standard.algorithms.internal;
 
 public interface WithForward<F> {
 

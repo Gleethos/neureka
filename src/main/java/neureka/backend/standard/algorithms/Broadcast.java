@@ -5,6 +5,8 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
+import neureka.backend.standard.algorithms.internal.Fun;
+import neureka.backend.standard.algorithms.internal.WithForward;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.operations.other.Reshape;
 import neureka.calculus.args.Arg;
@@ -107,7 +109,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         );
     }
 
-    public static WithForward<String> implementationForGPU( String postfix ) {
+    public static WithForward<String> implementationForGPU(String postfix ) {
         return
             forward ->
                 backward ->

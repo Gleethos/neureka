@@ -2,11 +2,10 @@ package neureka.backend.standard.operations.function;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.standard.algorithms.Fun;
+import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
-import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.devices.Device;

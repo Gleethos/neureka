@@ -60,6 +60,7 @@ class Tensor_Exception_Spec extends Specification
         //    1 * Tsr._LOG.error( "Provided tensor is empty! Empty tensors cannot be injected." )
     }
 
+
     def 'Passing an invalid object into Tsr constructor causes descriptive exception.'()
     {
         when : 'A tensor is being instantiated with a nonsensical parameter.'

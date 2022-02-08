@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
  */
 public class MemValidator {
 
-    private final Tsr<?> _result;
+    private final Tsr<?>  _result;
     private final boolean _wronglyIntermediate;
     private final boolean _wronglyNonIntermediate;
 
@@ -49,7 +49,7 @@ public class MemValidator {
             First we check if the function executed successfully:
         */
         if ( result == null )
-            throw new IllegalStateException("Failed to execute function!");
+            throw new IllegalStateException( "Failed to execute function! Returned result was null." );
         /*
             After that we analyse the validity of the result
             with respect to memory safety!
@@ -57,18 +57,26 @@ public class MemValidator {
             First we check if the result tensor was created inside the function or not:
          */
         boolean resultIsInputGradient = Arrays.stream( tensors ).anyMatch( t -> t.getGradient() == result );
-        boolean resultIsInputMember = Arrays.stream( tensors ).anyMatch( t -> t == result );
+        boolean resultIsInputMember   = Arrays.stream( tensors ).anyMatch( t -> t == result );
         /*
             Then we check if this is valid with respect to the "isIntermediate" flag:
          */
         if ( resultIsInputMember || resultIsInputGradient ) {
-            int positionInInput;
-            if ( resultIsInputGradient )
-                positionInInput = IntStream.range(0, inputs.length).filter(i -> inputs[i].getGradient() == result).findFirst().getAsInt();
-            else
-                positionInInput = IntStream.range(0, inputs.length).filter(i -> inputs[i] == result).findFirst().getAsInt();
+            int positionInInput =
+                    resultIsInputGradient
+                        ? IntStream.range( 0, inputs.length )
+                                   .filter( i -> inputs[i].getGradient() == result)
+                                   .findFirst()
+                                   .getAsInt()
+                        : IntStream.range( 0, inputs.length )
+                                   .filter( i -> inputs[i] == result)
+                                   .findFirst()
+                                   .getAsInt();
 
-            boolean resultWasIntermediate = (resultIsInputGradient ? gradIntermediates[positionInInput] : areIntermediates[positionInInput]);
+            boolean resultWasIntermediate =
+                            resultIsInputGradient
+                                ? gradIntermediates[positionInInput]
+                                : areIntermediates[positionInInput];
 
             _wronglyIntermediate = result.isIntermediate() && !resultWasIntermediate;
             _wronglyNonIntermediate = false;

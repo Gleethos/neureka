@@ -1,4 +1,4 @@
-package neureka.backend.standard.algorithms;
+package neureka.backend.standard.algorithms.internal;
 
 public class FunPair<T extends Fun> implements FunArray<T> {
 

@@ -1,4 +1,4 @@
-package neureka.backend.standard.algorithms;
+package neureka.backend.standard.algorithms.internal;
 
 import neureka.backend.standard.implementations.CLImplementation;
 

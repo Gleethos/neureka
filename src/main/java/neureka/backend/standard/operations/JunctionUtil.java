@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 public class JunctionUtil
 {
-
     private static final Logger _LOG = LoggerFactory.getLogger( JunctionUtil.class );
 
     @Contract( pure = true )
@@ -60,7 +59,7 @@ public class JunctionUtil
             } else if ( call.getOperation().getOperator().equals("x"+ ((char) 187)) ) {
                 call.mutateTensors( 2, 1, 0 );
             }
-            return alternative;
+            return null;
         }
     }
 
@@ -114,7 +113,6 @@ public class JunctionUtil
         Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
-        Operation type = call.getOperation();
 
         Tsr<?> alternative = null;
         if ( tensors.length > 3 )
@@ -177,7 +175,8 @@ public class JunctionUtil
                 b.getUnsafe().delete();
             }
             return alternative;
-        } else
+        }
+        else
             return alternative;
     }
 
