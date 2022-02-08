@@ -77,7 +77,8 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
                                 int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
                                 // Drain tensor needs to be 'actual'! :
                                 if (!call.getTsrOfType( Number.class, offset + 1).isVirtual()) call.getTsrOfType( Number.class, offset).setIsVirtual( false );
-                                call.getDevice().getKernel(call)
+                                call.getDevice()
+                                        .getKernel(call)
                                         .passAllOf( call.getTsrOfType( Number.class, offset ) )
                                         .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
                                         .pass( call.getTsrOfType( Number.class, 0 ).rank() )
@@ -110,7 +111,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
         Class<?> typeClass = t0_drn.getValueClass();
         Class<?> rightTypeClass = t1_src.getValueClass();
 
-        boolean noSlices = !t0_drn.getNDConf().isSlice() && !t1_src.getNDConf().isSlice();
+        boolean isSimple = t0_drn.getNDConf().isSimple() && t1_src.getNDConf().isSimple();
 
         int d = call.getDerivativeIndex();
 
@@ -142,7 +143,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
             else
             {
                 double[] t1_value = t1_src.getDataAs(double[].class);
-                if ( noSlices )
+                if ( isSimple )
                     workload = (start, end) -> {
                         for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);
                     };
@@ -169,7 +170,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
             assert fun != null;
             float[] t0_value = (float[]) t0_drn.getData();
             float[] t1_value = t1_src.getDataAs(float[].class);
-            if ( noSlices )
+            if ( isSimple )
                 workload = (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);
                 };
@@ -195,7 +196,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
             assert fun != null;
             int[] t0_value = (int[]) t0_drn.getData();
             int[] t1_value = t1_src.getDataAs(int[].class);
-            if ( noSlices )
+            if ( isSimple )
                 workload = (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);
                 };

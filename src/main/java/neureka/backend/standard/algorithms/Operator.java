@@ -5,7 +5,6 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.calculus.args.Arg;
 import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.internal.RecursiveExecutor;
 import neureka.devices.Device;
@@ -107,7 +106,6 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         FunArray<Fun.F32F32ToF32> funF32 = pairs.get(Fun.F32F32ToF32.class);
         FunArray<Fun.I32I32ToI32> funI32 = pairs.get(Fun.I32I32ToI32.class);
         Class<?> typeClass = call.getTensors()[1].getValueClass();
-        Class<?> rightTypeClass = call.getTensors()[2].getValueClass();
 
         int d = call.getDerivativeIndex();
 
@@ -136,34 +134,41 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
     ) {
         t1_src.setIsVirtual( false );
         t2_src.setIsVirtual( false );
+        double[] t0_val = (double[]) t0_drn.getData();
         double[] t1_val = t1_src.getDataAs( double[].class );
         double[] t2_val = t2_src.getDataAs( double[].class );
 
+        assert t0_val != null;
         assert t1_val != null;
         assert t2_val != null;
 
+        boolean isSimple = t0_drn.getNDConf().isSimple() && t1_src.getNDConf().isSimple() && t2_src.getNDConf().isSimple();
+
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
-            return (start, end) ->
-                        ( (double[]) t0_drn.getData() )[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );
+            return (start, end) -> t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );
         } else {
-            double[] t0_value = t0_drn.getDataAs(double[].class);
-            return (i, end) -> {
-                NDIterator t0Idx = NDIterator.of(t0_drn);
-                NDIterator t1Idx = NDIterator.of(t1_src);
-                NDIterator t2Idx = NDIterator.of(t2_src);
-                t0Idx.set(t0_drn.indicesOfIndex(i));
-                t1Idx.set(t1_src.indicesOfIndex(i));
-                t2Idx.set(t2_src.indicesOfIndex(i));
-                while ( i < end ) {//increment on drain accordingly:
-                    //setInto _value in drn:
-                    t0_value[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);
-                    //increment on drain:
-                    t0Idx.increment();
-                    t1Idx.increment();
-                    t2Idx.increment();
-                    i++;
-                }
-            };
+            if ( isSimple )
+                return  (start, end) -> {
+                    for ( int i = start; i < end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);
+                };
+            else
+                return (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of(t0_drn);
+                    NDIterator t1Idx = NDIterator.of(t1_src);
+                    NDIterator t2Idx = NDIterator.of(t2_src);
+                    t0Idx.set(t0_drn.indicesOfIndex(i));
+                    t1Idx.set(t1_src.indicesOfIndex(i));
+                    t2Idx.set(t2_src.indicesOfIndex(i));
+                    while ( i < end ) {//increment on drain accordingly:
+                        //setInto _value in drn:
+                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);
+                        //increment on drain:
+                        t0Idx.increment();
+                        t1Idx.increment();
+                        t2Idx.increment();
+                        i++;
+                    }
+                };
         }
     }
 
@@ -174,34 +179,42 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
     ) {
         t1_src.setIsVirtual( false );
         t2_src.setIsVirtual( false );
+
+        float[] t0_val = (float[]) t0_drn.getData();
         float[] t1_val = t1_src.getDataAs( float[].class );
         float[] t2_val = t2_src.getDataAs( float[].class );
 
+        assert t0_val != null;
         assert t1_val != null;
         assert t2_val != null;
 
+        boolean isSimple = t0_drn.getNDConf().isSimple() && t1_src.getNDConf().isSimple() && t2_src.getNDConf().isSimple();
+
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
-            return (start, end) ->
-                    ( (double[]) t0_drn.getData() )[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );
+            return (start, end) -> t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );
         } else {
-            float[] t0_value = t0_drn.getDataAs(float[].class);
-            return (i, end) -> {
-                NDIterator t0Idx = NDIterator.of(t0_drn);
-                NDIterator t1Idx = NDIterator.of(t1_src);
-                NDIterator t2Idx = NDIterator.of(t2_src);
-                t0Idx.set(t0_drn.indicesOfIndex(i));
-                t1Idx.set(t1_src.indicesOfIndex(i));
-                t2Idx.set(t2_src.indicesOfIndex(i));
-                while ( i < end ) {//increment on drain accordingly:
-                    //setInto _value in drn:
-                    t0_value[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);
-                    //increment on drain:
-                    t0Idx.increment();
-                    t1Idx.increment();
-                    t2Idx.increment();
-                    i++;
-                }
-            };
+            if ( isSimple )
+                return  (start, end) -> {
+                    for ( int i = start; i < end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);
+                };
+            else
+                return (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of(t0_drn);
+                    NDIterator t1Idx = NDIterator.of(t1_src);
+                    NDIterator t2Idx = NDIterator.of(t2_src);
+                    t0Idx.set(t0_drn.indicesOfIndex(i));
+                    t1Idx.set(t1_src.indicesOfIndex(i));
+                    t2Idx.set(t2_src.indicesOfIndex(i));
+                    while ( i < end ) {//increment on drain accordingly:
+                        //setInto _value in drn:
+                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);
+                        //increment on drain:
+                        t0Idx.increment();
+                        t1Idx.increment();
+                        t2Idx.increment();
+                        i++;
+                    }
+                };
         }
     }
 
@@ -213,34 +226,41 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
     ) {
         t1_src.setIsVirtual( false );
         t2_src.setIsVirtual( false );
+        int[] t0_val = (int[]) t0_drn.getData();
         int[] t1_val = t1_src.getDataAs( int[].class );
         int[] t2_val = t2_src.getDataAs( int[].class );
 
+        assert t0_val != null;
         assert t1_val != null;
         assert t2_val != null;
 
+        boolean isSimple = t0_drn.getNDConf().isSimple() && t1_src.getNDConf().isSimple() && t2_src.getNDConf().isSimple();
+
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
-            return (start, end) ->
-                    ( (int[]) t0_drn.getData() )[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );
+            return (start, end) -> t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );
         } else {
-            int[] t0_value = t0_drn.getDataAs(int[].class);
-            return (i, end) -> {
-                NDIterator t0Idx = NDIterator.of(t0_drn);
-                NDIterator t1Idx = NDIterator.of(t1_src);
-                NDIterator t2Idx = NDIterator.of(t2_src);
-                t0Idx.set(t0_drn.indicesOfIndex(i));
-                t1Idx.set(t1_src.indicesOfIndex(i));
-                t2Idx.set(t2_src.indicesOfIndex(i));
-                while ( i < end ) {//increment on drain accordingly:
-                    //setInto _value in drn:
-                    t0_value[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);
-                    //increment on drain:
-                    t0Idx.increment();
-                    t1Idx.increment();
-                    t2Idx.increment();
-                    i++;
-                }
-            };
+            if ( isSimple )
+                return  (start, end) -> {
+                    for ( int i = start; i < end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);
+                };
+            else
+                return (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of(t0_drn);
+                    NDIterator t1Idx = NDIterator.of(t1_src);
+                    NDIterator t2Idx = NDIterator.of(t2_src);
+                    t0Idx.set(t0_drn.indicesOfIndex(i));
+                    t1Idx.set(t1_src.indicesOfIndex(i));
+                    t2Idx.set(t2_src.indicesOfIndex(i));
+                    while ( i < end ) {//increment on drain accordingly:
+                        //setInto _value in drn:
+                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);
+                        //increment on drain:
+                        t0Idx.increment();
+                        t1Idx.increment();
+                        t2Idx.increment();
+                        i++;
+                    }
+                };
         }
     }
 

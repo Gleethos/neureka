@@ -91,19 +91,20 @@ public interface NDConfiguration
     }
 
     /**
-     *  A slice will have a unique kind of access pattern defined by the ND-Configuration.
+     *  A slice has a unique kind of access pattern which require
+     *  a the {@link neureka.ndim.iterators.NDIterator} for iterating over their data.
+     *  This is contrary to the {@link #isSimple()} flag which guarantees
+     *  a simple access pattern.
      *
      * @return The truth value determining if this ND-Configuration models a slice index pattern.
      */
     default boolean isSlice() {
-        boolean noOffsets = Arrays.stream(offset()).allMatch( o -> o == 0 );
-        boolean simpleSpread = Arrays.stream(spread()).allMatch( s -> s == 1 );
-        return noOffsets && simpleSpread;
+        return !this.isSimple();
     }
 
     /**
      *  This method returns the number of axis of
-     *  an nd-array / {@link neureka.Tsr} which is equal to the
+     *  a nd-array / {@link neureka.Tsr} which is equal to the
      *  length of the shape of an nd-array / {@link neureka.Tsr}.
      *
      * @return The number of axis of an nd-array.
@@ -229,8 +230,11 @@ public interface NDConfiguration
      *  if this configuration is the most basic form of configuration
      *  possible for the given shape represented by this instance.
      *  This type of configuration is the typical for freshly created
-     *  tensors which are neither slices or reshaped variants of an
+     *  tensors which are neither slices nor reshaped variants of an
      *  original tensor...
+     *  Therefore, such "simple tensors" do not need a fancy {@link neureka.ndim.iterators.NDIterator}
+     *  in order to perform operations on them.
+     *  One can simply iterate over their underlying data array.
      *
      * @return The truth value determining if this configuration is not modeling more complex indices like reshaped views or slices...
      */

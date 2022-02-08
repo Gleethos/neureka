@@ -9,6 +9,7 @@ import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Algorithm
 import neureka.backend.standard.algorithms.Activation
 import neureka.backend.standard.algorithms.Operator
+import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
 class Backend_Algorithm_Implementation_Spec extends Specification
@@ -79,11 +80,12 @@ class Backend_Algorithm_Implementation_Spec extends Specification
     ){
 
         given : 'Mock instances to simulate an ExecutionCall instance.'
-            def call = Mock( ExecutionCall )
-            def device = Mock( CPU )
-            def tensor = Mock( Tsr )
-            def hostExecutor = imp.getImplementationFor( CPU.class )
-            def nativeExecutor = Mock( CPU.JVMExecutor )
+            var call = Mock( ExecutionCall )
+            var device = Mock( CPU )
+            var tensor = Mock( Tsr )
+            var ndConf = Mock(NDConfiguration)
+            var hostExecutor = imp.getImplementationFor( CPU.class )
+            var nativeExecutor = Mock( CPU.JVMExecutor )
 
         when : 'Host-executor instance is being called...'
             hostExecutor.run( call )
@@ -98,6 +100,9 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             (1.._) * tensor.size() >> 0
             (0.._) * tensor.valueClass >> Double
             (0.._) * tensor.getDataAs(double[]) >> new double[0]
+            (1.._) * tensor.getData() >> new double[0]
+            (1.._) * tensor.getNDConf() >> ndConf
+            (1.._) * ndConf.isSimple() >> false
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
             imp << Neureka.get().backend()
