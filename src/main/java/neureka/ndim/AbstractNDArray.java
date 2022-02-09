@@ -78,9 +78,13 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *  which imply individual access patterns for the underlying {@link #_data}.
      */
     private NDConfiguration _NDConf;
-
+    /**
+     *  The data type instance wrapping and representing the actual value type class.
+     */
     private DataType<?> _dataType = DataType.of( Neureka.get().settings().dtype().getDefaultDataTypeClass() );
-
+    /**
+     *  The heart and sole of the nd-array / tensor: its underlying data array.
+     */
     private Object _data;
 
     /**
@@ -423,92 +427,6 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         return (C) this;
     }
 
-    //---
-
-    /**
-     *  Static utility methods for the NDArray.
-     */
-    public static class Utility
-    {
-        public static class Stringify
-        {
-            @Contract( pure = true )
-            public static String strConf( int[] conf ) {
-                StringBuilder str = new StringBuilder();
-                for ( int i = 0; i < conf.length; i++ )
-                    str.append(conf[ i ]).append((i != conf.length - 1) ? ", " : "");
-                return "[" + str + "]";
-            }
-        }
-
-        /**
-         * Indexing methods.
-         */
-        public static class Indexing
-        {
-            @Contract(pure = true)
-            public static void shapeCheck( int[] newShp, Tsr<?> t ) {
-                if ( NDConfiguration.Utility.sizeOfShape( newShp ) != t.size() ) {
-                    throw new IllegalArgumentException(
-                        "New shape does not match tensor size!" +
-                        " (" +
-                            Utility.Stringify.strConf( newShp ) +
-                            ((NDConfiguration.Utility.sizeOfShape( newShp ) < t.size()) ? "<" : ">") +
-                            Utility.Stringify.strConf(t.getNDConf().shape()) + "" +
-                        ")"
-                    );
-                }
-            }
-
-            @Contract(pure = true)
-            public static int[][] makeFit( int[] sA, int[] sB ) {
-                int lastIndexOfA = 0;
-                for ( int i = sA.length-1; i >= 0; i-- ) {
-                    if ( sA[ i ] != 1 ) {
-                        lastIndexOfA = i;
-                        break;
-                    }
-                }
-                int firstIndexOfB = 0;
-                for ( int i = 0; i < sB.length; i++ ) {
-                    if ( sB[ i ] != 1 ) {
-                        firstIndexOfB = i;
-                        break;
-                    }
-                }
-                int newSize = lastIndexOfA + sB.length - firstIndexOfB;
-                int[] rsA = new int[ newSize ];
-                int[] rsB = new int[ newSize ];
-                for( int i = 0; i <newSize; i++ ) {
-                    if ( i <= lastIndexOfA ) rsA[ i ] = i; else rsA[ i ] = -1;
-                    if ( i >= lastIndexOfA ) rsB[ i ] = i - lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
-                }
-                return new int[][]{ rsA, rsB };
-            }
-
-            @Contract(pure = true)
-            public static int[] shpOfCon( int[] shp1, int[] shp2 ) {
-                int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
-                for ( int i = 0; i < shp1.length && i < shp2.length; i++ )
-                    shape[ i ] = Math.abs( shp1[ i ] - shp2[ i ] ) + 1;
-                return shape;
-            }
-
-            @Contract(pure = true)
-            public static int[] shpOfBrc( int[] shp1, int[] shp2 ) {
-                int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
-                for ( int i = 0; i < shp1.length && i < shp2.length; i++ ) {
-                    shape[ i ] = Math.max( shp1[ i ], shp2[ i ] );
-                    if ( Math.min(shp1[ i ], shp2[ i ]) != 1 && Math.max( shp1[ i ], shp2[ i ] ) != shape[ i ] ) {
-                        throw new IllegalStateException("Broadcast not possible. Shapes do not match!");
-                    }
-                }
-                return shape;
-            }
-        }
-
-    }
-
     /**
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
@@ -626,5 +544,44 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
 
     }
 
+    /**
+     *  Static utility methods for the NDArray.
+     */
+    public static class Utility
+    {
+        @Contract( pure = true )
+        public static String shapeString( int[] conf ) {
+            StringBuilder str = new StringBuilder();
+            for ( int i = 0; i < conf.length; i++ )
+                str.append(conf[ i ]).append((i != conf.length - 1) ? ", " : "");
+            return "[" + str + "]";
+        }
+
+        @Contract(pure = true)
+        public static int[][] makeFit( int[] sA, int[] sB ) {
+            int lastIndexOfA = 0;
+            for ( int i = sA.length-1; i >= 0; i-- ) {
+                if ( sA[ i ] != 1 ) {
+                    lastIndexOfA = i;
+                    break;
+                }
+            }
+            int firstIndexOfB = 0;
+            for ( int i = 0; i < sB.length; i++ ) {
+                if ( sB[ i ] != 1 ) {
+                    firstIndexOfB = i;
+                    break;
+                }
+            }
+            int newSize = lastIndexOfA + sB.length - firstIndexOfB;
+            int[] rsA = new int[ newSize ];
+            int[] rsB = new int[ newSize ];
+            for( int i = 0; i <newSize; i++ ) {
+                if ( i <= lastIndexOfA ) rsA[ i ] = i; else rsA[ i ] = -1;
+                if ( i >= lastIndexOfA ) rsB[ i ] = i - lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
+            }
+            return new int[][]{ rsA, rsB };
+        }
+    }
 
 }

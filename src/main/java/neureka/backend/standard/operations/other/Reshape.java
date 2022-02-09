@@ -17,6 +17,7 @@ import neureka.devices.Device;
 import neureka.framing.Relation;
 import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.NDConfiguration;
+import org.jetbrains.annotations.Contract;
 
 public class Reshape extends AbstractOperation
 {
@@ -75,7 +76,7 @@ public class Reshape extends AbstractOperation
         Tsr<?> parent = tensor;
         tensor = newTsr ? tensor.shallowCopy().getUnsafe().setIsIntermediate( true ) : tensor;
         NDConfiguration newNDC = tensor.getNDConf().newReshaped( newForm );
-        AbstractNDArray.Utility.Indexing.shapeCheck( newNDC.shape(), tensor );
+        _shapeCheck( newNDC.shape(), tensor );
         tensor.getUnsafe().setNDConf( newNDC );
         if ( newTsr ) {
             Relation r = parent.get( Relation.class );
@@ -109,7 +110,7 @@ public class Reshape extends AbstractOperation
                 for ( int ii = handle; ii < largest; ii++ ) newReshape[ ii ] = ( postfix <= prefix ) ? ii - padding : -1;
 
                 Function f = Function.of(
-                        AbstractNDArray.Utility.Stringify.strConf( newReshape ) + ":(I[ 0 ])",
+                        AbstractNDArray.Utility.shapeString( newReshape ) + ":(I[ 0 ])",
                         doesAD
                 );
                 tensors[ i ] = f.execute( tensors[ i ] );
@@ -179,4 +180,20 @@ public class Reshape extends AbstractOperation
     {
             return src[ 0 ].call( inputs, j );
     }
+
+
+    @Contract(pure = true)
+    private static void _shapeCheck( int[] newShp, Tsr<?> t ) {
+        if ( NDConfiguration.Utility.sizeOfShape( newShp ) != t.size() ) {
+            throw new IllegalArgumentException(
+                    "New shape does not match tensor size!" +
+                            " (" +
+                            AbstractNDArray.Utility.shapeString( newShp ) +
+                            ((NDConfiguration.Utility.sizeOfShape( newShp ) < t.size()) ? "<" : ">") +
+                            AbstractNDArray.Utility.shapeString(t.getNDConf().shape()) + "" +
+                            ")"
+            );
+        }
+    }
+    
 }

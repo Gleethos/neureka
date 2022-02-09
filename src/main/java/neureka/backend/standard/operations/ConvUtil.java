@@ -11,6 +11,7 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
+import org.jetbrains.annotations.Contract;
 
 public class ConvUtil {
 
@@ -76,7 +77,7 @@ public class ConvUtil {
                                 (call.getValOf( Arg.DerivIdx.class ) < 0)
                                     ? Tsr.of(
                                             inputs[0].getValueClass(),
-                                            Tsr.Utility.Indexing.shpOfCon(tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape()),
+                                            _shpOfCon(tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape()),
                                             0
                                         )
                                         .getUnsafe()
@@ -115,7 +116,7 @@ public class ConvUtil {
                          Device<Number> device = call.getDeviceFor(Number.class);
                          if ( tensors[ 0 ] == null ) // Creating a new tensor:
                          {
-                             int[] shp = Tsr.Utility.Indexing.shpOfCon(tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape());
+                             int[] shp = _shpOfCon(tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape());
                              Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                              output.setIsVirtual( false );
                              try {
@@ -134,5 +135,13 @@ public class ConvUtil {
     public static Convolution getConv() {
         if ( conv == null ) conv = createDeconvolutionFor("x");
         return ConvUtil.conv;
+    }
+
+    @Contract(pure = true)
+    private static int[] _shpOfCon( int[] shp1, int[] shp2 ) {
+        int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
+        for ( int i = 0; i < shp1.length && i < shp2.length; i++ )
+            shape[ i ] = Math.abs( shp1[ i ] - shp2[ i ] ) + 1;
+        return shape;
     }
 }
