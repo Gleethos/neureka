@@ -398,7 +398,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
     public static <T> Tsr<T> of( Class<T> targetType, List<Object> conf ) {
-        boolean isDoubleMatrix =
+        boolean isDoubleMatrix = 
                             conf.stream()
                                 .allMatch( e ->
                                     e instanceof List
@@ -1934,7 +1934,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  with the provided double scalar added to all elements of this {@link Tsr}.
      *
      *  The shapes of this tensor is irrelevant as the provided value will
-     *  simply be broadcasted to any possible shape.
+     *  simply be broadcastet to any possible shape.
      *
      * @param value The right operand of the addition.
      * @return The sum between this instance as the left and the passed double as right operand.
@@ -2207,13 +2207,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> convDot(Tsr<V> b ) {
         Tsr<V> a = this;
-        int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit( a.getNDConf().shape(), b.getNDConf().shape() );
+        int[][] fitter = AbstractNDArray.Utility.makeFit( a.getNDConf().shape(), b.getNDConf().shape() );
         boolean doReshape = false;
         for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
         for ( int i = 0; i < fitter[ 1 ].length && !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;
         if ( doReshape ) {
-            a = Function.of( AbstractNDArray.Utility.Stringify.strConf( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
-            b = Function.of( AbstractNDArray.Utility.Stringify.strConf( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( b );
+            a = Function.of( AbstractNDArray.Utility.shapeString( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
+            b = Function.of( AbstractNDArray.Utility.shapeString( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( b );
         }
         return Neureka.get()
                         .backend()

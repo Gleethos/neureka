@@ -17,6 +17,7 @@ import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
+import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
@@ -128,7 +129,7 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     public int testTensorUtility_makeFit(int[] a, int[] b, int[][] expected){
-        int [][] result =  Tsr.Utility.Indexing.makeFit(a, b);
+        int [][] result =  Tsr.Utility.makeFit(a, b);
         printSessionStart("Testing Tsr.indexing: dimension _translation!");
         if ( result.length != 2 ) throw new AssertionError("Invalid result!");
         assertIsEqual(
@@ -146,7 +147,7 @@ public class UnitTester_Tensor extends UnitTester
             int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd
     ){
         printSessionStart("Test tensor indexing: tensMul_mxd");
-        int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
+        int[] drnMxd  = _shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[NDConfiguration.Utility.sizeOfShape(drnMxd)];
         Neureka.get().backend().getOperation("x")
                 .getAlgorithm(Convolution.class)
@@ -172,7 +173,7 @@ public class UnitTester_Tensor extends UnitTester
             double[] expctd, boolean first
     ){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
-        int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
+        int[] drnMxd  = _shpOfCon(frstShp, scndShp);
         Neureka.get().backend().getOperation(((char) 171)+"x")
                 .getAlgorithm(Convolution.class)
                 .getImplementationFor( CPU.class )
@@ -193,7 +194,7 @@ public class UnitTester_Tensor extends UnitTester
 
     public int testTensBroadcast(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
-        int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
+        int[] drnMxd  = _shpOfBrc(frstShp, scndShp);
         double[] rsltData = new double[NDConfiguration.Utility.sizeOfShape(drnMxd)];
 
         Neureka.get().backend().getOperation("*")
@@ -220,7 +221,7 @@ public class UnitTester_Tensor extends UnitTester
             double[] expctd, boolean first
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
-        int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
+        int[] drnMxd  = _shpOfBrc(frstShp, scndShp);
 
         Broadcast right = new Broadcast((executionCall, executor) -> null)
                                 .setCanPerformBackwardADFor( call -> true )
@@ -405,7 +406,24 @@ public class UnitTester_Tensor extends UnitTester
         return (printSessionEnd()>0)?1:0;
     }
 
+    @Contract(pure = true)
+    private static int[] _shpOfBrc( int[] shp1, int[] shp2 ) {
+        int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
+        for ( int i = 0; i < shp1.length && i < shp2.length; i++ ) {
+            shape[ i ] = Math.max( shp1[ i ], shp2[ i ] );
+            if ( Math.min(shp1[ i ], shp2[ i ]) != 1 && Math.max( shp1[ i ], shp2[ i ] ) != shape[ i ] ) {
+                throw new IllegalStateException("Broadcast not possible. Shapes do not match!");
+            }
+        }
+        return shape;
+    }
 
-
+    @Contract(pure = true)
+    private static int[] _shpOfCon( int[] shp1, int[] shp2 ) {
+        int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
+        for ( int i = 0; i < shp1.length && i < shp2.length; i++ )
+            shape[ i ] = Math.abs( shp1[ i ] - shp2[ i ] ) + 1;
+        return shape;
+    }
 
 }
