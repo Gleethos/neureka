@@ -1,23 +1,24 @@
 package neureka.backend.standard.operations.other;
 
-import neureka.Neureka;
-import neureka.Tsr;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
-import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
 import neureka.calculus.internal.CalcUtil;
 import neureka.devices.host.CPU;
+import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.iterators.NDIterator;
 
 import java.util.Arrays;
 
 public class Randomization extends AbstractOperation
 {
+    private static final long   MULTIPLIER = 0x5DEECE66DL;
+    private static final long   ADDEND = 0xBL;
+    private static final long   MASK = (1L << 48) - 1;
+    private static final double DOUBLE_UNIT = 0x1.0p-53; // 1.0 / (1L << 53)
+
     public Randomization()
     {
         super(
@@ -89,7 +90,13 @@ public class Randomization extends AbstractOperation
                                     }
                                 )
                     )
-            )
+                )
+                .setImplementationFor(
+                        OpenCLDevice.class,
+                        call -> {
+                            throw new IllegalStateException("Not yet implemented");
+                        }
+                )
         );
 
     }
@@ -148,10 +155,5 @@ public class Randomization extends AbstractOperation
         long nextSeed = (seed * MULTIPLIER + ADDEND) & MASK;
         return (int)(nextSeed >>> (48 - bits));
     }
-
-    private static final long MULTIPLIER = 0x5DEECE66DL;
-    private static final long ADDEND = 0xBL;
-    private static final long MASK = (1L << 48) - 1;
-    private static final double DOUBLE_UNIT = 0x1.0p-53; // 1.0 / (1L << 53)
 
 }
