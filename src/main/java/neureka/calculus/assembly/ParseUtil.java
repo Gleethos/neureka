@@ -29,7 +29,7 @@ public class ParseUtil
         String operation;
         for ( int i = exp.length()-1; i >= index; i--) {
             operation = exp.substring(index, i);
-            if (ParseUtil.isAnOperation(operation) || ParseUtil.isAnOperation(operation.toLowerCase())) {
+            if ( ParseUtil.isAnOperation(operation) || ParseUtil.isAnOperation(operation.toLowerCase()) ) {
                 return operation;
             }
         }

@@ -37,3 +37,4 @@ neureka.backend.standard.operations.other.DimTrim
 neureka.backend.standard.operations.other.Reshape
 neureka.backend.standard.operations.other.CopyLeft
 neureka.backend.standard.operations.other.CopyRight
+neureka.backend.standard.operations.other.Randomization

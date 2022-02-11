@@ -127,6 +127,23 @@ class Tensor_Operation_Integration_Spec extends Specification
             Float  | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
     }
 
+    def 'The "random" function populates tensors randomly.'() {
+
+        given :
+            var t = Tsr.of(Double).withShape(2,4).all(-42)
+        and :
+            var f = Function.of('random(I[0])')
+
+        when :
+            var r = f(t)
+
+        then :
+            r === t
+        and :
+            r.data == [-0.7074510162445843, 0.14808287426650948, -0.7888948683990806, -2.181740312874695, -1.1197168888693103, 1.2257972878274785, -0.47327720076512647, -0.1973446354969572]
+
+    }
+
     def 'New method "asFunction" of String added at runtime is callable by groovy and also works.'(
             Class<?> type, String code, String expected
     ) {

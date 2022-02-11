@@ -211,7 +211,7 @@ public class BackendContext implements Cloneable
      * @param identifier The operation identifier, aka: its name.
      * @return The requested Operation or null.
      */
-    public Operation getOperation(String identifier ) { return _lookup.getOrDefault( identifier, null ); }
+    public Operation getOperation( String identifier ) { return _lookup.getOrDefault( identifier, null ); }
 
     /**
      *  This method produces a shallow copy of this {@link BackendContext}.

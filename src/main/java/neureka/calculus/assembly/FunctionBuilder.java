@@ -236,13 +236,13 @@ public class FunctionBuilder
             return _build(component, doAD);
         }
         // If the component did not trigger constant/input/variable creation: -> Cleaning!
-        String cleaned = ParseUtil.cleanedHeadAndTail(component);
+        String cleaned = ParseUtil.cleanedHeadAndTail( component );
         String raw = component.replace( cleaned, "" );
         String assumed = ParseUtil.assumptionBasedOn( raw );
         if ( assumed.trim().equals("") ) component = cleaned;
         else component = assumed + cleaned;
         // Let's try again:
-        return build(component, doAD);
+        return build( component, doAD );
     }
 
     private Function _buildOperators(

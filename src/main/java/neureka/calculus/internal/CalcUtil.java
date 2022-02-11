@@ -75,7 +75,7 @@ public class CalcUtil
         Tsr<?>[] tensors =
                     operation.isIndexer()
                         ? new Tsr[ 1 + inputs.length ]
-                        :  new Tsr[ 1 + nodes.length ];
+                        : new Tsr[ 1 + nodes.length  ];
 
         if ( operation.isIndexer() )
             for ( int i = 1; i < tensors.length; i++ )

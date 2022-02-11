@@ -61,7 +61,12 @@ public abstract class Arg<T> implements Component<Args> {
 
     public static class MinRank extends Arg<Integer> {
         public static MinRank of( int arg ) { return new MinRank( arg ); }
-        private MinRank(int arg) { super(arg); }
+        private MinRank( int arg ) { super(arg); }
+    }
+
+    public static class Seed extends Arg<Long> {
+        public static Seed of( long arg ) { return new Seed( arg ); }
+        private Seed( long arg ) { super(arg); }
     }
 
     @Override
