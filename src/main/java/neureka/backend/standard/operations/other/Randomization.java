@@ -12,6 +12,7 @@ import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.iterators.NDIterator;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Randomization extends AbstractOperation
 {
@@ -100,7 +101,7 @@ public class Randomization extends AbstractOperation
                                         }
                                     }
                                 )
-                    )
+                        )
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
@@ -142,14 +143,14 @@ public class Randomization extends AbstractOperation
     }
 
     private void _gaussianFrom( long seed, double[] out ) {
-        seed = _pow( 11, Math.abs(seed) );
+
         // See Knuth, ACP, Section 3.4.1 Algorithm C.
         double v1, v2, s;
         do {
-            long seed1 = (seed  * MULTIPLIER + ADDEND) & MASK;
-            long seed2 = (seed1 * MULTIPLIER + ADDEND) & MASK;
-            long seed3 = (seed2 * MULTIPLIER + ADDEND) & MASK;
-            long seed4 = (seed3 * MULTIPLIER + ADDEND) & MASK;
+            long seed1 = _next(seed );
+            long seed2 = _next(seed1);
+            long seed3 = _next(seed2);
+            long seed4 = _next(seed3);
             v1 = 2 * _doubleFrom( seed1, seed2 ) - 1; // between -1 and 1
             v2 = 2 * _doubleFrom( seed3, seed4 ) - 1; // between -1 and 1
             s = v1 * v1 + v2 * v2;
@@ -161,6 +162,16 @@ public class Randomization extends AbstractOperation
 
         out[0] = v1 * multiplier;
         out[1] = v2 * multiplier;
+    }
+
+    private long _next( long currentSeed ) {
+        long oldseed, nextseed;
+        AtomicLong seed = new AtomicLong(currentSeed);
+        do {
+            oldseed = seed.get();
+            nextseed = (oldseed * MULTIPLIER + ADDEND) & MASK;
+        } while (!seed.compareAndSet(oldseed, nextseed));
+        return seed.get();
     }
 
     private static double _doubleFrom( long seed1, long seed2 ) {
