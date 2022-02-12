@@ -1,6 +1,9 @@
 package neureka.fluent.building;
 
+import neureka.Neureka;
 import neureka.Tsr;
+import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.common.utility.DataConverter;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
@@ -97,23 +100,14 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
     public Tsr<V> andSeed( Object seed ) {
         Class<V> type = (Class<V>) _dataType.getJVMTypeClass();
         Class<?> seedType = seed.getClass();
-        int size = NDConfiguration.Utility.sizeOfShape( _shape );
         try {
+            Function random = Neureka.get().backend().getFunction().random();
             if (type == Double.class && seedType == Long.class)
-                return (Tsr<V>) Tsr.of(
-                                        Double.class,
-                                        _shape,
-                                        DataConverter.Utility.newSeededDoubleArray((Long) seed, size)
-                                )
-                                .to(_device);
-
+                return (Tsr<V>) random.callWith(Arg.Seed.of((Long) seed))
+                                      .call(Tsr.of(Double.class, _shape, 0d).to(_device));
             else if (type == Float.class && seedType == Long.class)
-                return (Tsr<V>) Tsr.of(
-                                        Float.class,
-                                        _shape,
-                                        DataConverter.Utility.newSeededFloatArray((Long) seed, size)
-                                )
-                                .to(_device);
+                return (Tsr<V>) random.callWith(Arg.Seed.of((Long) seed))
+                                      .call(Tsr.of(Float.class, _shape, 0f).to(_device));
             else
                 return Tsr.of(type, _shape, seed.toString()).to(_device);
         } catch ( Exception e ) {

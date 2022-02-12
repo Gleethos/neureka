@@ -333,16 +333,16 @@ class Tensor_IO_Spec extends Specification
             Tsr x = Tsr.ofRandom(Double, shape)
 
         then : '...the newly created variable x is as expected!'
-            x.toString().contains("[4]:(-0.14690E0, -0.13858E0, -2.30775E0, 0.67281E0)")
+            x.toString().contains("[4]:(-1.04829E0, -0.40245E0, -0.04347E0, -1.4921E0)")
         when : 'Again using the "andSeed" method with a long seed...'
             x = Tsr.ofDoubles().withShape(shape).andSeed(106605040595L)
         then : '...the newly created variable x is as expected!'
-            x.toString().contains("[4]:(-0.36765E0, -0.45818E0, -1.6556E0, 0.73242E0)")
+            x.toString().contains("[4]:(0.22266E0, 0.65678E0, -0.83154E0, 0.68019E0)")
 
         when : 'Again using the "andSeed" method with a long seed and with float as data type...'
             x = Tsr.ofFloats().withShape(shape).andSeed(106605040595L)
         then : '...the newly created variable x is as expected!'
-            x.toString().contains("[4]:(-0.36765E0, -0.45818E0, -1.6556E0, 0.73242E0)")
+            x.toString().contains("[4]:(0.22266E0, 0.65678E0, -0.83154E0, 0.68019E0)")
     }
 
 
