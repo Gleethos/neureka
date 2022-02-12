@@ -1,5 +1,6 @@
 package neureka.backend.standard.operations.other;
 
+import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -82,53 +83,82 @@ public class Randomization extends AbstractOperation
     }
 
     private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall<?> call ) {
-        Class<?> type = call.getTensors()[0].getValueClass();
+        Tsr<?> tensor = call.getTensors()[0];
+        Class<?> type = tensor.getValueClass();
+        boolean isSimple = tensor.getNDConf().isSimple();
         long seed = call.getValOf(Arg.Seed.class);
-        if ( type == Double.class )
-            return ( i, end ) -> {
 
-                NDIterator t0Idx = NDIterator.of( call.getTsrOfType( Double.class, 0 ) );
-                t0Idx.set( call.getTsrOfType( Double.class, 0 ).indicesOfIndex( i ) );
-
-                double[] t0_value = call.getTsrOfType( Double.class, 0 ).getDataAs( double[].class );
-                double[] gaussian = { 0, 0 };
-
-                if ( i % 2 == 1 ) {
-                    gaussianFrom(seed + i, gaussian );
-                    t0_value[ t0Idx.getIndexAndIncrement() ] = gaussian[0];
-                    i++;
-                }
-
-                for ( ; i < end; i += 2 ) // increment on drain accordingly:
-                {
-                    gaussianFrom( seed + i, gaussian );
-                    t0_value[ t0Idx.getIndexAndIncrement() ] = gaussian[0];
-                    t0_value[ t0Idx.getIndexAndIncrement() ] = gaussian[1];
-                }
-            };
-        else
-            return ( i, end ) -> {
-
-                NDIterator t0Idx = NDIterator.of( call.getTsrOfType( Float.class, 0 ) );
-                t0Idx.set( call.getTsrOfType( Float.class, 0 ).indicesOfIndex( i ) );
-
-                float[] t0_value = call.getTsrOfType( Float.class, 0 ).getDataAs( float[].class );
-                double[] gaussian = { 0, 0 };
-
-                if ( i % 2 == 1 ) {
-                    gaussianFrom(seed + i, gaussian );
-                    t0_value[ t0Idx.getIndexAndIncrement() ] = (float) gaussian[0];
-                    i++;
-                }
-
-                for ( ; i < end; i += 2 ) // increment on drain accordingly:
-                {
-                    gaussianFrom( seed + i, gaussian );
-                    t0_value[ t0Idx.getIndexAndIncrement() ] = (float) gaussian[0];
-                    t0_value[ t0Idx.getIndexAndIncrement() ] = (float) gaussian[1];
-                }
-            };
-
+        if ( type == Double.class ) {
+            if ( isSimple )
+                return (i, end) -> {
+                    double[] t0_value = tensor.getDataAs(double[].class);
+                    double[] gaussian = {0, 0};
+                    if ( i % 2 == 1 ) {
+                        gaussianFrom(seed + i, gaussian);
+                        t0_value[i] = gaussian[0];
+                        i++;
+                    }
+                    for ( ; i < end; i += 2 ) // increment on drain accordingly:
+                    {
+                        gaussianFrom(seed + i, gaussian);
+                        t0_value[i + 0] = gaussian[0];
+                        t0_value[i + 1] = gaussian[1];
+                    }
+                };
+            else
+                return (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of(tensor);
+                    t0Idx.set(tensor.indicesOfIndex(i));
+                    double[] t0_value = tensor.getDataAs(double[].class);
+                    double[] gaussian = {0, 0};
+                    if ( i % 2 == 1 ) {
+                        gaussianFrom(seed + i, gaussian);
+                        t0_value[t0Idx.getIndexAndIncrement()] = gaussian[0];
+                        i++;
+                    }
+                    for ( ; i < end; i += 2 ) // increment on drain accordingly:
+                    {
+                        gaussianFrom(seed + i, gaussian);
+                        t0_value[t0Idx.getIndexAndIncrement()] = gaussian[0];
+                        t0_value[t0Idx.getIndexAndIncrement()] = gaussian[1];
+                    }
+                };
+        } else {
+            if ( isSimple )
+                return (i, end) -> {
+                    float[] t0_value = tensor.getDataAs(float[].class);
+                    double[] gaussian = {0, 0};
+                    if ( i % 2 == 1 ) {
+                        gaussianFrom(seed + i, gaussian);
+                        t0_value[i] = (float) gaussian[0];
+                        i++;
+                    }
+                    for ( ; i < end; i += 2 ) // increment on drain accordingly:
+                    {
+                        gaussianFrom(seed + i, gaussian);
+                        t0_value[i + 0] = (float) gaussian[0];
+                        t0_value[i + 1] = (float) gaussian[1];
+                    }
+                };
+            else
+                return (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of(tensor);
+                    t0Idx.set(tensor.indicesOfIndex(i));
+                    float[] t0_value = tensor.getDataAs(float[].class);
+                    double[] gaussian = {0, 0};
+                    if ( i % 2 == 1 ) {
+                        gaussianFrom(seed + i, gaussian);
+                        t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[0];
+                        i++;
+                    }
+                    for ( ; i < end; i += 2 ) // increment on drain accordingly:
+                    {
+                        gaussianFrom(seed + i, gaussian);
+                        t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[0];
+                        t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[1];
+                    }
+                };
+        }
     }
 
     @Override
