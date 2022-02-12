@@ -25,16 +25,20 @@ public class Measure {
         //System.out.println(seconds(_f32())+"s");
         //System.out.println(seconds(_f64())+"s");
 
-        int times = 150;
+        System.out.println(_averageSeconds(10, _random2())+"s");
+        System.out.println(_averageSeconds(10, _random1())+"s");
+        System.out.println("DONE!");
 
-        for ( int i = 0; i < times; i++ ) _map();
+    }
+
+    private static double _averageSeconds(int times, Runnable task)
+    {
+        for ( int i = 0; i < Math.min(times, 1_500); i++ ) task.run();
 
         double average = 0;
-        for ( int i = 0; i < times; i++ ) average += seconds(_map());
+        for ( int i = 0; i < times; i++ ) average += seconds(task);
         average /= times;
-
-        System.out.println(average+"s");
-
+        return average;
     }
 
     private static Runnable _f32() {
@@ -51,6 +55,20 @@ public class Measure {
         Tsr<Double> c = Tsr.ofDoubles().withShape(40, 300, 200).andSeed("I am a happy seed! :D");
         Function f = Function.of("relu(i0+i1*3)*i2");
         return  ()-> f.call(a, b, c);
+    }
+
+    private static Runnable _random1() {
+        return  ()-> {
+            Tsr.ofRandom(Double.class, 40, 300, 200);
+        };
+    }
+
+    private static Runnable _random2() {
+        Function f = Function.of("random(I[0])");
+        return  ()-> {
+            Tsr<Double> a = Tsr.ofDoubles().withShape(40, 300, 200).all(0d);
+            f.call(a);
+        };
     }
 
     private static Runnable _map() {
