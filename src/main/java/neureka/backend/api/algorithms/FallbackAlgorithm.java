@@ -167,8 +167,8 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                 case "-": m = _findMethod("minus", typeClass);break;
                 case "*":
                     m = _findMethod("times", typeClass);
-                    if ( m == null) m = _findMethod("multiply", typeClass);
-                    if ( m == null) m = _findMethod("mul", typeClass);
+                    if ( m == null ) m = _findMethod("multiply", typeClass);
+                    if ( m == null ) m = _findMethod("mul", typeClass);
                     break;
                 case "%": m = _findMethod("mod", typeClass);break;
             }

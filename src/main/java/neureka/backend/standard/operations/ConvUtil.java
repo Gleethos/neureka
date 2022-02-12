@@ -15,6 +15,10 @@ import org.jetbrains.annotations.Contract;
 
 public class ConvUtil {
 
+    /**
+     *  There will always only be a single convolution instance
+     *  shared among all 3 convolution operations.
+     */
     private static Convolution conv = null;
 
     public static Convolution createDeconvolutionFor( String operator ) {

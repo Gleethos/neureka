@@ -19,7 +19,7 @@ public class XConvLeft extends AbstractOperation {
                         .setIsDifferentiable( false       )
                         .setIsInline(         false       )
         );
-        setAlgorithm(Convolution.class, ConvUtil.getConv());
+        setAlgorithm( Convolution.class, ConvUtil.getConv() );
     }
 
     @Override

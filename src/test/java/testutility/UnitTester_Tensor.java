@@ -128,8 +128,8 @@ public class UnitTester_Tensor extends UnitTester
         return (printSessionEnd()>0)?1:0;
     }
 
-    public int testTensorUtility_makeFit(int[] a, int[] b, int[][] expected){
-        int [][] result =  Tsr.Utility.makeFit(a, b);
+    public int testTensorUtility_makeFit( int[] a, int[] b, int[][] expected ){
+        int [][] result =  Tsr.Utility.makeFit( a, b );
         printSessionStart("Testing Tsr.indexing: dimension _translation!");
         if ( result.length != 2 ) throw new AssertionError("Invalid result!");
         assertIsEqual(
