@@ -3,6 +3,7 @@ package it.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
+import neureka.calculus.args.Arg
 import neureka.calculus.assembly.FunctionBuilder
 import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
@@ -142,6 +143,13 @@ class Tensor_Operation_Integration_Spec extends Specification
         and :
             r.data == [-0.7074510162445843, 0.14808287426650948, -0.7888948683990806, -2.181740312874695, -1.1197168888693103, 1.2257972878274785, -0.47327720076512647, -0.1973446354969572]
 
+        when :
+            r = f.callWith(Arg.Seed.of(42)).call(t)
+
+        then :
+            r === t
+        and :
+            r.data == [1.5059094646263302, -0.1356951918671754, -1.683062055783479, -0.49937766123028976, 2.2040597220709994, 0.6085224990934023, 0.8730718925874055, 1.2440169994326327]
     }
 
     def 'New method "asFunction" of String added at runtime is callable by groovy and also works.'(

@@ -106,9 +106,11 @@ public class CalcUtil
 
         CalcUtil.recursiveExecution(
                 ExecutionCall.of( tensors )
-                        .andArgs( Arg.DerivIdx.of(-1) )
+                        .andArgs( call.allMetaArgs() )
                         .running( operation )
-                        .on( device ),
+                        .on( device )
+                        .setMetaArg( Arg.DerivIdx.of(-1) )
+                        .setMetaArg( Arg.VarIdx.of(-1) ),
                 executor
             );
 

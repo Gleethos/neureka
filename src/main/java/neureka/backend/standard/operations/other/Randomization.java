@@ -44,6 +44,8 @@ public class Randomization extends AbstractOperation
                     if ( call.getTensors()[0] == null )
                         call.getTensors()[0] = call.getTensors()[1];
 
+                    call.getTensors()[0].getUnsafe().incrementVersion(call);
+
                     int hash = Arrays.hashCode( call.getTensors()[0].getNDConf().shape() );
                     Arg.Seed seed = call.get(Arg.Seed.class);
                     if ( seed != null ) seed = Arg.Seed.of( seed.get() + hash );

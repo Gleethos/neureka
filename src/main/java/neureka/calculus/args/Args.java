@@ -13,9 +13,14 @@ public class Args extends AbstractComponentOwner<Args> {
         return args;
     }
 
-    public <V, T extends Arg<V>> V valOf(Class<T> argumentClass ) {
+    public <V, T extends Arg<V>> V valOf( Class<T> argumentClass ) {
         Arg<V> argument = get(argumentClass);
         if ( argument == null ) return null; else return argument.get();
+    }
+
+    public <V, T extends Arg<V>> V valOfOr( Class<T> argumentClass, V fallback ) {
+        Arg<V> argument = get(argumentClass);
+        if ( argument == null ) return fallback; else return argument.get();
     }
 
     @Override

@@ -27,7 +27,7 @@ public class MemValidator {
      * @param resultProvider The callback providing the result which ought to be validated.
      * @return The {@link MemValidator} which ought to validate the provided result.
      */
-    public static MemValidator forInputs(Tsr<?>[] inputs, Supplier<Tsr<?>> resultProvider ) {
+    public static MemValidator forInputs( Tsr<?>[] inputs, Supplier<Tsr<?>> resultProvider ) {
         return new MemValidator( inputs, resultProvider );
     }
 

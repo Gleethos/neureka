@@ -1531,14 +1531,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param call The context object containing all relevant information that defines a call for tensor execution.
      * @return This very tensor instance. (factory pattern)
      */
-    private Tsr<V> _incrementVersionBecauseOf(ExecutionCall<?> call ) {
+    private Tsr<V> _incrementVersionBecauseOf( ExecutionCall<?> call ) {
         if ( Neureka.get().settings().autograd().isPreventingInlineOperations() ) {
             _version++;
             GraphNode<?> node = get( GraphNode.class );
             if ( node != null && node.getPayloadReferenceVersion() != _version ) {
                 if ( node.usesAD() || node.isUsedAsDerivative() ) {
                     String error = "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\n" +
-                            "The following OperationType caused an internal version mismatch: '"+call.getOperation().getFunction()+"'";
+                                   "The following OperationType caused an internal version mismatch: '"+call.getOperation().getFunction()+"'";
                     _LOG.error( error );
                     throw new IllegalStateException( error );
                 }

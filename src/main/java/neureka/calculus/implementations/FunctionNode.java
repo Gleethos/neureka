@@ -96,10 +96,11 @@ public class FunctionNode implements Function
                 this,
                 () -> {
                     ExecutionCall<? extends Device<?>> call = ExecutionCall.of( tensors )
-                                                                            .andArgs(arguments.getAll(Arg.class))
+                                                                            .andArgs( arguments.getAll(Arg.class) )
                                                                             .running(_operation)
                                                                             .on( _deviceFor( tensors ) );
-                    int d = arguments.valOf(Arg.DerivIdx.class);
+
+                    int d = arguments.valOfOr( Arg.DerivIdx.class, -1 );
 
                     if ( _isFlat )
                     {
