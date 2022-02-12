@@ -5,6 +5,7 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.calculus.internal.CalcUtil;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -38,9 +39,17 @@ public class Randomization extends AbstractOperation
                 .setCanPerformForwardADFor( call -> false )
                 .setSupplyADAgentFor( getDefaultAlgorithm() )
                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
-                .setCallPreparation( call -> {
+                .setCallPreparation( call ->
+                {
                     if ( call.getTensors()[0] == null )
                         call.getTensors()[0] = call.getTensors()[1];
+
+                    int hash = Arrays.hashCode( call.getTensors()[0].getNDConf().shape() );
+                    Arg.Seed seed = call.get(Arg.Seed.class);
+                    if ( seed != null ) seed = Arg.Seed.of( seed.get() + hash );
+                    else seed = Arg.Seed.of( hash );
+
+                    call.setMetaArg(seed);
                     return call;
                 })
                 .buildFunAlgorithm()
@@ -60,7 +69,7 @@ public class Randomization extends AbstractOperation
                                         NDIterator t0Idx = NDIterator.of( call.getTsrOfType( Number.class, 0 ) );
                                         t0Idx.set( call.getTsrOfType( Number.class, 0 ).indicesOfIndex( i ) );
 
-                                        long seed = Arrays.hashCode( call.getTsrOfType( Number.class, 0 ).getNDConf().shape() );
+                                        long seed = call.getValOf(Arg.Seed.class);
 
                                         double[] t0_value = call.getTsrOfType( Number.class, 0 ).getDataAs( double[].class );
                                         double[] gaussian = { 0, 0 };
@@ -92,10 +101,10 @@ public class Randomization extends AbstractOperation
                     )
                 )
                 .setImplementationFor(
-                        OpenCLDevice.class,
-                        call -> {
-                            throw new IllegalStateException("Not yet implemented");
-                        }
+                    OpenCLDevice.class,
+                    call -> {
+                        throw new IllegalStateException("Not yet implemented");
+                    }
                 )
         );
 

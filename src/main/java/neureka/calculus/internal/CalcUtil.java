@@ -308,7 +308,7 @@ public class CalcUtil
                     );
                 }
                 call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of( call.getTensors() )
-                                                                .andArgs( Arg.DerivIdx.of( call.getValOf( Arg.DerivIdx.class ) ) )
+                                                                .andArgs( call.allMetaArgs() )
                                                                 .running( call.getOperation() )
                                                                 .on( call.getDevice() )
                                                                 .forDeviceType( call.getDevice().getClass() );
@@ -399,9 +399,10 @@ public class CalcUtil
         if ( result == null ) {
             finalExecution.accept(
                     ExecutionCall.of( call.getTensors() )
-                            .andArgs( Arg.DerivIdx.of(d) )
+                            .andArgs( call.allMetaArgs() )
                             .running( type )
                             .on( device )
+                            .setMetaArg( Arg.DerivIdx.of(d) )
                 );
         }
         else return result;

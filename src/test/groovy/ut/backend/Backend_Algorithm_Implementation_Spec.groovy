@@ -60,17 +60,18 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             def clExecutor = imp.getImplementationFor( OpenCLDevice.class )
 
         then : 'The variables containing the executor instances are not null.'
-        hostExecutor != null
-        clExecutor != null
+            hostExecutor != null
+            clExecutor != null
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
-        imp << Neureka.get().backend()
-                .getOperations()
-                .stream()
-                .filter(
-                        e ->
-                                        e.supports( Activation.class )
-                ).map( e -> e.getAlgorithm( Activation.class ) )
+            imp << Neureka.get()
+                    .backend()
+                    .getOperations()
+                    .stream()
+                    .filter(
+                            e ->
+                                            e.supports( Activation.class )
+                    ).map( e -> e.getAlgorithm( Activation.class ) )
 
     }
 
