@@ -1553,15 +1553,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  However, sometimes a tensor changes its identity, or rather the underlying
      *  data changes the wrapping tensor instance. <br>
      *  <br>
-     *  This change currently only happens when tensors are being instantiated by
-     *  certain constructors to which input tensors and a math expression is passed.
-     *  This triggers the creation of a {@link Function} instance and execution on the provided
-     *  input tensors. In that case the output tensor will be created somewhere
-     *  along the execution call stack, however the result is expected to be 
-     *  stored within the tensor whose constructor initialized all of this.
-     *  In that case this tensor will rip out the guts of the resulting output
-     *  tensor and stuff onto its own field variables.
-     * 
      * @param tensor The tensor whose identity should be stolen.
      * @return This very tensor instance in order to enable method chaining.
      */

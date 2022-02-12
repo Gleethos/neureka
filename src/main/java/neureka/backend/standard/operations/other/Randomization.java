@@ -49,8 +49,8 @@ public class Randomization extends AbstractOperation
 
                     int hash = Arrays.hashCode( call.getTensors()[0].getNDConf().shape() );
                     Arg.Seed seed = call.get(Arg.Seed.class);
-                    if ( seed != null ) seed = Arg.Seed.of( seed.get() + hash );
-                    else seed = Arg.Seed.of( hash );
+                    if ( seed != null ) seed = Arg.Seed.of( initialScramble(seed.get() + hash) );
+                    else seed = Arg.Seed.of( initialScramble(hash) );
 
                     call.setMetaArg(seed);
                     return call;
@@ -78,7 +78,7 @@ public class Randomization extends AbstractOperation
                                         double[] gaussian = { 0, 0 };
 
                                         if ( i % 2 == 1 ) {
-                                            _gaussianFrom(seed + i, gaussian );
+                                            gaussianFrom(seed + i, gaussian );
                                             // setting value in output:
                                             t0_value[ t0Idx.i() ] = gaussian[0];
                                             t0Idx.increment();
@@ -87,7 +87,7 @@ public class Randomization extends AbstractOperation
 
                                         for ( ; i < end; i += 2 ) // increment on drain accordingly:
                                         {
-                                            _gaussianFrom( seed + i, gaussian );
+                                            gaussianFrom( seed + i, gaussian );
                                             // setting value in output:
                                             t0_value[ t0Idx.i() ] = gaussian[0];
 
@@ -142,7 +142,12 @@ public class Randomization extends AbstractOperation
         return result;
     }
 
-    private void _gaussianFrom( long seed, double[] out ) {
+
+    public static long initialScramble(long seed) {
+        return (seed ^ MULTIPLIER) & MASK;
+    }
+
+    public static void gaussianFrom( long seed, double[] out ) {
 
         // See Knuth, ACP, Section 3.4.1 Algorithm C.
         double v1, v2, s;
@@ -164,14 +169,13 @@ public class Randomization extends AbstractOperation
         out[1] = v2 * multiplier;
     }
 
-    private long _next( long currentSeed ) {
+    private static long _next( long currentSeed ) {
         long oldseed, nextseed;
-        AtomicLong seed = new AtomicLong(currentSeed);
         do {
-            oldseed = seed.get();
+            oldseed = currentSeed;
             nextseed = (oldseed * MULTIPLIER + ADDEND) & MASK;
-        } while (!seed.compareAndSet(oldseed, nextseed));
-        return seed.get();
+        } while ( oldseed == (currentSeed = nextseed) );
+        return nextseed;
     }
 
     private static double _doubleFrom( long seed1, long seed2 ) {
