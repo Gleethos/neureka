@@ -129,12 +129,16 @@ class Tensor_Operation_Integration_Spec extends Specification
             Float  | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
     }
 
-    def 'The "random" function populates tensors randomly.'() {
+    def 'The "random" function populates tensors randomly.'(
+            Class<?> type
+    ) {
 
         given :
-            var t = Tsr.of(Double).withShape(2,4).all(-42)
+            var t = Tsr.of(type).withShape(2,4).all(-42)
         and :
             var f = Function.of('random(I[0])')
+        expect :
+            t.valueClass == type
 
         when :
             var r = f(t)
@@ -142,7 +146,7 @@ class Tensor_Operation_Integration_Spec extends Specification
         then :
             r === t
         and :
-            r.data == [1.0588074829449825, 1.4017553991887317, 1.2537495891884651, -1.3897221987461341, 1.0374786110013237, 0.7433159818693932, 1.1692946106505062, 1.397728906646054]
+            ( r.data as float[] ) == [1.0588075, 1.4017555, 1.2537496, -1.3897222, 1.0374786, 0.743316, 1.1692946, 1.3977289] as float[]
 
         when :
             r = f.callWith(Arg.Seed.of(42)).call(t)
@@ -150,23 +154,31 @@ class Tensor_Operation_Integration_Spec extends Specification
         then :
             r === t
         and :
-            r.data == [2.2639139286289724, -0.2763464310754003, 0.3719153742868813, -0.9768504740489802, 0.5154099159307729, 1.1608137295804097, 2.1905023977046336, -0.5449569795660217]
+            ( r.data as float[] ) == [2.2639139286289724, -0.2763464310754003, 0.3719153742868813, -0.9768504740489802, 0.5154099159307729, 1.1608137295804097, 2.1905023977046336, -0.5449569795660217] as float[]
+
+        where :
+            type << [Double, Float]
     }
 
-    def 'The values of a randomly populated tensor seems to adhere to a gaussian distribution.'() {
+    def 'The values of a randomly populated tensor seems to adhere to a gaussian distribution.'(
+            Class<?> type
+    ) {
 
         given :
-            var t = Tsr.of(Double).withShape(20, 40, 20).all(0)
+            var t = Tsr.of(type).withShape(20, 40, 20).all(0)
         and :
             var f = Function.of('random(I[0])')
 
         when :
             f.callWith(Arg.Seed.of(-73L)).call(t)
-            var stats = new Statistics((double[]) t.data)
+            var stats = new Statistics( t.data as double[] )
         then :
             -0.05d < stats.mean && stats.mean < 0.05d
         and :
             0.875d < stats.variance && stats.variance < 1.125d
+
+        where :
+            type << [Double, Float]
     }
 
     def 'New method "asFunction" of String added at runtime is callable by groovy and also works.'(

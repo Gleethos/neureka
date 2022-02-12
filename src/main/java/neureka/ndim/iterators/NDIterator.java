@@ -88,6 +88,12 @@ public interface NDIterator
 
     void increment();
 
+    default int getIndexAndIncrement() {
+        int i = i();
+        this.increment();
+        return i;
+    }
+
     void decrement();
 
     int i();

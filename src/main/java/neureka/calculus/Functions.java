@@ -26,6 +26,7 @@ public class Functions {
 
     private final Function _matMul;
     private final Function _transpose2D;
+    private final Function _random;
 
     public Functions( boolean doingAD ) {
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
@@ -48,6 +49,7 @@ public class Functions {
         _neg = Function.of( "(-1*I[ 0 ])",                     doingAD );
         _matMul = Function.of("I[0] @ I[1]",                   doingAD );
         _transpose2D = Function.of("[1, 0]:(I[0])",            doingAD );
+        _random = Function.of("random(I[0])",                  doingAD );
     }
 
     public Function getDimTrim() { return _dimTrim; }
@@ -89,6 +91,8 @@ public class Functions {
     public Function getMatMul() { return _matMul; }
 
     public Function getTranspose2D() { return _transpose2D; }
+
+    public Function getRandom() { return _random; }
 
     public Function dimTrim() {
         return _dimTrim;
@@ -165,6 +169,8 @@ public class Functions {
     public Function matMul() { return _matMul; }
 
     public Function transpose2D() { return _transpose2D; }
+
+    public Function random() { return _random; }
 
     @Override
     public String toString() {

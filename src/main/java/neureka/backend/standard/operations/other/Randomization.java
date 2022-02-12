@@ -1,5 +1,6 @@
 package neureka.backend.standard.operations.other;
 
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -12,7 +13,6 @@ import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.iterators.NDIterator;
 
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class Randomization extends AbstractOperation
 {
@@ -67,39 +67,7 @@ public class Randomization extends AbstractOperation
                                 .getExecutor()
                                 .threaded(
                                     call.getTsrOfType( Number.class, 0 ).size(),
-                                    ( i, end ) -> {
-
-                                        NDIterator t0Idx = NDIterator.of( call.getTsrOfType( Number.class, 0 ) );
-                                        t0Idx.set( call.getTsrOfType( Number.class, 0 ).indicesOfIndex( i ) );
-
-                                        long seed = call.getValOf(Arg.Seed.class);
-
-                                        double[] t0_value = call.getTsrOfType( Number.class, 0 ).getDataAs( double[].class );
-                                        double[] gaussian = { 0, 0 };
-
-                                        if ( i % 2 == 1 ) {
-                                            gaussianFrom(seed + i, gaussian );
-                                            // setting value in output:
-                                            t0_value[ t0Idx.i() ] = gaussian[0];
-                                            t0Idx.increment();
-                                            i++;
-                                        }
-
-                                        for ( ; i < end; i += 2 ) // increment on drain accordingly:
-                                        {
-                                            gaussianFrom( seed + i, gaussian );
-                                            // setting value in output:
-                                            t0_value[ t0Idx.i() ] = gaussian[0];
-
-                                            // increment on drain:
-                                            t0Idx.increment();
-
-                                            t0_value[ t0Idx.i() ] = gaussian[1];
-
-                                            // increment on drain:
-                                            t0Idx.increment();
-                                        }
-                                    }
+                                    _newWorkloadFor( call )
                                 )
                         )
                 )
@@ -110,6 +78,57 @@ public class Randomization extends AbstractOperation
                     }
                 )
         );
+
+    }
+
+    private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall<?> call ) {
+        Class<?> type = call.getTensors()[0].getValueClass();
+        long seed = call.getValOf(Arg.Seed.class);
+
+        if ( type == Double.class )
+            return ( i, end ) -> {
+
+                NDIterator t0Idx = NDIterator.of( call.getTsrOfType( Double.class, 0 ) );
+                t0Idx.set( call.getTsrOfType( Double.class, 0 ).indicesOfIndex( i ) );
+
+                double[] t0_value = call.getTsrOfType( Double.class, 0 ).getDataAs( double[].class );
+                double[] gaussian = { 0, 0 };
+
+                if ( i % 2 == 1 ) {
+                    gaussianFrom(seed + i, gaussian );
+                    t0_value[ t0Idx.getIndexAndIncrement() ] = gaussian[0];
+                    i++;
+                }
+
+                for ( ; i < end; i += 2 ) // increment on drain accordingly:
+                {
+                    gaussianFrom( seed + i, gaussian );
+                    t0_value[ t0Idx.getIndexAndIncrement() ] = gaussian[0];
+                    t0_value[ t0Idx.getIndexAndIncrement() ] = gaussian[1];
+                }
+            };
+        else
+            return ( i, end ) -> {
+
+                NDIterator t0Idx = NDIterator.of( call.getTsrOfType( Float.class, 0 ) );
+                t0Idx.set( call.getTsrOfType( Float.class, 0 ).indicesOfIndex( i ) );
+
+                float[] t0_value = call.getTsrOfType( Float.class, 0 ).getDataAs( float[].class );
+                double[] gaussian = { 0, 0 };
+
+                if ( i % 2 == 1 ) {
+                    gaussianFrom(seed + i, gaussian );
+                    t0_value[ t0Idx.getIndexAndIncrement() ] = (float) gaussian[0];
+                    i++;
+                }
+
+                for ( ; i < end; i += 2 ) // increment on drain accordingly:
+                {
+                    gaussianFrom( seed + i, gaussian );
+                    t0_value[ t0Idx.getIndexAndIncrement() ] = (float) gaussian[0];
+                    t0_value[ t0Idx.getIndexAndIncrement() ] = (float) gaussian[1];
+                }
+            };
 
     }
 

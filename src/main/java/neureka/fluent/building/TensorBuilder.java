@@ -101,19 +101,19 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
         try {
             if (type == Double.class && seedType == Long.class)
                 return (Tsr<V>) Tsr.of(
-                                Double.class,
-                                _shape,
-                                DataConverter.Utility.newSeededDoubleArray((Long) seed, size)
-                        )
-                        .to(_device);
+                                        Double.class,
+                                        _shape,
+                                        DataConverter.Utility.newSeededDoubleArray((Long) seed, size)
+                                )
+                                .to(_device);
 
             else if (type == Float.class && seedType == Long.class)
                 return (Tsr<V>) Tsr.of(
-                                Float.class,
-                                _shape,
-                                DataConverter.Utility.newSeededFloatArray((Long) seed, size)
-                        )
-                        .to(_device);
+                                        Float.class,
+                                        _shape,
+                                        DataConverter.Utility.newSeededFloatArray((Long) seed, size)
+                                )
+                                .to(_device);
             else
                 return Tsr.of(type, _shape, seed.toString()).to(_device);
         } catch ( Exception e ) {
