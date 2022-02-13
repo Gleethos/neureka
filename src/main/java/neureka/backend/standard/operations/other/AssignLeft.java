@@ -17,18 +17,18 @@ import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
-public class CopyLeft extends AbstractOperation
+public class AssignLeft extends AbstractOperation
 {
-    public CopyLeft() {
+    public AssignLeft() {
         super(
             new OperationBuilder()
-                    .setFunction(         "left_inline"    )
-                    .setOperator(         "<"        )
-                    .setArity(            -2         )
-                    .setIsOperator(       true       )
-                    .setIsIndexer(        false      )
-                    .setIsDifferentiable( false       )
-                    .setIsInline(         true      )
+                    .setFunction(         "left_inline"  )
+                    .setOperator(         "<"            )
+                    .setArity(            -2             )
+                    .setIsOperator(       true           )
+                    .setIsIndexer(        false          )
+                    .setIsDifferentiable( false          )
+                    .setIsInline(         true           )
         );
 
         Scalarization scalarization = new Scalarization()
@@ -65,26 +65,10 @@ public class CopyLeft extends AbstractOperation
             scalarization.setImplementationFor(
                 CPU.class,
                 Scalarization.implementationForCPU()
-                    .with(Fun.F64F64ToF64.triple(
-                        ( a, b ) -> b,
-                        null,
-                        null
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> b,
-                        null,
-                        null
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> b,
-                        null,
-                        null
-                    ))
-                    .with(Fun.ObjObjToObj.triple(
-                            ( a, b ) -> b,
-                            null, // Deriving at input 0
-                            null // deriving input 1
-                    ))
+                    .with(Fun.F64F64ToF64.of( ( a, b ) -> b ))
+                    .with(Fun.F32F32ToF32.of( ( a, b ) -> b ))
+                    .with(Fun.F32F32ToF32.of( ( a, b ) -> b ))
+                    .with(Fun.ObjObjToObj.of( ( a, b ) -> b ))
                     .get()
             )
             .setImplementationFor(

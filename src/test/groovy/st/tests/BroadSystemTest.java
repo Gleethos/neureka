@@ -80,10 +80,10 @@ public class BroadSystemTest
         Tsr<Double> tensor3 = Tsr.of(2);
         tester.testInjection(
                 new Tsr[]{tensor1, tensor2, tensor3},//ERROR here
-                "(Ig[0]<-I[1])->I[2]",
+                "I[2]<-(Ig[0]<-I[1])",
                 new String[][]{
                         {"(-4.0)"},// == I[2]
-                        {"(3.0)", "g:(-4.0)"},//tensor1
+                        {"(3.0)", "gdeleted"},//tensor1
                         {"(-4.0)"},//tensor2
                         {"(-4.0)"},//tensor3
                 });
@@ -91,7 +91,7 @@ public class BroadSystemTest
         tensor2 = Tsr.of(-4);
         tensor3 = Tsr.of(2);
         try {
-            Function.of("(Ig[0]<-I[1])->I[2]", true).call( tensor1, tensor2, tensor3 );
+            Function.of("I[2]<-(Ig[0]<-I[1])", true).call( tensor1, tensor2, tensor3 );
         } catch ( Exception e ) {
             tester.testContains(
                     e.getClass().getName()+" : "+e.getMessage(),
@@ -99,7 +99,7 @@ public class BroadSystemTest
                     "Non-detached functions performing inline operations will throw exceptions on active autograd computation graphs!"
             );
         }
-        Tsr<Double> result = Function.of("(Ig[0]<-I[1])->I[2]", false).call( tensor1, tensor2, tensor3  );
+        Tsr<Double> result = Function.of("I[2]<-(Ig[0]<-I[1])", false).call( tensor1, tensor2, tensor3  );
         tester.testContains(
                 result.toString(),
                 new String[]{"(-4.0)"},

@@ -42,6 +42,10 @@ public interface Fun {
         static FunArray<ObjObjToObj> triple( ObjObjToObj activation, ObjObjToObj derivation, ObjObjToObj derivation2 ) {
             return new Operator.FunTriple<>( activation, derivation, derivation2 );
         }
+
+        static FunArray<ObjObjToObj> of( ObjObjToObj activation ) {
+            return new Operator.FunTriple<>( activation, null, null );
+        }
     }
     //...
 
@@ -52,6 +56,10 @@ public interface Fun {
         static FunArray<F64F64ToF64> triple( F64F64ToF64 activation, F64F64ToF64 derivation1, F64F64ToF64 derivation2 ) {
             return new Operator.FunTriple<>(activation, derivation1, derivation2);
         }
+
+        static FunArray<F64F64ToF64> of( F64F64ToF64 activation ) {
+            return new Operator.FunTriple<>(activation, null, null);
+        }
     }
 
     interface F32F32ToF32 extends Fun {
@@ -59,6 +67,10 @@ public interface Fun {
 
         static FunArray<F32F32ToF32> triple( F32F32ToF32 activation, F32F32ToF32 derivation1, F32F32ToF32 derivation2 ) {
             return new Operator.FunTriple<>(activation, derivation1, derivation2);
+        }
+
+        static FunArray<F32F32ToF32> of( F32F32ToF32 activation ) {
+            return new Operator.FunTriple<>(activation, null, null);
         }
     }
 
