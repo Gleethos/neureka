@@ -367,7 +367,7 @@ public class CalcUtil
         Operation type = call.getOperation();
 
         Consumer<Tsr<Object>>[] rollbacks = new Consumer[ tensors.length ];
-        for ( int i = 0; i < tensors.length; i++ ) {
+        for ( int i = 0; i < tensors.length; i++ )
             if ( tensors[ i ] != null && !tensors[ i ].isOutsourced() ) {
                 try {
                     device.store( tensors[ i ] );
@@ -385,7 +385,6 @@ public class CalcUtil
             }
             else
                 rollbacks[ i ] = t -> {};
-        }
         /*
             Below is the core lambda of recursive preprocessing
             which is defined for each Algorithm individually :
@@ -398,7 +397,7 @@ public class CalcUtil
                                         _recursiveReductionOf( innerCall, finalExecution, executor )
                             );
 
-        if ( result == null ) {
+        if ( result == null )
             finalExecution.accept(
                     ExecutionCall.of( call.getTensors() )
                             .andArgs( call.allMetaArgs() )
@@ -406,8 +405,8 @@ public class CalcUtil
                             .on( device )
                             .setMetaArg( Arg.DerivIdx.of(d) )
                 );
-        }
-        else return result;
+        else
+            return result;
 
         for ( int i = 0; i < tensors.length; i++ )
             if ( tensors[ i ] != null && !tensors[ i ].isUndefined() )
