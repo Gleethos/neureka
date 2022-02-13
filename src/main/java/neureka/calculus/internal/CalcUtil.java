@@ -88,7 +88,7 @@ public class CalcUtil
                     operation.supportsAlgorithm(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-            tensors =  srcActivation( inputs, j, -1, 0, nodes );
+            tensors = srcActivation( inputs, j, -1, 0, nodes );
             String asStr = operation.stringify(
                                                 IntStream.range( 0, nodes.length )
                                                          .mapToObj( i -> "I[" + i + "]" )
@@ -106,11 +106,11 @@ public class CalcUtil
 
         CalcUtil.recursiveExecution(
                 ExecutionCall.of( tensors )
-                        .andArgs( call.allMetaArgs() )
-                        .running( operation )
-                        .on( device )
-                        .setMetaArg( Arg.DerivIdx.of(-1) )
-                        .setMetaArg( Arg.VarIdx.of(-1) ),
+                                .andArgs( call.allMetaArgs() )
+                                .running( operation )
+                                .on( device )
+                                .setMetaArg( Arg.DerivIdx.of(-1) )
+                                .setMetaArg( Arg.VarIdx.of(-1) ),
                 executor
             );
 
@@ -140,7 +140,7 @@ public class CalcUtil
         if ( allVirtual ) {
             int index = -1;
             for ( int i = 0; i < tensors.length; i++ ) {
-                double value = ( tensors[ i ] == null ) ? 0.0 : tensors[ i ].getValueAs( double[].class )[ 0 ];
+                double value = ( tensors[ i ] == null ? 0.0 : tensors[ i ].getValueAs( double[].class )[ 0 ] );
                 if ( value == 1.0 ) {
                     if ( index >= 0 ) return -1;
                     index = i;
@@ -159,7 +159,8 @@ public class CalcUtil
             final Operation operation,
             final RecursiveExecutor executor
     ) {
-        Supplier<Tsr<?>> actor = () -> {
+        Supplier<Tsr<?>> actor = () ->
+        {
             Tsr<?>[] inputs = call.getTensors();
             return MemUtil.keep( inputs, () -> {
                 Device<?> device = call.getDevice();
@@ -175,10 +176,9 @@ public class CalcUtil
                 // inner times outer means:
                 // first derive source!
                 // like so:
-                if ( operation.isIndexer() ) {
+                if ( operation.isIndexer() )
                     for ( int i = 1; i < tensors.length; i++ )
                         tensors[ i ] = nodes[ 0 ].executeDerive( inputs, d, i - 1 );
-                }
                 else
                     for ( int i = 1; i < tensors.length; i++ )
                         tensors[ i ] =
@@ -257,9 +257,11 @@ public class CalcUtil
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
         Tsr<?> out = null;
-        for ( int i = 0; i < nodes.length; i++ ) { // constants need to be figured out!
+        for ( int i = 0; i < nodes.length; i++ )
+        {
+            // constants need to be figured out!
             int di = ( nodes[ i ].dependsOn( d ) ? i : -1 );
-            if ( di >= 0 ) {
+            if ( di >= 0 )
                 if ( out == null ) out = actor.get();
                 else
                     CalcUtil.recursiveExecution(
@@ -269,24 +271,22 @@ public class CalcUtil
                                     .on( device ),
                             null
                     );
-            }
         }
         return out;
     }
 
-    private static void _deleteIfNotIn(Tsr<?>[] array, Tsr<?> tensor ) {
+    private static void _deleteIfNotIn( Tsr<?>[] array, Tsr<?> tensor ) {
         if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {
             for ( int i = 1; i < array.length; i++ )
-                if (array[i] == tensor) return;
+                if ( array[i] == tensor ) return;
 
-            if (!tensor.isDeleted()) tensor.getUnsafe().delete();
+            if ( !tensor.isDeleted() ) tensor.getUnsafe().delete();
         }
     }
 
     private static void _delete( Tsr<?> tensor ) {
-        if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {
-            if (!tensor.isDeleted()) tensor.getUnsafe().delete();
-        }
+        if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() )
+            if ( !tensor.isDeleted() ) tensor.getUnsafe().delete();
     }
 
     public static void recursiveExecution(
@@ -294,21 +294,22 @@ public class CalcUtil
             RecursiveExecutor executor
     ) {
         executionCall = executionCall.getAlgorithm().prepare( executionCall );
-        for ( Tsr<?> t : executionCall.getTensors() ) {
+
+        for ( Tsr<?> t : executionCall.getTensors() )
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +
                             "One or more tensor arguments within the given ExecutionCall instance is null."
             );
-        }
+
         _recursiveReductionOf(
             executionCall,
             call -> {
-                for ( Tsr<?> t : call.getTensors() ) {
+                for ( Tsr<?> t : call.getTensors() )
                     if ( t == null ) throw new IllegalArgumentException(
                             "Device arguments may not be null!\n" +
                                     "One or more tensor arguments within the given ExecutionCall instance is null."
                     );
-                }
+
                 call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of( call.getTensors() )
                                                                 .andArgs( call.allMetaArgs() )
                                                                 .running( call.getOperation() )
@@ -423,7 +424,8 @@ public class CalcUtil
     public static Tsr<?>[] srcActivation(
             Tsr<?>[] inputs, int j, int d, int offset, Function[] src
     ) {
-        return MemUtil.keep( inputs, () -> {
+        return MemUtil.keep( inputs, () ->
+        {
             int[] tempShape = null;
             Class<?> tempType = null;
             Tsr<?>[] tensors = new Tsr[ src.length + offset ];
