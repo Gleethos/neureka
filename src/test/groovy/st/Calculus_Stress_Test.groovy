@@ -150,14 +150,17 @@ class Calculus_Stress_Test extends Specification
             //Device.find('gpu') | [2, 3, 1] | [1, 3, 2] | 'i0/i1'   || "(2x3x2):[1.33333E0, 2.0, 3.0, -∞, -2.0, -1.0, 0.33333E0, 0.5, -0.0, NaN, 1.0, 0.5]"
     }
 
-    def 'Activation functions work across types on large 1D slices and non sliced 1D tensors.'(
+    def 'Activation functions work across types, on large prime sized 1D slices and non sliced 1D tensors.'(
             Class<?> type, String funExpression
     ) {
         given : 'We create a function based on the provided expression.'
             var func = Function.of(funExpression)
+        and : 'We use a large prime number to size our tensors in order to stress workload divisibility.'
+            var PRIME_SIZE_1 = 7907
+            var PRIME_SIZE_2 = 7919
         and : 'We create 2 tensors storing the same values, one sliced and the other a normal tensor.'
-            var t1 = Tsr.of(type).withShape(7907).andSeed("Tempeh")
-            var t2 = Tsr.of(type).withShape(7919).all(0)[9..7915]
+            var t1 = Tsr.of(type).withShape(PRIME_SIZE_1).andSeed("Tempeh")
+            var t2 = Tsr.of(type).withShape(PRIME_SIZE_2).all(0)[9..7915]
             t2[0..t2.size-1] = t1
 
         expect : 'The types of both tensors should match what was provided during instantiation.'
@@ -169,7 +172,7 @@ class Calculus_Stress_Test extends Specification
         when : 'We apply the function to both tensors...'
             var result1 = func(t1)
             var result2 = func(t2)
-        then :
+        then : 'First we ensure that both tensors have the correct value/element type.'
             result1.valueClass == type
             result2.valueClass == type
         and : 'The underlying data object should match the data array type as is defined by the data type!'
@@ -181,10 +184,14 @@ class Calculus_Stress_Test extends Specification
             Arrays.hashCode(result2.data) == expected[1]
 
         where :
-            type   |  funExpression  || expected
+            type   |  funExpression      || expected
 
-            Double | 'random(i0)'    || [-2059799883, 276852681]
-            Float  | 'random(i0)'    || [-2100773274, -590726536]
+            Double | 'gaus(i0)*100 % i0' || [-669955549, -669955549]
+            Float  | 'gaus(i0)*100 % i0' || [-1410818458, -1410818458]
+            Integer| 'gaus(i0)*100 % i0' || [566202463, 566202463]
+
+            Double | 'random(i0)'        || [-2059799883, 276852681]
+            Float  | 'random(i0)'        || [-2100773274, -590726536]
     }
 
 
