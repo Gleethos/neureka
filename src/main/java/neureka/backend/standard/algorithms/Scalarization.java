@@ -68,7 +68,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                     call.getDevice()
                         .getExecutor()
                         .threaded(
-                            call.getTensors()[ 0 ].size(),
+                            call.tensor( 0 ).size(),
                             _workloadFor( call, pairs )
                         )
         );
@@ -79,10 +79,10 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
         Functions<Fun> functions
     ) {
         int offset = ( call.getTensors().length == 3 ? 1 : 0 );
-        Tsr<?> t0_drn = call.getTensors()[0];
+        Tsr<?> t0_drn = call.tensor( 0 );
         Tsr<?> src    = call.getTensors()[offset];
 
-        Class<?> typeClass = call.getTensors()[1].getValueClass();
+        Class<?> typeClass = call.tensor( 1 ).getValueClass();
 
         CPU.RangeWorkload workload = null;
 

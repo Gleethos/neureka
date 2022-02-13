@@ -49,9 +49,16 @@ public class Call<D> {
     public D getDevice() { return _device; }
 
     /**
-     * @return The {@link Tsr} parameters of this {@link Call} fo execution.
+     * @return The {@link Tsr} parameters of this {@link Call} for execution.
      */
     public Tsr<?>[] getTensors() { return _tensors; }
+
+    /**
+     * @return The {@code i}'th {@link Tsr} parameter of this {@link Call} for execution.
+     */
+    public Tsr<?> tensor( int i ) {
+        return getTensors()[ i ];
+    }
 
     public void mutateTensors( int... indices ) {
         Tsr<?>[] tensors = _tensors.clone();

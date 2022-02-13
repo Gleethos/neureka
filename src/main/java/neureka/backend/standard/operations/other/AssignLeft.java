@@ -131,7 +131,7 @@ public class AssignLeft extends AbstractOperation
                         .withArity(2)
                         .andImplementation(
                             call -> {
-                                call.getTensors()[ 0 ].setIsVirtual( false );
+                                call.tensor( 0 ).setIsVirtual( false );
                                 Neureka.get().backend().getOperation("idy")
                                         .getAlgorithm( Activation.class )
                                         .getImplementationFor( CPU.class )

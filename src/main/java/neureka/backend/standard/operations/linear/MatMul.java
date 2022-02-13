@@ -140,9 +140,9 @@ public class MatMul extends AbstractOperation
                                 "}                                                                    \n"
                         )
                         .lambda( call -> {
-                            int M = call.getTensors()[1].shape(0);
+                            int M = call.tensor( 1 ).shape(0);
                             int N = call.getTensors()[2].shape(1);
-                            int K = call.getTensors()[1].shape(1);
+                            int K = call.tensor( 1 ).shape(1);
                             call.getDevice()
                                 .getKernel(call)
                                 .pass(M) // M

@@ -24,7 +24,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         super("operator");
         setIsSuitableFor(
             call -> {
-                List<Integer> shape = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[ 1 ].shape() : call.getTensors()[ 0 ].shape();
+                List<Integer> shape = ( call.tensor( 0 ) == null ) ? call.getTensors()[ 1 ].shape() : call.tensor( 0 ).shape();
                 int size = shape.stream().reduce(1, ( x, y ) -> x * y );
                 return call.validate()
                         .allNotNull( t -> t.size() == size && shape.equals( t.shape() ) )
@@ -108,20 +108,20 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         FunArray<Fun.F64F64ToF64> funF64 = pairs.get(Fun.F64F64ToF64.class);
         FunArray<Fun.F32F32ToF32> funF32 = pairs.get(Fun.F32F32ToF32.class);
         FunArray<Fun.I32I32ToI32> funI32 = pairs.get(Fun.I32I32ToI32.class);
-        Class<?> typeClass = call.getTensors()[1].getValueClass();
+        Class<?> typeClass = call.tensor( 1 ).getValueClass();
 
         int d = call.getDerivativeIndex();
 
         CPU.RangeWorkload workload = null;
 
         if ( typeClass == Double.class )
-            workload = _newWorkloadF64(  call.getTensors()[0], call.getTensors()[1], call.getTensors()[2], funF64.get(d) );
+            workload = _newWorkloadF64(  call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 ), funF64.get(d) );
 
         if ( typeClass == Float.class )
-            workload = _newWorkloadF32(  call.getTensors()[0], call.getTensors()[1], call.getTensors()[2], funF32.get(d) );
+            workload = _newWorkloadF32(  call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 ), funF32.get(d) );
 
         if ( typeClass == Integer.class )
-            workload = _newWorkloadI32(  call.getTensors()[0], call.getTensors()[1], call.getTensors()[2], funI32.get(d) );
+            workload = _newWorkloadI32(  call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 ), funI32.get(d) );
 
         if ( workload == null )
             throw new IllegalArgumentException("");

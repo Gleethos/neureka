@@ -317,7 +317,7 @@ public class CalcUtil
                                                                 .forDeviceType( call.getDevice().getClass() );
                 Device<?> device = call.getDevice();
                 device.approve( call );
-                call.getTensors()[ 0 ].setIsVirtual( false );
+                call.tensor( 0 ).setIsVirtual( false );
 
                 Algorithm<?> algorithm = call.getAlgorithm();
                 if ( algorithm == null ) {
