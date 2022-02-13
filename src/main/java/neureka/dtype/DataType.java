@@ -144,9 +144,16 @@ public final class DataType<Type>
      * @return True if the provided type is a sub-type of the type represented by this instance.
      */
     public boolean typeClassImplements( Class<?> interfaceClass ) {
-        return interfaceClass.isAssignableFrom(_typeClass);
+        return interfaceClass.isAssignableFrom( _typeClass );
     }
 
+    public Class<?> dataArrayType() {
+        if ( this.typeClassImplements( NumericType.class ) ) {
+            return ( (NumericType<?,?,?,?>) Objects.requireNonNull( getTypeClassInstance() ) ).holderArrayType();
+        }
+        else
+            return Object[].class;
+    }
 
     public <T> T virtualize(T value )
     {

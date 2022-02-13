@@ -623,9 +623,9 @@ class Tensor_Operation_Integration_Spec extends Specification
             result2.valueClass == type
 
         and : 'The data of the first (non slice) tensor should be as expected.'
-            result1.data == expected instanceof Map ? expected['data'] : expected
+            result1.data == expected instanceof Map ? expected['r1'] : expected
         and : 'As well the value of the slice tensor (Its data would be a sparse array).'
-            result2.value == expected instanceof Map ? expected['value'] : expected
+            result2.value == expected instanceof Map ? expected['r2'] : expected
 
         where :
             type   |  funExpression     || expected
@@ -670,9 +670,8 @@ class Tensor_Operation_Integration_Spec extends Specification
             Float  | 'gaus(i0)*100%i0'  || [0.011690378, 0.81929654, 0.087213635, 0.12778962, 0.6121441, 0.09210494] as float[]
             Integer| 'gaus(i0)*100%i0'  || [0, 0, 0, 0, 0, 0] as int[]
 
-            Double | 'random(i0)'       || ['value':[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.242396559265774, 0.23980663860290638, 0.4667980401594514, 0.0, 0.0, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as double[], 'data':[2.242396559265774, 0.23980663860290638, 0.4667980401594514, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283] as double[]]
-            Float  | 'random(i0)'       || ['value':[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.2423966, 0.23980664, 0.46679804, 0.0, 0.0, -1.0840396, 0.43090823, 1.0381081, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as float[], 'data':[2.2423966, 0.23980664, 0.46679804, -1.0840396, 0.43090823, 1.0381081] as float[]]
-
+            Double | 'random(i0)'       || ['r2':[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.242396559265774, 0.23980663860290638, 0.4667980401594514, 0.0, 0.0, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as double[], 'r1':[2.242396559265774, 0.23980663860290638, 0.4667980401594514, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283] as double[]]
+            Float  | 'random(i0)'       || ['r2':[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.2423966, 0.23980664, 0.46679804, 0.0, 0.0, -1.0840396, 0.43090823, 1.0381081, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as float[], 'r1':[2.2423966, 0.23980664, 0.46679804, -1.0840396, 0.43090823, 1.0381081] as float[]]
     }
 
 }

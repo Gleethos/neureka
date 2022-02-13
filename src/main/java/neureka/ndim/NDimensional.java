@@ -48,6 +48,11 @@ public interface NDimensional {
     default int size() { return NDConfiguration.Utility.sizeOfShape(getNDConf().shape()); }
 
     /**
+     * @return The number of elements stored inside the tensor.
+     */
+    default int getSize() { return size(); }
+
+    /**
      *  This is a convenience method identical to {@code tensor.getNDConf().indexOfIndex(i)}.
      *  Use this to calculate the true index for an element in the data array (data array index)
      *  based on a provided "virtual index", or "value array index".

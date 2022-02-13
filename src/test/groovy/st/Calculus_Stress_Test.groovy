@@ -2,9 +2,11 @@ package st
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.calculus.Function
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
+import neureka.dtype.DataType
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
@@ -146,6 +148,43 @@ class Calculus_Stress_Test extends Specification
             //WIP: fix derivative! -> Make multiple kernels!
             //Device.find('gpu') | [2, 1]    | [2, 2]    | 'i0/i1'   || "(2x2):[1.33333E0, 2.0, 3.0, -∞]"
             //Device.find('gpu') | [2, 3, 1] | [1, 3, 2] | 'i0/i1'   || "(2x3x2):[1.33333E0, 2.0, 3.0, -∞, -2.0, -1.0, 0.33333E0, 0.5, -0.0, NaN, 1.0, 0.5]"
+    }
+
+    def 'Activation functions work across types on large 1D slices and non sliced 1D tensors.'(
+            Class<?> type, String funExpression
+    ) {
+        given : 'We create a function based on the provided expression.'
+            var func = Function.of(funExpression)
+        and : 'We create 2 tensors storing the same values, one sliced and the other a normal tensor.'
+            var t1 = Tsr.of(type).withShape(7907).andSeed("Tempeh")
+            var t2 = Tsr.of(type).withShape(7919).all(0)[9..7915]
+            t2[0..t2.size-1] = t1
+
+        expect : 'The types of both tensors should match what was provided during instantiation.'
+            t1.dataType == DataType.of(type)
+            t1.valueClass == type
+            t2.dataType == DataType.of(type)
+            t2.valueClass == type
+
+        when : 'We apply the function to both tensors...'
+            var result1 = func(t1)
+            var result2 = func(t2)
+        then :
+            result1.valueClass == type
+            result2.valueClass == type
+        and : 'The underlying data object should match the data array type as is defined by the data type!'
+            result1.data.class == result1.dataType.dataArrayType()
+            result2.data.class == result2.dataType.dataArrayType()
+
+        and : 'The data of the first non slice tensor as well as its slice should be as expected.'
+            Arrays.hashCode(result1.data) == expected[0]
+            Arrays.hashCode(result2.data) == expected[1]
+
+        where :
+            type   |  funExpression  || expected
+
+            Double | 'random(i0)'    || [-2059799883, 276852681]
+            Float  | 'random(i0)'    || [-2100773274, -590726536]
     }
 
 
