@@ -15,6 +15,15 @@ import neureka.ndim.iterators.NDIterator;
 
 import java.util.Arrays;
 
+/**
+ *  This {@link neureka.backend.api.Operation} takes an optional user seed,
+ *  the shape of its input tensor, and
+ *  the indices of individual elements within said tensor to generate
+ *  floats or doubles with a gaussian distribution where the mean
+ *  is 0 and the standard deviation is 1.
+ *  This operation is very fast because it generates numbers in parallel unlike
+ *  the JDKs random number generator class {@link java.util.Random}.
+ */
 public class Randomization extends AbstractOperation
 {
     private static final long   MULTIPLIER = 0x5DEECE66DL;
