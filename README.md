@@ -133,7 +133,7 @@ dependencies {
 ...or by using a custom commit hash instead:
 ```
 dependencies {
-	implementation 'com.github.Gleethos:neureka:40782f5'//Any commit hash...
+	implementation 'com.github.Gleethos:neureka:7c74811'//Any commit hash...
 }
 ```
 ---
