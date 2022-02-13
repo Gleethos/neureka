@@ -180,17 +180,6 @@ public class Randomization extends AbstractOperation
         return src[ 0 ].call( inputs, j );
     }
 
-    private static long _pow( long number, long power ) {
-        if ( power == 0 ) return 1;
-        long result = number;
-        while ( power > 1 ) {
-            result *= number;
-            power--;
-        }
-        return result;
-    }
-
-
     public static long initialScramble(long seed) {
         return (seed ^ MULTIPLIER) & MASK;
     }
