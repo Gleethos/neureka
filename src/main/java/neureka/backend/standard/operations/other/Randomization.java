@@ -94,15 +94,15 @@ public class Randomization extends AbstractOperation
                     double[] t0_value = tensor.getDataAs(double[].class);
                     double[] gaussian = {0, 0};
                     if ( i % 2 == 1 ) {
-                        gaussianFrom(seed + i, gaussian);
-                        t0_value[i] = gaussian[0];
+                        gaussianFrom(seed + i - 1, gaussian);
+                        t0_value[i] = gaussian[1];
                         i++;
                     }
                     for ( ; i < end; i += 2 ) // increment on drain accordingly:
                     {
                         gaussianFrom(seed + i, gaussian);
                         t0_value[i + 0] = gaussian[0];
-                        t0_value[i + 1] = gaussian[1];
+                        if ( i + 1 < end ) t0_value[i + 1] = gaussian[1];
                     }
                 };
             else
@@ -112,15 +112,15 @@ public class Randomization extends AbstractOperation
                     double[] t0_value = tensor.getDataAs(double[].class);
                     double[] gaussian = {0, 0};
                     if ( i % 2 == 1 ) {
-                        gaussianFrom(seed + i, gaussian);
-                        t0_value[t0Idx.getIndexAndIncrement()] = gaussian[0];
+                        gaussianFrom(seed + i - 1, gaussian);
+                        t0_value[t0Idx.getIndexAndIncrement()] = gaussian[1];
                         i++;
                     }
                     for ( ; i < end; i += 2 ) // increment on drain accordingly:
                     {
                         gaussianFrom(seed + i, gaussian);
                         t0_value[t0Idx.getIndexAndIncrement()] = gaussian[0];
-                        t0_value[t0Idx.getIndexAndIncrement()] = gaussian[1];
+                        if ( i + 1 < end ) t0_value[t0Idx.getIndexAndIncrement()] = gaussian[1];
                     }
                 };
         } else {
@@ -129,15 +129,15 @@ public class Randomization extends AbstractOperation
                     float[] t0_value = tensor.getDataAs(float[].class);
                     double[] gaussian = {0, 0};
                     if ( i % 2 == 1 ) {
-                        gaussianFrom(seed + i, gaussian);
-                        t0_value[i] = (float) gaussian[0];
+                        gaussianFrom(seed + i - 1, gaussian);
+                        t0_value[i] = (float) gaussian[1];
                         i++;
                     }
                     for ( ; i < end; i += 2 ) // increment on drain accordingly:
                     {
                         gaussianFrom(seed + i, gaussian);
                         t0_value[i + 0] = (float) gaussian[0];
-                        t0_value[i + 1] = (float) gaussian[1];
+                        if ( i + 1 < end ) t0_value[i + 1] = (float) gaussian[1];
                     }
                 };
             else
@@ -147,15 +147,15 @@ public class Randomization extends AbstractOperation
                     float[] t0_value = tensor.getDataAs(float[].class);
                     double[] gaussian = {0, 0};
                     if ( i % 2 == 1 ) {
-                        gaussianFrom(seed + i, gaussian);
-                        t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[0];
+                        gaussianFrom(seed + i - 1, gaussian);
+                        t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[1];
                         i++;
                     }
                     for ( ; i < end; i += 2 ) // increment on drain accordingly:
                     {
                         gaussianFrom(seed + i, gaussian);
                         t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[0];
-                        t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[1];
+                        if ( i + 1 < end ) t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[1];
                     }
                 };
         }
