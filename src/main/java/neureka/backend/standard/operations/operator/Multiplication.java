@@ -157,7 +157,7 @@ public class Multiplication extends AbstractOperation
                     .andImplementation(
                         call -> {
                             if ( call.getDerivativeIndex() == 0 )
-                                call.getTensors()[0] = call.getTensors()[2].shallowCopy().getUnsafe().setIsIntermediate( true );
+                                call.getTensors()[0] = call.tensor( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true );
                             else if ( call.getDerivativeIndex() == 1 )
                                 call.getTensors()[0] = call.tensor( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true );
                             else
@@ -194,7 +194,7 @@ public class Multiplication extends AbstractOperation
                     .execution(
                         call -> {
                             if ( call.getDerivativeIndex() == 0 )
-                                call.getTensors()[0] = call.getTensors()[2].shallowCopy().getUnsafe().setIsIntermediate( true );
+                                call.getTensors()[0] = call.tensor( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true );
                             else if ( call.getDerivativeIndex() == 1 )
                                 call.getTensors()[0] = call.tensor( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true );
                             else {

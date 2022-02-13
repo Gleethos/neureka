@@ -158,7 +158,7 @@ public class Addition extends AbstractOperation {
                             if ( call.getDerivativeIndex() == 0 )
                                 call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d ).getUnsafe().setIsIntermediate( true );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d ).getUnsafe().setIsIntermediate( true );
+                                call.getTensors()[0] = Tsr.of( call.tensor( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
                             else {
                                 Scalarization.implementationForCPU()
                                     .with(Fun.F64F64ToF64.triple(
@@ -197,7 +197,7 @@ public class Addition extends AbstractOperation {
                             if ( call.getDerivativeIndex() == 0 )
                                 call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d ).getUnsafe().setIsIntermediate( true );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.getTensors()[0] = Tsr.of( call.getTensors()[2].shape(), 1d ).getUnsafe().setIsIntermediate( true );
+                                call.getTensors()[0] = Tsr.of( call.tensor( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
                             else {
                                 int gwz = call.getTsrOfType(Number.class, 0).size();
                                 float value = call.getTsrOfType(Number.class, 2).getValueAt(0).floatValue();

@@ -24,7 +24,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         super("operator");
         setIsSuitableFor(
             call -> {
-                List<Integer> shape = ( call.tensor( 0 ) == null ) ? call.getTensors()[ 1 ].shape() : call.tensor( 0 ).shape();
+                List<Integer> shape = ( call.tensor( 0 ) == null ) ? call.tensor( 1 ).shape() : call.tensor( 0 ).shape();
                 int size = shape.stream().reduce(1, ( x, y ) -> x * y );
                 return call.validate()
                         .allNotNull( t -> t.size() == size && shape.equals( t.shape() ) )

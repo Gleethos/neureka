@@ -34,7 +34,7 @@ public class AssignLeft extends AbstractOperation
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor(
                     call -> {
-                        if ( call.getTensors()[ 1 ].isVirtual() || call.getTensors()[ 1 ].size() == 1 )
+                        if ( call.tensor( 1 ).isVirtual() || call.tensor( 1 ).size() == 1 )
                             return SuitabilityPredicate.GOOD;
                         else
                             return SuitabilityPredicate.UNSUITABLE;

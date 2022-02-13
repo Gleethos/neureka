@@ -176,12 +176,12 @@ public class Call<D> {
         public Estimator getEstimator() { return new Estimator( _isValid ); }
 
         public Validator first( TensorCondition condition ) {
-            if ( _isValid && !condition.check( getTensors()[ 0 ] ) ) _isValid = false;
+            if ( _isValid && !condition.check( tensor( 0 ) ) ) _isValid = false;
             return this;
         }
 
         public Validator last( TensorCondition condition ) {
-            if ( _isValid && !condition.check( getTensors()[ getTensors().length - 1 ] ) ) _isValid = false;
+            if ( _isValid && !condition.check( tensor( getTensors().length - 1 ) ) ) _isValid = false;
             return this;
         }
 

@@ -51,11 +51,11 @@ public class SimpleMatMul implements ImplementationFor<CPU> {
                "All tensors must be of the same type."
             );
 
-        NDConfiguration.Layout layout = call.getTensors()[ 1 ].getNDConf().getLayout();
+        NDConfiguration.Layout layout = call.tensor( 1 ).getNDConf().getLayout();
 
         Conf.ROW_MAJOR = ( layout == NDConfiguration.Layout.ROW_MAJOR );
 
-        int[] shapeA = call.getTensors()[ 1 ].getNDConf().shape();
+        int[] shapeA = call.tensor( 1 ).getNDConf().shape();
         int[] shapeB = call.getTensors()[ 2 ].getNDConf().shape();
         int[] shapeC = call.tensor( 0 ).getNDConf().shape();
 
