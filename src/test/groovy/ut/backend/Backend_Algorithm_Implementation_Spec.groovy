@@ -79,7 +79,6 @@ class Backend_Algorithm_Implementation_Spec extends Specification
     def 'HostExecutors of Operator implementations behave as expected.'(
             Algorithm imp
     ){
-
         given : 'Mock instances to simulate an ExecutionCall instance.'
             var call = Mock( ExecutionCall )
             var device = Mock( CPU )
@@ -96,6 +95,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             1 * device.getExecutor() >> nativeExecutor
             1 * nativeExecutor.threaded( _, _ )
             (0.._) * call.getTensors() >> new Tsr[]{ tensor, tensor, tensor }
+            (0.._) * call.tensor({it >= 0 && it <= 2}) >> tensor
             (1.._) * call.getTsrOfType( Number.class, 0 ) >> tensor
             (0.._) * call.getTsrOfType( Number.class, 1 ) >> tensor
             (1.._) * tensor.size() >> 0

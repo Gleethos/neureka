@@ -122,7 +122,10 @@ import neureka.view.TsrStringSettings;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.awt.image.*;
 import java.util.*;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -2933,6 +2936,30 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 });
     }
 
+    /**
+     *  Turns this tensor into a {@link BufferedImage} based on the provided
+     *  {@link ImageType} formatting choice.
+     *
+     * @param type The type of format used to create the buffered image.
+     * @return A {@link BufferedImage} populated with the contents of this tensor.
+     */
+    public BufferedImage asImage( ImageType type )
+    {
+        if ( type.bufferType == BufferedImage.TYPE_3BYTE_BGR )
+        {
+            BufferedImage buffi = new BufferedImage( shape(1), shape(0), BufferedImage.TYPE_3BYTE_BGR );
+            byte[] data = DataConverter.instance().convert(getData(), byte[].class);
+            writeImgData(new DataBufferByte(data, data.length), buffi);
+            return buffi;
+        }
+        throw new IllegalArgumentException("Image type '"+type+"' not supported.");
+    }
+
+    private static void writeImgData( DataBuffer data, BufferedImage target ) {
+        target.setData(
+            Raster.createRaster( target.getSampleModel(), data, new Point() )
+        );
+    }
 
     /**
      *  This method takes the provided {@link Tsr} instance and adds its
@@ -3210,5 +3237,27 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             }
         };
     }
+
+
+    public enum ImageType {
+        RGB_1INT(1),
+        ARGB_1INT(2),
+        ARGB_PRE_1INT(3),
+        BGR_1INT(4),
+        BGR_3BYTE(5),
+        ABGR_4BYTE(6),
+        ABGR_PRE_4BYTE(7),
+        RGB_565_USHORT(8),
+        RGB_555_USHORT(9),
+        GRAY_BYTE(0),
+        GRAY_USHORT(1);
+
+        public final int bufferType;
+
+        ImageType(int bufferType) {
+            this.bufferType = bufferType;
+        }
+    }
+
 
 }

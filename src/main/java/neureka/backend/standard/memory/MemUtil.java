@@ -12,11 +12,23 @@ import java.util.stream.Stream;
 
 /**
  *  Utility methods for deleting tensors or preventing thereof.
+ *  In essence, it exposes convenience methods for setting and resetting
+ *  the {@link Tsr#isIntermediate} flag or supplied tensors...
+ *  This is an internal library class which should not be used
+ *  anywhere but in Neurekas backend.
+ *  <br>Do not use this anywhere else!</br>
  */
 public class MemUtil {
 
     private MemUtil() {}
 
+    /**
+     *  This method will try to delete the provided array of tensors
+     *  if the tensors are not important computation
+     *  graph components (like derivatives for example).
+     *
+     * @param tensors The tensors which should be deleted if possible.
+     */
     public static void autoDelete( Tsr<?>... tensors ) {
         /*
              When we are purely in the JVM world, then the garbage
@@ -40,7 +52,13 @@ public class MemUtil {
     }
 
     /**
-     *  This method makes sure that the provided tensors do not get deleted!
+     *  This method makes sure that the provided tensors do not get deleted
+     *  by setting the {@link Tsr#isIntermediate} flag to off
+     *  during the execution of the provided {@link Supplier} lambda!
+     *  In said lambda the supplied thing will ultimately be returned by
+     *  this method...
+     *  All provided tensors will have the {@link Tsr#isIntermediate} flag
+     *  set to their original state after execution.
      */
     public static <T> T keep( Tsr<?>[] tensors, Supplier<T> during ) {
         List<Tsr<?>> doNotDelete = Arrays.stream(tensors).filter(Tsr::isIntermediate).collect(Collectors.toList());
@@ -52,7 +70,13 @@ public class MemUtil {
     }
 
     /**
-     *  This method makes sure that the provided tensors do not get deleted!
+     *  This method makes sure that the provided tensors do not get deleted
+     *  by setting the {@link Tsr#isIntermediate} flag to off
+     *  during the execution of the provided {@link Supplier} lambda!
+     *  In said lambda the supplied thing will ultimately be returned by
+     *  this method...
+     *  Both of the provided tensors will have the {@link Tsr#isIntermediate} flag
+     *  set to their original state after execution.
      */
     public static <T> T keep( Tsr<?> a, Tsr<?> b, Supplier<T> during ) {
         List<Tsr<?>> doNotDelete = Stream.of(a, b).filter(Tsr::isIntermediate).collect(Collectors.toList());

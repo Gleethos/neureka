@@ -51,13 +51,13 @@ public class SimpleMatMul implements ImplementationFor<CPU> {
                "All tensors must be of the same type."
             );
 
-        NDConfiguration.Layout layout = call.getTensors()[ 1 ].getNDConf().getLayout();
+        NDConfiguration.Layout layout = call.tensor( 1 ).getNDConf().getLayout();
 
         Conf.ROW_MAJOR = ( layout == NDConfiguration.Layout.ROW_MAJOR );
 
-        int[] shapeA = call.getTensors()[ 1 ].getNDConf().shape();
+        int[] shapeA = call.tensor( 1 ).getNDConf().shape();
         int[] shapeB = call.getTensors()[ 2 ].getNDConf().shape();
-        int[] shapeC = call.getTensors()[ 0 ].getNDConf().shape();
+        int[] shapeC = call.tensor( 0 ).getNDConf().shape();
 
         // A * B = C // [MxK]*[KxN] = [MxN]
         int aRows = shapeA[0];
@@ -68,7 +68,7 @@ public class SimpleMatMul implements ImplementationFor<CPU> {
         if ( aCols != bRows )
             throw new IllegalArgumentException("A:Rows: " + aCols + " did not match B:Columns " + bRows + ".");
 
-        Class<?> type = call.getTensors()[0].getDataType().getJVMTypeClass();
+        Class<?> type = call.tensor( 0 ).getDataType().getJVMTypeClass();
         if ( type == Double.class ) {
             double[] A = (double[]) call.getTsrOfType(Double.class, 1).getData();
             double[] B = (double[]) call.getTsrOfType(Double.class, 2).getData();

@@ -6,11 +6,9 @@ import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.I16;
 import neureka.dtype.custom.UI8;
-import neureka.common.utility.DataConverter;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
@@ -154,15 +152,11 @@ public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
     @Override
     public <T extends Number> Storage<Number> store( Tsr<T> tensor )
     {
-        byte[] data = DataConverter.instance().convert( tensor.getData(), byte[].class );
+        assert tensor.shape(1) == _width;
+        assert tensor.shape(0) == _height;
 
-        BufferedImage buffi = new BufferedImage( _width, _height, BufferedImage.TYPE_3BYTE_BGR );
-        buffi.setData(
-                Raster.createRaster(
-                        buffi.getSampleModel(), new DataBufferByte( data, data.length ),
-                        new Point()
-                )
-        );
+        BufferedImage buffi = tensor.asImage(Tsr.ImageType.BGR_3BYTE);
+
         try {
             ImageIO.write( buffi, "jpg", new File( _fileName ) );
         } catch ( Exception e ) {

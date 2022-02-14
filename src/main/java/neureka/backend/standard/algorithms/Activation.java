@@ -98,7 +98,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
                                 call.getDevice()
                                     .getExecutor()
                                     .threaded(
-                                            call.getTensors()[ 0 ].size(),
+                                            call.tensor( 0 ).size(),
                                             _newWorkloadFor(call, pairs)
                                     )
                         );
@@ -108,8 +108,8 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
             ExecutionCall<CPU> call,
             Functions<Fun> funs
     ) {
-        Tsr<?> t0_drn = call.getTensors()[0];
-        Tsr<?> t1_src = call.getTensors()[1];
+        Tsr<?> t0_drn = call.tensor( 0 );
+        Tsr<?> t1_src = call.tensor( 1 );
         Class<?> typeClass = t0_drn.getValueClass();
         Class<?> rightTypeClass = t1_src.getValueClass();
 
