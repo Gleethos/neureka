@@ -2164,7 +2164,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
-    public Tsr<V> getT() { // Trannsposed
+    public Tsr<V> getT() { // Transposed
         return this.T();
     }
 
@@ -2311,7 +2311,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return An element located at the provided index.
      */
     @Override
-    public Tsr<V> getAt( int... indices ) { return getAt( Arrays.stream( indices ).mapToObj( i->i ).toArray() ); }
+    public Tsr<V> getAt( int... indices ) { return getAt( Arrays.stream( indices ).boxed().toArray() ); }
 
     /**
      *  The following method enables the creation of tensor slices which access
@@ -2328,40 +2328,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
-     *  The following method returns a raw value item within this tensor
-     *  targeted by a scalar index.
-     *
-     * @param i The scalar index of the value item which should be returned by the method.
-     * @return The value item found at the targeted index.
-     */
-    public V getValueAt( int i ) { return getDataAt( indexOfIndex( i ) ); }
-
-    /**
-     *  This method returns a raw value item within this tensor
-     *  targeted by an index array which is expect to hold an index for
-     *  every dimension of the shape of this tensor.
-     *  So the provided array must have the same length as the
-     *  rank of this tensor!
-     *
-     * @param indices The index array which targets a single value item within this tensor.
-     * @return The found raw value item targeted by the provided index array.
-     */
-    public V getValueAt( int... indices ) { return getDataAt( getNDConf().indexOfIndices( indices ) ); }
-
-    /**
-     *  This getter method creates and returns a slice of the original tensor.
-     *  The returned slice is a scalar tensor wrapping a single value element which
-     *  is being targeted by the provided integer index.
-     *
-     * @param i The index of the value item which should be returned as a tensor instance.
-     * @return A tensor holding a single value element which is internally still residing in the original tensor.
-     */
-    @Override
-    public Tsr<V> getAt( Number i ) {
-        return getAt( Collections.singletonList( getNDConf().indicesOfIndex( (i).intValue() ) ).toArray() );
-    }
-
-    /**
      *  This method is most useful when used in Groovy
      *  where defining maps is done through square brackets,
      *  making it possible to slice tensors like so: <br>
@@ -2374,17 +2340,17 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  j... end indexAlias. (inclusive!)                                           <br>
      *  k... step size.
      *
-     * @param rangToStrides A map where the keys define where axes should be sliced and values which define the strides for the specific axis.
+     * @param rankToStrides A map where the keys define where axes should be sliced and values which define the strides for the specific axis.
      * @return A tensor slice with an offset based on the provided map keys and
      *         strides based on the provided map values.
      */
     @Override
-    public Tsr<V> getAt( Map<?,Integer> rangToStrides )
+    public Tsr<V> getAt( Map<?,Integer> rankToStrides )
     {
-        if ( rangToStrides == null ) return this;
+        if ( rankToStrides == null ) return this;
         // ...not a simple slice... Advanced:
         return SmartSlicer.slice(
-                        new Object[]{rangToStrides},
+                        new Object[]{rankToStrides},
                         this,
                         this::_sliceOf
                     );

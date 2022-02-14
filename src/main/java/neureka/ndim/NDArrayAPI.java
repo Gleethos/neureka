@@ -2,6 +2,7 @@ package neureka.ndim;
 
 import neureka.Tsr;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,18 @@ public interface NDArrayAPI<V> extends NDimensional, Iterable<V> {
      * @return An element located at the provided index.
      */
     Tsr<V> getAt( int... indices );
+
+    /**
+     *  This getter method creates and returns a slice of the original tensor.
+     *  The returned slice is a scalar tensor wrapping a single value element which
+     *  is being targeted by the provided integer index.
+     *
+     * @param i The index of the value item which should be returned as a tensor instance.
+     * @return A tensor holding a single value element which is internally still residing in the original tensor.
+     */
+    default Tsr<V> getAt( Number i ) {
+        return getAt( Collections.singletonList( getNDConf().indicesOfIndex( (i).intValue() ) ).toArray() );
+    }
 
     /**
      *  The following method enables access to specific scalar elements within the tensor.
@@ -85,16 +98,6 @@ public interface NDArrayAPI<V> extends NDimensional, Iterable<V> {
      * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
     default Tsr<V> get( int i ) { return getAt( i ); }
-
-    /**
-     *  This getter method creates and returns a slice of the original tensor.
-     *  The returned slice is a scalar tensor wrapping a single value element which
-     *  is being targeted by the provided integer index.
-     *
-     * @param i The index of the value item which should be returned as a tensor instance.
-     * @return A tensor holding a single value element which is internally still residing in the original tensor.
-     */
-    Tsr<V> getAt( Number i );
 
     /**
      *  This getter method creates and returns a slice of the original tensor.
@@ -219,5 +222,52 @@ public interface NDArrayAPI<V> extends NDimensional, Iterable<V> {
     default Tsr<V> putAt( List<?> indices, V value ) {
         return this.putAt( indices, Tsr.of( this.getValueClass(), shape(), value ) );
     }
+
+    /**
+     *  An NDArray implementation ought to have some way to access its underlying data array.
+     *  This method simple returns an element within this data array sitting at position "i".
+     * @param i The position of the targeted item within the raw data array of an NDArray implementation.
+     * @return The found object sitting at the specified index position.
+     */
+    V getDataAt( int i );
+
+    /**
+     *  An NDArray implementation ought to have some way to selectively modify its underlying data array.
+     *  This method simply overrides an element within this data array sitting at position "i".
+     * @param i The index of the data array entry which ought to be addressed.
+     * @param o The object which ought to be placed at the requested position.
+     * @return This very tensor in order to enable method chaining.
+     */
+    Tsr<V> setDataAt( int i, V o );
+
+    /**
+     *  An NDArray implementation ought to have some way to selectively modify its underlying value.
+     *  This method simply overrides an element within this data array sitting at position "i".
+     * @param i The index of the value array entry which ought to be addressed.
+     * @param o The object which ought to be placed at the requested position.
+     * @return This very tensor in order to enable method chaining.
+     */
+    Tsr<V> setValueAt( int i, V o );
+
+    /**
+     *  The following method returns a raw value item within this tensor
+     *  targeted by a scalar index.
+     *
+     * @param i The scalar index of the value item which should be returned by the method.
+     * @return The value item found at the targeted index.
+     */
+    default V getValueAt( int i ) { return getDataAt( indexOfIndex( i ) ); }
+
+    /**
+     *  This method returns a raw value item within this tensor
+     *  targeted by an index array which is expect to hold an index for
+     *  every dimension of the shape of this tensor.
+     *  So the provided array must have the same length as the
+     *  rank of this tensor!
+     *
+     * @param indices The index array which targets a single value item within this tensor.
+     * @return The found raw value item targeted by the provided index array.
+     */
+    default V getValueAt( int... indices ) { return getDataAt( getNDConf().indexOfIndices( indices ) ); }
 
 }

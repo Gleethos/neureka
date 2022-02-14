@@ -61,6 +61,9 @@ import java.util.Arrays;
  *  {@link Tsr} inherits from {@link AbstractNDArray} which inherits from {@link AbstractComponentOwner}
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
+ *  This class also implements the {@link NDArrayAPI} interface, which uses
+ *  default methods to expose a rich API with good interoperability with
+ *  different JVM languages...
  *
  * @param <C> The type of the concrete class extending this abstract class (currently the {@link Tsr} class).
  * @param <V> The value type of the individual items stored within this nd-array.
@@ -360,32 +363,6 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         else
             return DataConverter.instance().convert( getData(), newDT.getTypeClass() );
     }
-
-    /**
-     *  An NDArray implementation ought to have some way to access its underlying data array.
-     *  This method simple returns an element within this data array sitting at position "i".
-     * @param i The position of the targeted item within the raw data array of an NDArray implementation.
-     * @return The found object sitting at the specified index position.
-     */
-    public abstract Object getDataAt( int i );
-
-    /**
-     *  An NDArray implementation ought to have some way to selectively modify its underlying data array.
-     *  This method simply overrides an element within this data array sitting at position "i".
-     * @param i The index of the data array entry which ought to be addressed.
-     * @param o The object which ought to be placed at the requested position.
-     * @return This very tensor in order to enable method chaining.
-     */
-    public abstract C setDataAt( int i, V o );
-
-    /**
-     *  An NDArray implementation ought to have some way to selectively modify its underlying value.
-     *  This method simply overrides an element within this data array sitting at position "i".
-     * @param i The index of the value array entry which ought to be addressed.
-     * @param o The object which ought to be placed at the requested position.
-     * @return This very tensor in order to enable method chaining.
-     */
-    public abstract C setValueAt( int i, V o );
 
     /**
      *  This method compares the passed class with the underlying data-type of this NDArray.
