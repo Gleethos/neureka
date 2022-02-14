@@ -1658,7 +1658,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The tensor on which this method was called. (factory pattern)
      */
     public Tsr<V> backward( double value ) {
-        backward((Tsr<V>) Tsr.of( this.getValueClass(), getNDConf().shape(), (Object) value ));
+        backward( Tsr.of( this.getValueClass(), getNDConf().shape(), value ) );
         return this;
     }
 
@@ -2150,7 +2150,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             return Neureka.get().backend().getFunction().transpose2D().call(this);
         }
         StringBuilder operation = new StringBuilder();
-        for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( ( i == 0 ) ? "" : ", " );
+        for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( i == 0 ? "" : ", " );
         operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
         return Function.of( operation.toString(), true ).call( this );
     }
@@ -2325,24 +2325,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
-     *  This getter method creates and returns a slice of the original tensor.
-     *  The returned slice is a scalar tensor wrapping a single value element which
-     *  is being targeted by the provided integer index.
-     *
-     * @param i The index of the value item which should be returned as a tensor instance.
-     * @return A tensor holding a single value element which is internally still residing in the original tensor.
-     */
-    @Override
-    public Tsr<V> getAt( int i ) { return getAt( indicesOfIndex(i) ); }
-
-    /**
      *  The following method returns a raw value item within this tensor
      *  targeted by a scalar index.
      *
      * @param i The scalar index of the value item which should be returned by the method.
      * @return The value item found at the targeted index.
      */
-    public V getValueAt( int i ) { return getDataAt( getNDConf().indexOfIndex( i ) ); }
+    public V getValueAt( int i ) { return getDataAt( indexOfIndex( i ) ); }
 
     /**
      *  This method returns a raw value item within this tensor
@@ -2448,7 +2437,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             boolean hasScale = false;
             for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
             return SmartSlicer.slice(
-                    ( allInt ) ? new Object[]{ _intArray( (Object[]) key ) } : (Object[]) key,
+                    ( allInt ? new Object[]{ _intArray( (Object[]) key ) } : (Object[]) key ),
                     this,
                     this::_sliceOf
             );
@@ -2524,8 +2513,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         for ( int i = 0; i < newOffset.length; i++ )
             newOffset[ i ] = newOffset[ i ] + getNDConf().offset( i ); // Offset is being inherited!
 
-        Tsr<?> rootTensor = ( this.isSlice() ) ? get( Relation.class ).findRootTensor() : this;
-        Tsr<?> parentTensor = ( this.isSlice() ) ? get( Relation.class ).getParent() : this;
+        Tsr<?> rootTensor   = ( this.isSlice() ? get( Relation.class ).findRootTensor() : this );
+        Tsr<?> parentTensor = ( this.isSlice() ? get( Relation.class ).getParent()      : this );
         /*
             The following code check the validity of the slice shape ranges with
             respect to the 'parentTensor' of this new slice.
@@ -3051,7 +3040,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public <A> A getValueAs( Class<A> arrayTypeClass ) {
         if ( arrayTypeClass == double[].class ) return (A) _value64();
-        if ( arrayTypeClass == float[].class ) return (A) _value32();
+        if ( arrayTypeClass == float[].class  ) return (A) _value32();
         if ( this.isVirtual() )
             return DataConverter.instance().convert(
                         getDataType().actualize( this.getData(), this.size() ),

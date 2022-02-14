@@ -74,7 +74,7 @@ public interface NDArrayAPI<V> extends NDimensional, Iterable<V> {
      * @param i The index of the value item which should be returned as a tensor instance.
      * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
-    Tsr<V> getAt( int i );
+    default Tsr<V> getAt( int i ) { return getAt( indicesOfIndex(i) ); }
 
     /**
      *  This getter method creates and returns a slice of the original tensor.
