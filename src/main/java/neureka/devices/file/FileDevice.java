@@ -7,7 +7,6 @@ import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
-import neureka.ndim.AbstractNDArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

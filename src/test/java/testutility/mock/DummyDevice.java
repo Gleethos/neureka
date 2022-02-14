@@ -6,7 +6,6 @@ import neureka.calculus.Function;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import neureka.backend.api.ExecutionCall;
-import neureka.ndim.AbstractNDArray;
 
 import java.util.Collection;
 

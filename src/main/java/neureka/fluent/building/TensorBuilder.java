@@ -4,19 +4,17 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.common.utility.DataConverter;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.fluent.building.states.*;
 import neureka.ndim.Initializer;
-import neureka.ndim.config.NDConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static neureka.ndim.AbstractNDArray._LOG;
+import static neureka.ndim.AbstractTensor._LOG;
 
 /**
  *  This class exposes a fluent builder API for creating {@link Tsr} instances.

@@ -47,7 +47,7 @@ import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.devices.host.CPU;
-import neureka.ndim.AbstractNDArray;
+import neureka.ndim.AbstractTensor;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.*;
@@ -206,7 +206,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     Device<V> approve( ExecutionCall<? extends Device<?>> call );
 
     /**
-     *  This method automatically called within the {@link AbstractNDArray.Unsafe#setNDConf(NDConfiguration)} method
+     *  This method automatically called within the {@link AbstractTensor.Unsafe#setNDConf(NDConfiguration)} method
      *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
      *  given {@link Device} implementation... <br><br>
      *

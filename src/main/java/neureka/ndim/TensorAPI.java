@@ -11,11 +11,11 @@ import java.util.Map;
  *  how data can read from and written to a tensor.
  *  In essence, this interface exists to expand
  *  the tensor API through default methods without littering the
- *  already large {@link Tsr} and {@link AbstractNDArray} classes.
+ *  already large {@link Tsr} and {@link AbstractTensor} classes.
  *
  * @param <V> The value type parameter of the tensor.
  */
-public interface NDArrayAPI<V> extends NDimensional, Iterable<V> {
+public interface TensorAPI<V> extends NDimensional, Iterable<V> {
 
     /**
      * @return The type class of individual value items within this {@link Tsr} instance.

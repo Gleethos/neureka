@@ -11,7 +11,7 @@ import neureka.backend.standard.algorithms.Activation
 import neureka.backend.standard.algorithms.Broadcast
 import neureka.backend.standard.algorithms.Convolution
 import neureka.backend.standard.algorithms.Operator
-import neureka.ndim.AbstractNDArray
+import neureka.ndim.AbstractTensor
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
@@ -29,7 +29,7 @@ class Backend_Algorithm_AD_Spec extends Specification
             def function = Mock(Function)
             def derivative = Mock(Tsr)
             function.executeDerive(*_) >> derivative
-            def mutate = Mock(AbstractNDArray.Unsafe)
+            def mutate = Mock(AbstractTensor.Unsafe)
             derivative.getUnsafe() >> mutate
 
         and : 'A mock ExecutionCall.'
@@ -80,7 +80,7 @@ class Backend_Algorithm_AD_Spec extends Specification
         and : 'A mock Function.'
             def function = Mock(Function)
             def derivative = Mock(Tsr)
-            def mutate = Mock(AbstractNDArray.Unsafe)
+            def mutate = Mock(AbstractTensor.Unsafe)
             function.derive(*_) >> derivative
             function.executeDerive(*_) >> derivative
             derivative.getUnsafe() >> mutate

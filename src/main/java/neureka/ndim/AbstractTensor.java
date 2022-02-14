@@ -58,17 +58,17 @@ import java.util.Arrays;
  *  This is the precursor class to the final {@link Tsr} class from which
  *  tensor instances can be created. <br>
  *  The inheritance model of a tensor is structured as follows: <br>
- *  {@link Tsr} inherits from {@link AbstractNDArray} which inherits from {@link AbstractComponentOwner}
+ *  {@link Tsr} inherits from {@link AbstractTensor} which inherits from {@link AbstractComponentOwner}
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
- *  This class also implements the {@link NDArrayAPI} interface, which uses
+ *  This class also implements the {@link TensorAPI} interface, which uses
  *  default methods to expose a rich API with good interoperability with
  *  different JVM languages...
  *
  * @param <C> The type of the concrete class extending this abstract class (currently the {@link Tsr} class).
  * @param <V> The value type of the individual items stored within this nd-array.
  */
-public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> implements NDArrayAPI<V>
+public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> implements TensorAPI<V>
 {
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
@@ -77,7 +77,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
 
     /**
      *  An instance of an implementation of the {@link NDConfiguration} interface defining
-     *  the dimensionality of this {@link AbstractNDArray} in terms of certain index properties
+     *  the dimensionality of this {@link AbstractTensor} in terms of certain index properties
      *  which imply individual access patterns for the underlying {@link #_data}.
      */
     private NDConfiguration _NDConf;
@@ -147,7 +147,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
 
     /**
      *  The {@link Class} returned by this method is the representative {@link Class} of the
-     *  value items of a concrete {@link AbstractNDArray} but not necessarily the actual {@link Class} of
+     *  value items of a concrete {@link AbstractTensor} but not necessarily the actual {@link Class} of
      *  a given value item, this is especially true for numeric types, which are represented by
      *  implementations of the {@link NumericType} interface.                                        <br>
      *  For example in the case of a tensor of type {@link Double}, this method would
@@ -155,7 +155,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *  Calling the {@link #getValueClass()} method instead of this method would return the actual value
      *  type class, namely: {@link Double}.
      *
-     * @return The representative type class of individual value items within this concrete {@link AbstractNDArray}
+     * @return The representative type class of individual value items within this concrete {@link AbstractTensor}
      *         extension instance which might also be sub-classes of the {@link NumericType} interface
      *         to model unsigned types or other JVM foreign numeric concepts.
      */
@@ -164,10 +164,10 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     }
 
     /**
-     *  This method enables modifying the data-type configuration of this {@link AbstractNDArray}.
+     *  This method enables modifying the data-type configuration of this {@link AbstractTensor}.
      *  Warning! The method should not be used unless absolutely necessary.
      *  This is because it can cause unpredictable inconsistencies between the
-     *  underlying {@link DataType} instance of this {@link AbstractNDArray} and the actual type of the actual
+     *  underlying {@link DataType} instance of this {@link AbstractTensor} and the actual type of the actual
      *  data it is wrapping (or it is referencing on a {@link neureka.devices.Device}).<br>
      *  <br>
      * @param dataType The new {@link DataType} which ought to be set.
@@ -303,19 +303,19 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     protected abstract void _setIsVirtual( boolean isVirtual );
 
     /**
-     *  The {@link AbstractNDArray} is in essence a precursor class to the {@link Tsr} which encapsulates
+     *  The {@link AbstractTensor} is in essence a precursor class to the {@link Tsr} which encapsulates
      *  and protects most of its state...
      *  This is especially important during constructing where a wider range of unexpected user input
      *  might lead to a wider variety of exceptions.
      *  The API returned by this method simplifies this greatly.
      *
-     * @return An {@link NDAConstructor} exposing a simple API for configuring a new {@link Tsr} instance.
+     * @return An {@link TsrConstructor} exposing a simple API for configuring a new {@link Tsr} instance.
      */
-    protected NDAConstructor createConstructionAPI()
+    protected TsrConstructor createConstructionAPI()
     {
-        AbstractNDArray<C, ?> nda = this;
-        return new NDAConstructor(
-                    new NDAConstructor.API() {
+        AbstractTensor<C, ?> nda = this;
+        return new TsrConstructor(
+                    new TsrConstructor.API() {
                         @Override public void setType( DataType<?> type        ) { nda.getUnsafe().setDataType( type ); }
                         @Override public void setConf( NDConfiguration conf    ) { nda.getUnsafe().setNDConf(   conf ); }
                         @Override public void setData( Object o                ) { nda._setData(      o  ); }
@@ -460,10 +460,10 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         <V> Tsr<V> toType( Class<V> typeClass );
 
         /**
-         *  This method enables modifying the data-type configuration of this {@link AbstractNDArray}.
+         *  This method enables modifying the data-type configuration of this {@link AbstractTensor}.
          *  Warning! The method should not be used unless absolutely necessary.
          *  This is because it can cause unpredictable inconsistencies between the
-         *  underlying {@link DataType} instance of this {@link AbstractNDArray} and the actual type of the actual
+         *  underlying {@link DataType} instance of this {@link AbstractTensor} and the actual type of the actual
          *  data it is wrapping (or it is referencing on a {@link neureka.devices.Device}).<br>
          *  <br>
          * @param dataType The new {@link DataType} which ought to be set.
@@ -472,7 +472,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         <V> Tsr<V> setDataType( DataType<V> dataType );
 
         /**
-         *  This method allows you to modify the data-layout of this {@link AbstractNDArray}.
+         *  This method allows you to modify the data-layout of this {@link AbstractTensor}.
          *  Warning! The method should not be used unless absolutely necessary.
          *  This is because it can cause unpredictable side effects especially for certain
          *  operations expecting a particular data layout (like for example matrix multiplication).

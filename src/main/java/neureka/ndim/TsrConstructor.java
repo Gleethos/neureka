@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- *  The {@link NDAConstructor} is an <b>internal API</b> for receiving a wide range
+ *  The {@link TsrConstructor} is an <b>internal API</b> for receiving a wide range
  *  of different inputs and using them to populate the fields
  *  of freshly instantiated {@link neureka.Tsr} instances.
  *  The existence of this class is a symptom of the fact that there
@@ -25,9 +25,9 @@ import java.util.stream.IntStream;
  *  sits inside this class instead of polluting the already very large
  *  {@link neureka.Tsr} class.
  */
-public class NDAConstructor {
+public class TsrConstructor {
 
-    private static final Logger _LOG = LoggerFactory.getLogger(NDAConstructor.class);
+    private static final Logger _LOG = LoggerFactory.getLogger(TsrConstructor.class);
 
     /**
      *  An interface defining methods for configuring a {@link neureka.Tsr}
@@ -44,7 +44,7 @@ public class NDAConstructor {
 
     private final API _API;
 
-    public NDAConstructor( API API ) { _API = API; }
+    public TsrConstructor(API API ) { _API = API; }
 
     /**
      *  This method is responsible for instantiating and setting the _conf variable.
@@ -115,7 +115,7 @@ public class NDAConstructor {
                 ( data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
             }
         }
-        return NDAConstructor.optimizeObjectArray(dataType, data, size);
+        return TsrConstructor.optimizeObjectArray(dataType, data, size);
     }
 
     public boolean constructAllFromOne( int[] shape, Object data ) {

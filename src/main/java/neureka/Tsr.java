@@ -111,7 +111,7 @@ import neureka.fluent.slicing.SmartSlicer;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
-import neureka.ndim.AbstractNDArray;
+import neureka.ndim.AbstractTensor;
 import neureka.ndim.Initializer;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
@@ -146,7 +146,7 @@ import java.util.stream.IntStream;
  *  <br>
  * @param <V> The type parameter for the individual value items within this tensor.
  */
-public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<V>>, Cloneable
+public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V>>, Cloneable
 {
     static {
         _CPU = CPU.get();
@@ -2201,13 +2201,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> convDot(Tsr<V> b ) {
         Tsr<V> a = this;
-        int[][] fitter = AbstractNDArray.Utility.makeFit( a.getNDConf().shape(), b.getNDConf().shape() );
+        int[][] fitter = AbstractTensor.Utility.makeFit( a.getNDConf().shape(), b.getNDConf().shape() );
         boolean doReshape = false;
         for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
         for ( int i = 0; i < fitter[ 1 ].length && !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;
         if ( doReshape ) {
-            a = Function.of( AbstractNDArray.Utility.shapeString( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
-            b = Function.of( AbstractNDArray.Utility.shapeString( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( b );
+            a = Function.of( AbstractTensor.Utility.shapeString( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
+            b = Function.of( AbstractTensor.Utility.shapeString( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( b );
         }
         return Neureka.get()
                         .backend()
