@@ -52,6 +52,8 @@ public abstract class AbstractNDC implements NDConfiguration
      *  This method receives an int array and returns an int array which
      *  can either be the one provided or an array found in the global int array cache residing inside
      *  this class.
+     *  Integer array based configurations are not very large,
+     *  that is why their state can uniquely be encoded in {@code long} keys.
      *
      * @param data The integer array which ought to be cached.
      * @return The provided array or an already present array found in the int array cache.
@@ -60,15 +62,15 @@ public abstract class AbstractNDC implements NDConfiguration
     {
         long key = 0;
         for ( int e : data ) {
-            if ( e <= 10 ) key *= 10;
-            else if ( e <= 100 ) key *= 100;
-            else if ( e <= 1000 ) key *= 1000;
-            else if ( e <= 10000 ) key *= 10000;
-            else if ( e <= 100000 ) key *= 100000;
-            else if ( e <= 1000000 ) key *= 1000000;
-            else if ( e <= 10000000 ) key *= 10000000;
-            else if ( e <= 100000000 ) key *= 100000000;
-            else if ( e <= 1000000000 ) key *= 1000000000;
+            if      ( e <=              10 ) key *=              10;
+            else if ( e <=             100 ) key *=             100;
+            else if ( e <=           1_000 ) key *=           1_000;
+            else if ( e <=          10_000 ) key *=          10_000;
+            else if ( e <=         100_000 ) key *=         100_000;
+            else if ( e <=       1_000_000 ) key *=       1_000_000;
+            else if ( e <=      10_000_000 ) key *=      10_000_000;
+            else if ( e <=     100_000_000 ) key *=     100_000_000;
+            else if ( e <=   1_000_000_000 ) key *=   1_000_000_000;
             key += Math.abs( e ) + 1;
         }
         int rank = data.length;
@@ -78,11 +80,11 @@ public abstract class AbstractNDC implements NDConfiguration
         }
         key += data.length;
         int[] found = _CACHED_INT_ARRAYS.get( key );
-        if ( found != null ) return found;
-        else {
-            _CACHED_INT_ARRAYS.put( key, data );
-            return data;
-        }
+        if ( found != null && Arrays.equals(data, found) )
+            return found;
+
+        _CACHED_INT_ARRAYS.put(key, data);
+        return data;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -90,22 +92,24 @@ public abstract class AbstractNDC implements NDConfiguration
     @Override
     public long keyCode()
     {
-        return Arrays.hashCode( shape() ) +
+        return this.getClass().hashCode() +
+               Arrays.hashCode( shape() )       * 1L +
                Arrays.hashCode( translation() ) * 2L +
-               Arrays.hashCode( indicesMap() ) * 3L +
-               Arrays.hashCode( spread() ) * 4L +
-               Arrays.hashCode( offset() ) * 5L
-               + ( getLayout() == Layout.ROW_MAJOR ? 0 : 1 );
+               Arrays.hashCode( indicesMap() )  * 3L +
+               Arrays.hashCode( spread() )      * 4L +
+               Arrays.hashCode( offset() )      * 5L +
+               ( getLayout() == Layout.ROW_MAJOR ? 0 : 1 );
     }
 
     @Override
     public boolean equals( NDConfiguration ndc )
     {
-        return  Arrays.equals(shape(), ndc.shape()) &&
+        return  this.getClass() == ndc.getClass() &&
+                Arrays.equals(shape(),       ndc.shape()      ) &&
                 Arrays.equals(translation(), ndc.translation()) &&
-                Arrays.equals(indicesMap(), ndc.indicesMap()) &&
-                Arrays.equals(spread(), ndc.spread()) &&
-                Arrays.equals(offset(), ndc.offset()) &&
+                Arrays.equals(indicesMap(),  ndc.indicesMap() ) &&
+                Arrays.equals(spread(),      ndc.spread()     ) &&
+                Arrays.equals(offset(),      ndc.offset()     ) &&
                 this.getLayout() == ndc.getLayout();
     }
 

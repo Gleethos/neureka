@@ -8,7 +8,6 @@ import java.util.WeakHashMap;
 
 public class VirtualNDConfiguration extends AbstractNDC
 {
-
     private static Map<int[], VirtualNDConfiguration> _Virtual_Cache = new WeakHashMap<>();
 
     private final int[] _shape;

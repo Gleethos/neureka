@@ -38,11 +38,11 @@ public class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
             int[] spread,
             int[] offset
     ) {
-        _shape = _cacheArray(shape);
+        _shape       = _cacheArray(shape);
         _translation = _cacheArray(translation);
-        _indicesMap = _cacheArray(indicesMap);
-        _spread = _cacheArray(spread);
-        _offset = _cacheArray(offset);
+        _indicesMap  = _cacheArray(indicesMap);
+        _spread      = _cacheArray(spread);
+        _offset      = _cacheArray(offset);
     }
 
     public static NDConfiguration construct(

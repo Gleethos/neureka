@@ -205,20 +205,20 @@ public interface NDConfiguration
      *  define this nd-configuration in a compact manner.
      *  The array consists of the following arrays joined
      *  in the following order:
-     *  [ shape | translation | idxMap | idx | idxScale | idxBase ]
+     *  [ shape | translation | indicesMap | offsets | strides ]
      *
      * @return An array of flattened arrays which define this nd-configuration in a compact manner.
      */
     default int[] asInlineArray()
     {
-        //CONFIG TRANSFER: <[ shape | translation | indicesMap | indices | strides ]>
         int rank = rank();
         int[] inline = new int[ rank * 5 ];
-        System.arraycopy( shape(),       0, inline, rank * 0, rank ); // -=> SHAPE COPY
+        //config format: [ shape | translation | indicesMap | offsets | strides ]
+        System.arraycopy( shape(),       0, inline, rank * 0, rank ); // -=> SHAPE
         System.arraycopy( translation(), 0, inline, rank * 1, rank ); // -=> TRANSLATION
-        System.arraycopy( indicesMap(),  0, inline, rank * 2, rank ); // -=> INDICES MAP (translates scalarization to dimension index)
-        System.arraycopy( offset(),      0, inline, rank * 3, rank ); // -=> SPREAD / STRIDES
-        System.arraycopy( spread(),      0, inline, rank * 4, rank ); // -=> OFFSET
+        System.arraycopy( indicesMap(),  0, inline, rank * 2, rank ); // -=> INDICES MAP (translates scalar to n-dimensional index)
+        System.arraycopy( offset(),      0, inline, rank * 3, rank ); // -=> SPREAD / STRIDES (step size for dimensions in underlying parent tensor)
+        System.arraycopy( spread(),      0, inline, rank * 4, rank ); // -=> OFFSET (nd-position inside underlying parent tensor)
         return inline;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
