@@ -69,6 +69,26 @@ class Eleven_Lines_NN_System_Spec extends Specification {
             W2.data == [0.1390771364808861, -1.8305543533070094, -0.7491036073708567, 1.874957973207181]
     }
 
+
+    def 'One can write a simple float based neural network in less than 11 lines of java like code!'()
+    {
+        given :
+            var X = Tsr.ofFloats().withShape(4,3).andFill(0f, 0f, 1f,  0f, 1f, 1f,  1f, 0f, 1f,  1f, 1f, 1f);
+            var y = Tsr.ofFloats().withShape(1,4).andFill(0f, 1f, 1f, 0f).T();
+            var W1 = Tsr.ofRandom(Float.class, 3,4).setRqsGradient(true);
+            var W2 = Tsr.ofRandom(Float.class, 4,1).setRqsGradient(true);
+            for ( int i = 0; i < 60; i++ ) {
+                Tsr<Float> l2 = Tsr.of('sig(',Tsr.of('sig(',X.matMul(W1),')').matMul(W2),')');
+                l2.backward(y.minus(l2));
+                W1.applyGradient(); W2.applyGradient();
+            }
+
+        expect :
+            W1.data == [-0.91154915, -2.8053198, -0.25180113, -1.3116924, -0.6594294, 2.512382, -1.0514474, -1.2928098, 1.3971564, 2.2039096, -0.6782811, 2.738544] as float[]
+            W2.data == [0.13907683, -1.8305545, -0.74910396, 1.8749583] as float[]
+    }
+
+
     def 'The pseudo random number generator works as expected for the weights used in the 11 line NN example!'()
     {
         given :
