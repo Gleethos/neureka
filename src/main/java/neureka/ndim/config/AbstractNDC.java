@@ -6,12 +6,8 @@ import neureka.ndim.config.types.complex.*;
 import neureka.ndim.config.types.simple.*;
 import neureka.ndim.config.types.views.SimpleReshapeView;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
-import neureka.ndim.internal.Cache;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  *  The following is an abstract implementation of the {@link NDConfiguration} which offers a basis for
