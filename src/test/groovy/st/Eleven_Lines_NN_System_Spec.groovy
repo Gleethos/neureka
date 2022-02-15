@@ -89,7 +89,7 @@ class Eleven_Lines_NN_System_Spec extends Specification {
     }
 
 
-    def 'The pseudo random number generator works as expected for the weights used in the 11 line NN example!'()
+    def 'The pseudo random number generator works as expected for the weights used in the 11 line NN examples!'()
     {
         given :
             var W1 = Tsr.ofRandom(Double, 3, 4)

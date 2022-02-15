@@ -143,6 +143,14 @@ public interface NDConfiguration
 
     int[] offset();
 
+    /**
+     *  The offset is the position of a slice within the n-dimensional
+     *  data array of its parent tensor.
+     *  Use this to look up the offset in a particular dimension.
+     *
+     * @param i The dimension index of the dimension whose offset should be returned.
+     * @return The offset of the targeted dimension.
+     */
     int offset( int i );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
