@@ -141,6 +141,13 @@ public interface NDConfiguration
 
     int spread( int i );
 
+    /**
+     *  The offset is the position of a slice within the n-dimensional
+     *  data array of its parent tensor.
+     *  Use this to get the offsets of all slice dimension.
+     *
+     * @return The offset position of the slice tensor inside the n-dimensional data array of the parent tensor.
+     */
     int[] offset();
 
     /**
