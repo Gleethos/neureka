@@ -223,7 +223,7 @@ public interface NDConfiguration
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    long keyCode();
+    int hashCode();
 
     boolean equals(NDConfiguration ndc);
 

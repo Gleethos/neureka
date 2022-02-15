@@ -6,6 +6,7 @@ import neureka.ndim.config.types.complex.*;
 import neureka.ndim.config.types.simple.*;
 import neureka.ndim.config.types.views.SimpleReshapeView;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
+import neureka.ndim.internal.Cache;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,7 +18,7 @@ import java.util.WeakHashMap;
  *  instantiation and caching of concrete implementations extending this abstract class.
  *  Concrete {@link NDConfiguration} implementations are expected to be immutable which ensures that sharing them is safe.
  *  In order to cash instances based in their field variables, this class comes with a common
- *  implementation of the {@link NDConfiguration#keyCode()} method.
+ *  implementation of the {@link NDConfiguration#hashCode()} method.
  *  {@link NDConfiguration} implementation instances will be used by tensors which often times
  *  share the same shape, and way of mapping indices to their respective data.
  *  In these cases tensors can simply share their {@link NDConfiguration} instances for memory efficiency.
@@ -31,10 +32,10 @@ public abstract class AbstractNDC implements NDConfiguration
      *  Implementations of {@link NDConfiguration} are expected to be immutable which allows us to have them be
      *  shared between tensors (because they are read only, meaning no side-effects).
      */
-    private static final Map<Long, NDConfiguration> _CACHED_NDCS;
+    private static final Cache<NDConfiguration> _CACHED_NDCS;
     static
     {
-        _CACHED_NDCS = Collections.synchronizedMap( new WeakHashMap<>() ) ;
+        _CACHED_NDCS = new Cache<>(512);
     }
 
     /**
@@ -42,10 +43,10 @@ public abstract class AbstractNDC implements NDConfiguration
      *  Warning! This can of course become dangerous when these arrays are being shared and modified.
      *  Please copy them when exposing them to the user.
      */
-    private static final Map<Long, int[]> _CACHED_INT_ARRAYS;
+    private static final Cache<int[]> _CACHED_INT_ARRAYS;
     static
     {
-        _CACHED_INT_ARRAYS = Collections.synchronizedMap( new WeakHashMap<>() ) ;
+        _CACHED_INT_ARRAYS = new Cache<>(512);
     }
 
     /**
@@ -60,45 +61,24 @@ public abstract class AbstractNDC implements NDConfiguration
      */
     protected static int[] _cacheArray( int[] data )
     {
-        long key = 0;
-        for ( int e : data ) {
-            if      ( e <=              10 ) key *=              10;
-            else if ( e <=             100 ) key *=             100;
-            else if ( e <=           1_000 ) key *=           1_000;
-            else if ( e <=          10_000 ) key *=          10_000;
-            else if ( e <=         100_000 ) key *=         100_000;
-            else if ( e <=       1_000_000 ) key *=       1_000_000;
-            else if ( e <=      10_000_000 ) key *=      10_000_000;
-            else if ( e <=     100_000_000 ) key *=     100_000_000;
-            else if ( e <=   1_000_000_000 ) key *=   1_000_000_000;
-            key += Math.abs( e ) + 1;
-        }
-        int rank = data.length;
-        while ( rank != 0 ) {
-            rank /= 10;
-            key *= 10;
-        }
-        key += data.length;
-        int[] found = _CACHED_INT_ARRAYS.get( key );
-        if ( found != null && Arrays.equals(data, found) )
-            return found;
-
-        _CACHED_INT_ARRAYS.put(key, data);
-        return data;
+        return _CACHED_INT_ARRAYS.process( data );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public long keyCode()
+    public int hashCode()
     {
-        return this.getClass().hashCode() +
-               Arrays.hashCode( shape() )       * 1L +
-               Arrays.hashCode( translation() ) * 2L +
-               Arrays.hashCode( indicesMap() )  * 3L +
-               Arrays.hashCode( spread() )      * 4L +
-               Arrays.hashCode( offset() )      * 5L +
-               ( getLayout() == Layout.ROW_MAJOR ? 0 : 1 );
+        return Long.valueOf(
+                    this.getClass().hashCode() +
+                   Arrays.hashCode( shape() )       * 1L +
+                   Arrays.hashCode( translation() ) * 2L +
+                   Arrays.hashCode( indicesMap() )  * 3L +
+                   Arrays.hashCode( spread() )      * 4L +
+                   Arrays.hashCode( offset() )      * 5L +
+                   ( getLayout() == Layout.ROW_MAJOR ? 0 : 1 )
+            )
+            .hashCode();
     }
 
     @Override
@@ -164,13 +144,7 @@ public abstract class AbstractNDC implements NDConfiguration
     protected static <T extends NDConfiguration> NDConfiguration _cached( T ndc )
     {
         assert !( ndc instanceof VirtualNDConfiguration );
-        long key = ndc.keyCode();
-        NDConfiguration found = _CACHED_NDCS.get( key );
-        if ( found != null && ndc.equals(found) ) return found;
-        else {
-            _CACHED_NDCS.put( key, ndc );
-            return ndc;
-        }
+        return _CACHED_NDCS.process( ndc );
     }
 
     private static boolean _isSimpleConfiguration(
@@ -194,7 +168,7 @@ public abstract class AbstractNDC implements NDConfiguration
 
     @Override
     public String toString() {
-        return "NDConfiguration@"+Integer.toHexString(hashCode())+"#"+Long.toHexString(keyCode())+"[" +
+        return "NDConfiguration@"+Integer.toHexString(hashCode())+"#"+Long.toHexString(this.hashCode())+"[" +
                     "shape="+Arrays.toString(shape())+","+
                     "translation="+Arrays.toString(translation())+","+
                     "indicesMap="+Arrays.toString(indicesMap())+","+
