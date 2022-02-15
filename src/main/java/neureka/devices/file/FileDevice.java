@@ -7,6 +7,7 @@ import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
+import neureka.ndim.config.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
 {
     private static final Logger _LOG = LoggerFactory.getLogger(FileDevice.class);
 
-    private static final Map<String, FileDevice> _DEVICES = new WeakHashMap<>();
+    private static final Cache<CacheBundle> _CACHE = new Cache<>(512);
 
     private Map<Tsr<Object>, FileHead<?, Object>> _stored = new HashMap<>();
 
@@ -51,11 +52,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
      * @return A {@link FileDevice} instance representing the provided directory path and all compatible files within it.
      */
     public static FileDevice at( String path ) {
-        FileDevice device = _DEVICES.get( path );
-        if ( device != null ) return device;
-        device = new FileDevice( path );
-        _DEVICES.put( path, device );
-        return device;
+        return _CACHE.process( new CacheBundle( path ) ).getDevice();
     }
 
     private FileDevice( String directory ) {
@@ -279,5 +276,33 @@ public class FileDevice extends AbstractBaseDevice<Object>
 
     public List<String> getLoaded() {
         return _loaded;
+    }
+
+    private static class CacheBundle {
+
+        private final String _directory;
+        private FileDevice _device = null;
+
+        public CacheBundle( String directory ) {
+            _directory = directory;
+        }
+
+        public FileDevice getDevice() {
+            if ( _device == null ) _device = new FileDevice( _directory );
+            return _device;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if ( this == o ) return true;
+            if ( o == null || getClass() != o.getClass() ) return false;
+            CacheBundle that = (CacheBundle) o;
+            return _directory.equals(that._directory);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash( _directory );
+        }
     }
 }

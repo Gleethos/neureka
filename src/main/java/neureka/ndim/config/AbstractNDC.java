@@ -139,7 +139,6 @@ public abstract class AbstractNDC implements NDConfiguration
 
     protected static <T extends NDConfiguration> NDConfiguration _cached( T ndc )
     {
-        assert !( ndc instanceof VirtualNDConfiguration );
         return _CACHED_NDCS.process( ndc );
     }
 

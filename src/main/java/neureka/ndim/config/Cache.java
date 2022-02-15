@@ -9,7 +9,7 @@ import java.util.Objects;
  *
  * @param <O> The type that should be cached, this may be an {@link neureka.ndim.config.NDConfiguration} or {@code int[]} array.
  */
-class Cache<O> {
+public class Cache<O> {
 
     private final Object[] _ringBuffer;
 
