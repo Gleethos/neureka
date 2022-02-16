@@ -41,10 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -59,7 +56,14 @@ import java.util.function.Consumer;
 */
 public final class DataType<Type>
 {
-    private static final Map<Class<?>, DataType> _instances = new WeakHashMap<>();
+    private final static int CAPACITY = 128;
+
+    private static final Map<Class<?>, DataType> _instances = new LinkedHashMap<Class<?>, DataType>() {
+        @Override
+        protected boolean removeEldestEntry(final Map.Entry eldest) {
+            return size() > CAPACITY;
+        }
+    };
 
     /**
      *  This method finds the corresponding NumericType implementation representing

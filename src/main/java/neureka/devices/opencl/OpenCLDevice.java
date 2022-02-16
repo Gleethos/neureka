@@ -177,7 +177,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     |   ---------------------------
     */
 
-    private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap( new WeakHashMap<Tsr<Number>, Boolean>() );
+    private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap( new WeakHashMap<>() );
 
     private final KernelCache _kernelCache = new KernelCache();
 
