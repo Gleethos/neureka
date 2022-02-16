@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -42,9 +43,15 @@ import java.util.WeakHashMap;
  */
 public final class FunctionCache
 {
+    private final static int CAPACITY = 1024;
     private Logger _log = LoggerFactory.getLogger( FunctionCache.class );
 
-    private final Map<String, Function> _functionCache = Collections.synchronizedMap( new WeakHashMap<>() );
+    private final Map<String, Function> _functionCache = new LinkedHashMap<String, Function>() {
+        @Override
+        protected boolean removeEldestEntry(final Map.Entry eldest) {
+            return size() > CAPACITY;
+        }
+    };
 
     public void put( Function function ) {
         if ( function == null ) {

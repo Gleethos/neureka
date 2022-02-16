@@ -138,7 +138,7 @@ class OpenCLDevice_Integration_Spec extends Specification
 
         given :
             def device = Neureka.get().backend().get(CLContext.class).getPlatforms()[0].devices[0]
-            def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).to( device )
+            def someData  = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).to( device )
 
         expect : 'The OpenCL device initially does not have the "dummy_kernel" we are going to create.'
             !device.hasAdHocKernel( 'dummy_kernel' )
