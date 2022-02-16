@@ -7,7 +7,7 @@ import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
-import neureka.ndim.config.Cache;
+import neureka.common.utility.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

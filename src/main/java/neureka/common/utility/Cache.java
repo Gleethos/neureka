@@ -1,4 +1,4 @@
-package neureka.ndim.config;
+package neureka.common.utility;
 
 import java.util.Arrays;
 import java.util.Objects;

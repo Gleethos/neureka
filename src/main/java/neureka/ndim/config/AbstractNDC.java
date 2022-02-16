@@ -1,11 +1,11 @@
 package neureka.ndim.config;
 
 import neureka.Neureka;
+import neureka.common.utility.Cache;
 import neureka.ndim.config.types.ColumnMajorNDConfiguration;
 import neureka.ndim.config.types.complex.*;
 import neureka.ndim.config.types.simple.*;
 import neureka.ndim.config.types.views.SimpleReshapeView;
-import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 
 import java.util.Arrays;
 
