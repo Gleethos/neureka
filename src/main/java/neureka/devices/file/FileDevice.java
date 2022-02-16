@@ -39,7 +39,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
 {
     private static final Logger _LOG = LoggerFactory.getLogger(FileDevice.class);
 
-    private static final Cache<CacheBundle> _CACHE = new Cache<>(512);
+    private static final Cache<Cache.LazyEntry<String, FileDevice>> _CACHE = new Cache<>(512);
 
     private Map<Tsr<Object>, FileHead<?, Object>> _stored = new HashMap<>();
 
@@ -52,7 +52,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
      * @return A {@link FileDevice} instance representing the provided directory path and all compatible files within it.
      */
     public static FileDevice at( String path ) {
-        return _CACHE.process( new CacheBundle( path ) ).getDevice();
+        return _CACHE.process( new Cache.LazyEntry<>( path, FileDevice::new ) ).getValue();
     }
 
     private FileDevice( String directory ) {
@@ -278,31 +278,4 @@ public class FileDevice extends AbstractBaseDevice<Object>
         return _loaded;
     }
 
-    private static class CacheBundle {
-
-        private final String _directory;
-        private FileDevice _device = null;
-
-        public CacheBundle( String directory ) {
-            _directory = directory;
-        }
-
-        public FileDevice getDevice() {
-            if ( _device == null ) _device = new FileDevice( _directory );
-            return _device;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if ( this == o ) return true;
-            if ( o == null || getClass() != o.getClass() ) return false;
-            CacheBundle that = (CacheBundle) o;
-            return _directory.equals(that._directory);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash( _directory );
-        }
-    }
 }

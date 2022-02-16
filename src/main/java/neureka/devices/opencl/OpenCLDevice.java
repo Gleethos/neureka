@@ -91,18 +91,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         CPU, GPU, ACCELERATOR, DEFAULT, CUSTOM, ALL, UNKNOWN
     }
 
-    public String toString() {
-        return "OpenCLDevice[deviceId=" + _deviceId + ",platform=" + _platform + "]";
-    }
-
-    public cl_device_id getDeviceId() {
-        return _deviceId;
-    }
-
-    public OpenCLPlatform getPlatform() {
-        return _platform;
-    }
-
     /*==================================================================================================================
     |
     |       §(1) : NESTED CLASSES
@@ -168,11 +156,19 @@ public class OpenCLDevice extends AbstractDevice<Number>
      *  a uniquely associated purpose which has been created by an operation possibly for specific
      *  tensor dimensions or possibly other properties...
      */
-    private static class cl_ad_hoc
+    static class cl_ad_hoc
     {
-        public String source;
-        public cl_kernel kernel;
-        public cl_program program;
+        public final String source;
+        public final cl_kernel kernel;
+        public final cl_program program;
+
+        public cl_ad_hoc(
+                String source, cl_kernel kernel, cl_program program
+        ) {
+            this.source = source;
+            this.kernel = kernel;
+            this.program = program;
+        }
     }
 
     /*==================================================================================================================
@@ -181,11 +177,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
     |   ---------------------------
     */
 
-    private final Map<String, cl_ad_hoc> _adhocKernels = new WeakHashMap<>();
-    private final cl_ad_hoc[] _adhocKernelRingBuffer = new cl_ad_hoc[ 128 ];
-    private int _ringIndex = 0;
-
     private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap( new WeakHashMap<Tsr<Number>, Boolean>() );
+
+    private final KernelCache _kernelCache = new KernelCache();
 
     private final cl_device_id _deviceId;
 
@@ -234,12 +228,24 @@ public class OpenCLDevice extends AbstractDevice<Number>
         //}));
     }
 
+    public String toString() {
+        return "OpenCLDevice[deviceId=" + _deviceId + ",platform=" + _platform + "]";
+    }
+
+    public cl_device_id getDeviceId() {
+        return _deviceId;
+    }
+
+    public OpenCLPlatform getPlatform() {
+        return _platform;
+    }
+
     public boolean hasAdHocKernel( String name ) {
-        return _adhocKernels.containsKey( name );
+        return _kernelCache.has( name );
     }
 
     public KernelCaller getAdHocKernel( String name ) {
-        cl_ad_hoc adHoc = _adhocKernels.get( name );
+        cl_ad_hoc adHoc = _kernelCache.get( name );
         if ( adHoc != null ) return new KernelCaller( adHoc.kernel, _queue );
         else return null;
     }
@@ -261,12 +267,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public synchronized OpenCLDevice compileAdHocKernel( String name, String source )
     {
         if ( this.hasAdHocKernel( name ) ) {
-            cl_ad_hoc adHoc = _adhocKernels.get( name );
-            String message = "Cannot compile kernel source for name '"+name+"' because the name is already taken.\n" +
+            cl_ad_hoc adHoc = _kernelCache.get( name );
+            String message =
+                    "Cannot compile kernel source for name '"+name+"' because the name is already taken.\n" +
                     "Use another name or find out why this kernel already exists.\n" +
                     (
                         adHoc.source.equals( source )
-                                ? "Besides the name, the source code of the existing kernel is also identical.\n" : ""
+                        ? "Besides the name, the source code of the existing kernel is also identical.\n" : ""
                     );
             _log.error( message );
             throw new IllegalArgumentException( message );
@@ -283,13 +290,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         // Build the program
         int err = clBuildProgram(
-                cpProgram,
-                1,
-                new cl_device_id[]{ _deviceId },
-                "-cl-mad-enable",
-                null,
-                null
-        );
+                        cpProgram,
+                        1,
+                        new cl_device_id[]{ _deviceId },
+                        "-cl-mad-enable",
+                        null,
+                        null
+                    );
         //TODO: check compilation errors!
         cl_kernel kernel;
         try {
@@ -305,19 +312,15 @@ public class OpenCLDevice extends AbstractDevice<Number>
             _log.error( "Method call 'clCreateKernel(.., name=\""+name+"\", ..)' failed!", e );
             throw e;
         }
-        cl_ad_hoc adHoc = new cl_ad_hoc();
-        adHoc.source = source;
-        adHoc.kernel = kernel;
-        adHoc.program = cpProgram;
+        cl_ad_hoc adHoc = new cl_ad_hoc(source, kernel, cpProgram);
+
         // Storing the ad hoc object in a weak hash map for fast access by operations :
-        _adhocKernels.put( name, adHoc );
-        // Storing the ad hoc object in a ring buffer to avoid immediate garbage collection :
-        _ringIndex = ( _ringIndex + 1 ) % _adhocKernelRingBuffer.length;
+        _kernelCache.put( name, adHoc );
 
         _cleaning( adHoc, () -> {
             clReleaseKernel( kernel );
             clReleaseProgram( cpProgram );
-        } );
+        });
         return this;
     }
 

@@ -160,7 +160,7 @@ class OpenCLDevice_Integration_Spec extends Specification
             device.hasAdHocKernel( 'dummy_kernel' )
 
         and : 'The device still references the source code od that kernel.'
-            device._adhocKernels['dummy_kernel'].source == """
+            device._kernelCache._adhocKernels['dummy_kernel'].source == """
                 __kernel void dummy_kernel (
                         __global float* output,
                         __global float* input,

@@ -2,6 +2,7 @@ package neureka.ndim.config;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  *  This is a simple internal cache for many objects which are
@@ -12,6 +13,7 @@ import java.util.Objects;
 public class Cache<O> {
 
     private final Object[] _ringBuffer;
+    private int _size = 0;
 
     public Cache( int size ) {
         _ringBuffer = new Object[ size ];
@@ -29,15 +31,23 @@ public class Cache<O> {
         return newObject;
     }
 
-    private O _getAt(int index) {
+    public boolean has( O o ) {
+        O found = (O) _ringBuffer[ _indexFor( o ) ];
+        return found != null && found.equals( o );
+    }
+
+    public int size() { return _size; }
+
+    private O _getAt( int index ) {
         return (O) _ringBuffer[ index ];
     }
 
-    private void _setAt(int index, O o) {
+    private void _setAt( int index, O o ) {
+        if ( _ringBuffer[ index ] == null && o != null ) _size++;
         _ringBuffer[ index ] = o;
     }
 
-    private boolean _equalsFor(Object a, Object b) {
+    private boolean _equalsFor( Object a, Object b ) {
         if ( a != null && b != null ) {
             if (a instanceof int[] && b instanceof int[])
                 return Arrays.equals((int[]) a, (int[]) b);
@@ -51,11 +61,11 @@ public class Cache<O> {
         return o instanceof int[] ? _index((int[]) o) : _index( o.hashCode() );
     }
 
-    private int _index(int key) {
+    private int _index( int key ) {
         return Math.abs(key)%_ringBuffer.length;
     }
 
-    private int _index(int[] data )
+    private int _index( int[] data )
     {
         long key = 0;
         for ( int e : data ) {
@@ -79,5 +89,36 @@ public class Cache<O> {
         return _index(Long.valueOf(key).hashCode());
     }
 
+    public static class LazyEntry<K,V> {
+
+        private final K _key;
+        private final Function<K,V> _valueSupplier;
+
+        private V _value = null;
+
+        public LazyEntry( K directory, Function<K,V> valueSupplier ) {
+            _key = directory;
+            _valueSupplier = valueSupplier;
+        }
+
+        public V getValue() {
+            if ( _value == null ) _value = _valueSupplier.apply(_key);
+            return _value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if ( this == o ) return true;
+            if ( o == null || getClass() != o.getClass() ) return false;
+            LazyEntry that = (LazyEntry) o;
+            return _key.equals(that._key);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(_key);
+        }
+
+    }
 
 }
