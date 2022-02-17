@@ -21,7 +21,7 @@ public class VirtualNDConfiguration extends AbstractNDC
     public static NDConfiguration construct(
             int[] shape
     ) {
-        return  _cached( new VirtualNDConfiguration( _cacheArray( shape ) ) );
+        return _cached( new VirtualNDConfiguration( shape ) );
     }
 
     @Override
