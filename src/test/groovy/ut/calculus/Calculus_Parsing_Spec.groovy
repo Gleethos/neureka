@@ -1,17 +1,42 @@
 package ut.calculus
 
 import neureka.calculus.Function
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("Parsing Expressions into Functions")
+@Narrative('''
+
+    Neureka uses the 'Function' interface as a representation of a
+    nested structure of operations.
+    This means that a 'Function' is simply an abstract syntax trees made up of other 'Function' implementations
+    which are assembled together by a parser receiving a string expression.
+    In this specification we ensure that function expressions will be properly parsed into
+    'Function' implementations.
+
+''')
 class Calculus_Parsing_Spec extends Specification
 {
     def setupSpec()
     {
         reportHeader """
-            In essence, this specification assures that functions can be created from String expressions.
-            Internally this conversion occurs through a parser, which builds an abstract syntax tree.
-            This parsing procedure is rather complex, having many classes involved in it in order to produce
-            the final Function instance.   
+            This specification ensures that functions can be created from String expressions
+            using factory methods on the $Function interface.
+            The implementation details as to how exactly this leads to an abstract syntax tree
+            will not be covered here.
+            This is because the parsing procedure is rather complex and the only thing we care about 
+            is the result.   
+            <br>
+            Within a given expression String passed to the parser, function inputs are
+            recognized by 'I[j]', 'Ij' or 'ij', where j is the input index.
+            Functions accept arrays as their inputs,
+            which is why variables must be targeted in such a way.
+            There are also many mathematical function like 'sig(..)', 'tanh(..)', 'sin(..)', 'cos(..)' 
+            and many more which are recognised by the parser. 
+            Other than that the syntax is rather mundane with respect to traditional
+            operations like for example plus '+', minus '-', times '*', ... etc.      <br>
+         
         """
     }
 
@@ -89,21 +114,5 @@ class Calculus_Parsing_Spec extends Specification
         //"(3 * I[0]) ^ (I[0]/6)"      | 0     || ""
 
     }
-    /*
-    (
-        (
-            (1.0 / 6.0)
-        )
-        *
-        (
-            (
-                3.0 * ( (3.0 * I[0]) ^ ( (I[0] / 6.0) - 1.0 ) )
-            )
-                +
-            (
-                ln(3.0 * I[0]) * ((3.0 * I[0]) ^ (I[0] / 6.0))
-            )
-        )
-    )
-     */
+
 }
