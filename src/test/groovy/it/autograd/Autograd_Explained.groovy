@@ -17,12 +17,11 @@ import spock.lang.Title
      your code is run, and that every single iteration can be different.                                     <br>
                                                                                                              <br>
      The class neureka.Tsr is the central class of the main package.                                         <br>
-     If you set its attribute rqsGradient to True, Neureka starts to track all operations on it.             <br>
+     If you set its attribute 'rqsGradient' to True, Neureka starts to track all operations on it.           <br>
      When you finish the forward pass of your network                                                        <br>
      you can call .backward() and have all the gradients computed                                            <br>
      and distributed to the tensors requiring them automatically.                                            <br>
                                                                                                              <br>
-     <b> Tensors and Gradients </b>                                                                          <br>
      <br>                                                                                                    <br>
      The gradient for a tensor will be accumulated into a child tensor (component) which                     <br>
      can be accessed via the '.getGradient()' method.                                                        <br>
@@ -37,7 +36,7 @@ class Autograd_Explained extends Specification
     def setupSpec()
     {
         reportHeader """
-            There’s one more class which is very important for autograd implementation : the GraphNode.             <br>
+            There’s one more class which is very important for autograd implementation : the 'GraphNode class'!     <br>
             Tsr and GraphNode instances are interconnected and build up an acyclic graph,                           <br>       
             that encodes a complete history of computation.                                                         <br>                   
             Each tensor has a .getGraphNode() attribute that references the GraphNode                               <br>             
