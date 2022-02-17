@@ -50,14 +50,13 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
     def 'Slices can be created using the SliceBuilder.'(
         Device device
     ) {
-    given :
-        if ( device == null ) return
-        Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-        Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
-        if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
+        given :
+            if ( device == null ) return
+            Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
+            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
-    and: 'A tensor which ought to be sliced:'
-
+        and: 'A tensor which ought to be sliced:'
             Tsr a = Tsr.of([4, 6], [
                     1d, 2d, 3d, 4d, 5d, 6d,
                     7d, 8d, 9d, 1d, 2d, 3d,
@@ -65,16 +64,18 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                     1d, 2d, 3d, 4d, 5d, 6d
             ])
             /*
-                1, 2, 3, 4, 5, 6,
-                7, 8, 9, 1, 2, 3, => 7, 8, 9, 1
-                4, 5, 6, 7, 8, 9, => 4, 5, 6, 7
-                1, 2, 3, 4, 5, 6  => 1, 2, 3, 4
+                Let's do the following slice! :
+
+                    1, 2, 3, 4, 5, 6,
+                    7, 8, 9, 1, 2, 3, => 7, 8, 9, 1
+                    4, 5, 6, 7, 8, 9, => 4, 5, 6, 7
+                    1, 2, 3, 4, 5, 6  => 1, 2, 3, 4
              */
 
             device.store(a)
 
         when:
-            Tsr b = a.slice() // [[-1..-3, -6..-3]]
+            Tsr b = a.slice() // [-1..-3, -6..-3]
                         .axis(0).from(-1).to(-3)
                         .axis(1).from(-6).to(-3)
                         .get()
@@ -94,14 +95,13 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                     "7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
             )
             b.spread() != null
-        /*
+
         when :
             Tsr y = ( s * 4 ) ^ 1.5
 
-
         then :
-             y.toString() == ''
-        */
+             y.toString() == '(1x1):[22.6274E0]; ->d(1x1):[16.9706E0]'
+
         where:
             device << [Device.find('gpu'), CPU.get() ]
 
@@ -152,10 +152,12 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                     1d, 2d, 3d, 4d, 5d, 6d
             ])
             /*
-                1, 2, 3, 4, 5, 6,
-                7, 8, 9, 1, 2, 3, => 7, 8, 9, 1
-                4, 5, 6, 7, 8, 9, => 4, 5, 6, 7
-                1, 2, 3, 4, 5, 6  => 1, 2, 3, 4
+                Let's do the following slice! :
+
+                    1, 2, 3, 4, 5, 6,
+                    7, 8, 9, 1, 2, 3, => 7, 8, 9, 1
+                    4, 5, 6, 7, 8, 9, => 4, 5, 6, 7
+                    1, 2, 3, 4, 5, 6  => 1, 2, 3, 4
              */
 
             device.store(a)
@@ -183,13 +185,16 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                     "7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
             )
             b.spread() != null
-            /**
-             * 2, 3, 4,
-             * 6, 7, 8,
-             * 1, 2, 3,
-             * 5, 6, 7,
+            /*
+                As matrix :
+
+                2, 3, 4,
+                6, 7, 8,
+                1, 2, 3,
+                5, 6, 7,
+
              */
-        //---
+
         when:
             if( device instanceof DummyDevice ) {
                 a.getDataAs( double[].class )[1] = a.getDataAs( double[].class )[1] * 6
@@ -208,12 +213,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             }
 
         then:
-            b.toString().contains(
-                    "7.0, 16.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
-            )
-
-            //assert x.toString().contains("-16.0")
-            //---
+            b.toString().contains("7.0, 16.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0")
 
         when:
             Tsr c = Tsr.of([3, 4], [
@@ -222,7 +222,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                     -1d, 1d, 2d,
                      3d, 4d, 2d,
             ])
-            /* //NON LEGACY INDEXED:
+            /*
                 -3, 2, 3, 5,
                 6, 2, -1, 1,
                 2, 3, 4, 2,
@@ -236,8 +236,9 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                 3,  5, 7   6
 
              */
-            //device.add(c)
+
             Tsr d = b + c
+
         then:
             (d.NDConf.asInlineArray() as List) == ( [3, 4, 4, 1, 4, 1, 0, 0, 1, 1] )
             (b.NDConf.asInlineArray() as List) == ( [3, 4, 6, 1, 4, 1, 1, 0, 1, 1] )
@@ -246,48 +247,47 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
 
             d.toString().contains(
                 "4.0, 18.0, 12.0, 6.0, "+
-                        "10.0, 7.0, 5.0, 8.0, "+
-                        "3.0, 5.0, 7.0, 6.0"
-            ) // 9.0, 5.0, 7.0, 10.0, 12.0, 9.0, 15.0, 10.0, 3.0, 5.0, 7.0, 6.0
-              // 9.0, 5.0, 7.0, 10.0, 12.0, 9.0, 15.0, 10.0, 3.0, 5.0, 7.0, 6.0
-            //---
+                "10.0, 7.0, 5.0, 8.0, "+
+                "3.0, 5.0, 7.0, 6.0"
+            )
+
         when:
             b = a[1..3, 2..4]
         then:
-            b.toString().contains(
-                    "9.0, 1.0, 2.0, 6.0, 7.0, 8.0, 3.0, 4.0, 5.0"
-            )
-
+            b.toString().contains("9.0, 1.0, 2.0, 6.0, 7.0, 8.0, 3.0, 4.0, 5.0")
             b.spread() != null
-            /**
-             1, 12, 3, 4, 5, 6,
-             7, 16, 9, 1, 2, 3, =>  9, 1, 2,
-             4, 5, 6, 7, 8, 9,  =>  6, 7, 8,
-             1, 2, 3, 4, 5, 6   =>  3, 4, 5,
+            /*
+                Let's do the following slice! :
+
+                 1, 12, 3, 4, 5, 6,
+                 7, 16, 9, 1, 2, 3, =>  9, 1, 2,
+                 4, 5, 6, 7, 8, 9,  =>  6, 7, 8,
+                 1, 2, 3, 4, 5, 6   =>  3, 4, 5,
              */
-            //---
+
         when:
             b = a[[[0..3]:2, [1..4]:2]]
         then:
             b.toString().contains( "12.0, 4.0, 5.0, 7.0" )
             b.spread() != null
-            /**
-             1, 12, 3, 4, 5, 6, => 12, 4,
-             7, 16, 9, 1, 2, 3,
-             4, 5, 6, 7, 8, 9,  => 5,  7,
-             1, 2, 3, 4, 5, 6
+            /*
+                Let's do the following slice! :
+
+                 1, 12, 3, 4, 5, 6, => 12, 4,
+                 7, 16, 9, 1, 2, 3,
+                 4, 5, 6, 7, 8, 9,  => 5,  7,
+                 1, 2, 3, 4, 5, 6
              */
-            //---
+
         when:
             Tsr p = Tsr.of([2,2], [2d, 55d, 4d, 7d]).to((device instanceof DummyDevice)?null:device)
             Tsr u = Tsr.of([2,2], [5d, 2d, 7d, 34d]).to((device instanceof DummyDevice)?null:device)
 
             p[] = u
-            //tester.testContains(p.toString(), ["5.0, 2.0, 7.0, 34.0"], "Testing slicing")
+
         then:
             p.toString().contains("5.0, 2.0, 7.0, 34.0")
 
-        //---
         when:
             a[[[0..3]:2, [1..4]:2]] = Tsr.of([2, 2], [1d, 2d, 3d, 4d])
         then:
@@ -298,13 +298,14 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                     "4.0, 3.0, 6.0, 4.0, 8.0, 9.0, " +
                     "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
             )
-            /**a:>>
-              1   1   3   2   5   6
-              7   16  9   1   2   3
-              4   3   6   4   8   9
-              1   2   3   4   5   6
+            /*
+                a:
+                  1   1   3   2   5   6
+                  7   16  9   1   2   3
+                  4   3   6   4   8   9
+                  1   2   3   4   5   6
              */
-            //---
+
         when:
             a[1..2, 1..2] = Tsr.of([2, 2], [8, 8, 8, 8])
         then:
@@ -318,29 +319,26 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                     "4.0, 8.0, 8.0, 4.0, 8.0, 9.0, " +
                     "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
             )
-            /**a:>>
-             1.0, 1.0, 3.0, 2.0, 5.0, 6.0,
-             7.0, 8.0, 8.0, 1.0, 2.0, 3.0,
-             4.0, 8.0, 8.0, 4.0, 8.0, 9.0,
-             1.0, 2.0, 3.0, 4.0, 5.0, 6.0
-             */
-
-            //---
-            //b>>
-            //      1, 8,
-            //      3, 4
+            /*
+                a:
+                 1.0, 1.0, 3.0, 2.0, 5.0, 6.0,
+                 7.0, 8.0, 8.0, 1.0, 2.0, 3.0,
+                 4.0, 8.0, 8.0, 4.0, 8.0, 9.0,
+                 1.0, 2.0, 3.0, 4.0, 5.0, 6.0
+                b:
+                 1, 8,
+                 3, 4
+        */
         when:
             b.setRqsGradient(true)
             c = Tsr.of([2, 2], [
-                    -2, 3,//-2 + 24 + 3 + 8
-                    1, 2,
-            ])
+                            -2, 3,//-2 + 24 + 3 + 8
+                             1, 2,
+                        ])
             device.store(b).store(c) // -2 + 6 + 8 + 8 = 22
             x = Tsr.of(b, "x", c) // This test is important because it tests convolution on slices!
         then:
-            x.toString().contains(
-                    "[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
-            )
+            x.toString().contains("[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)")
 
         where:
             device << [CPU.get(),Device.find('gpu')]
