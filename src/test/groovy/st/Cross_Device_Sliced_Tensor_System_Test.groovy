@@ -8,16 +8,14 @@ import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
-
+import spock.lang.Title
 import testutility.mock.DummyDevice
 
-
+@Title("Cross Device Tensor Slicing")
 class Cross_Device_Sliced_Tensor_System_Test extends Specification
 {
     def setupSpec() {
-        reportHeader """
-                <h2> Cross Device Tensor Slicing </h2>
-                <br> 
+        reportHeader """ 
                 <p>
                     This specification covers the behavior of tensors when being sliced
                     on multiple different device types in conjunction with 
