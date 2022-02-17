@@ -123,7 +123,8 @@ public abstract class AbstractNDC implements NDConfiguration
                 ndc = SimpleD2Configuration.construct(shape, translation);
             } else if ( shape.length == 3 ) {
                 ndc = SimpleD3Configuration.construct(shape, translation);
-            } else ndc = SimpleDefaultNDConfiguration.construct(shape, translation);
+            } else
+                ndc = SimpleDefaultNDConfiguration.construct(shape, translation);
         } else {
             if ( shape.length == 1 ) {
                 if ( shape[ 0 ] == 1 ) ndc = ComplexScalarConfiguration.construct(shape, offset);
@@ -132,7 +133,8 @@ public abstract class AbstractNDC implements NDConfiguration
                 ndc = ComplexD2Configuration.construct(shape, translation, indicesMap, spread, offset);
             } else if ( shape.length == 3 ) {
                 ndc = ComplexD3Configuration.construct(shape, translation, indicesMap, spread, offset);
-            } else ndc = ComplexDefaultNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
+            } else
+                ndc = ComplexDefaultNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
         }
         return ndc;
     }

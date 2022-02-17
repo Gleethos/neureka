@@ -3,6 +3,13 @@ package neureka.ndim.config.types.virtual;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 
+/**
+ *  {@link VirtualNDConfiguration}s represent tensors which
+ *  are filled homogeneously with a single value exclusively,
+ *  like for example a tensor filled with only zeros.
+ *  such tensors have very simple data access patterns
+ *  which are modeled by this class!
+ */
 public class VirtualNDConfiguration extends AbstractNDC
 {
     private final int[] _shape;

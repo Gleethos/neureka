@@ -5,20 +5,25 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- *  This is a simple internal cache for many objects which are
- *  mostly the same throughout the library runtime...
+ *  This is a simple, fixed size cache for immutable objects which are
+ *  shared throughout the library runtime...
+ *  This is an internal class which should not be used outside of Neurekas internals.
  *
  * @param <O> The type that should be cached, this may be an {@link neureka.ndim.config.NDConfiguration} or {@code int[]} array.
  */
 public class Cache<O> {
 
-    private final Object[] _ringBuffer;
+    private final Object[] _buffer;
     private int _size = 0;
 
     public Cache( int size ) {
-        _ringBuffer = new Object[ size ];
+        _buffer = new Object[ size ];
     }
 
+    /**
+     * @param newObject The object which may or may not be cached.
+     * @return Either the provided object or the object found inside the cache...
+     */
     public O process( O newObject ) {
 
         int index = _indexFor(newObject);
@@ -32,19 +37,19 @@ public class Cache<O> {
     }
 
     public boolean has( O o ) {
-        O found = (O) _ringBuffer[ _indexFor( o ) ];
+        O found = (O) _buffer[ _indexFor( o ) ];
         return found != null && found.equals( o );
     }
 
     public int size() { return _size; }
 
     private O _getAt( int index ) {
-        return (O) _ringBuffer[ index ];
+        return (O) _buffer[ index ];
     }
 
     private void _setAt( int index, O o ) {
-        if ( _ringBuffer[ index ] == null && o != null ) _size++;
-        _ringBuffer[ index ] = o;
+        if ( _buffer[ index ] == null && o != null ) _size++;
+        _buffer[ index ] = o;
     }
 
     private boolean _equalsFor( Object a, Object b ) {
@@ -62,7 +67,7 @@ public class Cache<O> {
     }
 
     private int _index( int key ) {
-        return Math.abs(key)%_ringBuffer.length;
+        return Math.abs(key)% _buffer.length;
     }
 
     private int _index( int[] data )
@@ -89,6 +94,13 @@ public class Cache<O> {
         return _index(Long.valueOf(key).hashCode());
     }
 
+    /**
+     *  Lazy cache entries are entries whose values will be calculated
+     *  only when the entry is being stored in the cache.
+     *
+     * @param <K> The key type parameter.
+     * @param <V> The value type parameter.
+     */
     public static class LazyEntry<K,V> {
 
         private final K _key;

@@ -39,7 +39,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
 {
     private static final Logger _LOG = LoggerFactory.getLogger(FileDevice.class);
 
-    private static final Cache<Cache.LazyEntry<String, FileDevice>> _CACHE = new Cache<>(512);
+    private static final Cache<Cache.LazyEntry<String, FileDevice>> _CACHE = new Cache<>(64);
 
     private Map<Tsr<Object>, FileHead<?, Object>> _stored = new HashMap<>();
 
