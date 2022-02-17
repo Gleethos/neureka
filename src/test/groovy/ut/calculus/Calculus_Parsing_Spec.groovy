@@ -36,7 +36,6 @@ class Calculus_Parsing_Spec extends Specification
             and many more which are recognised by the parser. 
             Other than that the syntax is rather mundane with respect to traditional
             operations like for example plus '+', minus '-', times '*', ... etc.      <br>
-         
         """
     }
 
@@ -61,7 +60,7 @@ class Calculus_Parsing_Spec extends Specification
             "[1,0, 5,3, 4]:(tanh(i0xi1))"               || "([1,0,5,3,4]:(tanh(I[0] x I[1])))"
             "[0,2, 1,3, -1](sig(I0))"                   || "([0,2,1,3,-1]:(sig(I[0])))"
             "I[0]<-I[1]"                                || "(I[0] <- I[1])"
-            "quadratic(I[0]) <- (I[1] <- I[2])"         || "(quad(I[0]) <- (I[1] <- I[2]))"
+            "quadratic(I[0]) <- (I[1] <- I[2])"         || "(quad(I[0]) <- (I[1] <- I[2]))" // '<-' is the assign operator!
             "((tanh(i0)"                                || "tanh(I[0])"
             '($$(gaus(i0*()'                            || "gaus(I[0] * 0.0)"
             "rrlu(i0)"                                  || "relu(I[0])"

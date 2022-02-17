@@ -4,35 +4,38 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
 import neureka.view.TsrStringSettings
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("Autograd - Automatic Differentiation")
+@Narrative('''
+
+     Central to all neural networks in Neureka is the autograd package.                                      <br>
+     The autograd package provides automatic differentiation for all default operations on Tensors.          <br>
+     Neureka is a define-by-run library, which means that your backpropagation is defined by how             <br>
+     your code is run, and that every single iteration can be different.                                     <br>
+                                                                                                             <br>
+     The class neureka.Tsr is the central class of the main package.                                         <br>
+     If you set its attribute rqsGradient to True, Neureka starts to track all operations on it.             <br>
+     When you finish the forward pass of your network                                                        <br>
+     you can call .backward() and have all the gradients computed                                            <br>
+     and distributed to the tensors requiring them automatically.                                            <br>
+                                                                                                             <br>
+     <b> Tensors and Gradients </b>                                                                          <br>
+     <br>                                                                                                    <br>
+     The gradient for a tensor will be accumulated into a child tensor (component) which                     <br>
+     can be accessed via the '.getGradient()' method.                                                        <br>
+                                                                                                             <br>
+     To stop a tensor from tracking history, you can call '.detach()' to detach it from the                  <br>
+     computation history, and to prevent future computation from being tracked.                              <br>
+     <br>   
+            
+''')
 class Autograd_Explained extends Specification
 {
     def setupSpec()
     {
-        reportHeader """
-            <b> Autograd - Automatic Differentiation </b>                                                           <br>
-            <br>
-            Central to all neural networks in Neureka is the autograd package.                                      <br>
-            The autograd package provides automatic differentiation for all default operations on Tensors.          <br>
-            Neureka is a define-by-run library, which means that your backpropagation is defined by how             <br>
-            your code is run, and that every single iteration can be different.                                     <br>
-            <br>
-            The class neureka.Tsr is the central class of the main package.                                         <br>
-            If you set its attribute rqsGradient to True, Neureka starts to track all operations on it.             <br>
-            When you finish the forward pass of your network                                                        <br>
-            you can call .backward() and have all the gradients computed                                            <br>
-            and distributed to the tensors requiring them automatically.                                            <br>
-            <br>
-            <b> Tensors and Gradients </b>                                                                          <br>
-            <br>                                                                                                        <br>
-            The gradient for a tensor will be accumulated into a child tensor (component) which                     <br>
-            can be accessed via the .getGradient() method.                                                          <br>
-            <br>
-            To stop a tensor from tracking history, you can call .detach() to detach it from the                    <br>
-            computation history, and to prevent future computation from being tracked.                              <br>
-            <br>                                         
-        """
         reportHeader """
             There’s one more class which is very important for autograd implementation : the GraphNode.             <br>
             Tsr and GraphNode instances are interconnected and build up an acyclic graph,                           <br>       
