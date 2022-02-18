@@ -349,12 +349,14 @@ class OpenCLDevice_Integration_Spec extends Specification
             long[] global = new long[]{ M, K }
 
             def data = (0..(M*K-1)).collect( v-> v + seed )
-            def data1 = data.collect( v -> ((v+5)%11)-5  as int )
-            def data2 = data.collect( v -> ((v+7)%11)-5 as int )
+            def data1 = data.collect( v -> ((v+5)%11)-5 as float )
+            def data2 = data.collect( v -> ((v+7)%11)-5 as float )
 
             Tsr A = Tsr.of( [M,K], data1  )
-            Tsr B = Tsr.of( [K,N], data2 )
-            Tsr C = Tsr.of( [M,N], 0 )
+            Tsr B = Tsr.of( [K,N], data2  )
+            Tsr C = Tsr.of( [M,N], 0f )
+
+            var reference = A.matMul(B).value // CPU execution for reference!
 
             A.to( device )
             B.to( device )
@@ -410,6 +412,8 @@ class OpenCLDevice_Integration_Spec extends Specification
 
         then :
             C.toString({it.setRowLimit(50)}) == expected
+        and :
+            C.value == reference
 
         where :
             seed | M   | K   | N  || expected

@@ -323,7 +323,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value An object of type {@link T} which will populate the data array of the new instance.
      * @return A new {@link Tsr} instance for the generic type {@link T}.
      */
-    public static <T> Tsr<T> of( List<Integer> shape, T value ) { return _of( shape, value ); }
+    public static <T> Tsr<T> of( List<Integer> shape, T value ) {
+        if ( value == null ) throw new IllegalArgumentException("Provided value is null!");
+        return of( (Class<T>) value.getClass(), shape, value );
+    }
 
     /**
      *  This factory method will create and return a {@link Tsr} instance
