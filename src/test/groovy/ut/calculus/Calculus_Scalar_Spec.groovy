@@ -16,7 +16,6 @@ import spock.lang.Title
 ''')
 class Calculus_Scalar_Spec extends Specification
 {
-
     def 'Function "1/I[0]" instance returns expected scalar results.'(
             double[] inputs, Integer index, double expected
     ){
@@ -24,8 +23,8 @@ class Calculus_Scalar_Spec extends Specification
             Function f = new FunctionBuilder( Neureka.get().backend() ).build("1/I[0]", false)
 
         expect : 'The function yields expected scalar results when called.'
-            if (index!=null) assert f.derive( inputs, index )==expected
-            else assert f.call( inputs )==expected
+            if (index!=null) assert f.derive( inputs, index ) == expected
+            else assert f.call( inputs ) == expected
 
         where : 'The following input array, target derivative index and result scalar is used :'
             inputs | index || expected
@@ -41,15 +40,15 @@ class Calculus_Scalar_Spec extends Specification
             Function f = new FunctionBuilder( Neureka.get().backend() ).build("I[0]+1/I[0]", false)
 
         expect : 'The function yields expected scalar results when called.'
-            if (index!=null) assert f.derive( inputs, index )==expected
-            else assert f.call( inputs )==expected
+            if (index!=null) assert f.derive( inputs, index ) == expected
+            else assert f.call( inputs ) == expected
 
         where : 'The following input array, target derivative index and result scalar is used :'
             inputs | index || expected
             [2]    | null  ||  2.5
             [-1]   | 0     ||  0.0
             [-3]   | 0     ||  0.8888888888888888
-            [0.2]  | 0     ||  -23.999999999999996
+            [0.2]  | 0     || -23.999999999999996
     }
 
 
@@ -60,13 +59,13 @@ class Calculus_Scalar_Spec extends Specification
             Function f = new FunctionBuilder( Neureka.get().backend() ).build("(I[0]+1/I[0])^-I[0]", false)
 
         expect : 'The function yields expected scalar results when called.'
-            if (index!=null) assert f.derive( inputs, index )==expected
-            else assert f.call( inputs )==expected
+            if (index!=null) assert f.derive( inputs, index ) == expected
+            else assert f.call( inputs ) == expected
 
         where : 'The following input array, target derivative index and result scalar is used :'
             inputs  | index || expected
             [  1  ] | null  ||  0.5
-            [ 0.2 ] | 0     ||  -0.5217778675999797
+            [ 0.2 ] | 0     || -0.5217778675999797
     }
 
 
@@ -77,7 +76,7 @@ class Calculus_Scalar_Spec extends Specification
             Function f = new FunctionBuilder( Neureka.get().backend() ).build("(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)", false)
 
         expect :
-            if (index!=null) assert f.derive( inputs, index )==expected
+            if ( index != null ) assert f.derive( inputs, index )==expected
             else assert f.call( inputs )==expected
 
         where : 'The following input array, target derivative index and result scalar is used :'
@@ -87,7 +86,7 @@ class Calculus_Scalar_Spec extends Specification
             [ 0  ] | null  ||  0.2
             [ 0  ] | 0     ||  1.1
             [ 0.5] | 0     ||  0.646867884000033
-            [ 1.6] | 0     ||  -0.00697440343353687
+            [ 1.6] | 0     || -0.00697440343353687
             [ -4 ] | 0     ||  3.9174193383745917
     }
 
@@ -106,7 +105,7 @@ class Calculus_Scalar_Spec extends Specification
             inputs                | index || expected
             [0.0, 0.5, 1.6, -4.0] | 0     ||  1.1
             [0.0, 0.5, 1.6, -4.0] | 1     ||  0.646867884000033
-            [0.0, 0.5, 1.6, -4.0] | 2     ||  -0.00697440343353687
+            [0.0, 0.5, 1.6, -4.0] | 2     || -0.00697440343353687
             [0.0, 0.5, 1.6, -4.0] | 3     ||  3.9174193383745917
     }
 
@@ -122,7 +121,7 @@ class Calculus_Scalar_Spec extends Specification
             else assert f.call( inputs )==expected
 
         where : 'The following parameters are used :'
-            equation                         | inputs               | index || expected
+            equation                          | inputs               | index || expected
              "6/2*(1+2)"                      | []                   | null  ||   9
              "sumJs(Ij)"                      | [2, 3.2, 6]          | null  ||  11.2
              "prod(Ij)"                       | [0.5, 0.5, 100]      | null  ||  25

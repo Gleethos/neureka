@@ -37,27 +37,27 @@ class Tensor_Indexing_Integration_Spec extends Specification
 
         when : 'The following calculations are being executed...'
             Tsr i_a = Tsr.of([2, 1], [
-                    1d,
-                    2d
-            ])
+                                    1d,
+                                    2d
+                            ])
             Tsr w_a = Tsr.of([2, 2], [
-                    1d, 3d,
-                    4d, -1d
-            ]).setRqsGradient(true)
+                                    1d, 3d,
+                                    4d, -1d
+                            ]).setRqsGradient(true)
             Tsr o_a = Tsr.of(i_a, "x", w_a)
             //[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0),
             //---
             Tsr w_b = Tsr.of([2, 2], [
-                    -2d, 1d,  // 9, 1 -> -17
-                    2d, -1d   // ... -> 17
-            ]).setRqsGradient(true)
+                                    -2d, 1d,  // 9, 1 -> -17
+                                    2d, -1d   // ... -> 17
+                            ]).setRqsGradient(true)
             Tsr o_b = Tsr.of(o_a, "x", w_b)
             //[2x1]:(-10.0, 5.0); ->d[2x2]:(-2.0, 1.0, 2.0, -1.0):g:(null), ->d[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0), ,
             //---
             Tsr w_c = Tsr.of([2, 2], [
-                    0.5d, 3d,
-                    -2d, -0.5d
-            ]).setRqsGradient(true)
+                                    0.5d, 3d,
+                                    -2d, -0.5d
+                            ]).setRqsGradient(true)
             Tsr o_c = Tsr.of(o_a, "x", w_c)
             //[2x1]:(-0.5, 20.0); ->d[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0), , ->d[2x2]:(0.5, 3.0, -2.0, -0.5):g:(null),
             //---
@@ -187,7 +187,7 @@ class Tensor_Indexing_Integration_Spec extends Specification
             t0.toString() == "(3x2x1):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]"
             x0.toString() == "(1x2x3):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]"
 
-        when : out0 = Tsr.of("i0xi1", [t0, x0] )
+        when : out0 = Tsr.of("i0xi1", [t0, x0])
         then :
             out0.toString() == "(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]"
     }

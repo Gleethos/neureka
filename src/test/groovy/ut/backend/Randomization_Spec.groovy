@@ -6,8 +6,8 @@ import spock.lang.Specification
 
 class Randomization_Spec extends Specification {
 
-    def 'Randomization is in essence the same algorithm as JDKs "Random".'() {
-
+    def 'Randomization is in essence the same algorithm as JDKs "Random".'()
+    {
         given :
             var random = new Random()
             var seed = Randomization.initialScramble(666_42_666)

@@ -39,23 +39,20 @@ class Calculus_Function_Spec extends Specification {
 
         where :
             caller << [
-                    {t1, t2, fun -> fun.call(t1, t2)},
-                    {t1, t2, fun -> fun.invoke(t1, t2)},
-                    {t1, t2, fun -> fun.execute(t1, t2)}
-            ]
+                        {t1, t2, fun -> fun.call(t1, t2)},
+                        {t1, t2, fun -> fun.invoke(t1, t2)},
+                        {t1, t2, fun -> fun.execute(t1, t2)}
+                    ]
     }
 
     def 'Function implementations ensure that outputs which are input members are not flagged as "intermediate"!'()
     {
         given :
-            var fun1 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                return tensors[0]
-            })
+            var fun1 = new DummyFunction((Args args, Tsr<?>[] tensors) -> tensors[0] )
         and :
             var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                return tensors[0].unsafe.setIsIntermediate( true ) // This should fail!
-            })
-
+                                    return tensors[0].unsafe.setIsIntermediate( true ) // This should fail!
+                                })
         and :
             var a = Tsr.of(3)
             var b = Tsr.of(-2.5)
@@ -75,10 +72,10 @@ class Calculus_Function_Spec extends Specification {
 
         where :
             caller << [
-                    {t1, t2, fun -> fun.call(t1, t2)},
-                    {t1, t2, fun -> fun.invoke(t1, t2)},
-                    {t1, t2, fun -> fun.execute(t1, t2)}
-            ]
+                        {t1, t2, fun -> fun.call(t1, t2)},
+                        {t1, t2, fun -> fun.invoke(t1, t2)},
+                        {t1, t2, fun -> fun.execute(t1, t2)}
+                    ]
     }
 
 
