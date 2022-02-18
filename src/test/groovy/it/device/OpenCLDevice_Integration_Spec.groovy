@@ -413,7 +413,7 @@ class OpenCLDevice_Integration_Spec extends Specification
         then :
             C.toString({it.setRowLimit(50)}) == expected
         and :
-            C.value == reference
+            C.value == reference // GPU should produce the same as CPU!
 
         where :
             seed | M   | K   | N  || expected
