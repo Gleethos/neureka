@@ -39,8 +39,14 @@ import org.jetbrains.annotations.Contract;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+/**
+ *  This interface represents the access pattern configuration for the data array of a tensor.
+ */
 public interface NDConfiguration
 {
+    /**
+     *  Types of common data layouts.
+     */
     enum Layout {
 
         ROW_MAJOR, COLUMN_MAJOR;
@@ -137,8 +143,22 @@ public interface NDConfiguration
 
     int translation( int i );
 
+    /**
+     *  The spread is the access step size of a slice within the n-dimensional
+     *  data array of its parent tensor.
+     *
+     * @return An array of index step sizes for each tensor dimension / axis.
+     */
     int[] spread();
 
+    /**
+     *  The spread is the access step size of a slice within the n-dimensional
+     *  data array of its parent tensor.
+     *  Use this to look up the spread in a particular dimension / axis.
+     *
+     * @param i The dimension / axis index of the dimension / axis whose spread should be returned.
+     * @return The spread of the targeted dimension.
+     */
     int spread( int i );
 
     /**
@@ -153,14 +173,12 @@ public interface NDConfiguration
     /**
      *  The offset is the position of a slice within the n-dimensional
      *  data array of its parent tensor.
-     *  Use this to look up the offset in a particular dimension.
+     *  Use this to look up the offset in a particular dimension / axis.
      *
-     * @param i The dimension index of the dimension whose offset should be returned.
+     * @param i The dimension / axis index of the dimension / axis whose offset should be returned.
      * @return The offset of the targeted dimension.
      */
     int offset( int i );
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      *  Use this to calculate the true index for an element in the data array (data array index)
@@ -198,8 +216,6 @@ public interface NDConfiguration
      */
     int indexOfIndices( int[] indices );
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     /**
      *  This method returns an array of flattened arrays which
      *  define this nd-configuration in a compact manner.
@@ -214,20 +230,17 @@ public interface NDConfiguration
         int rank = rank();
         int[] inline = new int[ rank * 5 ];
         //config format: [ shape | translation | indicesMap | offsets | strides ]
-        System.arraycopy( shape(),       0, inline, rank * 0, rank ); // -=> SHAPE
-        System.arraycopy( translation(), 0, inline, rank * 1, rank ); // -=> TRANSLATION
-        System.arraycopy( indicesMap(),  0, inline, rank * 2, rank ); // -=> INDICES MAP (translates scalar to n-dimensional index)
-        System.arraycopy( offset(),      0, inline, rank * 3, rank ); // -=> SPREAD / STRIDES (step size for dimensions in underlying parent tensor)
-        System.arraycopy( spread(),      0, inline, rank * 4, rank ); // -=> OFFSET (nd-position inside underlying parent tensor)
+        System.arraycopy( shape(),       0, inline, rank * 0, rank ); //=> SHAPE
+        System.arraycopy( translation(), 0, inline, rank * 1, rank ); //=> TRANSLATION
+        System.arraycopy( indicesMap(),  0, inline, rank * 2, rank ); //=> INDICES MAP (translates scalar to n-dimensional index)
+        System.arraycopy( offset(),      0, inline, rank * 3, rank ); //=> SPREAD / STRIDES (step size for dimensions in underlying parent tensor)
+        System.arraycopy( spread(),      0, inline, rank * 4, rank ); //=> OFFSET (nd-position inside underlying parent tensor)
         return inline;
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     int hashCode();
 
-    boolean equals(NDConfiguration ndc);
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    boolean equals( NDConfiguration ndc );
 
     /**
      *  This method enables reshaping for {@link NDConfiguration} implementation instances.

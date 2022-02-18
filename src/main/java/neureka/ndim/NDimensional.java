@@ -32,6 +32,7 @@ public interface NDimensional {
      * @return A list of the dimensions of this tensor / array.
      */
     default List<Integer> shape() { return Util.asList(getNDConf().shape()); }
+
     /**
      * @return A list of the dimensions of this tensor / array.
      */
@@ -50,7 +51,16 @@ public interface NDimensional {
      */
     NDConfiguration getNDConf();
 
-    default int shape( int i ) { return getNDConf().shape()[ i ]; }
+    /**
+     *  This method receives an axis index and return the
+     *  size of the targeted axis / dimension.
+     *  It enables readable access to the shape
+     *  of this tensor.
+     *
+     * @param i The index of the shape dimension size which should be returned.
+     * @return The dimension size targeted by the provided dimension index.
+     */
+    default int shape( int i ) { return getNDConf().shape( i ); }
 
     /**
      * @return The number of elements stored inside the tensor.
@@ -97,7 +107,7 @@ public interface NDimensional {
      * @param indices The indices for every axis of a given nd-array.
      * @return The true index targeting the underlying data array of a given nd-array.
      */
-    default int indexOfIndices( int[] indices ) { return getNDConf().indexOfIndices(indices); }
+    default int indexOfIndices( int[] indices ) { return getNDConf().indexOfIndices( indices ); }
 
 
     class Util {
