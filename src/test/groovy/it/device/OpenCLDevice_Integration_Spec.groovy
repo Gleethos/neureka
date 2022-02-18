@@ -428,4 +428,87 @@ class OpenCLDevice_Integration_Spec extends Specification
 
     }
 
+
+
+
+
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    def 'Ad hoc compilation works for custom OpenCL backends matrix multiplication.'(
+            int seed, int M, int K, int N, String expected
+    ) {
+        given :
+            def device = Neureka.get().backend().get(CLContext.class).platforms[0].devices[0]
+            def kernelName = "backend_mm_${M}x${K}x${N}"
+
+            long[] local=   null //new long[]{ Math.min(16, M), Math.min(16, K) }
+            long[] global = new long[]{ M, N }
+
+            def data = (0..(M*K-1)).collect( v-> v + seed )
+            def data1 = data.collect( v -> ((v+5)%11)-5 as float )
+            def data2 = data.collect( v -> ((v+7)%11)-5 as float )
+
+            Tsr A = Tsr.of( [M,K], data1  )
+            Tsr B = Tsr.of( [K,N], data2  )
+            Tsr C = Tsr.of( [M,N], 0f )
+
+            var reference = A.matMul(B).value // CPU execution for reference!
+
+            A.to( device )
+            B.to( device )
+            C.to( device ).setIsVirtual(false)
+
+        expect :
+            !device.hasAdHocKernel( kernelName )
+
+        when :
+            device.compileAdHocKernel( kernelName, """ 
+                                __kernel void backend_mm_${M}x${K}x${N}(                                  
+                                      const int M, const int N, const int K,                        
+                                      const __global float* A,                                      
+                                      const __global float* B,                                      
+                                            __global float* C                                       
+                               ) {                                                                  
+                                   const int m = get_global_id(0); // Row index of C (0..M)         
+                                   const int n = get_global_id(1); // Col index of C (0..N)         
+                                                                                                    
+                                   // Compute a single element (loop over K)                        
+                                   float acc = 0.0f;                                                
+                                   for ( int k = 0; k < K; k++ )                                    
+                                       acc += A[ k + m * K ] * B[ n + k * N ];                      
+                                                                                                    
+                                   // Store the result                                              
+                                   C[ n + m * N ] = acc;                                            
+                               }                                                                    
+                        """
+            )
+
+        then :
+            device.hasAdHocKernel( kernelName )
+
+        when :
+            device.getAdHocKernel( kernelName )
+                    .pass( M ).pass( N ).pass( K )
+                    .pass( A ).pass( B ).pass( C )
+                    .call( global, local )
+
+        then :
+            C.toString({it.setRowLimit(50)}) == expected
+        and :
+            C.value == reference // GPU should produce the same as CPU!
+
+        where :
+            seed | M   | K   | N  || expected
+            7    | 2   | 2   | 2  || '(2x2):[8.0, 1.0, 4.0, 1.0]'
+            7    | 4   | 4   | 4  || '(4x4):[13.0, 3.0, -7.0, -17.0, -11.0, -5.0, 1.0, 7.0, 31.0, 31.0, 31.0, 31.0, 7.0, 1.0, -5.0, -11.0]'
+            7    | 16  | 16  | 16 || '(16x16):[-8.0, -62.0, -17.0, 39.0, 51.0, 30.0, -13.0, -78.0, 0.0, 34.0, 24.0, -8.0, -62.0, -17.0, 39.0, 51.0, -28.0, 9.0, 24.0, -5.0, -78.0, -8.0, 40.0, 66.0, 59.0, 8.0, -87.0, -28.0, 9.0, 24.0, -5.0, -78.0, 40.0, -8.0, -78.0, -5.0, 24.0, 9.0, -28.0, -87.0, 8.0, 59.0, 66.0, 40.0, -8.0, -78.0, -5.0, 24.0, -13.0, 30.0, ... + 206 more]'
+            7    | 2   | 4   | 2  || '(2x2):[0.0, -10.0, 16.0, 22.0]'
+            7    | 2   | 3   | 2  || '(2x2):[4.0, -5.0, 4.0, 4.0]'
+            7    | 17  | 18  | 16 || '(17x16):[-17.0, -68.0, -20.0, 39.0, 54.0, 25.0, -15.0, -77.0, 4.0, 41.0, 34.0, -17.0, -68.0, -20.0, 39.0, 54.0, 15.0, 13.0, -11.0, -101.0, 7.0, 71.0, 80.0, 67.0, -1.0, -113.0, -27.0, 15.0, 13.0, -11.0, -101.0, 7.0, -85.0, -27.0, 9.0, 23.0, -7.0, -81.0, -12.0, 35.0, 71.0, 63.0, 11.0, -85.0, -27.0, 9.0, 23.0, -7.0, 35.0, -12.0, ... + 222 more]'
+            7    | 32  | 32  | 32 || '(32x32):[160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, -305.0, -145.0, -18.0, 76.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, ... + 974 more]' // seems to work
+            11   | 16  | 16  | 32 || '(16x32):[-33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, -84.0, -16.0, 30.0, 54.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, ... + 462 more]'
+
+    }
+
+
 }
