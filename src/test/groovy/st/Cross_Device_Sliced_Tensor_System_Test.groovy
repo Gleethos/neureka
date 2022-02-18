@@ -98,7 +98,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              y.toString() == '(1x1):[22.6274E0]; ->d(1x1):[16.9706E0]'
 
         where:
-            device << [Device.find('gpu'), CPU.get() ]
+            device << [ Device.find('gpu'), CPU.get() ]
 
     }
 
@@ -138,11 +138,11 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             y = b + w * x
 
             Tsr a = Tsr.of([4, 6], [
-                    1d, 2d, 3d, 4d, 5d, 6d,
-                    7d, 8d, 9d, 1d, 2d, 3d,
-                    4d, 5d, 6d, 7d, 8d, 9d,
-                    1d, 2d, 3d, 4d, 5d, 6d
-            ])
+                                1d, 2d, 3d, 4d, 5d, 6d,
+                                7d, 8d, 9d, 1d, 2d, 3d,
+                                4d, 5d, 6d, 7d, 8d, 9d,
+                                1d, 2d, 3d, 4d, 5d, 6d
+                        ])
             /*
                 Let's do the following slice! :
 
@@ -180,7 +180,6 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                 6, 7, 8,
                 1, 2, 3,
                 5, 6, 7,
-
              */
 
         when:
