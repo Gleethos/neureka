@@ -73,7 +73,7 @@ class Tensor_Indexing_Integration_Spec extends Specification
             assert w_b.toString().contains("g:(null)")
 
         when : 'The "backward" method is being called on the "out" tensor...'
-            out.backward(Tsr.of([2, 1], 1))
+            out.backward(Tsr.of([2, 1], 1d))
 
         then : 'The autograd system produces the expected results.'
             assert w_a.toString().contains("g:(null)")

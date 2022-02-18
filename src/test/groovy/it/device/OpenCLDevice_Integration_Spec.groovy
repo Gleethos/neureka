@@ -340,7 +340,6 @@ class OpenCLDevice_Integration_Spec extends Specification
     def 'Ad hoc compilation works for OpenCL backends matrix multiplication.'(
             int seed, int M, int K, int N, String expected
     ) {
-
         given :
             def device = Neureka.get().backend().get(CLContext.class).platforms[0].devices[0]
             def kernelName = "backend_mm_${M}x${K}x${N}"
@@ -368,7 +367,7 @@ class OpenCLDevice_Integration_Spec extends Specification
         when :
             device.compileAdHocKernel( kernelName, """
     kernel void backend_mm_${M}x${K}x${N}(
-        global float* C,
+        global       float* C,
         global const float* A,
         global const float* B,
         int M, int N, int K
@@ -425,6 +424,7 @@ class OpenCLDevice_Integration_Spec extends Specification
             //7    | 17  | 18  | 16 || '?' // Broken! Seems to only work for quadratic matrices?
             // Works but is a little bit too much:
             7    | 32  | 32  | 32 || '(32x32):[160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, -305.0, -145.0, -18.0, 76.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, ... + 974 more]' // seems to work
+            //11   | 16  | 16  | 32 || '(16x32):[57.0, 14.0, 48.0, 38.0, -71.0, -26.0, -69.0, -13.0, -1.0, -33.0, 56.0, 57.0, 14.0, 48.0, 38.0, -71.0, -30.0, -50.0, 7.0, 20.0, -44.0, 46.0, 48.0, 6.0, 41.0, 32.0, -76.0, -30.0, -50.0, 7.0, 20.0, -44.0, 48.0, 51.0, 10.0, 46.0, 27.0, -80.0, -33.0, -52.0, 6.0, 20.0, -43.0, 48.0, 51.0, 10.0, 46.0, 27.0, -72.0, -46.0, ... + 462 more]' // seems to work
 
     }
 

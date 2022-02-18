@@ -85,7 +85,7 @@ class Autograd_Explained extends Specification
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
 
         and : 'We create a simple tensor and set rqsGradient to true in order to track dependent computation.'
-            def x = Tsr.of([2, 2], 1).setRqsGradient(true)
+            def x = Tsr.of([2, 2], 1d).setRqsGradient(true)
 
         expect : 'The tensor should look as follows : '
             x.toString().contains("(2x2):[1.0, 1.0, 1.0, 1.0]")
@@ -98,7 +98,6 @@ class Autograd_Explained extends Specification
 
         and : 'Because "y" was created as a result of a default operation, it now has a graph node as component.'
             y.has( GraphNode.class )
-            println("---")
 
         when : 'We do more computations on "y" ...'
             def z = y * y * 3

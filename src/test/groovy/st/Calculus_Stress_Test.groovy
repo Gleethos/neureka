@@ -36,22 +36,22 @@ class Calculus_Stress_Test extends Specification
     ) {
         given:
             def stress = ( Tsr t ) -> {
-                t = t + Tsr.of( t.shape(), -3..12 )
-                t = t * Tsr.of( t.shape(),  2..3  )
-                t = t / Tsr.of( t.shape(),  1..2  )
-                t = t ^ Tsr.of( t.shape(),  2..1  )
-                t = t - Tsr.of( t.shape(), -2..2  )
+                t = t + Tsr.of( t.shape(), -3d..12d )
+                t = t * Tsr.of( t.shape(),  2d..3d  )
+                t = t / Tsr.of( t.shape(),  1d..2d  )
+                t = t ^ Tsr.of( t.shape(),  2d..1d  )
+                t = t - Tsr.of( t.shape(), -2d..2d  )
                 return t
             }
         and :
-            Tsr source = Tsr.of( [3, 3, 3, 3], -1 ).to( device )
+            Tsr source = Tsr.of( [3, 3, 3, 3], -1d ).to( device )
 
         when :
-            source[1..2, 0..2, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4..2 )
-            Tsr t = source[1..2, 0..2, 1..1, 0..2]
+            source[1..2, 0..2, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4d..2d )
+            Tsr t = source[1..2, 0..2, 1..1, 0d..2d]
 
         then :
-            t.toString() == Tsr.of( [2, 3, 1, 3], -4..2 ).toString()
+            t.toString() == Tsr.of( [2, 3, 1, 3], -4d..2d ).toString()
 
         when :
             t = stress(t)

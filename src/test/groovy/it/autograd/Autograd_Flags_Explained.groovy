@@ -104,7 +104,7 @@ class Autograd_Flags_Explained extends Specification
             Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT
 
         and :
-            def x = Tsr.of([2, 2], 1).setRqsGradient(true)
+            def x = Tsr.of([2, 2], 1d).setRqsGradient(true)
             def y = x + 2
             Binding binding = new Binding()
             binding.setVariable('x', x)

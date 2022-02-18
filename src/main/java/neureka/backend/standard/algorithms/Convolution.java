@@ -71,7 +71,7 @@ public class Convolution extends AbstractFunctionalAlgorithm<Convolution>
         }
 
         if ( workload == null )
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Could not create convolution worker for type class '"+typeClass+"'!");
         else
             return workload;
     }

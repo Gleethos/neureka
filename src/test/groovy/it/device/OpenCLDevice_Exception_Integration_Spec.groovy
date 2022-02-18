@@ -31,7 +31,7 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
         given: 'The first found OpenCLDevice instance.'
             Device device = Device.find('first')
         and : 'A tensor and a slice tensor of the prior.'
-            Tsr t = Tsr.of([4, 3], 2)
+            Tsr t = Tsr.of([4, 3], 2d)
             Tsr s = t[1..3, 1..2]
 
         expect : 'Both tensors share not only the same data but also the same data type.'
