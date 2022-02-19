@@ -79,8 +79,6 @@ extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSu
      */
     String getName();
 
-    //---
-
     /**
      * Implementations of the Algorithm interface ought to express a compositional design pattern. <br>
      * This means that concrete implementations of an algorithm for a device are not extending

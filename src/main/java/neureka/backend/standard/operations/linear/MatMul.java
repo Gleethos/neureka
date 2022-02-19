@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 public class MatMul extends AbstractOperation
 {
     private static final Logger _LOG = LoggerFactory.getLogger(MatMul.class);
+    private final FunAlgorithm simpleMatMulAlgorithm;
 
     public MatMul()
     {
@@ -38,7 +39,7 @@ public class MatMul extends AbstractOperation
                         .setIsInline(         false       )
         );
 
-        FunAlgorithm simpleMatMulAlgorithm =
+        simpleMatMulAlgorithm =
                         Algorithm
                             .withName("simple_matmul")
                             .setIsSuitableFor(
@@ -62,12 +63,12 @@ public class MatMul extends AbstractOperation
                                     Tsr<?> derivative = inputs[ d ].T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                                     derivative.to(call.getDevice());
                                     return ADAgent.of( derivative )
-                                                    .setBackward( (node, error) -> {
-                                                        if ( d == 1 )
-                                                            return matMul.execute( error, derivative );
-                                                        else
-                                                            return matMul.execute( derivative, error );
-                                                    });
+                                                  .setBackward( (node, error) -> {
+                                                      if ( d == 1 )
+                                                          return matMul.execute( error, derivative );
+                                                      else
+                                                          return matMul.execute( derivative, error );
+                                                  });
                                 }
                             )
                             .setExecutionDispatcher(
@@ -77,34 +78,13 @@ public class MatMul extends AbstractOperation
 
                                     Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
                                     for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                                    ExecutionCall<Device<Object>> preparedCall = (ExecutionCall<Device<Object>>) call.getAlgorithm().prepare( call.withTensors(tensors) );
-                                    return call.getAlgorithm()
-                                                .getImplementationFor(call.getDeviceFor(Object.class))
-                                                .runAndGetFirstTensor(preparedCall);
+                                    ExecutionCall<Device<Object>> preparedCall = _prepare( call.withTensors(tensors) );
+                                    return MatMul.this.simpleMatMulAlgorithm
+                                                        .getImplementationFor(call.getDeviceFor(Object.class))
+                                                        .runAndGetFirstTensor(preparedCall);
                                 }
                             )
-                            .setCallPreparation(
-                                call -> {
-                                    Tsr<?>[] tensors = call.getTensors();
-                                    Device<Number> device = call.getDeviceFor(Number.class);
-                                    if ( tensors[ 0 ] == null ) // Creating a new tensor:
-                                    {
-                                        Class<Number> type = (Class<Number>) tensors[1].getDataType().getJVMTypeClass();
-                                        int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };
-                                        Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).getUnsafe().setIsIntermediate( true );
-                                        output.getUnsafe().toLayout(tensors[1].getNDConf().getLayout());
-                                        output.setIsVirtual( false );
-                                        try {
-                                            device.store( output );
-                                        } catch ( Exception e ) {
-                                            e.printStackTrace();
-                                        }
-                                        tensors[ 0 ] = output;
-                                    }
-                                    _autoClone( tensors );
-                                    return call;
-                                }
-                            )
+                            .setCallPreparation( MatMul::_prepare )
                             .buildFunAlgorithm();
 
         setAlgorithm(
@@ -185,6 +165,27 @@ public class MatMul extends AbstractOperation
                 .build();
         */
 
+    }
+
+    private static ExecutionCall<Device<Object>> _prepare( ExecutionCall call ) {
+        Tsr<?>[] tensors = call.getTensors();
+        Device<Number> device = call.getDeviceFor(Number.class);
+        if ( tensors[ 0 ] == null ) // Creating a new tensor:
+        {
+            Class<Number> type = (Class<Number>) tensors[1].getDataType().getJVMTypeClass();
+            int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };
+            Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).getUnsafe().setIsIntermediate( true );
+            output.getUnsafe().toLayout(tensors[1].getNDConf().getLayout());
+            output.setIsVirtual( false );
+            try {
+                device.store( output );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
+            tensors[ 0 ] = output;
+        }
+        _autoClone( tensors );
+        return (ExecutionCall<Device<Object>>) call;
     }
 
     /**

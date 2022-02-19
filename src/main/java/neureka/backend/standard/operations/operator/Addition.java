@@ -25,41 +25,42 @@ import java.util.stream.Collectors;
 
 public class Addition extends AbstractOperation {
 
-    private final Broadcast _broadcast = new Broadcast((executionCall, executor) -> null)
-                                                    .setCanPerformBackwardADFor( call -> true )
-                                                    .setSupplyADAgentFor(
-                                                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                                                        {
-                                                            Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                                                            assert ctxDerivative == null;
-                                                            Tsr<?>[] inputs = call.getTensors();
-                                                            int d = call.getDerivativeIndex();
-                                                            if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                                                            else
-                                                            {
-                                                                Tsr<?> derivative = JunctionUtil.newTsrLike(inputs[(d==0?1:0)], 0);
-                                                                Tsr<?> toBeDerived = JunctionUtil.newTsrLike(inputs[d], 0);
-                                                                Device device = call.getDeviceFor(Number.class);
-                                                                return ADAgent.of( derivative )
-                                                                                .setBackward(
-                                                                                    ( node, backwardError ) ->
-                                                                                        this.getAlgorithm( Broadcast.class )
-                                                                                             .getImplementationFor( device )
-                                                                                             .runAndGetFirstTensor(
-                                                                                                     ExecutionCall.of(
-                                                                                                             toBeDerived.setIsVirtual(false),
-                                                                                                             derivative,
-                                                                                                             backwardError
-                                                                                                     )
-                                                                                                     .andArgs( Arg.DerivIdx.of(d) )
-                                                                                                     .running( this )
-                                                                                                     .on( device )
-                                                                                             )
-                                                                                );
-                                                            }
-                                                        }
-                                                    )
-                                                    .buildFunAlgorithm();
+    private final Broadcast _broadcast =
+            new Broadcast((executionCall, executor) -> null)
+                .setCanPerformBackwardADFor( call -> true )
+                .setSupplyADAgentFor(
+                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                    {
+                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                        assert ctxDerivative == null;
+                        Tsr<?>[] inputs = call.getTensors();
+                        int d = call.getDerivativeIndex();
+                        if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                        else
+                        {
+                            Tsr<?> derivative = JunctionUtil.newTsrLike(inputs[(d==0?1:0)], 0);
+                            Tsr<?> toBeDerived = JunctionUtil.newTsrLike(inputs[d], 0);
+                            Device device = call.getDeviceFor(Number.class);
+                            return ADAgent.of( derivative )
+                                            .setBackward(
+                                                ( node, backwardError ) ->
+                                                    this.getAlgorithm( Broadcast.class )
+                                                         .getImplementationFor( device )
+                                                         .runAndGetFirstTensor(
+                                                                 ExecutionCall.of(
+                                                                         toBeDerived.setIsVirtual(false),
+                                                                         derivative,
+                                                                         backwardError
+                                                                 )
+                                                                 .andArgs( Arg.DerivIdx.of(d) )
+                                                                 .running( this )
+                                                                 .on( device )
+                                                         )
+                                            );
+                        }
+                    }
+                )
+                .buildFunAlgorithm();
 
     public Addition()
     {
