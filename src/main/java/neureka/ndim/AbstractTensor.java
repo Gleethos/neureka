@@ -435,7 +435,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
          * @param configuration The new NDConfiguration instance which ought to be set.
          * @return The final instance type of this class which enables method chaining.
          */
-        Unsafe<T> setNDConf( NDConfiguration configuration );
+        Tsr<T> setNDConf( NDConfiguration configuration );
         /**
          *  This method is an inline operation which changes the underlying data of this tensor.
          *  It converts the data types of the elements of this tensor to the specified type!<br>
@@ -481,7 +481,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
          * @param layout The layout of the data array (row or column major).
          * @return The final instance type of this class which enables method chaining.
          */
-        Unsafe<T> toLayout( NDConfiguration.Layout layout );
+        Tsr<T> toLayout( NDConfiguration.Layout layout );
 
         /**
          *  This method is responsible for incrementing
@@ -493,7 +493,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
          * @param call The context object containing all relevant information that defines a call for tensor execution.
          * @return This very tensor instance. (factory pattern)
          */
-        Unsafe<T> incrementVersion( ExecutionCall<?> call );
+        Tsr<T> incrementVersion( ExecutionCall<?> call );
 
         /**
          *  Intermediate tensors are internal non-user tensors which may be eligible

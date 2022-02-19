@@ -2153,7 +2153,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     {
         if ( this.rank() == 1 ) return this;
         else if ( this.rank() == 2 ) {
-            return Neureka.get().backend().getFunction().transpose2D().call(this);
+            boolean wasIntermediate = this.isIntermediate();
+            this.getUnsafe().setIsIntermediate(false);
+            Tsr<V> result = Neureka.get().backend().getFunction().transpose2D().call(this);
+            this.getUnsafe().setIsIntermediate(wasIntermediate);
+            return result;
         }
         StringBuilder operation = new StringBuilder();
         for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( i == 0 ? "" : ", " );
@@ -3183,17 +3187,17 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         _guardGet("mutate");
         return new Unsafe<V>() {
             @Override
-            public Unsafe setNDConf(NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return this; }
+            public Tsr<V> setNDConf(NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return Tsr.this; }
             @Override
             public <V> Tsr<V> toType( Class<V> typeClass ) { return Tsr.this._toType( typeClass ); }
             @Override
             public <V> Tsr<V> setDataType( DataType<V> dataType ) { return (Tsr<V>) Tsr.this._setDataType(dataType); }
             @Override
-            public Unsafe<V> toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return this; }
+            public Tsr<V> toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return Tsr.this; }
             @Override
-            public Unsafe<V> incrementVersion(ExecutionCall<?> call ) {
+            public Tsr<V> incrementVersion(ExecutionCall<?> call ) {
                 _incrementVersionBecauseOf( call );
-                return this;
+                return Tsr.this;
             }
             @Override
             public Tsr<V> setIsIntermediate( boolean isIntermediate ) {

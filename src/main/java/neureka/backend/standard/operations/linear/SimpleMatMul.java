@@ -82,5 +82,6 @@ public class SimpleMatMul implements ImplementationFor<CPU> {
 
             execute(A, B, C, aRows, aCols, bCols);
         }
+        else throw new IllegalArgumentException("Data type '"+type.getSimpleName()+"' not yet supported for matrix multiplication!");
     }
 }

@@ -16,6 +16,7 @@ import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
+import neureka.ndim.config.types.ColumnMajorNDConfiguration;
 import neureka.ndim.config.types.simple.SimpleD2Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -196,16 +197,28 @@ public class MatMul extends AbstractOperation
      */
     private static void _autoClone( Tsr<?>[] tensors ) {
         for ( int i = 0; i < tensors.length; i++ ) {
-            if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {
+            if (
+                    !_isSimpleRowMajorMatrix(tensors[i])
+                            &&
+                    !_isSimpleColumnMajorMatrix(tensors[i])
+            ) {
                 _LOG.debug("Auto cloning a tensor which does not have a simple ND configuration...");
                 tensors[i] = tensors[i].clone().getUnsafe().setIsIntermediate( true );
                 /*
                     The user should do cloning explicitly because using slices
-                    will cause the backend to perform aut cloning every time the
+                    will cause the backend to perform auto cloning every time the
                     slice is being used for operations like this one...
                  */
             }
         }
+    }
+
+    private static boolean _isSimpleColumnMajorMatrix( Tsr<?> t ) {
+        return t.rank() == 2 && t.getNDConf() instanceof ColumnMajorNDConfiguration;
+    }
+
+    private static boolean _isSimpleRowMajorMatrix( Tsr<?> t ) {
+        return t.rank() == 2 && t.getNDConf() instanceof SimpleD2Configuration;
     }
 
     @Override
