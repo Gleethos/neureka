@@ -6,6 +6,7 @@ import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
 import neureka.backend.standard.algorithms.*;
 import neureka.backend.standard.implementations.CLImplementation;
+import neureka.backend.standard.implementations.SimpleCLImplementation;
 import org.jocl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,16 @@ public class OpenCLPlatform {
         _compile(devicesArray);
     }
 
-    private void _compile(cl_device_id[] devicesArray)
+    /**
+     *   This is where all the kernels defined by all the {@link CLImplementation}
+     *   in the standard backend, will be compiled to OpenCL programs.
+     *   These kernels are usually based on pre-made template kernel source files...
+     *   They are supposed to be as general purpose as possible, meaning they use
+     *   a rather complicated indexing mechanism (see 'utility.cl').
+     *
+     * @param devicesArray The array of devices for which kernels should be compiled.
+     */
+    private void _compile( cl_device_id[] devicesArray )
     {
         //Reading all kernels!
         List<String> templateSources = new ArrayList<>();
@@ -136,9 +146,9 @@ public class OpenCLPlatform {
                             impl = type.getAlgorithm(FunAlgorithm.class).getImplementationFor( OpenCLDevice.class );
                         }
                         if ( impl instanceof CLImplementation ) {
-                            CLImplementation clImplementation = (CLImplementation) impl;
-                            if ( clImplementation.getSource() != null )
-                                code.put( clImplementation.getName(), clImplementation.getSource() );
+                            KernelCode kernelCode = ((CLImplementation) impl).getKernelCode();
+                            if ( kernelCode.getCode() != null )
+                                code.put( kernelCode.getName(), kernelCode.getCode() );
                         }
                     }
                     code.forEach( ( n, s ) -> {
@@ -156,9 +166,9 @@ public class OpenCLPlatform {
                 ImplementationFor<OpenCLDevice> impl = algorithm.getImplementationFor(OpenCLDevice.class);
                 if ( impl instanceof CLImplementation ) {
                     CLImplementation cli = ((CLImplementation) impl);
-                    if ( cli.isSimpleSource() ) {
-                        names.add(cli.getName());
-                        sources.add(cli.getSource());
+                    if ( cli instanceof SimpleCLImplementation) {
+                        names.add(((SimpleCLImplementation) cli).getKernelCode(  ).getName());
+                        sources.add(((SimpleCLImplementation) cli).getKernelCode().getCode());
                     }
                 }
             }
@@ -188,9 +198,8 @@ public class OpenCLPlatform {
         //TODO: check compilation errors!
 
         // Create the kernels
-        for ( String name : names ) {
+        for ( String name : names )
             if ( name != null ) _kernels.put( name, clCreateKernel( cpProgram, name, null ) );
-        }
     }
 
     public List<OpenCLDevice> getDevices() {
@@ -213,8 +222,12 @@ public class OpenCLPlatform {
        _id_device.put( did, device );
     }
 
-    public Map<String, cl_kernel> getKernels() {
-        return _kernels;
+    public cl_kernel getKernel( String kernelName ) {
+        return _kernels.get( kernelName );
+    }
+
+    public boolean hasKernel( String kernelName ) {
+        return _kernels.containsKey( kernelName );
     }
 
     public cl_platform_id getPid() {

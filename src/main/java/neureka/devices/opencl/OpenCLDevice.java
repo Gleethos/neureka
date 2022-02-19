@@ -73,18 +73,16 @@ import java.util.*;
 import static org.jocl.CL.*;
 
 /**
- *  This class is a concrete implementation of the {@link Device} interface by extending the {@link AbstractDevice} class.
- *  Instances of this class internally utilize the OpenCL API in order to use supported
- *  accelerator hardware like GPUs or FPGAs for storing tensors and executing operations on them.
+ * This class is a concrete implementation of the {@link Device} interface by extending the {@link AbstractDevice} class.
+ * Instances of this class internally utilize the OpenCL API in order to use supported
+ * accelerator hardware like GPUs or FPGAs for storing tensors and executing operations on them.
  */
-public class OpenCLDevice extends AbstractDevice<Number>
-{
+public class OpenCLDevice extends AbstractDevice<Number> {
     private static Logger _LOG = LoggerFactory.getLogger(OpenCLDevice.class);
 
-    public static OpenCLDevice newInstanceOf( OpenCLPlatform platform, cl_device_id did )
-    {
-        if ( !platform.has( did ) ) platform.put( did,  new OpenCLDevice( platform, did ) );
-        return platform.get( did );
+    public static OpenCLDevice newInstanceOf(OpenCLPlatform platform, cl_device_id did) {
+        if (!platform.has(did)) platform.put(did, new OpenCLDevice(platform, did));
+        return platform.get(did);
     }
 
     public enum Type {
@@ -105,8 +103,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * a reference to a wrapper containing a pointer to the tensors data (cl_data)
      * The latter two lend their identity for garbage collection!
      */
-    static class cl_tsr<V, T extends V> implements Component<Tsr<T>>
-    {
+    static class cl_tsr<V, T extends V> implements Component<Tsr<T>> {
 
         /**
          * This class is responsible for representing the
@@ -116,8 +113,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
          * Meaning this inner memory object "cl_mem" will
          * be freed via a call hook stored inside a Cleaner instance...
          */
-        public static class cl_value
-        {
+        public static class cl_value {
             public int size = 0;
             public cl_mem data;
             public cl_event event;
@@ -130,8 +126,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
          * Meaning this inner memory object "cl_mem" will
          * be freed via a call hook stored inside a Cleaner instance...
          */
-        public static class cl_config
-        {
+        public static class cl_config {
             public cl_mem data;
         }
 
@@ -140,7 +135,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public cl_value value;
 
         @Override
-        public boolean update( OwnerChangeRequest<Tsr<T>> changeRequest ) {
+        public boolean update(OwnerChangeRequest<Tsr<T>> changeRequest) {
             // Update not needed...
             changeRequest.executeChange();
             return true;
@@ -148,16 +143,15 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     /**
-     *  This class manages reference to a so called "ad hoc" program & kernel.
-     *  Ad hoc is a Latin phrase meaning literally 'to this'.
-     *  In English, it generally signifies a solution designed for a specific problem or task,
-     *  non-generalizable, and not intended to be adapted to other purposes.
-     *  This leads to the purpose of instances of this class, namely to hold the context to a unique kernel with
-     *  a uniquely associated purpose which has been created by an operation possibly for specific
-     *  tensor dimensions or possibly other properties...
+     * This class manages reference to a so called "ad hoc" program & kernel.
+     * Ad hoc is a Latin phrase meaning literally 'to this'.
+     * In English, it generally signifies a solution designed for a specific problem or task,
+     * non-generalizable, and not intended to be adapted to other purposes.
+     * This leads to the purpose of instances of this class, namely to hold the context to a unique kernel with
+     * a uniquely associated purpose which has been created by an operation possibly for specific
+     * tensor dimensions or possibly other properties...
      */
-    static class cl_ad_hoc
-    {
+    static class cl_ad_hoc {
         public final String source;
         public final cl_kernel kernel;
         public final cl_program program;
@@ -177,16 +171,16 @@ public class OpenCLDevice extends AbstractDevice<Number>
     |   ---------------------------
     */
 
-    private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap( new WeakHashMap<>() );
+    private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<>());
 
     private final KernelCache _kernelCache = new KernelCache();
 
     private final cl_device_id _deviceId;
 
     /**
-     *  The OpenCLPlatform :
-     *  This method is a simple getter for the OpenCLPlatform instance hosting this current device.
-     *  A platform would for example be vendor specific like Intel, AMD, Nvidia...
+     * The OpenCLPlatform :
+     * This method is a simple getter for the OpenCLPlatform instance hosting this current device.
+     * A platform would for example be vendor specific like Intel, AMD, Nvidia...
      */
     private final OpenCLPlatform _platform;
 
@@ -206,8 +200,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @param platform The platform containing this device.
      * @param deviceId The underlying OpenCL id of this device.
      */
-    private OpenCLDevice( OpenCLPlatform platform, cl_device_id deviceId )
-    {
+    private OpenCLDevice(OpenCLPlatform platform, cl_device_id deviceId) {
         super();
         _deviceId = deviceId;
         _platform = platform;
@@ -216,7 +209,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null,
                 null
         );
-        _cleaning( this, () -> clReleaseCommandQueue( _queue ) );
+        _cleaning(this, () -> clReleaseCommandQueue(_queue));
         //Runtime.getRuntime().addShutdownHook(new Thread(() -> {
         //    _mapping.forEach((k, v) -> {
         //        if (v.value.event!=null) clWaitForEvents(1, new cl_event[]{v.value.event});
@@ -241,75 +234,74 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     public boolean hasAdHocKernel( String name ) {
-        return _kernelCache.has( name );
+        return _kernelCache.has(name);
     }
 
     public KernelCaller getAdHocKernel( String name ) {
-        cl_ad_hoc adHoc = _kernelCache.get( name );
-        if ( adHoc != null ) return new KernelCaller( adHoc.kernel, _queue );
+        cl_ad_hoc adHoc = _kernelCache.get(name);
+        if (adHoc != null) return new KernelCaller(adHoc.kernel, _queue);
         else return null;
     }
 
     /**
-     *  This method compiles so called "ad hoc" kernel.
-     *  Ad hoc is a Latin phrase meaning literally 'to this'.
-     *  In English, it generally signifies a solution designed for a specific problem or task,
-     *  non-generalizable, and not intended to be adapted to other purposes.
-     *  This leads to the purpose of ad hoc kernel compilation, namely to be able to compile
-     *  unique kernels with a specific purpose created on the fly during runtime by operations.
-     *  This might be useful for high performance operations on tensors with specific dimensions and
-     *  or possibly other variables / properties which might be taken into account...
+     * This method compiles so called "ad hoc" kernel.
+     * Ad hoc is a Latin phrase meaning literally 'to this'.
+     * In English, it generally signifies a solution designed for a specific problem or task,
+     * non-generalizable, and not intended to be adapted to other purposes.
+     * This leads to the purpose of ad hoc kernel compilation, namely to be able to compile
+     * unique kernels with a specific purpose created on the fly during runtime by operations.
+     * This might be useful for high performance operations on tensors with specific dimensions and
+     * or possibly other variables / properties which might be taken into account...
      *
-     * @param name The name of the kernel which ought to be compiled.
+     * @param name   The name of the kernel which ought to be compiled.
      * @param source The source of the kernel which ought to be compiled.
      * @return This very instance in order to enable the factory pattern.
      */
-    public synchronized OpenCLDevice compileAdHocKernel( String name, String source )
-    {
-        if ( this.hasAdHocKernel( name ) ) {
-            cl_ad_hoc adHoc = _kernelCache.get( name );
+    public synchronized OpenCLDevice compileAdHocKernel(String name, String source) {
+        if (this.hasAdHocKernel(name)) {
+            cl_ad_hoc adHoc = _kernelCache.get(name);
             String message =
-                    "Cannot compile kernel source for name '"+name+"' because the name is already taken.\n" +
-                    "Use another name or find out why this kernel already exists.\n" +
-                    (
-                        adHoc.source.equals( source )
-                        ? "Besides the name, the source code of the existing kernel is also identical.\n" : ""
-                    );
-            _log.error( message );
-            throw new IllegalArgumentException( message );
+                    "Cannot compile kernel source for name '" + name + "' because the name is already taken.\n" +
+                            "Use another name or find out why this kernel already exists.\n" +
+                            (
+                                    adHoc.source.equals(source)
+                                            ? "Besides the name, the source code of the existing kernel is also identical.\n" : ""
+                            );
+            _log.error(message);
+            throw new IllegalArgumentException(message);
         }
 
         // Create the program for the kernel
         cl_program cpProgram = clCreateProgramWithSource(
                 getPlatform().getContext(),
                 1,
-                new String[]{ source },
+                new String[]{source},
                 null,
                 null
         );
 
         // Build the program
         int err = clBuildProgram(
-                        cpProgram,
-                        1,
-                        new cl_device_id[]{ _deviceId },
-                        "-cl-mad-enable",
-                        null,
-                        null
-                    );
+                cpProgram,
+                1,
+                new cl_device_id[]{_deviceId},
+                "-cl-mad-enable",
+                null,
+                null
+        );
         //TODO: check compilation errors!
         cl_kernel kernel;
         try {
             // Create the kernel
             kernel = clCreateKernel(cpProgram, name, null);
-        } catch ( Exception e ) {
-            if ( e.getMessage().equals("CL_INVALID_KERNEL_NAME") && !source.contains( "__kernel void " + name ) ) {
+        } catch (Exception e) {
+            if (e.getMessage().equals("CL_INVALID_KERNEL_NAME") && !source.contains("__kernel void " + name)) {
                 String message = "Method 'clCreateKernel' failed! The name of the '__kernel' method declared inside \n" +
                         "the source String does not match the provided name needed for kernel creation.";
-                _log.error( message, e );
-                throw new IllegalArgumentException( message );
+                _log.error(message, e);
+                throw new IllegalArgumentException(message);
             }
-            _log.error( "Method call 'clCreateKernel(.., name=\""+name+"\", ..)' failed!", e );
+            _log.error("Method call 'clCreateKernel(.., name=\"" + name + "\", ..)' failed!", e);
             throw e;
         }
         cl_ad_hoc adHoc = new cl_ad_hoc(source, kernel, cpProgram);
@@ -317,102 +309,102 @@ public class OpenCLDevice extends AbstractDevice<Number>
         // Storing the ad hoc object in a weak hash map for fast access by operations :
         _kernelCache.put( name, adHoc );
 
-        _cleaning( adHoc, () -> {
-            clReleaseKernel( kernel );
-            clReleaseProgram( cpProgram );
+        _cleaning(adHoc, () -> {
+            clReleaseKernel(kernel);
+            clReleaseProgram(cpProgram);
         });
         return this;
     }
 
 
     /**
-     *  This method returns all the tensors stored on this
-     *  OpenCLDevice instance as a Collection.
+     * This method returns all the tensors stored on this
+     * OpenCLDevice instance as a Collection.
      *
      * @return A collection of all tensors currently stored on the device.
      */
     @Override
     public synchronized Collection<Tsr<Number>> getTensors() {
-        Collection<Collection<Tsr<Number>>> collection = Collections.singleton( _tensors );
+        Collection<Collection<Tsr<Number>>> collection = Collections.singleton(_tensors);
         Collection<Tsr<Number>> extracted = new ArrayList<>();
-        collection.forEach( c -> c.forEach( t -> { if ( t != null ) extracted.add( t ); }));
+        collection.forEach(c -> c.forEach(t -> {
+            if (t != null) extracted.add(t);
+        }));
         return extracted;
     }
 
     @Override
-    public Operation optimizedOperationOf( Function function, String name ) {
-        return new CLFunctionCompiler(this, function, name ).optimize();
+    public Operation optimizedOperationOf(Function function, String name) {
+        return new CLFunctionCompiler(this, function, name).optimize();
     }
 
     /**
-     *  This method tells the to restore all tensors stored on it and release all resources.
+     * This method tells the to restore all tensors stored on it and release all resources.
      */
     @Override
     public void dispose() {
-        _tensors.forEach( this::restore );
-        clFinish( _queue );
+        _tensors.forEach(this::restore);
+        clFinish(_queue);
         clReleaseCommandQueue(_queue);
     }
 
     /**
-     *  This method assumes that the passed tensor is stored on this device instance.
-     *  If the tensor is stored on the device then the method loads the outsourced
-     *  data of the tensor back into primitive JVM arrays and restores the tensor
-     *  freshly in RAM.
+     * This method assumes that the passed tensor is stored on this device instance.
+     * If the tensor is stored on the device then the method loads the outsourced
+     * data of the tensor back into primitive JVM arrays and restores the tensor
+     * freshly in RAM.
      *
      * @param tensor The tensor whose data ought to be restored (loaded to RAM).
      * @return This device, which enables method chaining.
      */
     @Override
-    public Device<Number> restore( Tsr<Number> tensor )
-    {
-        if ( !this.has( tensor ) ) {
+    public Device<Number> restore(Tsr<Number> tensor) {
+        if (!this.has(tensor)) {
             String message = "The passed tensor cannot be restored from this OpenCL device " +
                     "because the tensor is not stored on the device.\n";
-            _log.error( message );
-            throw new IllegalArgumentException( message );
+            _log.error(message);
+            throw new IllegalArgumentException(message);
         }
         double[] value = tensor.isVirtual()
-                            ? _value64f( tensor.get( cl_tsr.class ), 1, 0 )
-                            : value64f( tensor );
-        free( tensor );
-        tensor.forComponent( Tsr.class, this::restore);
-        tensor.setValue( value );
+                ? _value64f(tensor.get(cl_tsr.class), 1, 0)
+                : value64f(tensor);
+        free(tensor);
+        tensor.forComponent(Tsr.class, this::restore);
+        tensor.setValue(value);
         return this;
     }
 
     @Override
-    public <T extends Number> Device<Number> store( Tsr<T> tensor, Tsr<T> parent ) {
-        _store( tensor, parent, () -> tensor.set( (Component) this ) );
+    public <T extends Number> Device<Number> store(Tsr<T> tensor, Tsr<T> parent) {
+        _store(tensor, parent, () -> tensor.set((Component) this));
         return this;
     }
 
-    private <T extends Number> Device<Number> _store( Tsr<T> tensor, Tsr<T> parent, Runnable migration ) {
-        if ( !parent.isOutsourced() ) throw new IllegalStateException( "Data parent is not outsourced!" );
-        _add( (Tsr<Number>) tensor, parent.get( cl_tsr.class ), migration );
-        _tensors.add( (Tsr<Number>) tensor );
+    private <T extends Number> Device<Number> _store(Tsr<T> tensor, Tsr<T> parent, Runnable migration) {
+        if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
+        _add((Tsr<Number>) tensor, parent.get(cl_tsr.class), migration);
+        _tensors.add((Tsr<Number>) tensor);
         return this;
     }
 
-    private <T extends Number> void _add( Tsr<Number> tensor, cl_tsr<Number, T> parent, Runnable migration  )
-    {
-        if ( this.has( tensor ) ) {
+    private <T extends Number> void _add(Tsr<Number> tensor, cl_tsr<Number, T> parent, Runnable migration) {
+        if (this.has(tensor)) {
             _LOG.debug("Trying to add a tensor to a device which already reports hosting it.");
             return;
         }
-        cl_tsr<Number,Number> newClt = new cl_tsr<>();
+        cl_tsr<Number, Number> newClt = new cl_tsr<>();
 
         //VALUE TRANSFER:
-        if ( parent == null ) {
+        if (parent == null) {
             newClt.value = new cl_tsr.cl_value();
-            _store( tensor, newClt, 1 );
-            if ( tensor.rqsGradient() && tensor.has( Tsr.class ) ) this.store( tensor.getGradient() );
+            _store(tensor, newClt, 1);
+            if (tensor.rqsGradient() && tensor.has(Tsr.class)) this.store(tensor.getGradient());
             {
                 final cl_mem clValMem = newClt.value.data;
                 cl_event clValEvent = newClt.value.event;
-                _cleaning( newClt.value, () -> {
-                    if ( clValEvent != null ) clWaitForEvents( 1, new cl_event[]{ clValEvent } );
-                    clReleaseMemObject( clValMem );//Removing value.. from device!
+                _cleaning(newClt.value, () -> {
+                    if (clValEvent != null) clWaitForEvents(1, new cl_event[]{clValEvent});
+                    clReleaseMemObject(clValMem);//Removing value.. from device!
                 });
             }
         } else { // Tensor is a subset tensor of parent:
@@ -420,13 +412,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
             newClt.value = parent.value;
         }
 
-        newClt.config = _writeNDConfig( tensor.getNDConf() );
+        newClt.config = _writeNDConfig(tensor.getNDConf());
 
         cl_mem[] memos;
-        if ( parent == null )
-            memos = new cl_mem[]{ newClt.value.data, newClt.config.data };
+        if (parent == null)
+            memos = new cl_mem[]{newClt.value.data, newClt.config.data};
         else
-            memos = new cl_mem[]{ newClt.config.data };
+            memos = new cl_mem[]{newClt.config.data};
 
         clEnqueueMigrateMemObjects(
                 _queue,
@@ -438,21 +430,21 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null
         );
 
-        _tensors.add( tensor );
+        _tensors.add(tensor);
 
-        tensor.set( newClt );
+        tensor.set(newClt);
         migration.run(); // TODO: REMOVE
 
-        tensor.setIsOutsourced( true );
+        tensor.setIsOutsourced(true);
 
         // When tensors get stored on this device,
         // they are implicitly converted to a float tensor:
-        tensor.getUnsafe().toType( F32.class );
+        tensor.getUnsafe().toType(F32.class);
     }
 
-    private cl_tsr.cl_config _writeNDConfig( NDConfiguration ndc ) {
+    private cl_tsr.cl_config _writeNDConfig(NDConfiguration ndc) {
 
-         cl_tsr.cl_config clf = new cl_tsr.cl_config();
+        cl_tsr.cl_config clf = new cl_tsr.cl_config();
 
         //CONFIG TRANSFER: <[ shape | translation | indicesMap | indices | scale ]>
         int[] config = ndc.asInlineArray();
@@ -477,7 +469,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null
         );
         final cl_mem clConfMem = clf.data;
-        _cleaning( clf, () -> clReleaseMemObject( clConfMem ) );
+        _cleaning(clf, () -> clReleaseMemObject(clConfMem));
         return clf;
     }
 
@@ -491,23 +483,25 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @return The truth value of the fact that the provided tensor is on this device.
      */
     @Override
-    public <T extends Number> boolean has( Tsr<T> tensor ) { return _tensors.contains( tensor ); }
+    public <T extends Number> boolean has(Tsr<T> tensor) {
+        return _tensors.contains(tensor);
+    }
 
 
-    private void _store( Tsr<Number> tensor, cl_tsr<?,?> newClTsr, int fp ) {
+    private void _store(Tsr<Number> tensor, cl_tsr<?, ?> newClTsr, int fp) {
         boolean isVirtual = tensor.isVirtual();
         Pointer p;
         int size;
-        if ( fp == 1 ) {
-            float[] data = tensor.getDataAs( float[].class );
+        if (fp == 1) {
+            float[] data = tensor.getDataAs(float[].class);
             assert !isVirtual || data.length == 1;
-            data = ( data == null ) ? new float[ tensor.size() ] : data;
+            data = (data == null) ? new float[tensor.size()] : data;
             p = Pointer.to(data);
             size = data.length;
         } else {
-            double[] data = tensor.getDataAs( double[].class );
+            double[] data = tensor.getDataAs(double[].class);
             assert !isVirtual || data.length == 1;
-            data = ( data == null ) ? new double[ tensor.size() ] : data;
+            data = (data == null) ? new double[tensor.size()] : data;
             p = Pointer.to(data);
             size = data.length;
         }
@@ -536,31 +530,30 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
 
     @Override
-    public <T extends Number> Device<Number> free( Tsr<T> tensor ) {
-        cl_tsr<?,?> clt = tensor.get( cl_tsr.class );
-        if ( clt == null ) return this;
-        _tensors.remove( tensor );
-        tensor.setIsOutsourced( false );
-        ( (Tsr<Number>) tensor ).remove( cl_tsr.class );
+    public <T extends Number> Device<Number> free(Tsr<T> tensor) {
+        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        if (clt == null) return this;
+        _tensors.remove(tensor);
+        tensor.setIsOutsourced(false);
+        ((Tsr<Number>) tensor).remove(cl_tsr.class);
         return this;
     }
 
 
     @Override
-    public <T extends Number> Device<Number> write( Tsr<T> tensor, Object value ) {
-        if ( value instanceof double[] ) return overwrite64( (Tsr<Number>) tensor, (double[]) value );
-        else if ( value instanceof float[] ) return overwrite32( (Tsr<Number>) tensor, (float[]) value );
+    public <T extends Number> Device<Number> write(Tsr<T> tensor, Object value) {
+        if (value instanceof double[]) return overwrite64((Tsr<Number>) tensor, (double[]) value);
+        else if (value instanceof float[]) return overwrite32((Tsr<Number>) tensor, (float[]) value);
         return this;
     }
 
 
-    public Device<Number> overwrite64( Tsr<Number> tensor, double[] value )
-    {
-        if ( value.length == 0 ) return this;
-        cl_tsr<?,?> clt = tensor.get(cl_tsr.class);
-        if ( clt.fp == 1 ) overwrite32( tensor, DataConverter.Utility.doubleToFloat( value ) );
+    public Device<Number> overwrite64(Tsr<Number> tensor, double[] value) {
+        if (value.length == 0) return this;
+        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        if (clt.fp == 1) overwrite32(tensor, DataConverter.Utility.doubleToFloat(value));
         else {
-            if ( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
+            if (clt.value.event != null) clWaitForEvents(1, new cl_event[]{clt.value.event});
             clt.value.event = new cl_event();
             clEnqueueWriteBuffer(
                     _queue,
@@ -568,7 +561,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     CL_FALSE,
                     0,
                     (long) Sizeof.cl_double * value.length,
-                    Pointer.to( value ),
+                    Pointer.to(value),
                     0,
                     null,
                     clt.value.event
@@ -578,12 +571,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
 
-    public Device<Number> overwrite32( Tsr<Number> tensor, float[] value)
-    {
-        if ( value.length == 0 ) return this;
-        cl_tsr<?,?> clt = tensor.get( cl_tsr.class );
-        if ( clt.fp == 1 ) {
-            if ( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
+    public Device<Number> overwrite32(Tsr<Number> tensor, float[] value) {
+        if (value.length == 0) return this;
+        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        if (clt.fp == 1) {
+            if (clt.value.event != null) clWaitForEvents(1, new cl_event[]{clt.value.event});
             clt.value.event = new cl_event();
             clEnqueueWriteBuffer(
                     _queue,
@@ -596,78 +588,74 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     null,
                     clt.value.event
             );
+        } else overwrite64(tensor, DataConverter.Utility.floatToDouble(value));
+
+        return this;
+    }
+
+    @Override
+    public <T extends Number> Device<Number> swap(Tsr<T> former, Tsr<T> replacement) {
+        cl_tsr<Number, T> clTsr = former.get(cl_tsr.class);
+        former.remove(cl_tsr.class);
+        replacement.set(clTsr);
+        _tensors.remove(former);
+        _tensors.add((Tsr<Number>) replacement);
+        return this;
+    }
+
+    @Override
+    public <T extends Number> Device<Number> updateNDConf(Tsr<T> tensor) {
+        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        if (clt != null) {
+            clt.config = _writeNDConfig(tensor.getNDConf());
+            cl_mem[] memos = new cl_mem[]{clt.config.data};
+            clEnqueueMigrateMemObjects(
+                    _queue,
+                    memos.length,
+                    memos,
+                    CL_MIGRATE_MEM_OBJECT_HOST,
+                    0,
+                    null,
+                    null
+            );
         }
-        else overwrite64( tensor, DataConverter.Utility.floatToDouble( value ) );
-
         return this;
     }
 
     @Override
-    public <T extends Number> Device<Number> swap( Tsr<T> former, Tsr<T> replacement )
-    {
-        cl_tsr<Number,T> clTsr = former.get( cl_tsr.class );
-        former.remove( cl_tsr.class );
-        replacement.set( clTsr );
-        _tensors.remove( former );
-        _tensors.add( (Tsr<Number>) replacement );
-        return this;
-    }
-
-    @Override
-    public <T extends Number> Device<Number> updateNDConf( Tsr<T> tensor ) {
-         cl_tsr<?,?> clt = tensor.get(cl_tsr.class);
-         if ( clt != null ) {
-             clt.config = _writeNDConfig( tensor.getNDConf() );
-             cl_mem[] memos = new cl_mem[]{clt.config.data};
-             clEnqueueMigrateMemObjects(
-                     _queue,
-                     memos.length,
-                     memos,
-                     CL_MIGRATE_MEM_OBJECT_HOST,
-                     0,
-                     null,
-                     null
-             );
-         }
-         return this;
-    }
-
-    @Override
-    public boolean update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
-        super.update( changeRequest );
-        if ( changeRequest.type() == IsBeing.ADDED ) {
+    public boolean update(OwnerChangeRequest<Tsr<Number>> changeRequest) {
+        super.update(changeRequest);
+        if (changeRequest.type() == IsBeing.ADDED) {
             Tsr<Number> newOwner = changeRequest.getNewOwner();
             _updateInternal(newOwner, changeRequest::executeChange);
-        }
-        else
+        } else
             changeRequest.executeChange();
         return true;
     }
 
-    private void _updateInternal( Tsr<Number> newOwner, Runnable migration ) {
+    private void _updateInternal(Tsr<Number> newOwner, Runnable migration) {
         Tsr<Number> root = null;
-        if ( newOwner.has( Relation.class ) ) root = ((Relation<Number>)newOwner.get( Relation.class )).findRootTensor();
-        if ( root != null ) store( newOwner, root );
-        else _add( newOwner, null, migration );
+        if (newOwner.has(Relation.class)) root = ((Relation<Number>) newOwner.get(Relation.class)).findRootTensor();
+        if (root != null) store(newOwner, root);
+        else _add(newOwner, null, migration);
     }
 
-    public double[] value64f( Tsr<Number> tensor ) {
-        cl_tsr<?,?> clt = tensor.get( cl_tsr.class );
-        return _value64f( clt, clt.value.size, 0 );
+    public double[] value64f(Tsr<Number> tensor) {
+        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        return _value64f(clt, clt.value.size, 0);
     }
 
-    private double[] _value64f( cl_tsr<?,?> clt , int size, int offset )
-    {
-        if ( clt.fp == 1 ) return DataConverter.Utility.floatToDouble( _value32f( clt, size, offset ) );
+    private double[] _value64f(cl_tsr<?, ?> clt, int size, int offset) {
+        if (clt.fp == 1) return DataConverter.Utility.floatToDouble(_value32f(clt, size, offset));
         else {
-            double[] data = new double[ size ];
+            double[] data = new double[size];
             clEnqueueReadBuffer(
                     _queue,
                     clt.value.data,
                     CL_TRUE,
                     offset * 8L, // one double == eight byte
                     (long) Sizeof.cl_double * data.length,
-                    Pointer.to( data ),
+                    Pointer.to(data),
                     0,
                     null,
                     null
@@ -676,66 +664,72 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
     }
 
-    public float[] value32f( Tsr<Number> tensor ) {
-        cl_tsr<?,?> clt = tensor.get( cl_tsr.class );
-        return _value32f( clt, clt.value.size, 0 );
+    public float[] value32f(Tsr<Number> tensor) {
+        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        return _value32f(clt, clt.value.size, 0);
     }
 
-    private float[] _value32f( cl_tsr<?,?> clt, int size, int offset ) {
-        if ( clt.fp == 1 ) {
-            float[] data = new float[ size ];
+    private float[] _value32f(cl_tsr<?, ?> clt, int size, int offset) {
+        if (clt.fp == 1) {
+            float[] data = new float[size];
             clEnqueueReadBuffer(
                     _queue,
                     clt.value.data,
                     CL_TRUE,
                     offset * 4L, // one float == four bytes !
                     (long) Sizeof.cl_float * data.length,
-                    Pointer.to( data ),
+                    Pointer.to(data),
                     0,
                     null,
                     null
             );
             return data;
-        }
-        else return DataConverter.Utility.doubleToFloat( _value64f( clt, size, offset ) );
+        } else return DataConverter.Utility.doubleToFloat(_value64f(clt, size, offset));
     }
 
     @Override
-    public <T extends Number> Object valueFor( Tsr<T> tensor ) {
-        return value32f( (Tsr<Number>) tensor );
+    public <T extends Number> Object valueFor(Tsr<T> tensor) {
+        return value32f((Tsr<Number>) tensor);
     }
 
     @Override
-    public <T extends Number> Number valueFor( Tsr<T> tensor, int index ) {
-        return value32f( (Tsr<Number>) tensor, index );
+    public <T extends Number> Number valueFor(Tsr<T> tensor, int index) {
+        return value32f((Tsr<Number>) tensor, index);
     }
 
-    public double value64f( Tsr<Number> tensor, int index ) {
-        cl_tsr<?,?> clt = tensor.get( cl_tsr.class );
-        return _value64f( clt, 1, index )[ 0 ];
+    public double value64f(Tsr<Number> tensor, int index) {
+        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        return _value64f(clt, 1, index)[0];
     }
 
-    public float value32f( Tsr<Number> tensor, int index ) {
-        cl_tsr<?,?> clt = tensor.get( cl_tsr.class );
-        return _value32f( clt, 1, index )[ 0 ];
+    public float value32f(Tsr<Number> tensor, int index) {
+        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        return _value32f(clt, 1, index)[0];
     }
 
+    /**
+     * @param call The {@link ExecutionCall} which will be queried for a {@link CLImplementation} holding the kernel.
+     * @return The kernel call which uses the builder pattern to receive kernel arguments.
+     */
     public KernelCaller getKernel( ExecutionCall<OpenCLDevice> call ) {
         // We create the kernel name from the chosen algorithm:
         ImplementationFor<OpenCLDevice> impl = call.getAlgorithm().getImplementationFor(OpenCLDevice.class);
         String chosen;
-        if ( impl instanceof CLImplementation && _platform.getKernels().containsKey(((CLImplementation)impl).getName()) ){
-            chosen = ((CLImplementation)impl).getName();
+        if ( impl instanceof CLImplementation && _platform.hasKernel( ((CLImplementation) impl).getKernelFor( call ).getName()) ) {
+            chosen = ((CLImplementation) impl).getKernelFor( call ).getName();
         }
-        else chosen = call.getAlgorithm().getName() + "_" + call.getOperation().getFunction();
-        cl_kernel kernel = _platform.getKernels().get( chosen );
-        if ( kernel == null ) throw new IllegalStateException("No kernel found for '"+chosen+"'!");
-        return new KernelCaller( kernel, _queue );
+        else
+            chosen = call.getAlgorithm().getName() + "_" + call.getOperation().getFunction();
+
+        cl_kernel kernel = _platform.getKernel( chosen );
+        if ( kernel == null )
+            throw new IllegalStateException("No kernel found for '" + chosen + "'!");
+
+        return new KernelCaller(kernel, _queue);
     }
 
     @Override
-    protected boolean _approveExecutionOf( Tsr<?>[] tensors, int d, Operation type )
-    {
+    protected boolean _approveExecutionOf(Tsr<?>[] tensors, int d, Operation type) {
         return true;
     }
 
@@ -771,25 +765,25 @@ public class OpenCLDevice extends AbstractDevice<Number>
     */
 
     public String name() {
-        return DeviceQuery.getString( _deviceId, CL_DEVICE_NAME );
+        return DeviceQuery.getString(_deviceId, CL_DEVICE_NAME);
     }
 
     public String vendor() {
-        return DeviceQuery.getString( _deviceId, CL_DEVICE_VENDOR );
+        return DeviceQuery.getString(_deviceId, CL_DEVICE_VENDOR);
     }
 
     public String version() {
-        return DeviceQuery.getString( _deviceId, CL_DRIVER_VERSION );
+        return DeviceQuery.getString(_deviceId, CL_DRIVER_VERSION);
     }
 
     public Type type() {
-        long deviceType = DeviceQuery.getLong( _deviceId, CL_DEVICE_TYPE );
-        if ( ( deviceType & CL_DEVICE_TYPE_CPU         ) != 0 ) return Type.CPU;
-        if ( ( deviceType & CL_DEVICE_TYPE_GPU         ) != 0 ) return Type.GPU;
-        if ( ( deviceType & CL_DEVICE_TYPE_ACCELERATOR ) != 0 ) return Type.ACCELERATOR;
-        if ( ( deviceType & CL_DEVICE_TYPE_DEFAULT     ) != 0 ) return Type.DEFAULT;
-        if ( ( deviceType & CL_DEVICE_TYPE_CUSTOM      ) != 0 ) return Type.CUSTOM;
-        if ( ( deviceType & CL_DEVICE_TYPE_ALL         ) != 0 ) return Type.ALL;
+        long deviceType = DeviceQuery.getLong(_deviceId, CL_DEVICE_TYPE);
+        if ((deviceType & CL_DEVICE_TYPE_CPU) != 0) return Type.CPU;
+        if ((deviceType & CL_DEVICE_TYPE_GPU) != 0) return Type.GPU;
+        if ((deviceType & CL_DEVICE_TYPE_ACCELERATOR) != 0) return Type.ACCELERATOR;
+        if ((deviceType & CL_DEVICE_TYPE_DEFAULT) != 0) return Type.DEFAULT;
+        if ((deviceType & CL_DEVICE_TYPE_CUSTOM) != 0) return Type.CUSTOM;
+        if ((deviceType & CL_DEVICE_TYPE_ALL) != 0) return Type.ALL;
         return Type.UNKNOWN;
     }
 
@@ -844,6 +838,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public long maxConstantBufferSizeKB() {
         return (int) (DeviceQuery.getLong(_deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE) / 1024);
     }
+
     /*
     public boolean queueExecIsOrdered() {
         long queueProperties = DeviceQuery.getLong(_did, CL_DEVICE_QUEUE_PROPERTIES);//Deprecation!
@@ -915,21 +910,20 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);
     }
 
-    public static class DeviceQuery
-    {
+    public static class DeviceQuery {
         /**
-         *  Returns the value of the device info parameter with the given name
+         * Returns the value of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
          * @return The value
          */
         public static int getInt(cl_device_id device, int paramName) {
-            return getInts(device, paramName, 1)[ 0 ];
+            return getInts(device, paramName, 1)[0];
         }
 
         /**
-         *  Returns the values of the device info parameter with the given name
+         * Returns the values of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
@@ -938,23 +932,23 @@ public class OpenCLDevice extends AbstractDevice<Number>
          */
         public static int[] getInts(cl_device_id device, int paramName, int numValues) {
             int[] values = new int[numValues];
-            clGetDeviceInfo(device, paramName, (long)Sizeof.cl_int * numValues, Pointer.to(values), null);
+            clGetDeviceInfo(device, paramName, (long) Sizeof.cl_int * numValues, Pointer.to(values), null);
             return values;
         }
 
         /**
-         *  Returns the value of the device info parameter with the given name
+         * Returns the value of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
          * @return The value
          */
         public static long getLong(cl_device_id device, int paramName) {
-            return getLongs(device, paramName, 1)[ 0 ];
+            return getLongs(device, paramName, 1)[0];
         }
 
         /**
-         *  Returns the values of the device info parameter with the given name
+         * Returns the values of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
@@ -963,12 +957,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
          */
         public static long[] getLongs(cl_device_id device, int paramName, int numValues) {
             long[] values = new long[numValues];
-            clGetDeviceInfo(device, paramName, (long)Sizeof.cl_long * numValues, Pointer.to(values), null);
+            clGetDeviceInfo(device, paramName, (long) Sizeof.cl_long * numValues, Pointer.to(values), null);
             return values;
         }
 
         /**
-         *  Returns the value of the device info parameter with the given name
+         * Returns the value of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
@@ -976,11 +970,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
          */
         public static String getString(cl_device_id device, int paramName) {
             // Obtain the length of the string that will be queried
-            long[] size = new long[ 1 ];
+            long[] size = new long[1];
             clGetDeviceInfo(device, paramName, 0, null, size);
 
             // Create a buffer of the appropriate size and fill it with the info
-            byte[] buffer = new byte[(int) size[ 0 ]];
+            byte[] buffer = new byte[(int) size[0]];
             clGetDeviceInfo(device, paramName, buffer.length, Pointer.to(buffer), null);
 
             // Create a string from the buffer (excluding the trailing \0 byte)
@@ -988,38 +982,38 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
 
         /**
-         *  Returns the value of the platform info parameter with the given name
+         * Returns the value of the platform info parameter with the given name
          *
          * @param platform  The platform
          * @param paramName The parameter name
          * @return The value
          */
-        public static String getString( cl_platform_id platform, int paramName ) {
+        public static String getString(cl_platform_id platform, int paramName) {
             // Obtain the length of the string that will be queried
-            long[] size = new long[ 1 ];
+            long[] size = new long[1];
             clGetPlatformInfo(platform, paramName, 0, null, size);
 
             // Create a buffer of the appropriate size and fill it with the info
-            byte[] buffer = new byte[ (int) size[ 0 ] ];
-            clGetPlatformInfo( platform, paramName, buffer.length, Pointer.to(buffer), null );
+            byte[] buffer = new byte[(int) size[0]];
+            clGetPlatformInfo(platform, paramName, buffer.length, Pointer.to(buffer), null);
 
             // Create a string from the buffer (excluding the trailing \0 byte)
-            return new String( buffer, 0, buffer.length - 1 );
+            return new String(buffer, 0, buffer.length - 1);
         }
 
         /**
-         *  Returns the value of the device info parameter with the given name
+         * Returns the value of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
          * @return The value64
          */
-        public static long getSize( cl_device_id device, int paramName ) {
-            return getSizes( device, paramName, 1 )[ 0 ];
+        public static long getSize(cl_device_id device, int paramName) {
+            return getSizes(device, paramName, 1)[0];
         }
 
         /**
-         *  Returns the values of the device info parameter with the given name
+         * Returns the values of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
@@ -1029,7 +1023,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public static long[] getSizes(cl_device_id device, int paramName, int numValues) {
             // The size of the returned data has to depend on
             // the size of a size_t, which is handled here
-            ByteBuffer buffer = ByteBuffer.allocate( numValues * Sizeof.size_t ).order( ByteOrder.nativeOrder() );
+            ByteBuffer buffer = ByteBuffer.allocate(numValues * Sizeof.size_t).order(ByteOrder.nativeOrder());
             clGetDeviceInfo(
                     device,
                     paramName,
@@ -1037,14 +1031,14 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     Pointer.to(buffer),
                     null
             );
-            long[] values = new long[ numValues ];
-            if ( Sizeof.size_t == 4 ) {
-                for ( int i = 0; i < numValues; i++ ) {
-                    values[ i ] = buffer.getInt( i * Sizeof.size_t );
+            long[] values = new long[numValues];
+            if (Sizeof.size_t == 4) {
+                for (int i = 0; i < numValues; i++) {
+                    values[i] = buffer.getInt(i * Sizeof.size_t);
                 }
             } else {
-                for ( int i = 0; i < numValues; i++ ) {
-                    values[ i ] = buffer.getLong( i * Sizeof.size_t );
+                for (int i = 0; i < numValues; i++) {
+                    values[i] = buffer.getLong(i * Sizeof.size_t);
                 }
             }
             return values;

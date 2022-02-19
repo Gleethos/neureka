@@ -146,9 +146,7 @@ public class MatMul extends AbstractOperation
                             int K = call.tensor( 1 ).shape(1);
                             call.getDevice()
                                 .getKernel(call)
-                                .pass(M) // M
-                                .pass(N) // N
-                                .pass(K) // K
+                                .pass(M).pass(N).pass(K)
                                 .pass(call.getTsrOfType(Number.class, 1))
                                 .pass(call.getTsrOfType(Number.class, 2))
                                 .pass(call.getTsrOfType(Number.class, 0))

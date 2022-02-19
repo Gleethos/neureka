@@ -7,7 +7,8 @@ public class KernelCache {
 
     private final static int CAPACITY = 256;
 
-    private final Map<String, OpenCLDevice.cl_ad_hoc> _adhocKernels = new LinkedHashMap<String, OpenCLDevice.cl_ad_hoc>(CAPACITY) {
+    private final Map<String, OpenCLDevice.cl_ad_hoc> _adhocKernels =
+    new LinkedHashMap<String, OpenCLDevice.cl_ad_hoc>(CAPACITY) {
         @Override
         protected boolean removeEldestEntry(final Map.Entry eldest) {
             return size() > CAPACITY;
