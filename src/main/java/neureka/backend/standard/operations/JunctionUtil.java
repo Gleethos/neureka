@@ -11,6 +11,11 @@ import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *  Methods inside this utility class execute only some {@link ExecutionCall} arguments
+ *  in groups if their total number exceeds the arity of an operation.
+ *  
+ */
 public class JunctionUtil
 {
     private static final Logger _LOG = LoggerFactory.getLogger( JunctionUtil.class );
@@ -18,7 +23,7 @@ public class JunctionUtil
     @Contract( pure = true )
     public static Tsr<?> forConvolution(
             ExecutionCall<? extends Device<?>> call,
-            CallExecutor goDeeperWith
+            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
         Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
@@ -29,7 +34,7 @@ public class JunctionUtil
         if ( tensors.length > 3 ) {
             if ( d < 0 ) {
                 Tsr<?>[] reduction = new Tsr[]{ tensors[ 0 ], tensors[ 1 ], tensors[ 2 ] };
-                alternative = goDeeperWith.execute(
+                alternative = recursiveExecutor.execute(
                                     ExecutionCall.of( reduction )
                                                     .andArgs( Arg.DerivIdx.of(d) )
                                                     .running( operation )
@@ -38,7 +43,7 @@ public class JunctionUtil
                 tensors[ 0 ] = reduction[ 0 ];
 
                 reduction = Operation.Utility.offsetted(tensors, 1);
-                alternative = goDeeperWith.execute(
+                alternative = recursiveExecutor.execute(
                                     ExecutionCall.of(reduction)
                                                     .andArgs(Arg.DerivIdx.of(d))
                                                     .running(operation)
@@ -65,7 +70,7 @@ public class JunctionUtil
 
     public static Tsr<?> forMultiplications(
             ExecutionCall<? extends Device<?>> call,
-            CallExecutor goDeeperWith
+            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
         Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
@@ -76,13 +81,13 @@ public class JunctionUtil
         if ( tensors.length > 3 ) {
             if ( d < 0 ) {
                 Tsr<?>[] reduction = new Tsr[]{ tensors[ 0 ], tensors[ 1 ], tensors[ 2 ] };
-                alternative = goDeeperWith.execute(
+                alternative = recursiveExecutor.execute(
                         ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                 );
                 tensors[ 0 ] = reduction[ 0 ];
 
                 reduction = Operation.Utility.offsetted(tensors, 1);
-                alternative = goDeeperWith.execute(
+                alternative = recursiveExecutor.execute(
                         ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                 );
                 tensors[ 0 ] = reduction[ 0 ];
@@ -90,7 +95,7 @@ public class JunctionUtil
                 Tsr<?>[] reduction = Operation.Utility.without(tensors, 1+d);
                 if ( reduction.length > 2 ) {
                     reduction[ 0 ] = ( reduction[ 0 ] == null ) ? tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];
-                    alternative = goDeeperWith.execute(
+                    alternative = recursiveExecutor.execute(
                             ExecutionCall.of(reduction)
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
                                             .running( Neureka.get().backend().getOperation("*") )
@@ -100,15 +105,16 @@ public class JunctionUtil
                 } else tensors[ 0 ] = reduction[ 1 ];
             }
             return alternative;
-        } else
-            return alternative;
+        } 
+        else
+            return null;
 
     }
 
     @Contract( pure = true )
     public static Tsr<?> forDivisionsOrModuli(
             ExecutionCall<? extends Device<?>> call,
-            CallExecutor goDeeperWith
+            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
         Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
@@ -119,13 +125,13 @@ public class JunctionUtil
         {
             if ( d < 0 ) {
                 Tsr<?>[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};
-                alternative = goDeeperWith.execute(
+                alternative = recursiveExecutor.execute(
                         call.withTensors( reduction )
                             );
                 tensors[ 0 ] = reduction[ 0 ];
 
                 reduction = Operation.Utility.offsetted(tensors, 1);
-                alternative = goDeeperWith.execute(
+                alternative = recursiveExecutor.execute(
                                     call.withTensors(reduction)
                             );
                 tensors[ 0 ] = reduction[ 0 ];
@@ -134,7 +140,7 @@ public class JunctionUtil
                 if ( d > 1 ) {
                     Tsr<?>[] reduction = Operation.Utility.subset(tensors, 1, 1, d+1);
                     reduction[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true );
-                    alternative = goDeeperWith.execute(
+                    alternative = recursiveExecutor.execute(
                                         ExecutionCall.of(reduction)
                                                         .andArgs(Arg.DerivIdx.of(-1))
                                                         .running(Neureka.get().backend().getOperation("/"))
@@ -149,7 +155,7 @@ public class JunctionUtil
                     Tsr<?>[] reduction = Operation.Utility.subset(tensors, 2, d+2, tensors.length-(d+2));
                     reduction[ 1 ] = newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
                     reduction[ 0 ] = reduction[ 1 ];
-                    alternative = goDeeperWith.execute(
+                    alternative = recursiveExecutor.execute(
                                         ExecutionCall.of(reduction)
                                                         .andArgs(Arg.DerivIdx.of(-1))
                                                         .running(Neureka.get().backend().getOperation("/"))
@@ -159,13 +165,13 @@ public class JunctionUtil
                 }
                 else b = newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
 
-                alternative = goDeeperWith.execute(
+                alternative = recursiveExecutor.execute(
                                         ExecutionCall.of( tensors[ 0 ], a, b )
                                                         .andArgs( Arg.DerivIdx.of( -1 ) )
                                                         .running( Neureka.get().backend().getOperation("*") )
                                                         .on( device )
                                 );
-                alternative = goDeeperWith.execute(
+                alternative = recursiveExecutor.execute(
                                         ExecutionCall.of( tensors[ 0 ], tensors[ 0 ], tensors[ d + 1 ] )
                                                         .andArgs(Arg.DerivIdx.of(1))
                                                         .running(Neureka.get().backend().getOperation("/"))
@@ -174,32 +180,30 @@ public class JunctionUtil
                 if ( d == 0 ) a.getUnsafe().delete();
                 b.getUnsafe().delete();
             }
-            return alternative;
         }
-        else
-            return alternative;
+        return alternative;
     }
 
     @Contract( pure = true )
     public static Tsr<?> forAdditions(
             ExecutionCall<? extends Device<?>> call,
-            CallExecutor goDeeperWith
+            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
-        return _forAdditionsOrSubtractions(call, goDeeperWith, true);
+        return _forAdditionsOrSubtractions(call, recursiveExecutor, true);
     }
 
     @Contract( pure = true )
     public static Tsr<?> forSubtractions(
             ExecutionCall<? extends Device<?>> call,
-            CallExecutor goDeeperWith
+            CallExecutor recursiveExecutor
     ) {
-        return _forAdditionsOrSubtractions(call, goDeeperWith, false);
+        return _forAdditionsOrSubtractions(call, recursiveExecutor, false);
     }
 
     @Contract( pure = true )
     private static Tsr<?> _forAdditionsOrSubtractions(
             ExecutionCall<? extends Device<?>> call,
-            CallExecutor goDeeperWith,
+            CallExecutor recursiveExecutor,
             boolean thisIsForAddition
     ) {
         Tsr<?>[] tensors = call.getTensors();
@@ -211,7 +215,7 @@ public class JunctionUtil
         if ( tensors.length > 3 ) {
             if ( d < 0 ) {
                 Tsr<?>[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};
-                alternative = goDeeperWith.execute(
+                alternative = recursiveExecutor.execute(
                                     ExecutionCall.of(reduction)
                                                     .andArgs(Arg.DerivIdx.of(d))
                                                     .running(operation)
@@ -220,7 +224,7 @@ public class JunctionUtil
                 tensors[ 0 ] = reduction[ 0 ];
 
                 reduction = Operation.Utility.offsetted(tensors, 1);
-                alternative = goDeeperWith.execute(
+                alternative = recursiveExecutor.execute(
                                         ExecutionCall.of(reduction)
                                                         .andArgs(Arg.DerivIdx.of(d))
                                                         .running(operation)
@@ -228,21 +232,22 @@ public class JunctionUtil
                                 );
                 tensors[ 0 ] = reduction[ 0 ];
             }
-            else tensors[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true ).setValue( d == 0 || thisIsForAddition ? 1f : -1f );
-
-            return alternative;
+            else
+                tensors[ 0 ] = tensors[ 1 ].clone()
+                                            .getUnsafe()
+                                            .setIsIntermediate( true )
+                                            .setValue( d == 0 || thisIsForAddition ? 1f : -1f );
         }
-        else
-            return alternative;
+        return alternative;
     }
 
 
     public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
         //Tsr<V> t = (Tsr<V>) Tsr.like( (Tsr<Number>) template ).all( value );
         //t.setIsVirtual(false);
-        Tsr<V> t = (Tsr<V>) Tsr.of( template.getValueClass(), template.getNDConf().shape(), value )
-                                .getUnsafe()
-                                .setIsIntermediate( true );
+        Tsr<V> t = Tsr.of( template.getValueClass(), template.getNDConf().shape(), value )
+                        .getUnsafe()
+                        .setIsIntermediate( true );
         t.setIsVirtual( false );
         t.setValue( value );
         try {
