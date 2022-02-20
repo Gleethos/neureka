@@ -42,6 +42,7 @@ import neureka.common.utility.Messages;
 import neureka.common.utility.SettingsLoader;
 import neureka.devices.opencl.CLContext;
 import neureka.dtype.custom.F64;
+import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
 import neureka.view.TsrStringSettings;
 import org.slf4j.Logger;
 
@@ -569,7 +570,7 @@ public final class Neureka
         public class NDim
         {
             /**
-             *  The {@link neureka.ndim.config.types.complex.ComplexDefaultNDConfiguration}
+             *  The {@link SlicedNDConfiguration}
              *  class stores shape, translation... as cached int arrays.
              *  Disabling this flag allows for custom 1D, 2D, 3D classes to be loaded. (Improves memory locality)
              */

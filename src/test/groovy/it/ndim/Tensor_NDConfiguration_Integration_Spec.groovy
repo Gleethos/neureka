@@ -2,10 +2,10 @@ package it.ndim
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.ndim.config.types.complex.ComplexD1Configuration
-import neureka.ndim.config.types.complex.ComplexScalarConfiguration
-import neureka.ndim.config.types.simple.SimpleD1Configuration
-import neureka.ndim.config.types.simple.SimpleScalarConfiguration
+import neureka.ndim.config.types.simple.Simple1DConfiguration
+import neureka.ndim.config.types.simple.Simple0DConfiguration
+import neureka.ndim.config.types.sliced.Sliced0DConfiguration
+import neureka.ndim.config.types.sliced.Sliced1DConfiguration
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
@@ -48,7 +48,7 @@ class Tensor_NDConfiguration_Integration_Spec extends Specification
             Tsr b = Tsr.of(2)
 
         expect: 'Tensor "a" contains an instance of the "SimpleScalarConfiguration".'
-            a.NDConf instanceof SimpleScalarConfiguration
+            a.NDConf instanceof Simple0DConfiguration
         and : 'Both tensors "a" and "b" share the same (cached) "NDConfiguration" instance because they are both scalars.'
             a.NDConf == b.NDConf
         and : 'This ND-Configuration behaves as expected.'
@@ -68,9 +68,9 @@ class Tensor_NDConfiguration_Integration_Spec extends Specification
             Tsr<Object> z = Tsr.of([1.4, 2, 4])
 
         expect : 'All of them possess "SimpleD1Configuration" NDConfiguration implementations.'
-            x.NDConf instanceof SimpleD1Configuration
-            y.NDConf instanceof SimpleD1Configuration
-            z.NDConf instanceof SimpleD1Configuration
+            x.NDConf instanceof Simple1DConfiguration
+            y.NDConf instanceof Simple1DConfiguration
+            z.NDConf instanceof Simple1DConfiguration
         and : 'They all share the same (cached) SimpleD1Configuration instance because they do not require otherwise.'
             x.NDConf == y.NDConf
             y.NDConf == z.NDConf
@@ -80,8 +80,8 @@ class Tensor_NDConfiguration_Integration_Spec extends Specification
             x.NDConf.indicesMap(0) == 1
             x.NDConf.offset(0) == 0
             x.NDConf.spread(0) == 1
-            x[2].NDConf instanceof ComplexScalarConfiguration
-            y[1.1].NDConf instanceof ComplexScalarConfiguration
+            x[2].NDConf instanceof Sliced0DConfiguration
+            y[1.1].NDConf instanceof Sliced0DConfiguration
             y[1.1].NDConf != x[2].NDConf
             y[1.1].NDConf == z[1].NDConf
 
@@ -98,7 +98,7 @@ class Tensor_NDConfiguration_Integration_Spec extends Specification
             y = y[1..2]
         then : 'This produces the expected slice.'
             y.toString().contains("(2):[4.5, 2.0]")
-            y.NDConf instanceof ComplexD1Configuration
+            y.NDConf instanceof Sliced1DConfiguration
             y.NDConf.shape(0) == 2
             y.NDConf.translation(0) == 1
             y.NDConf.indicesMap(0) == 1

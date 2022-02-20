@@ -17,7 +17,7 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.types.ColumnMajorNDConfiguration;
-import neureka.ndim.config.types.simple.SimpleD2Configuration;
+import neureka.ndim.config.types.simple.Simple2DConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +46,8 @@ public class MatMul extends AbstractOperation
                                 call -> call.validate()
                                             .allNotNull( t -> Number.class.isAssignableFrom(t.getValueClass()) )
                                             .getEstimator()
-                                                .goodIfAnyNonNull( t -> t.getNDConf() instanceof SimpleD2Configuration )
-                                                .badIfAnyNonNull( t -> !( t.getNDConf() instanceof SimpleD2Configuration ) )
+                                                .goodIfAnyNonNull( t -> t.getNDConf() instanceof Simple2DConfiguration)
+                                                .badIfAnyNonNull( t -> !( t.getNDConf() instanceof Simple2DConfiguration) )
                                                 .getEstimation()
                             )
                             .setCanPerformBackwardADFor( call -> true )
@@ -217,7 +217,7 @@ public class MatMul extends AbstractOperation
     }
 
     private static boolean _isSimpleRowMajorMatrix( Tsr<?> t ) {
-        return t.rank() == 2 && t.getNDConf() instanceof SimpleD2Configuration;
+        return t.rank() == 2 && t.getNDConf() instanceof Simple2DConfiguration;
     }
 
     @Override

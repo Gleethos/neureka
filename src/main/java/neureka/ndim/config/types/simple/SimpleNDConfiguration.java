@@ -5,7 +5,7 @@ import neureka.ndim.config.NDConfiguration;
 
 import java.util.Arrays;
 
-public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
+public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
 {
 
     /**
@@ -18,7 +18,7 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
     private final int[] _translation_and_indicesMap;
 
 
-    protected SimpleDefaultNDConfiguration(
+    protected SimpleNDConfiguration(
             int[] shape, int[] translation
     ) {
         _shape = _cacheArray( shape );
@@ -29,7 +29,7 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
             int[] shape,
             int[] translation
     ) {
-        return _cached( new SimpleDefaultNDConfiguration( shape, translation ) );
+        return _cached( new SimpleNDConfiguration( shape, translation ) );
     }
 
     @Override

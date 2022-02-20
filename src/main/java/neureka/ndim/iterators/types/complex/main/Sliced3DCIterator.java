@@ -1,15 +1,15 @@
 package neureka.ndim.iterators.types.complex.main;
 
-import neureka.ndim.config.types.complex.ComplexD3Configuration;
+import neureka.ndim.config.types.sliced.Sliced3DConfiguration;
 import neureka.ndim.iterators.NDIterator;
 
-public final class ComplexD3CIterator extends ComplexD3Configuration implements NDIterator
+public final class Sliced3DCIterator extends Sliced3DConfiguration implements NDIterator
 {
     private int _d1 = 0;
     private int _d2 = 0;
     private int _d3 = 0;
 
-    public ComplexD3CIterator(ComplexD3Configuration ndc) {
+    public Sliced3DCIterator(Sliced3DConfiguration ndc) {
         super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );
     }
 

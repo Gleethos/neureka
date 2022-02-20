@@ -3,7 +3,7 @@ package neureka.ndim.config.types.simple;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D3C;
 
-public class SimpleD3Configuration extends D3C //:= IMMUTABLE
+public class Simple3DConfiguration extends D3C //:= IMMUTABLE
 {
     /**
      *  The shape of the NDArray.
@@ -18,7 +18,7 @@ public class SimpleD3Configuration extends D3C //:= IMMUTABLE
     private final int _translation2;
     private final int _translation3;
 
-    protected SimpleD3Configuration(
+    protected Simple3DConfiguration(
             int[] shape,
             int[] translation
     ) {
@@ -34,7 +34,7 @@ public class SimpleD3Configuration extends D3C //:= IMMUTABLE
             int[] shape,
             int[] translation
     ) {
-        return _cached(new SimpleD3Configuration(shape, translation));
+        return _cached(new Simple3DConfiguration(shape, translation));
     }
 
     @Override

@@ -1,17 +1,16 @@
-package neureka.ndim.iterators.types.complex.main;
+package neureka.ndim.iterators.types.simple.main;
 
-import neureka.ndim.config.types.complex.ComplexD2Configuration;
+import neureka.ndim.config.types.simple.Simple2DConfiguration;
 import neureka.ndim.iterators.NDIterator;
 
-public final class ComplexD2CIterator extends ComplexD2Configuration implements NDIterator
+public final class Simple2DCIterator extends Simple2DConfiguration implements NDIterator
 {
     protected int _d1 = 0;
     protected int _d2 = 0;
 
-    public ComplexD2CIterator(ComplexD2Configuration ndc) {
-        super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );
+    public Simple2DCIterator(Simple2DConfiguration ndc) {
+        super( ndc.shape(), ndc.translation() );
     }
-
 
     @Override
     public void increment() {
@@ -53,8 +52,8 @@ public final class ComplexD2CIterator extends ComplexD2Configuration implements 
 
     @Override
     public void set( int[] indices ) {
-        _d1 = indices[ 0 ];
-        _d2 = indices[ 1 ];
+        _d1 = indices[0];
+        _d2 = indices[1];
     }
 
 }

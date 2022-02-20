@@ -1,15 +1,15 @@
 package neureka.ndim.iterators.types.simple.main;
 
-import neureka.ndim.config.types.simple.SimpleD3Configuration;
+import neureka.ndim.config.types.simple.Simple3DConfiguration;
 import neureka.ndim.iterators.NDIterator;
 
-public final class SimpleD3CIterator extends SimpleD3Configuration implements NDIterator
+public final class Simple3DCIterator extends Simple3DConfiguration implements NDIterator
 {
     protected int _d1 = 0;
     protected int _d2 = 0;
     protected int _d3 = 0;
 
-    public SimpleD3CIterator(SimpleD3Configuration ndc) {
+    public Simple3DCIterator(Simple3DConfiguration ndc) {
         super( ndc.shape(), ndc.translation() );
     }
 

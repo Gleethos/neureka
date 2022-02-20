@@ -3,7 +3,7 @@ package neureka.ndim.config;
 import neureka.Neureka;
 import neureka.common.utility.Cache;
 import neureka.ndim.config.types.ColumnMajorNDConfiguration;
-import neureka.ndim.config.types.complex.*;
+import neureka.ndim.config.types.sliced.*;
 import neureka.ndim.config.types.simple.*;
 import neureka.ndim.config.types.views.SimpleReshapeView;
 
@@ -111,30 +111,30 @@ public abstract class AbstractNDC implements NDConfiguration
             return ColumnMajorNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
 
         if ( Neureka.get().settings().ndim().isOnlyUsingDefaultNDConfiguration() )
-            return ComplexDefaultNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
+            return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
 
         boolean isSimple = _isSimpleConfiguration(shape, translation, indicesMap, spread, offset);
         NDConfiguration ndc = null;
         if ( isSimple ) {
             if ( shape.length == 1 ) {
-                if ( shape[ 0 ]==1 ) ndc = SimpleScalarConfiguration.construct();
-                else ndc = SimpleD1Configuration.construct(shape, translation);
+                if ( shape[ 0 ]==1 ) ndc = Simple0DConfiguration.construct();
+                else ndc = Simple1DConfiguration.construct(shape, translation);
             } else if ( shape.length == 2 ) {
-                ndc = SimpleD2Configuration.construct(shape, translation);
+                ndc = Simple2DConfiguration.construct(shape, translation);
             } else if ( shape.length == 3 ) {
-                ndc = SimpleD3Configuration.construct(shape, translation);
+                ndc = Simple3DConfiguration.construct(shape, translation);
             } else
-                ndc = SimpleDefaultNDConfiguration.construct(shape, translation);
+                ndc = SimpleNDConfiguration.construct(shape, translation);
         } else {
             if ( shape.length == 1 ) {
-                if ( shape[ 0 ] == 1 ) ndc = ComplexScalarConfiguration.construct(shape, offset);
-                else ndc = ComplexD1Configuration.construct(shape, translation, indicesMap, spread, offset);
+                if ( shape[ 0 ] == 1 ) ndc = Sliced0DConfiguration.construct(shape, offset);
+                else ndc = Sliced1DConfiguration.construct(shape, translation, indicesMap, spread, offset);
             } else if ( shape.length == 2 ) {
-                ndc = ComplexD2Configuration.construct(shape, translation, indicesMap, spread, offset);
+                ndc = Sliced2DConfiguration.construct(shape, translation, indicesMap, spread, offset);
             } else if ( shape.length == 3 ) {
-                ndc = ComplexD3Configuration.construct(shape, translation, indicesMap, spread, offset);
+                ndc = Sliced3DConfiguration.construct(shape, translation, indicesMap, spread, offset);
             } else
-                ndc = ComplexDefaultNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
+                ndc = SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
         }
         return ndc;
     }

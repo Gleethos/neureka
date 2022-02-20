@@ -1,9 +1,9 @@
-package neureka.ndim.config.types.complex;
+package neureka.ndim.config.types.sliced;
 
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D3C;
 
-public class ComplexD3Configuration extends D3C //:= IMMUTABLE
+public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
 {
     /**
      *  The shape of the NDArray.
@@ -37,7 +37,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     private final int _offset3;
 
 
-    protected ComplexD3Configuration(
+    protected Sliced3DConfiguration(
             int[] shape,
             int[] translation,
             int[] indicesMap,
@@ -68,7 +68,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
             int[] spread,
             int[] offset
     ) {
-        return _cached(new ComplexD3Configuration(shape, translation, indicesMap, spread, offset));
+        return _cached(new Sliced3DConfiguration(shape, translation, indicesMap, spread, offset));
     }
 
     @Override

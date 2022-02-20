@@ -3,13 +3,13 @@ package neureka.ndim.config.types.simple;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 
-public final class SimpleScalarConfiguration extends AbstractNDC //:= IMMUTABLE
+public final class Simple0DConfiguration extends AbstractNDC //:= IMMUTABLE
 {
     public static NDConfiguration construct() {
-        return _cached(new SimpleScalarConfiguration());
+        return _cached(new Simple0DConfiguration());
     }
 
-    private SimpleScalarConfiguration() {}
+    private Simple0DConfiguration() {}
 
     @Override
     public int rank() {

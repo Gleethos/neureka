@@ -4,7 +4,7 @@ import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D1C;
 
 
-public class SimpleD1Configuration extends D1C //:= IMMUTABLE
+public class Simple1DConfiguration extends D1C //:= IMMUTABLE
 {
     /**
      *  The shape of the NDArray.
@@ -20,10 +20,10 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
             int[] shape,
             int[] translation
     ) {
-        return _cached(new SimpleD1Configuration(shape[ 0 ], translation[ 0 ]));
+        return _cached(new Simple1DConfiguration(shape[ 0 ], translation[ 0 ]));
     }
 
-    protected SimpleD1Configuration(
+    protected Simple1DConfiguration(
             int shape,
             int translation
     ) {

@@ -1,9 +1,9 @@
-package neureka.ndim.config.types.complex;
+package neureka.ndim.config.types.sliced;
 
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D1C;
 
-public class ComplexD1Configuration extends D1C //:= IMMUTABLE
+public class Sliced1DConfiguration extends D1C //:= IMMUTABLE
 {
     /**
      *  The shape of the NDArray.
@@ -34,10 +34,10 @@ public class ComplexD1Configuration extends D1C //:= IMMUTABLE
             int[] spread,
             int[] offset
     ) {
-        return _cached(new ComplexD1Configuration(shape[ 0 ], translation[ 0 ],  indicesMap[ 0 ], spread[ 0 ], offset[ 0 ]));
+        return _cached(new Sliced1DConfiguration(shape[ 0 ], translation[ 0 ],  indicesMap[ 0 ], spread[ 0 ], offset[ 0 ]));
     }
 
-    protected ComplexD1Configuration(
+    protected Sliced1DConfiguration(
             int shape,
             int translation,
             int indicesMap,

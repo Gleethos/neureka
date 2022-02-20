@@ -1,17 +1,15 @@
-package neureka.ndim.iterators.types.simple;
+package neureka.ndim.iterators.types.complex;
 
-
-import neureka.ndim.config.types.simple.SimpleD1Configuration;
+import neureka.ndim.config.types.sliced.Sliced1DConfiguration;
 import neureka.ndim.iterators.NDIterator;
 
-public final class SimpleD1CIterator extends SimpleD1Configuration implements NDIterator
+public final class Sliced1DCIterator extends Sliced1DConfiguration implements NDIterator
 {
     private int _d1;
 
-    public SimpleD1CIterator( SimpleD1Configuration ndc ) {
-        super( ndc.shape( 0 ), ndc.translation( 0 ));
+    public Sliced1DCIterator(Sliced1DConfiguration ndc) {
+        super(ndc.shape(0), ndc.translation(0), ndc.indicesMap(0), ndc.spread(0), ndc.offset(0));
     }
-
 
     @Override
     public void increment() {
@@ -45,7 +43,7 @@ public final class SimpleD1CIterator extends SimpleD1Configuration implements ND
     }
 
     @Override
-    public void set( int[] indices) {
+    public void set( int[] indices ) {
         _d1 = indices[0];
     }
 

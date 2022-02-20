@@ -1,9 +1,9 @@
 package neureka.ndim.config.types;
 
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.types.complex.ComplexDefaultNDConfiguration;
+import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
 
-public final class ColumnMajorNDConfiguration extends ComplexDefaultNDConfiguration //:= IMMUTABLE
+public final class ColumnMajorNDConfiguration extends SlicedNDConfiguration //:= IMMUTABLE
 {
     private ColumnMajorNDConfiguration(
             int[] shape,

@@ -37,21 +37,21 @@ package neureka.ndim.iterators;
 
 import neureka.Tsr;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.types.complex.ComplexD1Configuration;
-import neureka.ndim.config.types.complex.ComplexD2Configuration;
-import neureka.ndim.config.types.complex.ComplexD3Configuration;
-import neureka.ndim.config.types.simple.SimpleD1Configuration;
-import neureka.ndim.config.types.simple.SimpleD2Configuration;
-import neureka.ndim.config.types.simple.SimpleD3Configuration;
+import neureka.ndim.config.types.simple.Simple1DConfiguration;
+import neureka.ndim.config.types.simple.Simple2DConfiguration;
+import neureka.ndim.config.types.simple.Simple3DConfiguration;
+import neureka.ndim.config.types.sliced.Sliced1DConfiguration;
+import neureka.ndim.config.types.sliced.Sliced2DConfiguration;
+import neureka.ndim.config.types.sliced.Sliced3DConfiguration;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.ndim.iterators.types.DefaultNDIterator;
 import neureka.ndim.iterators.types.VirtualNDIterator;
-import neureka.ndim.iterators.types.complex.ComplexD1CIterator;
-import neureka.ndim.iterators.types.complex.main.ComplexD2CIterator;
-import neureka.ndim.iterators.types.complex.main.ComplexD3CIterator;
-import neureka.ndim.iterators.types.simple.SimpleD1CIterator;
-import neureka.ndim.iterators.types.simple.main.SimpleD2CIterator;
-import neureka.ndim.iterators.types.simple.main.SimpleD3CIterator;
+import neureka.ndim.iterators.types.complex.Sliced1DCIterator;
+import neureka.ndim.iterators.types.complex.main.Sliced2DCIterator;
+import neureka.ndim.iterators.types.complex.main.Sliced3DCIterator;
+import neureka.ndim.iterators.types.simple.Simple1DCIterator;
+import neureka.ndim.iterators.types.simple.main.Simple2DCIterator;
+import neureka.ndim.iterators.types.simple.main.Simple3DCIterator;
 
 import java.util.StringJoiner;
 import java.util.stream.IntStream;
@@ -68,13 +68,13 @@ public interface NDIterator
 
         NDConfiguration ndc = t.getNDConf();
 
-        if ( ndc instanceof ComplexD1Configuration) return new ComplexD1CIterator( (ComplexD1Configuration) ndc );
-        if ( ndc instanceof SimpleD1Configuration ) return new SimpleD1CIterator( (SimpleD1Configuration) ndc );
+        if ( ndc instanceof Sliced1DConfiguration) return new Sliced1DCIterator( (Sliced1DConfiguration) ndc );
+        if ( ndc instanceof Simple1DConfiguration) return new Simple1DCIterator( (Simple1DConfiguration) ndc );
 
-        if ( ndc instanceof ComplexD2Configuration) return new ComplexD2CIterator( (ComplexD2Configuration) ndc );
-        if ( ndc instanceof ComplexD3Configuration) return new ComplexD3CIterator( (ComplexD3Configuration) ndc );
-        if ( ndc instanceof SimpleD2Configuration ) return new SimpleD2CIterator( (SimpleD2Configuration) ndc );
-        if ( ndc instanceof SimpleD3Configuration ) return new SimpleD3CIterator( (SimpleD3Configuration) ndc );
+        if ( ndc instanceof Sliced2DConfiguration) return new Sliced2DCIterator( (Sliced2DConfiguration) ndc );
+        if ( ndc instanceof Sliced3DConfiguration) return new Sliced3DCIterator( (Sliced3DConfiguration) ndc );
+        if ( ndc instanceof Simple2DConfiguration) return new Simple2DCIterator( (Simple2DConfiguration) ndc );
+        if ( ndc instanceof Simple3DConfiguration) return new Simple3DCIterator( (Simple3DConfiguration) ndc );
 
         if ( ndc instanceof VirtualNDConfiguration && shouldNotBeVirtual == NonVirtual.FALSE )
             return new VirtualNDIterator( (VirtualNDConfiguration) ndc );
