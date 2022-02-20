@@ -21,7 +21,7 @@ public final class ColumnMajorNDConfiguration extends SlicedNDConfiguration //:=
         );
     }
 
-    public static NDConfiguration construct(
+    public static ColumnMajorNDConfiguration construct(
             int[] shape,
             int[] translation,
             int[] indicesMap,

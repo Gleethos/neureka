@@ -65,8 +65,10 @@ public interface NDIterator
     }
 
     static NDIterator of( Tsr<?> t, NonVirtual shouldNotBeVirtual ) {
+        return of( t.getNDConf(), shouldNotBeVirtual );
+    }
 
-        NDConfiguration ndc = t.getNDConf();
+    static NDIterator of( NDConfiguration ndc, NonVirtual shouldNotBeVirtual ) {
 
         if ( ndc instanceof Sliced1DConfiguration) return new Sliced1DCIterator( (Sliced1DConfiguration) ndc );
         if ( ndc instanceof Simple1DConfiguration) return new Simple1DCIterator( (Simple1DConfiguration) ndc );
@@ -81,6 +83,7 @@ public interface NDIterator
         else
             return new DefaultNDIterator( ndc );
     }
+
 
     int shape( int i );
 

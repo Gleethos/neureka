@@ -117,6 +117,10 @@ public interface NDConfiguration
      */
     int rank();
 
+    default int size() {
+        return Arrays.stream(shape()).reduce(1, (a, b) -> a * b );
+    }
+
     /**
      *  This method returns an array of axis sizes.
      *
