@@ -1,7 +1,6 @@
 package neureka.ndim.config.types.sliced;
 
 import neureka.ndim.config.AbstractNDC;
-import neureka.ndim.config.NDConfiguration;
 
 public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
 {
@@ -45,14 +44,14 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
         _offset      = _cacheArray(offset);
     }
 
-    public static NDConfiguration construct(
+    public static SlicedNDConfiguration construct(
             int[] shape,
             int[] translation,
             int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-        return _cached(new SlicedNDConfiguration(shape, translation, indicesMap, spread, offset));
+        return _cached( new SlicedNDConfiguration(shape, translation, indicesMap, spread, offset) );
     }
 
     @Override

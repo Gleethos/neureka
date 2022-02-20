@@ -24,13 +24,13 @@ public class Cache<O> {
      * @param newObject The object which may or may not be cached.
      * @return Either the provided object or the object found inside the cache...
      */
-    public O process( O newObject ) {
+    public <T extends O> T process( T newObject ) {
 
         int index = _indexFor(newObject);
 
         O found = _getAt(index);
 
-        if ( _equalsFor( found, newObject ) ) return found;
+        if ( _equalsFor( found, newObject ) ) return (T) found;
         else _setAt( index, newObject );
 
         return newObject;

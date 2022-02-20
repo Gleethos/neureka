@@ -1,6 +1,5 @@
 package neureka.ndim.config.types.sliced;
 
-import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D2C;
 
 public class Sliced2DConfiguration extends D2C //:= IMMUTABLE
@@ -51,14 +50,14 @@ public class Sliced2DConfiguration extends D2C //:= IMMUTABLE
         _offset2 = offset[ 1 ];
     }
 
-    public static NDConfiguration construct(
+    public static Sliced2DConfiguration construct(
             int[] shape,
             int[] translation,
             int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-        return _cached(new Sliced2DConfiguration(shape, translation, indicesMap, spread, offset));
+        return _cached( new Sliced2DConfiguration(shape, translation, indicesMap, spread, offset) );
     }
 
     @Override

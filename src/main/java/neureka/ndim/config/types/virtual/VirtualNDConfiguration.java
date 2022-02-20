@@ -1,7 +1,6 @@
 package neureka.ndim.config.types.virtual;
 
 import neureka.ndim.config.AbstractNDC;
-import neureka.ndim.config.NDConfiguration;
 
 /**
  *  {@link VirtualNDConfiguration}s represent tensors which
@@ -18,7 +17,7 @@ public class VirtualNDConfiguration extends AbstractNDC
         _shape = _cacheArray( shape );
     }
 
-    public static NDConfiguration construct(
+    public static VirtualNDConfiguration construct(
             int[] shape
     ) {
         return _cached( new VirtualNDConfiguration( shape ) );

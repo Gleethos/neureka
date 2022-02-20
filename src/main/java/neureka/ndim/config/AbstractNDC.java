@@ -3,8 +3,8 @@ package neureka.ndim.config;
 import neureka.Neureka;
 import neureka.common.utility.Cache;
 import neureka.ndim.config.types.ColumnMajorNDConfiguration;
-import neureka.ndim.config.types.sliced.*;
 import neureka.ndim.config.types.simple.*;
+import neureka.ndim.config.types.sliced.*;
 import neureka.ndim.config.types.views.SimpleReshapeView;
 
 import java.util.Arrays;
@@ -139,7 +139,7 @@ public abstract class AbstractNDC implements NDConfiguration
         return ndc;
     }
 
-    protected static <T extends NDConfiguration> NDConfiguration _cached( T ndc )
+    protected static <T extends NDConfiguration> T _cached( T ndc )
     {
         return _CACHED_NDCS.process( ndc );
     }

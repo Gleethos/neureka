@@ -1,7 +1,8 @@
 package neureka.ndim.config.types.simple;
 
-import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D3C;
+import neureka.ndim.iterators.NDIterator;
+import neureka.ndim.iterators.types.simple.main.Simple3DCIterator;
 
 public class Simple3DConfiguration extends D3C //:= IMMUTABLE
 {
@@ -30,11 +31,11 @@ public class Simple3DConfiguration extends D3C //:= IMMUTABLE
         _translation3 = translation[ 2 ];
     }
 
-    public static NDConfiguration construct(
+    public static Simple3DConfiguration construct(
             int[] shape,
             int[] translation
     ) {
-        return _cached(new Simple3DConfiguration(shape, translation));
+        return _cached( new Simple3DConfiguration(shape, translation) );
     }
 
     @Override

@@ -1,6 +1,5 @@
 package neureka.ndim.config.types.simple;
 
-import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D1C;
 
 
@@ -16,11 +15,11 @@ public class Simple1DConfiguration extends D1C //:= IMMUTABLE
     private final int _translation_and_indicesMap;
 
 
-    public static NDConfiguration construct(
+    public static Simple1DConfiguration construct(
             int[] shape,
             int[] translation
     ) {
-        return _cached(new Simple1DConfiguration(shape[ 0 ], translation[ 0 ]));
+        return _cached( new Simple1DConfiguration(shape[ 0 ], translation[ 0 ]) );
     }
 
     protected Simple1DConfiguration(

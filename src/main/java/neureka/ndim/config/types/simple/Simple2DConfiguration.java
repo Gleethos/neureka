@@ -1,6 +1,5 @@
 package neureka.ndim.config.types.simple;
 
-import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D2C;
 
 
@@ -27,11 +26,11 @@ public class Simple2DConfiguration extends D2C //:= IMMUTABLE
         _translation2 = translation[ 1 ];
     }
 
-    public static NDConfiguration construct(
+    public static Simple2DConfiguration construct(
             int[] shape,
             int[] translation
     ) {
-        return _cached(new Simple2DConfiguration(shape, translation));
+        return _cached( new Simple2DConfiguration(shape, translation) );
     }
 
 

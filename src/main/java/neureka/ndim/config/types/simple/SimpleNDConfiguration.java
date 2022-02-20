@@ -1,7 +1,6 @@
 package neureka.ndim.config.types.simple;
 
 import neureka.ndim.config.AbstractNDC;
-import neureka.ndim.config.NDConfiguration;
 
 import java.util.Arrays;
 
@@ -25,7 +24,7 @@ public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
         _translation_and_indicesMap = _cacheArray( translation );
     }
 
-    public static NDConfiguration construct(
+    public static SimpleNDConfiguration construct(
             int[] shape,
             int[] translation
     ) {
