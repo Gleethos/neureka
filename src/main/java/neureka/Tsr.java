@@ -1504,21 +1504,21 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     |   ------------------------------------------
     */
 
-    private void _toLayout(NDConfiguration.Layout layout ) {
+    private void _toLayout( NDConfiguration.Layout layout ) {
 
         if ( layout == this.getNDConf().getLayout() ) return;
 
         Tsr<V> transposed = this.T().clone().detach();
         if ( !this.isVirtual() )
-            IntStream.range(0,transposed.size())
-                    .parallel()
-                    .forEach( i -> this.setDataAt( i, transposed.getDataAt( i ) ) );
+            MemUtil.keep( this, transposed,
+                () -> Neureka.get().backend().getFunction().idy().execute( this, transposed )
+            );
 
         NDConfiguration old = this.getNDConf();
-        this._setNDConf(
+        _setNDConf(
             AbstractNDC.construct(
                     old.shape(),
-                    layout.newTranslationFor(old.shape()),
+                    layout.newTranslationFor( old.shape() ),
                     old.translation(),
                     old.spread(),
                     old.offset(),
@@ -3184,7 +3184,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     @Override
     public Unsafe<V> getUnsafe() {
-        _guardGet("mutate");
+        _guardGet("unsafe API");
         return new Unsafe<V>() {
             @Override
             public Tsr<V> setNDConf(NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return Tsr.this; }
