@@ -44,14 +44,14 @@ import neureka.ndim.config.types.sliced.Sliced1DConfiguration;
 import neureka.ndim.config.types.sliced.Sliced2DConfiguration;
 import neureka.ndim.config.types.sliced.Sliced3DConfiguration;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
-import neureka.ndim.iterators.types.DefaultNDIterator;
+import neureka.ndim.iterators.types.GenericNDIterator;
 import neureka.ndim.iterators.types.VirtualNDIterator;
-import neureka.ndim.iterators.types.complex.Sliced1DCIterator;
-import neureka.ndim.iterators.types.complex.main.Sliced2DCIterator;
-import neureka.ndim.iterators.types.complex.main.Sliced3DCIterator;
+import neureka.ndim.iterators.types.sliced.Sliced1DCIterator;
+import neureka.ndim.iterators.types.sliced.Sliced2DCIterator;
+import neureka.ndim.iterators.types.sliced.Sliced3DCIterator;
 import neureka.ndim.iterators.types.simple.Simple1DCIterator;
-import neureka.ndim.iterators.types.simple.main.Simple2DCIterator;
-import neureka.ndim.iterators.types.simple.main.Simple3DCIterator;
+import neureka.ndim.iterators.types.simple.Simple2DCIterator;
+import neureka.ndim.iterators.types.simple.Simple3DCIterator;
 
 import java.util.StringJoiner;
 import java.util.stream.IntStream;
@@ -81,7 +81,7 @@ public interface NDIterator
         if ( ndc instanceof VirtualNDConfiguration && shouldNotBeVirtual == NonVirtual.FALSE )
             return new VirtualNDIterator( (VirtualNDConfiguration) ndc );
         else
-            return new DefaultNDIterator( ndc );
+            return new GenericNDIterator( ndc );
     }
 
 

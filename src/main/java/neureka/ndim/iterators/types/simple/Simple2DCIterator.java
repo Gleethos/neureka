@@ -1,4 +1,4 @@
-package neureka.ndim.iterators.types.simple.main;
+package neureka.ndim.iterators.types.simple;
 
 import neureka.ndim.config.types.simple.Simple2DConfiguration;
 import neureka.ndim.iterators.NDIterator;

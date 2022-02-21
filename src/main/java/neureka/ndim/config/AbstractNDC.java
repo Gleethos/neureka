@@ -3,6 +3,7 @@ package neureka.ndim.config;
 import neureka.Neureka;
 import neureka.common.utility.Cache;
 import neureka.ndim.config.types.ColumnMajorNDConfiguration;
+import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
 import neureka.ndim.config.types.simple.*;
 import neureka.ndim.config.types.sliced.*;
 import neureka.ndim.config.types.views.SimpleReshapeView;

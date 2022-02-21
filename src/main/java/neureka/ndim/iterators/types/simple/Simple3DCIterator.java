@@ -1,16 +1,16 @@
-package neureka.ndim.iterators.types.complex.main;
+package neureka.ndim.iterators.types.simple;
 
-import neureka.ndim.config.types.sliced.Sliced3DConfiguration;
+import neureka.ndim.config.types.simple.Simple3DConfiguration;
 import neureka.ndim.iterators.NDIterator;
 
-public final class Sliced3DCIterator extends Sliced3DConfiguration implements NDIterator
+public final class Simple3DCIterator extends Simple3DConfiguration implements NDIterator
 {
-    private int _d1 = 0;
-    private int _d2 = 0;
-    private int _d3 = 0;
+    protected int _d1 = 0;
+    protected int _d2 = 0;
+    protected int _d3 = 0;
 
-    public Sliced3DCIterator(Sliced3DConfiguration ndc) {
-        super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );
+    public Simple3DCIterator(Simple3DConfiguration ndc) {
+        super( ndc.shape(), ndc.translation() );
     }
 
 
@@ -63,7 +63,7 @@ public final class Sliced3DCIterator extends Sliced3DConfiguration implements ND
     }
 
     @Override
-    public void set( int[] indices ) {
+    public void set( int[] indices) {
         _d1 = indices[0];
         _d2 = indices[1];
         _d3 = indices[2];

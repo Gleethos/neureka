@@ -1,4 +1,4 @@
-package neureka.ndim.iterators.types.complex.main;
+package neureka.ndim.iterators.types.sliced;
 
 import neureka.ndim.config.types.sliced.Sliced2DConfiguration;
 import neureka.ndim.iterators.NDIterator;

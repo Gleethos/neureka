@@ -109,9 +109,6 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
         return _offset[ i ];
     }
 
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     @Override
     public int indexOfIndex( int index ) {
         return indexOfIndices( indicesOfIndex( index ) );
