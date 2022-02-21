@@ -43,10 +43,19 @@ class NDConfiguration_Spec extends Specification {
         and :
             (0..generalized.size()-1).collect({
                 var matches = i1.get() == i2.get()
-                i1.increment(); i2.increment()
+                if ( it < generalized.size()-1 ) { i1.increment(); i2.increment() }
                 return matches
             })
             .every()
+        and :
+           (0..generalized.size()-1).collect({
+               var matches = i1.get() == i2.get()
+               i1.decrement(); i2.decrement()
+               print i1.get()
+               println i2.get()
+               return matches
+           })
+           .every()
 
         where :
             shape  | translation  | indicesMap  | spread   | offset  || expected

@@ -29,11 +29,14 @@ public final class Simple3DCIterator extends Simple3DConfiguration implements ND
 
     @Override
     public void decrement() {
-        if ( _d3 == 0 ) {
+        _d3--;
+        if ( _d3 == -1 ) {
             _d3 = _shape3 - 1;
-            if ( _d2 == 0 ) {
+            _d2--;
+            if ( _d2 == -1 ) {
+                _d2 = _shape2 - 1;
                 _d1--;
-            } else _d2--;
+            }
         }
     }
 

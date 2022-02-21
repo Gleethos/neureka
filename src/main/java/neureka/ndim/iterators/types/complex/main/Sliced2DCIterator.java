@@ -24,9 +24,10 @@ public final class Sliced2DCIterator extends Sliced2DConfiguration implements ND
 
     @Override
     public void decrement() {
-        if ( _d2 == 0 ) {
-            _d1--;
+        _d2--;
+        if ( _d2 == -1 ) {
             _d2 = _shape2 - 1;
+            _d1--;
         }
     }
 

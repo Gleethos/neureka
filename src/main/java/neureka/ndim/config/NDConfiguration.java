@@ -327,6 +327,28 @@ public interface NDConfiguration
         }
 
         @Contract(pure = true)
+        public static void decrement( int[] indices, int[] shape ) {
+            int i = shape.length-1;
+            while ( i >= 0 && i < shape.length ) i = _decrementAt( i, indices, shape );
+        }
+
+        @Contract(pure = true)
+        private static int _decrementAt( int i, int[] indices, int[] shape )
+        {
+            if ( indices[ i ] >= 0 ) {
+                indices[ i ]--;
+                if ( indices[ i ] == -1 ) {
+                    indices[ i ] = shape[ i ] - 1;
+                    i--;
+                }
+                else i = -1;
+            }
+            else i--;
+            return i;
+        }
+
+
+        @Contract(pure = true)
         public static int sizeOfShape( int[] shape ) {
             int size = 1;
             for ( int i : shape ) size *= i;

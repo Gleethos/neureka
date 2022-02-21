@@ -1,8 +1,6 @@
 package neureka.ndim.config.types.simple;
 
 import neureka.ndim.config.types.D3C;
-import neureka.ndim.iterators.NDIterator;
-import neureka.ndim.iterators.types.simple.main.Simple3DCIterator;
 
 public class Simple3DConfiguration extends D3C //:= IMMUTABLE
 {

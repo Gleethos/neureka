@@ -32,7 +32,7 @@ public final class DefaultNDIterator implements NDIterator
 
     @Override
     public void decrement() {
-        //NDConfiguration.Utility... // TODO: This is currently not needed
+        NDConfiguration.Utility.decrement( _indices, _shape );
     }
 
     @Override
