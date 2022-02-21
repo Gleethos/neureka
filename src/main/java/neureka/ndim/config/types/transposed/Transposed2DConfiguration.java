@@ -1,14 +1,15 @@
-package neureka.ndim.config.types.sliced;
+package neureka.ndim.config.types.transposed;
 
 import neureka.ndim.config.types.D2C;
+import neureka.ndim.config.types.sliced.Sliced2DConfiguration;
 
-public class Sliced2DConfiguration extends D2C //:= IMMUTABLE
+public class Transposed2DConfiguration extends D2C
 {
     /**
      *  The shape of the NDArray.
      */
-    protected final int _shape1;
-    protected final int _shape2;
+    private final int _shape1;
+    private final int _shape2;
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
@@ -19,24 +20,11 @@ public class Sliced2DConfiguration extends D2C //:= IMMUTABLE
      */
     private final int _indicesMap1;
     private final int _indicesMap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
-    /**
-     *  Produces the strides of a tensor subset / slice
-     */
-    private final int _spread1;
-    private final int _spread2;
-    /**
-     *  Defines the position of a subset / slice tensor within its parent!
-     */
-    private final int _offset1;
-    private final int _offset2;
 
-
-    protected Sliced2DConfiguration(
+    private Transposed2DConfiguration(
             int[] shape,
             int[] translation,
-            int[] indicesMap,
-            int[] spread,
-            int[] offset
+            int[] indicesMap
     ) {
         _shape1 = shape[ 0 ];
         _shape2 = shape[ 1 ];
@@ -44,20 +32,14 @@ public class Sliced2DConfiguration extends D2C //:= IMMUTABLE
         _translation2 = translation[ 1 ];
         _indicesMap1 = indicesMap[ 0 ];
         _indicesMap2 = indicesMap[ 1 ];
-        _spread1 = spread[ 0 ];
-        _spread2 = spread[ 1 ];
-        _offset1 = offset[ 0 ];
-        _offset2 = offset[ 1 ];
     }
 
-    public static Sliced2DConfiguration construct(
+    public static Transposed2DConfiguration construct(
             int[] shape,
             int[] translation,
-            int[] indicesMap,
-            int[] spread,
-            int[] offset
+            int[] indicesMap
     ) {
-        return _cached( new Sliced2DConfiguration(shape, translation, indicesMap, spread, offset) );
+        return _cached( new Transposed2DConfiguration(shape, translation, indicesMap) );
     }
 
     @Override
@@ -97,22 +79,22 @@ public class Sliced2DConfiguration extends D2C //:= IMMUTABLE
 
     @Override
     public int[] spread() {
-        return new int[]{_spread1, _spread2};
+        return new int[]{1, 1};
     }
 
     @Override
     public int spread( int i ) {
-        return (i==0?_spread1:_spread2);
+        return 1;
     }
 
     @Override
     public int[] offset() {
-        return new int[]{_offset1, _offset2};
+        return new int[]{0, 0};
     }
 
     @Override
     public int offset( int i ) {
-        return (i==0?_offset1:_offset2);
+        return 0;
     }
 
 
@@ -120,8 +102,8 @@ public class Sliced2DConfiguration extends D2C //:= IMMUTABLE
 
     @Override
     public int indexOfIndex(int index) {
-        return ((index / _indicesMap1) * _spread1 + _offset1) * _translation1 +
-                (((index %_indicesMap1) / _indicesMap2) * _spread2 + _offset2) * _translation2;
+        return (index / _indicesMap1) * _translation1 +
+                ((index %_indicesMap1) / _indicesMap2) * _translation2;
     }
 
     @Override
@@ -136,16 +118,16 @@ public class Sliced2DConfiguration extends D2C //:= IMMUTABLE
     @Override
     public int indexOfIndices(int[] indices) {
         int i = 0;
-        i += (indices[ 0 ] * _spread1 + _offset1) * _translation1;
-        i += (indices[ 1 ] * _spread2 + _offset2) * _translation2;
+        i += indices[ 0 ]* _translation1;
+        i += indices[ 1 ]* _translation2;
         return i;
     }
 
     @Override
     public int indexOfIndices(int d1, int d2) {
         int i = 0;
-        i += (d1 * _spread1 + _offset1) * _translation1;
-        i += (d2 * _spread2 + _offset2) * _translation2;
+        i += d1 * _translation1;
+        i += d2 * _translation2;
         return i;
     }
 }

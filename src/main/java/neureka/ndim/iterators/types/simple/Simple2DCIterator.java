@@ -5,8 +5,8 @@ import neureka.ndim.iterators.NDIterator;
 
 public final class Simple2DCIterator extends Simple2DConfiguration implements NDIterator
 {
-    protected int _d1 = 0;
-    protected int _d2 = 0;
+    private int _d1 = 0;
+    private int _d2 = 0;
 
     public Simple2DCIterator(Simple2DConfiguration ndc) {
         super( ndc.shape(), ndc.translation() );

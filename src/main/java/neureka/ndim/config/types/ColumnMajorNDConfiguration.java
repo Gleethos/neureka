@@ -13,7 +13,7 @@ public final class ColumnMajorNDConfiguration extends SlicedNDConfiguration //:=
     ) {
         super(
             shape,
-            translation,
+            translation, // This array will usually be the reverse of the indices map!
             indicesMap,
             spread,
             offset

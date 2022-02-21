@@ -89,9 +89,6 @@ public class Simple2DConfiguration extends D2C //:= IMMUTABLE
         return 0;
     }
 
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     @Override
     public int indexOfIndex(int index) {
         return (index / _translation1) * _translation1 +

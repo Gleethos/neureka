@@ -6,6 +6,7 @@ import neureka.ndim.config.types.ColumnMajorNDConfiguration;
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
 import neureka.ndim.config.types.simple.*;
 import neureka.ndim.config.types.sliced.*;
+import neureka.ndim.config.types.transposed.Transposed2DConfiguration;
 import neureka.ndim.config.types.views.SimpleReshapeView;
 
 import java.util.Arrays;
@@ -115,29 +116,42 @@ public abstract class AbstractNDC implements NDConfiguration
             return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
 
         boolean isSimple = _isSimpleConfiguration(shape, translation, indicesMap, spread, offset);
-        NDConfiguration ndc = null;
-        if ( isSimple ) {
+        boolean isSimpleTransposed = _isSimpleTransposedConfiguration(shape, spread, offset);
+
+        if ( isSimple )
+        {
             if ( shape.length == 1 ) {
-                if ( shape[ 0 ]==1 ) ndc = Simple0DConfiguration.construct();
-                else ndc = Simple1DConfiguration.construct(shape, translation);
-            } else if ( shape.length == 2 ) {
-                ndc = Simple2DConfiguration.construct(shape, translation);
-            } else if ( shape.length == 3 ) {
-                ndc = Simple3DConfiguration.construct(shape, translation);
-            } else
-                ndc = SimpleNDConfiguration.construct(shape, translation);
-        } else {
-            if ( shape.length == 1 ) {
-                if ( shape[ 0 ] == 1 ) ndc = Sliced0DConfiguration.construct(shape, offset);
-                else ndc = Sliced1DConfiguration.construct(shape, translation, indicesMap, spread, offset);
-            } else if ( shape.length == 2 ) {
-                ndc = Sliced2DConfiguration.construct(shape, translation, indicesMap, spread, offset);
-            } else if ( shape.length == 3 ) {
-                ndc = Sliced3DConfiguration.construct(shape, translation, indicesMap, spread, offset);
-            } else
-                ndc = SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
+                if ( shape[ 0 ] == 1 )
+                    return Simple0DConfiguration.construct();
+                else
+                    return Simple1DConfiguration.construct(shape, translation);
+            }
+            else if ( shape.length == 2 )
+                return Simple2DConfiguration.construct(shape, translation);
+            else if ( shape.length == 3 )
+                return Simple3DConfiguration.construct(shape, translation);
+            else
+                return SimpleNDConfiguration.construct(shape, translation);
         }
-        return ndc;
+        if ( isSimpleTransposed )
+        {
+            if ( shape.length == 2 )
+                return Transposed2DConfiguration.construct(shape, translation, indicesMap);
+        }
+
+        if ( shape.length == 1 ) {
+            if ( shape[ 0 ] == 1 )
+                return Sliced0DConfiguration.construct(shape, offset);
+            else
+                return Sliced1DConfiguration.construct(shape, translation, indicesMap, spread, offset);
+        }
+        else if ( shape.length == 2 )
+            return Sliced2DConfiguration.construct(shape, translation, indicesMap, spread, offset);
+        else if ( shape.length == 3 )
+            return Sliced3DConfiguration.construct(shape, translation, indicesMap, spread, offset);
+
+        // This configuration fits every shape:
+        return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
     }
 
     protected static <T extends NDConfiguration> T _cached( T ndc )
@@ -160,6 +174,17 @@ public abstract class AbstractNDC implements NDConfiguration
                 Arrays.equals( indicesMap, newTranslation ) &&
                 Arrays.equals( offset, new int[ shape.length ] ) &&
                 Arrays.equals( spread, newSpread );
+    }
+
+    private static boolean _isSimpleTransposedConfiguration(
+            int[] shape,
+            int[] spread,
+            int[] offset
+    ) {
+        int[] newSpread = new int[ shape.length ];
+        Arrays.fill( newSpread, 1 );
+        return Arrays.equals( offset, new int[ shape.length ] ) &&
+               Arrays.equals( spread, newSpread );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
