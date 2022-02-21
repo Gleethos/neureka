@@ -1,0 +1,127 @@
+package neureka.ndim.config.types.reshaped;
+
+import neureka.ndim.config.AbstractNDC;
+
+import java.util.Arrays;
+
+public class ReshapedNDConfiguration extends AbstractNDC
+{
+    /**
+     *  The shape of the NDArray.
+     */
+    private final int[] _shape;
+    /**
+     *  The translation from a shape index (indices) to the index of the underlying data array.
+     */
+    private final int[] _translation;
+    /**
+     *  The mapping of an index to an index array.
+     *  The index array is created and filled
+     *  during iteration and passed to this configuration for element access...
+     *  However, it is also possible to creat an index array from an index integer.
+     *  This is what the following property does :
+     */
+    private final int[] _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
+
+
+    protected ReshapedNDConfiguration(
+            int[] shape,
+            int[] translation,
+            int[] indicesMap
+    ) {
+        _shape       = _cacheArray(shape);
+        _translation = _cacheArray(translation);
+        _indicesMap  = _cacheArray(indicesMap);
+    }
+
+    public static ReshapedNDConfiguration construct(
+            int[] shape,
+            int[] translation,
+            int[] indicesMap
+    ) {
+        return _cached( new ReshapedNDConfiguration(shape, translation, indicesMap) );
+    }
+
+    @Override
+    public int rank() {
+        return _shape.length;
+    }
+
+    @Override
+    public int[] shape() {
+        return _shape;
+    }
+
+    @Override
+    public int shape( int i ) {
+        return _shape[ i ];
+    }
+
+    @Override
+    public int[] indicesMap() {
+        return _indicesMap;
+    }
+
+    @Override
+    public int indicesMap(int i ) {
+        return _indicesMap[ i ];
+    }
+
+    @Override
+    public int[] translation() {
+        return _translation;
+    }
+
+    @Override
+    public int translation( int i ) {
+        return _translation[ i ];
+    }
+
+    @Override
+    public int[] spread() {
+        int[] spread = new int[rank()];
+        Arrays.fill(spread, 1);
+        return spread;
+    }
+
+    @Override
+    public int spread( int i ) {
+        return 1;
+    }
+
+    @Override
+    public int[] offset() {
+        int[] offset = new int[rank()];
+        Arrays.fill(offset, 0);
+        return offset;
+    }
+
+    @Override
+    public int offset( int i ) {
+        return 0;
+    }
+
+    @Override
+    public int indexOfIndex( int index ) {
+        return indexOfIndices( indicesOfIndex( index ) );
+    }
+
+    @Override
+    public int[] indicesOfIndex( int index ) {
+        int[] indices = new int[ _shape.length ];
+        for ( int ii = 0; ii < rank(); ii++ ) {
+            indices[ ii ] += index / _indicesMap[ ii ];
+            index %= _indicesMap[ ii ];
+        }
+        return indices;
+    }
+
+    @Override
+    public int indexOfIndices( int[] indices ) {
+        int i = 0;
+        for ( int ii = 0; ii < _shape.length; ii++ )
+            i += indices[ ii ] * _translation[ ii ];
+        return i;
+    }
+
+}

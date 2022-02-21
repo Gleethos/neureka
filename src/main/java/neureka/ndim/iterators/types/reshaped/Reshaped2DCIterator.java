@@ -1,17 +1,16 @@
-package neureka.ndim.iterators.types.sliced;
+package neureka.ndim.iterators.types.reshaped;
 
-import neureka.ndim.config.types.sliced.Sliced2DConfiguration;
+import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration;
 import neureka.ndim.iterators.NDIterator;
 
-public final class Sliced2DCIterator extends Sliced2DConfiguration implements NDIterator
+public class Reshaped2DCIterator extends Reshaped2DConfiguration implements NDIterator
 {
     private int _d1 = 0;
     private int _d2 = 0;
 
-    public Sliced2DCIterator(Sliced2DConfiguration ndc) {
-        super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );
+    public Reshaped2DCIterator(Reshaped2DConfiguration ndc) {
+        super( ndc.shape(), ndc.translation(), ndc.indicesMap() );
     }
-
 
     @Override
     public void increment() {

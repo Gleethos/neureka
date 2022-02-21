@@ -1,9 +1,8 @@
-package neureka.ndim.config.types.sliced;
+package neureka.ndim.config.types.reshaped;
 
 import neureka.ndim.config.types.D1C;
 
-public class Sliced1DConfiguration extends D1C //:= IMMUTABLE
-{
+public class Reshaped1DConfiguration extends D1C {
     /**
      *  The shape of the NDArray.
      */
@@ -16,41 +15,25 @@ public class Sliced1DConfiguration extends D1C //:= IMMUTABLE
      *  The mapping of the indices array.
      */
     private final int _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
-    /**
-     *  Produces the strides of a tensor subset / slice
-     */
-    private final int _spread;
-    /**
-     *  Defines the position of a subset / slice tensor within its parent!
-     */
-    private final int _offset;
 
-
-    public static Sliced1DConfiguration construct(
+    public static Reshaped1DConfiguration construct(
             int[] shape,
             int[] translation,
-            int[] indicesMap,
-            int[] spread,
-            int[] offset
+            int[] indicesMap
     ) {
-        return _cached( new Sliced1DConfiguration(shape[ 0 ], translation[ 0 ],  indicesMap[ 0 ], spread[ 0 ], offset[ 0 ]) );
+        return _cached( new Reshaped1DConfiguration(shape[ 0 ], translation[ 0 ],  indicesMap[ 0 ]) );
     }
 
-    protected Sliced1DConfiguration(
+    protected Reshaped1DConfiguration(
             int shape,
             int translation,
-            int indicesMap,
-            int spread,
-            int offset
+            int indicesMap
     ) {
         _shape = shape;
         _translation = translation;
         _indicesMap = indicesMap;
-        _spread = spread;
-        _offset = offset;
         assert translation != 0;
         assert indicesMap != 0;
-        assert spread != 0;
     }
 
     @Override
@@ -90,27 +73,27 @@ public class Sliced1DConfiguration extends D1C //:= IMMUTABLE
 
     @Override
     public int[] spread() {
-        return new int[]{_spread};
+        return new int[]{1};
     }
 
     @Override
     public int spread( int i ) {
-        return _spread;
+        return 1;
     }
 
     @Override
     public int[] offset() {
-        return new int[]{_offset};
+        return new int[]{0};
     }
 
     @Override
     public int offset( int i ) {
-        return _offset;
+        return 0;
     }
 
     @Override
     public int indexOfIndex(int index) {
-        return ((index / _indicesMap) * _spread + _offset) * _translation;
+        return (index / _indicesMap) * _translation;
     }
 
     @Override
@@ -120,12 +103,12 @@ public class Sliced1DConfiguration extends D1C //:= IMMUTABLE
 
     @Override
     public int indexOfIndices(int[] indices) {
-        return (indices[ 0 ] * _spread + _offset) * _translation;
+        return indices[ 0 ] * _translation;
     }
 
     @Override
     public int indexOfIndices(int d1 ) {
-        return (d1 * _spread + _offset) * _translation;
+        return d1 * _translation;
     }
 
 }

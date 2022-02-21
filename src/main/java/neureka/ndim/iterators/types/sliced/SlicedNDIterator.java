@@ -1,15 +1,15 @@
-package neureka.ndim.iterators.types;
+package neureka.ndim.iterators.types.sliced;
 
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 
-public final class GenericNDIterator implements NDIterator
+public final class SlicedNDIterator implements NDIterator
 {
     private final int[] _indices;
     private final int[] _shape;
     private final NDConfiguration _conf;
 
-    public GenericNDIterator( NDConfiguration ndc ) {
+    public SlicedNDIterator(NDConfiguration ndc ) {
         _shape = ndc.shape();
         _indices = new int[ _shape.length ];
         _conf = ndc;

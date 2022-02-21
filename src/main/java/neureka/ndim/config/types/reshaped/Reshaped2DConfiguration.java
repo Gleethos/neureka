@@ -1,15 +1,14 @@
-package neureka.ndim.config.types.transposed;
+package neureka.ndim.config.types.reshaped;
 
 import neureka.ndim.config.types.D2C;
-import neureka.ndim.config.types.sliced.Sliced2DConfiguration;
 
-public class Transposed2DConfiguration extends D2C
+public class Reshaped2DConfiguration extends D2C
 {
     /**
      *  The shape of the NDArray.
      */
-    private final int _shape1;
-    private final int _shape2;
+    protected final int _shape1;
+    protected final int _shape2;
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
@@ -21,7 +20,7 @@ public class Transposed2DConfiguration extends D2C
     private final int _indicesMap1;
     private final int _indicesMap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
 
-    private Transposed2DConfiguration(
+    protected Reshaped2DConfiguration(
             int[] shape,
             int[] translation,
             int[] indicesMap
@@ -34,12 +33,12 @@ public class Transposed2DConfiguration extends D2C
         _indicesMap2 = indicesMap[ 1 ];
     }
 
-    public static Transposed2DConfiguration construct(
+    public static Reshaped2DConfiguration construct(
             int[] shape,
             int[] translation,
             int[] indicesMap
     ) {
-        return _cached( new Transposed2DConfiguration(shape, translation, indicesMap) );
+        return _cached( new Reshaped2DConfiguration(shape, translation, indicesMap) );
     }
 
     @Override

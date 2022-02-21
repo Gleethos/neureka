@@ -3,10 +3,13 @@ package neureka.ndim.config;
 import neureka.Neureka;
 import neureka.common.utility.Cache;
 import neureka.ndim.config.types.ColumnMajorNDConfiguration;
+import neureka.ndim.config.types.reshaped.Reshaped1DConfiguration;
+import neureka.ndim.config.types.reshaped.Reshaped3DConfiguration;
+import neureka.ndim.config.types.reshaped.ReshapedNDConfiguration;
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
 import neureka.ndim.config.types.simple.*;
 import neureka.ndim.config.types.sliced.*;
-import neureka.ndim.config.types.transposed.Transposed2DConfiguration;
+import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration;
 import neureka.ndim.config.types.views.SimpleReshapeView;
 
 import java.util.Arrays;
@@ -135,8 +138,14 @@ public abstract class AbstractNDC implements NDConfiguration
         }
         if ( isSimpleTransposed )
         {
-            if ( shape.length == 2 )
-                return Transposed2DConfiguration.construct(shape, translation, indicesMap);
+            if ( shape.length == 1 )
+                return Reshaped1DConfiguration.construct(shape, translation, indicesMap);
+            else if ( shape.length == 2 )
+                return Reshaped2DConfiguration.construct(shape, translation, indicesMap);
+            else if ( shape.length == 3 )
+                return Reshaped3DConfiguration.construct(shape, translation, indicesMap);
+            else
+                return ReshapedNDConfiguration.construct(shape, translation, indicesMap);
         }
 
         if ( shape.length == 1 ) {

@@ -37,6 +37,7 @@ package neureka.ndim.iterators;
 
 import neureka.Tsr;
 import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration;
 import neureka.ndim.config.types.simple.Simple1DConfiguration;
 import neureka.ndim.config.types.simple.Simple2DConfiguration;
 import neureka.ndim.config.types.simple.Simple3DConfiguration;
@@ -44,7 +45,8 @@ import neureka.ndim.config.types.sliced.Sliced1DConfiguration;
 import neureka.ndim.config.types.sliced.Sliced2DConfiguration;
 import neureka.ndim.config.types.sliced.Sliced3DConfiguration;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
-import neureka.ndim.iterators.types.GenericNDIterator;
+import neureka.ndim.iterators.types.reshaped.Reshaped2DCIterator;
+import neureka.ndim.iterators.types.sliced.SlicedNDIterator;
 import neureka.ndim.iterators.types.VirtualNDIterator;
 import neureka.ndim.iterators.types.sliced.Sliced1DCIterator;
 import neureka.ndim.iterators.types.sliced.Sliced2DCIterator;
@@ -70,18 +72,20 @@ public interface NDIterator
 
     static NDIterator of( NDConfiguration ndc, NonVirtual shouldNotBeVirtual ) {
 
-        if ( ndc instanceof Sliced1DConfiguration) return new Sliced1DCIterator( (Sliced1DConfiguration) ndc );
-        if ( ndc instanceof Simple1DConfiguration) return new Simple1DCIterator( (Simple1DConfiguration) ndc );
+        if ( ndc instanceof Simple1DConfiguration   ) return new Simple1DCIterator(     (Simple1DConfiguration) ndc );
+        if ( ndc instanceof Sliced1DConfiguration   ) return new Sliced1DCIterator(     (Sliced1DConfiguration) ndc );
 
-        if ( ndc instanceof Sliced2DConfiguration) return new Sliced2DCIterator( (Sliced2DConfiguration) ndc );
-        if ( ndc instanceof Sliced3DConfiguration) return new Sliced3DCIterator( (Sliced3DConfiguration) ndc );
-        if ( ndc instanceof Simple2DConfiguration) return new Simple2DCIterator( (Simple2DConfiguration) ndc );
-        if ( ndc instanceof Simple3DConfiguration) return new Simple3DCIterator( (Simple3DConfiguration) ndc );
+        if ( ndc instanceof Simple2DConfiguration   ) return new Simple2DCIterator(     (Simple2DConfiguration) ndc );
+        if ( ndc instanceof Reshaped2DConfiguration ) return new Reshaped2DCIterator( (Reshaped2DConfiguration) ndc );
+        if ( ndc instanceof Sliced2DConfiguration   ) return new Sliced2DCIterator(     (Sliced2DConfiguration) ndc );
+
+        if ( ndc instanceof Simple3DConfiguration  ) return new Simple3DCIterator(      (Simple3DConfiguration) ndc );
+        if ( ndc instanceof Sliced3DConfiguration  ) return new Sliced3DCIterator(      (Sliced3DConfiguration) ndc );
 
         if ( ndc instanceof VirtualNDConfiguration && shouldNotBeVirtual == NonVirtual.FALSE )
             return new VirtualNDIterator( (VirtualNDConfiguration) ndc );
         else
-            return new GenericNDIterator( ndc );
+            return new SlicedNDIterator( ndc );
     }
 
 
