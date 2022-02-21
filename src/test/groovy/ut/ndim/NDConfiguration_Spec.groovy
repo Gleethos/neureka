@@ -5,6 +5,7 @@ import neureka.ndim.config.NDConfiguration
 import neureka.ndim.config.types.simple.Simple1DConfiguration
 import neureka.ndim.config.types.simple.Simple2DConfiguration
 import neureka.ndim.config.types.simple.Simple3DConfiguration
+import neureka.ndim.config.types.simple.SimpleNDConfiguration
 import neureka.ndim.config.types.sliced.Sliced1DConfiguration
 import neureka.ndim.config.types.sliced.Sliced2DConfiguration
 import neureka.ndim.config.types.sliced.Sliced3DConfiguration
@@ -58,18 +59,23 @@ class NDConfiguration_Spec extends Specification {
            .every()
 
         where :
-            shape  | translation  | indicesMap  | spread   | offset  || expected
-            [2,3,8]| [24,8,1]     | [24,8,1]    | [1, 1, 1]| [0,0,0] || Simple3DConfiguration
-            [2,3,8]| [8,3*8,7]    | [1,2,3]     | [1, 1, 1]| [0,0,0] || Sliced3DConfiguration
-            [2,3]  | [1,2]        | [1,2]       | [1, 1]   | [0,0]   || Sliced2DConfiguration
-            [2,3]  | [1,2]        | [2,1]       | [7, 2]   | [1,8]   || Sliced2DConfiguration
-            [2,3]  | [3,1]        | [3,1]       | [1, 1]   | [6,0]   || Sliced2DConfiguration
-            [2,3]  | [3,1]        | [3,1]       | [1, 2]   | [0,0]   || Sliced2DConfiguration
-            [2,3]  | [3,1]        | [3,1]       | [1, 1]   | [0,0]   || Simple2DConfiguration
-            [3]    | [1]          | [1]         | [1]      | [0]     || Simple1DConfiguration
-            [42]   | [1]          | [1]         | [1]      | [0]     || Simple1DConfiguration
-            [3]    | [1]          | [2]         | [1]      | [0]     || Sliced1DConfiguration
-            [2]    | [1]          | [1]         | [1]      | [5]     || Sliced1DConfiguration
+            shape     | translation    | indicesMap     | spread     | offset    || expected
+            [2,3,8,4] | [96, 32, 4, 1] | [96, 32, 4, 1] | [1,1,1,1]  | [0,0,0,0] || SimpleNDConfiguration
+            [2,3,8,4] | [96, 32, 4, 1] | [96, 32, 4, 1] | [1,4,1,1]  | [0,0,0,0] || SlicedNDConfiguration
+
+            [2,3,8]   | [24,8,1]       | [24,8,1]       | [1, 1, 1]  | [0,0,0]   || Simple3DConfiguration
+            [2,3,8]   | [8,24,7]       | [1,2,3]        | [1, 1, 1]  | [0,0,0]   || Sliced3DConfiguration
+
+            [2,3]     | [3,1]          | [3,1]          | [1, 1]     | [0,0]     || Simple2DConfiguration
+            [2,3]     | [1,2]          | [1,2]          | [1, 1]     | [0,0]     || Sliced2DConfiguration
+            [2,3]     | [1,2]          | [2,1]          | [7, 2]     | [1,8]     || Sliced2DConfiguration
+            [2,3]     | [3,1]          | [3,1]          | [1, 1]     | [6,0]     || Sliced2DConfiguration
+            [2,3]     | [3,1]          | [3,1]          | [1, 2]     | [0,0]     || Sliced2DConfiguration
+
+            [3]       | [1]            | [1]            | [1]        | [0]       || Simple1DConfiguration
+            [42]      | [1]            | [1]            | [1]        | [0]       || Simple1DConfiguration
+            [3]       | [1]            | [2]            | [1]        | [0]       || Sliced1DConfiguration
+            [2]       | [1]            | [1]            | [1]        | [5]       || Sliced1DConfiguration
     }
 
 

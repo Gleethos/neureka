@@ -7,7 +7,7 @@ public final class Sliced0DConfiguration extends AbstractNDC //:= IMMUTABLE
     /**
      *  The shape of the NDArray.
      */
-    protected final int _shape;
+    private final int _shape;
     /**
      *  Defines the position of a subset / slice tensor within its parent!
      */

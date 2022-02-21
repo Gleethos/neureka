@@ -1517,12 +1517,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         NDConfiguration old = this.getNDConf();
         _setNDConf(
             AbstractNDC.construct(
-                    old.shape(),
-                    layout.newTranslationFor( old.shape() ),
-                    old.translation(),
-                    old.spread(),
-                    old.offset(),
-                    layout
+                old.shape(),
+                layout.newTranslationFor( old.shape() ),
+                old.translation(),
+                old.spread(),
+                old.offset(),
+                layout
             )
         );
     }
