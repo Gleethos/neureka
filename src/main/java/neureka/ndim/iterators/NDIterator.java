@@ -38,6 +38,7 @@ package neureka.ndim.iterators;
 import neureka.Tsr;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration;
+import neureka.ndim.config.types.reshaped.Reshaped3DConfiguration;
 import neureka.ndim.config.types.simple.Simple1DConfiguration;
 import neureka.ndim.config.types.simple.Simple2DConfiguration;
 import neureka.ndim.config.types.simple.Simple3DConfiguration;
@@ -46,8 +47,9 @@ import neureka.ndim.config.types.sliced.Sliced2DConfiguration;
 import neureka.ndim.config.types.sliced.Sliced3DConfiguration;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.ndim.iterators.types.reshaped.Reshaped2DCIterator;
+import neureka.ndim.iterators.types.reshaped.Reshaped3DCIterator;
 import neureka.ndim.iterators.types.sliced.SlicedNDIterator;
-import neureka.ndim.iterators.types.VirtualNDIterator;
+import neureka.ndim.iterators.types.virtual.VirtualNDIterator;
 import neureka.ndim.iterators.types.sliced.Sliced1DCIterator;
 import neureka.ndim.iterators.types.sliced.Sliced2DCIterator;
 import neureka.ndim.iterators.types.sliced.Sliced3DCIterator;
@@ -79,8 +81,9 @@ public interface NDIterator
         if ( ndc instanceof Reshaped2DConfiguration ) return new Reshaped2DCIterator( (Reshaped2DConfiguration) ndc );
         if ( ndc instanceof Sliced2DConfiguration   ) return new Sliced2DCIterator(     (Sliced2DConfiguration) ndc );
 
-        if ( ndc instanceof Simple3DConfiguration  ) return new Simple3DCIterator(      (Simple3DConfiguration) ndc );
-        if ( ndc instanceof Sliced3DConfiguration  ) return new Sliced3DCIterator(      (Sliced3DConfiguration) ndc );
+        if ( ndc instanceof Simple3DConfiguration   ) return new Simple3DCIterator(      (Simple3DConfiguration) ndc );
+        if ( ndc instanceof Reshaped3DConfiguration ) return new Reshaped3DCIterator(  (Reshaped3DConfiguration) ndc );
+        if ( ndc instanceof Sliced3DConfiguration   ) return new Sliced3DCIterator(      (Sliced3DConfiguration) ndc );
 
         if ( ndc instanceof VirtualNDConfiguration && shouldNotBeVirtual == NonVirtual.FALSE )
             return new VirtualNDIterator( (VirtualNDConfiguration) ndc );

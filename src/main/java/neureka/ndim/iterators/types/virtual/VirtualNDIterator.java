@@ -1,4 +1,4 @@
-package neureka.ndim.iterators.types;
+package neureka.ndim.iterators.types.virtual;
 
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.ndim.iterators.NDIterator;
