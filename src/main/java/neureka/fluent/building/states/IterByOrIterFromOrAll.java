@@ -1,7 +1,7 @@
 package neureka.fluent.building.states;
 
 import neureka.Tsr;
-import neureka.ndim.Initializer;
+import neureka.ndim.Filler;
 
 public interface IterByOrIterFromOrAll<V>
 {
@@ -24,10 +24,10 @@ public interface IterByOrIterFromOrAll<V>
      *  as well as an array of shape based nd-indices which can be used to
      *  initialize the underlying data of the {@link Tsr} more selectively.
      *
-     * @param initializer A data initialization lambda translating the indices to custom values.
-     * @return The resulting {@link Tsr} instance populated by the provided {@link Initializer}.
+     * @param filler A data element provider lambda mapping the indices to custom values.
+     * @return The resulting {@link Tsr} instance populated by the provided {@link Filler}.
      */
-    Tsr<V> andWhere( Initializer<V> initializer );
+    Tsr<V> andWhere( Filler<V> filler);
 
     /**
      *  This part of the builder API allows for specifying a range which starts from the

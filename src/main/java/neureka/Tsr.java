@@ -112,7 +112,7 @@ import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
 import neureka.ndim.AbstractTensor;
-import neureka.ndim.Initializer;
+import neureka.ndim.Filler;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterator.NDIterator;
@@ -708,14 +708,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @param type The data type this tensor ought to have.
      * @param shape The shape of this new tensor ought to have.
-     * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    public static <T> Tsr<T> of( DataType<T> type, List<Integer> shape, Initializer<T> initializer ) {
+    public static <T> Tsr<T> of( DataType<T> type, List<Integer> shape, Filler<T> filler) {
         return Tsr.of(
                     type,
                     shape.stream().mapToInt( e -> e ).toArray(),
-                    initializer
+                filler
                 );
     }
 
@@ -731,37 +731,37 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @param type The data type this tensor ought to have.
      * @param shape The shape of this new tensor ought to have.
-     * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    public static <T> Tsr<T> of( DataType<T> type, int[] shape, Initializer<T> initializer ) {
-        return new Tsr<>( shape, type, initializer );
+    public static <T> Tsr<T> of( DataType<T> type, int[] shape, Filler<T> filler) {
+        return new Tsr<>( shape, type, filler);
     }
 
     /**
-     *  see {@link #of(DataType, int[], Initializer)}
+     *  see {@link #of(DataType, int[], Filler)}
      *
      * @param shape The shape of this new tensor ought to have.
      * @param type The data type this tensor ought to have.
-     * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    private <T> Tsr( int[] shape, DataType<T> type, Initializer<T> initializer )
+    private <T> Tsr( int[] shape, DataType<T> type, Filler<T> filler)
     {
-        _constructFromInitializer( shape, type, initializer );
+        _constructFromInitializer( shape, type, filler);
     }
 
     /**
      * @param shape The shape of that this new tensor ought to have.
      * @param type The data type that this tensor ought to have.
-     * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Initializer<T> initializer )
+    private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Filler<T> filler)
     {
         _setDataType( type );
         _constructAndAllocate( shape, false );
-        _initData( initializer );
+        _initData(filler);
     }
 
 

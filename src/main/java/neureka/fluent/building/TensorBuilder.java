@@ -8,7 +8,7 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.fluent.building.states.*;
-import neureka.ndim.Initializer;
+import neureka.ndim.Filler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,14 +79,14 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
     public final Tsr<V> andFill( V... values ) { return Tsr.of( _dataType, _shape, values ).to( _device ); }
 
     /**
-     *  This method receives an {@link neureka.ndim.Initializer} lambda which will be
+     *  This method receives an {@link Filler} lambda which will be
      *  used to populate the {@link Tsr} instance produced by this API with values.
      *
-     * @param initializer The {@link neureka.ndim.Initializer} which ought to populate the returned {@link Tsr}.
+     * @param filler The {@link Filler} which ought to populate the returned {@link Tsr}.
      * @return A new {@link Tsr} instance populated by the lambda supplied to this method.
      */
     @Override
-    public Tsr<V> andWhere( Initializer<V> initializer) { return Tsr.of( _dataType, _shape, initializer ).to( _device ); }
+    public Tsr<V> andWhere( Filler<V> filler) { return Tsr.of( _dataType, _shape, filler).to( _device ); }
 
     @Override
     public To<V> iterativelyFilledFrom( V index ) { _from = _checked(index); return this; }
