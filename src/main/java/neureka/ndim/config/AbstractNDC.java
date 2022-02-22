@@ -2,14 +2,12 @@ package neureka.ndim.config;
 
 import neureka.Neureka;
 import neureka.common.utility.Cache;
-import neureka.ndim.config.types.ColumnMajorNDConfiguration;
 import neureka.ndim.config.types.reshaped.Reshaped1DConfiguration;
+import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration;
 import neureka.ndim.config.types.reshaped.Reshaped3DConfiguration;
 import neureka.ndim.config.types.reshaped.ReshapedNDConfiguration;
-import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
 import neureka.ndim.config.types.simple.*;
 import neureka.ndim.config.types.sliced.*;
-import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration;
 import neureka.ndim.config.types.views.SimpleReshapeView;
 
 import java.util.Arrays;
@@ -111,9 +109,6 @@ public abstract class AbstractNDC implements NDConfiguration
                 throw new IllegalStateException( message );
             }
         }
-
-        if ( layout == Layout.COLUMN_MAJOR )
-            return ColumnMajorNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
 
         if ( Neureka.get().settings().ndim().isOnlyUsingDefaultNDConfiguration() )
             return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);

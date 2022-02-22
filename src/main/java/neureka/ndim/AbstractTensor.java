@@ -47,7 +47,6 @@ import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.types.ColumnMajorNDConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 
@@ -396,10 +395,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
         }
         _NDConf = ndConfiguration;
         if ( this.has( Device.class ) ) {
-            if ( ndConfiguration instanceof ColumnMajorNDConfiguration )
-                throw new IllegalStateException("Column major data layout not yet supported on the GPU!");
-            else
-                this.get(Device.class).updateNDConf((Tsr) this);
+            this.get(Device.class).updateNDConf((Tsr) this);
         }
         return (C) this;
     }
