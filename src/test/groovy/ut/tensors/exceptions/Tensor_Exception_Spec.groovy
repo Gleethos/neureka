@@ -8,6 +8,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Title
 
+import java.util.function.Consumer
+
 @Title('Tensors Exception Behavior')
 @Narrative('''
 
@@ -60,6 +62,37 @@ class Tensor_Exception_Spec extends Specification
         //    1 * Tsr._LOG.error( "Provided tensor is empty! Empty tensors cannot be injected." )
     }
 
+    def 'Passing null to various methods of the tensor API will throw exceptions.'(
+            Class<Exception> type, Consumer<Tsr<Integer>> errorCode
+    ) {
+
+        given :
+            Tsr<Integer> t = Tsr.of(1, 2, 3)
+
+        when :
+            errorCode(t)
+
+        then :
+            var exception = thrown(type)
+        and :
+            exception.message != "" && exception.message.length() > 13
+
+        where :
+            type                        | errorCode
+            IllegalArgumentException    | { Tsr x -> x.times((Tsr)null) }
+            IllegalArgumentException    | { Tsr x -> x.div((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.plus((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.mod((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.timesAssign((Tsr)null) }
+            IllegalArgumentException    | { Tsr x -> x.divAssign((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.plusAssign((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.modAssign((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.label((String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.label("hi", (String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.label(null, (String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.label("hi", (Map)null) }
+            IllegalArgumentException    | { Tsr x -> x.label(null, (Map)null) }
+    }
 
     def 'Passing an invalid object into Tsr constructor causes descriptive exception.'()
     {

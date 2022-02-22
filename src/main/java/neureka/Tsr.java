@@ -96,6 +96,7 @@ import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.ListReader;
+import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -1654,6 +1655,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return The tensor on which this method was called. (factory pattern)
      */
     public Tsr<V> backward( Tsr<V> error ) {
+        LogUtil.nullArgCheck(error, "error", Tsr.class, "Cannot back-propagate 'null'!");
         if ( this.isOutsourced() ) {
             error = error.clone();
             error = error.to(this.getDevice());
@@ -1815,6 +1817,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     private void _label( String tensorName, String[][] labels )
     {
+        LogUtil.nullArgCheck(labels, "labels", String[][].class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) {
             frame = new NDFrame( this.rank(), tensorName );
@@ -1850,6 +1853,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public Tsr<V> label( List<List<Object>> labels )
     {
+        LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) set( new NDFrame( labels, null ) );
         return this;
@@ -1874,6 +1878,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public Tsr<V> label( String tensorName, List<List<Object>> labels )
     {
+        LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) set( new NDFrame<>( labels, tensorName ) );
         return this;
@@ -1897,12 +1902,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public Tsr<V> label( Map<Object, List<Object>> labels )
     {
+        LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
         this.set( new NDFrame<>( labels, this, null ) );
         return this;
     }
 
     public Tsr<V> label( String tensorName, Map<Object, List<Object>> labels )
     {
+        LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
         this.set( new NDFrame<>( labels, this, tensorName ) );
         return this;
     }
@@ -1936,10 +1943,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return The sum of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     public Tsr<V> plus( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add 'null' to a tensor!");
         return Neureka.get().backend().getAutogradFunction().plus().call( this, other );
     }
 
     public Tsr<V> plusAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add-assign 'null' to a tensor!");
         return Neureka.get().backend().getFunction().plusAssign().call( this, other );
     }
 
@@ -1972,10 +1981,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return The difference between this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     public Tsr<V> minus( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract 'null' from a tensor!");
         return Neureka.get().backend().getAutogradFunction().minus().call( this, other );
     }
 
     public Tsr<V> minus( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract 'null' from a tensor!");
         return minus(
                  Tsr.of((Class<V>)this.getDataType().getTypeClass())
                              .withShape(this.getNDConf().shape())
@@ -1984,10 +1995,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     public Tsr<V> minusAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract-assign 'null' from a tensor!");
         return Neureka.get().backend().getFunction().minusAssign().call( this, other );
     }
 
     public Tsr<V> minusAssign( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract-assign 'null' from a tensor!");
         return minusAssign(
                 Tsr.of((Class<V>)this.getDataType().getTypeClass())
                         .withShape(this.getNDConf().shape())
@@ -2017,10 +2030,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     public Tsr<V> multiply( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply 'null' with a tensor!");
         return Neureka.get().backend().getAutogradFunction().mul().call( this, other );
     }
 
     public Tsr<V> multiply( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
         return multiply(
                            Tsr.of( (Class<V>) this.getDataType().getTypeClass() )
                                .withShape( this.getNDConf().shape() )
@@ -2045,15 +2060,23 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param other The right operand of the multiplication.
      * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    public Tsr<V> times( Tsr<V> other ) { return multiply( other ); }
+    public Tsr<V> times( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply 'null' with a tensor!");
+        return multiply( other );
+    }
 
-    public Tsr<V> times( V other ) { return multiply( other ); }
+    public Tsr<V> times( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
+        return multiply( other );
+    }
 
     public Tsr<V> timesAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply-assign 'null' to a tensor!");
         return Neureka.get().backend().getFunction().mulAssign().call( this, other );
     }
 
     public Tsr<V> timesAssign( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply-assign 'null' to a tensor!");
         return this.timesAssign( Tsr.of( this.getValueClass(), this.shape(), other ) );
     }
 
@@ -2077,6 +2100,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return The quotient of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     public Tsr<V> div( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide a tensor by 'null' (In any sense of the word)!");
         return Neureka.get().backend().getAutogradFunction().div().call( this, other );
     }
 
@@ -2085,6 +2109,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     public Tsr<V> divAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
         return Neureka.get().backend().getFunction().divAssign().call( this, other );
     }
 
@@ -2105,6 +2130,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return The modulus of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     public Tsr<V> mod( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
         return Neureka.get().backend().getAutogradFunction().mod().call( this, other );
     }
 
@@ -2117,6 +2143,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     public Tsr<V> modAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
         return Neureka.get().backend().getFunction().modAssign().call( this, other );
     }
 
@@ -2137,6 +2164,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return The power of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     public Tsr<V> power( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot raise a tensor to the power of 'null'!");
         return Neureka.get().backend().getAutogradFunction().pow().call( this, other );
     }
 
@@ -2148,6 +2176,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  This method is synonymous to the {@link #power(Tsr)} method.
      */
     public Tsr<V> xor( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot raise a tensor to the power of 'null'!");
         return Neureka.get().backend().getAutogradFunction().pow().call( this, other );
     }
 
@@ -2220,24 +2249,25 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  This method performs a convolutional based dot product between the last dimension of this tensor
      *  and the first dimension of the passed tensor.
      *
-     * @param b The tensor which is the right part of the dot product operation.
+     * @param other The tensor which is the right part of the dot product operation.
      * @return A new tensor which is the dot product of this tensor and the passed one.
      */
-    public Tsr<V> convDot(Tsr<V> b ) {
+    public Tsr<V> convDot( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class);
         Tsr<V> a = this;
-        int[][] fitter = AbstractTensor.Utility.makeFit( a.getNDConf().shape(), b.getNDConf().shape() );
+        int[][] fitter = AbstractTensor.Utility.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );
         boolean doReshape = false;
         for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
         for ( int i = 0; i < fitter[ 1 ].length && !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;
         if ( doReshape ) {
             a = Function.of( AbstractTensor.Utility.shapeString( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
-            b = Function.of( AbstractTensor.Utility.shapeString( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( b );
+            other = Function.of( AbstractTensor.Utility.shapeString( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( other );
         }
         return Neureka.get()
                         .backend()
                         .getAutogradFunction()
                         .conv()
-                        .call( a, b )
+                        .call( a, other )
                         .dimtrim();
     }
 
@@ -2247,13 +2277,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  However, currently this method can only handle matrices which means
      *  that it is functionally completely identical to the {@link #matMul(Tsr)} method.
      *
-     * @param b The tensor which is the right part of the dot product operation.
+     * @param other The tensor which is the right part of the dot product operation.
      * @return A new tensor which is the dot product of this tensor and the passed one.
      */
-    public Tsr<V> dot( Tsr<V> b ) {
-        if ( this.rank() != 2 && b.rank() != 2 )
+    public Tsr<V> dot( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform dot operation when second operand is 'null'!");
+        if ( this.rank() != 2 && other.rank() != 2 )
             throw new IllegalStateException("Not yet implemented!"); // This is not yet available in the backend!
-        return this.matMul( b );
+        return this.matMul( other );
     }
 
     /**
@@ -2261,17 +2292,18 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  two 2 dimensional arrays, where the left operand is this {@link Tsr}
      *  instaance and the right operand is the tensor passed to the method.
      *
-     * @param b The right operand of the matrix multiplication.
+     * @param other The right operand of the matrix multiplication.
      * @return The matrix product of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    public Tsr<V> matMul( Tsr<V> b ) {
-        if ( this.rank() != 2 || b.rank() != 2 ) {
+    public Tsr<V> matMul( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform matrix multiplication operation when second operand is 'null'!");
+        if ( this.rank() != 2 || other.rank() != 2 ) {
             String message = "Cannot perform matrix multiplication for tensors whose ranks are not both 2!\n" +
-                             "Encountered ranks: " + this.rank() + ", " + b.rank() + ";";
+                             "Encountered ranks: " + this.rank() + ", " + other.rank() + ";";
             _LOG.error( message );
             throw new IllegalArgumentException( message );
         }
-        return Neureka.get().backend().getAutogradFunction().matMul().call( this, b );
+        return Neureka.get().backend().getAutogradFunction().matMul().call( this, other );
     }
 
     /**
@@ -2292,13 +2324,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  Both methods do the exact same thing, however they exist
      *  for better language support.
      *
-     * @param t The tensor which will be checked.
+     * @param other The tensor which will be checked.
      * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
      */
-    public boolean isCase( Tsr<V> t ) {
+    public boolean isCase( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform 'is case' operation when second oprand is 'null'!");
         boolean[] found = { false };
         this.forComponent( Relation.class, r -> r.foreachChild( c -> {
-                if ( c.equals( t ) ) found[ 0 ] = true;
+                if ( c.equals( other ) ) found[ 0 ] = true;
             }));
         return found[ 0 ];
     }
@@ -2309,10 +2342,13 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  Both methods do the exact same thing, however they exist
      *  for better language support.
      *
-     * @param t The tensor which will be checked.
+     * @param other The tensor which will be checked.
      * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
      */
-    public boolean contains( Tsr<V> t ) { return isCase( t ); }
+    public boolean contains( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform 'contains' operation when second oprand is 'null'!");
+        return isCase( other );
+    }
 
 
     /*==================================================================================================================
@@ -2335,7 +2371,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return An element located at the provided index.
      */
     @Override
-    public Tsr<V> getAt( int... indices ) { return getAt( Arrays.stream( indices ).boxed().toArray() ); }
+    public Tsr<V> getAt( int... indices ) {
+        LogUtil.nullArgCheck(indices, "indices", int[].class, "Indices array must not be 'null'!");
+        return getAt( Arrays.stream( indices ).boxed().toArray() );
+    }
 
     /**
      *  The following method enables the creation of tensor slices which access

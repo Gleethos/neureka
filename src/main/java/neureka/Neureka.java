@@ -38,9 +38,10 @@ package neureka;
 
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.Operation;
-import neureka.common.utility.Messages;
+import neureka.common.utility.LogUtil;
 import neureka.common.utility.SettingsLoader;
 import neureka.devices.opencl.CLContext;
+import neureka.devices.opencl.utility.Messages;
 import neureka.dtype.custom.F64;
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
 import neureka.view.TsrStringSettings;
@@ -112,10 +113,10 @@ public final class Neureka
                     Operation operation = operationIterator.next();
                     assert operation.getFunction() != null;
                     assert operation.getOperator() != null;
-                    if ( operation.getFunction() == null ) _LOG.error(Messages.Operations.illegalStateFor( "function" ) );
-                    if ( operation.getOperator() == null ) _LOG.error(Messages.Operations.illegalStateFor( "operator" ) );
+                    if ( operation.getFunction() == null ) _LOG.error(_illegalStateFor( "function" ) );
+                    if ( operation.getOperator() == null ) _LOG.error(_illegalStateFor( "operator" ) );
                     _backend.addOperation(operation);
-                    _LOG.debug( Messages.Operations.loaded(operation) );
+                    _LOG.debug( LogUtil.format("Operation: '{}' loaded!", operation.getFunction()) );
                 } catch ( Exception e ) {
                     _LOG.error("Failed to load operations!", e);
                 }
@@ -124,9 +125,17 @@ public final class Neureka
             if ( _OPENCL_AVAILABLE )
                 _backend.set( new CLContext() );
             else
-                _LOG.warn( Messages.OpenCL.clContextCreationFailed() );
+                _LOG.warn( Messages.clContextCreationFailed() );
         }
         return _backend;
+    }
+
+    private static String _illegalStateFor( String type ) {
+        return LogUtil.format(
+                "Unexpected '{}' state encountered:\n" +
+                        "The operation '{}' String should not be null but was null!",
+                        type, Operation.class.getSimpleName()
+                );
     }
 
     private Neureka() {
@@ -690,7 +699,7 @@ public final class Neureka
                     System.out.println(
                             "[Info]: '"+className+"' dependencies not found!"+groovyInfo+"\n" +
                             "[Cause]: "+cause+"\n" +
-                            "[Tip]: "+ Messages.OpenCL.findTip().bootstrapTip()
+                            "[Tip]: "+ Messages.findTip().bootstrapTip()
                     );
                 }
                 return found;

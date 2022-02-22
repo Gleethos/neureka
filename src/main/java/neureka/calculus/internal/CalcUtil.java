@@ -13,8 +13,8 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionConstant;
+import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
-import neureka.common.utility.Messages;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -321,13 +321,13 @@ public class CalcUtil
 
                 Algorithm<?> algorithm = call.getAlgorithm();
                 if ( algorithm == null ) {
-                    String message = Messages.Devices.couldNotFindSuitableAlgorithmFor( device.getClass() );
+                    String message = _couldNotFindSuitableAlgorithmFor( device.getClass() );
                     _LOG.error( message );
                     throw new IllegalStateException( message );
                 } else {
                     ImplementationFor<Device<?>> implementation = algorithm.getImplementationFor( device );
                     if ( implementation == null ) {
-                        String message = Messages.Devices.couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
+                        String message = _couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
                         _LOG.error( message );
                         throw new IllegalStateException( message );
                     }
@@ -456,5 +456,23 @@ public class CalcUtil
         });
     }
 
+
+    private static String _couldNotFindSuitableAlgorithmFor(Class<?> type ) {
+        return LogUtil.format(
+                "No suitable '"+ Algorithm.class.getSimpleName()+"' found for device of type '{}'.",
+                type.getSimpleName()
+        );
+    }
+
+    private static String _couldNotFindSuitableImplementationFor(
+            Algorithm<?> algorithm,
+            Class<?> type
+    ) {
+        return LogUtil.format(
+                "No suitable implementation found for algorithm '{}' and device type '{}'.",
+                algorithm.getName(),
+                type.getSimpleName()
+        );
+    }
 
 }

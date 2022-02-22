@@ -6,7 +6,7 @@ import neureka.backend.api.Extensions;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
-import neureka.common.utility.Messages;
+import neureka.devices.opencl.utility.Messages;
 import org.jocl.cl_platform_id;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +102,7 @@ public class CLContext implements BackendExtension
             }
         }
         if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -> p.getDevices().isEmpty() ) ) {
-            _LOG.warn( Messages.OpenCL.clContextCouldNotFindAnyDevices() );
+            _LOG.warn( Messages.clContextCouldNotFindAnyDevices() );
         }
         return loadedPlatforms;
     }
