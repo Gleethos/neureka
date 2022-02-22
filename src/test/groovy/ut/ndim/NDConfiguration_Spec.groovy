@@ -14,7 +14,7 @@ import neureka.ndim.config.types.sliced.Sliced2DConfiguration
 import neureka.ndim.config.types.sliced.Sliced3DConfiguration
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration
 import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration
-import neureka.ndim.iterators.NDIterator
+import neureka.ndim.iterator.NDIterator
 import spock.lang.Specification
 
 class NDConfiguration_Spec extends Specification {

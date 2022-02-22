@@ -7,7 +7,7 @@ import neureka.backend.standard.operations.linear.internal.M32;
 import neureka.backend.standard.operations.linear.internal.M64;
 import neureka.devices.host.CPU;
 import neureka.ndim.AbstractTensor;
-import neureka.ndim.configs.NDConfiguration;
+import neureka.ndim.config.NDConfiguration;
 
 public class SimpleMatMul implements ImplementationFor<CPU> {
 

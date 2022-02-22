@@ -7,7 +7,7 @@ import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
-import neureka.ndim.iterators.NDIterator;
+import neureka.ndim.iterator.NDIterator;
 import org.jetbrains.annotations.Contract;
 
 public class Convolution extends AbstractFunctionalAlgorithm<Convolution>

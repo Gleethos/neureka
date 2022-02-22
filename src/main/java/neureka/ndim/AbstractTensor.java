@@ -46,7 +46,7 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
-import neureka.ndim.configs.NDConfiguration;
+import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 

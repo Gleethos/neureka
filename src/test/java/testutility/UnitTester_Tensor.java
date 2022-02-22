@@ -16,7 +16,7 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
-import neureka.ndim.configs.NDConfiguration;
+import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;

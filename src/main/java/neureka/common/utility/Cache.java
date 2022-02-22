@@ -9,7 +9,7 @@ import java.util.function.Function;
  *  shared throughout the library runtime...
  *  This is an internal class which should not be used outside of Neurekas internals.
  *
- * @param <O> The type that should be cached, this may be an {@link neureka.ndim.configs.NDConfiguration} or {@code int[]} array.
+ * @param <O> The type that should be cached, this may be an {@link neureka.ndim.config.NDConfiguration} or {@code int[]} array.
  */
 public class Cache<O> {
 

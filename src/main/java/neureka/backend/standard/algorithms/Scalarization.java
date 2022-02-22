@@ -9,7 +9,7 @@ import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
-import neureka.ndim.iterators.NDIterator;
+import neureka.ndim.iterator.NDIterator;
 import org.jetbrains.annotations.Contract;
 
 public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >

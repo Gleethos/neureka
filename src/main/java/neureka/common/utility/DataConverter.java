@@ -37,7 +37,7 @@ package neureka.common.utility;
 
 import neureka.Tsr;
 import neureka.dtype.DataType;
-import neureka.ndim.configs.NDConfiguration;
+import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -11,7 +11,7 @@ import neureka.calculus.args.Arg;
 import neureka.calculus.internal.CalcUtil;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.ndim.iterators.NDIterator;
+import neureka.ndim.iterator.NDIterator;
 
 import java.util.Arrays;
 

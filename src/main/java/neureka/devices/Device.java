@@ -48,7 +48,7 @@ import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.devices.host.CPU;
 import neureka.ndim.AbstractTensor;
-import neureka.ndim.configs.NDConfiguration;
+import neureka.ndim.config.NDConfiguration;
 
 import java.util.*;
 import java.util.function.Supplier;

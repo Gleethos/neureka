@@ -16,8 +16,8 @@ import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.ndim.configs.NDConfiguration;
-import neureka.ndim.configs.types.simple.Simple2DConfiguration;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.types.simple.Simple2DConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,7 +192,7 @@ public class MatMul extends AbstractOperation
 
     /**
      *  This method will clone {@link Tsr} instances if they do not
-     *  possess a simple {@link neureka.ndim.configs.NDConfiguration}.
+     *  possess a simple {@link neureka.ndim.config.NDConfiguration}.
      *
      * @param tensors The tensors which ought to be cloned based on the complexity of their access patterns.
      */

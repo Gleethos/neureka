@@ -12,7 +12,7 @@ import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
-import neureka.ndim.iterators.NDIterator;
+import neureka.ndim.iterator.NDIterator;
 
 /**
  *  This is lambda based {@link neureka.backend.api.Algorithm} implementation
