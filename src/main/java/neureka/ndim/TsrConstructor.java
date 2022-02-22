@@ -78,8 +78,7 @@ public class TsrConstructor {
                             newTranslation,
                             newTranslation, // indicesMap
                             newSpread,
-                            newOffset,
-                            layout
+                            newOffset
                     )
             );
         }

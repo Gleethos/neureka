@@ -1523,8 +1523,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                         NDConfiguration.Layout.ROW_MAJOR.newTranslationFor( old.shape() ),
                         NDConfiguration.Layout.ROW_MAJOR.newTranslationFor( old.shape() ),
                         old.spread(),
-                        old.offset(),
-                        layout
+                        old.offset()
                 );
         else
             newConf =
@@ -1533,8 +1532,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                             layout.newTranslationFor( old.shape() ),
                             old.translation(),
                             old.spread(),
-                            old.offset(),
-                            layout
+                            old.offset()
                     );
 
         if ( newConf.getLayout() != layout )
@@ -2559,15 +2557,13 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 }
             }
         }
-
         subset._setNDConf(
                 AbstractNDC.construct(
                         newShape,
                         newTranslation,
                         newIndicesMap,
                         newSpread,
-                        newOffset,
-                        NDConfiguration.Layout.ROW_MAJOR
+                        newOffset
                 )
         );
 

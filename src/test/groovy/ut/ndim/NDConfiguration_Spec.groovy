@@ -1,8 +1,8 @@
 package ut.ndim
 
 import neureka.ndim.config.AbstractNDC
-import neureka.ndim.config.NDConfiguration
 import neureka.ndim.config.types.reshaped.Reshaped1DConfiguration
+import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration
 import neureka.ndim.config.types.reshaped.Reshaped3DConfiguration
 import neureka.ndim.config.types.reshaped.ReshapedNDConfiguration
 import neureka.ndim.config.types.simple.Simple1DConfiguration
@@ -13,7 +13,6 @@ import neureka.ndim.config.types.sliced.Sliced1DConfiguration
 import neureka.ndim.config.types.sliced.Sliced2DConfiguration
 import neureka.ndim.config.types.sliced.Sliced3DConfiguration
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration
-import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration
 import neureka.ndim.iterator.NDIterator
 import spock.lang.Specification
 
@@ -31,7 +30,7 @@ class NDConfiguration_Spec extends Specification {
 
         given :
             var ndc1 = SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset)
-            var ndc2 = AbstractNDC.construct(shape, translation, indicesMap, spread, offset, NDConfiguration.Layout.ROW_MAJOR)
+            var ndc2 = AbstractNDC.construct(shape, translation, indicesMap, spread, offset)
             var i1 = NDIterator.of(ndc1, NDIterator.NonVirtual.FALSE)
             var i2 = NDIterator.of(ndc2, NDIterator.NonVirtual.FALSE)
 

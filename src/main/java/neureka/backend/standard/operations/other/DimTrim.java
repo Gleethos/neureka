@@ -128,8 +128,7 @@ public class DimTrim extends AbstractOperation
                         newTranslation.stream().mapToInt( i -> i ).toArray(),
                         newIdxmap.stream().mapToInt( i -> i ).toArray(),
                         newSpread.stream().mapToInt( i -> i ).toArray(),
-                        newOffset.stream().mapToInt( i -> i ).toArray(),
-                        NDConfiguration.Layout.ROW_MAJOR
+                        newOffset.stream().mapToInt( i -> i ).toArray()
                 )
         );
         return tensor;
@@ -165,8 +164,7 @@ public class DimTrim extends AbstractOperation
                         newTranslation.stream().mapToInt( i -> i ).toArray(),
                         newIdxmap.stream().mapToInt( i -> i ).toArray(),
                         newSpread.stream().mapToInt( i -> i ).toArray(),
-                        newOffset.stream().mapToInt( i -> i ).toArray(),
-                        NDConfiguration.Layout.ROW_MAJOR
+                        newOffset.stream().mapToInt( i -> i ).toArray()
                 )
         );
         ends[ 0 ] = prefix;

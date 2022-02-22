@@ -99,8 +99,7 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] translation,
             int[] indicesMap,
             int[] spread,
-            int[] offset,
-            Layout layout
+            int[] offset
     ) {
         for ( int dim : shape ) {
             if ( dim == 0 ) {
@@ -225,8 +224,7 @@ public abstract class AbstractNDC implements NDConfiguration
                 newTranslation,
                 newIndicesMap,
                 newSpread,
-                newOffset,
-                Layout.ROW_MAJOR
+                newOffset
             );
     }
 
