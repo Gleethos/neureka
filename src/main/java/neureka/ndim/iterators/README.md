@@ -1,4 +1,4 @@
-# The 'iterators' package #
+# Iterators #
 
 This package contains a custom 
 iterator interface type whose implementations 
