@@ -1,14 +1,14 @@
-package neureka.ndim.config;
+package neureka.ndim.configs;
 
 import neureka.Neureka;
 import neureka.common.utility.Cache;
-import neureka.ndim.config.types.reshaped.Reshaped1DConfiguration;
-import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration;
-import neureka.ndim.config.types.reshaped.Reshaped3DConfiguration;
-import neureka.ndim.config.types.reshaped.ReshapedNDConfiguration;
-import neureka.ndim.config.types.simple.*;
-import neureka.ndim.config.types.sliced.*;
-import neureka.ndim.config.types.views.SimpleReshapeView;
+import neureka.ndim.configs.types.reshaped.Reshaped1DConfiguration;
+import neureka.ndim.configs.types.reshaped.Reshaped2DConfiguration;
+import neureka.ndim.configs.types.reshaped.Reshaped3DConfiguration;
+import neureka.ndim.configs.types.reshaped.ReshapedNDConfiguration;
+import neureka.ndim.configs.types.simple.*;
+import neureka.ndim.configs.types.sliced.*;
+import neureka.ndim.configs.types.views.SimpleReshapeView;
 
 import java.util.Arrays;
 

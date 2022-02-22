@@ -1,6 +1,6 @@
 package neureka.ndim.iterators.types.reshaped;
 
-import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration;
+import neureka.ndim.configs.types.reshaped.Reshaped2DConfiguration;
 import neureka.ndim.iterators.NDIterator;
 
 public class Reshaped2DCIterator extends Reshaped2DConfiguration implements NDIterator

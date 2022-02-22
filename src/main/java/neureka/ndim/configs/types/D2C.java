@@ -1,6 +1,6 @@
-package neureka.ndim.config.types;
+package neureka.ndim.configs.types;
 
-import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.configs.AbstractNDC;
 
 public abstract class D2C extends AbstractNDC
 {

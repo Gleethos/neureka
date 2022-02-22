@@ -1,6 +1,6 @@
-package neureka.ndim.config.types.sliced;
+package neureka.ndim.configs.types.sliced;
 
-import neureka.ndim.config.types.D2C;
+import neureka.ndim.configs.types.D2C;
 
 public class Sliced2DConfiguration extends D2C //:= IMMUTABLE
 {

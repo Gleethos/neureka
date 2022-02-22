@@ -1,7 +1,7 @@
 package neureka.ndim;
 
 import neureka.Tsr;
-import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.configs.NDConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;

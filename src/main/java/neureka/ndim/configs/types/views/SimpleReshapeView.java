@@ -1,7 +1,7 @@
-package neureka.ndim.config.types.views;
+package neureka.ndim.configs.types.views;
 
-import neureka.ndim.config.AbstractNDC;
-import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.configs.AbstractNDC;
+import neureka.ndim.configs.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

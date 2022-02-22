@@ -40,7 +40,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.framing.NDFrame;
-import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.configs.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.text.DecimalFormat;

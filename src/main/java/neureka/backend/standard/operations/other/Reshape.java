@@ -16,7 +16,7 @@ import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.framing.Relation;
 import neureka.ndim.AbstractTensor;
-import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.configs.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 public class Reshape extends AbstractOperation

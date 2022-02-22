@@ -1,6 +1,6 @@
-package neureka.ndim.config.types.simple;
+package neureka.ndim.configs.types.simple;
 
-import neureka.ndim.config.types.D3C;
+import neureka.ndim.configs.types.D3C;
 
 public class Simple3DConfiguration extends D3C //:= IMMUTABLE
 {

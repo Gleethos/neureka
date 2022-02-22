@@ -1,10 +1,8 @@
-package neureka.ndim.config.types.simple;
+package neureka.ndim.configs.types.reshaped;
 
-import neureka.ndim.config.types.D1C;
+import neureka.ndim.configs.types.D1C;
 
-
-public class Simple1DConfiguration extends D1C //:= IMMUTABLE
-{
+public class Reshaped1DConfiguration extends D1C {
     /**
      *  The shape of the NDArray.
      */
@@ -12,22 +10,30 @@ public class Simple1DConfiguration extends D1C //:= IMMUTABLE
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation_and_indicesMap;
+    private final int _translation;
+    /**
+     *  The mapping of the indices array.
+     */
+    private final int _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
 
-
-    public static Simple1DConfiguration construct(
+    public static Reshaped1DConfiguration construct(
             int[] shape,
-            int[] translation
+            int[] translation,
+            int[] indicesMap
     ) {
-        return _cached( new Simple1DConfiguration(shape[ 0 ], translation[ 0 ]) );
+        return _cached( new Reshaped1DConfiguration(shape[ 0 ], translation[ 0 ],  indicesMap[ 0 ]) );
     }
 
-    protected Simple1DConfiguration(
+    protected Reshaped1DConfiguration(
             int shape,
-            int translation
+            int translation,
+            int indicesMap
     ) {
         _shape = shape;
-        _translation_and_indicesMap = translation;
+        _translation = translation;
+        _indicesMap = indicesMap;
+        assert translation != 0;
+        assert indicesMap != 0;
     }
 
     @Override
@@ -47,22 +53,22 @@ public class Simple1DConfiguration extends D1C //:= IMMUTABLE
 
     @Override
     public int[] indicesMap() {
-        return new int[]{_translation_and_indicesMap};
+        return new int[]{_indicesMap};
     }
 
     @Override
     public int indicesMap(int i ) {
-        return _translation_and_indicesMap;
+        return _indicesMap;
     }
 
     @Override
     public int[] translation() {
-        return new int[]{_translation_and_indicesMap};
+        return new int[]{_translation};
     }
 
     @Override
     public int translation( int i ) {
-        return _translation_and_indicesMap;
+        return _translation;
     }
 
     @Override
@@ -85,25 +91,24 @@ public class Simple1DConfiguration extends D1C //:= IMMUTABLE
         return 0;
     }
 
-
     @Override
     public int indexOfIndex(int index) {
-        return index;
+        return (index / _indicesMap) * _translation;
     }
 
     @Override
     public int[] indicesOfIndex(int index) {
-        return new int[]{index / _translation_and_indicesMap};
+        return new int[]{index / _indicesMap};
     }
 
     @Override
     public int indexOfIndices(int[] indices) {
-        return indices[ 0 ] * _translation_and_indicesMap;
+        return indices[ 0 ] * _translation;
     }
 
     @Override
     public int indexOfIndices(int d1 ) {
-        return d1 * _translation_and_indicesMap;
+        return d1 * _translation;
     }
 
 }

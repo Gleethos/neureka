@@ -36,16 +36,16 @@ SOFTWARE.
 package neureka.ndim.iterators;
 
 import neureka.Tsr;
-import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration;
-import neureka.ndim.config.types.reshaped.Reshaped3DConfiguration;
-import neureka.ndim.config.types.simple.Simple1DConfiguration;
-import neureka.ndim.config.types.simple.Simple2DConfiguration;
-import neureka.ndim.config.types.simple.Simple3DConfiguration;
-import neureka.ndim.config.types.sliced.Sliced1DConfiguration;
-import neureka.ndim.config.types.sliced.Sliced2DConfiguration;
-import neureka.ndim.config.types.sliced.Sliced3DConfiguration;
-import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
+import neureka.ndim.configs.NDConfiguration;
+import neureka.ndim.configs.types.reshaped.Reshaped2DConfiguration;
+import neureka.ndim.configs.types.reshaped.Reshaped3DConfiguration;
+import neureka.ndim.configs.types.simple.Simple1DConfiguration;
+import neureka.ndim.configs.types.simple.Simple2DConfiguration;
+import neureka.ndim.configs.types.simple.Simple3DConfiguration;
+import neureka.ndim.configs.types.sliced.Sliced1DConfiguration;
+import neureka.ndim.configs.types.sliced.Sliced2DConfiguration;
+import neureka.ndim.configs.types.sliced.Sliced3DConfiguration;
+import neureka.ndim.configs.types.virtual.VirtualNDConfiguration;
 import neureka.ndim.iterators.types.reshaped.Reshaped2DCIterator;
 import neureka.ndim.iterators.types.reshaped.Reshaped3DCIterator;
 import neureka.ndim.iterators.types.sliced.SlicedNDIterator;

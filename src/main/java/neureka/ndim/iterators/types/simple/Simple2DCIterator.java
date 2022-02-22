@@ -1,6 +1,6 @@
 package neureka.ndim.iterators.types.simple;
 
-import neureka.ndim.config.types.simple.Simple2DConfiguration;
+import neureka.ndim.configs.types.simple.Simple2DConfiguration;
 import neureka.ndim.iterators.NDIterator;
 
 public final class Simple2DCIterator extends Simple2DConfiguration implements NDIterator

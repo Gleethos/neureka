@@ -42,7 +42,7 @@ import neureka.common.utility.Messages;
 import neureka.common.utility.SettingsLoader;
 import neureka.devices.opencl.CLContext;
 import neureka.dtype.custom.F64;
-import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
+import neureka.ndim.configs.types.sliced.SlicedNDConfiguration;
 import neureka.view.TsrStringSettings;
 import org.slf4j.Logger;
 

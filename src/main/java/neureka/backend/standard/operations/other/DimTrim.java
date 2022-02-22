@@ -14,8 +14,8 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
-import neureka.ndim.config.AbstractNDC;
-import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.configs.AbstractNDC;
+import neureka.ndim.configs.NDConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,9 +3,9 @@ package neureka.ndim;
 import neureka.common.utility.DataConverter;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
-import neureka.ndim.config.AbstractNDC;
-import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
+import neureka.ndim.configs.AbstractNDC;
+import neureka.ndim.configs.NDConfiguration;
+import neureka.ndim.configs.types.virtual.VirtualNDConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

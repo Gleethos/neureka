@@ -36,9 +36,8 @@ SOFTWARE.
 package neureka.common.utility;
 
 import neureka.Tsr;
-import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
-import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.configs.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,6 @@
-package neureka.ndim.config.types.sliced;
+package neureka.ndim.configs.types.sliced;
 
-import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.configs.AbstractNDC;
 
 public final class Sliced0DConfiguration extends AbstractNDC //:= IMMUTABLE
 {

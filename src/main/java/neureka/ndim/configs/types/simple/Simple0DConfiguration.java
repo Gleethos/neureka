@@ -1,6 +1,6 @@
-package neureka.ndim.config.types.simple;
+package neureka.ndim.configs.types.simple;
 
-import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.configs.AbstractNDC;
 
 public final class Simple0DConfiguration extends AbstractNDC //:= IMMUTABLE
 {

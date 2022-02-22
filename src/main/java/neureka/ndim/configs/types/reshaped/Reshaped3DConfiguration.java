@@ -1,9 +1,8 @@
-package neureka.ndim.config.types.sliced;
+package neureka.ndim.configs.types.reshaped;
 
-import neureka.ndim.config.types.D3C;
+import neureka.ndim.configs.types.D3C;
 
-public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
-{
+public class Reshaped3DConfiguration extends D3C {
     /**
      *  The shape of the NDArray.
      */
@@ -22,26 +21,12 @@ public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
     private final int _indicesMap1;
     private final int _indicesMap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     private final int _indicesMap3;
-    /**
-     *  Produces the strides of a tensor subset / slice
-     */
-    private final int _spread1;
-    private final int _spread2;
-    private final int _spread3;
-    /**
-     *  Defines the position of a subset / slice tensor within its parent!
-     */
-    private final int _offset1;
-    private final int _offset2;
-    private final int _offset3;
 
 
-    protected Sliced3DConfiguration(
+    protected Reshaped3DConfiguration(
             int[] shape,
             int[] translation,
-            int[] indicesMap,
-            int[] spread,
-            int[] offset
+            int[] indicesMap
     ) {
         _shape1 = shape[ 0 ];
         _shape2 = shape[ 1 ];
@@ -52,22 +37,14 @@ public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
         _indicesMap1 = indicesMap[ 0 ];
         _indicesMap2 = indicesMap[ 1 ];
         _indicesMap3 = indicesMap[ 2 ];
-        _spread1 = spread[ 0 ];
-        _spread2 = spread[ 1 ];
-        _spread3 = spread[ 2 ];
-        _offset1 = offset[ 0 ];
-        _offset2 = offset[ 1 ];
-        _offset3 = offset[ 2 ];
     }
 
-    public static Sliced3DConfiguration construct(
+    public static Reshaped3DConfiguration construct(
             int[] shape,
             int[] translation,
-            int[] indicesMap,
-            int[] spread,
-            int[] offset
+            int[] indicesMap
     ) {
-        return _cached( new Sliced3DConfiguration(shape, translation, indicesMap, spread, offset) );
+        return _cached( new Reshaped3DConfiguration(shape, translation, indicesMap) );
     }
 
     @Override
@@ -107,22 +84,22 @@ public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
 
     @Override
     public int[] spread() {
-        return new int[]{_spread1, _spread2, _spread3};
+        return new int[]{1, 1, 1};
     }
 
     @Override
     public int spread( int i ) {
-        return (i==0)?_spread1:(i==1)?_spread2:_spread3;
+        return 1;
     }
 
     @Override
     public int[] offset() {
-        return new int[]{_offset1, _offset2, _offset3};
+        return new int[]{0, 0, 0};
     }
 
     @Override
     public int offset( int i ) {
-        return (i==0)?_offset1:(i==1)?_offset2:_offset3;
+        return 0;
     }
 
     @Override
@@ -133,9 +110,9 @@ public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
         indices2 = index / _indicesMap2;
         index %= _indicesMap2;
         indices3 = index / _indicesMap3;
-        return (indices1 * _spread1 + _offset1) * _translation1 +
-                (indices2 * _spread2 + _offset2) * _translation2 +
-                (indices3 * _spread3 + _offset3) * _translation3;
+        return indices1 * _translation1 +
+                indices2 * _translation2 +
+                indices3 * _translation3;
     }
 
     @Override
@@ -151,16 +128,16 @@ public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
 
     @Override
     public int indexOfIndices(int[] indices) {
-        return (indices[ 0 ] * _spread1 + _offset1) * _translation1 +
-                    (indices[ 1 ] * _spread2 + _offset2) * _translation2 +
-                        (indices[ 2 ] * _spread3 + _offset3) * _translation3;
+        return indices[ 0 ] * _translation1 +
+                indices[ 1 ] * _translation2 +
+                indices[ 2 ] * _translation3;
     }
 
     @Override
     public int indexOfIndices(int d1, int d2, int d3 ) {
-        return (d1 * _spread1 + _offset1) * _translation1 +
-                (d2 * _spread2 + _offset2) * _translation2 +
-                (d3 * _spread3 + _offset3) * _translation3;
+        return d1 * _translation1 +
+               d2 * _translation2 +
+               d3 * _translation3;
     }
 
 }

@@ -1,6 +1,6 @@
 package neureka.ndim.iterators.types.sliced;
 
-import neureka.ndim.config.types.sliced.Sliced1DConfiguration;
+import neureka.ndim.configs.types.sliced.Sliced1DConfiguration;
 import neureka.ndim.iterators.NDIterator;
 
 public final class Sliced1DCIterator extends Sliced1DConfiguration implements NDIterator

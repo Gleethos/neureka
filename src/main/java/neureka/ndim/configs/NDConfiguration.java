@@ -32,7 +32,7 @@ SOFTWARE.
                                         |___/
 */
 
-package neureka.ndim.config;
+package neureka.ndim.configs;
 
 import org.jetbrains.annotations.Contract;
 

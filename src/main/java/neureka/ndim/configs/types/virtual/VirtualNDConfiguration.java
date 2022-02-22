@@ -1,6 +1,6 @@
-package neureka.ndim.config.types.virtual;
+package neureka.ndim.configs.types.virtual;
 
-import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.configs.AbstractNDC;
 
 /**
  *  {@link VirtualNDConfiguration}s represent tensors which

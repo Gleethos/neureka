@@ -61,7 +61,7 @@ import neureka.devices.Device;
 import neureka.devices.opencl.utility.CLFunctionCompiler;
 import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
-import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.configs.NDConfiguration;
 import org.jocl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

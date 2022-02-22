@@ -1,6 +1,6 @@
-package neureka.ndim.config.types.simple;
+package neureka.ndim.configs.types.simple;
 
-import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.configs.AbstractNDC;
 
 import java.util.Arrays;
 

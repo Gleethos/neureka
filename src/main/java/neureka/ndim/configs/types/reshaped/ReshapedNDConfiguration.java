@@ -1,6 +1,6 @@
-package neureka.ndim.config.types.reshaped;
+package neureka.ndim.configs.types.reshaped;
 
-import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.configs.AbstractNDC;
 
 import java.util.Arrays;
 
