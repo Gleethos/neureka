@@ -38,10 +38,5 @@ public final class ColumnMajorNDConfiguration extends SlicedNDConfiguration //:=
         );
     }
 
-    @Override
-    public Layout getLayout() {
-        return Layout.COLUMN_MAJOR;
-    }
-
 }
 

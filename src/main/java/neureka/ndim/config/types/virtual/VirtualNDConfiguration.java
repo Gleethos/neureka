@@ -44,7 +44,7 @@ public class VirtualNDConfiguration extends AbstractNDC
     }
 
     @Override
-    public int indicesMap(int i ) {
+    public int indicesMap( int i ) {
         return 0;
     }
 

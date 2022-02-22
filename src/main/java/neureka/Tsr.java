@@ -1515,16 +1515,36 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             );
 
         NDConfiguration old = this.getNDConf();
-        _setNDConf(
-            AbstractNDC.construct(
-                old.shape(),
-                layout.newTranslationFor( old.shape() ),
-                old.translation(),
-                old.spread(),
-                old.offset(),
-                layout
-            )
-        );
+        NDConfiguration newConf;
+
+        if ( old.getLayout() == NDConfiguration.Layout.COLUMN_MAJOR && layout == NDConfiguration.Layout.ROW_MAJOR )
+            newConf =
+                AbstractNDC.construct(
+                        old.shape(),
+                        NDConfiguration.Layout.ROW_MAJOR.newTranslationFor( old.shape() ),
+                        NDConfiguration.Layout.ROW_MAJOR.newTranslationFor( old.shape() ),
+                        old.spread(),
+                        old.offset(),
+                        layout
+                );
+        else
+            newConf =
+                    AbstractNDC.construct(
+                            old.shape(),
+                            layout.newTranslationFor( old.shape() ),
+                            old.translation(),
+                            old.spread(),
+                            old.offset(),
+                            layout
+                    );
+
+        if ( newConf.getLayout() != layout )
+            throw new IllegalArgumentException(
+                "Failed to convert this tensor from its original layout '"+old.getLayout()+"' " +
+                "to target layout '"+layout+"'. Instead this tensor has layout '"+newConf.getLayout()+"'."
+            );
+
+        _setNDConf( newConf );
     }
 
     /**
@@ -2532,8 +2552,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 if ( top > parentTensor.shape( ii ) ) {
                     String message =
                             "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
-                                    "At index '" + i + "' : offset '" + newOffset[ i ] + "' + shape '" + newShape[ i ] + "' = '" + top + "',\n" +
-                                    "which is larger than the target shape '" + parentTensor.shape( ii ) + "' at the same index!";
+                            "At index '" + i + "' : offset '" + newOffset[ i ] + "' + shape '" + newShape[ i ] + "' = '" + top + "',\n" +
+                            "which is larger than the target shape '" + parentTensor.shape( ii ) + "' at the same index!";
                     Exception exception = new IllegalArgumentException( message );
                     _LOG.error( message, exception );
                     throw new IllegalArgumentException( exception );

@@ -10,13 +10,13 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.CPUImplementation;
-import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.ndim.config.types.ColumnMajorNDConfiguration;
+import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.simple.Simple2DConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,9 +174,11 @@ public class MatMul extends AbstractOperation
         {
             Class<Number> type = (Class<Number>) tensors[1].getDataType().getJVMTypeClass();
             int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };
+            NDConfiguration.Layout targetLayout = tensors[1].getNDConf().getLayout();
+            tensors[2].getUnsafe().toLayout(targetLayout);
             Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).getUnsafe().setIsIntermediate( true );
-            output.getUnsafe().toLayout(tensors[1].getNDConf().getLayout());
             output.setIsVirtual( false );
+            output.getUnsafe().toLayout(targetLayout);
             try {
                 device.store( output );
             } catch ( Exception e ) {
@@ -213,11 +215,11 @@ public class MatMul extends AbstractOperation
     }
 
     private static boolean _isSimpleColumnMajorMatrix( Tsr<?> t ) {
-        return t.rank() == 2 && t.getNDConf() instanceof ColumnMajorNDConfiguration;
+        return t.rank() == 2 && t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR;
     }
 
     private static boolean _isSimpleRowMajorMatrix( Tsr<?> t ) {
-        return t.rank() == 2 && t.getNDConf() instanceof Simple2DConfiguration;
+        return t.rank() == 2 && t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR;
     }
 
     @Override

@@ -201,6 +201,7 @@ public abstract class AbstractNDC implements NDConfiguration
     @Override
     public String toString() {
         return "NDConfiguration@"+Integer.toHexString(hashCode())+"#"+Long.toHexString(this.hashCode())+"[" +
+                    "layout="+getLayout().name()+","+
                     "shape="+Arrays.toString(shape())+","+
                     "translation="+Arrays.toString(translation())+","+
                     "indicesMap="+Arrays.toString(indicesMap())+","+

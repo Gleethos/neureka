@@ -49,7 +49,7 @@ public interface NDConfiguration
      */
     enum Layout {
 
-        ROW_MAJOR, COLUMN_MAJOR;
+        ROW_MAJOR, COLUMN_MAJOR, UNDEFINED;
 
         @Contract(pure = true)
         public int[] newTranslationFor( int[] shape ) {
@@ -60,7 +60,7 @@ public interface NDConfiguration
                     translation[ i ] = prod;
                     prod *= shape[ i ];
                 }
-            } else if ( this == ROW_MAJOR ) {
+            } else if ( this == ROW_MAJOR || this == UNDEFINED ) {
                 for ( int i = translation.length - 1; i >= 0; i-- ) {
                     translation[i] = prod;
                     prod *= shape[i];
@@ -93,7 +93,21 @@ public interface NDConfiguration
      * @return The layout of the underlying data array of a tensor.
      */
     default Layout getLayout() {
-        return Layout.ROW_MAJOR;
+        if ( !this.isCompact() )
+            return Layout.UNDEFINED;
+        else {
+            int[] translation1 = Layout.ROW_MAJOR.newTranslationFor(this.shape());
+            boolean basicIndices = Arrays.equals(translation1, indicesMap());
+
+            if ( Arrays.equals(translation1, translation()) && basicIndices )
+                return Layout.ROW_MAJOR;
+
+            int[] translation2 = Layout.COLUMN_MAJOR.newTranslationFor(this.shape());
+            if ( Arrays.equals(translation2, translation()) && basicIndices )
+                return Layout.COLUMN_MAJOR;
+
+        }
+        return Layout.UNDEFINED;
     }
 
     /**
@@ -274,11 +288,16 @@ public interface NDConfiguration
         int[] simpleTranslation = this.getLayout().newTranslationFor( this.shape() );
         return Arrays.equals( this.translation(), simpleTranslation )
                 &&
-               IntStream.range( 0, this.rank() ).allMatch( i -> this.spread(i) == 1 )
-                &&
                Arrays.equals( this.indicesMap(), simpleTranslation )
                 &&
-               IntStream.range( 0, this.rank() ).allMatch( i -> this.offset(i) == 0 );
+               isCompact();
+    }
+
+    default boolean isCompact() {
+        return
+                IntStream.range( 0, this.rank() ).allMatch( i -> this.spread(i) == 1 )
+                        &&
+                IntStream.range( 0, this.rank() ).allMatch( i -> this.offset(i) == 0 );
     }
 
     default IndexToIndexFunction getIndexToIndexAccessPattern() {
