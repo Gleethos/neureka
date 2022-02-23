@@ -68,8 +68,8 @@ public class KernelCaller
      * @param tensor The tensor whose data ought to be passed to the kernel.
      * @return This very KernelCaller instance (factory patter).
      */
-    public KernelCaller pass( @NotNull Tsr<Number> tensor ) {
-        _inputs.add( tensor );
+    public <T extends Number> KernelCaller pass( @NotNull Tsr<T> tensor ) {
+        _inputs.add( (Tsr<Number>) tensor );
         clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.get( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
         return this;

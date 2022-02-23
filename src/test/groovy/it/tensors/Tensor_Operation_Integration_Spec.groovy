@@ -9,6 +9,7 @@ import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.dtype.DataType
+import neureka.ndim.config.NDConfiguration
 import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
 import spock.lang.Specification
@@ -533,7 +534,7 @@ class Tensor_Operation_Integration_Spec extends Specification
     }
 
 
-    void 'A new transposed version of a given tensor will be returned by the "T()" method.'()
+    def 'A new transposed version of a given tensor will be returned by the "T()" method.'()
     {
         given :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
@@ -545,6 +546,38 @@ class Tensor_Operation_Integration_Spec extends Specification
                             ]).T()
 
         then : t.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
+    }
+
+
+    def 'Matrix multiplication works for both column and row major matrices.'()
+    {
+        given :
+            var a = Tsr.ofFloats().withShape(42, 73).andWhere({it, idx->((7**it)%10).floatValue()})
+            var b = Tsr.ofFloats().withShape(73, 69).andWhere({it, idx->((5**it)%10).floatValue()})
+            Device.find(device).store(a).store(b)
+            var hash
+
+        when :
+            a.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            b.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+        and :
+            hash = Arrays.hashCode(a.matMul(b).value as int[])
+        then :
+            true//hash == expectedHash
+
+        //when :
+        //    a.unsafe.toLayout(NDConfiguration.Layout.ROW_MAJOR)
+        //    b.unsafe.toLayout(NDConfiguration.Layout.ROW_MAJOR)
+        //and :
+        //    hash = Arrays.hashCode(a.matMul(b).value)
+        //then :
+        //    hash == expectedHash
+
+        where :
+            device  |  expectedHash
+            'CPU'   |  125923169
+            'GPU'   |  125923169
+
     }
 
 

@@ -10,6 +10,7 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.CPUImplementation;
+import neureka.backend.standard.operations.linear.internal.opencl.GEMM;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.internal.CalcUtil;
@@ -121,49 +122,29 @@ public class MatMul extends AbstractOperation
                             "   }                                                                    \n"
                         )
                         .lambda( call -> {
-                            int M = call.tensor( 1 ).shape(0);
-                            int N = call.tensor( 2 ).shape(1);
-                            int K = call.tensor( 1 ).shape(1);
-                            call.getDevice()
-                                .getKernel(call)
-                                .pass(M).pass(N).pass(K)
-                                .pass(call.getTsrOfType(Number.class, 1))
-                                .pass(call.getTsrOfType(Number.class, 2))
-                                .pass(call.getTsrOfType(Number.class, 0))
-                                .call(new long[]{M,N}, null);
-                        } )
+                            if (
+                                call.validate()
+                                        .all( t -> t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
+                                        .isValid()
+                            ) {
+                                new GEMM().run( call );
+                            } else {
+                                int M = call.tensor(1).shape(0);
+                                int N = call.tensor(2).shape(1);
+                                int K = call.tensor(1).shape(1);
+                                call.getDevice()
+                                        .getKernel(call)
+                                        .pass(M).pass(N).pass(K)
+                                        .pass(call.getTsrOfType(Number.class, 1))
+                                        .pass(call.getTsrOfType(Number.class, 2))
+                                        .pass(call.getTsrOfType(Number.class, 0))
+                                        .call(new long[]{M, N}, null);
+                            }
+                        })
                         .build()
                 )
         );
-        /*
-        // TODO: Non-simple tensors:
-        CLImplementation.fromSource()
-                .arity( 3 )
-                .kernelName( "fallBackMatMul" )
-                .kernelSource(
-                        "_kernel void fallBackMatMul(                                                 " +
-                                "   int widthA,                                                       " +
-                                "   int heightA,                                                      " +
-                                "   int widthB,                                                       " +
-                                "   int heightB,                                                      " +
-                                "   __global float* outputC, __global int *confC,                     " +
-                                "   __global float* inputA,  __global int *confA,                     " +
-                                "   __global float* inputB   __global int *confB,                     " +
-                                ") {                                                                  " +
-                                "   int prvConfC[32]; _cfg_of_cfg(prvConfC, prvConfC, rank);\n        " +
-                                "   int prvConfA[32]; _cfg_of_cfg(prvConfA, prvConfA, rank);\n        " +
-                                "   int prvConfB[32]; _cfg_of_cfg(prvConfB, prvConfB, rank);          " +
-                                "   int row = get_global_id( 1 );                                     " +
-                                "   int col = get_global_id(0);                                       " +
-                                "   float sum = 0.0f;                                                 " +
-                                "   for ( int i = 0; i < widthA; i++ ) {                              " +
-                                "      sum += inputA[ row * widthA + i ] * inputB[ i * widthB + col ];" +
-                                "   }                                                                 " +
-                                "   outputC[ row * widthB * col ] = sum;                              " +
-                                "}"
-                )
-                .build();
-        */
+
 
     }
 

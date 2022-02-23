@@ -77,7 +77,8 @@ import static org.jocl.CL.*;
  * Instances of this class internally utilize the OpenCL API in order to use supported
  * accelerator hardware like GPUs or FPGAs for storing tensors and executing operations on them.
  */
-public class OpenCLDevice extends AbstractDevice<Number> {
+public class OpenCLDevice extends AbstractDevice<Number>
+{
     private static Logger _LOG = LoggerFactory.getLogger(OpenCLDevice.class);
 
     public static OpenCLDevice newInstanceOf(OpenCLPlatform platform, cl_device_id did) {
@@ -261,12 +262,12 @@ public class OpenCLDevice extends AbstractDevice<Number> {
         if (this.hasAdHocKernel(name)) {
             cl_ad_hoc adHoc = _kernelCache.get(name);
             String message =
-                    "Cannot compile kernel source for name '" + name + "' because the name is already taken.\n" +
-                            "Use another name or find out why this kernel already exists.\n" +
-                            (
-                                    adHoc.source.equals(source)
-                                            ? "Besides the name, the source code of the existing kernel is also identical.\n" : ""
-                            );
+                "Cannot compile kernel source for name '" + name + "' because the name is already taken.\n" +
+                "Use another name or find out why this kernel already exists.\n" +
+                (
+                        adHoc.source.equals(source)
+                                ? "Besides the name, the source code of the existing kernel is also identical.\n" : ""
+                );
             _log.error(message);
             throw new IllegalArgumentException(message);
         }
