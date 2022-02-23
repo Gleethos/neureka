@@ -1520,21 +1520,21 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         if ( old.getLayout() == NDConfiguration.Layout.COLUMN_MAJOR && layout == NDConfiguration.Layout.ROW_MAJOR )
             newConf =
                 AbstractNDC.construct(
-                        old.shape(),
-                        NDConfiguration.Layout.ROW_MAJOR.newTranslationFor( old.shape() ),
-                        NDConfiguration.Layout.ROW_MAJOR.newTranslationFor( old.shape() ),
-                        old.spread(),
-                        old.offset()
+                    old.shape(),
+                    NDConfiguration.Layout.ROW_MAJOR.newTranslationFor( old.shape() ),
+                    NDConfiguration.Layout.ROW_MAJOR.newTranslationFor( old.shape() ),
+                    old.spread(),
+                    old.offset()
                 );
         else
             newConf =
-                    AbstractNDC.construct(
-                            old.shape(),
-                            layout.newTranslationFor( old.shape() ),
-                            old.translation(),
-                            old.spread(),
-                            old.offset()
-                    );
+                AbstractNDC.construct(
+                    old.shape(),
+                    layout.newTranslationFor( old.shape() ),
+                    old.translation(),
+                    old.spread(),
+                    old.offset()
+                );
 
         if ( newConf.getLayout() != layout )
             throw new IllegalArgumentException(
