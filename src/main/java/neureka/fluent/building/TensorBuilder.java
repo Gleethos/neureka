@@ -9,12 +9,12 @@ import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.fluent.building.states.*;
 import neureka.ndim.Filler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
-
-import static neureka.ndim.AbstractTensor._LOG;
 
 /**
  *  This class exposes a fluent builder API for creating {@link Tsr} instances.
@@ -61,6 +61,8 @@ import static neureka.ndim.AbstractTensor._LOG;
  */
 public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, IterByOrIterFromOrAll<V>, To<V>, Step<V>
 {
+    private static final Logger _LOG = LoggerFactory.getLogger(TensorBuilder.class);
+
     private final DataType<V> _dataType;
     private int[] _shape;
     private V _from;
@@ -109,9 +111,10 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
             else
                 return Tsr.of(type, _shape, seed.toString()).to(_device);
         } catch ( Exception e ) {
-            IllegalArgumentException exception =  new IllegalArgumentException(
-                 "Could not create a random tensor for type '"+type+"'!"
-            );
+            IllegalArgumentException exception =
+                    new IllegalArgumentException(
+                         "Could not create a random tensor for type '"+type+"'!"
+                    );
             _LOG.error( exception.getMessage(), e );
             throw exception;
         }

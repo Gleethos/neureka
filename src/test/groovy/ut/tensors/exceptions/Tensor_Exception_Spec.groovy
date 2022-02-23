@@ -22,6 +22,9 @@ import java.util.function.Consumer
 ''')
 class Tensor_Exception_Spec extends Specification
 {
+
+    @Shared def oldStream
+
     def setupSpec() {
         reportHeader """
                 <h2> Tensors Exception Behavior </h2>
@@ -33,16 +36,14 @@ class Tensor_Exception_Spec extends Specification
             """
     }
 
-    @Shared def oldLogger
-
     def setup() {
         Neureka.get().reset()
-        if (Tsr._LOG != null) oldLogger = Tsr._LOG
-        Tsr._LOG = Mock( Logger )
+        oldStream = System.err
+        System.err = Mock(PrintStream)
     }
 
     def cleanup() {
-        Tsr._LOG = oldLogger
+        System.err = oldStream
     }
 
     def "Trying to inject an empty tensor into another causes fitting exception."()
@@ -65,7 +66,6 @@ class Tensor_Exception_Spec extends Specification
     def 'Passing null to various methods of the tensor API will throw exceptions.'(
             Class<Exception> type, Consumer<Tsr<Integer>> errorCode
     ) {
-
         given :
             Tsr<Integer> t = Tsr.of(1, 2, 3)
 
@@ -120,7 +120,7 @@ class Tensor_Exception_Spec extends Specification
                     "Cannot create tensor slice from key of type 'java.lang.Class'!"
             )
         and : 'The logger logs the exception message!'
-            1 * Tsr._LOG.error( "Cannot create tensor slice from key of type 'java.lang.Class'!" )
+            1 * System.err.println( "[Test worker] ERROR neureka.Tsr - Cannot create tensor slice from key of type 'java.lang.Class'!" )
     }
 
 
@@ -138,11 +138,10 @@ class Tensor_Exception_Spec extends Specification
                     "which is larger than the target shape '3' at the same index!"
 
         and : 'The logger logs the exception message!'
-            1 * Tsr._LOG.error(
-                    "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
+            1 * System.err.println(
+                    "[Test worker] ERROR neureka.Tsr - Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
                     "At index '1' : offset '1' + shape '3' = '4',\n" +
-                    "which is larger than the target shape '3' at the same index!",
-                    _
+                    "which is larger than the target shape '3' at the same index!"
             )
     }
 

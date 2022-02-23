@@ -72,7 +72,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
      */
-    public static Logger _LOG; // Why is this not final ? -> For unit testing!
+    protected static Logger _LOG;
 
     /**
      *  An instance of an implementation of the {@link NDConfiguration} interface defining

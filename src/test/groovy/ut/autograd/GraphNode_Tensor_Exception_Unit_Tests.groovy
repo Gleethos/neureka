@@ -10,7 +10,7 @@ import spock.lang.Specification
 class GraphNode_Tensor_Exception_Unit_Tests extends Specification
 {
 
-    @Shared def oldLogger
+    @Shared def oldStream
 
     def setupSpec()
     {
@@ -25,12 +25,12 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
 
     def setup() {
         Neureka.get().reset()
-        oldLogger = Tsr._LOG
-        Tsr._LOG = Mock( Logger )
+        oldStream = System.err
+        System.err = Mock(PrintStream)
     }
 
     def cleanup() {
-        Tsr._LOG = oldLogger
+        System.err = oldStream
     }
 
 
@@ -55,7 +55,7 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
             def exception = thrown(IllegalStateException)
             exception.message == "Cannot delete a tensor which is used as derivative by the AD computation graph!"
         and : 'The exception message is also being thrown.'
-            Tsr._LOG.error( "Cannot delete a tensor which is used as derivative by the AD computation graph!" )
+            1 * System.err.println( "[Test worker] ERROR neureka.Tsr - Cannot delete a tensor which is used as derivative by the AD computation graph!" )
     }
 
 }

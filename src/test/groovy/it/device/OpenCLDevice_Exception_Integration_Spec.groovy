@@ -7,10 +7,14 @@ import neureka.devices.opencl.CLContext
 import neureka.dtype.DataType
 import org.slf4j.Logger
 import spock.lang.IgnoreIf
+import spock.lang.Shared
 import spock.lang.Specification
 
 class OpenCLDevice_Exception_Integration_Spec extends Specification
 {
+
+    @Shared def oldStream
+
     def setupSpec()
     {
         reportHeader """
@@ -24,6 +28,14 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
         Neureka.get().reset()
     }
 
+    def setup() {
+        oldStream = System.err
+        System.err = Mock(PrintStream)
+    }
+
+    def cleanup() {
+        System.err = oldStream
+    }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
@@ -46,7 +58,7 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
             def exception = thrown(IllegalStateException)
 
         and : 'It explains what went wrong.'
-            exception.message=="Data parent is not outsourced!"
+            exception.message == "Data parent is not outsourced!"
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
@@ -127,9 +139,6 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
     {
         given :
             def device = Neureka.get().backend().get(CLContext.class).getPlatforms()[0].devices[0]
-        and : 'We create a new mock logger for the OpenCL device.'
-            def oldLogger = device._log
-            device._log = Mock( Logger )
 
         when : 'We pass a new tensor to the restore method of the device, even though the tensor is not stored on it...'
             device.restore( Tsr.newInstance() )
@@ -140,13 +149,10 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
                     "this OpenCL device because the tensor is not stored on the device.\n"
 
         and : 'This message is also being logged by the internal device logger.'
-            1 * device._log.error(
-                    "The passed tensor cannot be restored from " +
+            1 * System.err.println( "[Test worker] ERROR neureka.devices.opencl.OpenCLDevice - The passed tensor cannot be restored from " +
                     "this OpenCL device because the tensor is not stored on the device.\n"
             )
 
-        cleanup : 'Afterwards we restore the original logger!'
-            device._log = oldLogger
     }
 
 
