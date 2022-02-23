@@ -548,9 +548,10 @@ class Tensor_Operation_Integration_Spec extends Specification
         then : t.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
     }
 
-
-    def 'Matrix multiplication works for both column and row major matrices.'()
-    {
+    @IgnoreIf({device == 'GPU' && !Neureka.get().canAccessOpenCL()})
+    def 'Matrix multiplication works for both column and row major matrices.'(
+        String device, int expectedHash
+    ) {
         given :
             var a = Tsr.ofFloats().withShape(42, 73).andWhere({it, idx->((7**it)%10).floatValue()})
             var b = Tsr.ofFloats().withShape(73, 69).andWhere({it, idx->((5**it)%10).floatValue()})
