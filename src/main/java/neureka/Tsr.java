@@ -1509,9 +1509,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         if ( layout == this.getNDConf().getLayout() ) return;
 
         Tsr<V> transposed = this.T().clone().detach();
-        if ( !this.isVirtual() )
-            MemUtil.keep( this, transposed,
-                () -> Neureka.get().backend().getFunction().idy().execute( this, transposed )
+        if (!this.isVirtual())
+            MemUtil.keep(this, transposed,
+                () -> Neureka.get().backend().getFunction().idy().execute(this, transposed)
             );
 
         NDConfiguration old = this.getNDConf();

@@ -550,34 +550,31 @@ class Tensor_Operation_Integration_Spec extends Specification
 
     @IgnoreIf({device == 'GPU' && !Neureka.get().canAccessOpenCL()})
     def 'Matrix multiplication works for both column and row major matrices.'(
-        String device, int expectedHash
+        String device, String expectedString
     ) {
         given :
-            var a = Tsr.ofFloats().withShape(42, 73).andWhere({it, idx->((7**it)%10).floatValue()})
-            var b = Tsr.ofFloats().withShape(73, 69).andWhere({it, idx->((5**it)%10).floatValue()})
+            var a = Tsr.ofFloats().withShape(2, 3).andWhere({it, idx->((7**it)%11-5).floatValue()})
+            var b = Tsr.ofFloats().withShape(3, 4).andWhere({it, idx->((5**it)%11-5).floatValue()})
             Device.find(device).store(a).store(b)
-            var hash
+        expect :
+            a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
 
         when :
             a.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
             b.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
-        and :
-            hash = Arrays.hashCode(a.matMul(b).value as int[])
         then :
-            true//hash == expectedHash
+            a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
 
-        //when :
+        //when : // TODO: FIX!
         //    a.unsafe.toLayout(NDConfiguration.Layout.ROW_MAJOR)
         //    b.unsafe.toLayout(NDConfiguration.Layout.ROW_MAJOR)
-        //and :
-        //    hash = Arrays.hashCode(a.matMul(b).value)
         //then :
-        //    hash == expectedHash
+        //    a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
 
         where :
-            device  |  expectedHash
-            'CPU'   |  125923169
-            'GPU'   |  125923169
+            device  |  expectedString
+            'CPU'   |  '(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'
+            'GPU'   |  '(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'
 
     }
 
