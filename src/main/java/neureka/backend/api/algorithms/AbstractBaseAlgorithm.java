@@ -3,6 +3,8 @@ package neureka.backend.api.algorithms;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractBaseAlgorithm<C extends Algorithm<C>> implements Algorithm<C>
 {
+    private final Logger _LOG = LoggerFactory.getLogger(AbstractBaseAlgorithm.class);
+
     /**
      *  This is the name of this {@link Algorithm}
      *  which may be used as variable names in OpenCL kernels or other backends.
@@ -44,9 +48,9 @@ public abstract class AbstractBaseAlgorithm<C extends Algorithm<C>> implements A
             Class<D> deviceClass, E implementation
     ) {
         if ( _implementations.containsKey( deviceClass ) )
-            throw new IllegalArgumentException(
-                        "Implementation for device '"+deviceClass.getSimpleName()+"' already defined!"
-                    );
+            _LOG.info(
+                    "Implementation for device '"+deviceClass.getSimpleName()+"' already defined!"
+                );
 
         _implementations.put(
             (Class<Device<?>>) deviceClass,

@@ -548,7 +548,7 @@ class Tensor_Operation_Integration_Spec extends Specification
     }
 
     @IgnoreIf({device == 'GPU' && !Neureka.get().canAccessOpenCL()})
-    def 'Matrix multiplication works for both column and row major matrices.'(
+    def 'Matrix multiplication works for both column and row major matrices across devices.'(
         String device, String expectedString
     ) {
         given :
@@ -564,16 +564,16 @@ class Tensor_Operation_Integration_Spec extends Specification
         then :
             a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
 
-        //when : // TODO: FIX!
-        //    a.unsafe.toLayout(NDConfiguration.Layout.ROW_MAJOR)
-        //    b.unsafe.toLayout(NDConfiguration.Layout.ROW_MAJOR)
-        //then :
-        //    a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
+        when :
+            a.unsafe.toLayout(NDConfiguration.Layout.ROW_MAJOR)
+            b.unsafe.toLayout(NDConfiguration.Layout.ROW_MAJOR)
+        then :
+            a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
 
         where :
             device  |  expectedString
             'CPU'   |  '(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'
-            //'GPU'   |  '(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'
+            'GPU'   |  '(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'
 
     }
 

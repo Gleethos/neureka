@@ -1508,23 +1508,33 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     {
         if ( target == this.getNDConf().getLayout() ) return;
 
-        Tsr<V> transposed = this.T().clone().detach();
-        _assign( transposed, target == NDConfiguration.Layout.COLUMN_MAJOR );
+        NDConfiguration old = this.getNDConf();
 
+        if ( target == NDConfiguration.Layout.ROW_MAJOR )
+            _fromCMToRM();
+        else
+            _fromRMToCM();
+
+        _checkLayoutConversion( this.getNDConf(), old, target );
+    }
+
+    private void _fromCMToRM() {
+        Tsr<V> transposed = clone();
+        _setNDConf( transposed.getNDConf() );
+        _assign( transposed );
+    }
+
+    private void _fromRMToCM() {
+        Tsr<V> transposed = this.T().clone().detach();
+        _assign( transposed );
         NDConfiguration old = this.getNDConf();
         NDConfiguration newConf;
-
-        if ( old.getLayout() == NDConfiguration.Layout.COLUMN_MAJOR && target == NDConfiguration.Layout.ROW_MAJOR )
-            newConf = _createNewNDCFrom( old, target.newTranslationFor( old.shape() ), target.newTranslationFor( old.shape() ) );
-        else
-            newConf = _createNewNDCFrom( old, target.newTranslationFor( old.shape() ), old.translation() );
-
-        _checkLayoutConversion( newConf, old, target );
+        newConf = _createNewNDCFrom( old, NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor( old.shape() ), old.translation() );
         _setNDConf( newConf );
     }
 
-    private void _assign( Tsr<?> transposed, boolean doIt ) {
-        if ( !this.isVirtual() && doIt )
+    private void _assign( Tsr<?> transposed ) {
+        if ( !this.isVirtual() )
             MemUtil.keep(this, transposed,
                     () -> Neureka.get().backend().getFunction().idy().execute( this, transposed )
             );
@@ -1545,7 +1555,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             NDConfiguration oldConf,
             NDConfiguration.Layout targetLayout
     ) {
-
         if ( newConf.getLayout() != targetLayout )
             throw new IllegalArgumentException(
                     "Failed to convert this tensor from its original layout '"+oldConf.getLayout()+"' " +

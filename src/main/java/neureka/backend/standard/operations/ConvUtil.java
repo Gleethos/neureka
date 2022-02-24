@@ -137,7 +137,8 @@ public class ConvUtil {
     }
 
     public static Convolution getConv() {
-        if ( conv == null ) conv = createDeconvolutionFor("x");
+        if ( conv == null )
+            conv = createDeconvolutionFor("x");
         return ConvUtil.conv;
     }
 
