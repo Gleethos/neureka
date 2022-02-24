@@ -1504,45 +1504,53 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     |   ------------------------------------------
     */
 
-    private void _toLayout( NDConfiguration.Layout layout ) {
-
-        if ( layout == this.getNDConf().getLayout() ) return;
+    private void _toLayout( NDConfiguration.Layout target )
+    {
+        if ( target == this.getNDConf().getLayout() ) return;
 
         Tsr<V> transposed = this.T().clone().detach();
-        if (!this.isVirtual())
-            MemUtil.keep(this, transposed,
-                () -> Neureka.get().backend().getFunction().idy().execute(this, transposed)
-            );
+        _assign( transposed, target == NDConfiguration.Layout.COLUMN_MAJOR );
 
         NDConfiguration old = this.getNDConf();
         NDConfiguration newConf;
 
-        if ( old.getLayout() == NDConfiguration.Layout.COLUMN_MAJOR && layout == NDConfiguration.Layout.ROW_MAJOR )
-            newConf =
-                AbstractNDC.construct(
-                    old.shape(),
-                    NDConfiguration.Layout.ROW_MAJOR.newTranslationFor( old.shape() ),
-                    NDConfiguration.Layout.ROW_MAJOR.newTranslationFor( old.shape() ),
-                    old.spread(),
-                    old.offset()
-                );
+        if ( old.getLayout() == NDConfiguration.Layout.COLUMN_MAJOR && target == NDConfiguration.Layout.ROW_MAJOR )
+            newConf = _createNewNDCFrom( old, target.newTranslationFor( old.shape() ), target.newTranslationFor( old.shape() ) );
         else
-            newConf =
-                AbstractNDC.construct(
-                    old.shape(),
-                    layout.newTranslationFor( old.shape() ),
-                    old.translation(),
-                    old.spread(),
-                    old.offset()
-                );
+            newConf = _createNewNDCFrom( old, target.newTranslationFor( old.shape() ), old.translation() );
 
-        if ( newConf.getLayout() != layout )
-            throw new IllegalArgumentException(
-                "Failed to convert this tensor from its original layout '"+old.getLayout()+"' " +
-                "to target layout '"+layout+"'. Instead this tensor has layout '"+newConf.getLayout()+"'."
-            );
-
+        _checkLayoutConversion( newConf, old, target );
         _setNDConf( newConf );
+    }
+
+    private void _assign( Tsr<?> transposed, boolean doIt ) {
+        if ( !this.isVirtual() && doIt )
+            MemUtil.keep(this, transposed,
+                    () -> Neureka.get().backend().getFunction().idy().execute( this, transposed )
+            );
+    }
+
+    private static NDConfiguration _createNewNDCFrom( NDConfiguration old, int[] translation, int[] indicesMap ) {
+        return AbstractNDC.construct(
+                old.shape(),
+                translation,
+                indicesMap,
+                old.spread(),
+                old.offset()
+        );
+    }
+
+    private static void _checkLayoutConversion(
+            NDConfiguration newConf,
+            NDConfiguration oldConf,
+            NDConfiguration.Layout targetLayout
+    ) {
+
+        if ( newConf.getLayout() != targetLayout )
+            throw new IllegalArgumentException(
+                    "Failed to convert this tensor from its original layout '"+oldConf.getLayout()+"' " +
+                            "to target layout '"+targetLayout+"'. Instead this tensor has layout '"+newConf.getLayout()+"'."
+            );
     }
 
     /**

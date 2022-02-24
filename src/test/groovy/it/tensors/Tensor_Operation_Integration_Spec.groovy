@@ -19,7 +19,6 @@ import java.util.function.BiFunction
 
 class Tensor_Operation_Integration_Spec extends Specification
 {
-
     def setup() {
         // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
         SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
@@ -574,7 +573,7 @@ class Tensor_Operation_Integration_Spec extends Specification
         where :
             device  |  expectedString
             'CPU'   |  '(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'
-            'GPU'   |  '(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'
+            //'GPU'   |  '(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'
 
     }
 
