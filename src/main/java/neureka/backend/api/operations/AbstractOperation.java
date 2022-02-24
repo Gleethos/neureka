@@ -133,14 +133,13 @@ public abstract class AbstractOperation implements Operation
     @Override
     public <T extends Algorithm<T>> T getAlgorithm( Class<T> type ) {
         T found = (T) _algorithms.get( type );
-        if ( found == null ) { // Maybe the provided type is a superclass of one of the entries...
+        if ( found == null ) // Maybe the provided type is a superclass of one of the entries...
             return _algorithms.entrySet()
                                     .stream()
                                     .filter( e -> type.isAssignableFrom( e.getKey() ) )
                                     .map( e -> (T) e.getValue() )
                                     .findFirst()
                                     .orElse( null );
-        }
         else
             return found;
     }
@@ -171,6 +170,11 @@ public abstract class AbstractOperation implements Operation
      */
     @Override
     public <T extends Algorithm<T>> Operation setAlgorithm( Class<T> type, T instance ) {
+        if ( _algorithms.containsKey( type ) )
+            throw new IllegalArgumentException(
+                        "Algorithm of type '"+type.getSimpleName()+"' already defined for this operation!"
+                    );
+
         _algorithms.put( type, instance );
         return this;
     }
