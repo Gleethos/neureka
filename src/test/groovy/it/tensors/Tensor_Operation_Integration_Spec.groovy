@@ -538,7 +538,7 @@ class Tensor_Operation_Integration_Spec extends Specification
         given :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 
-        when : 'A three by two matrix is being transposed...'
+        when : 'A two by three matrix is being transposed...'
             Tsr t = Tsr.of([2, 3], [
                                 1d, 2d, 3d,
                                 4d, 5d, 6d
