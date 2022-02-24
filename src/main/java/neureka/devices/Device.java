@@ -78,7 +78,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @param searchKeys The search parameter and name of the requested {@link Device} instance.
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
-    static Device<?> find( String... searchKeys )
+    static Device<Object> find( String... searchKeys )
     {
         return find( Device.class, searchKeys );
     }
