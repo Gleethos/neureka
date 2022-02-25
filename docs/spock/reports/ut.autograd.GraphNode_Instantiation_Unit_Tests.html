@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Feb 04 16:08:13 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 25 23:22:48 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.048 seconds</td>
+<td>0.045 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -514,27 +514,27 @@ result.usesReverseAD()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>3 * context.getTensors() &gt;&gt; inputs
-5 * inputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
-1 * function.isDoingAD() &gt;&gt; true
-1 * payload.getDevice() &gt;&gt; device
-1 * payload.set( _ )
-1 * device.cleaning( payload, _ )
-4 * inputs[0].getGraphNode() &gt;&gt; inputsNodeMock
-3 * inputs[1].getGraphNode() &gt;&gt; inputsNodeMock
-3 * inputs[2].getGraphNode() &gt;&gt; inputsNodeMock
-1 * inputsNodeMock.getMode() &gt;&gt; -2
-1 * inputs[0].rqsGradient() &gt;&gt; true
-1 * inputs[1].rqsGradient() &gt;&gt; false
-1 * inputs[2].rqsGradient() &gt;&gt; true
-1 * context.allowsForward() &gt;&gt; true
-1 * context.allowsBackward() &gt;&gt; true
-3 * function.getOperation() &gt;&gt; type
-0 * type.isDifferentiable() &gt;&gt; true
-3 * type.isInline() &gt;&gt; false
-0 * type.getOperator() &gt;&gt; "*"
-3 * inputsNodeMock.getPayload() &gt;&gt; payload
-3 * payload.hashCode() &gt;&gt; 3</pre>
+<pre class='block-source'>(3.._) * context.getTensors() &gt;&gt; inputs
+(5.._) * inputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
+(1.._) * function.isDoingAD() &gt;&gt; true
+(1.._) * payload.getDevice() &gt;&gt; device
+(1.._) * payload.set( _ )
+(1.._) * device.cleaning( payload, _ )
+(4.._) * inputs[0].getGraphNode() &gt;&gt; inputsNodeMock
+(3.._) * inputs[1].getGraphNode() &gt;&gt; inputsNodeMock
+(3.._) * inputs[2].getGraphNode() &gt;&gt; inputsNodeMock
+(1.._) * inputsNodeMock.getMode() &gt;&gt; -2
+(1.._) * inputs[0].rqsGradient() &gt;&gt; true
+(1.._) * inputs[1].rqsGradient() &gt;&gt; false
+(1.._) * inputs[2].rqsGradient() &gt;&gt; true
+(1.._) * context.allowsForward() &gt;&gt; true
+(1.._) * context.allowsBackward() &gt;&gt; true
+(3.._) * function.getOperation() &gt;&gt; type
+(0.._) * type.isDifferentiable() &gt;&gt; true
+(3.._) * type.isInline() &gt;&gt; false
+(0.._) * type.getOperator() &gt;&gt; "*"
+(3.._) * inputsNodeMock.getPayload() &gt;&gt; payload
+(3.._) * payload.hashCode() &gt;&gt; 3</pre>
 </td>
 </tr>
 </tbody>

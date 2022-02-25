@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Feb 04 16:08:03 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 25 23:22:21 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,13 +329,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>6</td>
-<td>6</td>
+<td>8</td>
+<td>8</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.849 seconds</td>
+<td>2.549 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -380,10 +380,16 @@ div.footer {
 <a href='#-1262359990' class='feature-toc-pass'>Ad hoc compilation produces executable kernel.</a>
 </li>
 <li>
-<a href='#-508582404' class='feature-toc-pass'>Ad hoc compilation works for matrix multiplication.</a>
+<a href='#-218802024' class='feature-toc-pass'>Ad hoc compilation works for WIP general purpose matrix multiplication.</a>
 </li>
 <li>
-<a href='#-412425968' class='feature-toc-pass'>Ad hoc compilation works for OpenCL backends matrix multiplication.</a>
+<a href='#-2125717213' class='feature-toc-pass'>Ad hoc matrix multiplication works for multiple of 16 matrices.</a>
+</li>
+<li>
+<a href='#-242898283' class='feature-toc-pass'>Ad hoc compilation works for custom simple row major based matrix multiplication.</a>
+</li>
+<li>
+<a href='#-1994867243' class='feature-toc-pass'>Ad hoc compilation works for custom column major based tiled matrix multiplication.</a>
 </li>
 </ul>
 <tr>
@@ -628,8 +634,8 @@ div.footer {
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-508582404'>
-<span>Ad hoc compilation works for matrix multiplication.</span>
+<div class='feature-description' id='-218802024'>
+<span>Ad hoc compilation works for WIP general purpose matrix multiplication.</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -732,9 +738,18 @@ div.footer {
 <td class='ex-value'>4</td>
 <td class='ex-value'>16</td>
 <td class='ex-value'>4</td>
-<td class='ex-value'>6</td>
+<td class='ex-value'>16</td>
 <td class='ex-value'>8</td>
-<td class='ex-value'>(4x8):[-44.0, -32.0, -32.0, -20.0, -32.0, -20.0, -44.0, -32.0, -32.0, -20.0, -44.0, -32.0, -32.0, -20.0, -32.0, -20.0, -32.0, -20.0, -32.0, -20.0, -44.0, -32.0, -32.0, -20.0, -44.0, -32.0, -32.0, -20.0, -32.0, -20.0, -44.0, -32.0]</td>
+<td class='ex-value'>&lt;null&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>4</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>32</td>
+<td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -742,13 +757,13 @@ div.footer {
 </div>
 </td>
 <td>
-<div class='spec-status'>3/3 passed</div>
+<div class='spec-status'>4/4 passed</div>
 </td>
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-412425968'>
-<span>Ad hoc compilation works for OpenCL backends matrix multiplication.</span>
+<div class='feature-description' id='-2125717213'>
+<span>Ad hoc matrix multiplication works for multiple of 16 matrices.</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -844,12 +859,338 @@ div.footer {
 <td class='ex-value'>(32x32):[160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, -305.0, -145.0, -18.0, 76.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, ... + 974 more]</td>
 <td class='ex-result'>OK</td>
 </tr>
+<tr class='ex-pass'>
+<td class='ex-value'>11</td>
+<td class='ex-value'>64</td>
+<td class='ex-value'>64</td>
+<td class='ex-value'>64</td>
+<td class='ex-value'>&lt;null&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
 </tbody>
 </table>
 </div>
 </td>
 <td>
-<div class='spec-status'>2/2 passed</div>
+<div class='spec-status'>3/3 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-242898283'>
+<span>Ad hoc compilation works for custom simple row major based matrix multiplication.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>Matrix multiplication kernel will work for all dimensions reasonably well!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>seed</th>
+<th class='ex-header'>M</th>
+<th class='ex-header'>K</th>
+<th class='ex-header'>N</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>(2x2):[8.0, 1.0, 4.0, 1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>(4x4):[13.0, 3.0, -7.0, -17.0, -11.0, -5.0, 1.0, 7.0, 31.0, 31.0, 31.0, 31.0, 7.0, 1.0, -5.0, -11.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>(16x16):[-8.0, -62.0, -17.0, 39.0, 51.0, 30.0, -13.0, -78.0, 0.0, 34.0, 24.0, -8.0, -62.0, -17.0, 39.0, 51.0, -28.0, 9.0, 24.0, -5.0, -78.0, -8.0, 40.0, 66.0, 59.0, 8.0, -87.0, -28.0, 9.0, 24.0, -5.0, -78.0, 40.0, -8.0, -78.0, -5.0, 24.0, 9.0, -28.0, -87.0, 8.0, 59.0, 66.0, 40.0, -8.0, -78.0, -5.0, 24.0, -13.0, 30.0, ... + 206 more]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>(2x2):[0.0, -10.0, 16.0, 22.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>3</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>(2x2):[4.0, -5.0, 4.0, 4.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>17</td>
+<td class='ex-value'>18</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>(17x16):[-17.0, -68.0, -20.0, 39.0, 54.0, 25.0, -15.0, -77.0, 4.0, 41.0, 34.0, -17.0, -68.0, -20.0, 39.0, 54.0, 15.0, 13.0, -11.0, -101.0, 7.0, 71.0, 80.0, 67.0, -1.0, -113.0, -27.0, 15.0, 13.0, -11.0, -101.0, 7.0, -85.0, -27.0, 9.0, 23.0, -7.0, -81.0, -12.0, 35.0, 71.0, 63.0, 11.0, -85.0, -27.0, 9.0, 23.0, -7.0, 35.0, -12.0, ... + 222 more]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>32</td>
+<td class='ex-value'>32</td>
+<td class='ex-value'>32</td>
+<td class='ex-value'>(32x32):[160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, -305.0, -145.0, -18.0, 76.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, ... + 974 more]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>11</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>32</td>
+<td class='ex-value'>(16x32):[-33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, -84.0, -16.0, 30.0, 54.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, ... + 462 more]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>8/8 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1994867243'>
+<span>Ad hoc compilation works for custom column major based tiled matrix multiplication.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We create column major based matrices!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>This kernel will work for all dimensions well:</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>seed</th>
+<th class='ex-header'>M</th>
+<th class='ex-header'>K</th>
+<th class='ex-header'>N</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>(2x2):[8.0, 1.0, 4.0, 1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>(4x4):[13.0, 3.0, -7.0, -17.0, -11.0, -5.0, 1.0, 7.0, 31.0, 31.0, 31.0, 31.0, 7.0, 1.0, -5.0, -11.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>(16x16):[-8.0, -62.0, -17.0, 39.0, 51.0, 30.0, -13.0, -78.0, 0.0, 34.0, 24.0, -8.0, -62.0, -17.0, 39.0, 51.0, -28.0, 9.0, 24.0, -5.0, -78.0, -8.0, 40.0, 66.0, 59.0, 8.0, -87.0, -28.0, 9.0, 24.0, -5.0, -78.0, 40.0, -8.0, -78.0, -5.0, 24.0, 9.0, -28.0, -87.0, 8.0, 59.0, 66.0, 40.0, -8.0, -78.0, -5.0, 24.0, -13.0, 30.0, ... + 206 more]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>(2x2):[0.0, -10.0, 16.0, 22.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>3</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>(2x2):[4.0, -5.0, 4.0, 4.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>17</td>
+<td class='ex-value'>18</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>(17x16):[-17.0, -68.0, -20.0, 39.0, 54.0, 25.0, -15.0, -77.0, 4.0, 41.0, 34.0, -17.0, -68.0, -20.0, 39.0, 54.0, 15.0, 13.0, -11.0, -101.0, 7.0, 71.0, 80.0, 67.0, -1.0, -113.0, -27.0, 15.0, 13.0, -11.0, -101.0, 7.0, -85.0, -27.0, 9.0, 23.0, -7.0, -81.0, -12.0, 35.0, 71.0, 63.0, 11.0, -85.0, -27.0, 9.0, 23.0, -7.0, 35.0, -12.0, ... + 222 more]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>7</td>
+<td class='ex-value'>32</td>
+<td class='ex-value'>32</td>
+<td class='ex-value'>32</td>
+<td class='ex-value'>(32x32):[160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, -305.0, -145.0, -18.0, 76.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, ... + 974 more]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>11</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>32</td>
+<td class='ex-value'>(16x32):[-33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, -84.0, -16.0, 30.0, 54.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, ... + 462 more]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>5</td>
+<td class='ex-value'>167</td>
+<td class='ex-value'>73</td>
+<td class='ex-value'>88</td>
+<td class='ex-value'>(167x88):[40.0, 30.0, 20.0, 10.0, 0.0, -10.0, -20.0, -30.0, -40.0, -50.0, 50.0, 40.0, 30.0, 20.0, 10.0, 0.0, -10.0, -20.0, -30.0, -40.0, -50.0, 50.0, 40.0, 30.0, 20.0, 10.0, 0.0, -10.0, -20.0, -30.0, -40.0, -50.0, 50.0, 40.0, 30.0, 20.0, 10.0, 0.0, -10.0, -20.0, -30.0, -40.0, -50.0, 50.0, 40.0, 30.0, 20.0, 10.0, 0.0, -10.0, ... + 14646 more]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>9/9 passed</div>
 </td>
 </tr>
 </tbody>

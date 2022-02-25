@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Feb 04 16:08:04 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 25 23:22:11 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.202 seconds</td>
+<td>0.113 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -403,7 +403,7 @@ Tsr b = Tsr.of(2)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>a.NDConf instanceof SimpleScalarConfiguration</pre>
+<pre class='block-source'>a.NDConf instanceof Simple0DConfiguration</pre>
 </td>
 </tr>
 <tr>
@@ -475,9 +475,9 @@ Tsr&lt;Object&gt; z = Tsr.of([1.4, 2, 4])</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>x.NDConf instanceof SimpleD1Configuration
-y.NDConf instanceof SimpleD1Configuration
-z.NDConf instanceof SimpleD1Configuration</pre>
+<pre class='block-source'>x.NDConf instanceof Simple1DConfiguration
+y.NDConf instanceof Simple1DConfiguration
+z.NDConf instanceof Simple1DConfiguration</pre>
 </td>
 </tr>
 <tr>
@@ -511,8 +511,8 @@ x.NDConf.translation(0) == 1
 x.NDConf.indicesMap(0) == 1
 x.NDConf.offset(0) == 0
 x.NDConf.spread(0) == 1
-x[2].NDConf instanceof ComplexScalarConfiguration
-y[1.1].NDConf instanceof ComplexScalarConfiguration
+x[2].NDConf instanceof Sliced0DConfiguration
+y[1.1].NDConf instanceof Sliced0DConfiguration
 y[1.1].NDConf != x[2].NDConf
 y[1.1].NDConf == z[1].NDConf</pre>
 </td>
@@ -575,7 +575,7 @@ x.NDConf.spread(0) == 1</pre>
 <td></td>
 <td>
 <pre class='block-source'>y.toString().contains("(2):[4.5, 2.0]")
-y.NDConf instanceof ComplexD1Configuration
+y.NDConf instanceof Sliced1DConfiguration
 y.NDConf.shape(0) == 2
 y.NDConf.translation(0) == 1
 y.NDConf.indicesMap(0) == 1

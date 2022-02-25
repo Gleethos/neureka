@@ -128,70 +128,68 @@ import java.util.List;
 <span class="fc" id="L128">                        newTranslation.stream().mapToInt( i -&gt; i ).toArray(),</span>
 <span class="fc" id="L129">                        newIdxmap.stream().mapToInt( i -&gt; i ).toArray(),</span>
 <span class="fc" id="L130">                        newSpread.stream().mapToInt( i -&gt; i ).toArray(),</span>
-<span class="fc" id="L131">                        newOffset.stream().mapToInt( i -&gt; i ).toArray(),</span>
-                        NDConfiguration.Layout.ROW_MAJOR
+<span class="fc" id="L131">                        newOffset.stream().mapToInt( i -&gt; i ).toArray()</span>
                 )
         );
-<span class="fc" id="L135">        return tensor;</span>
+<span class="fc" id="L134">        return tensor;</span>
     }
 
     private static Tsr&lt;?&gt; _trim( Tsr&lt;?&gt; tensor, int[] ends, boolean newTsr )
     {
-<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )</span>
-<span class="nc" id="L141">            throw new IllegalArgumentException(&quot;Column major not yet supported for shape trimming!&quot;);</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )</span>
+<span class="nc" id="L140">            throw new IllegalArgumentException(&quot;Column major not yet supported for shape trimming!&quot;);</span>
 
-<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        tensor = ( newTsr ? tensor.getAt( new ArrayList&lt;&gt;() ).getUnsafe().setIsIntermediate( true ) : tensor );</span>
-<span class="fc" id="L144">        List&lt;Integer&gt; newShape = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L145">        List&lt;Integer&gt; newTranslation = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L146">        List&lt;Integer&gt; newIdxmap = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L147">        List&lt;Integer&gt; newSpread = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L148">        List&lt;Integer&gt; newOffset = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L149">        int[] shape = tensor.getNDConf().shape();</span>
-<span class="fc" id="L150">        int prefix = 0;</span>
-<span class="fc bfc" id="L151" title="All 4 branches covered.">        for ( int s : shape ) if ( s == 1 ) prefix++; else break;</span>
-<span class="fc" id="L152">        int postfix = 0;</span>
-<span class="fc bfc" id="L153" title="All 4 branches covered.">        for ( int i = shape.length-1; i &gt;= 0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;</span>
-<span class="fc bfc" id="L154" title="All 2 branches covered.">        for ( int i = prefix; i &lt; shape.length-postfix; i++ ) {</span>
-<span class="fc" id="L155">            newShape.add( shape[ i ] );</span>
-<span class="fc" id="L156">            newTranslation.add( tensor.getNDConf().translation( i ) );</span>
-<span class="fc" id="L157">            newIdxmap.add( tensor.getNDConf().indicesMap( i ) );</span>
-<span class="fc" id="L158">            newSpread.add( tensor.getNDConf().spread( i ) );</span>
-<span class="fc" id="L159">            newOffset.add( tensor.getNDConf().offset( i ) );</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">        tensor = ( newTsr ? tensor.getAt( new ArrayList&lt;&gt;() ).getUnsafe().setIsIntermediate( true ) : tensor );</span>
+<span class="fc" id="L143">        List&lt;Integer&gt; newShape = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L144">        List&lt;Integer&gt; newTranslation = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L145">        List&lt;Integer&gt; newIdxmap = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L146">        List&lt;Integer&gt; newSpread = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L147">        List&lt;Integer&gt; newOffset = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L148">        int[] shape = tensor.getNDConf().shape();</span>
+<span class="fc" id="L149">        int prefix = 0;</span>
+<span class="fc bfc" id="L150" title="All 4 branches covered.">        for ( int s : shape ) if ( s == 1 ) prefix++; else break;</span>
+<span class="fc" id="L151">        int postfix = 0;</span>
+<span class="fc bfc" id="L152" title="All 4 branches covered.">        for ( int i = shape.length-1; i &gt;= 0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        for ( int i = prefix; i &lt; shape.length-postfix; i++ ) {</span>
+<span class="fc" id="L154">            newShape.add( shape[ i ] );</span>
+<span class="fc" id="L155">            newTranslation.add( tensor.getNDConf().translation( i ) );</span>
+<span class="fc" id="L156">            newIdxmap.add( tensor.getNDConf().indicesMap( i ) );</span>
+<span class="fc" id="L157">            newSpread.add( tensor.getNDConf().spread( i ) );</span>
+<span class="fc" id="L158">            newOffset.add( tensor.getNDConf().offset( i ) );</span>
         }
-<span class="fc" id="L161">        tensor.getUnsafe()</span>
-<span class="fc" id="L162">              .setNDConf(</span>
-<span class="fc" id="L163">                AbstractNDC.construct(</span>
-<span class="fc" id="L164">                        newShape.stream().mapToInt( i -&gt; i ).toArray(),</span>
-<span class="fc" id="L165">                        newTranslation.stream().mapToInt( i -&gt; i ).toArray(),</span>
-<span class="fc" id="L166">                        newIdxmap.stream().mapToInt( i -&gt; i ).toArray(),</span>
-<span class="fc" id="L167">                        newSpread.stream().mapToInt( i -&gt; i ).toArray(),</span>
-<span class="fc" id="L168">                        newOffset.stream().mapToInt( i -&gt; i ).toArray(),</span>
-                        NDConfiguration.Layout.ROW_MAJOR
+<span class="fc" id="L160">        tensor.getUnsafe()</span>
+<span class="fc" id="L161">              .setNDConf(</span>
+<span class="fc" id="L162">                AbstractNDC.construct(</span>
+<span class="fc" id="L163">                        newShape.stream().mapToInt( i -&gt; i ).toArray(),</span>
+<span class="fc" id="L164">                        newTranslation.stream().mapToInt( i -&gt; i ).toArray(),</span>
+<span class="fc" id="L165">                        newIdxmap.stream().mapToInt( i -&gt; i ).toArray(),</span>
+<span class="fc" id="L166">                        newSpread.stream().mapToInt( i -&gt; i ).toArray(),</span>
+<span class="fc" id="L167">                        newOffset.stream().mapToInt( i -&gt; i ).toArray()</span>
                 )
         );
-<span class="fc" id="L172">        ends[ 0 ] = prefix;</span>
-<span class="fc" id="L173">        ends[ 1 ] = postfix;</span>
-<span class="fc" id="L174">        return tensor;</span>
+<span class="fc" id="L170">        ends[ 0 ] = prefix;</span>
+<span class="fc" id="L171">        ends[ 1 ] = postfix;</span>
+<span class="fc" id="L172">        return tensor;</span>
     }
 
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L180">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L181" title="3 of 4 branches missed.">        if ( expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')' ) {</span>
-<span class="nc" id="L182">            return &quot;dimtrim&quot; + expression;</span>
+<span class="fc" id="L178">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L179" title="3 of 4 branches missed.">        if ( expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')' ) {</span>
+<span class="nc" id="L180">            return &quot;dimtrim&quot; + expression;</span>
         }
-<span class="fc" id="L184">        return &quot;dimtrim&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="fc" id="L182">        return &quot;dimtrim&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L189">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L187">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L194">        return src[ 0 ].call( inputs, j );</span>
+<span class="nc" id="L192">        return src[ 0 ].call( inputs, j );</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

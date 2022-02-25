@@ -26,160 +26,166 @@ public class Functions {
 
     private final Function _matMul;
     private final Function _transpose2D;
+    private final Function _random;
 
-<span class="fc" id="L30">    public Functions( boolean doingAD ) {</span>
-<span class="fc" id="L31">        _dimTrim = Function.of( &quot;dimtrim(I[ 0 ])&quot;,             doingAD );</span>
-<span class="fc" id="L32">        _idy = Function.of( &quot;I[ 0 ]&lt;-I[ 1 ]&quot;,                  doingAD );</span>
-<span class="fc" id="L33">        _conv = Function.of( &quot;I[ 0 ]xI[ 1 ]&quot;,                  doingAD );</span>
-<span class="fc" id="L34">        _plus = Function.of( &quot;(I[ 0 ]+I[ 1 ])&quot;,                doingAD );</span>
-<span class="fc" id="L35">        _plusAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]+I[ 1 ])&quot;,  doingAD );</span>
-<span class="fc" id="L36">        _minus = Function.of( &quot;(I[ 0 ]-I[ 1 ])&quot;,               doingAD );</span>
-<span class="fc" id="L37">        _minusAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]-I[ 1 ])&quot;, doingAD );</span>
-<span class="fc" id="L38">        _div = Function.of( &quot;(I[ 0 ]/I[ 1 ])&quot;,                 doingAD );</span>
-<span class="fc" id="L39">        _divAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]/I[ 1 ])&quot;,   doingAD );</span>
-<span class="fc" id="L40">        _pow = Function.of( &quot;(I[ 0 ]^I[ 1 ])&quot;,                 doingAD );</span>
-<span class="fc" id="L41">        _powAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]^I[ 1 ])&quot;,   doingAD );</span>
-<span class="fc" id="L42">        _mul = Function.of( &quot;I[ 0 ]*I[ 1 ]&quot;,                   doingAD );</span>
-<span class="fc" id="L43">        _mulAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]*I[ 1 ])&quot;,   doingAD );</span>
-<span class="fc" id="L44">        _add = Function.of( &quot;I[ 0 ]+I[ 1 ]&quot;,                   doingAD );</span>
-<span class="fc" id="L45">        _addAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]+I[ 1 ])&quot;,   doingAD );</span>
-<span class="fc" id="L46">        _mod = Function.of( &quot;(I[ 0 ]%I[ 1 ])&quot;,                 doingAD );</span>
-<span class="fc" id="L47">        _modAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]%I[ 1 ])&quot;,   doingAD );</span>
-<span class="fc" id="L48">        _neg = Function.of( &quot;(-1*I[ 0 ])&quot;,                     doingAD );</span>
-<span class="fc" id="L49">        _matMul = Function.of(&quot;I[0] @ I[1]&quot;,                   doingAD );</span>
-<span class="fc" id="L50">        _transpose2D = Function.of(&quot;[1, 0]:(I[0])&quot;,            doingAD );</span>
-<span class="fc" id="L51">    }</span>
+<span class="fc" id="L31">    public Functions( boolean doingAD ) {</span>
+<span class="fc" id="L32">        _dimTrim = Function.of( &quot;dimtrim(I[ 0 ])&quot;,             doingAD );</span>
+<span class="fc" id="L33">        _idy = Function.of( &quot;I[ 0 ]&lt;-I[ 1 ]&quot;,                  doingAD );</span>
+<span class="fc" id="L34">        _conv = Function.of( &quot;I[ 0 ]xI[ 1 ]&quot;,                  doingAD );</span>
+<span class="fc" id="L35">        _plus = Function.of( &quot;(I[ 0 ]+I[ 1 ])&quot;,                doingAD );</span>
+<span class="fc" id="L36">        _plusAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]+I[ 1 ])&quot;,  doingAD );</span>
+<span class="fc" id="L37">        _minus = Function.of( &quot;(I[ 0 ]-I[ 1 ])&quot;,               doingAD );</span>
+<span class="fc" id="L38">        _minusAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]-I[ 1 ])&quot;, doingAD );</span>
+<span class="fc" id="L39">        _div = Function.of( &quot;(I[ 0 ]/I[ 1 ])&quot;,                 doingAD );</span>
+<span class="fc" id="L40">        _divAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]/I[ 1 ])&quot;,   doingAD );</span>
+<span class="fc" id="L41">        _pow = Function.of( &quot;(I[ 0 ]^I[ 1 ])&quot;,                 doingAD );</span>
+<span class="fc" id="L42">        _powAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]^I[ 1 ])&quot;,   doingAD );</span>
+<span class="fc" id="L43">        _mul = Function.of( &quot;I[ 0 ]*I[ 1 ]&quot;,                   doingAD );</span>
+<span class="fc" id="L44">        _mulAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]*I[ 1 ])&quot;,   doingAD );</span>
+<span class="fc" id="L45">        _add = Function.of( &quot;I[ 0 ]+I[ 1 ]&quot;,                   doingAD );</span>
+<span class="fc" id="L46">        _addAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]+I[ 1 ])&quot;,   doingAD );</span>
+<span class="fc" id="L47">        _mod = Function.of( &quot;(I[ 0 ]%I[ 1 ])&quot;,                 doingAD );</span>
+<span class="fc" id="L48">        _modAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]%I[ 1 ])&quot;,   doingAD );</span>
+<span class="fc" id="L49">        _neg = Function.of( &quot;(-1*I[ 0 ])&quot;,                     doingAD );</span>
+<span class="fc" id="L50">        _matMul = Function.of(&quot;I[0] @ I[1]&quot;,                   doingAD );</span>
+<span class="fc" id="L51">        _transpose2D = Function.of(&quot;[1, 0]:(I[0])&quot;,            doingAD );</span>
+<span class="fc" id="L52">        _random = Function.of(&quot;random(I[0])&quot;,                  doingAD );</span>
+<span class="fc" id="L53">    }</span>
 
-<span class="nc" id="L53">    public Function getDimTrim() { return _dimTrim; }</span>
+<span class="nc" id="L55">    public Function getDimTrim() { return _dimTrim; }</span>
 
-<span class="nc" id="L55">    public Function getIdy() { return _idy; }</span>
+<span class="fc" id="L57">    public Function getIdy() { return _idy; }</span>
 
-<span class="nc" id="L57">    public Function getConv() { return _conv; }</span>
+<span class="nc" id="L59">    public Function getConv() { return _conv; }</span>
 
-<span class="nc" id="L59">    public Function getPlus() { return _plus; }</span>
+<span class="nc" id="L61">    public Function getPlus() { return _plus; }</span>
 
-<span class="nc" id="L61">    public Function getPlusAssign() { return _plusAssign; }</span>
+<span class="nc" id="L63">    public Function getPlusAssign() { return _plusAssign; }</span>
 
-<span class="nc" id="L63">    public Function getMinus() { return _minus; }</span>
+<span class="nc" id="L65">    public Function getMinus() { return _minus; }</span>
 
-<span class="nc" id="L65">    public Function getMinusAssign() { return _minusAssign; }</span>
+<span class="nc" id="L67">    public Function getMinusAssign() { return _minusAssign; }</span>
 
-<span class="nc" id="L67">    public Function getDiv() { return _div; }</span>
+<span class="nc" id="L69">    public Function getDiv() { return _div; }</span>
 
-<span class="nc" id="L69">    public Function getDivAssign() { return _divAssign; }</span>
+<span class="nc" id="L71">    public Function getDivAssign() { return _divAssign; }</span>
 
-<span class="nc" id="L71">    public Function getPow() { return _pow; }</span>
+<span class="nc" id="L73">    public Function getPow() { return _pow; }</span>
 
-<span class="nc" id="L73">    public Function getPowAssign() { return _powAssign; }</span>
+<span class="nc" id="L75">    public Function getPowAssign() { return _powAssign; }</span>
 
-<span class="nc" id="L75">    public Function getMul() { return _mul; }</span>
+<span class="nc" id="L77">    public Function getMul() { return _mul; }</span>
 
-<span class="nc" id="L77">    public Function getMulAssign() { return _mulAssign; }</span>
+<span class="nc" id="L79">    public Function getMulAssign() { return _mulAssign; }</span>
 
-<span class="nc" id="L79">    public Function getAdd() { return _add; }</span>
+<span class="nc" id="L81">    public Function getAdd() { return _add; }</span>
 
-<span class="nc" id="L81">    public Function getAddAssign() { return _addAssign; }</span>
+<span class="nc" id="L83">    public Function getAddAssign() { return _addAssign; }</span>
 
-<span class="nc" id="L83">    public Function getMod() { return _mod; }</span>
+<span class="nc" id="L85">    public Function getMod() { return _mod; }</span>
 
-<span class="nc" id="L85">    public Function getModAssign() { return _modAssign; }</span>
+<span class="nc" id="L87">    public Function getModAssign() { return _modAssign; }</span>
 
-<span class="nc" id="L87">    public Function getNeg() { return _neg; }</span>
+<span class="nc" id="L89">    public Function getNeg() { return _neg; }</span>
 
-<span class="nc" id="L89">    public Function getMatMul() { return _matMul; }</span>
+<span class="nc" id="L91">    public Function getMatMul() { return _matMul; }</span>
 
-<span class="nc" id="L91">    public Function getTranspose2D() { return _transpose2D; }</span>
+<span class="nc" id="L93">    public Function getTranspose2D() { return _transpose2D; }</span>
+
+<span class="nc" id="L95">    public Function getRandom() { return _random; }</span>
 
     public Function dimTrim() {
-<span class="fc" id="L94">        return _dimTrim;</span>
+<span class="fc" id="L98">        return _dimTrim;</span>
     }
 
     public Function idy() {
-<span class="fc" id="L98">        return _idy;</span>
+<span class="fc" id="L102">        return _idy;</span>
     }
 
     public Function conv() {
-<span class="fc" id="L102">        return _conv;</span>
+<span class="fc" id="L106">        return _conv;</span>
     }
 
     public Function plus() {
-<span class="fc" id="L106">        return _plus;</span>
+<span class="fc" id="L110">        return _plus;</span>
     }
 
     public Function plusAssign() {
-<span class="fc" id="L110">        return _plusAssign;</span>
+<span class="fc" id="L114">        return _plusAssign;</span>
     }
 
     public Function minus() {
-<span class="fc" id="L114">        return _minus;</span>
+<span class="fc" id="L118">        return _minus;</span>
     }
 
     public Function minusAssign() {
-<span class="fc" id="L118">        return _minusAssign;</span>
+<span class="fc" id="L122">        return _minusAssign;</span>
     }
 
     public Function div() {
-<span class="fc" id="L122">        return _div;</span>
+<span class="fc" id="L126">        return _div;</span>
     }
 
     public Function divAssign() {
-<span class="fc" id="L126">        return _divAssign;</span>
+<span class="fc" id="L130">        return _divAssign;</span>
     }
 
     public Function pow() {
-<span class="fc" id="L130">        return _pow;</span>
+<span class="fc" id="L134">        return _pow;</span>
     }
 
     public Function powAssign() {
-<span class="nc" id="L134">        return _powAssign;</span>
+<span class="nc" id="L138">        return _powAssign;</span>
     }
 
     public Function mul() {
-<span class="fc" id="L138">        return _mul;</span>
+<span class="fc" id="L142">        return _mul;</span>
     }
 
     public Function mulAssign() {
-<span class="fc" id="L142">        return _mulAssign;</span>
+<span class="fc" id="L146">        return _mulAssign;</span>
     }
 
     public Function add() {
-<span class="nc" id="L146">        return _add;</span>
+<span class="nc" id="L150">        return _add;</span>
     }
 
     public Function addAssign() {
-<span class="nc" id="L150">        return _addAssign;</span>
+<span class="nc" id="L154">        return _addAssign;</span>
     }
 
     public Function mod() {
-<span class="fc" id="L154">        return _mod;</span>
+<span class="fc" id="L158">        return _mod;</span>
     }
 
     public Function modAssign() {
-<span class="nc" id="L158">        return _modAssign;</span>
+<span class="nc" id="L162">        return _modAssign;</span>
     }
 
     public Function neg() {
-<span class="fc" id="L162">        return _neg;</span>
+<span class="fc" id="L166">        return _neg;</span>
     }
 
-<span class="fc" id="L165">    public Function matMul() { return _matMul; }</span>
+<span class="fc" id="L169">    public Function matMul() { return _matMul; }</span>
 
-<span class="fc" id="L167">    public Function transpose2D() { return _transpose2D; }</span>
+<span class="fc" id="L171">    public Function transpose2D() { return _transpose2D; }</span>
+
+<span class="fc" id="L173">    public Function random() { return _random; }</span>
 
     @Override
     public String toString() {
-<span class="fc" id="L171">        String state =</span>
-<span class="fc" id="L172">                Arrays.stream(this.getClass().getDeclaredFields())</span>
-<span class="fc" id="L173">                      .map( field -&gt; {</span>
+<span class="fc" id="L177">        String state =</span>
+<span class="fc" id="L178">                Arrays.stream(this.getClass().getDeclaredFields())</span>
+<span class="fc" id="L179">                      .map( field -&gt; {</span>
                           try {
-<span class="fc" id="L175">                              return field.getName()+&quot;=&quot;+field.get(this).toString()+&quot;&quot;;</span>
-<span class="nc" id="L176">                          } catch (IllegalAccessException e) {</span>
-<span class="nc" id="L177">                              return field.getName()+&quot;=?&quot;;</span>
+<span class="fc" id="L181">                              return field.getName()+&quot;=&quot;+field.get(this).toString()+&quot;&quot;;</span>
+<span class="nc" id="L182">                          } catch (IllegalAccessException e) {</span>
+<span class="nc" id="L183">                              return field.getName()+&quot;=?&quot;;</span>
                           }
                       })
-<span class="fc" id="L180">                      .collect(Collectors.joining(&quot;,&quot;));</span>
+<span class="fc" id="L186">                      .collect(Collectors.joining(&quot;,&quot;));</span>
 
-<span class="fc" id="L182">        return this.getClass().getSimpleName()+&quot;[&quot;+state+&quot;]&quot;;</span>
+<span class="fc" id="L188">        return this.getClass().getSimpleName()+&quot;[&quot;+state+&quot;]&quot;;</span>
     }
 
 }

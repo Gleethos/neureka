@@ -68,9 +68,9 @@ public interface ImplementationFor&lt; TargetDevice extends Device&lt;?&gt; &gt;
      */
     void run( ExecutionCall&lt;TargetDevice&gt; call );
 
-    default Tsr&lt;?&gt; runAndGetFirstTensor(ExecutionCall&lt;TargetDevice&gt; call ) {
+    default Tsr&lt;?&gt; runAndGetFirstTensor( ExecutionCall&lt;TargetDevice&gt; call ) {
 <span class="fc" id="L72">        this.run( call );</span>
-<span class="fc" id="L73">        return call.getTensors()[0];</span>
+<span class="fc" id="L73">        return call.tensor( 0 );</span>
     }
 
 }

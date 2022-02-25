@@ -2,11 +2,10 @@
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.standard.algorithms.Fun;
+import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
-import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.devices.Device;
@@ -18,108 +17,108 @@ public final class Sinus extends AbstractOperation
 {
     public Sinus()
     {
-<span class="fc" id="L21">        super(</span>
+<span class="fc" id="L20">        super(</span>
             new OperationBuilder()
-<span class="fc" id="L23">                .setFunction(         &quot;sin&quot;    )</span>
-<span class="fc" id="L24">                .setOperator(         &quot;sin&quot;    )</span>
-<span class="fc" id="L25">                .setArity(            1        )</span>
-<span class="fc" id="L26">                .setIsOperator(       false    )</span>
-<span class="fc" id="L27">                .setIsIndexer(        false    )</span>
-<span class="fc" id="L28">                .setIsDifferentiable( true     )</span>
-<span class="fc" id="L29">                .setIsInline(         false    )</span>
+<span class="fc" id="L22">                .setFunction(         &quot;sin&quot;    )</span>
+<span class="fc" id="L23">                .setOperator(         &quot;sin&quot;    )</span>
+<span class="fc" id="L24">                .setArity(            1        )</span>
+<span class="fc" id="L25">                .setIsOperator(       false    )</span>
+<span class="fc" id="L26">                .setIsIndexer(        false    )</span>
+<span class="fc" id="L27">                .setIsDifferentiable( true     )</span>
+<span class="fc" id="L28">                .setIsInline(         false    )</span>
         );
 
-<span class="fc" id="L32">        Activation operationAlgorithm =</span>
+<span class="fc" id="L31">        Activation operationAlgorithm =</span>
                 new Activation()
-<span class="pc" id="L34">                    .setCanPerformBackwardADFor( call -&gt; true )</span>
-<span class="fc" id="L35">                    .setCanPerformForwardADFor(</span>
+<span class="pc" id="L33">                    .setCanPerformBackwardADFor( call -&gt; true )</span>
+<span class="fc" id="L34">                    .setCanPerformForwardADFor(</span>
                          call -&gt; {
-<span class="nc" id="L37">                             Tsr&lt;?&gt; last = null;</span>
-<span class="nc bnc" id="L38" title="All 2 branches missed.">                             for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
-<span class="nc bnc" id="L39" title="All 4 branches missed.">                                 if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
-<span class="nc" id="L40">                                 last = t; // Note: shapes are cached!</span>
+<span class="nc" id="L36">                             Tsr&lt;?&gt; last = null;</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">                             for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
+<span class="nc bnc" id="L38" title="All 4 branches missed.">                                 if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
+<span class="nc" id="L39">                                 last = t; // Note: shapes are cached!</span>
                              }
-<span class="nc" id="L42">                             return true;</span>
+<span class="nc" id="L41">                             return true;</span>
                          }
                     )
-<span class="fc" id="L45">                    .setSupplyADAgentFor(</span>
+<span class="fc" id="L44">                    .setSupplyADAgentFor(</span>
                         ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
-<span class="fc" id="L47">                        getDefaultAlgorithm().supplyADAgentFor( f, call, forward )</span>
+<span class="fc" id="L46">                        getDefaultAlgorithm().supplyADAgentFor( f, call, forward )</span>
                     )
-<span class="fc" id="L49">                    .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)</span>
-<span class="fc" id="L50">                    .setCallPreparation(</span>
+<span class="fc" id="L48">                    .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)</span>
+<span class="fc" id="L49">                    .setCallPreparation(</span>
                          call -&gt; {
-<span class="nc" id="L52">                             Tsr&lt;?&gt;[] tsrs = call.getTensors();</span>
-<span class="nc" id="L53">                             Device device = call.getDevice();</span>
-<span class="nc bnc" id="L54" title="All 2 branches missed.">                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:</span>
+<span class="nc" id="L51">                             Tsr&lt;?&gt;[] tsrs = call.getTensors();</span>
+<span class="nc" id="L52">                             Device device = call.getDevice();</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:</span>
                              {
-<span class="nc" id="L56">                                 int[] shp = tsrs[ 1 ].getNDConf().shape();</span>
-<span class="nc" id="L57">                                 Tsr&lt;?&gt; output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );</span>
-<span class="nc" id="L58">                                 output.setIsVirtual( false );</span>
+<span class="nc" id="L55">                                 int[] shp = tsrs[ 1 ].getNDConf().shape();</span>
+<span class="nc" id="L56">                                 Tsr&lt;?&gt; output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );</span>
+<span class="nc" id="L57">                                 output.setIsVirtual( false );</span>
                                  try {
-<span class="nc" id="L60">                                     device.store( output );</span>
-<span class="nc" id="L61">                                 } catch ( Exception e ) {</span>
-<span class="nc" id="L62">                                     e.printStackTrace();</span>
-<span class="nc" id="L63">                                 }</span>
-<span class="nc" id="L64">                                 tsrs[ 0 ] = output;</span>
+<span class="nc" id="L59">                                     device.store( output );</span>
+<span class="nc" id="L60">                                 } catch ( Exception e ) {</span>
+<span class="nc" id="L61">                                     e.printStackTrace();</span>
+<span class="nc" id="L62">                                 }</span>
+<span class="nc" id="L63">                                 tsrs[ 0 ] = output;</span>
                              }
-<span class="nc" id="L66">                             return call;</span>
+<span class="nc" id="L65">                             return call;</span>
                          }
                     )
-<span class="fc" id="L69">                    .buildFunAlgorithm();</span>
+<span class="fc" id="L68">                    .buildFunAlgorithm();</span>
 
-<span class="fc" id="L71">        setAlgorithm(</span>
+<span class="fc" id="L70">        setAlgorithm(</span>
             Activation.class,
-<span class="fc" id="L73">            operationAlgorithm.setImplementationFor(</span>
+<span class="fc" id="L72">            operationAlgorithm.setImplementationFor(</span>
                 CPU.class,
-<span class="fc" id="L75">                Activation.implementationForCPU()</span>
-<span class="fc" id="L76">                    .with(Fun.F64ToF64.pair(</span>
-<span class="nc" id="L77">                        x -&gt; Math.sin(x),</span>
-<span class="nc" id="L78">                        x -&gt; Math.cos(x)</span>
+<span class="fc" id="L74">                Activation.implementationForCPU()</span>
+<span class="fc" id="L75">                    .with(Fun.F64ToF64.pair(</span>
+<span class="nc" id="L76">                        x -&gt; Math.sin(x),</span>
+<span class="nc" id="L77">                        x -&gt; Math.cos(x)</span>
                     ))
-<span class="fc" id="L80">                    .with(Fun.F32ToF32.pair(</span>
-<span class="nc" id="L81">                        x -&gt; (float) Math.sin(x),</span>
-<span class="nc" id="L82">                        x -&gt; (float) Math.cos(x)</span>
+<span class="fc" id="L79">                    .with(Fun.F32ToF32.pair(</span>
+<span class="nc" id="L80">                        x -&gt; (float) Math.sin(x),</span>
+<span class="nc" id="L81">                        x -&gt; (float) Math.cos(x)</span>
                     ))
-<span class="fc" id="L84">                    .with(Fun.I32ToI32.pair(</span>
-<span class="nc" id="L85">                        x -&gt; (int) Math.round(Math.sin(x)),</span>
-<span class="nc" id="L86">                        x -&gt; (int) Math.round(Math.cos(x))</span>
+<span class="fc" id="L83">                    .with(Fun.I32ToI32.pair(</span>
+<span class="nc" id="L84">                        x -&gt; (int) Math.round(Math.sin(x)),</span>
+<span class="nc" id="L85">                        x -&gt; (int) Math.round(Math.cos(x))</span>
                     ))
-<span class="fc" id="L88">                    .get()</span>
+<span class="fc" id="L87">                    .get()</span>
             )
-<span class="fc" id="L90">            .setImplementationFor(</span>
+<span class="fc" id="L89">            .setImplementationFor(</span>
                 OpenCLDevice.class,
-<span class="fc" id="L92">                    Activation.implementationForGPU( this.getFunction() )</span>
-<span class="fc" id="L93">                            .with( &quot;output = sin( input );\n&quot; )</span>
-<span class="fc" id="L94">                            .and( &quot;output = cos( input );\n&quot; )</span>
+<span class="fc" id="L91">                    Activation.implementationForGPU( this.getFunction() )</span>
+<span class="fc" id="L92">                            .with( &quot;output = sin( input );\n&quot; )</span>
+<span class="fc" id="L93">                            .and( &quot;output = cos( input );\n&quot; )</span>
             )
         );
-<span class="fc" id="L97">    }</span>
+<span class="fc" id="L96">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L101">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L102" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;sin&quot; + expression;</span>
-<span class="fc" id="L103">        return &quot;sin&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="fc" id="L100">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L101" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;sin&quot; + expression;</span>
+<span class="fc" id="L102">        return &quot;sin&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L108">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L107">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="fc" id="L113">        return calculate(</span>
-<span class="fc bfc" id="L114" title="All 2 branches covered.">                src[ 0 ].call( inputs, j ),</span>
+<span class="fc" id="L112">        return calculate(</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">                src[ 0 ].call( inputs, j ),</span>
                 d &gt;= 0
-<span class="fc bfc" id="L116" title="All 2 branches covered.">        ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
     }
 
     @Contract(pure = true)
     public static double calculate(double input, boolean derive ) {
-<span class="fc bfc" id="L121" title="All 2 branches covered.">        if ( !derive ) return Math.sin( input );</span>
-<span class="fc" id="L122">        else return Math.cos( input );</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        if ( !derive ) return Math.sin( input );</span>
+<span class="fc" id="L121">        else return Math.cos( input );</span>
     }
 
 

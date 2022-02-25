@@ -62,7 +62,7 @@ plugins {
 compileJava { options.encoding = "UTF-8" } // Allows for '"' characters in comments for example...
 
 String PROJECT = "neureka"
-String VERSION = "0.13.0"
+String VERSION = "0.14.0"
 String GROUP_ID = "com.github.gleethos"
 String BASENAME = "neureka"
 

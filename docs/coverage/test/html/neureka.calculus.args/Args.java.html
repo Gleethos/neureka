@@ -13,19 +13,24 @@ import neureka.common.composition.AbstractComponentOwner;
 <span class="fc" id="L13">        return args;</span>
     }
 
-    public &lt;V, T extends Arg&lt;V&gt;&gt; V valOf(Class&lt;T&gt; argumentClass ) {
+    public &lt;V, T extends Arg&lt;V&gt;&gt; V valOf( Class&lt;T&gt; argumentClass ) {
 <span class="fc" id="L17">        Arg&lt;V&gt; argument = get(argumentClass);</span>
 <span class="fc bfc" id="L18" title="All 2 branches covered.">        if ( argument == null ) return null; else return argument.get();</span>
     }
 
+    public &lt;V, T extends Arg&lt;V&gt;&gt; V valOfOr( Class&lt;T&gt; argumentClass, V fallback ) {
+<span class="fc" id="L22">        Arg&lt;V&gt; argument = get(argumentClass);</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        if ( argument == null ) return fallback; else return argument.get();</span>
+    }
+
     @Override
     protected &lt;T extends Component&lt;Args&gt;&gt; T _setOrReject( T newComponent ) {
-<span class="fc" id="L23">        return newComponent;</span>
+<span class="fc" id="L28">        return newComponent;</span>
     }
 
     @Override
     protected &lt;T extends Component&lt;Args&gt;&gt; T _removeOrReject(T newComponent) {
-<span class="nc" id="L28">        return newComponent;</span>
+<span class="nc" id="L33">        return newComponent;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

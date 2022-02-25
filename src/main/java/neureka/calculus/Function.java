@@ -209,6 +209,9 @@ public interface Function
         <T> Tsr<T> invoke( Tsr<T>... tensors );
         /**
          *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+         *
+         * @param tensors The tensors which should be sent through this function.
+         * @return The result from the execution of the provided tensors.
          */
         Tsr<?> execute( Tsr<?>... tensors );
     }

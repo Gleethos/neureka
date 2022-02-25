@@ -96,31 +96,32 @@ public class FunctionNode implements Function
                 this,
                 () -&gt; {
 <span class="fc" id="L98">                    ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call = ExecutionCall.of( tensors )</span>
-<span class="fc" id="L99">                                                                            .andArgs(arguments.getAll(Arg.class))</span>
+<span class="fc" id="L99">                                                                            .andArgs( arguments.getAll(Arg.class) )</span>
 <span class="fc" id="L100">                                                                            .running(_operation)</span>
 <span class="fc" id="L101">                                                                            .on( _deviceFor( tensors ) );</span>
-<span class="fc" id="L102">                    int d = arguments.valOf(Arg.DerivIdx.class);</span>
 
-<span class="fc bfc" id="L104" title="All 2 branches covered.">                    if ( _isFlat )</span>
+<span class="fc" id="L103">                    int d = arguments.valOfOr( Arg.DerivIdx.class, -1 );</span>
+
+<span class="fc bfc" id="L105" title="All 2 branches covered.">                    if ( _isFlat )</span>
                     {
                         /*  The following code is reached in flat functions only:
                             Autograd-Graph will be generated below for the new GraphNode:
                             only flat functions can be executed directly                         */
 
-<span class="fc bfc" id="L110" title="All 4 branches covered.">                        if ( d &lt; 0 &amp;&amp; _isDoingAD ) {</span>
-<span class="fc" id="L111">                            Tsr[] ref = {null};</span>
-<span class="fc" id="L112">                            new GraphNode&lt;&gt;(</span>
+<span class="fc bfc" id="L111" title="All 4 branches covered.">                        if ( d &lt; 0 &amp;&amp; _isDoingAD ) {</span>
+<span class="fc" id="L112">                            Tsr[] ref = {null};</span>
+<span class="fc" id="L113">                            new GraphNode&lt;&gt;(</span>
                                     this,
                                     call,
                                     () -&gt; { // This is a bit of a hack... TODO: fix
-<span class="fc" id="L116">                                        ref[0] = _execute(call);</span>
-<span class="fc" id="L117">                                        return ref[0];</span>
+<span class="fc" id="L117">                                        ref[0] = _execute(call);</span>
+<span class="fc" id="L118">                                        return ref[0];</span>
                                     }
                             );
-<span class="fc" id="L120">                            return ref[0];</span>
+<span class="fc" id="L121">                            return ref[0];</span>
                         }
                     }
-<span class="fc" id="L123">                    return _execute( call );</span>
+<span class="fc" id="L124">                    return _execute( call );</span>
                 }
         );
     }
@@ -128,10 +129,10 @@ public class FunctionNode implements Function
 
     private Tsr&lt;?&gt; _execute( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
     {
-<span class="fc" id="L131">        Tsr&lt;?&gt; alternative = call.getAlgorithm().dispatch( this, call );</span>
-<span class="pc bpc" id="L132" title="1 of 2 branches missed.">        if ( alternative != null ) return alternative;</span>
-<span class="nc" id="L133">        throw new IllegalStateException(</span>
-<span class="nc" id="L134">                &quot;Missing return value of &quot;+ ExecutionDispatcher.class.getSimpleName() +&quot; in algorithm '&quot;+call.getAlgorithm().getClass().getSimpleName()+&quot;' in operation '&quot;+call.getOperation().getClass().getName()+&quot;'&quot;</span>
+<span class="fc" id="L132">        Tsr&lt;?&gt; alternative = call.getAlgorithm().dispatch( this, call );</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if ( alternative != null ) return alternative;</span>
+<span class="nc" id="L134">        throw new IllegalStateException(</span>
+<span class="nc" id="L135">                &quot;Missing return value of &quot;+ ExecutionDispatcher.class.getSimpleName() +&quot; in algorithm '&quot;+call.getAlgorithm().getClass().getSimpleName()+&quot;' in operation '&quot;+call.getOperation().getClass().getName()+&quot;'&quot;</span>
         );
     }
 
@@ -143,52 +144,52 @@ public class FunctionNode implements Function
      */
     private Device&lt;?&gt; _deviceFor( Tsr&lt;?&gt;[] inputs )
     {
-<span class="fc bfc" id="L146" title="All 2 branches covered.">        if ( inputs.length == 0 ) return CPU.get();</span>
-<span class="fc" id="L147">        Device&lt;?&gt; device = inputs[ 0 ].get( Device.class );</span>
-<span class="fc" id="L148">        boolean onSameDevice = _shareGuestDevice( inputs );</span>
-<span class="fc bfc" id="L149" title="All 4 branches covered.">        boolean doAccel = !_operation.getOperator().equals(&quot;,&quot;) &amp;&amp; onSameDevice;</span>
-<span class="fc bfc" id="L150" title="All 4 branches covered.">        return ( doAccel &amp;&amp; device != null ? device : inputs[ 0 ].getDevice() );</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        if ( inputs.length == 0 ) return CPU.get();</span>
+<span class="fc" id="L148">        Device&lt;?&gt; device = inputs[ 0 ].get( Device.class );</span>
+<span class="fc" id="L149">        boolean onSameDevice = _shareGuestDevice( inputs );</span>
+<span class="fc bfc" id="L150" title="All 4 branches covered.">        boolean doAccel = !_operation.getOperator().equals(&quot;,&quot;) &amp;&amp; onSameDevice;</span>
+<span class="fc bfc" id="L151" title="All 4 branches covered.">        return ( doAccel &amp;&amp; device != null ? device : inputs[ 0 ].getDevice() );</span>
     }
 
     private static boolean _shareGuestDevice( Tsr&lt;?&gt;[] tensors )
     {
-<span class="fc" id="L155">        boolean onSameGuestDevice = true;</span>
-<span class="fc" id="L156">        Device&lt;?&gt; device = null;</span>
-<span class="fc bfc" id="L157" title="All 4 branches covered.">        for ( Tsr&lt;?&gt; tensor : tensors ) device = ( tensor.isOutsourced() ? tensor.get( Device.class ) : device );</span>
+<span class="fc" id="L156">        boolean onSameGuestDevice = true;</span>
+<span class="fc" id="L157">        Device&lt;?&gt; device = null;</span>
+<span class="fc bfc" id="L158" title="All 4 branches covered.">        for ( Tsr&lt;?&gt; tensor : tensors ) device = ( tensor.isOutsourced() ? tensor.get( Device.class ) : device );</span>
 
-<span class="fc bfc" id="L159" title="All 2 branches covered.">        if ( device != null ) {</span>
-<span class="fc bfc" id="L160" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; tsr : tensors ) {</span>
-<span class="fc bfc" id="L161" title="All 6 branches covered.">                onSameGuestDevice = ( !tsr.isVirtual() &amp;&amp; device == tsr.get(Device.class) ) &amp;&amp; onSameGuestDevice;</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        if ( device != null ) {</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; tsr : tensors ) {</span>
+<span class="fc bfc" id="L162" title="All 6 branches covered.">                onSameGuestDevice = ( !tsr.isVirtual() &amp;&amp; device == tsr.get(Device.class) ) &amp;&amp; onSameGuestDevice;</span>
             }
         }
-<span class="fc" id="L164">        else onSameGuestDevice = false;</span>
+<span class="fc" id="L165">        else onSameGuestDevice = false;</span>
 
-<span class="fc bfc" id="L166" title="All 6 branches covered.">        if ( device != null &amp;&amp; tensors.length == 2 &amp;&amp; tensors[ 1 ].size() == 1 ) onSameGuestDevice = true;</span>
-<span class="fc" id="L167">        return onSameGuestDevice;</span>
+<span class="fc bfc" id="L167" title="All 6 branches covered.">        if ( device != null &amp;&amp; tensors.length == 2 &amp;&amp; tensors[ 1 ].size() == 1 ) onSameGuestDevice = true;</span>
+<span class="fc" id="L168">        return onSameGuestDevice;</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public double call( final double[] inputs, int j ) {
-<span class="fc" id="L174">        return this.getOperation().calculate( inputs, j, -1, _src );</span>
+<span class="fc" id="L175">        return this.getOperation().calculate( inputs, j, -1, _src );</span>
     }
 
     @Override
     public double derive( final double[] inputs, final int d, final int j ) {
-<span class="fc" id="L179">        return this.getOperation().calculate( inputs, j, d, _src );</span>
+<span class="fc" id="L180">        return this.getOperation().calculate( inputs, j, d, _src );</span>
     }
 
     @Override
     public double derive( final double[] inputs, final int d ) {
-<span class="fc" id="L184">        return this.getOperation().calculate( inputs, -1, d, _src );</span>
+<span class="fc" id="L185">        return this.getOperation().calculate( inputs, -1, d, _src );</span>
     }
 
-<span class="fc" id="L187">    public Operation getOperation() { return _operation; }</span>
+<span class="fc" id="L188">    public Operation getOperation() { return _operation; }</span>
 
-<span class="fc" id="L189">    public boolean isFlat() { return _isFlat; }</span>
+<span class="fc" id="L190">    public boolean isFlat() { return _isFlat; }</span>
 
-<span class="fc" id="L191">    public boolean isDoingAD() { return _isDoingAD; }</span>
+<span class="fc" id="L192">    public boolean isDoingAD() { return _isDoingAD; }</span>
 
 
     private Tsr&lt;?&gt; preprocess(
@@ -196,25 +197,25 @@ public class FunctionNode implements Function
             Function function,
             Supplier&lt;Tsr&lt;?&gt;&gt; activation
     ) {
-<span class="fc bfc" id="L199" title="All 2 branches covered.">        if ( !function.isDoingAD() ) {</span>
-<span class="fc" id="L200">            return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD =&gt; NO GRAPH NODES</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        if ( !function.isDoingAD() ) {</span>
+<span class="fc" id="L201">            return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD =&gt; NO GRAPH NODES</span>
         }
-<span class="fc" id="L202">        boolean allLocked = true; // Input tensors might all have graph nodes which are left from previous computation.</span>
+<span class="fc" id="L203">        boolean allLocked = true; // Input tensors might all have graph nodes which are left from previous computation.</span>
         // ( =&gt; needs to be locked again! )
-<span class="fc" id="L204">        Tsr&lt;?&gt; untracked = null;</span>
-<span class="fc bfc" id="L205" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : inputs ) {</span>
-<span class="fc" id="L206">            GraphNode&lt;?&gt; node = t.get( GraphNode.class );</span>
-<span class="fc bfc" id="L207" title="All 2 branches covered.">            if ( node != null ) {</span>
-<span class="fc" id="L208">                untracked = t;</span>
-<span class="pc bpc" id="L209" title="1 of 4 branches missed.">                allLocked = node.getLock().isLocked() &amp;&amp; allLocked;</span>
+<span class="fc" id="L205">        Tsr&lt;?&gt; untracked = null;</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : inputs ) {</span>
+<span class="fc" id="L207">            GraphNode&lt;?&gt; node = t.get( GraphNode.class );</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">            if ( node != null ) {</span>
+<span class="fc" id="L209">                untracked = t;</span>
+<span class="pc bpc" id="L210" title="1 of 4 branches missed.">                allLocked = node.getLock().isLocked() &amp;&amp; allLocked;</span>
             }
         }
-<span class="fc bfc" id="L212" title="All 4 branches covered.">        if ( untracked == null || !allLocked ) { // If graph tracking (nodes) has not yet been initialized!</span>
-<span class="fc" id="L213">            return commit( inputs, function, activation );</span>
+<span class="fc bfc" id="L213" title="All 4 branches covered.">        if ( untracked == null || !allLocked ) { // If graph tracking (nodes) has not yet been initialized!</span>
+<span class="fc" id="L214">            return commit( inputs, function, activation );</span>
         }
-<span class="fc" id="L215">        GraphLock lock =  untracked.get( GraphNode.class ).getLock();</span>
-<span class="fc" id="L216">        attachGraph( inputs, function, lock );</span>
-<span class="fc" id="L217">        return activation.get();</span>
+<span class="fc" id="L216">        GraphLock lock =  untracked.get( GraphNode.class ).getLock();</span>
+<span class="fc" id="L217">        attachGraph( inputs, function, lock );</span>
+<span class="fc" id="L218">        return activation.get();</span>
     }
 
     private static Tsr&lt;?&gt; commit(
@@ -222,16 +223,16 @@ public class FunctionNode implements Function
             Function function,
             Supplier&lt;Tsr&lt;?&gt;&gt; activation
     ) {
-<span class="fc" id="L225">        Reshape.makeFit( inputs, function.isDoingAD() ); // reshaping if needed</span>
+<span class="fc" id="L226">        Reshape.makeFit( inputs, function.isDoingAD() ); // reshaping if needed</span>
 
-<span class="fc" id="L227">        GraphLock newLock = new GraphLock( function );</span>
-<span class="fc" id="L228">        attachGraph( inputs, function, newLock );</span>
+<span class="fc" id="L228">        GraphLock newLock = new GraphLock( function );</span>
+<span class="fc" id="L229">        attachGraph( inputs, function, newLock );</span>
         Tsr&lt;?&gt; result;
-<span class="pc bpc" id="L230" title="1 of 2 branches missed.">        if ( activation == null ) result = function.execute( inputs );</span>
-<span class="fc" id="L231">        else result = activation.get();</span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">        if ( activation == null ) result = function.execute( inputs );</span>
+<span class="fc" id="L232">        else result = activation.get();</span>
 
-<span class="fc" id="L233">        newLock.release();</span>
-<span class="fc" id="L234">        return result;</span>
+<span class="fc" id="L234">        newLock.release();</span>
+<span class="fc" id="L235">        return result;</span>
     }
 
     private static void attachGraph(
@@ -239,11 +240,11 @@ public class FunctionNode implements Function
             Function function,
             GraphLock newLock
     ) {
-<span class="fc bfc" id="L242" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : inputs ) {</span>
-<span class="fc bfc" id="L243" title="All 2 branches covered.">            if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( newLock );</span>
-<span class="fc" id="L244">            else new GraphNode&lt;&gt;( function, newLock, () -&gt; t );</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : inputs ) {</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">            if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( newLock );</span>
+<span class="fc" id="L245">            else new GraphNode&lt;&gt;( function, newLock, () -&gt; t );</span>
         }
-<span class="fc" id="L246">    }</span>
+<span class="fc" id="L247">    }</span>
 
 
 }

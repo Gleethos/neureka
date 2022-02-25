@@ -10,183 +10,166 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.CPUImplementation;
-import neureka.calculus.internal.CalcUtil;
+import neureka.backend.standard.operations.linear.internal.opencl.GEMM;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.ndim.config.types.simple.SimpleD2Configuration;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.types.simple.Simple2DConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MatMul extends AbstractOperation
 {
-<span class="fc" id="L25">    private static final Logger _LOG = LoggerFactory.getLogger(MatMul.class);</span>
+<span class="fc" id="L27">    private static final Logger _LOG = LoggerFactory.getLogger(MatMul.class);</span>
+    private final FunAlgorithm simpleMatMulAlgorithm;
 
     public MatMul()
     {
-<span class="fc" id="L29">        super(</span>
+<span class="fc" id="L32">        super(</span>
                 new OperationBuilder()
-<span class="fc" id="L31">                        .setFunction(         &quot;matMul&quot;    )</span>
-<span class="fc" id="L32">                        .setOperator(         &quot;@&quot;         )</span>
-<span class="fc" id="L33">                        .setArity(            2           )</span>
-<span class="fc" id="L34">                        .setIsOperator(       true        )</span>
-<span class="fc" id="L35">                        .setIsIndexer(        false       )</span>
-<span class="fc" id="L36">                        .setIsDifferentiable( true        )</span>
-<span class="fc" id="L37">                        .setIsInline(         false       )</span>
+<span class="fc" id="L34">                        .setFunction(         &quot;matMul&quot;    )</span>
+<span class="fc" id="L35">                        .setOperator(         &quot;@&quot;         )</span>
+<span class="fc" id="L36">                        .setArity(            2           )</span>
+<span class="fc" id="L37">                        .setIsOperator(       true        )</span>
+<span class="fc" id="L38">                        .setIsIndexer(        false       )</span>
+<span class="fc" id="L39">                        .setIsDifferentiable( true        )</span>
+<span class="fc" id="L40">                        .setIsInline(         false       )</span>
         );
 
-<span class="fc" id="L40">        FunAlgorithm simpleMatMulAlgorithm =</span>
+<span class="fc" id="L43">        simpleMatMulAlgorithm =</span>
                         Algorithm
-<span class="fc" id="L42">                            .withName(&quot;simple_matmul&quot;)</span>
-<span class="fc" id="L43">                            .setIsSuitableFor(</span>
-<span class="fc" id="L44">                                call -&gt; call.validate()</span>
-<span class="fc" id="L45">                                            .allNotNull( t -&gt; Number.class.isAssignableFrom(t.getValueClass()) )</span>
-<span class="fc" id="L46">                                            .getEstimator()</span>
-<span class="fc" id="L47">                                                .goodIfAnyNonNull( t -&gt; t.getNDConf() instanceof SimpleD2Configuration )</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">                                                .badIfAnyNonNull( t -&gt; !( t.getNDConf() instanceof SimpleD2Configuration ) )</span>
-<span class="fc" id="L49">                                                .getEstimation()</span>
+<span class="fc" id="L45">                            .withName(&quot;simple_matmul&quot;)</span>
+<span class="fc" id="L46">                            .setIsSuitableFor(</span>
+<span class="fc" id="L47">                                call -&gt; call.validate()</span>
+<span class="fc" id="L48">                                            .allNotNull( t -&gt; Number.class.isAssignableFrom(t.getValueClass()) )</span>
+<span class="fc" id="L49">                                            .getEstimator()</span>
+<span class="fc" id="L50">                                                .goodIfAnyNonNull( t -&gt; t.getNDConf() instanceof Simple2DConfiguration)</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">                                                .badIfAnyNonNull( t -&gt; !( t.getNDConf() instanceof Simple2DConfiguration) )</span>
+<span class="fc" id="L52">                                                .getEstimation()</span>
                             )
-<span class="fc" id="L51">                            .setCanPerformBackwardADFor( call -&gt; true )</span>
-<span class="fc" id="L52">                            .setCanPerformForwardADFor( call -&gt; false )</span>
-<span class="fc" id="L53">                            .setSupplyADAgentFor(</span>
+<span class="fc" id="L54">                            .setCanPerformBackwardADFor( call -&gt; true )</span>
+<span class="fc" id="L55">                            .setCanPerformForwardADFor( call -&gt; false )</span>
+<span class="fc" id="L56">                            .setSupplyADAgentFor(</span>
                                 ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
                                 {
-<span class="pc bpc" id="L56" title="1 of 2 branches missed.">                                    if ( forward ) throw new IllegalArgumentException(&quot;Matrix multiplication does not support forward-AD!&quot;);</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">                                    if ( forward ) throw new IllegalArgumentException(&quot;Matrix multiplication does not support forward-AD!&quot;);</span>
 
-<span class="fc" id="L58">                                    Function matMul = Neureka.get().backend().getFunction().matMul();</span>
-<span class="fc" id="L59">                                    Tsr&lt;?&gt;[] inputs = call.getTensors();</span>
-<span class="fc" id="L60">                                    int d = ( 1 + call.getValOf( Arg.DerivIdx.class ) ) % 2;</span>
-<span class="fc" id="L61">                                    Tsr&lt;?&gt; derivative = inputs[ d ].T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...</span>
-<span class="fc" id="L62">                                    derivative.to(call.getDevice());</span>
-<span class="fc" id="L63">                                    return ADAgent.of( derivative )</span>
-<span class="fc" id="L64">                                                    .setBackward( (node, error) -&gt; {</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">                                                        if ( d == 1 )</span>
-<span class="fc" id="L66">                                                            return matMul.execute( error, derivative );</span>
-                                                        else
-<span class="fc" id="L68">                                                            return matMul.execute( derivative, error );</span>
-                                                    });
+<span class="fc" id="L61">                                    Function matMul = Neureka.get().backend().getFunction().matMul();</span>
+<span class="fc" id="L62">                                    Tsr&lt;?&gt;[] inputs = call.getTensors();</span>
+<span class="fc" id="L63">                                    int d = ( 1 + call.getValOf( Arg.DerivIdx.class ) ) % 2;</span>
+<span class="fc" id="L64">                                    Tsr&lt;?&gt; derivative = inputs[ d ].T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...</span>
+<span class="fc" id="L65">                                    derivative.to(call.getDevice());</span>
+<span class="fc" id="L66">                                    return ADAgent.of( derivative )</span>
+<span class="fc" id="L67">                                                  .setBackward( (node, error) -&gt; {</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                                                      if ( d == 1 )</span>
+<span class="fc" id="L69">                                                          return matMul.execute( error, derivative );</span>
+                                                      else
+<span class="fc" id="L71">                                                          return matMul.execute( derivative, error );</span>
+                                                  });
                                 }
                             )
-<span class="fc" id="L72">                            .setExecutionDispatcher(</span>
+<span class="fc" id="L75">                            .setExecutionDispatcher(</span>
                                 ( caller, call ) -&gt; {
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">                                    if ( !caller.isFlat() )</span>
-<span class="nc" id="L75">                                        return CalcUtil.defaultRecursiveExecution( caller, call );</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">                                    if ( !caller.isFlat() )</span>
+<span class="nc" id="L78">                                        return CalcUtil.defaultRecursiveExecution( caller, call );</span>
 
-<span class="fc" id="L77">                                    Tsr&lt;?&gt;[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 1, caller.getSubFunctions().toArray(new Function[0]));</span>
-<span class="fc bfc" id="L78" title="All 4 branches covered.">                                    for ( Tsr&lt;?&gt; t : tensors ) if ( t != null ) t.setIsVirtual( false );</span>
-<span class="fc" id="L79">                                    ExecutionCall&lt;Device&lt;Object&gt;&gt; preparedCall = (ExecutionCall&lt;Device&lt;Object&gt;&gt;) call.getAlgorithm().prepare( call.withTensors(tensors) );</span>
-<span class="fc" id="L80">                                    return call.getAlgorithm()</span>
-<span class="fc" id="L81">                                                .getImplementationFor(call.getDeviceFor(Object.class))</span>
-<span class="fc" id="L82">                                                .runAndGetFirstTensor(preparedCall);</span>
+<span class="fc" id="L80">                                    Tsr&lt;?&gt;[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 1, caller.getSubFunctions().toArray(new Function[0]));</span>
+<span class="fc bfc" id="L81" title="All 4 branches covered.">                                    for ( Tsr&lt;?&gt; t : tensors ) if ( t != null ) t.setIsVirtual( false );</span>
+<span class="fc" id="L82">                                    ExecutionCall&lt;Device&lt;Object&gt;&gt; preparedCall = _prepare( call.withTensors(tensors) );</span>
+<span class="fc" id="L83">                                    return MatMul.this.simpleMatMulAlgorithm</span>
+<span class="fc" id="L84">                                                        .getImplementationFor(call.getDeviceFor(Object.class))</span>
+<span class="fc" id="L85">                                                        .runAndGetFirstTensor(preparedCall);</span>
                                 }
                             )
-<span class="fc" id="L85">                            .setCallPreparation(</span>
-                                call -&gt; {
-<span class="fc" id="L87">                                    Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
-<span class="fc" id="L88">                                    Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
-<span class="pc bpc" id="L89" title="1 of 2 branches missed.">                                    if ( tensors[ 0 ] == null ) // Creating a new tensor:</span>
-                                    {
-<span class="fc" id="L91">                                        Class&lt;Number&gt; type = (Class&lt;Number&gt;) tensors[1].getDataType().getJVMTypeClass();</span>
-<span class="fc" id="L92">                                        int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };</span>
-<span class="fc" id="L93">                                        Tsr&lt;Number&gt; output = Tsr.of( type ).withShape( shp ).all( 0 ).getUnsafe().setIsIntermediate( true );</span>
-<span class="fc" id="L94">                                        output.getUnsafe().toLayout(tensors[1].getNDConf().getLayout());</span>
-<span class="fc" id="L95">                                        output.setIsVirtual( false );</span>
-                                        try {
-<span class="fc" id="L97">                                            device.store( output );</span>
-<span class="nc" id="L98">                                        } catch ( Exception e ) {</span>
-<span class="nc" id="L99">                                            e.printStackTrace();</span>
-<span class="fc" id="L100">                                        }</span>
-<span class="fc" id="L101">                                        tensors[ 0 ] = output;</span>
-                                    }
-<span class="fc" id="L103">                                    _autoClone( tensors );</span>
-<span class="fc" id="L104">                                    return call;</span>
-                                }
-                            )
-<span class="fc" id="L107">                            .buildFunAlgorithm();</span>
+<span class="fc" id="L88">                            .setCallPreparation( MatMul::_prepare )</span>
+<span class="fc" id="L89">                            .buildFunAlgorithm();</span>
 
-<span class="fc" id="L109">        setAlgorithm(</span>
+<span class="fc" id="L91">        setAlgorithm(</span>
             simpleMatMulAlgorithm
-<span class="fc" id="L111">                .setImplementationFor(</span>
+<span class="fc" id="L93">                .setImplementationFor(</span>
                     CPU.class,
                     CPUImplementation
-<span class="fc" id="L114">                        .withArity(3)</span>
-<span class="fc" id="L115">                        .andImplementation( new SimpleMatMul() )</span>
+<span class="fc" id="L96">                        .withArity(3)</span>
+<span class="fc" id="L97">                        .andImplementation( new SimpleMatMul() )</span>
                 )
-<span class="fc" id="L117">                .setImplementationFor(</span>
+<span class="fc" id="L99">                .setImplementationFor(</span>
                     OpenCLDevice.class,
                     CLImplementation
-<span class="fc" id="L120">                        .fromSource()</span>
-<span class="fc" id="L121">                        .arity( 3 )</span>
-<span class="fc" id="L122">                        .kernelName( &quot;simple_matMul&quot; )</span>
-<span class="fc" id="L123">                        .kernelSource(</span>
-                                &quot;__kernel void simple_matMul(                                          \n&quot; +
-                                &quot;       const int M, const int N, const int K,                        \n&quot; +
-                                &quot;       const __global float* A,                                      \n&quot; +
-                                &quot;       const __global float* B,                                      \n&quot; +
-                                &quot;       __global float* C                                             \n&quot; +
-                                &quot;) {                                                                  \n&quot; +
-                                &quot;    const int globalRow = get_global_id(0); // Row ID of C (0..M)    \n&quot; +
-                                &quot;    const int globalCol = get_global_id(1); // Col ID of C (0..N)    \n&quot; +
-                                &quot;                                                                     \n&quot; +
-                                &quot;    // Compute a single element (loop over K)                        \n&quot; +
-                                &quot;    float acc = 0.0f;                                                \n&quot; +
-                                &quot;    for ( int k = 0; k &lt; K; k++ ) {                                  \n&quot; +
-                                &quot;        acc += A[k + globalRow*K] * B[globalCol + k*N];              \n&quot; +
-                                &quot;    }                                                                \n&quot; +
-                                &quot;    // Store the result                                              \n&quot; +
-                                &quot;    C[globalCol + globalRow*N] = acc;                                \n&quot; +
-                                &quot;}                                                                    \n&quot;
+<span class="fc" id="L102">                        .fromSource()</span>
+<span class="fc" id="L103">                        .arity( 3 )</span>
+<span class="fc" id="L104">                        .kernelName( &quot;simple_matMul&quot; )</span>
+<span class="fc" id="L105">                        .kernelSource(</span>
+                            &quot;   __kernel void simple_matMul(                                         \n&quot; +
+                            &quot;          const int M, const int N, const int K,                        \n&quot; +
+                            &quot;          const __global float* A,                                      \n&quot; +
+                            &quot;          const __global float* B,                                      \n&quot; +
+                            &quot;                __global float* C                                       \n&quot; +
+                            &quot;   ) {                                                                  \n&quot; +
+                            &quot;       const int m = get_global_id(0); // Row index of C (0..M)         \n&quot; +
+                            &quot;       const int n = get_global_id(1); // Col index of C (0..N)         \n&quot; +
+                            &quot;                                                                        \n&quot; +
+                            &quot;       // Compute a single element (loop over K)                        \n&quot; +
+                            &quot;       float acc = 0.0f;                                                \n&quot; +
+                            &quot;       for ( int k = 0; k &lt; K; k++ )                                    \n&quot; +
+                            &quot;           acc += A[ k + m * K ] * B[ n + k * N ];                      \n&quot; +
+                            &quot;                                                                        \n&quot; +
+                            &quot;       // Store the result                                              \n&quot; +
+                            &quot;       C[ n + m * N ] = acc;                                            \n&quot; +
+                            &quot;   }                                                                    \n&quot;
                         )
-<span class="fc" id="L142">                        .lambda( call -&gt; {</span>
-<span class="fc" id="L143">                            int M = call.getTensors()[1].shape(0);</span>
-<span class="fc" id="L144">                            int N = call.getTensors()[2].shape(1);</span>
-<span class="fc" id="L145">                            int K = call.getTensors()[1].shape(1);</span>
-<span class="fc" id="L146">                            call.getDevice()</span>
-<span class="fc" id="L147">                                .getKernel(call)</span>
-<span class="fc" id="L148">                                .pass(M) // M</span>
-<span class="fc" id="L149">                                .pass(N) // N</span>
-<span class="fc" id="L150">                                .pass(K) // K</span>
-<span class="fc" id="L151">                                .pass(call.getTsrOfType(Number.class, 1))</span>
-<span class="fc" id="L152">                                .pass(call.getTsrOfType(Number.class, 2))</span>
-<span class="fc" id="L153">                                .pass(call.getTsrOfType(Number.class, 0))</span>
-<span class="fc" id="L154">                                .call(new long[]{M,N}, null);</span>
-<span class="fc" id="L155">                        } )</span>
-<span class="fc" id="L156">                        .build()</span>
+<span class="fc" id="L124">                        .lambda( call -&gt; {</span>
+<span class="fc" id="L125">                            if (</span>
+<span class="fc" id="L126">                                call.validate()</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">                                        .all( t -&gt; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">                                        .isValid()</span>
+                            ) {
+<span class="fc" id="L130">                                new GEMM().run( call );</span>
+                            } else {
+<span class="fc" id="L132">                                int M = call.tensor(1).shape(0);</span>
+<span class="fc" id="L133">                                int N = call.tensor(2).shape(1);</span>
+<span class="fc" id="L134">                                int K = call.tensor(1).shape(1);</span>
+<span class="fc" id="L135">                                call.getDevice()</span>
+<span class="fc" id="L136">                                        .getKernel(call)</span>
+<span class="fc" id="L137">                                        .pass(M).pass(N).pass(K)</span>
+<span class="fc" id="L138">                                        .pass(call.getTsrOfType(Number.class, 1))</span>
+<span class="fc" id="L139">                                        .pass(call.getTsrOfType(Number.class, 2))</span>
+<span class="fc" id="L140">                                        .pass(call.getTsrOfType(Number.class, 0))</span>
+<span class="fc" id="L141">                                        .call(new long[]{M, N}, null);</span>
+                            }
+<span class="fc" id="L143">                        })</span>
+<span class="fc" id="L144">                        .build()</span>
                 )
         );
-        /*
-        // TODO: Non-simple tensors:
-        CLImplementation.fromSource()
-                .arity( 3 )
-                .kernelName( &quot;fallBackMatMul&quot; )
-                .kernelSource(
-                        &quot;_kernel void fallBackMatMul(                                                 &quot; +
-                                &quot;   int widthA,                                                       &quot; +
-                                &quot;   int heightA,                                                      &quot; +
-                                &quot;   int widthB,                                                       &quot; +
-                                &quot;   int heightB,                                                      &quot; +
-                                &quot;   __global float* outputC, __global int *confC,                     &quot; +
-                                &quot;   __global float* inputA,  __global int *confA,                     &quot; +
-                                &quot;   __global float* inputB   __global int *confB,                     &quot; +
-                                &quot;) {                                                                  &quot; +
-                                &quot;   int prvConfC[32]; _cfg_of_cfg(prvConfC, prvConfC, rank);\n        &quot; +
-                                &quot;   int prvConfA[32]; _cfg_of_cfg(prvConfA, prvConfA, rank);\n        &quot; +
-                                &quot;   int prvConfB[32]; _cfg_of_cfg(prvConfB, prvConfB, rank);          &quot; +
-                                &quot;   int row = get_global_id( 1 );                                     &quot; +
-                                &quot;   int col = get_global_id(0);                                       &quot; +
-                                &quot;   float sum = 0.0f;                                                 &quot; +
-                                &quot;   for ( int i = 0; i &lt; widthA; i++ ) {                              &quot; +
-                                &quot;      sum += inputA[ row * widthA + i ] * inputB[ i * widthB + col ];&quot; +
-                                &quot;   }                                                                 &quot; +
-                                &quot;   outputC[ row * widthB * col ] = sum;                              &quot; +
-                                &quot;}&quot;
-                )
-                .build();
-        */
 
-<span class="fc" id="L189">    }</span>
+
+<span class="fc" id="L149">    }</span>
+
+    private static ExecutionCall&lt;Device&lt;Object&gt;&gt; _prepare( ExecutionCall call ) {
+<span class="fc" id="L152">        Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
+<span class="fc" id="L153">        Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        if ( tensors[ 0 ] == null ) // Creating a new tensor:</span>
+        {
+<span class="fc" id="L156">            Class&lt;Number&gt; type = (Class&lt;Number&gt;) tensors[1].getDataType().getJVMTypeClass();</span>
+<span class="fc" id="L157">            int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };</span>
+<span class="fc" id="L158">            NDConfiguration.Layout targetLayout = tensors[1].getNDConf().getLayout();</span>
+<span class="fc" id="L159">            tensors[2].getUnsafe().toLayout(targetLayout);</span>
+<span class="fc" id="L160">            Tsr&lt;Number&gt; output = Tsr.of( type ).withShape( shp ).all( 0 ).getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L161">            output.setIsVirtual( false );</span>
+<span class="fc" id="L162">            output.getUnsafe().toLayout(targetLayout);</span>
+            try {
+<span class="fc" id="L164">                device.store( output );</span>
+<span class="nc" id="L165">            } catch ( Exception e ) {</span>
+<span class="nc" id="L166">                e.printStackTrace();</span>
+<span class="fc" id="L167">            }</span>
+<span class="fc" id="L168">            tensors[ 0 ] = output;</span>
+        }
+<span class="fc" id="L170">        _autoClone( tensors );</span>
+<span class="fc" id="L171">        return (ExecutionCall&lt;Device&lt;Object&gt;&gt;) call;</span>
+    }
 
     /**
      *  This method will clone {@link Tsr} instances if they do not
@@ -195,38 +178,50 @@ public class MatMul extends AbstractOperation
      * @param tensors The tensors which ought to be cloned based on the complexity of their access patterns.
      */
     private static void _autoClone( Tsr&lt;?&gt;[] tensors ) {
-<span class="fc bfc" id="L198" title="All 2 branches covered.">        for ( int i = 0; i &lt; tensors.length; i++ ) {</span>
-<span class="fc bfc" id="L199" title="All 2 branches covered.">            if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {</span>
-<span class="fc" id="L200">                _LOG.debug(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
-<span class="fc" id="L201">                tensors[i] = tensors[i].clone().getUnsafe().setIsIntermediate( true );</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        for ( int i = 0; i &lt; tensors.length; i++ ) {</span>
+<span class="fc" id="L182">            if (</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">                    !_isSimpleRowMajorMatrix(tensors[i])</span>
+                            &amp;&amp;
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">                    !_isSimpleColumnMajorMatrix(tensors[i])</span>
+            ) {
+<span class="nc" id="L187">                _LOG.debug(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
+<span class="nc" id="L188">                tensors[i] = tensors[i].clone().getUnsafe().setIsIntermediate( true );</span>
                 /*
                     The user should do cloning explicitly because using slices
-                    will cause the backend to perform aut cloning every time the
+                    will cause the backend to perform auto cloning every time the
                     slice is being used for operations like this one...
                  */
             }
         }
-<span class="fc" id="L209">    }</span>
+<span class="fc" id="L196">    }</span>
+
+    private static boolean _isSimpleColumnMajorMatrix( Tsr&lt;?&gt; t ) {
+<span class="pc bpc" id="L199" title="2 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR;</span>
+    }
+
+    private static boolean _isSimpleRowMajorMatrix( Tsr&lt;?&gt; t ) {
+<span class="pc bpc" id="L203" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR;</span>
+    }
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L213">        StringBuilder reconstructed = new StringBuilder();</span>
-<span class="fc bfc" id="L214" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
-<span class="fc" id="L215">            reconstructed.append( children[ i ] );</span>
-<span class="fc bfc" id="L216" title="All 2 branches covered.">            if ( i &lt; children.length - 1 )</span>
-<span class="fc" id="L217">                reconstructed.append(&quot; @ &quot;);</span>
+<span class="fc" id="L208">        StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
+<span class="fc" id="L210">            reconstructed.append( children[ i ] );</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">            if ( i &lt; children.length - 1 )</span>
+<span class="fc" id="L212">                reconstructed.append(&quot; @ &quot;);</span>
         }
-<span class="fc" id="L219">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+<span class="fc" id="L214">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L224">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L219">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L229">        return src[ 0 ].call( inputs, j );</span>
+<span class="nc" id="L224">        return src[ 0 ].call( inputs, j );</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

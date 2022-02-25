@@ -61,13 +61,18 @@ public abstract class Arg&lt;T&gt; implements Component&lt;Args&gt; {
 
     public static class MinRank extends Arg&lt;Integer&gt; {
 <span class="nc" id="L63">        public static MinRank of( int arg ) { return new MinRank( arg ); }</span>
-<span class="nc" id="L64">        private MinRank(int arg) { super(arg); }</span>
+<span class="nc" id="L64">        private MinRank( int arg ) { super(arg); }</span>
+    }
+
+    public static class Seed extends Arg&lt;Long&gt; {
+<span class="fc" id="L68">        public static Seed of( long arg ) { return new Seed( arg ); }</span>
+<span class="fc" id="L69">        private Seed( long arg ) { super(arg); }</span>
     }
 
     @Override
     public String toString() {
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        if ( _value == null ) return &quot;null&quot;;</span>
-<span class="fc" id="L70">        else return _value.toString();</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if ( _value == null ) return &quot;null&quot;;</span>
+<span class="fc" id="L75">        else return _value.toString();</span>
     }
 
 }

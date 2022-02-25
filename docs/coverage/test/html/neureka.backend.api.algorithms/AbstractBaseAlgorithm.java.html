@@ -3,9 +3,12 @@
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *  This is a partial implementation of the {@link Algorithm} interface which implements
@@ -16,53 +19,64 @@ import java.util.Map;
  */
 public abstract class AbstractBaseAlgorithm&lt;C extends Algorithm&lt;C&gt;&gt; implements Algorithm&lt;C&gt;
 {
+<span class="fc" id="L22">    private final Logger _LOG = LoggerFactory.getLogger(AbstractBaseAlgorithm.class);</span>
+
     /**
      *  This is the name of this {@link Algorithm}
      *  which may be used as variable names in OpenCL kernels or other backends.
      *  Therefore this name is expected to be void of any spaces
-     *  or non numeric and alphabetic characters.
+     *  or non-numeric and alphabetic characters.
      */
     private final String _name;
 
-<span class="fc" id="L27">    protected final Map&lt;Class&lt;Device&lt;?&gt;&gt;, ImplementationFor&lt;Device&lt;?&gt;&gt;&gt; _implementations = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L32">    protected final Map&lt;Class&lt;Device&lt;?&gt;&gt;, ImplementationFor&lt;Device&lt;?&gt;&gt;&gt; _implementations = new HashMap&lt;&gt;();</span>
 
-<span class="fc" id="L29">    public AbstractBaseAlgorithm( String name ) { _name = name; }</span>
+<span class="fc" id="L34">    public AbstractBaseAlgorithm( String name ) { _name = name; }</span>
 
     /**
      *  This method returns the name of this {@link Algorithm}
      *  which may be used as variable names in OpenCL kernels or other backends.
      *  Therefore this name is expected to be void of any spaces
-     *  or non numeric and alphabetic characters.
+     *  or non-numeric and alphabetic characters.
      *
      * @return The name of this {@link Algorithm}.
      */
-<span class="fc" id="L39">    public String getName() { return _name; }</span>
+<span class="fc" id="L44">    public String getName() { return _name; }</span>
 
     @Override
-    public &lt;D extends Device&lt;?&gt;, E extends ImplementationFor&lt;D&gt;&gt; C setImplementationFor( Class&lt;D&gt; deviceClass, E implementation ) {
-<span class="fc" id="L43">        _implementations.put(</span>
-                (Class&lt;Device&lt;?&gt;&gt;) deviceClass,
-                (ImplementationFor&lt;Device&lt;?&gt;&gt;) implementation
+    public &lt;D extends Device&lt;?&gt;, E extends ImplementationFor&lt;D&gt;&gt; C setImplementationFor(
+            Class&lt;D&gt; deviceClass, E implementation
+    ) {
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if ( _implementations.containsKey( deviceClass ) )</span>
+<span class="fc" id="L51">            _LOG.info(</span>
+<span class="fc" id="L52">                    &quot;Implementation for device '&quot;+deviceClass.getSimpleName()+&quot;' already defined!&quot;</span>
+                );
+
+<span class="fc" id="L55">        _implementations.put(</span>
+            (Class&lt;Device&lt;?&gt;&gt;) deviceClass,
+            (ImplementationFor&lt;Device&lt;?&gt;&gt;) implementation
         );
-<span class="fc" id="L47">        return (C) this;</span>
+<span class="fc" id="L59">        return (C) this;</span>
     }
 
     @Override
-    public &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( Class&lt;D&gt; deviceClass ) {
-<span class="fc" id="L52">        ImplementationFor&lt;D&gt; found = (ImplementationFor&lt;D&gt;) _implementations.get( deviceClass );</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">        if ( found == null ) {</span>
-<span class="fc bfc" id="L54" title="All 2 branches covered.">            for ( Class&lt;Device&lt;?&gt;&gt; type : _implementations.keySet() ) {</span>
-<span class="fc bfc" id="L55" title="All 2 branches covered.">                if ( type.isAssignableFrom(deviceClass) ) return (ImplementationFor&lt;D&gt;) _implementations.get(type);</span>
-<span class="fc" id="L56">            }</span>
-        }
-<span class="fc" id="L58">        return found;</span>
+    public &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( Class&lt;D&gt; deviceClass )
+    {
+<span class="fc" id="L65">        ImplementationFor&lt;D&gt; found = (ImplementationFor&lt;D&gt;) _implementations.get( deviceClass );</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if ( found == null )</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            for ( Class&lt;Device&lt;?&gt;&gt; type : _implementations.keySet() )</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                if ( type.isAssignableFrom(deviceClass) )</span>
+<span class="fc" id="L69">                    return (ImplementationFor&lt;D&gt;) _implementations.get(type);</span>
+
+<span class="fc" id="L71">        return found;</span>
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L63">        String algorithmString = getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode());</span>
-<span class="fc" id="L64">        algorithmString = ( algorithmString + &quot;[name=&quot; + getName() + &quot;]&quot; );</span>
-<span class="fc" id="L65">        return algorithmString;</span>
+<span class="fc" id="L76">        String algorithmString = getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode());</span>
+<span class="fc" id="L77">        String implementations = _implementations.keySet().stream().map(Class::getSimpleName).collect(Collectors.joining(&quot;,&quot;));</span>
+<span class="fc" id="L78">        algorithmString = ( algorithmString + &quot;[name=&quot; + getName() + &quot;,support=[&quot; + implementations + &quot;]]&quot; );</span>
+<span class="fc" id="L79">        return algorithmString;</span>
     }
 
 }

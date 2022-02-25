@@ -3,10 +3,9 @@
 
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.implementations.AbstractImplementationFor;
+import neureka.devices.opencl.KernelSource;
 import neureka.devices.opencl.OpenCLDevice;
-
-import java.util.HashMap;
-import java.util.Map;
+import neureka.devices.opencl.StaticKernelSource;
 
 /**
  * This class is the ExecutorFor &amp;lt; OpenCLDevice &amp;gt; implementation
@@ -14,158 +13,50 @@ import java.util.Map;
  * ExecutionOn &amp;lt; OpenCLDevice &amp;gt; lambda implementation
  * receiving an instance of the ExecutionCall class.
 */
-public class CLImplementation extends AbstractImplementationFor&lt;OpenCLDevice&gt;
+public abstract class CLImplementation extends AbstractImplementationFor&lt;OpenCLDevice&gt; implements StaticKernelSource
 {
 
-<span class="fc" id="L20">    private final java.util.function.Function&lt;String, String&gt; _aliasSwapper =</span>
-            s -&gt;
-<span class="fc" id="L22">                &quot;//-=&lt;PARSED&gt;=-//\n&quot; +</span>
-<span class="fc" id="L23">                    s.replace(&quot;src1&quot;, &quot;src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]&quot;)</span>
-<span class="fc" id="L24">                            .replace(&quot;src2&quot;, &quot;src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]&quot;)</span>
-<span class="fc" id="L25">                            .replace(&quot;input1&quot;, &quot;src1[_i_of_i(i, prv_src1_cfg, rank)]&quot;)</span>
-<span class="fc" id="L26">                            .replace(&quot;input2&quot;, &quot;src2[_i_of_i(i, prv_src2_cfg, rank)]&quot;)</span>
-<span class="fc" id="L27">                            .replace(&quot;input&quot;, &quot;src1[_i_of_i(i, prv_src1_cfg, rank)]&quot;)</span>
-<span class="fc" id="L28">                            .replace(&quot;output&quot;, &quot;drn[_i_of_i(i, prv_drn_cfg, rank)]&quot;)</span>
-<span class="fc" id="L29">                            .replace(&quot;handle&quot;, &quot;src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]&quot;)</span>
-<span class="fc" id="L30">                            .replace(&quot;drain&quot;, &quot;src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]&quot;)</span>
-<span class="fc" id="L31">                            .replace(&quot;origin&quot;, &quot;drn[di]&quot;)</span>
-<span class="fc" id="L32">                            .replace(&quot;target&quot;, &quot;frn[_i_of_idx_on_tln(prv_frn_cfg, rank)]&quot;) +</span>
-                    &quot;\n//-=&lt;PARSED&gt;=-//&quot;;
-
-<span class="fc" id="L35">    private final java.util.function.Function&lt;String, String&gt; asAdvanced =</span>
-            s -&gt;
-<span class="fc" id="L37">            s.replace(&quot;target&quot;, &quot;frn[_i_of_idx_on_tln(prv_frn2_cfg, rank)]&quot;)</span>
-<span class="fc" id="L38">                    .replace(&quot;input3&quot;,&quot;frn[_i_of_idx_on_tln(prv_frn2_cfg, rank)]&quot;)</span>
-<span class="fc" id="L39">                    .replace(&quot;//-=&lt;ARGUMENT&gt;=-//&quot;, &quot;&quot;)</span>
-<span class="fc" id="L40">                    .replace(&quot;//-=&lt;CONFIGURATION&gt;=-//&quot;, &quot;&quot;);</span>
-
-    private String _source;
-    private String _name;
-    private final boolean isSimple;
-
-    private CLImplementation(
+    protected CLImplementation(
             ImplementationFor&lt;OpenCLDevice&gt; execution,
-            int arity,
-            String kernelName,
-            String kernelSource
+            int arity
     ) {
-<span class="fc" id="L52">        super( execution, arity );</span>
-<span class="fc" id="L53">        _name = kernelName;</span>
-<span class="fc" id="L54">        _source = kernelSource;</span>
-<span class="fc" id="L55">        isSimple = true;</span>
-<span class="fc" id="L56">    }</span>
-
-    private CLImplementation(
-            ImplementationFor&lt;OpenCLDevice&gt; lambda,
-            int arity,
-            String kernelSource,
-            String activationSource,
-            String differentiationSource,
-            String postfix
-    ) {
-<span class="fc" id="L66">        super( lambda, arity );</span>
-<span class="fc" id="L67">        this.isSimple = false;</span>
-        boolean templateFound;
-<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if (kernelSource.contains(&quot;__kernel&quot;)) {</span>
-<span class="fc" id="L70">            String[] parts = kernelSource.split(&quot;__kernel&quot;)[ 1 ].split(&quot;\\(&quot;)[ 0 ].split(&quot; &quot;);</span>
-
-<span class="fc" id="L72">            templateFound = parts[parts.length - 1].contains(&quot;template&quot;);</span>
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            if (!templateFound) {</span>
-<span class="nc" id="L74">                throw new IllegalStateException(&quot;Invalid source code passed to AbstractCLExecution!&quot;);</span>
-            } else {
-<span class="fc" id="L76">                Map&lt;String, String&gt; map = _getParsedKernelsFromTemplate(</span>
-                        parts[parts.length - 1],
-                        kernelSource,
-                        activationSource,
-                        differentiationSource,
-                        postfix
-                );
-<span class="fc" id="L83">                _name = map.keySet().toArray(new String[ 0 ])[ 0 ];</span>
-<span class="fc" id="L84">                _source = map.values().toArray(new String[ 0 ])[ 0 ];</span>
-            }
-        }
-<span class="fc" id="L87">    }</span>
-
-    public boolean isSimpleSource() {
-<span class="fc" id="L90">        return isSimple;</span>
-    }
+<span class="fc" id="L23">        super( execution, arity );</span>
+<span class="fc" id="L24">    }</span>
 
     public static SourceBuilder fromSource() {
-<span class="fc" id="L94">        return new SourceBuilder();</span>
+<span class="fc" id="L27">        return new SourceBuilder();</span>
     }
 
     public static Compiler compiler() {
-<span class="fc" id="L98">        return new Compiler();</span>
+<span class="fc" id="L31">        return new Compiler();</span>
     }
 
-    public String getSource() {
-<span class="fc" id="L102">        return _source;</span>
-    }
-
-    public String getName() {
-<span class="fc" id="L106">        return _name;</span>
-    }
-
-    private interface Parser
-    {
-        void apply(String name, String first, String second);
-    }
-
-    private Map&lt;String, String&gt; _getParsedKernelsFromTemplate(
-            String templateName,
-            String kernelSource,
-            String activationSource,
-            String differentiationSource,
-            String postfix
-    ) {
-<span class="fc" id="L121">        Map&lt;String, String&gt; code = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L122">        String preName = templateName.replace(&quot;template&quot;, &quot;&quot;);</span>
-<span class="fc" id="L123">        String source = kernelSource.replace(&quot;template&quot;, &quot;&quot;);</span>
-<span class="fc" id="L124">        String[] parts = source.split(&quot;//-=&lt;OPERATION&gt;=-//&quot;);</span>
-
-<span class="fc" id="L126">        Parser parser = ( n, f, s ) -&gt; {</span>
-<span class="fc" id="L127">            String convcode =</span>
-<span class="fc" id="L128">                    parts[ 0 ].replace(preName, preName + n) +</span>
-<span class="fc" id="L129">                            _aliasSwapper.apply(f) +</span>
-                            parts[ 2 ] +
-<span class="fc" id="L131">                            _aliasSwapper.apply(s) +</span>
-                            parts[4];
-<span class="pc bpc" id="L133" title="2 of 6 branches missed.">            boolean isAdvanced = s.contains(&quot;target&quot;)&amp;&amp;s.contains(&quot;drain&quot;)&amp;&amp;s.contains(&quot;handle&quot;)</span>
-<span class="pc bpc" id="L134" title="1 of 6 branches missed.">                    || s.contains(&quot;input1&quot;)&amp;&amp;s.contains(&quot;input2&quot;)&amp;&amp;s.contains(&quot;input3&quot;);</span>
-<span class="fc bfc" id="L135" title="All 2 branches covered.">            convcode = (isAdvanced) ? asAdvanced.apply(convcode) : convcode;</span>
-<span class="fc" id="L136">            code.put(preName + n, convcode);</span>
-<span class="fc" id="L137">        };</span>
-        //Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0
-        //Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
-        //drn[di], src1[_i_of_idx_on_tln(prv_src1_cfg, rank)], src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]
-        //default:  src1 o src2 -&gt; drain
-        //inverse:  src1/fdrn &lt;-src2 &lt;- drain
-        //===========================================================================
-<span class="fc" id="L144">        parser.apply(</span>
-                postfix,
-                activationSource,
-                differentiationSource
-        );
-<span class="fc" id="L149">        return code;</span>
+    public static AdHocCompiler adHoc( KernelSource kernelProvider ) {
+<span class="nc" id="L35">        return new AdHocCompiler( kernelProvider );</span>
     }
 
     /**
      *  This builder builds the most basic type of {@link CLImplementation} which
      *  is in essence merely a wrapper for a lambda and the arity of this implementation.
      */
-    public static class SourceBuilder {
+    public static class SourceBuilder
+    {
         private ImplementationFor&lt;OpenCLDevice&gt; lambda;
         private int arity;
         private String kernelName;
         private String kernelSource;
 
-<span class="fc" id="L162">        SourceBuilder() { }</span>
+        private SourceBuilder() { }
 
-<span class="fc" id="L164">        public SourceBuilder lambda(ImplementationFor&lt;OpenCLDevice&gt; lambda) { this.lambda = lambda;return this; }</span>
-<span class="fc" id="L165">        public SourceBuilder arity(int arity) { this.arity = arity; return this; }</span>
-<span class="fc" id="L166">        public SourceBuilder kernelName(String kernelName) { this.kernelName = kernelName;return this; }</span>
-<span class="fc" id="L167">        public SourceBuilder kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }</span>
-<span class="fc" id="L168">        public CLImplementation build() { return new CLImplementation(lambda, arity, kernelName, kernelSource); }</span>
+        /**
+         * @param lambda The code which passes the call data to OpenCL and calls the kernel.
+         * @return This builder instance to allow for method chaining.
+         */
+<span class="fc" id="L55">        public SourceBuilder lambda(ImplementationFor&lt;OpenCLDevice&gt; lambda) { this.lambda = lambda;return this; }</span>
+<span class="fc" id="L56">        public SourceBuilder arity(int arity) { this.arity = arity; return this; }</span>
+<span class="fc" id="L57">        public SourceBuilder kernelName(String kernelName) { this.kernelName = kernelName;return this; }</span>
+<span class="fc" id="L58">        public SourceBuilder kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }</span>
+<span class="fc" id="L59">        public CLImplementation build() { return new SimpleCLImplementation(lambda, arity, kernelName, kernelSource); }</span>
     }
 
     public static class Compiler {
@@ -176,20 +67,35 @@ public class CLImplementation extends AbstractImplementationFor&lt;OpenCLDevice&
         private String differentiationSource;
         private String type;
 
-<span class="fc" id="L179">        Compiler() { }</span>
+        private Compiler() { }
 
-<span class="fc" id="L181">        public Compiler execution(ImplementationFor&lt;OpenCLDevice&gt; lambda) { this.lambda = lambda;return this; }</span>
-<span class="fc" id="L182">        public Compiler arity(int arity) { this.arity = arity; return this; }</span>
-<span class="fc" id="L183">        public Compiler kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }</span>
-<span class="fc" id="L184">        public Compiler activationSource(String activationSource) { this.activationSource = activationSource;return this; }</span>
-<span class="fc" id="L185">        public Compiler differentiationSource(String differentiationSource) { this.differentiationSource = differentiationSource;return this; }</span>
-<span class="fc" id="L186">        public Compiler kernelPostfix(String type) { this.type = type;return this; }</span>
+<span class="fc" id="L72">        public Compiler execution(ImplementationFor&lt;OpenCLDevice&gt; lambda) { this.lambda = lambda;return this; }</span>
+<span class="fc" id="L73">        public Compiler arity(int arity) { this.arity = arity; return this; }</span>
+<span class="fc" id="L74">        public Compiler kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }</span>
+<span class="fc" id="L75">        public Compiler activationSource(String activationSource) { this.activationSource = activationSource;return this; }</span>
+<span class="fc" id="L76">        public Compiler differentiationSource(String differentiationSource) { this.differentiationSource = differentiationSource;return this; }</span>
+<span class="fc" id="L77">        public Compiler kernelPostfix(String type) { this.type = type;return this; }</span>
         public CLImplementation build() {
-<span class="pc bpc" id="L188" title="1 of 2 branches missed.">            if ( lambda == null ) throw new IllegalStateException(</span>
-<span class="nc" id="L189">                    CLImplementation.class.getSimpleName()+&quot; builder not satisfied.&quot;</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">            if ( lambda == null ) throw new IllegalStateException(</span>
+<span class="nc" id="L80">                    CLImplementation.class.getSimpleName()+&quot; builder not satisfied.&quot;</span>
             );
-<span class="fc" id="L191">            return new CLImplementation(lambda, arity, kernelSource, activationSource, differentiationSource, type);</span>
+<span class="fc" id="L82">            return new ParsedCLImplementation(lambda, arity, kernelSource, activationSource, differentiationSource, type);</span>
         }
+    }
+
+    public static class AdHocCompiler {
+
+        private final KernelSource _source;
+        private int _arity;
+
+<span class="nc" id="L91">        AdHocCompiler( KernelSource source ) { _source = source; }</span>
+
+<span class="nc" id="L93">        public AdHocCompiler arity( int arity ) { _arity = arity; return this; }</span>
+
+        public CLImplementation caller( ImplementationFor&lt;OpenCLDevice&gt; lambda) {
+<span class="nc" id="L96">            return new AdHocClImplementation( lambda, _arity, _source );</span>
+        }
+
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

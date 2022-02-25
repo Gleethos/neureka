@@ -68,8 +68,8 @@ import static org.jocl.CL.*;
      * @param tensor The tensor whose data ought to be passed to the kernel.
      * @return This very KernelCaller instance (factory patter).
      */
-    public KernelCaller pass( @NotNull Tsr&lt;Number&gt; tensor ) {
-<span class="fc" id="L72">        _inputs.add( tensor );</span>
+    public &lt;T extends Number&gt; KernelCaller pass( @NotNull Tsr&lt;T&gt; tensor ) {
+<span class="fc" id="L72">        _inputs.add( (Tsr&lt;Number&gt;) tensor );</span>
 <span class="fc" id="L73">        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.get( OpenCLDevice.cl_tsr.class ).value.data ) );</span>
 <span class="fc" id="L74">        _argId++;</span>
 <span class="fc" id="L75">        return this;</span>

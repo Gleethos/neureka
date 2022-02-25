@@ -260,9 +260,9 @@ public class ParseUtil
     /**
      *  This method estimates the similarity between 2 provided {@link String} instances.
      *
-     * @param s1
-     * @param s2
-     * @return
+     * @param s1 The first string which should be compared to the second string.
+     * @param s2 The second string which should be compared to the first string.
+     * @return A similarity score between 0 and 1 where 1 would be 100% similar (equal).
      */
     @Contract( pure = true )
     public static double similarity( final String s1, final String s2 ) {

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Feb 04 16:07:56 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 25 23:22:00 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,37 +335,33 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>5.694 seconds</td>
+<td>5.750 seconds</td>
 </tr>
 </tbody>
 </table>
 </div>
+<pre class='title'>Autograd - Automatic Differentiation</pre>
+<pre class='narrative'>Central to all neural networks in Neureka is the autograd package.                                      &lt;br&gt;
+     The autograd package provides automatic differentiation for all default operations on Tensors.          &lt;br&gt;
+     Neureka is a define-by-run library, which means that your backpropagation is defined by how             &lt;br&gt;
+     your code is run, and that every single iteration can be different.                                     &lt;br&gt;
+                                                                                                             &lt;br&gt;
+     The class neureka.Tsr is the central class of the main package.                                         &lt;br&gt;
+     If you set its attribute 'rqsGradient' to True, Neureka starts to track all operations on it.           &lt;br&gt;
+     When you finish the forward pass of your network                                                        &lt;br&gt;
+     you can call .backward() and have all the gradients computed                                            &lt;br&gt;
+     and distributed to the tensors requiring them automatically.                                            &lt;br&gt;
+                                                                                                             &lt;br&gt;
+     &lt;br&gt;                                                                                                    &lt;br&gt;
+     The gradient for a tensor will be accumulated into a child tensor (component) which                     &lt;br&gt;
+     can be accessed via the '.getGradient()' method.                                                        &lt;br&gt;
+                                                                                                             &lt;br&gt;
+     To stop a tensor from tracking history, you can call '.detach()' to detach it from the                  &lt;br&gt;
+     computation history, and to prevent future computation from being tracked.                              &lt;br&gt;
+     &lt;br&gt;</pre>
 <div class='spec-headers'>
 <div class='spec-header'>
-            <b> Autograd - Automatic Differentiation </b>                                                           <br>
-            <br>
-            Central to all neural networks in Neureka is the autograd package.                                      <br>
-            The autograd package provides automatic differentiation for all default operations on Tensors.          <br>
-            Neureka is a define-by-run library, which means that your backpropagation is defined by how             <br>
-            your code is run, and that every single iteration can be different.                                     <br>
-            <br>
-            The class neureka.Tsr is the central class of the main package.                                         <br>
-            If you set its attribute rqsGradient to True, Neureka starts to track all operations on it.             <br>
-            When you finish the forward pass of your network                                                        <br>
-            you can call .backward() and have all the gradients computed                                            <br>
-            and distributed to the tensors requiring them automatically.                                            <br>
-            <br>
-            <b> Tensors and Gradients </b>                                                                          <br>
-            <br>                                                                                                        <br>
-            The gradient for a tensor will be accumulated into a child tensor (component) which                     <br>
-            can be accessed via the .getGradient() method.                                                          <br>
-            <br>
-            To stop a tensor from tracking history, you can call .detach() to detach it from the                    <br>
-            computation history, and to prevent future computation from being tracked.                              <br>
-            <br>                                         
-        </div>
-<div class='spec-header'>
-            There’s one more class which is very important for autograd implementation : the GraphNode.             <br>
+            There’s one more class which is very important for autograd implementation : the 'GraphNode class'!     <br>
             Tsr and GraphNode instances are interconnected and build up an acyclic graph,                           <br>       
             that encodes a complete history of computation.                                                         <br>                   
             Each tensor has a .getGraphNode() attribute that references the GraphNode                               <br>             
@@ -440,7 +436,7 @@ Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)<
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def x = Tsr.of([2, 2], 1).setRqsGradient(true)</pre>
+<pre class='block-source'>def x = Tsr.of([2, 2], 1d).setRqsGradient(true)</pre>
 </td>
 </tr>
 <tr>
@@ -496,8 +492,7 @@ Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)<
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>y.has( GraphNode.class )
-println("---")</pre>
+<pre class='block-source'>y.has( GraphNode.class )</pre>
 </td>
 </tr>
 <tr>

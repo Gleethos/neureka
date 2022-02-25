@@ -79,8 +79,6 @@ extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSu
      */
     String getName();
 
-    //---
-
     /**
      * Implementations of the Algorithm interface ought to express a compositional design pattern. &lt;br&gt;
      * This means that concrete implementations of an algorithm for a device are not extending
@@ -120,7 +118,7 @@ extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSu
      * @return The implementation for the passed device type class.
      */
     default &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( D device ) {
-<span class="fc" id="L123">        return (ImplementationFor&lt;D&gt;) getImplementationFor(device.getClass());</span>
+<span class="fc" id="L121">        return (ImplementationFor&lt;D&gt;) getImplementationFor(device.getClass());</span>
     }
 
 

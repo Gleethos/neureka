@@ -7,7 +7,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
-import neureka.backend.standard.algorithms.Fun;
+import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -157,9 +157,9 @@ public class Multiplication extends AbstractOperation
 <span class="fc" id="L157">                    .andImplementation(</span>
                         call -&gt; {
 <span class="fc bfc" id="L159" title="All 2 branches covered.">                            if ( call.getDerivativeIndex() == 0 )</span>
-<span class="fc" id="L160">                                call.getTensors()[0] = call.getTensors()[2].shallowCopy().getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L160">                                call.getTensors()[0] = call.tensor( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true );</span>
 <span class="fc bfc" id="L161" title="All 2 branches covered.">                            else if ( call.getDerivativeIndex() == 1 )</span>
-<span class="fc" id="L162">                                call.getTensors()[0] = call.getTensors()[1].shallowCopy().getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L162">                                call.getTensors()[0] = call.tensor( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true );</span>
                             else
 <span class="fc" id="L164">                                Scalarization.implementationForCPU()</span>
 <span class="fc" id="L165">                                    .with(Fun.F64F64ToF64.triple(</span>
@@ -194,9 +194,9 @@ public class Multiplication extends AbstractOperation
 <span class="fc" id="L194">                    .execution(</span>
                         call -&gt; {
 <span class="fc bfc" id="L196" title="All 2 branches covered.">                            if ( call.getDerivativeIndex() == 0 )</span>
-<span class="fc" id="L197">                                call.getTensors()[0] = call.getTensors()[2].shallowCopy().getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L197">                                call.getTensors()[0] = call.tensor( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true );</span>
 <span class="fc bfc" id="L198" title="All 2 branches covered.">                            else if ( call.getDerivativeIndex() == 1 )</span>
-<span class="fc" id="L199">                                call.getTensors()[0] = call.getTensors()[1].shallowCopy().getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L199">                                call.getTensors()[0] = call.tensor( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true );</span>
                             else {
 <span class="pc bpc" id="L201" title="1 of 4 branches missed.">                                int offset = (call.getTsrOfType(Number.class, 2).isVirtual() || call.getTsrOfType(Number.class, 2).size() == 1) ? 1 : 0;</span>
 <span class="fc" id="L202">                                int gwz = call.getTsrOfType(Number.class, 0).size();</span>

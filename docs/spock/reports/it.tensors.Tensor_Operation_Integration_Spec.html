@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Feb 04 16:08:31 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 25 23:22:43 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,17 +329,21 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>13</td>
-<td>13</td>
+<td>14</td>
+<td>14</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>23.297 seconds</td>
+<td>30.399 seconds</td>
 </tr>
 </tbody>
 </table>
 </div>
+<pre class='title'>Running Tensors through operations</pre>
+<pre class='narrative'>This specification covers the interaction 
+    between tensors and operations, more specifically it
+    runs tensors through operations and validates that the results are valid.</pre>
 <h3>Features:</h3>
 <table class='features-table'>
 <colgroup>
@@ -349,13 +353,19 @@ div.footer {
 <tbody>
 <ul id='toc'>
 <li>
-<a href='#-1985424227' class='feature-toc-pass'>Test "x-mul" operator produces expected results. (Not on device)</a>
+<a href='#168556918' class='feature-toc-pass'>Test "x-mul" (convolution) operator produces expected results. (Not on device)</a>
 </li>
 <li>
 <a href='#-2074180502' class='feature-toc-pass'>The "dot" operation reshapes and produces valid "x" operation result.</a>
 </li>
 <li>
 <a href='#-1114774697' class='feature-toc-pass'>The "matMul" operation produces the expected result.</a>
+</li>
+<li>
+<a href='#-1791627835' class='feature-toc-pass'>The "random" function/operation populates tensors randomly.</a>
+</li>
+<li>
+<a href='#311460304' class='feature-toc-pass'>The values of a randomly populated tensor seems to adhere to a gaussian distribution.</a>
 </li>
 <li>
 <a href='#-1742155683' class='feature-toc-pass'>New method "asFunction" of String added at runtime is callable by groovy and also works.</a>
@@ -379,9 +389,6 @@ div.footer {
 <a href='#-2093975990' class='feature-toc-pass'>Auto reshaping and broadcasting works and the result can be back propagated.</a>
 </li>
 <li>
-<a href='#-1054980820' class='feature-toc-pass'>A new transposed version of a given tensor will be returned by the "T()" method.</a>
-</li>
-<li>
 <a href='#-1712186838' class='feature-toc-pass'>Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance</a>
 </li>
 <li>
@@ -390,8 +397,8 @@ div.footer {
 </ul>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-1985424227'>
-<span>Test "x-mul" operator produces expected results. (Not on device)</span>
+<div class='feature-description' id='168556918'>
+<span>Test "x-mul" (convolution) operator produces expected results. (Not on device)</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -800,6 +807,197 @@ var b = Tsr.of(Double.class).withShape(K, N).andFill(B).unsafe.toType(type)</pre
 </td>
 <td>
 <div class='spec-status'>6/6 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1791627835'>
+<span>The "random" function/operation populates tensors randomly.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>var t = Tsr.of(type).withShape(2,4).all(-42)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>var f = Function.of('random(I[0])')</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>t.valueClass == type</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>var r = f(t)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>r === t</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>( r.data as float[] ) == [1.0588075, 1.4017555, 1.2537496, -1.3897222, 1.0374786, 0.743316, 1.1692946, 1.3977289] as float[]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>r = f.callWith(Arg.Seed.of(42)).call(t)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>r === t</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>( r.data as float[] ) == [2.2639139286289724, -0.2763464310754003, 0.3719153742868813, -0.9768504740489802, 0.5154099159307729, 1.1608137295804097, 2.1905023977046336, -0.5449569795660217] as float[]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='311460304'>
+<span>The values of a randomly populated tensor seems to adhere to a gaussian distribution.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>var t = Tsr.of(type).withShape(20, 40, 20).all(0)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>var f = Function.of('random(I[0])')</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>f.callWith(Arg.Seed.of(-73L)).call(t)
+var stats = new Statistics( t.data as double[] )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>-0.05d &lt; stats.mean &amp;&amp; stats.mean &lt; 0.05d</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>0.875d &lt; stats.variance &amp;&amp; stats.variance &lt; 1.125d</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
 </td>
 </tr>
 <tr>
@@ -1376,7 +1574,7 @@ assert ccAsStr.contains("(2x2):[0.0, 0.0, 0.0, 0.0]")</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x293b42f1720],platform=OpenCLPlatform@7a49db16[pid=cl_platform_id[0x293b42f2850],context=cl_context[0x293b56776e0],kernels=[..37..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x205599ad1d0],platform=OpenCLPlatform@744b29a[pid=cl_platform_id[0x205599ac780],context=cl_context[0x20555aa7810],kernels=[..37..]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -1453,7 +1651,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x293b42f1720],platform=OpenCLPlatform@7a49db16[pid=cl_platform_id[0x293b42f2850],context=cl_context[0x293b56776e0],kernels=[..37..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x205599ad1d0],platform=OpenCLPlatform@744b29a[pid=cl_platform_id[0x205599ac780],context=cl_context[0x20555aa7810],kernels=[..37..]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -1570,7 +1768,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure11@3247706</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure11@5ac7562b</td>
 <td class='ex-value'>9, 10, 11, 12</td>
 <td class='ex-value'>5, -2, 7, 3</td>
 <td class='ex-result'>OK</td>
@@ -1580,7 +1778,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure12@577139a3</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure12@25a33549</td>
 <td class='ex-value'>9, 10, 11, 12</td>
 <td class='ex-value'>5, -2, 7, 3</td>
 <td class='ex-result'>OK</td>
@@ -1590,7 +1788,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure13@458cfd47</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure13@664f1d99</td>
 <td class='ex-value'>9, 10, 11, 12</td>
 <td class='ex-value'>5, -2, 7, 3</td>
 <td class='ex-result'>OK</td>
@@ -1600,7 +1798,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure14@3c9fa2ed</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure14@60ee083d</td>
 <td class='ex-value'>9, 10, 11, 12</td>
 <td class='ex-value'>5, -2, 7, 3</td>
 <td class='ex-result'>OK</td>
@@ -1610,7 +1808,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure15@2b1465c2</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure15@22026438</td>
 <td class='ex-value'>8, 16, 24, 32</td>
 <td class='ex-value'>40, -16, 56, 24</td>
 <td class='ex-result'>OK</td>
@@ -1620,7 +1818,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure16@358a418f</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure16@40f8bc38</td>
 <td class='ex-value'>8, 16, 24, 32</td>
 <td class='ex-value'>40, -16, 56, 24</td>
 <td class='ex-result'>OK</td>
@@ -1630,7 +1828,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure17@40f99ff5</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure17@6caaadd2</td>
 <td class='ex-value'>8, 16, 24, 32</td>
 <td class='ex-value'>40, -16, 56, 24</td>
 <td class='ex-result'>OK</td>
@@ -1640,7 +1838,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure18@44d44e4b</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure18@6d7f95fc</td>
 <td class='ex-value'>8, 16, 24, 32</td>
 <td class='ex-value'>40, -16, 56, 24</td>
 <td class='ex-result'>OK</td>
@@ -1650,7 +1848,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure19@6e0a19d1</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure19@76e9e045</td>
 <td class='ex-value'>9, 10, 12, 13</td>
 <td class='ex-value'>3, 10</td>
 <td class='ex-result'>OK</td>
@@ -1660,7 +1858,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure20@36689488</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure20@23a6567</td>
 <td class='ex-value'>9, 10, 12, 13</td>
 <td class='ex-value'>3, 10</td>
 <td class='ex-result'>OK</td>
@@ -1670,7 +1868,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure21@5855d1cf</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure21@74bae0a6</td>
 <td class='ex-value'>9, 10, 11, 12</td>
 <td class='ex-value'>13</td>
 <td class='ex-result'>OK</td>
@@ -1680,7 +1878,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure22@35e676cd</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure22@35543d1f</td>
 <td class='ex-value'>9, 10, 11, 12</td>
 <td class='ex-value'>13</td>
 <td class='ex-result'>OK</td>
@@ -1690,7 +1888,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure23@39b8760d</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure23@18fa4b87</td>
 <td class='ex-value'>9, 10, 11, 12</td>
 <td class='ex-value'>13</td>
 <td class='ex-result'>OK</td>
@@ -1700,7 +1898,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure24@33d315b</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure24@5200a66e</td>
 <td class='ex-value'>9, 10, 11, 12</td>
 <td class='ex-value'>13</td>
 <td class='ex-result'>OK</td>
@@ -1710,7 +1908,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure25@79e48e12</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure25@1c15f427</td>
 <td class='ex-value'>9, 11, 11, 13</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1720,7 +1918,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure26@456e84cf</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure26@2cee80dc</td>
 <td class='ex-value'>9, 11, 11, 13</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1730,7 +1928,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure27@4e6de3a4</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure27@7403ba76</td>
 <td class='ex-value'>9, 11, 11, 13</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1740,7 +1938,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure28@dd856b5</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure28@3ca6ebcb</td>
 <td class='ex-value'>9, 11, 11, 13</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1750,7 +1948,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure29@2d9a980e</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure29@36fa3205</td>
 <td class='ex-value'>9, 11, 11, 13</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1760,7 +1958,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure30@738043d5</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure30@6a5b9408</td>
 <td class='ex-value'>9, 11, 11, 13</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1770,7 +1968,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure31@765a3059</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure31@2bbe7708</td>
 <td class='ex-value'>9, 11, 11, 13</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1780,7 +1978,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure32@70a7635d</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure32@12c9d8a</td>
 <td class='ex-value'>9, 11, 11, 13</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1790,7 +1988,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure33@1b93a694</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure33@6399e60f</td>
 <td class='ex-value'>-7, -7, -5, -5</td>
 <td class='ex-value'>-12, -1</td>
 <td class='ex-result'>OK</td>
@@ -1800,7 +1998,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure34@48588f46</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure34@726b74c9</td>
 <td class='ex-value'>-7, -7, -5, -5</td>
 <td class='ex-value'>-12, -1</td>
 <td class='ex-result'>OK</td>
@@ -1810,7 +2008,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure35@4f445ad5</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure35@607e1cea</td>
 <td class='ex-value'>-7, -7, -5, -5</td>
 <td class='ex-value'>-12, -1</td>
 <td class='ex-result'>OK</td>
@@ -1820,7 +2018,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure36@70c098d1</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure36@368973bb</td>
 <td class='ex-value'>-7, -7, -5, -5</td>
 <td class='ex-value'>-12, -1</td>
 <td class='ex-result'>OK</td>
@@ -1830,7 +2028,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure37@41d0b4f4</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure37@1258ba08</td>
 <td class='ex-value'>-7, -7, -5, -5</td>
 <td class='ex-value'>-12, -1</td>
 <td class='ex-result'>OK</td>
@@ -1840,7 +2038,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure38@1d51a4d2</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure38@693bf56</td>
 <td class='ex-value'>-7, -7, -5, -5</td>
 <td class='ex-value'>-12, -1</td>
 <td class='ex-result'>OK</td>
@@ -1850,7 +2048,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure39@517fa7d1</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure39@e27c658</td>
 <td class='ex-value'>-7, -7, -5, -5</td>
 <td class='ex-value'>-12, -1</td>
 <td class='ex-result'>OK</td>
@@ -1860,7 +2058,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure40@328d7fec</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure40@4c72cfde</td>
 <td class='ex-value'>-7, -7, -5, -5</td>
 <td class='ex-value'>-12, -1</td>
 <td class='ex-result'>OK</td>
@@ -1870,7 +2068,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure41@4040c041</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure41@965dd4c</td>
 <td class='ex-value'>7, 7, 5, 5</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1880,7 +2078,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure42@40145a74</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure42@37c8ae06</td>
 <td class='ex-value'>7, 7, 5, 5</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1890,7 +2088,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure43@5f70fb4d</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure43@4f0a0d6f</td>
 <td class='ex-value'>7, 7, 5, 5</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1900,7 +2098,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[1, 2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure44@48273b70</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure44@24e0d663</td>
 <td class='ex-value'>7, 7, 5, 5</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1910,7 +2108,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure45@bb0dfda</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure45@1e494c8c</td>
 <td class='ex-value'>7, 7, 5, 5</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1920,7 +2118,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure46@5b61a577</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure46@705b6bdc</td>
 <td class='ex-value'>7, 7, 5, 5</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1930,7 +2128,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure47@3482533</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure47@c3d7a99</td>
 <td class='ex-value'>7, 7, 5, 5</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1940,7 +2138,7 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2]</td>
-<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov4_closure48@41f31776</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure48@71921839</td>
 <td class='ex-value'>7, 7, 5, 5</td>
 <td class='ex-value'>12, 1</td>
 <td class='ex-result'>OK</td>
@@ -1951,49 +2149,6 @@ String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
 </td>
 <td>
 <div class='spec-status'>38/38 passed</div>
-</td>
-</tr>
-<tr>
-<td colspan='10'>
-<div class='feature-description' id='-1054980820'>
-<span>A new transposed version of a given tensor will be returned by the "T()" method.</span>
-<span style='float: right; font-size: 60%;'>
-<a href='#toc'>Return</a>
-</span>
-</div>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>Given:</div>
-</td>
-<td>
-<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>When:</div>
-</td>
-<td>
-<div class='block-text'>A three by two matrix is being transposed...</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>Tsr t = Tsr.of([2, 3], [
-    1d, 2d, 3d,
-    4d, 5d, 6d
-]).T()</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>Then:</div>
-</td>
-<td>
-<pre class='block-source'>t.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")</pre>
 </td>
 </tr>
 <tr>
@@ -2260,7 +2415,7 @@ result2.valueClass == type</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>result1.data == expected</pre>
+<pre class='block-source'>result1.data == expected instanceof Map ? expected['r1'] : expected</pre>
 </td>
 </tr>
 <tr>
@@ -2274,7 +2429,7 @@ result2.valueClass == type</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>result2.value == expected</pre>
+<pre class='block-source'>result2.value == expected instanceof Map ? expected['r2'] : expected</pre>
 </td>
 </tr>
 <tr>
@@ -2472,12 +2627,24 @@ result2.valueClass == type</pre>
 <td class='ex-value'>[0, 0, 0, 0, 0, 0]</td>
 <td class='ex-result'>OK</td>
 </tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>random(i0)</td>
+<td class='ex-value'>[r2:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.242396559265774, 0.23980663860290638, 0.4667980401594514, 0.0, 0.0, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], r1:[2.242396559265774, 0.23980663860290638, 0.4667980401594514, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>random(i0)</td>
+<td class='ex-value'>[r2:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.2423966, 0.23980664, 0.46679804, 0.0, 0.0, -1.0840396, 0.43090823, 1.0381081, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], r1:[2.2423966, 0.23980664, 0.46679804, -1.0840396, 0.43090823, 1.0381081]]</td>
+<td class='ex-result'>OK</td>
+</tr>
 </tbody>
 </table>
 </div>
 </td>
 <td>
-<div class='spec-status'>30/30 passed</div>
+<div class='spec-status'>32/32 passed</div>
 </td>
 </tr>
 </tbody>

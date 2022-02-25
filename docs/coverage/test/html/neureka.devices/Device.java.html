@@ -47,7 +47,7 @@ import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.devices.host.CPU;
-import neureka.ndim.AbstractNDArray;
+import neureka.ndim.AbstractTensor;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.*;
@@ -78,7 +78,7 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * @param searchKeys The search parameter and name of the requested {@link Device} instance.
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
-    static Device&lt;?&gt; find( String... searchKeys )
+    static Device&lt;Object&gt; find( String... searchKeys )
     {
 <span class="fc" id="L83">        return find( Device.class, searchKeys );</span>
     }
@@ -206,7 +206,7 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
     Device&lt;V&gt; approve( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call );
 
     /**
-     *  This method automatically called within the {@link AbstractNDArray.Unsafe#setNDConf(NDConfiguration)} method
+     *  This method automatically called within the {@link AbstractTensor.Unsafe#setNDConf(NDConfiguration)} method
      *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
      *  given {@link Device} implementation... &lt;br&gt;&lt;br&gt;
      *

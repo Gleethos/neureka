@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Feb 04 16:08:14 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 25 23:22:33 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>9.604 seconds</td>
+<td>7.176 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -439,21 +439,6 @@ assert t.toString().contains("(3):[1.0, 3.3, 6.0]")</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<div class='block-text'>Function cache mocking is being prepared to test logging...</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>Logger oldLogger = Neureka.get().backend().getFunctionCache()._log
-Neureka.get().backend().getFunctionCache()._log = Mock( Logger )</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
 <div class='block-text'>The benchmark script is being loaded into a GroovyShell instance.</div>
 </td>
 </tr>
@@ -517,20 +502,6 @@ String expected = "13f4f656e8035b2668cc2ca88de4e118"</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<div class='block-text'>No logging occurs because the benchmark does not render a scenario where a cache hit could occur.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>0 * Neureka.get().backend().getFunctionCache()._log.debug(_)</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
 <pre class='block-source'>result.keySet().toList() == ["convolutional_matrix_multiplication", "matrix_multiplication", "vector_multiplication", "manual_convolution", "tensor_math", "iterations", "difficulty"]</pre>
 </td>
 </tr>
@@ -545,20 +516,6 @@ String expected = "13f4f656e8035b2668cc2ca88de4e118"</pre>
 <tr>
 <td>
 <div class='block-kind'>When:</div>
-</td>
-<td>
-<div class='block-text'>The cache logging is being reverted to the original state...</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>Neureka.get().backend().getFunctionCache()._log = oldLogger</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>And:</div>
 </td>
 <td>
 <div class='block-text'>Only continue if testing system supports OpenCL.</div>

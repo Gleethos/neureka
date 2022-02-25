@@ -236,13 +236,13 @@ import java.util.stream.IntStream;
 <span class="fc" id="L236">            return _build(component, doAD);</span>
         }
         // If the component did not trigger constant/input/variable creation: -&gt; Cleaning!
-<span class="fc" id="L239">        String cleaned = ParseUtil.cleanedHeadAndTail(component);</span>
+<span class="fc" id="L239">        String cleaned = ParseUtil.cleanedHeadAndTail( component );</span>
 <span class="fc" id="L240">        String raw = component.replace( cleaned, &quot;&quot; );</span>
 <span class="fc" id="L241">        String assumed = ParseUtil.assumptionBasedOn( raw );</span>
 <span class="fc bfc" id="L242" title="All 2 branches covered.">        if ( assumed.trim().equals(&quot;&quot;) ) component = cleaned;</span>
 <span class="fc" id="L243">        else component = assumed + cleaned;</span>
         // Let's try again:
-<span class="fc" id="L245">        return build(component, doAD);</span>
+<span class="fc" id="L245">        return build( component, doAD );</span>
     }
 
     private Function _buildOperators(

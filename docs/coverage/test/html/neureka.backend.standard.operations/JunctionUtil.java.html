@@ -11,248 +11,252 @@ import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-<span class="nc" id="L14">public class JunctionUtil</span>
+/**
+ *  Methods inside this utility class execute only some {@link ExecutionCall} arguments
+ *  in groups if their total number exceeds the arity of an operation.
+ *  
+ */
+<span class="nc" id="L19">public class JunctionUtil</span>
 {
-
-<span class="fc" id="L17">    private static final Logger _LOG = LoggerFactory.getLogger( JunctionUtil.class );</span>
+<span class="fc" id="L21">    private static final Logger _LOG = LoggerFactory.getLogger( JunctionUtil.class );</span>
 
     @Contract( pure = true )
     public static Tsr&lt;?&gt; forConvolution(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
-            CallExecutor goDeeperWith
+            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
-<span class="fc" id="L24">        Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
-<span class="fc" id="L25">        Device&lt;?&gt; device = call.getDevice();</span>
-<span class="fc" id="L26">        int d = call.getValOf( Arg.DerivIdx.class );</span>
-<span class="fc" id="L27">        Operation operation = call.getOperation();</span>
+<span class="fc" id="L28">        Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
+<span class="fc" id="L29">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L30">        int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="fc" id="L31">        Operation operation = call.getOperation();</span>
 
-<span class="fc" id="L29">        Tsr&lt;?&gt; alternative = null;</span>
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if ( tensors.length &gt; 3 ) {</span>
-<span class="nc bnc" id="L31" title="All 2 branches missed.">            if ( d &lt; 0 ) {</span>
-<span class="nc" id="L32">                Tsr&lt;?&gt;[] reduction = new Tsr[]{ tensors[ 0 ], tensors[ 1 ], tensors[ 2 ] };</span>
-<span class="nc" id="L33">                alternative = goDeeperWith.execute(</span>
-<span class="nc" id="L34">                                    ExecutionCall.of( reduction )</span>
-<span class="nc" id="L35">                                                    .andArgs( Arg.DerivIdx.of(d) )</span>
-<span class="nc" id="L36">                                                    .running( operation )</span>
-<span class="nc" id="L37">                                                    .on(device)</span>
+<span class="fc" id="L33">        Tsr&lt;?&gt; alternative = null;</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if ( tensors.length &gt; 3 ) {</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">            if ( d &lt; 0 ) {</span>
+<span class="nc" id="L36">                Tsr&lt;?&gt;[] reduction = new Tsr[]{ tensors[ 0 ], tensors[ 1 ], tensors[ 2 ] };</span>
+<span class="nc" id="L37">                alternative = recursiveExecutor.execute(</span>
+<span class="nc" id="L38">                                    ExecutionCall.of( reduction )</span>
+<span class="nc" id="L39">                                                    .andArgs( Arg.DerivIdx.of(d) )</span>
+<span class="nc" id="L40">                                                    .running( operation )</span>
+<span class="nc" id="L41">                                                    .on(device)</span>
                                 );
-<span class="nc" id="L39">                tensors[ 0 ] = reduction[ 0 ];</span>
+<span class="nc" id="L43">                tensors[ 0 ] = reduction[ 0 ];</span>
 
-<span class="nc" id="L41">                reduction = Operation.Utility.offsetted(tensors, 1);</span>
-<span class="nc" id="L42">                alternative = goDeeperWith.execute(</span>
-<span class="nc" id="L43">                                    ExecutionCall.of(reduction)</span>
-<span class="nc" id="L44">                                                    .andArgs(Arg.DerivIdx.of(d))</span>
-<span class="nc" id="L45">                                                    .running(operation)</span>
-<span class="nc" id="L46">                                                    .on(device)</span>
+<span class="nc" id="L45">                reduction = Operation.Utility.offsetted(tensors, 1);</span>
+<span class="nc" id="L46">                alternative = recursiveExecutor.execute(</span>
+<span class="nc" id="L47">                                    ExecutionCall.of(reduction)</span>
+<span class="nc" id="L48">                                                    .andArgs(Arg.DerivIdx.of(d))</span>
+<span class="nc" id="L49">                                                    .running(operation)</span>
+<span class="nc" id="L50">                                                    .on(device)</span>
                                 );
-<span class="nc" id="L48">                tensors[ 0 ] = reduction[ 0 ];</span>
+<span class="nc" id="L52">                tensors[ 0 ] = reduction[ 0 ];</span>
             }
-<span class="nc" id="L50">            return alternative;</span>
+<span class="nc" id="L54">            return alternative;</span>
         } else {
-<span class="fc bfc" id="L52" title="All 2 branches covered.">            if ( call.getOperation().getOperator().equals(&quot;x&quot;) ) {</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">                if ( d &gt;= 0 ) {</span>
-<span class="fc bfc" id="L54" title="All 2 branches covered.">                    if ( d == 0 ) tensors[ 0 ] = tensors[ 2 ];</span>
-<span class="fc" id="L55">                    else tensors[ 0 ] = tensors[ 1 ];</span>
-<span class="fc" id="L56">                    return tensors[ 0 ];</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            if ( call.getOperation().getOperator().equals(&quot;x&quot;) ) {</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">                if ( d &gt;= 0 ) {</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">                    if ( d == 0 ) tensors[ 0 ] = tensors[ 2 ];</span>
+<span class="fc" id="L59">                    else tensors[ 0 ] = tensors[ 1 ];</span>
+<span class="fc" id="L60">                    return tensors[ 0 ];</span>
                 } else {
-<span class="fc" id="L58">                    call.mutateTensors( 0, 1, 2 );</span>
+<span class="fc" id="L62">                    call.mutateTensors( 0, 1, 2 );</span>
                 }
-<span class="fc bfc" id="L60" title="All 2 branches covered.">            } else if ( call.getOperation().getOperator().equals(&quot;x&quot;+ ((char) 187)) ) {</span>
-<span class="fc" id="L61">                call.mutateTensors( 2, 1, 0 );</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">            } else if ( call.getOperation().getOperator().equals(&quot;x&quot;+ ((char) 187)) ) {</span>
+<span class="fc" id="L65">                call.mutateTensors( 2, 1, 0 );</span>
             }
-<span class="fc" id="L63">            return alternative;</span>
+<span class="fc" id="L67">            return null;</span>
         }
     }
 
     public static Tsr&lt;?&gt; forMultiplications(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
-            CallExecutor goDeeperWith
+            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
-<span class="fc" id="L71">        Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
-<span class="fc" id="L72">        Device&lt;?&gt; device = call.getDevice();</span>
-<span class="fc" id="L73">        int d = call.getValOf( Arg.DerivIdx.class );</span>
-<span class="fc" id="L74">        Operation type = call.getOperation();</span>
+<span class="fc" id="L75">        Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
+<span class="fc" id="L76">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L77">        int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="fc" id="L78">        Operation type = call.getOperation();</span>
 
-<span class="fc" id="L76">        Tsr&lt;?&gt; alternative = null;</span>
-<span class="fc bfc" id="L77" title="All 2 branches covered.">        if ( tensors.length &gt; 3 ) {</span>
-<span class="fc bfc" id="L78" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
-<span class="fc" id="L79">                Tsr&lt;?&gt;[] reduction = new Tsr[]{ tensors[ 0 ], tensors[ 1 ], tensors[ 2 ] };</span>
-<span class="fc" id="L80">                alternative = goDeeperWith.execute(</span>
-<span class="fc" id="L81">                        ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)</span>
+<span class="fc" id="L80">        Tsr&lt;?&gt; alternative = null;</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if ( tensors.length &gt; 3 ) {</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
+<span class="fc" id="L83">                Tsr&lt;?&gt;[] reduction = new Tsr[]{ tensors[ 0 ], tensors[ 1 ], tensors[ 2 ] };</span>
+<span class="fc" id="L84">                alternative = recursiveExecutor.execute(</span>
+<span class="fc" id="L85">                        ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)</span>
                 );
-<span class="fc" id="L83">                tensors[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L87">                tensors[ 0 ] = reduction[ 0 ];</span>
 
-<span class="fc" id="L85">                reduction = Operation.Utility.offsetted(tensors, 1);</span>
-<span class="fc" id="L86">                alternative = goDeeperWith.execute(</span>
-<span class="fc" id="L87">                        ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)</span>
+<span class="fc" id="L89">                reduction = Operation.Utility.offsetted(tensors, 1);</span>
+<span class="fc" id="L90">                alternative = recursiveExecutor.execute(</span>
+<span class="fc" id="L91">                        ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)</span>
                 );
-<span class="fc" id="L89">                tensors[ 0 ] = reduction[ 0 ];</span>
-<span class="fc" id="L90">            } else {</span>
-<span class="fc" id="L91">                Tsr&lt;?&gt;[] reduction = Operation.Utility.without(tensors, 1+d);</span>
-<span class="pc bpc" id="L92" title="1 of 2 branches missed.">                if ( reduction.length &gt; 2 ) {</span>
-<span class="pc bpc" id="L93" title="1 of 2 branches missed.">                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];</span>
-<span class="fc" id="L94">                    alternative = goDeeperWith.execute(</span>
-<span class="fc" id="L95">                            ExecutionCall.of(reduction)</span>
-<span class="fc" id="L96">                                            .andArgs( Arg.DerivIdx.of( -1 ) )</span>
-<span class="fc" id="L97">                                            .running( Neureka.get().backend().getOperation(&quot;*&quot;) )</span>
-<span class="fc" id="L98">                                            .on( device )</span>
+<span class="fc" id="L93">                tensors[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L94">            } else {</span>
+<span class="fc" id="L95">                Tsr&lt;?&gt;[] reduction = Operation.Utility.without(tensors, 1+d);</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">                if ( reduction.length &gt; 2 ) {</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];</span>
+<span class="fc" id="L98">                    alternative = recursiveExecutor.execute(</span>
+<span class="fc" id="L99">                            ExecutionCall.of(reduction)</span>
+<span class="fc" id="L100">                                            .andArgs( Arg.DerivIdx.of( -1 ) )</span>
+<span class="fc" id="L101">                                            .running( Neureka.get().backend().getOperation(&quot;*&quot;) )</span>
+<span class="fc" id="L102">                                            .on( device )</span>
                     );
-<span class="fc" id="L100">                    tensors[ 0 ] = reduction[ 0 ];</span>
-<span class="nc" id="L101">                } else tensors[ 0 ] = reduction[ 1 ];</span>
+<span class="fc" id="L104">                    tensors[ 0 ] = reduction[ 0 ];</span>
+<span class="nc" id="L105">                } else tensors[ 0 ] = reduction[ 1 ];</span>
             }
-<span class="fc" id="L103">            return alternative;</span>
-        } else
-<span class="fc" id="L105">            return alternative;</span>
+<span class="fc" id="L107">            return alternative;</span>
+        } 
+        else
+<span class="fc" id="L110">            return null;</span>
 
     }
 
     @Contract( pure = true )
     public static Tsr&lt;?&gt; forDivisionsOrModuli(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
-            CallExecutor goDeeperWith
+            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
-<span class="fc" id="L114">        Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
-<span class="fc" id="L115">        Device&lt;?&gt; device = call.getDevice();</span>
-<span class="fc" id="L116">        int d = call.getValOf( Arg.DerivIdx.class );</span>
-<span class="fc" id="L117">        Operation type = call.getOperation();</span>
+<span class="fc" id="L119">        Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
+<span class="fc" id="L120">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L121">        int d = call.getValOf( Arg.DerivIdx.class );</span>
 
-<span class="fc" id="L119">        Tsr&lt;?&gt; alternative = null;</span>
-<span class="fc bfc" id="L120" title="All 2 branches covered.">        if ( tensors.length &gt; 3 )</span>
+<span class="fc" id="L123">        Tsr&lt;?&gt; alternative = null;</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if ( tensors.length &gt; 3 )</span>
         {
-<span class="fc bfc" id="L122" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
-<span class="fc" id="L123">                Tsr&lt;?&gt;[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};</span>
-<span class="fc" id="L124">                alternative = goDeeperWith.execute(</span>
-<span class="fc" id="L125">                        call.withTensors( reduction )</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
+<span class="fc" id="L127">                Tsr&lt;?&gt;[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};</span>
+<span class="fc" id="L128">                alternative = recursiveExecutor.execute(</span>
+<span class="fc" id="L129">                        call.withTensors( reduction )</span>
                             );
-<span class="fc" id="L127">                tensors[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L131">                tensors[ 0 ] = reduction[ 0 ];</span>
 
-<span class="fc" id="L129">                reduction = Operation.Utility.offsetted(tensors, 1);</span>
-<span class="fc" id="L130">                alternative = goDeeperWith.execute(</span>
-<span class="fc" id="L131">                                    call.withTensors(reduction)</span>
+<span class="fc" id="L133">                reduction = Operation.Utility.offsetted(tensors, 1);</span>
+<span class="fc" id="L134">                alternative = recursiveExecutor.execute(</span>
+<span class="fc" id="L135">                                    call.withTensors(reduction)</span>
                             );
-<span class="fc" id="L133">                tensors[ 0 ] = reduction[ 0 ];</span>
-<span class="fc" id="L134">            } else {</span>
+<span class="fc" id="L137">                tensors[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L138">            } else {</span>
                 Tsr&lt;?&gt; a;
-<span class="pc bpc" id="L136" title="1 of 2 branches missed.">                if ( d &gt; 1 ) {</span>
-<span class="nc" id="L137">                    Tsr&lt;?&gt;[] reduction = Operation.Utility.subset(tensors, 1, 1, d+1);</span>
-<span class="nc" id="L138">                    reduction[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true );</span>
-<span class="nc" id="L139">                    alternative = goDeeperWith.execute(</span>
-<span class="nc" id="L140">                                        ExecutionCall.of(reduction)</span>
-<span class="nc" id="L141">                                                        .andArgs(Arg.DerivIdx.of(-1))</span>
-<span class="nc" id="L142">                                                        .running(Neureka.get().backend().getOperation(&quot;/&quot;))</span>
-<span class="nc" id="L143">                                                        .on(device)</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">                if ( d &gt; 1 ) {</span>
+<span class="nc" id="L141">                    Tsr&lt;?&gt;[] reduction = Operation.Utility.subset(tensors, 1, 1, d+1);</span>
+<span class="nc" id="L142">                    reduction[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true );</span>
+<span class="nc" id="L143">                    alternative = recursiveExecutor.execute(</span>
+<span class="nc" id="L144">                                        ExecutionCall.of(reduction)</span>
+<span class="nc" id="L145">                                                        .andArgs(Arg.DerivIdx.of(-1))</span>
+<span class="nc" id="L146">                                                        .running(Neureka.get().backend().getOperation(&quot;/&quot;))</span>
+<span class="nc" id="L147">                                                        .on(device)</span>
                     );
-<span class="nc" id="L145">                    a = reduction[ 0 ];</span>
-<span class="nc" id="L146">                }</span>
-<span class="pc bpc" id="L147" title="1 of 2 branches missed.">                else if ( d == 1 ) a = tensors[ 1 ];</span>
-<span class="nc" id="L148">                else a = newTsrLike( (Tsr&lt;Number&gt;) tensors[ 1 ], 1.0 );</span>
+<span class="nc" id="L149">                    a = reduction[ 0 ];</span>
+<span class="nc" id="L150">                }</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">                else if ( d == 1 ) a = tensors[ 1 ];</span>
+<span class="nc" id="L152">                else a = newTsrLike( (Tsr&lt;Number&gt;) tensors[ 1 ], 1.0 );</span>
                 Tsr&lt;?&gt; b;
-<span class="pc bpc" id="L150" title="1 of 2 branches missed.">                if ( tensors.length -  d - 2  &gt; 1 ) {</span>
-<span class="fc" id="L151">                    Tsr&lt;?&gt;[] reduction = Operation.Utility.subset(tensors, 2, d+2, tensors.length-(d+2));</span>
-<span class="fc" id="L152">                    reduction[ 1 ] = newTsrLike( (Tsr&lt;Number&gt;) tensors[ 1 ], 1.0 );</span>
-<span class="fc" id="L153">                    reduction[ 0 ] = reduction[ 1 ];</span>
-<span class="fc" id="L154">                    alternative = goDeeperWith.execute(</span>
-<span class="fc" id="L155">                                        ExecutionCall.of(reduction)</span>
-<span class="fc" id="L156">                                                        .andArgs(Arg.DerivIdx.of(-1))</span>
-<span class="fc" id="L157">                                                        .running(Neureka.get().backend().getOperation(&quot;/&quot;))</span>
-<span class="fc" id="L158">                                                        .on(device)</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">                if ( tensors.length -  d - 2  &gt; 1 ) {</span>
+<span class="fc" id="L155">                    Tsr&lt;?&gt;[] reduction = Operation.Utility.subset(tensors, 2, d+2, tensors.length-(d+2));</span>
+<span class="fc" id="L156">                    reduction[ 1 ] = newTsrLike( (Tsr&lt;Number&gt;) tensors[ 1 ], 1.0 );</span>
+<span class="fc" id="L157">                    reduction[ 0 ] = reduction[ 1 ];</span>
+<span class="fc" id="L158">                    alternative = recursiveExecutor.execute(</span>
+<span class="fc" id="L159">                                        ExecutionCall.of(reduction)</span>
+<span class="fc" id="L160">                                                        .andArgs(Arg.DerivIdx.of(-1))</span>
+<span class="fc" id="L161">                                                        .running(Neureka.get().backend().getOperation(&quot;/&quot;))</span>
+<span class="fc" id="L162">                                                        .on(device)</span>
                                 );
-<span class="fc" id="L160">                    b = reduction[ 0 ];</span>
-<span class="fc" id="L161">                }</span>
-<span class="nc" id="L162">                else b = newTsrLike( (Tsr&lt;Number&gt;) tensors[ 1 ], 1.0 );</span>
+<span class="fc" id="L164">                    b = reduction[ 0 ];</span>
+<span class="fc" id="L165">                }</span>
+<span class="nc" id="L166">                else b = newTsrLike( (Tsr&lt;Number&gt;) tensors[ 1 ], 1.0 );</span>
 
-<span class="fc" id="L164">                alternative = goDeeperWith.execute(</span>
-<span class="fc" id="L165">                                        ExecutionCall.of( tensors[ 0 ], a, b )</span>
-<span class="fc" id="L166">                                                        .andArgs( Arg.DerivIdx.of( -1 ) )</span>
-<span class="fc" id="L167">                                                        .running( Neureka.get().backend().getOperation(&quot;*&quot;) )</span>
-<span class="fc" id="L168">                                                        .on( device )</span>
+<span class="fc" id="L168">                alternative = recursiveExecutor.execute(</span>
+<span class="fc" id="L169">                                        ExecutionCall.of( tensors[ 0 ], a, b )</span>
+<span class="fc" id="L170">                                                        .andArgs( Arg.DerivIdx.of( -1 ) )</span>
+<span class="fc" id="L171">                                                        .running( Neureka.get().backend().getOperation(&quot;*&quot;) )</span>
+<span class="fc" id="L172">                                                        .on( device )</span>
                                 );
-<span class="fc" id="L170">                alternative = goDeeperWith.execute(</span>
-<span class="fc" id="L171">                                        ExecutionCall.of( tensors[ 0 ], tensors[ 0 ], tensors[ d + 1 ] )</span>
-<span class="fc" id="L172">                                                        .andArgs(Arg.DerivIdx.of(1))</span>
-<span class="fc" id="L173">                                                        .running(Neureka.get().backend().getOperation(&quot;/&quot;))</span>
-<span class="fc" id="L174">                                                        .on(device)</span>
+<span class="fc" id="L174">                alternative = recursiveExecutor.execute(</span>
+<span class="fc" id="L175">                                        ExecutionCall.of( tensors[ 0 ], tensors[ 0 ], tensors[ d + 1 ] )</span>
+<span class="fc" id="L176">                                                        .andArgs(Arg.DerivIdx.of(1))</span>
+<span class="fc" id="L177">                                                        .running(Neureka.get().backend().getOperation(&quot;/&quot;))</span>
+<span class="fc" id="L178">                                                        .on(device)</span>
                                 );
-<span class="pc bpc" id="L176" title="1 of 2 branches missed.">                if ( d == 0 ) a.getUnsafe().delete();</span>
-<span class="fc" id="L177">                b.getUnsafe().delete();</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">                if ( d == 0 ) a.getUnsafe().delete();</span>
+<span class="fc" id="L181">                b.getUnsafe().delete();</span>
             }
-<span class="fc" id="L179">            return alternative;</span>
-        } else
-<span class="fc" id="L181">            return alternative;</span>
+        }
+<span class="fc" id="L184">        return alternative;</span>
     }
 
     @Contract( pure = true )
     public static Tsr&lt;?&gt; forAdditions(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
-            CallExecutor goDeeperWith
+            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
-<span class="fc" id="L189">        return _forAdditionsOrSubtractions(call, goDeeperWith, true);</span>
+<span class="fc" id="L192">        return _forAdditionsOrSubtractions(call, recursiveExecutor, true);</span>
     }
 
     @Contract( pure = true )
     public static Tsr&lt;?&gt; forSubtractions(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
-            CallExecutor goDeeperWith
+            CallExecutor recursiveExecutor
     ) {
-<span class="fc" id="L197">        return _forAdditionsOrSubtractions(call, goDeeperWith, false);</span>
+<span class="fc" id="L200">        return _forAdditionsOrSubtractions(call, recursiveExecutor, false);</span>
     }
 
     @Contract( pure = true )
     private static Tsr&lt;?&gt; _forAdditionsOrSubtractions(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
-            CallExecutor goDeeperWith,
+            CallExecutor recursiveExecutor,
             boolean thisIsForAddition
     ) {
-<span class="fc" id="L206">        Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
-<span class="fc" id="L207">        Device&lt;?&gt; device = call.getDevice();</span>
-<span class="fc" id="L208">        int d = call.getValOf( Arg.DerivIdx.class );</span>
-<span class="fc" id="L209">        Operation operation = call.getOperation();</span>
+<span class="fc" id="L209">        Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
+<span class="fc" id="L210">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L211">        int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="fc" id="L212">        Operation operation = call.getOperation();</span>
 
-<span class="fc" id="L211">        Tsr&lt;?&gt; alternative = null;</span>
-<span class="fc bfc" id="L212" title="All 2 branches covered.">        if ( tensors.length &gt; 3 ) {</span>
-<span class="fc bfc" id="L213" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
-<span class="fc" id="L214">                Tsr&lt;?&gt;[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};</span>
-<span class="fc" id="L215">                alternative = goDeeperWith.execute(</span>
-<span class="fc" id="L216">                                    ExecutionCall.of(reduction)</span>
-<span class="fc" id="L217">                                                    .andArgs(Arg.DerivIdx.of(d))</span>
-<span class="fc" id="L218">                                                    .running(operation)</span>
-<span class="fc" id="L219">                                                    .on(device)</span>
+<span class="fc" id="L214">        Tsr&lt;?&gt; alternative = null;</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">        if ( tensors.length &gt; 3 ) {</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
+<span class="fc" id="L217">                Tsr&lt;?&gt;[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};</span>
+<span class="fc" id="L218">                alternative = recursiveExecutor.execute(</span>
+<span class="fc" id="L219">                                    ExecutionCall.of(reduction)</span>
+<span class="fc" id="L220">                                                    .andArgs(Arg.DerivIdx.of(d))</span>
+<span class="fc" id="L221">                                                    .running(operation)</span>
+<span class="fc" id="L222">                                                    .on(device)</span>
                             );
-<span class="fc" id="L221">                tensors[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L224">                tensors[ 0 ] = reduction[ 0 ];</span>
 
-<span class="fc" id="L223">                reduction = Operation.Utility.offsetted(tensors, 1);</span>
-<span class="fc" id="L224">                alternative = goDeeperWith.execute(</span>
-<span class="fc" id="L225">                                        ExecutionCall.of(reduction)</span>
-<span class="fc" id="L226">                                                        .andArgs(Arg.DerivIdx.of(d))</span>
-<span class="fc" id="L227">                                                        .running(operation)</span>
-<span class="fc" id="L228">                                                        .on(device)</span>
+<span class="fc" id="L226">                reduction = Operation.Utility.offsetted(tensors, 1);</span>
+<span class="fc" id="L227">                alternative = recursiveExecutor.execute(</span>
+<span class="fc" id="L228">                                        ExecutionCall.of(reduction)</span>
+<span class="fc" id="L229">                                                        .andArgs(Arg.DerivIdx.of(d))</span>
+<span class="fc" id="L230">                                                        .running(operation)</span>
+<span class="fc" id="L231">                                                        .on(device)</span>
                                 );
-<span class="fc" id="L230">                tensors[ 0 ] = reduction[ 0 ];</span>
-<span class="fc" id="L231">            }</span>
-<span class="pc bpc" id="L232" title="2 of 4 branches missed.">            else tensors[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true ).setValue( d == 0 || thisIsForAddition ? 1f : -1f );</span>
-
-<span class="fc" id="L234">            return alternative;</span>
+<span class="fc" id="L233">                tensors[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L234">            }</span>
+            else
+<span class="fc" id="L236">                tensors[ 0 ] = tensors[ 1 ].clone()</span>
+<span class="fc" id="L237">                                            .getUnsafe()</span>
+<span class="fc" id="L238">                                            .setIsIntermediate( true )</span>
+<span class="pc bpc" id="L239" title="2 of 4 branches missed.">                                            .setValue( d == 0 || thisIsForAddition ? 1f : -1f );</span>
         }
-        else
-<span class="fc" id="L237">            return alternative;</span>
+<span class="fc" id="L241">        return alternative;</span>
     }
 
 
     public static &lt;V&gt; Tsr&lt;V&gt; newTsrLike( Tsr&lt;V&gt; template, double value ) {
         //Tsr&lt;V&gt; t = (Tsr&lt;V&gt;) Tsr.like( (Tsr&lt;Number&gt;) template ).all( value );
         //t.setIsVirtual(false);
-<span class="fc" id="L244">        Tsr&lt;V&gt; t = (Tsr&lt;V&gt;) Tsr.of( template.getValueClass(), template.getNDConf().shape(), value )</span>
-<span class="fc" id="L245">                                .getUnsafe()</span>
-<span class="fc" id="L246">                                .setIsIntermediate( true );</span>
-<span class="fc" id="L247">        t.setIsVirtual( false );</span>
-<span class="fc" id="L248">        t.setValue( value );</span>
+<span class="fc" id="L248">        Tsr&lt;V&gt; t = Tsr.of( template.getValueClass(), template.getNDConf().shape(), value )</span>
+<span class="fc" id="L249">                        .getUnsafe()</span>
+<span class="fc" id="L250">                        .setIsIntermediate( true );</span>
+<span class="fc" id="L251">        t.setIsVirtual( false );</span>
+<span class="fc" id="L252">        t.setValue( value );</span>
         try {
-<span class="fc bfc" id="L250" title="All 2 branches covered.">            if ( template.isOutsourced() ) ( (Device&lt;Object&gt;) template.get( Device.class ) ).store( t );</span>
-<span class="nc" id="L251">        } catch ( Exception exception ) {</span>
-<span class="nc" id="L252">            _LOG.error( &quot;Failed storing a newly created tensor from a template tensor to its host device.&quot;, exception );</span>
-<span class="nc" id="L253">            throw exception;</span>
-<span class="fc" id="L254">        }</span>
-<span class="fc" id="L255">        return t;</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">            if ( template.isOutsourced() ) ( (Device&lt;Object&gt;) template.get( Device.class ) ).store( t );</span>
+<span class="nc" id="L255">        } catch ( Exception exception ) {</span>
+<span class="nc" id="L256">            _LOG.error( &quot;Failed storing a newly created tensor from a template tensor to its host device.&quot;, exception );</span>
+<span class="nc" id="L257">            throw exception;</span>
+<span class="fc" id="L258">        }</span>
+<span class="fc" id="L259">        return t;</span>
     }
 
 }

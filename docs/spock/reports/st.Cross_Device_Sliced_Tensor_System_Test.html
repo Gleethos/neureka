@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Feb 04 16:08:02 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 25 23:22:33 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,15 +335,14 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.325 seconds</td>
+<td>0.198 seconds</td>
 </tr>
 </tbody>
 </table>
 </div>
+<pre class='title'>Cross Device Tensor Slicing</pre>
 <div class='spec-headers'>
-<div class='spec-header'>
-                <h2> Cross Device Tensor Slicing </h2>
-                <br> 
+<div class='spec-header'> 
                 <p>
                     This specification covers the behavior of tensors when being sliced
                     on multiple different device types in conjunction with 
@@ -400,10 +399,10 @@ if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.get().canAccessOpenCL() 
 <td></td>
 <td>
 <pre class='block-source'>Tsr a = Tsr.of([4, 6], [
-        1d, 2d, 3d, 4d, 5d, 6d,
-        7d, 8d, 9d, 1d, 2d, 3d,
-        4d, 5d, 6d, 7d, 8d, 9d,
-        1d, 2d, 3d, 4d, 5d, 6d
+    1d, 2d, 3d, 4d, 5d, 6d,
+    7d, 8d, 9d, 1d, 2d, 3d,
+    4d, 5d, 6d, 7d, 8d, 9d,
+    1d, 2d, 3d, 4d, 5d, 6d
 ])
 device.store(a)</pre>
 </td>
@@ -413,11 +412,11 @@ device.store(a)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr b = a.slice() // [[-1..-3, -6..-3]]
+<pre class='block-source'>Tsr b = a.slice() // [-1..-3, -6..-3]
 .axis(0).from(-1).to(-3)
 .axis(1).from(-6).to(-3)
 .get()
-Tsr s = a.slice() // [[1, -2]]
+Tsr s = a.slice() // [1, -2]
 .axis(0).at(1)
 .axis(1).at(-2)
 .get()
@@ -432,10 +431,24 @@ s.rqsGradient = true</pre>
 <pre class='block-source'>s.toString() == "(1x1):[2.0]:g:[null]"
 s.getValueAt(0) == 2.0
 s.rqsGradient()
-b.toString().contains(
-        "7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
-)
+b.toString().contains("7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0")
 b.spread() != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr y = ( s * 4 ) ^ 1.5</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>y.toString() == '(1x1):[22.6274E0]; -&gt;d(1x1):[16.9706E0]'</pre>
 </td>
 </tr>
 <tr>
@@ -452,7 +465,7 @@ b.spread() != null</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x18a8ca09400],platform=OpenCLPlatform@6fac557b[pid=cl_platform_id[0x18a8ca099a0],context=cl_context[0x18a8ba118e0],kernels=[..37..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x1f1558846b0],platform=OpenCLPlatform@32493c89[pid=cl_platform_id[0x1f155884ed0],context=cl_context[0x1f155368050],kernels=[..37..]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -515,7 +528,7 @@ y.toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0)")</pre>
 </td>
 <td>
 <pre class='block-source'>y.backward(Tsr.of(2))
-y = ((x+b)*w)**2</pre>
+y = ( ( x + b ) * w )**2</pre>
 </td>
 </tr>
 <tr>
@@ -542,7 +555,7 @@ Tsr a = Tsr.of([4, 6], [
 ])
 device.store(a)
 b = a[[-1..-3, -6..-3]]
-def s = a[[1, -2]]</pre>
+var s = a[[1, -2]]</pre>
 </td>
 </tr>
 <tr>
@@ -552,9 +565,7 @@ def s = a[[1, -2]]</pre>
 <td>
 <pre class='block-source'>s.toString() == "[1x1]:(2.0)"
 s.getValueAt(0) == 2.0
-b.toString().contains(
-        "7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
-)
+b.toString().contains("7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0")
 b.spread() != null</pre>
 </td>
 </tr>
@@ -576,9 +587,7 @@ s = a[1, -2]</pre>
 s.getValueAt(0) == 2.0
 s.getDataAt(0) == 1.0
 s.getDataAt(1) == 2.0
-b.toString().contains(
-        "7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
-)
+b.toString().contains("7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0")
 b.spread() != null</pre>
 </td>
 </tr>
@@ -592,13 +601,13 @@ b.spread() != null</pre>
     a.getDataAs( double[].class )[7] = a.getDataAs( double[].class )[7] * 2
 } else {
     Tsr k = Tsr.of([4, 6], [
-            1d, 6d, 1d, 1d,
-            1d, 1d, 1d, 2d,
-            1d, 1d, 1d, 1d,
-            1d, 1d, 1d, 1d,
-            1d, 1d, 1d, 1d,
-            1d, 1d, 1d, 1d
-    ])
+                    1d, 6d, 1d, 1d,
+                    1d, 1d, 1d, 2d,
+                    1d, 1d, 1d, 1d,
+                    1d, 1d, 1d, 1d,
+                    1d, 1d, 1d, 1d,
+                    1d, 1d, 1d, 1d
+                ])
     device.store( k )
     a[] = a * k
 }</pre>
@@ -609,9 +618,7 @@ b.spread() != null</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>b.toString().contains(
-        "7.0, 16.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
-)</pre>
+<pre class='block-source'>b.toString().contains("7.0, 16.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0")</pre>
 </td>
 </tr>
 <tr>
@@ -620,10 +627,10 @@ b.spread() != null</pre>
 </td>
 <td>
 <pre class='block-source'>Tsr c = Tsr.of([3, 4], [
-        -3d, 2d, 3d,
-         5d, 6d, 2d,
-        -1d, 1d, 2d,
-         3d, 4d, 2d,
+    -3d, 2d, 3d,
+     5d, 6d, 2d,
+    -1d, 1d, 2d,
+     3d, 4d, 2d,
 ])
 Tsr d = b + c</pre>
 </td>
@@ -638,8 +645,8 @@ Tsr d = b + c</pre>
 (c.NDConf.asInlineArray() as List) == ( [3, 4, 4, 1, 4, 1, 0, 0, 1, 1] )
 d.toString().contains(
     "4.0, 18.0, 12.0, 6.0, "+
-            "10.0, 7.0, 5.0, 8.0, "+
-            "3.0, 5.0, 7.0, 6.0"
+    "10.0, 7.0, 5.0, 8.0, "+
+    "3.0, 5.0, 7.0, 6.0"
 )</pre>
 </td>
 </tr>
@@ -656,9 +663,7 @@ d.toString().contains(
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>b.toString().contains(
-        "9.0, 1.0, 2.0, 6.0, 7.0, 8.0, 3.0, 4.0, 5.0"
-)
+<pre class='block-source'>b.toString().contains("9.0, 1.0, 2.0, 6.0, 7.0, 8.0, 3.0, 4.0, 5.0")
 b.spread() != null</pre>
 </td>
 </tr>
@@ -751,8 +756,8 @@ a.toString().contains(
 <td>
 <pre class='block-source'>b.setRqsGradient(true)
 c = Tsr.of([2, 2], [
-        -2, 3,//-2 + 24 + 3 + 8
-        1, 2,
+    -2, 3,//-2 + 24 + 3 + 8
+     1, 2,
 ])
 device.store(b).store(c)
 x = Tsr.of(b, "x", c)</pre>
@@ -763,9 +768,7 @@ x = Tsr.of(b, "x", c)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>x.toString().contains(
-        "[1x1]:(20.0); -&gt;d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
-)</pre>
+<pre class='block-source'>x.toString().contains("[1x1]:(20.0); -&gt;d[2x2]:(-2.0, 3.0, 1.0, 2.0)")</pre>
 </td>
 </tr>
 <tr>
@@ -786,7 +789,7 @@ x = Tsr.of(b, "x", c)</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x18a8ca09400],platform=OpenCLPlatform@6fac557b[pid=cl_platform_id[0x18a8ca099a0],context=cl_context[0x18a8ba118e0],kernels=[..37..]]]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x1f1558846b0],platform=OpenCLPlatform@32493c89[pid=cl_platform_id[0x1f155884ed0],context=cl_context[0x1f155368050],kernels=[..37..]]]</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>

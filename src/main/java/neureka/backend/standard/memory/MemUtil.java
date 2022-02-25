@@ -16,7 +16,7 @@ import java.util.stream.Stream;
  *  the {@link Tsr#isIntermediate} flag or supplied tensors...
  *  This is an internal library class which should not be used
  *  anywhere but in Neurekas backend.
- *  <br>Do not use this anywhere else!</br>
+ *  <b>Do not use this anywhere else!</b>
  */
 public class MemUtil {
 

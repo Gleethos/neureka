@@ -162,13 +162,13 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm&lt;FallbackAl
     private void _tryExecute( ExecutionCall&lt;CPU&gt; call, Class&lt;?&gt; typeClass ) {
 <span class="fc" id="L163">        Method m = _findMethod( call.getOperation().getFunction(), typeClass );</span>
 <span class="fc bfc" id="L164" title="All 2 branches covered.">        if ( m == null ) {</span>
-<span class="pc bpc" id="L165" title="3 of 5 branches missed.">            switch (call.getOperation().getOperator()) {</span>
+<span class="pc bpc" id="L165" title="2 of 5 branches missed.">            switch (call.getOperation().getOperator()) {</span>
 <span class="fc" id="L166">                case &quot;+&quot;: m = _findMethod(&quot;plus&quot;, typeClass);break;</span>
 <span class="fc" id="L167">                case &quot;-&quot;: m = _findMethod(&quot;minus&quot;, typeClass);break;</span>
                 case &quot;*&quot;:
 <span class="nc" id="L169">                    m = _findMethod(&quot;times&quot;, typeClass);</span>
-<span class="nc bnc" id="L170" title="All 2 branches missed.">                    if ( m == null) m = _findMethod(&quot;multiply&quot;, typeClass);</span>
-<span class="nc bnc" id="L171" title="All 2 branches missed.">                    if ( m == null) m = _findMethod(&quot;mul&quot;, typeClass);</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">                    if ( m == null ) m = _findMethod(&quot;multiply&quot;, typeClass);</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">                    if ( m == null ) m = _findMethod(&quot;mul&quot;, typeClass);</span>
                     break;
 <span class="nc" id="L173">                case &quot;%&quot;: m = _findMethod(&quot;mod&quot;, typeClass);break;</span>
             }

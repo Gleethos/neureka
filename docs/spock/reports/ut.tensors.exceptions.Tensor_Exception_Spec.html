@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Feb 04 16:08:42 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Feb 25 23:22:22 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,13 +329,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>6</td>
-<td>6</td>
+<td>7</td>
+<td>7</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.018 seconds</td>
+<td>0.174 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -366,6 +366,9 @@ div.footer {
 <ul id='toc'>
 <li>
 <a href='#1533953245' class='feature-toc-pass'>Trying to inject an empty tensor into another causes fitting exception.</a>
+</li>
+<li>
+<a href='#1760728725' class='feature-toc-pass'>Passing null to various methods of the tensor API will throw exceptions.</a>
 </li>
 <li>
 <a href='#40049354' class='feature-toc-pass'>Passing an invalid object into Tsr constructor causes descriptive exception.</a>
@@ -438,6 +441,135 @@ assert exception.message.contains("Provided tensor is empty! Empty tensors canno
 </tr>
 <tr>
 <td colspan='10'>
+<div class='feature-description' id='1760728725'>
+<span>Passing null to various methods of the tensor API will throw exceptions.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr&lt;Integer&gt; t = Tsr.of(1, 2, 3)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>errorCode(t)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>var exception = thrown(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>exception.message != "" &amp;&amp; exception.message.length() &gt; 13</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>errorCode</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@6431a73</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@2de9a746</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@5dffd885</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@168ef34d</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@3573bb6f</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@2e5c83b4</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@4df9e8c5</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@5cdb0650</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@5b534ad1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@381e545d</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@59207ed6</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@235f369e</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.IllegalArgumentException</td>
+<td class='ex-value'>ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@4374eecf</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>13/13 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
 <div class='feature-description' id='40049354'>
 <span>Passing an invalid object into Tsr constructor causes descriptive exception.</span>
 <span style='float: right; font-size: 60%;'>
@@ -457,7 +589,7 @@ assert exception.message.contains("Provided tensor is empty! Empty tensors canno
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr.of( new Scanner( System.in ) )</pre>
+<pre class='block-source'>Tsr.ofRandom(Scanner.class, 2, 4)</pre>
 </td>
 </tr>
 <tr>
@@ -473,22 +605,8 @@ assert exception.message.contains("Provided tensor is empty! Empty tensors canno
 <td>
 <pre class='block-source'>def exception = thrown(IllegalArgumentException)
 exception.message.contains(
-        "Cannot create tensor from argument of type 'java.util.Scanner'!"
+        "Could not create a random tensor for type 'class java.util.Scanner'!"
 )</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
-<div class='block-text'>The logger logs the exception message!</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>1 * Tsr._LOG.error( "Cannot create tensor from argument of type 'java.util.Scanner'!" )</pre>
 </td>
 </tr>
 <tr>
@@ -557,7 +675,7 @@ exception.message.contains(
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>1 * Tsr._LOG.error( "Cannot create tensor slice from key of type 'java.lang.Class'!" )</pre>
+<pre class='block-source'>1 * System.err.println( "[Test worker] ERROR neureka.Tsr - Cannot create tensor slice from key of type 'java.lang.Class'!" )</pre>
 </td>
 </tr>
 <tr>
@@ -614,11 +732,10 @@ exception.message == "java.lang.IllegalArgumentException: " +
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>1 * Tsr._LOG.error(
-        "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
+<pre class='block-source'>1 * System.err.println(
+        "[Test worker] ERROR neureka.Tsr - Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
         "At index '1' : offset '1' + shape '3' = '4',\n" +
-        "which is larger than the target shape '3' at the same index!",
-        _
+        "which is larger than the target shape '3' at the same index!"
 )</pre>
 </td>
 </tr>

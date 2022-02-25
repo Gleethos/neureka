@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Gaussian.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.operations.function</a> &gt; <span class="el_source">Gaussian.java</span></div><h1>Gaussian.java</h1><pre class="source lang-java linenums">package neureka.backend.standard.operations.function;
 
 import neureka.Tsr;
-import neureka.backend.standard.algorithms.Fun;
+import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
-import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
-import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
@@ -17,56 +15,56 @@ public final class Gaussian extends AbstractOperation
 {
     public Gaussian()
     {
-<span class="fc" id="L20">        super(</span>
+<span class="fc" id="L18">        super(</span>
             new OperationBuilder()
-<span class="fc" id="L22">                    .setFunction(         &quot;gaus&quot;    )</span>
-<span class="fc" id="L23">                    .setOperator(         &quot;gaus&quot;    )</span>
-<span class="fc" id="L24">                    .setArity(            1         )</span>
-<span class="fc" id="L25">                    .setIsOperator(       false     )</span>
-<span class="fc" id="L26">                    .setIsIndexer(        false     )</span>
-<span class="fc" id="L27">                    .setIsDifferentiable( true      )</span>
-<span class="fc" id="L28">                    .setIsInline(         false     )</span>
+<span class="fc" id="L20">                    .setFunction(         &quot;gaus&quot;    )</span>
+<span class="fc" id="L21">                    .setOperator(         &quot;gaus&quot;    )</span>
+<span class="fc" id="L22">                    .setArity(            1         )</span>
+<span class="fc" id="L23">                    .setIsOperator(       false     )</span>
+<span class="fc" id="L24">                    .setIsIndexer(        false     )</span>
+<span class="fc" id="L25">                    .setIsDifferentiable( true      )</span>
+<span class="fc" id="L26">                    .setIsInline(         false     )</span>
         );
 
-<span class="fc" id="L31">        Activation operationAlgorithm = new Activation()</span>
-<span class="fc" id="L32">            .setCanPerformBackwardADFor( call -&gt; true )</span>
-<span class="fc" id="L33">            .setCanPerformForwardADFor(</span>
+<span class="fc" id="L29">        Activation operationAlgorithm = new Activation()</span>
+<span class="fc" id="L30">            .setCanPerformBackwardADFor( call -&gt; true )</span>
+<span class="fc" id="L31">            .setCanPerformForwardADFor(</span>
                 call -&gt; {
-<span class="fc" id="L35">                    Tsr&lt;?&gt; last = null;</span>
-<span class="fc bfc" id="L36" title="All 2 branches covered.">                for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
-<span class="pc bpc" id="L37" title="3 of 4 branches missed.">                    if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
-<span class="fc" id="L38">                    last = t; // Note: shapes are cached!</span>
+<span class="fc" id="L33">                    Tsr&lt;?&gt; last = null;</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">                for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
+<span class="pc bpc" id="L35" title="3 of 4 branches missed.">                    if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
+<span class="fc" id="L36">                    last = t; // Note: shapes are cached!</span>
                 }
-<span class="fc" id="L40">                return true;</span>
+<span class="fc" id="L38">                return true;</span>
                 }
             )
-<span class="fc" id="L43">            .setSupplyADAgentFor( getDefaultAlgorithm() )</span>
-<span class="fc" id="L44">            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)</span>
-<span class="fc" id="L45">            .buildFunAlgorithm();</span>
+<span class="fc" id="L41">            .setSupplyADAgentFor( getDefaultAlgorithm() )</span>
+<span class="fc" id="L42">            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)</span>
+<span class="fc" id="L43">            .buildFunAlgorithm();</span>
 
-<span class="fc" id="L47">        setAlgorithm(</span>
+<span class="fc" id="L45">        setAlgorithm(</span>
             Activation.class,
-<span class="fc" id="L49">            operationAlgorithm.setImplementationFor(</span>
+<span class="fc" id="L47">            operationAlgorithm.setImplementationFor(</span>
                 CPU.class,
-<span class="fc" id="L51">                Activation.implementationForCPU()</span>
-<span class="fc" id="L52">                    .with(Fun.F64ToF64.pair(</span>
-<span class="fc" id="L53">                        x -&gt; Math.pow(Math.E, -Math.pow(x, 2)),</span>
-<span class="nc" id="L54">                        x -&gt; -2 * x * Math.pow(Math.E, -Math.pow(x, 2))</span>
+<span class="fc" id="L49">                Activation.implementationForCPU()</span>
+<span class="fc" id="L50">                    .with(Fun.F64ToF64.pair(</span>
+<span class="fc" id="L51">                        x -&gt; Math.pow(Math.E, -Math.pow(x, 2)),</span>
+<span class="nc" id="L52">                        x -&gt; -2 * x * Math.pow(Math.E, -Math.pow(x, 2))</span>
                     ))
-<span class="fc" id="L56">                    .with(Fun.F32ToF32.pair(</span>
-<span class="fc" id="L57">                        x -&gt; (float) Math.pow(Math.E, -Math.pow(x, 2)),</span>
-<span class="nc" id="L58">                        x -&gt; (float) (-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))</span>
+<span class="fc" id="L54">                    .with(Fun.F32ToF32.pair(</span>
+<span class="fc" id="L55">                        x -&gt; (float) Math.pow(Math.E, -Math.pow(x, 2)),</span>
+<span class="nc" id="L56">                        x -&gt; (float) (-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))</span>
                     ))
-<span class="fc" id="L60">                    .with(Fun.I32ToI32.pair(</span>
-<span class="fc" id="L61">                        x -&gt; (int) Math.round(Math.pow(Math.E, -Math.pow(x, 2))),</span>
-<span class="nc" id="L62">                        x -&gt; (int) Math.round(-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))</span>
+<span class="fc" id="L58">                    .with(Fun.I32ToI32.pair(</span>
+<span class="fc" id="L59">                        x -&gt; (int) Math.round(Math.pow(Math.E, -Math.pow(x, 2))),</span>
+<span class="nc" id="L60">                        x -&gt; (int) Math.round(-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))</span>
                     ))
-<span class="fc" id="L64">                    .get()</span>
+<span class="fc" id="L62">                    .get()</span>
             )
-<span class="fc" id="L66">            .setImplementationFor(</span>
+<span class="fc" id="L64">            .setImplementationFor(</span>
                 OpenCLDevice.class,
-<span class="fc" id="L68">                    Activation.implementationForGPU( this.getFunction() )</span>
-<span class="fc" id="L69">                        .with(</span>
+<span class="fc" id="L66">                    Activation.implementationForGPU( this.getFunction() )</span>
+<span class="fc" id="L67">                        .with(</span>
                                 &quot;output =\n&quot; +
                                         &quot;    (float)pow(\n&quot; +
                                         &quot;        (float)M_E,\n&quot; +
@@ -76,37 +74,37 @@ public final class Gaussian extends AbstractOperation
                                         &quot;        )\n&quot; +
                                         &quot;    );\n&quot;
                         )
-<span class="fc" id="L79">                        .and(</span>
+<span class="fc" id="L77">                        .and(</span>
                                 &quot;output = 1 / (1 + (float)pow((float)M_E, -input));\n&quot;
                         )
             )
         );
-<span class="fc" id="L84">    }</span>
+<span class="fc" id="L82">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L88">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L89" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;gaus&quot; + expression;</span>
-<span class="fc" id="L90">        return &quot;gaus&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="fc" id="L86">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L87" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;gaus&quot; + expression;</span>
+<span class="fc" id="L88">        return &quot;gaus&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L95">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L93">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L100">        return calculate(</span>
-<span class="nc bnc" id="L101" title="All 2 branches missed.">                src[ 0 ].call( inputs, j ),</span>
+<span class="nc" id="L98">        return calculate(</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">                src[ 0 ].call( inputs, j ),</span>
                 d &gt;= 0
-<span class="nc bnc" id="L103" title="All 2 branches missed.">        ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
     }
 
     @Contract(pure = true)
     public static double calculate(double input, boolean derive ) {
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        if ( !derive ) return Math.pow(Math.E, -Math.pow(input, 2));</span>
-<span class="nc" id="L109">        else return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if ( !derive ) return Math.pow(Math.E, -Math.pow(input, 2));</span>
+<span class="nc" id="L107">        else return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));</span>
     }
 
 
