@@ -205,15 +205,17 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param context         Can be either an array of tensors or a new lock (for leave node or fresh function locking)
      * @param payloadSupplier Provides the payload of this node.
      */
-    public GraphNode( Function function, Object context, Supplier<Tsr<V>> payloadSupplier )
-    {
-        if ( function == null )
+    public GraphNode( Function function, Object context, Supplier<Tsr<V>> payloadSupplier ) {
+        if (function == null)
             throw new IllegalArgumentException(
                     "Passed constructor argument of type Function must not be null!"
             );
-        if ( context instanceof GraphLock ) // Note function always null in this case:
-            _construct( payloadSupplier.get(), function, null, (GraphLock) context );
-        else if ( context instanceof ExecutionCall ) {
+
+        if (context instanceof GraphLock) { // Note function always null in this case:
+            Tsr<V> out = payloadSupplier.get();
+            _construct(out, function, null, (GraphLock) context);
+            _construct2(out, function, null );
+        } else if ( context instanceof ExecutionCall ) {
             ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
             Tsr<?>[] inputs = call.getTensors();
             /* Applying JITProp and gradients */
@@ -248,7 +250,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     );
                 }
             }
-            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].getGraphNode().getLock() );
+            Tsr<V> out = payloadSupplier.get();
+            _construct( out, function, call, inputs[ 0 ].getGraphNode().getLock() );
+            _construct2( out, function, call );
         }
         else
             throw new IllegalArgumentException(
@@ -300,6 +304,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
             if ( _function != null ) nid += _function.hashCode();
             _nodeID = nid;
         }
+    }
+
+    private void _construct2( Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call )
+    {
+        Tsr<V>[] inputs = ( call == null ) ? null : (Tsr<V>[]) call.getTensors();
         /* Returning if the above cannot form an AutoDiff computation graph! : */
         if ( inputs == null || !function.isFlat() ) return; // Leave nodes have!
         for ( Tsr<V> t : inputs ) if ( t.equals(output) ) return; // Output must be a unique tensor for AD!
@@ -313,20 +322,20 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     if ( srcNode.usesAD() ) {
                         if (
                                 srcNode.size() == 0 && this.size() == 0
-                                    ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
-                                !srcNode.isLeave() && !srcNode._allows_forward
+                                        ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
+                                        !srcNode.isLeave() && !srcNode._allows_forward
                         ) {
                             this.put(
                                     srcNode,
                                     call.getADAgentFrom(
                                             function,
                                             ExecutionCall.of(call.getTensors())
-                                                            .andArgs(
-                                                                    Arg.DerivIdx.of(i),
-                                                                    Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
-                                                            )
-                                                            .running(call.getOperation())
-                                                            .on(call.getDevice()),
+                                                    .andArgs(
+                                                            Arg.DerivIdx.of(i),
+                                                            Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
+                                                    )
+                                                    .running(call.getOperation())
+                                                    .on(call.getDevice()),
                                             true
                                     )
                             );
@@ -335,29 +344,29 @@ public class GraphNode<V> implements Component<Tsr<V>>
                             int finalI = i;
                             Tsr<V> localDerivative = (Tsr<V>) function.derive( inputs, i );
                             srcNode.forEachTargetAgentPair(
-                                ( targetNode, localAgent ) ->
-                                {
-                                    // The agent multiplies the local derivative with its stored partial derivative...
-                                    Tsr<?> targetDerivative = localAgent.forward( this, localDerivative );
-                                    // ...this is now the new partial derivative with respect to the target node!
-                                    this.put(
-                                            targetNode,
-                                            call.getADAgentFrom(
-                                                    function,
-                                                    ExecutionCall.of(call.getTensors())
-                                                                    .andArgs(
-                                                                            Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
-                                                                            Arg.DerivIdx.of(finalI),
-                                                                            Arg.Derivative.of(targetDerivative)
-                                                                    )
-                                                                    .running(call.getOperation())
-                                                                    .on(call.getDevice()),
-                                                    true
-                                            )
-                                    );
-                                    // TODO: flag within src Tsr<ValType>s that grant that the tensor
-                                    // has been created by function constructor!
-                                }
+                                    ( targetNode, localAgent ) ->
+                                    {
+                                        // The agent multiplies the local derivative with its stored partial derivative...
+                                        Tsr<?> targetDerivative = localAgent.forward( this, localDerivative );
+                                        // ...this is now the new partial derivative with respect to the target node!
+                                        this.put(
+                                                targetNode,
+                                                call.getADAgentFrom(
+                                                        function,
+                                                        ExecutionCall.of(call.getTensors())
+                                                                .andArgs(
+                                                                        Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
+                                                                        Arg.DerivIdx.of(finalI),
+                                                                        Arg.Derivative.of(targetDerivative)
+                                                                )
+                                                                .running(call.getOperation())
+                                                                .on(call.getDevice()),
+                                                        true
+                                                )
+                                        );
+                                        // TODO: flag within src Tsr<ValType>s that grant that the tensor
+                                        // has been created by function constructor!
+                                    }
                             );
                         }
                     }
@@ -371,12 +380,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                 call.getADAgentFrom(
                                         function,
                                         ExecutionCall.of(call.getTensors())
-                                                        .andArgs(
-                                                                Arg.DerivIdx.of(i),
-                                                                Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
-                                                        )
-                                                        .running(call.getOperation())
-                                                        .on(call.getDevice()),
+                                                .andArgs(
+                                                        Arg.DerivIdx.of(i),
+                                                        Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
+                                                )
+                                                .running(call.getOperation())
+                                                .on(call.getDevice()),
                                         false
                                 )
                         );
@@ -385,6 +394,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             }
         }
     }
+
 
     /**
      *  Evaluate auto-grad/auto-differentiation mode:
