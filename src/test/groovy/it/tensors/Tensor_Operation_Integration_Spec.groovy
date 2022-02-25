@@ -535,16 +535,25 @@ class Tensor_Operation_Integration_Spec extends Specification
 
     def 'A new transposed version of a given tensor will be returned by the "T()" method.'()
     {
-        given :
+        given : 'We want to view tensors inm the "[shape]:(value)" format so we set the corresponding flag.'
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+        and : 'We instantiate a test tensor:'
+            var t = Tsr.of([2, 3], [
+                            1d, 2d, 3d,
+                            4d, 5d, 6d
+                        ])
 
         when : 'A two by three matrix is being transposed...'
-            Tsr t = Tsr.of([2, 3], [
-                                1d, 2d, 3d,
-                                4d, 5d, 6d
-                            ]).T()
+            var t2 = t.T()
 
-        then : t.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
+        then : 'The resulting tensor should look like this:'
+            t2.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
+
+        when : 'We try the same operation with a column major tensor...'
+            t2 = t.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR).T
+
+        then : 'Once again, the resulting tensor should look like this:'
+            t2.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
     }
 
     @IgnoreIf({device == 'GPU' && !Neureka.get().canAccessOpenCL()})

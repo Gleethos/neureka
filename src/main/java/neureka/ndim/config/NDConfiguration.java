@@ -49,7 +49,7 @@ public interface NDConfiguration
      */
     enum Layout {
 
-        ROW_MAJOR, COLUMN_MAJOR, UNDEFINED;
+        ROW_MAJOR, COLUMN_MAJOR, UNSPECIFIC;
 
         @Contract(pure = true)
         public int[] newTranslationFor( int[] shape ) {
@@ -60,7 +60,7 @@ public interface NDConfiguration
                     translation[ i ] = prod;
                     prod *= shape[ i ];
                 }
-            } else if ( this == ROW_MAJOR || this == UNDEFINED ) {
+            } else if ( this == ROW_MAJOR || this == UNSPECIFIC ) {
                 for ( int i = translation.length - 1; i >= 0; i-- ) {
                     translation[i] = prod;
                     prod *= shape[i];
@@ -92,9 +92,10 @@ public interface NDConfiguration
      *
      * @return The layout of the underlying data array of a tensor.
      */
-    default Layout getLayout() {
+    default Layout getLayout()
+    {
         if ( !this.isCompact() )
-            return Layout.UNDEFINED;
+            return Layout.UNSPECIFIC;
         else {
             int[] translation1 = Layout.ROW_MAJOR.newTranslationFor(this.shape());
             boolean basicIndices = Arrays.equals(translation1, indicesMap());
@@ -107,7 +108,7 @@ public interface NDConfiguration
                 return Layout.COLUMN_MAJOR;
 
         }
-        return Layout.UNDEFINED;
+        return Layout.UNSPECIFIC;
     }
 
     /**
@@ -159,6 +160,15 @@ public interface NDConfiguration
 
     int[] translation();
 
+    /**
+     *  This method receives an axis index and return the
+     *  translation value for the targeted axis.
+     *  It enables readable and fast access to the translation
+     *  of this configuration.
+     *
+     * @param i The index of the axis whose translation ought to be returned.
+     * @return The axis translation targeted by the provided index.
+     */
     int translation( int i );
 
     /**
@@ -293,11 +303,18 @@ public interface NDConfiguration
                isCompact();
     }
 
+    /**
+     *  {@link NDConfiguration} instance where this flag is true
+     *  will most likely not be slices because they have no offset (all 0)
+     *  and a compact spread / stride array (all 1).
+     *
+     * @return The truth value determining if this configuration has no offset and spread/strides larger than 1.
+     */
     default boolean isCompact() {
         return
-                IntStream.range( 0, this.rank() ).allMatch( i -> this.spread(i) == 1 )
-                        &&
-                IntStream.range( 0, this.rank() ).allMatch( i -> this.offset(i) == 0 );
+            IntStream.range( 0, this.rank() ).allMatch( i -> this.spread(i) == 1 )
+                    &&
+            IntStream.range( 0, this.rank() ).allMatch( i -> this.offset(i) == 0 );
     }
 
     default IndexToIndexFunction getIndexToIndexAccessPattern() {
