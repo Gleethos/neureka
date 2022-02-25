@@ -258,14 +258,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     "The passed context object for the GraphNode constructor is of type '" + context.getClass().getName() + "'.\n" +
                             "A given context must either be a GraphLock instance or an ExecutionCall."
             );
-        _payloadReferenceVersion = a.get_payloadReferenceVersion();
-        _lock = a.get_lock();
-        _mode = a.get_mode();
-        _function = a.get_function();
-        _allows_backward = a.is_allows_backward();
-        _allows_forward = a.is_allows_forward();
-        _parents = a.get_parents();
-        _nodeID = a.get_nodeID();
+        _payloadReferenceVersion = a.payloadReferenceVersion();
+        _lock = a.lock();
+        _mode = a.mode();
+        _function = a.function();
+        _allows_backward = a.isAllowsBackward();
+        _allows_forward = a.isAllowsForward();
+        _parents = a.parents();
+        _nodeID = a.nodeID();
         _construct2( out, function, ( context instanceof ExecutionCall ? (ExecutionCall) context : null ) );
     }
 
@@ -287,37 +287,37 @@ public class GraphNode<V> implements Component<Tsr<V>>
         GraphNodeAssembler<V> a = new GraphNodeAssembler<>();
         Tsr<V>[] inputs = ( call == null ) ? null : (Tsr<V>[]) call.getTensors();
         if ( output == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
-        a.set_payloadReferenceVersion( output.getVersion() );
+        a.setPayloadReferenceVersion( output.getVersion() );
         if ( !function.isDoingAD() ) return a; // Only functions with AutoDiff enabled create computation graph!
-        a.set_lock( lock );
+        a.setLock( lock );
         node._setPayload( output );
         output.set( node );
         if ( inputs == null ) {
-            a.set_mode( output.rqsGradient() ? 1 : 0 );
-            a.set_function( null );
-            a.set_parents( null );
+            a.setMode( output.rqsGradient() ? 1 : 0 );
+            a.setFunction( null );
+            a.setParents( null );
         } else {
             a._modeOf( call );
-            a.set_function( function );
-            a.set_parents( new GraphNode[ inputs.length ] );
+            a.setFunction( function );
+            a.setParents( new GraphNode[ inputs.length ] );
             for ( int i = 0; i < inputs.length; i++ ) {
-                a.get_parents()[ i ] = inputs[ i ].getGraphNode();
-                if ( a.get_parents()[ i ] == null ) {
+                a.parents()[ i ] = inputs[ i ].getGraphNode();
+                if ( a.parents()[ i ] == null ) {
                     throw new IllegalStateException(
                             "Input tensors of a new graph-node must contain leave graph-nodes!"
                     );
                 }
-                else a.get_parents()[ i ]._attachChild(node);
+                else a.parents()[ i ]._attachChild(node);
             }
         }
-        if ( a.get_nodeID() == -1 ) {
+        if ( a.nodeID() == -1 ) {
             long nid = 1;
-            if ( a.get_parents() != null ) {
-                for ( GraphNode<V> n : a.get_parents() )
+            if ( a.parents() != null ) {
+                for ( GraphNode<V> n : a.parents() )
                     nid *= n.getPayload().hashCode(); //payload might be 0! Why? -> garbage collected!
             }
-            if ( a.get_function() != null ) nid += a.get_function().hashCode();
-            a.set_nodeID( nid );
+            if ( a.function() != null ) nid += a.function().hashCode();
+            a.setNodeID( nid );
         }
         return a;
     }
