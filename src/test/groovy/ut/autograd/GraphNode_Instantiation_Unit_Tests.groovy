@@ -94,27 +94,27 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             result.usesReverseAD()
 
         and : 'The mock objects have been called as expected.'
-            3 * context.getTensors() >> inputs
-            5 * inputsNodeMock.getLock() >> Mock( GraphLock )
-            1 * function.isDoingAD() >> true
-            1 * payload.getDevice() >> device
-            1 * payload.set( _ )
-            1 * device.cleaning( payload, _ )
-            4 * inputs[0].getGraphNode() >> inputsNodeMock
-            3 * inputs[1].getGraphNode() >> inputsNodeMock
-            3 * inputs[2].getGraphNode() >> inputsNodeMock
-            1 * inputsNodeMock.getMode() >> -2
-            1 * inputs[0].rqsGradient() >> true
-            1 * inputs[1].rqsGradient() >> false
-            1 * inputs[2].rqsGradient() >> true
-            1 * context.allowsForward() >> true
-            1 * context.allowsBackward() >> true
-            3 * function.getOperation() >> type
-            0 * type.isDifferentiable() >> true
-            3 * type.isInline() >> false
-            0 * type.getOperator() >> "*"
-            3 * inputsNodeMock.getPayload() >> payload
-            3 * payload.hashCode() >> 3
+            (3.._) * context.getTensors() >> inputs
+            (5.._) * inputsNodeMock.getLock() >> Mock( GraphLock )
+            (1.._) * function.isDoingAD() >> true
+            (1.._) * payload.getDevice() >> device
+            (1.._) * payload.set( _ )
+            (1.._) * device.cleaning( payload, _ )
+            (4.._) * inputs[0].getGraphNode() >> inputsNodeMock
+            (3.._) * inputs[1].getGraphNode() >> inputsNodeMock
+            (3.._) * inputs[2].getGraphNode() >> inputsNodeMock
+            (1.._) * inputsNodeMock.getMode() >> -2
+            (1.._) * inputs[0].rqsGradient() >> true
+            (1.._) * inputs[1].rqsGradient() >> false
+            (1.._) * inputs[2].rqsGradient() >> true
+            (1.._) * context.allowsForward() >> true
+            (1.._) * context.allowsBackward() >> true
+            (3.._) * function.getOperation() >> type
+            (0.._) * type.isDifferentiable() >> true
+            (3.._) * type.isInline() >> false
+            (0.._) * type.getOperator() >> "*"
+            (3.._) * inputsNodeMock.getPayload() >> payload
+            (3.._) * payload.hashCode() >> 3
 
     }
 
