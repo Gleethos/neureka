@@ -85,7 +85,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * _mode < 0  |  backward Auto-Differentiation   |
      * -----------+----------------------------------+-
      */
-    private int _mode;
+    private final int _mode;
 
     /**
      *  This flag records the support evaluation of the forward-AD availability analysis
@@ -100,7 +100,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  then said node will not be able to perform forward-AD even though it might very well
      *  be possible given an ExecutionCall whose state allows for such...
      */
-    private boolean _allows_forward;
+    private final boolean _allows_forward;
 
     /**
      *  This flag records the support evaluation of the backward-AD availability analysis
@@ -115,7 +115,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  then said node will most likely perform backward-AD even though it might very well
      *  be possible given an ExecutionCall whose state allows for such...
      */
-    private boolean _allows_backward;
+    private final boolean _allows_backward;
 
     /**
      * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
@@ -148,14 +148,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * Recorded Function which produced this {@link GraphNode}.
      */
-    private Function _function;
+    private final Function _function;
 
     /**
      * The GraphNodes of the input tensors. ('Parents' of the tensor of this node)
      * These are always the GraphNodes of the tensors from which the tensor payload of this
      * GraphNode has been formed.
      */
-    private GraphNode<V>[] _parents;
+    private final GraphNode<V>[] _parents;
 
     /**
      * This is the tensor owning this GraphNode component.
@@ -171,7 +171,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  However it can be read freely in order to
      *  check that the version of the payload hasn't changed.
      */
-    private int _payloadReferenceVersion = -1;
+    private final int _payloadReferenceVersion;
 
     /**
      * Keys are {@link GraphNode} targets and values are {@link ADAgent}s which most of the times
@@ -211,9 +211,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     "Passed constructor argument of type Function must not be null!"
             );
         Tsr<V> out;
+        GraphNodeAssembler<V> a;
         if (context instanceof GraphLock) { // Note function always null in this case:
             out = payloadSupplier.get();
-            _construct(out, function, null, (GraphLock) context);
+            a = _construct(out, function, null, (GraphLock) context);
         } else if ( context instanceof ExecutionCall ) {
             ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
             Tsr<?>[] inputs = call.getTensors();
@@ -250,14 +251,21 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 }
             }
             out = payloadSupplier.get();
-            _construct( out, function, call, inputs[ 0 ].getGraphNode().getLock() );
+            a = _construct( out, function, call, inputs[ 0 ].getGraphNode().getLock() );
         }
         else
             throw new IllegalArgumentException(
                     "The passed context object for the GraphNode constructor is of type '" + context.getClass().getName() + "'.\n" +
                             "A given context must either be a GraphLock instance or an ExecutionCall."
             );
-
+        _payloadReferenceVersion = a.get_payloadReferenceVersion();
+        _lock = a.get_lock();
+        _mode = a.get_mode();
+        _function = a.get_function();
+        _allows_backward = a.is_allows_backward();
+        _allows_forward = a.is_allows_forward();
+        _parents = a.get_parents();
+        _nodeID = a.get_nodeID();
         _construct2( out, function, ( context instanceof ExecutionCall ? (ExecutionCall) context : null ) );
     }
 
@@ -269,41 +277,47 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param call The {@link ExecutionCall} instance containing context information for the current execution.
      * @param lock An object whose identity will be used to reserve the {@link Tsr} instances of the current {@link ExecutionCall}.
      */
-    private void _construct( Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call, GraphLock lock )
-    {
+    private GraphNodeAssembler<V> _construct(
+            Tsr<V> output,
+            Function function,
+            ExecutionCall<? extends Device<?>> call,
+            GraphLock lock
+    ) {
+        GraphNodeAssembler<V> a = new GraphNodeAssembler<>();
         Tsr<V>[] inputs = ( call == null ) ? null : (Tsr<V>[]) call.getTensors();
         if ( output == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
-        _payloadReferenceVersion = output.getVersion();
-        if ( !function.isDoingAD() ) return; // Only functions with AutoDiff enabled create computation graph!
-        _lock = lock;
+        a.set_payloadReferenceVersion( output.getVersion() );
+        if ( !function.isDoingAD() ) return a; // Only functions with AutoDiff enabled create computation graph!
+        a.set_lock( lock );
         _setPayload( output );
         output.set( this );
         if ( inputs == null ) {
-            _mode = ( output.rqsGradient() ) ? 1 : 0;
-            _function = null;
-            _parents = null;
+            a.set_mode( output.rqsGradient() ? 1 : 0 );
+            a.set_function( null );
+            a.set_parents( null );
         } else {
-            _mode = _modeOf( call );
-            _function = function;
-            _parents = new GraphNode[ inputs.length ];
+            a._modeOf( call );
+            a.set_function( function );
+            a.set_parents( new GraphNode[ inputs.length ] );
             for ( int i = 0; i < inputs.length; i++ ) {
-                _parents[ i ] = inputs[ i ].getGraphNode();
-                if ( _parents[ i ] == null ) {
+                a.get_parents()[ i ] = inputs[ i ].getGraphNode();
+                if ( a.get_parents()[ i ] == null ) {
                     throw new IllegalStateException(
                             "Input tensors of a new graph-node must contain leave graph-nodes!"
                     );
-                } else _parents[ i ]._attachChild(this);
+                } else a.get_parents()[ i ]._attachChild(this);
             }
         }
-        if ( _nodeID == -1 ) {
+        if ( a.get_nodeID() == -1 ) {
             long nid = 1;
-            if ( _parents != null ) {
-                for ( GraphNode<V> n : _parents )
+            if ( a.get_parents() != null ) {
+                for ( GraphNode<V> n : a.get_parents() )
                     nid *= n.getPayload().hashCode(); //payload might be 0! Why? -> garbage collected!
             }
-            if ( _function != null ) nid += _function.hashCode();
-            _nodeID = nid;
+            if ( a.get_function() != null ) nid += a.get_function().hashCode();
+            a.set_nodeID( nid );
         }
+        return a;
     }
 
     private void _construct2( Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call )
@@ -395,45 +409,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
         }
     }
 
-
-    /**
-     *  Evaluate auto-grad/auto-differentiation mode:
-     *  A positive value means that the AD-procedure will be forward mode AD,
-     *  whereas a negative value is backward mode AD.
-     *  If the resulting mode equals 0 then this means that no auto differentiation is needed.
-     *  This class tries to optimize the calculation of partial derivatives by forward propagating them
-     *  for as long as only a single input for every computation graph node requires gradients
-     *  and they all are differentiable!
-     *
-     *
-     * @param call The call containing inputs for the function which created the payload tensor of this GraphNode.
-     * @return int The mode of this GraphNode! ( m<0 : backward-AD, m>0 : forward-AD, m=0 : no-AD )
-     */
-    private int _modeOf( ExecutionCall<? extends Device<?>> call )
-    {
-        Tsr<V>[] inputs = (Tsr<V>[]) call.getTensors();
-        int resultMode = 0;
-        int[] modes = new int[ inputs.length ];
-        int inputMode = 0;
-        for ( int i = 0; i < inputs.length; i++ ) {
-            GraphNode<V> node = inputs[ i ].getGraphNode(); // Not null checked in constructor!
-            modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.getMode();
-            inputMode += ( modes[ i ] != 0) ? 1 : 0;
-        }
-        _allows_forward = call.allowsForward();
-        _allows_backward = call.allowsBackward();
-        if ( inputMode == 1 && _allows_forward ) { // Convolution and reshaping prohibit forward AutoDiff
-            for ( int i = 0; i < inputs.length; i++ ) {
-                resultMode += 
-                        ( modes[ i ] == 0 ) 
-                                ? 0 
-                                : ( modes[ i ] < 0 ) ? 1 : modes[ i ] + 1;
-            }
-        } // Reverse mode auto-differentiation :
-        else if ( _allows_backward ) resultMode = -inputMode;
-
-        return resultMode;
-    }
 
     /**
      * This short method simply migrates the error to the device of
