@@ -211,7 +211,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     "Passed constructor argument of type Function must not be null!"
             );
         Tsr<V> out;
-        GraphNodeAssembler<V> a;
+        GraphNodeAssemblyState<V> a;
         if (context instanceof GraphLock) { // Note function always null in this case:
             out = payloadSupplier.get();
             a = _construct( this, out, function, null, (GraphLock) context );
@@ -277,14 +277,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param call The {@link ExecutionCall} instance containing context information for the current execution.
      * @param lock An object whose identity will be used to reserve the {@link Tsr} instances of the current {@link ExecutionCall}.
      */
-    private static <V> GraphNodeAssembler<V> _construct(
+    private static <V> GraphNodeAssemblyState<V> _construct(
             GraphNode<V> node,
             Tsr<V> output,
             Function function,
             ExecutionCall<? extends Device<?>> call,
             GraphLock lock
     ) {
-        GraphNodeAssembler<V> a = new GraphNodeAssembler<>();
+        GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
         Tsr<V>[] inputs = ( call == null ) ? null : (Tsr<V>[]) call.getTensors();
         if ( output == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
         a.setPayloadReferenceVersion( output.getVersion() );

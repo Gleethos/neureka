@@ -5,7 +5,12 @@ import neureka.backend.api.ExecutionCall;
 import neureka.calculus.Function;
 import neureka.devices.Device;
 
-public class GraphNodeAssembler<V> {
+/**
+ *  This class exists in order to allow for {@link GraphNode}s to be instantiated
+ *  with final field variables by collecting them when defined
+ *  within constructor methods...
+ */
+class GraphNodeAssemblyState<V> {
 
     private int _mode;
 
@@ -29,7 +34,7 @@ public class GraphNodeAssembler<V> {
     /**
      * @param mode The mode of this GraphNode! ( m<0 : backward-AD, m>0 : forward-AD, m=0 : no-AD )
      */
-    public GraphNodeAssembler<V> setMode( int mode ) {
+    public GraphNodeAssemblyState<V> setMode(int mode ) {
         _mode = mode;
         return this;
     }
@@ -78,35 +83,35 @@ public class GraphNodeAssembler<V> {
 
     public Function function() { return _function; }
 
-    public GraphNodeAssembler<V> setFunction( Function function ) {
+    public GraphNodeAssemblyState<V> setFunction(Function function ) {
         _function = function;
         return this;
     }
 
     public GraphNode<V>[] parents() { return _parents; }
 
-    public GraphNodeAssembler<V> setParents( GraphNode<V>[] parents ) {
+    public GraphNodeAssemblyState<V> setParents(GraphNode<V>[] parents ) {
         _parents = parents;
         return this;
     }
 
     public int payloadReferenceVersion() { return _payloadReferenceVersion; }
 
-    public GraphNodeAssembler<V> setPayloadReferenceVersion(int payloadReferenceVersion) {
+    public GraphNodeAssemblyState<V> setPayloadReferenceVersion(int payloadReferenceVersion) {
         _payloadReferenceVersion = payloadReferenceVersion;
         return this;
     }
 
     public GraphLock lock() { return _lock; }
 
-    public GraphNodeAssembler<V> setLock(GraphLock lock) {
+    public GraphNodeAssemblyState<V> setLock(GraphLock lock) {
         _lock = lock;
         return this;
     }
 
     public long nodeID() { return _nodeID; }
 
-    public GraphNodeAssembler<V> setNodeID(long nodeID) {
+    public GraphNodeAssemblyState<V> setNodeID(long nodeID) {
         _nodeID = nodeID;
         return this;
     }
