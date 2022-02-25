@@ -4,144 +4,42 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.function.Supplier;
 
 public class GraphNodeAssembler<V> {
 
-    private static Logger _LOG = LoggerFactory.getLogger(GraphNode.class);
-
-    /**
-     * mode state meaning:
-     * -----------+----------------------------------+-
-     * _mode == 0 |  no Auto-Differentiation         |
-     * -----------+----------------------------------+-
-     * _mode > 0  |  forward Auto-Differentiation    |
-     * -----------+----------------------------------+-
-     * _mode < 0  |  backward Auto-Differentiation   |
-     * -----------+----------------------------------+-
-     */
     private int _mode;
 
-    /**
-     *  This flag records the support evaluation of the forward-AD availability analysis
-     *  done in the corresponding OperationTypeImplementation method
-     *  for a given ExecutionCall instance.
-     *
-     *  The difference between this flag and the "usesForwardAD()" truth value
-     *  is that the latter one can be false while the prior is true!
-     *  ( However the reverse is not possible! )
-     *  The reason is as follows:
-     *  If a GraphNode has multiple parent nodes which require auto-differentiation,
-     *  then said node will not be able to perform forward-AD even though it might very well
-     *  be possible given an ExecutionCall whose state allows for such...
-     */
     private boolean _allows_forward;
 
-    /**
-     *  This flag records the support evaluation of the backward-AD availability analysis
-     *  done in the corresponding OperationTypeImplementation method
-     *  for a given ExecutionCall instance.
-     *
-     *  The difference between this flag and the "usesBackwardAD()" truth value
-     *  is that the latter one can be false while the prior is true!
-     *  ( However the reverse is not possible! )
-     *  The reason is as follows:
-     *  If for example a GraphNode has only one parent node which require auto-differentiation,
-     *  then said node will most likely perform backward-AD even though it might very well
-     *  be possible given an ExecutionCall whose state allows for such...
-     */
     private boolean _allows_backward;
 
-    /**
-     * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
-     * This feature accumulates errors and continues propagation
-     * as soon as they are needed. (At the end of 'backward()' or when the tensor is used again).
-     * If the flag  {@link Neureka.Settings.AutoGrad#isRetainingPendingErrorForJITProp()}  is set to true
-     * then error values will accumulate whenever it makes sense.
-     * This technique however uses more memory but will
-     * improve performance for some networks substantially.
-     * <p>
-     * All nodes between a Pending-Error and those requiring gradients will
-     * be marked with '_relies_on_JIPProp=true'!
-     */
     private boolean _reliesOnJustInTimeProp = false;
 
-    /**
-     * Used by the Just-In-Time back-prop component.
-     */
     private PendingError<V> _pendingError = null;
 
-    /**
-     * The chain-rule states that the derivative of f(x) = h(g(x)) with respect to x is: g'(x) * h'(g(x))
-     * An example would be:
-     * f(x) = ((x*y)*z)
-     * f'(x) = (1*y) * (1*z) = z*y
-     * The values z,y or z*y must not be deleted as they are needed for back-propagation!
-     */
     private boolean _isUsedAsDerivative = false;
 
-    /**
-     * Recorded Function which produced this {@link GraphNode}.
-     */
     private Function _function;
 
-    /**
-     * The GraphNodes of the input tensors. ('Parents' of the tensor of this node)
-     * These are always the GraphNodes of the tensors from which the tensor payload of this
-     * GraphNode has been formed.
-     */
     private GraphNode<V>[] _parents;
 
-    /**
-     * This is the tensor owning this GraphNode component.
-     * It is referenced weakly because it might not be needed anymore (Not referenced inside AD-Agent for example)
-     * and can therefore be garbage collected.
-     */
     private WeakReference<Tsr<V>> _payload;
 
-    /**
-     *  This variable holds a copy of the version of the payload tensor
-     *  recorded when this GraphNode instance is instantiated.
-     *  It must be treated as final and should never be modified.
-     *  However it can be read freely in order to
-     *  check that the version of the payload hasn't changed.
-     */
     private int _payloadReferenceVersion = -1;
 
-    /**
-     * Keys are {@link GraphNode} targets and values are {@link ADAgent}s which most of the times
-     * simply store derivatives as well as operation specific implementations
-     * to propagate these derivatives with respect to mentioned  {@link GraphNode} targets.  <br>
-     * Note: values can be null if the recorded function is of type 'reshape'!
-     * Why? => because reshape operation does not need variables for _backward pass!
-     */
     private TreeMap<GraphNode<V>, List<ADAgent>> _targetsToAgents;
 
-    /**
-     * "Lock object" for graph identity. (result caching)
-     * Unique object which locks the payload to the current computation graph.
-     */
     private GraphLock _lock;
 
-    /**
-     *  The children are {@link GraphNode} instances which represent computations
-     *  involving the payload of this very {@link GraphNode} instance.
-     */
     private List<WeakReference<GraphNode<V>>> _children;
 
-    /**
-     * long Node-ID (Used for caching to avoid redundant computation within one computation graph)
-     */
     private long _nodeID = -1;
 
 

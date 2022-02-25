@@ -197,7 +197,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * long Node-ID (Used for caching to avoid redundant computation within one computation graph)
      */
-    private long _nodeID = -1;
+    private final long _nodeID;
 
 
     /**
@@ -214,7 +214,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         GraphNodeAssembler<V> a;
         if (context instanceof GraphLock) { // Note function always null in this case:
             out = payloadSupplier.get();
-            a = _construct(out, function, null, (GraphLock) context);
+            a = _construct( this, out, function, null, (GraphLock) context );
         } else if ( context instanceof ExecutionCall ) {
             ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
             Tsr<?>[] inputs = call.getTensors();
@@ -251,7 +251,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 }
             }
             out = payloadSupplier.get();
-            a = _construct( out, function, call, inputs[ 0 ].getGraphNode().getLock() );
+            a = _construct( this, out, function, call, inputs[ 0 ].getGraphNode().getLock() );
         }
         else
             throw new IllegalArgumentException(
@@ -277,7 +277,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param call The {@link ExecutionCall} instance containing context information for the current execution.
      * @param lock An object whose identity will be used to reserve the {@link Tsr} instances of the current {@link ExecutionCall}.
      */
-    private GraphNodeAssembler<V> _construct(
+    private static <V> GraphNodeAssembler<V> _construct(
+            GraphNode<V> node,
             Tsr<V> output,
             Function function,
             ExecutionCall<? extends Device<?>> call,
@@ -289,8 +290,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
         a.set_payloadReferenceVersion( output.getVersion() );
         if ( !function.isDoingAD() ) return a; // Only functions with AutoDiff enabled create computation graph!
         a.set_lock( lock );
-        _setPayload( output );
-        output.set( this );
+        node._setPayload( output );
+        output.set( node );
         if ( inputs == null ) {
             a.set_mode( output.rqsGradient() ? 1 : 0 );
             a.set_function( null );
@@ -305,7 +306,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     throw new IllegalStateException(
                             "Input tensors of a new graph-node must contain leave graph-nodes!"
                     );
-                } else a.get_parents()[ i ]._attachChild(this);
+                }
+                else a.get_parents()[ i ]._attachChild(node);
             }
         }
         if ( a.get_nodeID() == -1 ) {
@@ -335,11 +337,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     GraphNode<V> srcNode = inputs[ i ].getGraphNode();
                     if ( srcNode.usesAD() ) {
                         if (
-                                srcNode.size() == 0 && this.size() == 0
-                                        ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
-                                        !srcNode.isLeave() && !srcNode._allows_forward
+                            srcNode.size() == 0 && this.size() == 0
+                               ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
+                            !srcNode.isLeave() && !srcNode._allows_forward
                         ) {
-                            this.put(
+                            _put(
                                     srcNode,
                                     call.getADAgentFrom(
                                             function,
@@ -356,14 +358,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
                             int finalI = i;
-                            Tsr<V> localDerivative = (Tsr<V>) function.derive( inputs, i );
+                            Tsr<V> localDerivative = function.derive( inputs, i );
                             srcNode.forEachTargetAgentPair(
                                     ( targetNode, localAgent ) ->
                                     {
                                         // The agent multiplies the local derivative with its stored partial derivative...
                                         Tsr<?> targetDerivative = localAgent.forward( this, localDerivative );
                                         // ...this is now the new partial derivative with respect to the target node!
-                                        this.put(
+                                        this._put(
                                                 targetNode,
                                                 call.getADAgentFrom(
                                                         function,
@@ -389,7 +391,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 for ( int i = 0; i < inputs.length; i++ ) {
                     GraphNode<V> srcNode = inputs[ i ].getGraphNode();
                     if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {
-                        this.put(
+                        _put(
                                 srcNode,
                                 call.getADAgentFrom(
                                         function,
@@ -730,7 +732,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param target nodes are graph nodes which contain either tensors requiring errors for accumulation and/or more targets.
      * @param agent ADAgent's are used during back-propagation in order to distribute an error throughout the graph.
      */
-    public void put( GraphNode<V> target, ADAgent agent ) {
+    private void _put( GraphNode<V> target, ADAgent agent ) {
         if ( _targetsToAgents == null ) _targetsToAgents = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
 
         if ( _targetsToAgents.containsKey( target ) )
