@@ -12,11 +12,21 @@ import neureka.dtype.DataType
 import neureka.ndim.config.NDConfiguration
 import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 import testutility.Statistics
 
 import java.util.function.BiFunction
 
+@Title("Running Tensors through operations")
+@Narrative('''
+
+    This specification covers the interaction 
+    between tensors and operations, more specifically it
+    runs tensors through operations and validates that the results are valid. 
+
+''')
 class Tensor_Operation_Integration_Spec extends Specification
 {
     def setup() {
@@ -39,7 +49,7 @@ class Tensor_Operation_Integration_Spec extends Specification
         })
     }
 
-    def 'Test "x-mul" operator produces expected results. (Not on device)'(
+    def 'Test "x-mul" (convolution) operator produces expected results. (Not on device)'(
             Class<?> type, String expected
     ) {
         reportInfo """
@@ -129,10 +139,9 @@ class Tensor_Operation_Integration_Spec extends Specification
             Float  | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
     }
 
-    def 'The "random" function populates tensors randomly.'(
+    def 'The "random" function/operation populates tensors randomly.'(
             Class<?> type
     ) {
-
         given :
             var t = Tsr.of(type).withShape(2,4).all(-42)
         and :
@@ -278,7 +287,7 @@ class Tensor_Operation_Integration_Spec extends Specification
             ( a += -c                   ).toString().contains("(-11.0)")
             ( a -= c                    ).toString().contains("(-14.0)")
             ( a /= Tsr.of(2d)     ).toString().contains("(-7.0)")
-            ( a %= c                   ).toString().contains("(-1.0)")
+            ( a %= c                    ).toString().contains("(-1.0)")
     }
 
     def 'Manual convolution produces expected result.'()
@@ -380,35 +389,6 @@ class Tensor_Operation_Integration_Spec extends Specification
         where : 'The following data is being used for tensor instantiation :'
             device  << [CPU.get(), Device.find("openCL") ]
     }
-
-    //This needs verification!
-    //def 'Simple manual convolution produces expected result.'()
-    //{
-    //    given :
-    //        Neureka.instance().reset()
-    //        Neureka.instance().settings().view().setIsUsingLegacyView(false)
-    //        Tsr a = Tsr.of([8, 8], 0..63)
-    //        Tsr x = a[1..-2,0..-1]
-    //        Tsr y = a[0..-3,0..-1]
-    //        Tsr z = a[2..-1,0..-1]
-//
-    //    when :
-    //        Tsr rowconvol = x + y + z
-    //        Tsr k = rowconvol[0..-1,1..-2]
-    //        Tsr v = rowconvol[0..-1,0..-3]
-    //        Tsr j = rowconvol[0..-1,2..-1]
-    //        Tsr u = a[1..-2,1..-2]
-    //        Tsr colconvol = k + v + j - 9 * u
-    //        String rcAsStr = rowconvol.toString()
-//
-    //    then :
-    //        assert rcAsStr.contains("(6x8)")
-    //        assert rcAsStr.contains("[0.0, 3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0, 36.0, 39.0, 42.0, ")
-    //        String ccAsStr = colconvol.toString()
-    //        assert ccAsStr.contains("(6x6)")
-    //        assert ccAsStr.contains("[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]")
-    //}
-
 
     def 'Simple slice addition produces expected result.'(
             Device device
@@ -531,61 +511,6 @@ class Tensor_Operation_Integration_Spec extends Specification
             'CPU'  | Float  | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
             'GPU'  | Float  | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
     }
-
-
-    def 'A new transposed version of a given tensor will be returned by the "T()" method.'()
-    {
-        given : 'We want to view tensors inm the "[shape]:(value)" format so we set the corresponding flag.'
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
-        and : 'We instantiate a test tensor:'
-            var t = Tsr.of([2, 3], [
-                            1d, 2d, 3d,
-                            4d, 5d, 6d
-                        ])
-
-        when : 'A two by three matrix is being transposed...'
-            var t2 = t.T()
-
-        then : 'The resulting tensor should look like this:'
-            t2.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
-
-        when : 'We try the same operation with a column major tensor...'
-            t2 = t.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR).T
-
-        then : 'Once again, the resulting tensor should look like this:'
-            t2.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
-    }
-
-    @IgnoreIf({device == 'GPU' && !Neureka.get().canAccessOpenCL()})
-    def 'Matrix multiplication works for both column and row major matrices across devices.'(
-        String device, String expectedString
-    ) {
-        given :
-            var a = Tsr.ofFloats().withShape(2, 3).andWhere({it, idx->((7**it)%11-5).floatValue()})
-            var b = Tsr.ofFloats().withShape(3, 4).andWhere({it, idx->((5**it)%11-5).floatValue()})
-            Device.find(device).store(a).store(b)
-        expect :
-            a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
-
-        when :
-            a.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
-            b.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
-        then :
-            a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
-
-        when :
-            a.unsafe.toLayout(NDConfiguration.Layout.ROW_MAJOR)
-            b.unsafe.toLayout(NDConfiguration.Layout.ROW_MAJOR)
-        then :
-            a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
-
-        where :
-            device  |  expectedString
-            'CPU'   |  '(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'
-            'GPU'   |  '(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'
-
-    }
-
 
     def 'Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance'()
     {
