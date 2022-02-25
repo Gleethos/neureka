@@ -17,11 +17,13 @@ public class GEMM implements ImplementationFor<OpenCLDevice> {
             Tsr<Float> a = call.getTsrOfType(Float.class, 1);
             Tsr<Float> b = call.getTsrOfType(Float.class, 2);
 
-            assert a.shape(1) == b.shape(0);
-
             int M = a.shape(0);
             int K = a.shape(1);
             int N = b.shape(1);
+
+            int K1 = b.shape(0);
+
+            assert K == K1;
 
             String kernelName = "fast_CM_MM_"+M+"x"+K+"x"+N+"";
 
@@ -92,10 +94,8 @@ public class GEMM implements ImplementationFor<OpenCLDevice> {
                  ? call.getDevice().getAdHocKernel(kernelName)
                  : call.getDevice().compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);
 
-
         long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)
         long[] global = new long[]{(long) Math.floor(M/MW), (long) Math.floor(N/NW), 1 };
-
 
         caller.pass( a ).pass( b ).pass( c ).call( global, local );
     }

@@ -35,7 +35,7 @@ public class VirtualNDConfiguration extends AbstractNDC
 
     @Override
     public int shape( int i ) {
-        return _shape[ 0 ];
+        return _shape[ i ];
     }
 
     @Override
