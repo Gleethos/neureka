@@ -18,7 +18,7 @@ import neureka.dtype.NumericType;
 import neureka.ndim.iterator.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
+public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
 {
     public Broadcast( RecursiveExecutor finalExecutor )
     {

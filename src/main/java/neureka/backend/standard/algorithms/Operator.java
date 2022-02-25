@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Operator extends AbstractFunctionalAlgorithm<Operator>
+public final class Operator extends AbstractFunctionalAlgorithm<Operator>
 {
     public Operator( RecursiveExecutor finalExecutor ) {
         super("operator");

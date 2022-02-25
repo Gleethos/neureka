@@ -10,7 +10,7 @@ import neureka.dtype.NumericType;
 import neureka.ndim.iterator.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public class Convolution extends AbstractFunctionalAlgorithm<Convolution>
+public final class Convolution extends AbstractFunctionalAlgorithm<Convolution>
 {
     public Convolution() {
         super("convolution");

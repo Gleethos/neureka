@@ -19,7 +19,7 @@ import neureka.ndim.iterator.NDIterator;
  *  providing some basic functionality for implementing custom
  *  activation functions.
  */
-public class Activation extends AbstractFunctionalAlgorithm<Activation>
+public final class Activation extends AbstractFunctionalAlgorithm<Activation>
 {
     public Activation() {
         super("activation");

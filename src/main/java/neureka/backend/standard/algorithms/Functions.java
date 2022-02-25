@@ -11,7 +11,7 @@ import neureka.devices.host.CPU;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Functions<F extends Fun> {
+public final class Functions<F extends Fun> {
 
     private final List<FunArray<F>> _functions = new ArrayList<>();
 

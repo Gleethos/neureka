@@ -10,7 +10,7 @@ import neureka.devices.Device;
  *  with final field variables by collecting them when defined
  *  within constructor methods...
  */
-class GraphNodeAssemblyState<V> {
+final class GraphNodeAssemblyState<V> {
 
     private int _mode;
 
