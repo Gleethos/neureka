@@ -547,7 +547,13 @@ public class DataConverter
         public static float[] doubleToFloat( double[] data ) {
             if ( data == null ) return null;
             float[] newData = new float[ data.length ];
-            for ( int i = 0; i < data.length; i++) newData[ i ] = (float) data[ i ];
+            if ( data.length < 1_500 )
+                for ( int i = 0; i < data.length; i++) newData[ i ] = (float) data[ i ];
+            else
+                IntStream.range(0, data.length)
+                        .parallel()
+                        .forEach( i -> newData[ i ] = (float) data[ i ] );
+
             return newData;
         }
 
