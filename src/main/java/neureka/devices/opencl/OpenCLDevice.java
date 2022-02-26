@@ -724,7 +724,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         cl_kernel kernel = _platform.getKernel( chosen );
         if ( kernel == null )
-            throw new IllegalStateException("No kernel found for '" + chosen + "'!");
+            throw new IllegalStateException(
+                    "No kernel found for signature '" + chosen + "' for operation '" +  call.getOperation().getFunction() + "'."
+                );
 
         return new KernelCaller(kernel, _queue);
     }

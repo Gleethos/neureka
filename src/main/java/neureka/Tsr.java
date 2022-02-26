@@ -2511,7 +2511,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         Function cloner = Neureka.get().backend().getFunction().idy();
         boolean thisIsIntermediate = this.isIntermediate();
         _setIsIntermediate( false );
-        Tsr<V> clone = cloner.call( Tsr.of( this.getValueClass(), this.shape(), 0.0 ), this ).to( this.getDevice() );
+        Tsr<V> clone = Tsr.of( this.getValueClass() )
+                            .on(this.getDevice())
+                            .withShape( this.getNDConf().shape() )
+                            .all( (V) Double.valueOf(0.0) );
+
+        clone = cloner.call(clone, this);
         clone.getUnsafe().setIsIntermediate( thisIsIntermediate );
         _setIsIntermediate( thisIsIntermediate );
         return clone;

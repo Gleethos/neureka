@@ -62,7 +62,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
         return Neureka.get().utility().readResource("kernels/activation_template.cl");
     }
 
-    public static WithForward<String> implementationForGPU(String postfix ) {
+    public static WithForward<String> implementationForGPU( String postfix ) {
         return
             forward ->
                 backward ->

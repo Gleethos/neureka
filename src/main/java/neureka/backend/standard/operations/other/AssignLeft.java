@@ -141,13 +141,9 @@ public class AssignLeft extends AbstractOperation
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    call -> {
-                        call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
-                        Neureka.get().backend().getOperation("idy")
-                                .getAlgorithm(Activation.class)
-                                .getImplementationFor( OpenCLDevice.class )
-                                .run(call);
-                    }
+                    Activation.implementationForGPU( this.getFunction() )
+                            .with( "output = input;\n" )
+                            .and( "output = input;\n" )
             )
         );
     }
