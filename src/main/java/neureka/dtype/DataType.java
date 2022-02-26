@@ -180,31 +180,31 @@ public final class DataType<Type>
 
     public <T> Object actualize( T value, int size )
     {
-        Object newValue = value;
+        Object newValue;
         if ( getTypeClass() == F64.class ) {
             if ( ( (double[]) value ).length == size ) return value;
             newValue = new double[ size ];
-            Arrays.fill( (double[]) newValue, ( (double[]) value )[ 0 ] );
+            if ( ( (double[]) value )[ 0 ] != 0d ) Arrays.fill( (double[]) newValue, ( (double[]) value )[ 0 ] );
         } else if ( getTypeClass() == F32.class ) {
             if ( ( (float[]) value ).length == size ) return value;
             newValue = new float[size];
-            Arrays.fill( (float[]) newValue, ( (float[]) value )[ 0 ] );
+            if ( ( (float[]) value )[ 0 ] != 0f ) Arrays.fill( (float[]) newValue, ( (float[]) value )[ 0 ] );
         } else if ( getTypeClass() == I32.class ) {
             if ( ( (int[]) value ).length == size ) return value;
             newValue = new int[ size ];
-            Arrays.fill( (int[]) newValue, ( (int[]) value )[ 0 ] );
+            if ( ( (int[]) value )[ 0 ] != 0 ) Arrays.fill( (int[]) newValue, ( (int[]) value )[ 0 ] );
         } else if ( getTypeClass() == I16.class ) {
             if ( ( (short[]) value ).length == size ) return value;
             newValue = new short[ size ];
-            Arrays.fill( (short[]) newValue, ( (short[]) value )[ 0 ] );
+            if ( ( (short[]) value )[ 0 ] != 0 ) Arrays.fill( (short[]) newValue, ( (short[]) value )[ 0 ] );
         } else if ( getTypeClass() == I8.class ) {
             if ( ( (byte[]) value ).length == size ) return value;
             newValue = new byte[ size ];
-            Arrays.fill( (byte[]) newValue, ( (byte[]) value )[ 0 ] );
+            if ( ( (byte[]) value )[ 0 ] != 0 ) Arrays.fill( (byte[]) newValue, ( (byte[]) value )[ 0 ] );
         } else if ( getTypeClass() == I64.class ) {
             if ( ( (long[]) value ).length == size ) return value;
             newValue = new long[ size ];
-            Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );
+            if ( ( (long[]) value )[ 0 ] != 0 ) Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );
         } else if ( getTypeClass() == Boolean.class ) {
             if ( ( (boolean[]) value ).length == size ) return value;
             newValue = new boolean[ size ];
@@ -212,13 +212,13 @@ public final class DataType<Type>
         } else if ( getTypeClass() == Character.class ) {
             if ( ( (char[]) value ).length == size ) return value;
             newValue = new char[ size ];
-            Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );
+            if ( ( (boolean[]) value )[ 0 ] != false ) Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );
         } else {
             if ( ( (Object[]) value ).length == size ) return value;
             newValue = new Object[ size ];
-            Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
+            if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
         }
-        return (T) newValue;
+        return newValue;
     }
 
     public Object allocate( int size )
