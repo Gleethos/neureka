@@ -158,13 +158,13 @@ public class MatMul extends AbstractOperation
             NDConfiguration.Layout targetLayout = tensors[1].getNDConf().getLayout();
             tensors[2].getUnsafe().toLayout(targetLayout);
             Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).getUnsafe().setIsIntermediate( true );
-            output.setIsVirtual( false );
+            output.getUnsafe().toLayout(targetLayout);
+            output.setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).
             try {
                 device.store( output );
             } catch ( Exception e ) {
                 e.printStackTrace();
             }
-            output.getUnsafe().toLayout(targetLayout);
             tensors[ 0 ] = output;
         }
         _autoClone( tensors );
