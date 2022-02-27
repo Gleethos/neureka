@@ -65,7 +65,6 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
     private static final Logger _LOG = LoggerFactory.getLogger(TensorBuilder.class);
 
     private final DataType<V> _dataType;
-    private final NDConfiguration.Layout _layout;
     private int[] _shape;
     private V _from;
     private V _to;
@@ -73,24 +72,18 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
 
 
     public TensorBuilder(
-            Class<V> typeClass,
-            NDConfiguration.Layout layout
+            Class<V> typeClass
     ) {
         _dataType = DataType.of( typeClass );
-        _layout   = layout;
-        if ( layout == NDConfiguration.Layout.UNSPECIFIC )
-            throw new IllegalArgumentException(
-                "Cannot create tensor with an unspecified layout type."
-            );
     }
 
     private Tsr<V> _get( Object value ) {
-        return Tsr.of( _dataType, _shape, value ).to( _device ).getUnsafe().toLayout( _layout );
+        return Tsr.of( _dataType, _shape, value ).to( _device );
     }
 
 
     private Tsr<V> _get( Filler<V> filler ) {
-        return Tsr.of( _dataType, _shape, filler ).to( _device ).getUnsafe().toLayout( _layout );
+        return Tsr.of( _dataType, _shape, filler ).to( _device );
     }
 
     /**

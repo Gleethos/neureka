@@ -471,14 +471,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static <V> WithShapeOrScalarOrVectorOnDevice<V> of( Class<V> typeClass ) { return new TensorBuilder<>( typeClass, NDConfiguration.Layout.ROW_MAJOR ); }
-
-    public static <V> WithShapeOrScalarOrVectorOnDevice<V> of(
-            Class<V> typeClass, NDConfiguration.Layout layout
-    ) {
-        return new TensorBuilder<>( typeClass, layout );
-    }
-
+    public static <V> WithShapeOrScalarOrVectorOnDevice<V> of( Class<V> typeClass ) { return new TensorBuilder<>( typeClass ); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
