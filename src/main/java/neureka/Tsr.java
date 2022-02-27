@@ -124,10 +124,14 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.awt.image.*;
-import java.util.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
 import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
@@ -1522,32 +1526,44 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     private void _fromCMToRM() {
         Tsr<V> transposed = clone();
         _setNDConf( transposed.getNDConf() );
-        _assign( transposed );
+        _assign( () -> transposed );
     }
 
     private void _fromRMToCM() {
-        Tsr<V> transposed = this.T().clone().detach();
-        _assign( transposed );
+        _assign(() -> Tsr.this.T().clone().detach());
         NDConfiguration old = this.getNDConf();
-        NDConfiguration newConf;
-        newConf = _createNewNDCFrom( old, NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor( old.shape() ), old.translation() );
-        _setNDConf( newConf );
-    }
-
-    private void _assign( Tsr<?> transposed ) {
-        if ( !this.isVirtual() )
-            MemUtil.keep(this, transposed,
-                    () -> Neureka.get().backend().getFunction().idy().execute( this, transposed )
+        int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor(old.shape());
+        if ( old.isVirtual() ) {
+            this.setIsVirtual(false);
+            _setNDConf(
+                _createNewNDCFrom(this.getNDConf(), newTranslation, this.getNDConf().translation() )
+            );
+        }
+        else
+            _setNDConf(
+                _createNewNDCFrom( old, newTranslation, old.translation() )
             );
     }
 
-    private static NDConfiguration _createNewNDCFrom( NDConfiguration old, int[] translation, int[] indicesMap ) {
+    private void _assign( Supplier<Tsr<?>> provider ) {
+        if ( !this.isVirtual() ) {
+            Tsr<?> toBeAssigned = provider.get();
+            MemUtil.keep(this, toBeAssigned,
+                    () -> Neureka.get().backend().getFunction().idy().execute( this, toBeAssigned )
+            );
+        }
+    }
+
+    private static NDConfiguration _createNewNDCFrom(
+            NDConfiguration old, int[] newTranslation, int[] indicesMap
+    ) {
+        assert !old.isVirtual();
         return AbstractNDC.construct(
-                old.shape(),
-                translation,
-                indicesMap,
-                old.spread(),
-                old.offset()
+            old.shape(),
+            newTranslation,
+            indicesMap,
+            old.spread(),
+            old.offset()
         );
     }
 
@@ -1559,7 +1575,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         if ( newConf.getLayout() != targetLayout )
             throw new IllegalArgumentException(
                     "Failed to convert this tensor from its original layout '"+oldConf.getLayout()+"' " +
-                            "to target layout '"+targetLayout+"'. Instead this tensor has layout '"+newConf.getLayout()+"'."
+                    "to target layout '"+targetLayout+"'. Instead this tensor has layout '"+newConf.getLayout()+"'."
             );
     }
 

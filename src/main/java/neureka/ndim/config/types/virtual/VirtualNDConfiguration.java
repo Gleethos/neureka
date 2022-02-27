@@ -93,4 +93,8 @@ public class VirtualNDConfiguration extends AbstractNDC
         return 0;
     }
 
+    @Override
+    public boolean isVirtual() { return true; }
+
+
 }

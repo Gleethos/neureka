@@ -36,8 +36,8 @@ public class SimpleMatMul implements ImplementationFor<CPU> {
     }
 
     @Override
-    public void run( ExecutionCall<CPU> call ) {
-
+    public void run( ExecutionCall<CPU> call )
+    {
         if ( !call.validate().allShare( t -> t.getNDConf().getLayout() ).isValid() )
             throw new IllegalArgumentException(
                     "Data layout inconsistency between provided tensors encountered. " +

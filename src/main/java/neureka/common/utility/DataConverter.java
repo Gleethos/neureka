@@ -547,7 +547,7 @@ public class DataConverter
         public static float[] doubleToFloat( double[] data ) {
             if ( data == null ) return null;
             float[] newData = new float[ data.length ];
-            if ( data.length < 1_500 )
+            if ( data.length < 150_000 ) // Only very large arrays can be parallelized in this case!
                 for ( int i = 0; i < data.length; i++) newData[ i ] = (float) data[ i ];
             else
                 IntStream.range(0, data.length)
@@ -585,7 +585,13 @@ public class DataConverter
         public static double[] floatToDouble(float[] data) {
             if ( data == null ) return null;
             double[] newData = new double[ data.length ];
-            for ( int i = 0; i < data.length; i++) newData[ i ] = (double)data[ i ];
+            if ( data.length < 150_000 ) // Only very large arrays can be parallelized in this case!
+                for ( int i = 0; i < data.length; i++) newData[ i ] = data[ i ];
+            else
+                IntStream.range(0, data.length)
+                        .parallel()
+                        .forEach( i -> newData[ i ] = data[ i ] );
+
             return newData;
         }
 

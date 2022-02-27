@@ -25,13 +25,13 @@ public class Measure {
         //System.out.println(seconds(_f32())+"s");
         //System.out.println(seconds(_f64())+"s");
 
-        System.out.println(_averageSeconds(10, _random2())+"s");
-        System.out.println(_averageSeconds(10, _random1())+"s");
+        System.out.println(averageSeconds(10, _random2())+"s");
+        System.out.println(averageSeconds(10, _random1())+"s");
         System.out.println("DONE!");
 
     }
 
-    private static double _averageSeconds(int times, Runnable task)
+    public static double averageSeconds(int times, Runnable task)
     {
         for ( int i = 0; i < Math.min(times, 1_500); i++ ) task.run();
 

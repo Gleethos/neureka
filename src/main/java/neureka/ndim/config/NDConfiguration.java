@@ -317,6 +317,12 @@ public interface NDConfiguration
             IntStream.range( 0, this.rank() ).allMatch( i -> this.offset(i) == 0 );
     }
 
+    /**
+     * @return The truth value determining if this {@link NDConfiguration}
+     *         represents virtual tensors (see {@link neureka.Tsr#isVirtual()}).
+     */
+    default boolean isVirtual() { return false; }
+
     default IndexToIndexFunction getIndexToIndexAccessPattern() {
         NDConfiguration nda = this;
         return nda::indexOfIndex;
