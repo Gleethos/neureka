@@ -4,26 +4,33 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
+import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.operations.JunctionUtil;
-import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
+/**
+ *  This type of operation belongs to the same species as the
+ *  {@link Product} operation.
+ *  It executes incoming calls so that the calling function
+ *  will be executed with all input indices passed to it.
+ *  The resulting array of tensors will then be summed
+ *  to produce the result of this operation, hence the name {@link Summation}.
+ */
 public final class Summation extends AbstractOperation
 {
-
     public Summation()
     {
         super (

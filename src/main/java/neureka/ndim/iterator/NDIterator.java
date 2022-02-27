@@ -48,30 +48,60 @@ import neureka.ndim.config.types.sliced.Sliced3DConfiguration;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.ndim.iterator.types.reshaped.Reshaped2DCIterator;
 import neureka.ndim.iterator.types.reshaped.Reshaped3DCIterator;
-import neureka.ndim.iterator.types.sliced.SlicedNDIterator;
-import neureka.ndim.iterator.types.virtual.VirtualNDIterator;
-import neureka.ndim.iterator.types.sliced.Sliced1DCIterator;
-import neureka.ndim.iterator.types.sliced.Sliced2DCIterator;
-import neureka.ndim.iterator.types.sliced.Sliced3DCIterator;
 import neureka.ndim.iterator.types.simple.Simple1DCIterator;
 import neureka.ndim.iterator.types.simple.Simple2DCIterator;
 import neureka.ndim.iterator.types.simple.Simple3DCIterator;
+import neureka.ndim.iterator.types.sliced.Sliced1DCIterator;
+import neureka.ndim.iterator.types.sliced.Sliced2DCIterator;
+import neureka.ndim.iterator.types.sliced.Sliced3DCIterator;
+import neureka.ndim.iterator.types.sliced.SlicedNDIterator;
+import neureka.ndim.iterator.types.virtual.VirtualNDIterator;
 
-import java.util.StringJoiner;
-import java.util.stream.IntStream;
-
+/**
+ *  An {@link NDIterator} is used to iterate over n-dimensional arrays.
+ *  Their implementations are based on specific {@link NDConfiguration}
+ *  implementations which define the access pattern for a nd-array / tensor.
+ *  This functionality is abstracted away by these 2 interfaces in order
+ *  to allow for specialize implementations for various types
+ *  of access patterns for various types of dimensionality...
+ */
 public interface NDIterator
 {
+    /**
+     *  Defines if a new {@link NDIterator} is allowed to be a {@link VirtualNDIterator}.
+     */
     enum NonVirtual { TRUE, FALSE }
 
-    static NDIterator of ( Tsr<?> t ) {
+    /**
+     *  Use this to instantiate {@link NDIterator}s optimized for the provided tensor.
+     *
+     * @param t The tensor for which an optimized {@link NDIterator} should be created.
+     * @return A new {@link NDIterator} instance optimized for the provided tensor.
+     */
+    static NDIterator of( Tsr<?> t ) {
         return of( t, NonVirtual.FALSE );
     }
 
+    /**
+     *  Use this to instantiate {@link NDIterator}s optimized for the provided tensor
+     *  which may not be allowed to be a {@link VirtualNDIterator} instance.
+     *
+     * @param t The tensor for which an optimized {@link NDIterator} should be created.
+     * @param shouldNotBeVirtual The enum which determines if a virtual iterator is allowed.
+     * @return A new {@link NDIterator} instance optimized for the provided tensor.
+     */
     static NDIterator of( Tsr<?> t, NonVirtual shouldNotBeVirtual ) {
         return of( t.getNDConf(), shouldNotBeVirtual );
     }
 
+    /**
+     *  Use this to instantiate {@link NDIterator}s optimized for the provided {@link NDConfiguration}
+     *  which may not be allowed to be a {@link VirtualNDIterator} instance.
+     *
+     * @param ndc The nd-config for which an optimized {@link NDIterator} should be created.
+     * @param shouldNotBeVirtual The enum which determines if a virtual iterator is allowed.
+     * @return A new {@link NDIterator} instance optimized for the provided {@link NDConfiguration}.
+     */
     static NDIterator of( NDConfiguration ndc, NonVirtual shouldNotBeVirtual ) {
 
         if ( ndc instanceof Simple1DConfiguration   ) return new Simple1DCIterator(     (Simple1DConfiguration) ndc );
@@ -117,23 +147,5 @@ public interface NDIterator
     void set( int[] indices );
 
     int rank();
-
-
-    default String asString()
-    {
-        StringBuilder b = new StringBuilder();
-
-        StringJoiner sj = new StringJoiner( "," );
-        StringJoiner finalSj1 = sj;
-        IntStream.of( this.shape() ).forEach( x -> finalSj1.add( String.valueOf(x) ) );
-
-        b.append( "S[" + sj.toString() + "];" );
-        sj = new StringJoiner( "," );
-        StringJoiner finalSj = sj;
-        IntStream.of( this.get() ).forEach( x -> finalSj.add( String.valueOf( x ) ) );
-        b.append( "I[" + sj.toString() + "];" );
-        return b.toString();
-    }
-
 
 }

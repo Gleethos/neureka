@@ -43,15 +43,15 @@ public class CPUMatMul implements ImplementationFor<CPU> {
     {
         if ( !call.validate().allShare( t -> t.getNDConf().getLayout() ).isValid() )
             throw new IllegalArgumentException(
-                    "Data layout inconsistency between provided tensors encountered. " +
-                    "All tensors must be of the same layout."
-            );
+                        "Data layout inconsistency between provided tensors encountered. " +
+                        "All tensors must be of the same layout."
+                    );
 
         if ( !call.validate().allShare(AbstractTensor::getDataType).isValid() )
             throw new IllegalArgumentException(
-               "Type inconsistency between provided tensors encountered. " +
-               "All tensors must be of the same type."
-            );
+                       "Type inconsistency between provided tensors encountered. " +
+                       "All tensors must be of the same type."
+                    );
 
         NDConfiguration.Layout layout = call.tensor( 1 ).getNDConf().getLayout();
 
@@ -84,6 +84,10 @@ public class CPUMatMul implements ImplementationFor<CPU> {
 
             execute( rowMajor, A, B, C, aRows, aCols, bCols );
         }
-        else throw new IllegalArgumentException("Data type '"+type.getSimpleName()+"' not yet supported for matrix multiplication!");
+        else
+            throw new IllegalArgumentException(
+                        "Data type '"+type.getSimpleName()+"' not yet supported " +
+                        "for CPU based matrix multiplication!"
+                    );
     }
 }

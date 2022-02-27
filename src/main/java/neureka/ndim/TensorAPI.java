@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  *  This interface is part of the {@link Tsr} API, and it defines
- *  how data can read from and written to a tensor.
+ *  how data can be read from and written to a tensor.
  *  In essence, this interface exists to expand
  *  the tensor API through default methods without littering the
  *  already large {@link Tsr} and {@link AbstractTensor} classes.

@@ -4,92 +4,97 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
+import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.operations.JunctionUtil;
-import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-public final class Product extends AbstractOperation {
-
-
+/**
+ *  This type of operation belongs to the same species as the
+ *  {@link Summation} operation.
+ *  It executes incoming calls so that the calling function
+ *  will be executed with all input indices passed to it.
+ *  The resulting array of tensors will then multiplied with each other
+ *  to produce the result of this operation, hence the name {@link Product}.
+ */
+public final class Product extends AbstractOperation
+{
     public Product()
     {
         super (
-                new OperationBuilder()
-                        .setFunction(         "prodJs"    )
-                        .setOperator(         "prodJs"    )
-                        .setArity(            1           )
-                        .setIsOperator(       false       )
-                        .setIsIndexer(        true        )
-                        .setIsDifferentiable( true        )
-                        .setIsInline(         false       )
+            new OperationBuilder()
+                    .setFunction(         "prodJs"    )
+                    .setOperator(         "prodJs"    )
+                    .setArity(            1           )
+                    .setIsOperator(       false       )
+                    .setIsIndexer(        true        )
+                    .setIsDifferentiable( true        )
+                    .setIsInline(         false       )
         );
 
         //________________
         // BROADCASTING :
 
-        Broadcast operationAlgorithm = new Broadcast(JunctionUtil::forMultiplications)
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> true )
-                .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                    {
-                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                        Function mul = Neureka.get().backend().getFunction().mul();
-                        if ( ctxDerivative != null ) {
-                                return ADAgent.of( ctxDerivative )
-                                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
-                                                .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
-                        }
-                        Tsr<?>[] inputs = call.getTensors();
-                        int d = call.getValOf( Arg.DerivIdx.class );
-                        if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        else
-                        {
-                            Tsr<?> derivative = f.executeDerive( inputs, d );
-                            return ADAgent.of( derivative )
-                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
-                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
-                        }
-                    }
-                )
-                .buildFunAlgorithm();
-
         setAlgorithm(
-                Broadcast.class,
-                operationAlgorithm.setImplementationFor(
-                        CPU.class,
-                        Broadcast.implementationForCPU()
-                                .with(Fun.F64F64ToF64.triple(
-                                    ( a, b ) -> a * b,
-                                    ( a, b ) -> b, // Deriving at input 0
-                                    ( a, b ) -> a  // deriving input 1
-                                ))
-                                .with(Fun.F32F32ToF32.triple(
-                                    ( a, b ) -> a * b,
-                                    ( a, b ) -> b, // Deriving at input 0
-                                    ( a, b ) -> a  // deriving input 1
-                                ))
-                                .get()
-                )
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    Broadcast.implementationForGPU( this.getFunction() )
-                                    .with( "value = src1 * src2;\n" )
-                                    .and( "value += handle * drain;\n" )
-                )
+            new Broadcast(JunctionUtil::forMultiplications)
+            .setCanPerformBackwardADFor( call -> true )
+            .setCanPerformForwardADFor( call -> true )
+            .setSupplyADAgentFor(
+                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                {
+                    Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                    Function mul = Neureka.get().backend().getFunction().mul();
+                    if ( ctxDerivative != null ) {
+                        return ADAgent.of( ctxDerivative )
+                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                                .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
+                    }
+                    Tsr<?>[] inputs = call.getTensors();
+                    int d = call.getValOf( Arg.DerivIdx.class );
+                    if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                    else
+                    {
+                        Tsr<?> derivative = f.executeDerive( inputs, d );
+                        return ADAgent.of( derivative )
+                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
+                    }
+                }
+            )
+            .buildFunAlgorithm()
+            .setImplementationFor(
+                CPU.class,
+                Broadcast.implementationForCPU()
+                    .with(Fun.F64F64ToF64.triple(
+                        ( a, b ) -> a * b,
+                        ( a, b ) -> b, // Deriving at input 0
+                        ( a, b ) -> a  // deriving input 1
+                    ))
+                    .with(Fun.F32F32ToF32.triple(
+                        ( a, b ) -> a * b,
+                        ( a, b ) -> b, // Deriving at input 0
+                        ( a, b ) -> a  // deriving input 1
+                    ))
+                    .get()
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                Broadcast.implementationForGPU( this.getFunction() )
+                    .with( "value = src1 * src2;\n" )
+                    .and( "value += handle * drain;\n" )
+            )
         );
 
         //______________
@@ -183,26 +188,26 @@ public final class Product extends AbstractOperation {
                             .get()
                 )
                 .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( activation.getKernelSource() )
-                                .activationSource( "output = input;" )
-                                .differentiationSource( "output = 1;" )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
+                    OpenCLDevice.class,
+                    CLImplementation.compiler()
+                            .arity( 3 )
+                            .kernelSource( activation.getKernelSource() )
+                            .activationSource( "output = input;" )
+                            .differentiationSource( "output = 1;" )
+                            .kernelPostfix( this.getFunction() )
+                            .execution(
+                                call -> {
+                                    int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                    call.getDevice().getKernel(call)
+                                            .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                            .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                            .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                            .call( gwz );
+                                }
+                            )
+                            .build()
                 )
         );
 
