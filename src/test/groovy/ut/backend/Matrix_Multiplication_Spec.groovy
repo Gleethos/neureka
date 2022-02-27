@@ -1,6 +1,7 @@
 package ut.backend
 
-import neureka.backend.standard.operations.linear.SimpleMatMul
+
+import neureka.backend.standard.operations.linear.CPUMatMul
 import spock.lang.Specification
 import ut.backend.core.InternalMatMulTest
 
@@ -11,10 +12,10 @@ class Matrix_Multiplication_Spec extends Specification
             double[] A, double[] B, int M, int K, int N, double[] expectedC
     ) {
         given :
-            def C = new double[M*N]
+            var C = new double[M*N]
 
         when :
-            SimpleMatMul.execute(true, A, B, C, M, K, N)
+            CPUMatMul.execute(true, A, B, C, M, K, N)
 
         then :
             C == expectedC

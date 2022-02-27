@@ -8,7 +8,10 @@ import neureka.devices.host.CPU;
 import neureka.ndim.AbstractTensor;
 import neureka.ndim.config.NDConfiguration;
 
-public class SimpleMatMul implements ImplementationFor<CPU> {
+/**
+ *  This is a library internal class, do not depend on this.
+ */
+public class CPUMatMul implements ImplementationFor<CPU> {
 
     public static void execute(
             boolean rowMajor, double[] A, double[] B, double[] C, int aRows, int aCols, int bCols
