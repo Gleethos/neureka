@@ -1524,6 +1524,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     private void _fromCMToRM() {
+        if ( this.getNDConf().isVirtual() ) {
+            this.setIsVirtual( false ); // We actualized the tensor before convertion!
+            if ( this.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR )
+                return;
+        }
         Tsr<V> transposed = clone();
         _setNDConf( transposed.getNDConf() );
         _assign( () -> transposed );
@@ -1572,6 +1577,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             NDConfiguration oldConf,
             NDConfiguration.Layout targetLayout
     ) {
+        if ( newConf.isVirtual() )
+            throw new IllegalStateException("Layout conversion produced a virtual nd-configuration!");
         if ( newConf.getLayout() != targetLayout )
             throw new IllegalArgumentException(
                     "Failed to convert this tensor from its original layout '"+oldConf.getLayout()+"' " +
