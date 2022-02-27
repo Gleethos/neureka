@@ -50,7 +50,7 @@ import java.util.stream.IntStream;
  *     Tsr.of(Byte.class).vector( 2, 5, 6, 7, 8 )
  *
  * }</pre>
- * For more fine grained control over the initialization one can
+ * For more fine-grained control over the initialization one can
  * pass an initialization lambda to the API:
  * <pre>{@code
  *
@@ -85,12 +85,12 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
     }
 
     private Tsr<V> _get( Object value ) {
-        return Tsr.of( _dataType, _shape, value ).to( _device );
+        return Tsr.of( _dataType, _shape, value ).to( _device ).getUnsafe().toLayout( _layout );
     }
 
 
     private Tsr<V> _get( Filler<V> filler ) {
-        return Tsr.of( _dataType, _shape, filler ).to( _device );
+        return Tsr.of( _dataType, _shape, filler ).to( _device ).getUnsafe().toLayout( _layout );
     }
 
     /**
@@ -126,11 +126,9 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
         try {
             Function random = Neureka.get().backend().getFunction().random();
             if (type == Double.class && seedType == Long.class)
-                return (Tsr<V>) random.callWith(Arg.Seed.of((Long) seed))
-                                      .call(Tsr.of(Double.class, _shape, 0d).to(_device));
+                return random.callWith(Arg.Seed.of((Long) seed)).call( _get( 0d ) );
             else if (type == Float.class && seedType == Long.class)
-                return (Tsr<V>) random.callWith(Arg.Seed.of((Long) seed))
-                                      .call(Tsr.of(Float.class, _shape, 0f).to(_device));
+                return random.callWith(Arg.Seed.of((Long) seed)).call( _get( 0f ) );
             else
                 return Tsr.of(type, _shape, seed.toString()).to(_device);
         } catch ( Exception e ) {
@@ -154,7 +152,10 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
     }
 
     @Override
-    public Tsr<V> vector( Object[] values ) { return Tsr.of( _dataType, new int[]{ values.length }, values ).to( _device ); }
+    public Tsr<V> vector( Object[] values ) {
+        _shape = new int[]{ values.length };
+        return _get( values );
+    }
 
     @Override
     public Tsr<V> scalar( V value ) {
