@@ -9,6 +9,7 @@ import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.fluent.building.states.*;
 import neureka.ndim.Filler;
+import neureka.ndim.config.NDConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,13 +65,33 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
     private static final Logger _LOG = LoggerFactory.getLogger(TensorBuilder.class);
 
     private final DataType<V> _dataType;
+    private final NDConfiguration.Layout _layout;
     private int[] _shape;
     private V _from;
     private V _to;
     private Device<V> _device = (Device<V>) CPU.get();
 
 
-    public TensorBuilder( Class<V> typeClass ) { _dataType = DataType.of( typeClass ); }
+    public TensorBuilder(
+            Class<V> typeClass,
+            NDConfiguration.Layout layout
+    ) {
+        _dataType = DataType.of( typeClass );
+        _layout   = layout;
+        if ( layout == NDConfiguration.Layout.UNSPECIFIC )
+            throw new IllegalArgumentException(
+                "Cannot create tensor with an unspecified layout type."
+            );
+    }
+
+    private Tsr<V> _get( Object value ) {
+        return Tsr.of( _dataType, _shape, value ).to( _device );
+    }
+
+
+    private Tsr<V> _get( Filler<V> filler ) {
+        return Tsr.of( _dataType, _shape, filler ).to( _device );
+    }
 
     /**
      * @param values The values which will recurrently populate the returned {@link Tsr} with values until it is filled.
@@ -78,7 +99,9 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
      */
     @SafeVarargs
     @Override
-    public final Tsr<V> andFill( V... values ) { return Tsr.of( _dataType, _shape, values ).to( _device ); }
+    public final Tsr<V> andFill( V... values ) {
+        return _get( values );
+    }
 
     /**
      *  This method receives an {@link Filler} lambda which will be
@@ -88,13 +111,13 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
      * @return A new {@link Tsr} instance populated by the lambda supplied to this method.
      */
     @Override
-    public Tsr<V> andWhere( Filler<V> filler) { return Tsr.of( _dataType, _shape, filler).to( _device ); }
+    public Tsr<V> andWhere( Filler<V> filler ) { return _get( filler ); }
 
     @Override
     public To<V> iterativelyFilledFrom( V index ) { _from = _checked(index); return this; }
 
     @Override
-    public Tsr<V> all( V value ) { return Tsr.of( _dataType, _shape, value ).to( _device ); }
+    public Tsr<V> all( V value ) { return _get( value ); }
 
     @Override
     public Tsr<V> andSeed( Object seed ) {
@@ -126,7 +149,8 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
             throw new IllegalArgumentException("Cannot instantiate a tensor with shape 'null'!");
         if ( shape.length == 0 )
             throw new IllegalArgumentException("Cannot instantiate a tensor without shape arguments.");
-        _shape = shape; return this;
+        _shape = shape;
+        return this;
     }
 
     @Override
@@ -139,7 +163,8 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
             if ( value.getClass() != _dataType.getJVMTypeClass() )
                 throw new IllegalArgumentException("Provided value is of the wrong type!");
         }
-        return Tsr.of( _dataType, new int[]{1}, value ).to( _device );
+        _shape = new int[]{ 1 };
+        return _get( value );
     }
 
     /**
@@ -236,7 +261,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, I
             throw new IllegalStateException("Cannot form a range for the provided elements...");
             // TODO: make it possible to have ranges like 'a' to 'z'...
         }
-        return Tsr.of( _dataType, _shape, data ).to( _device );
+        return _get( data );
     }
 
     private int _size() {

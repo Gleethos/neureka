@@ -489,11 +489,15 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
 
-    private void _store(Tsr<Number> tensor, cl_tsr<?, ?> newClTsr, int fp) {
+    private void _store(
+            Tsr<Number> tensor,
+            cl_tsr<?, ?> newClTsr,
+            int fp
+    ) {
         boolean isVirtual = tensor.isVirtual();
         Pointer p;
         int size;
-        if (fp == 1) {
+        if ( fp == 1 ) {
             float[] data = tensor.getDataAs(float[].class);
             assert !isVirtual || data.length == 1;
             data = (data == null) ? new float[tensor.size()] : data;

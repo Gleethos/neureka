@@ -471,7 +471,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static <V> WithShapeOrScalarOrVectorOnDevice<V> of( Class<V> typeClass ) { return new TensorBuilder<>( typeClass ); }
+    public static <V> WithShapeOrScalarOrVectorOnDevice<V> of( Class<V> typeClass ) { return new TensorBuilder<>( typeClass, NDConfiguration.Layout.ROW_MAJOR ); }
+
+    public static <V> WithShapeOrScalarOrVectorOnDevice<V> of(
+            Class<V> typeClass, NDConfiguration.Layout layout
+    ) {
+        return new TensorBuilder<>( typeClass, layout );
+    }
+
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -1071,6 +1078,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             // Currently, we avoid offloading the virtualization by restoring outsourced tensors into RAM...
             Device<V> device = this.get( Device.class );
             try {
+                // TODO: Fix this imperformant mess below:
                 if ( device != null ) device.restore( this );
             } catch ( Exception exception ) {
                 _LOG.error(
