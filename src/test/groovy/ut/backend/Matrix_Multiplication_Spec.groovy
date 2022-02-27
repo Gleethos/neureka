@@ -1,10 +1,11 @@
 package ut.backend
 
-import neureka.backend.standard.operations.linear.SimpleMatMul;
+import neureka.backend.standard.operations.linear.SimpleMatMul
 import spock.lang.Specification
-import ut.backend.core.InternalMatMulTest;
+import ut.backend.core.InternalMatMulTest
 
-class Matrix_Multiplication_Spec extends Specification {
+class Matrix_Multiplication_Spec extends Specification
+{
 
     def 'The simple CPU matrix multiplication implementation works as expected.'(
             double[] A, double[] B, int M, int K, int N, double[] expectedC
@@ -13,7 +14,7 @@ class Matrix_Multiplication_Spec extends Specification {
             def C = new double[M*N]
 
         when :
-            SimpleMatMul.execute(A, B, C, M, K, N)
+            SimpleMatMul.execute(true, A, B, C, M, K, N)
 
         then :
             C == expectedC

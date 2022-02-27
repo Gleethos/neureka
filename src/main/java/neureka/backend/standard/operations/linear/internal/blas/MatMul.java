@@ -1,7 +1,6 @@
 /*<#LICENSE#>*/
 package neureka.backend.standard.operations.linear.internal.blas;
 
-import neureka.backend.standard.operations.linear.internal.Conf;
 import neureka.devices.host.CPU;
 
 /**
@@ -31,42 +30,44 @@ public class MatMul {
         );
     }
 
-    public static VectorOperationF32 operationForF32(final long rows, final long columns)
-    {
+    public static VectorOperationF32 operationForF32(
+            boolean rowMajor, final long rows, final long columns
+    ) {
         if ( rows > CPU.PARALLELIZATION_THRESHOLD && columns > CPU.PARALLELIZATION_THRESHOLD) {
-            return ( Conf.ROW_MAJOR
+            return ( rowMajor
                     ? MatMul::threaded_F32_MxN_RM
                     : MatMul::threaded_F32_MxN_CM
                 );
         }
         if ( columns == 1 ) {
-            return ( Conf.ROW_MAJOR
+            return ( rowMajor
                     ? MatMul::full_F32_Mx1_RM
                     : MatMul::full_F32_Mx1_CM
                 );
         }
         if ( rows == 1 )
             return (
-                    Conf.ROW_MAJOR
+                    rowMajor
                             ? MatMul::full_F32_1xN_RM
                             : MatMul::full_F32_1xN_CM
             );
         return (
-                Conf.ROW_MAJOR
+                rowMajor
                         ? MatMul::full_F32_MxN_RM
                         : MatMul::full_F32_MxN_CM
             );
     }
 
-    public static VectorOperationF64 operationForF64(final long rows, final long columns)
-    {
+    public static VectorOperationF64 operationForF64(
+            boolean rowMajor, final long rows, final long columns
+    ) {
         if ( rows > CPU.PARALLELIZATION_THRESHOLD && columns > CPU.PARALLELIZATION_THRESHOLD )
-            return ( Conf.ROW_MAJOR
+            return ( rowMajor
                 ? MatMul::threaded_F64_MxN_RM
                 : MatMul::threaded_F64_MxN_CM
             );
 
-        if ( !Conf.ROW_MAJOR ) { // Supported in column major only!
+        if ( !rowMajor ) { // Supported in column major only!
             if (rows == 5 && columns == 5) return MatMul::full_F64_5x5_CM;
             if (rows == 4 && columns == 4) return MatMul::full_F64_4x4_CM;
             if (rows == 3 && columns == 3) return MatMul::full_F64_3x3_CM;
@@ -75,12 +76,12 @@ public class MatMul {
         }
         if ( columns == 1 )
             return (
-                Conf.ROW_MAJOR
+                rowMajor
                     ? MatMul::full_F64_Mx1_RM
                     : MatMul::full_F64_Mx1_CM
             );
 
-        if ( !Conf.ROW_MAJOR ) { // Supported in column major only!
+        if ( !rowMajor ) { // Supported in column major only!
             if ( rows == 10) return MatMul::full_F64_0xN_CM;
             if ( rows == 9 ) return MatMul::full_F64_9xN_CM;
             if ( rows == 8 ) return MatMul::full_F64_8xN_CM;
@@ -89,13 +90,13 @@ public class MatMul {
         }
         if ( rows == 1 )
             return (
-                    Conf.ROW_MAJOR
+                    rowMajor
                             ? MatMul::full_F64_1xN_RM
                             : MatMul::full_F64_1xN_CM
                 );
 
         return (
-                Conf.ROW_MAJOR
+                rowMajor
                         ? MatMul::full_F64_MxN_RM
                         : MatMul::full_F64_MxN_CM
             );

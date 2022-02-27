@@ -18,14 +18,14 @@ public class M32 {
         _colCount = colCount; // N
     }
 
-    public M32 multiply( M32 matrix, float[] otherData ) {
+    public M32 multiply( boolean rowMajor, M32 matrix, float[] otherData ) {
 
         int otherColCount = matrix._colCount;
 
         M32 retVal = new M32(_rowCount, otherColCount, otherData);
 
         MatMul
-                .operationForF32(_rowCount, otherColCount)
+                .operationForF32( rowMajor, _rowCount, otherColCount )
                 .invoke(
                         retVal._data, _data, _colCount, matrix._data
                 );

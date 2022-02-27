@@ -18,14 +18,14 @@ public class M64 {
         _colCount = colCount; // N
     }
 
-    public M64 multiply( M64 matrix, double[] otherData ) {
+    public M64 multiply( boolean rowMajor, M64 matrix, double[] otherData ) {
 
         int otherColCount = matrix._colCount;
 
         M64 retVal = new M64(_rowCount, otherColCount, otherData);
 
         MatMul
-            .operationForF64(_rowCount, otherColCount)
+            .operationForF64( rowMajor, _rowCount, otherColCount )
             .invoke(
                 retVal._data, _data, _colCount, matrix._data
             );

@@ -1,21 +1,24 @@
 package ut.backend.core
 
 import groovy.transform.CompileStatic
-import neureka.backend.standard.operations.linear.internal.Conf
 import neureka.backend.standard.operations.linear.internal.M32
 import neureka.backend.standard.operations.linear.internal.M64
 
 @CompileStatic
 class InternalMatMulTest {
 
+
+    private static boolean DO_ROW_MAJOR = true
+
+
     private enum Type {
         ROW_MAJOR, COL_MAJOR;
 
         void set() {
             if ( this == ROW_MAJOR )
-                Conf.ROW_MAJOR = true
+                DO_ROW_MAJOR = true
             else
-                Conf.ROW_MAJOR = false
+                DO_ROW_MAJOR = false
         }
     }
 
@@ -204,14 +207,14 @@ class InternalMatMulTest {
 
     private static M32 _matmulF32(M32 A, M32 B) {
         var data = new float[A.getRowDim()*B.getColDim()]
-        var C = A.multiply(B, data)
+        var C = A.multiply(DO_ROW_MAJOR, B, data)
         assert C.data === data
         return C
     }
 
     private static M64 _matmulF64(M64 A, M64 B) {
         var data = new double[A.getRowDim()*B.getColDim()]
-        var C = A.multiply(B, data)
+        var C = A.multiply(DO_ROW_MAJOR, B, data)
         assert C.data === data
         return C
     }
