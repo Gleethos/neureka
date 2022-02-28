@@ -1523,38 +1523,43 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         _checkLayoutConversion( this.getNDConf(), old, target );
     }
 
+    /**
+     *  Converts this tensor from column major to column major layout.
+     */
     private void _fromCMToRM() {
         if ( this.getNDConf().isVirtual() ) {
-            this.setIsVirtual( false ); // We actualized the tensor before convertion!
+            this.setIsVirtual( false ); // We actualized the tensor before conversion!
             if ( this.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR )
                 return;
         }
-        Tsr<V> transposed = clone();
-        _setNDConf( transposed.getNDConf() );
-        _assign( () -> transposed );
+        Tsr<V> clone = clone(); // A clone will have by default a row major layout.
+        _setNDConf( clone.getNDConf() );
+        _assignIfActual( () -> clone );
     }
 
+    /**
+     *  Converts this tensor from row major to column major layout.
+     */
     private void _fromRMToCM() {
-        _assign(() -> Tsr.this.T().clone().detach());
+        _assignIfActual( () -> Tsr.this.T().clone().detach() );
         NDConfiguration old = this.getNDConf();
         int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor(old.shape());
         if ( old.isVirtual() ) {
             this.setIsVirtual(false);
-            _setNDConf(
-                _createNewNDCFrom(this.getNDConf(), newTranslation, this.getNDConf().translation() )
-            );
+            old = this.getNDConf();
         }
-        else
-            _setNDConf(
-                _createNewNDCFrom( old, newTranslation, old.translation() )
-            );
+        _setNDConf( _createNewNDCFrom( old, newTranslation, old.translation() ) );
     }
 
-    private void _assign( Supplier<Tsr<?>> provider ) {
+    /**
+     *  This will only call the supplier and copy its result into this tensor
+     *  if this tensor is not virtual (meaning this is an actual tensor).
+     */
+    private void _assignIfActual( Supplier<Tsr<?>> provider ) {
         if ( !this.isVirtual() ) {
             Tsr<?> toBeAssigned = provider.get();
             MemUtil.keep(this, toBeAssigned,
-                    () -> Neureka.get().backend().getFunction().idy().execute( this, toBeAssigned )
+                () -> Neureka.get().backend().getFunction().idy().execute( this, toBeAssigned )
             );
         }
     }
@@ -1564,11 +1569,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     ) {
         assert !old.isVirtual();
         return AbstractNDC.construct(
-            old.shape(),
-            newTranslation,
-            indicesMap,
-            old.spread(),
-            old.offset()
+            old.shape(), newTranslation, indicesMap, old.spread(), old.offset()
         );
     }
 
