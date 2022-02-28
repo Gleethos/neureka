@@ -51,7 +51,6 @@ import java.util.function.Consumer;
  *  This is because the Multiton implementation utilizes a hash map where classes are the
  *  keys and their corresponding values are DataType instances.
  *
- *
  * @param <Type> The type parameter of the type class whose instances ought to be represented.
 */
 public final class DataType<Type>
@@ -77,14 +76,14 @@ public final class DataType<Type>
         if      ( typeClass == Double.class  || typeClass.getSimpleName().equals("double")) realTypeClass = F64.class;
         else if ( typeClass == Float.class   || typeClass.getSimpleName().equals("float") ) realTypeClass = F32.class;
         else if ( typeClass == Integer.class || typeClass.getSimpleName().equals("int")   ) realTypeClass = I32.class;
-        else if ( typeClass == Short.class                                                ) realTypeClass = I16.class;
-        else if ( typeClass == Long.class                                                 ) realTypeClass = I64.class;
-        else if ( typeClass == Byte.class                                                 ) realTypeClass = I8.class;
+        else if ( typeClass == Short.class   || typeClass.getSimpleName().equals("short") ) realTypeClass = I16.class;
+        else if ( typeClass == Long.class    || typeClass.getSimpleName().equals("long")  ) realTypeClass = I64.class;
+        else if ( typeClass == Byte.class    || typeClass.getSimpleName().equals("byte")  ) realTypeClass = I8.class;
         else if ( typeClass == byte[].class                                               ) realTypeClass = I8.class;
         else if ( typeClass == int[].class                                                ) realTypeClass = I32.class;
         else if ( typeClass == float[].class                                              ) realTypeClass = F32.class;
         else if ( typeClass == double[].class                                             ) realTypeClass = F64.class;
-        else if ( typeClass == long[].class                                              ) realTypeClass = I64.class;
+        else if ( typeClass == long[].class                                               ) realTypeClass = I64.class;
         return realTypeClass;
     }
 
@@ -100,15 +99,6 @@ public final class DataType<Type>
         return dt;
     }
 
-    public static <T> void forType( Class<T> typeClass, Consumer<DataType<T>> action )
-    {
-        Class<?> realTypeClass = _numericTypeRepresentationOf( typeClass );
-        if ( _instances.containsKey( realTypeClass ) ) {
-            DataType<?> found = _instances.get( realTypeClass );
-            if ( found.getTypeClass() == typeClass ) action.accept( (DataType<T>) found );
-        }
-    }
-
     private final Logger _log;
 
     private final Class<Type> _typeClass;
@@ -116,8 +106,8 @@ public final class DataType<Type>
     private DataType( Class<Type> type ) {
         _typeClass = type;
         _log = LoggerFactory.getLogger(
-                DataType.class.getSimpleName() + ".of(" + _typeClass.getSimpleName() + ")"
-        );
+                    DataType.class.getSimpleName() + ".of(" + _typeClass.getSimpleName() + ")"
+                );
     }
 
     /**
@@ -166,6 +156,8 @@ public final class DataType<Type>
             newValue = ( ( (double[]) value ).length <= 1 ) ? value : new double[]{ ( (double[]) value )[ 0 ] };
         else if ( getTypeClass() == F32.class )
             newValue = ( ( (float[]) value ).length <= 1 ) ? value : new float[]{ ( (float[]) value )[ 0 ] };
+        else if ( getTypeClass() == I64.class )
+            newValue = ( ( (long[]) value ).length <= 1 ) ? value : new long[]{ ( (long[]) value )[ 0 ] };
         else if ( getTypeClass() == I32.class )
             newValue = ( ( (int[]) value ).length <= 1 ) ? value : new int[]{ ( (int[]) value )[ 0 ] };
         else if ( getTypeClass() == I16.class )
@@ -212,7 +204,7 @@ public final class DataType<Type>
         } else if ( getTypeClass() == Character.class ) {
             if ( ( (char[]) value ).length == size ) return value;
             newValue = new char[ size ];
-            if ( ( (boolean[]) value )[ 0 ] != false ) Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );
+            if ( ( (char[]) value )[ 0 ] != (char) 0 ) Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );
         } else {
             if ( ( (Object[]) value ).length == size ) return value;
             newValue = new Object[ size ];
