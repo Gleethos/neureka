@@ -265,29 +265,42 @@
                                         <div class="TabHead">
                                             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
                                             <button onclick="switchTab(event, '.javaTab')">Java</button>
+                                            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
                                         </div>
                                         <div class="TabBody">
                                             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    Tsr x = Tsr.of(3).setRqsGradient(true)
-    Tsr b = Tsr.of(-4)
-    Tsr w = Tsr.of(2)
-
-    Tsr y = ((x+b)*w)**2
-    // y: "[1]:(4.0); ->d[1]:(-8.0), "
+    var x = Tsr.of(3d).setRqsGradient(true)
+    var b = Tsr.of(-4d)
+    var w = Tsr.of(2d)
+    var y = ((x+b)*w)**2
+    y.backward(1)
+    // x.getGradient(): "(1):[-8]"
 
                 </code></pre>
                                             </div>
                                             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Tsr x = Tsr.of(3).setRqsGradient(true);
-    Tsr b = Tsr.of(-4);
-    Tsr w = Tsr.of(2);
-    Tsr y = Tsr.of(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
+    var x = Tsr.of(3d).setRqsGradient(true);
+    var b = Tsr.of(-4d);
+    var w = Tsr.of(2d);
+    var y = Tsr.of("((i0+i1)*i2)^2", x, b, w);
+    y.backward(1);
+    // x.getGradient(): "(1):[-8]"
 
-    // y: "(1):[4.0]; ->d(1):[-8.0], "
+                </code></pre>
+                                            </div>
+                                            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    val x = Tsr.of(3.0).setRqsGradient(true)
+    val b = Tsr.of(-4.0)
+    val w = Tsr.of(2.0)
+    val y = Tsr.of("((i0+i1)*i2)^2", x, b, w)
+    y.backward(1.0)
+    // x.getGradient(): "(1):[-8]"
 
                 </code></pre>
                                             </div>
@@ -306,27 +319,22 @@ Both code snippets express the following equations
                                 </div>
                                 <div class="col-sm-0 col-md-2 col-lg-3">
                                 </div>
-                                <div class="col-sm-12 col-md-7 col-lg-8">
-                                    <div class="ContentBox">
-                                        <p>
-                                            Some languages like Groovy for example
-                                            supports operator overloading.
-                                            Certain methods will be called when
-                                            corresponding operators are used ( + : plus(...), - : minus(...), ... ).
-                                            Such language features allow for elegant and short implementations.
-                                            For rapid prototyping and small scale projects groovy, scala or jython
-                                            might be the perfect choice.
-                                        </p>
+                                <div class="col-sm-7 col-md-8 col-lg-9">
+                                    <div class="ContentBox MarkdownMe">
+Neurekas API is designed to enable operator overloading in certain languages
+based on carefully chosen method names which will be translated to operators.
+
+This makes it possible to use tensors in mathematical expression in both Groovy and Kotlin
+to allow for rapid prototyping and highly readable math heavy code...
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-md-5 col-lg-4">
-                                    <div class="ContentBox">
-                                        <p>
-                                            ...if however performance is of concern for
-                                            you and your team, then Neureka can easily be
-                                            used with Java or Kotlin
-                                            to allow for a more efficient runtime.
-                                        </p>
+                                <div class="col-sm-5 col-md-4 col-lg-3">
+                                    <div class="ContentBox MarkdownMe">
+- `+` : `plus(...)`
+- `-` : `minus(...)`
+- `*` : `times(...)`
+- `/` : `divide(...)`
+- ...
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-12">
@@ -419,12 +427,30 @@ Both code snippets express the following equations
         console.log($(src.target).html());
     }
     $(document).ready(function() {
+        console.log('Executing format procedure...');
+        hljs.initHighlighting.called = false;
+        hljs.initHighlighting();
+        applyMarkdown(); // After loading we apply markdown
+        setTimeout(() => {
+                // For some weired reason the first time the dom does not find
+                // all the things we want to markdown...
+                applyMarkdown();
+                applyMarkdown();// Let' markdown again to make sure everything gets formatted
+                applyMarkdown();
+                // Now let's show the fully formatted ajax page:
+                $('#DynamicContent').show("fast");
+            },
+            200
+        );
+    })
+
+    function applyMarkdown() {
         for (let item of document.getElementsByClassName("MarkdownMe")) {
             item.innerHTML = marked(item.innerHTML)
             item.classList.remove("MarkdownMe");
-            console.log("Markdowned: "+item)
+            console.log("Converting to markdown in tag "+item.tagName);
         }
-    })
+    }
 </script>
 <!-----------------------------------VANTA JS------------------------------------------>
 <script src="src/js/three.min.js"></script>
