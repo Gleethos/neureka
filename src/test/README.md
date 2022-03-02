@@ -1,7 +1,11 @@
 # Note #
+ 
+Neureka relies on [Spock](https://github.com/spockframework/spock) as its primary testing framework.<br>
+If you are not familiar with Spock don't worry,
+[here is a simple introduction for writing and reading 
+Spock specifications](groovy/Example_Spec.groovy).
 
-Neureka uses the Spock testing framework. <br>
-Here is some basic information if you are not familiar with it:<br>
+TL;DR:<br>
 <br>
 Spock test methods are referred to as "features" which are bundled into a single test class called "specification". <br>
 <br>
@@ -13,8 +17,10 @@ A Spock specification can have the following fixture methods:
   - The cleanupSpec() method is invoked after all feature methods have been invoked.
 
 <br>
-Test methods are actually String! <br>
+Test methods are actually Strings! <br>
 They describe the given feature which this test
 method ought to cover. 
-Besides that there are also multiple 
-sections of such a feature method which can also have descriptive labels
+A feature consists of multiple 
+sections / code blocks which adhere to BDD and will be enforced by Spock.
+These sections can receive documentations in the form of strings, which will be
+used to generate nice and readable html reports.
