@@ -2,6 +2,11 @@
 
 ---
 
+Neureka relies on [Spock](https://github.com/spockframework/spock) as its primary testing framework.
+If you are not familiar with Spock don't worry,
+[here is a simple introduction for writing and reading 
+Spock specifications](Example_Spec.groovy).
+
 ## Structure ##
 
 Neureka's testsuite is divided into the following 3 packages : <br>
