@@ -128,6 +128,11 @@ public class CLContext implements BackendExtension
         return new DeviceOption( result, score );
     }
 
+    /**
+     *  This method will free all the resources occupied by this context,
+     *  meaning that all platforms and their devices will be disposed.
+     *  Their kernels will be removed and their tensors restored.
+     */
     @Override
     public void dispose() {
         for ( OpenCLPlatform platform : _platforms ) {
