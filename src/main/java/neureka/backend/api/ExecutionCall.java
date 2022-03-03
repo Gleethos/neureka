@@ -149,7 +149,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
                     );
     }
 
-    /*// WIP
     public ExecutionCall<D> withArgs( Arg<?>... args ) {
         List<Arg> old = _arguments.getAll(Arg.class);
         old.addAll(Arrays.stream(args).collect(Collectors.toList()));
@@ -157,7 +156,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
                     _device, _operation, _tensors, _algorithm, old
                 );
     }
-    */
 
     public <T extends Device<?>> ExecutionCall<T> forDeviceType( Class<T> type ) {
         assert _device.getClass() == type;

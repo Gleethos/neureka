@@ -396,13 +396,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                             srcNode,
                             call.getADAgentFrom(
                                 function,
-                                ExecutionCall.of(call.getTensors())
-                                        .andArgs(
-                                            Arg.DerivIdx.of(i),
-                                            Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
-                                        )
-                                        .running(call.getOperation())
-                                        .on(call.getDevice()),
+                                call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))),
                                 false
                             )
                         );
