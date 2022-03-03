@@ -307,7 +307,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
                             "Input tensors of a new graph-node must contain leave graph-nodes!"
                     );
                 }
-                else a.parents()[ i ]._attachChild(node);
+                else
+                    a.parents()[ i ]._attachChild(node);
             }
         }
         if ( a.nodeID() == -1 ) {
@@ -342,47 +343,47 @@ public class GraphNode<V> implements Component<Tsr<V>>
                             !srcNode.isLeave() && !srcNode._allows_forward
                         ) {
                             _put(
-                                    srcNode,
-                                    call.getADAgentFrom(
-                                            function,
-                                            ExecutionCall.of(call.getTensors())
-                                                    .andArgs(
-                                                            Arg.DerivIdx.of(i),
-                                                            Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
-                                                    )
-                                                    .running(call.getOperation())
-                                                    .on(call.getDevice()),
-                                            true
-                                    )
+                                srcNode,
+                                call.getADAgentFrom(
+                                    function,
+                                    ExecutionCall.of(call.getTensors())
+                                            .andArgs(
+                                                Arg.DerivIdx.of(i),
+                                                Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
+                                            )
+                                            .running(call.getOperation())
+                                            .on(call.getDevice()),
+                                    true
+                                )
                             );
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
                             int finalI = i;
                             Tsr<V> localDerivative = function.derive( inputs, i );
                             srcNode.forEachTargetAgentPair(
-                                    ( targetNode, localAgent ) ->
-                                    {
-                                        // The agent multiplies the local derivative with its stored partial derivative...
-                                        Tsr<?> targetDerivative = localAgent.forward( this, localDerivative );
-                                        // ...this is now the new partial derivative with respect to the target node!
-                                        this._put(
-                                                targetNode,
-                                                call.getADAgentFrom(
-                                                        function,
-                                                        ExecutionCall.of(call.getTensors())
-                                                                .andArgs(
-                                                                        Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
-                                                                        Arg.DerivIdx.of(finalI),
-                                                                        Arg.Derivative.of(targetDerivative)
-                                                                )
-                                                                .running(call.getOperation())
-                                                                .on(call.getDevice()),
-                                                        true
-                                                )
-                                        );
-                                        // TODO: flag within src Tsr<ValType>s that grant that the tensor
-                                        // has been created by function constructor!
-                                    }
+                                ( targetNode, localAgent ) ->
+                                {
+                                    // The agent multiplies the local derivative with its stored partial derivative...
+                                    Tsr<?> targetDerivative = localAgent.forward( this, localDerivative );
+                                    // ...this is now the new partial derivative with respect to the target node!
+                                    this._put(
+                                        targetNode,
+                                        call.getADAgentFrom(
+                                            function,
+                                            ExecutionCall.of(call.getTensors())
+                                                    .andArgs(
+                                                        Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
+                                                        Arg.DerivIdx.of(finalI),
+                                                        Arg.Derivative.of(targetDerivative)
+                                                    )
+                                                    .running(call.getOperation())
+                                                    .on(call.getDevice()),
+                                            true
+                                        )
+                                    );
+                                    // TODO: flag within src Tsr<ValType>s that grant that the tensor
+                                    // has been created by function constructor!
+                                }
                             );
                         }
                     }
@@ -392,18 +393,18 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     GraphNode<V> srcNode = inputs[ i ].getGraphNode();
                     if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {
                         _put(
-                                srcNode,
-                                call.getADAgentFrom(
-                                        function,
-                                        ExecutionCall.of(call.getTensors())
-                                                .andArgs(
-                                                        Arg.DerivIdx.of(i),
-                                                        Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
-                                                )
-                                                .running(call.getOperation())
-                                                .on(call.getDevice()),
-                                        false
-                                )
+                            srcNode,
+                            call.getADAgentFrom(
+                                function,
+                                ExecutionCall.of(call.getTensors())
+                                        .andArgs(
+                                            Arg.DerivIdx.of(i),
+                                            Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
+                                        )
+                                        .running(call.getOperation())
+                                        .on(call.getDevice()),
+                                false
+                            )
                         );
                     }
                 }
@@ -595,7 +596,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * It will traverse the path between a pending error and a tensor (rqsGradient==true)
      * containing the JITProp component which is triggered as soon as new gradients are needed or requested (applied).
      * This traverse however does not occur through the method below.
-     * Instead the 'backwardJIT' method is called by the JITProp component if present.
+     * Instead, the 'backwardJIT' method is called by the JITProp component if present.
      * Intermediate error accumulations are stored in the '_pending_error' variable.
      * The method halts when an error can be accumulated and returns.
      * This graph node however is not forgotten but being noted in the 'pendingNodes' Set.
@@ -634,7 +635,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * The path is being marked with '_relies_on_JITProp' so that intermediate size will
      * not be deleted.
      *
-     * @param pendingBackProp
+     * @param pendingBackProp The set of graph nodes where further propagation is pending.
      */
     private void _carryPendingBackPropToGradients( Set<GraphNode<V>> pendingBackProp ) {
         _reliesOnJustInTimeProp = true; //:=> Shall be traversed at a later point in time...
