@@ -245,6 +245,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  The lambda will be called by the {@link #isSuitableFor(ExecutionCall)} method
      *  by any given {@link Operation} instances this algorithm belongs to.
      *
+     * @param isSuitableFor The suitability predicate which determines if the algorithm is suitable or not.
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setIsSuitableFor( SuitabilityPredicate isSuitableFor ) {
@@ -273,7 +274,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  The lambda will be called by the {@link #canPerformBackwardADFor(ExecutionCall)} method
      *  by any given {@link Operation} instances this algorithm belongs to.
      *
-     *
+     * @param canPerformBackwardADFor A predicate lambda which determines if this algorithm can perform backward AD for a given execution call.
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setCanPerformBackwardADFor( BackwardADPredicate canPerformBackwardADFor ) {
@@ -287,7 +288,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  The lambda will be called by the {@link #supplyADAgentFor(Function, ExecutionCall, boolean)} method
      *  by any given {@link Operation} instances this algorithm belongs to.
      *
-     *
+     * @param supplyADAgentFor A supplier for an {@link ADAgent} containing implementation details for autograd.
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setSupplyADAgentFor( ADAgentSupplier supplyADAgentFor ) {
@@ -314,6 +315,8 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  The lambda passed to this will be called by the {@link #dispatch(FunctionNode, ExecutionCall)} method
      *  by any given {@link Operation} instances this algorithm belongs to.
      *
+     * @param handleInsteadOfDevice The {@link ExecutionDispatcher} which is the main entrypoint for execution.
+     * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setExecutionDispatcher(ExecutionDispatcher handleInsteadOfDevice ) {
         _handleInsteadOfDevice = _checked(handleInsteadOfDevice, _handleInsteadOfDevice, ExecutionDispatcher.class);
@@ -333,6 +336,9 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  linear operation like for example a broadcast operation will require a very different approach...
      *  The lambda passed to this will be called by the {@link #prepare(ExecutionCall)} method
      *  by any given {@link Operation} instances this algorithm belongs to.
+     *
+     * @param instantiateNewTensorsForExecutionIn A lambda which prepares the provided execution call (usually output instantiation).
+     * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setCallPreparation( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
         _instantiateNewTensorsForExecutionIn = _checked(instantiateNewTensorsForExecutionIn, _instantiateNewTensorsForExecutionIn, ExecutionPreparation.class);

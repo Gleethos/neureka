@@ -127,6 +127,8 @@ public class BackendContext implements Cloneable
      *  {@link Function} instances which are configured to track their computational history.
      *  This means that a computation graph will be built by these instances.
      *  ( Computation graphs in Neureka are made of instances of the {@link neureka.autograd.GraphNode} class... )
+     *
+     * @return A container object which exposes various types of functions with autograd support.
      */
     public Functions getAutogradFunction() {
         if ( _getAutogradFunction == null ) _getAutogradFunction = new Functions( true );
@@ -235,6 +237,10 @@ public class BackendContext implements Cloneable
 
     /**
      *  Checks if this context has an instance of the provided {@link BackendExtension} type.
+     *
+     * @param extensionClass The type class of the extensions whose presents should be checked.
+     * @param <E> The type parameter of the provided type class which requires the type to be an extension.
+     * @return The truth value determining if the provided type is present.
      */
     public <E extends BackendExtension> boolean has( Class<E> extensionClass ) {
         return extensions.has( extensionClass );
@@ -249,7 +255,7 @@ public class BackendContext implements Cloneable
     }
 
     /**
-     *  Returns all {@link BackendExtension} instances.
+     * @return A list of all {@link BackendExtension} instances.
      */
     public List<BackendExtension> getExtensions() {
         return extensions.getAll( BackendExtension.class );
@@ -258,6 +264,9 @@ public class BackendContext implements Cloneable
     /**
      *  Registers the provided {@link BackendExtension} instance
      *  which can then be accessed via {@link #get(Class)}.
+     *
+     * @param extension The backend extension component which ought to be stored by this.
+     * @return This very {@link BackendContext} instance to allow for method chaining.
      */
     public BackendContext set( BackendExtension extension ) {
         extensions.set( extension );

@@ -255,6 +255,10 @@ public class CPU extends AbstractDevice<Number>
 
         /**
          *  Takes the provided range and divides it into multi-threaded workloads.
+         *
+         * @param first The start index of the threaded workload range.
+         * @param limit The limit for the workload range, which is exclusive.
+         * @param rangeWorkload A workload lambda which will be called by different threads with different sub-ranges.
          */
         public void threaded(
                 final int first,

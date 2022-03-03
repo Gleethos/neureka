@@ -33,8 +33,7 @@ public class FunctionNode implements Function
     //------------------------------------------------------------------------------------------------------------------
 
     /**
-     *
-     * @param type
+     * @param type The operation which ought to be represented.
      * @param sources
      * @param doAD
      */

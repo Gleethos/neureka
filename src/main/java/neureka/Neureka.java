@@ -179,6 +179,9 @@ public final class Neureka
 
     /**
      *  This allows you to configure Neureka using a Groovy DSL.
+     *
+     * @param closure A Groovy closure to allow for DSL type configuring.
+     * @return The thread-local {@link Neureka} singleton instance.
      */
     public static Neureka configure( Object closure ) {
         Object o = SettingsLoader.tryGroovyClosureOn(closure, Neureka.get());
@@ -489,6 +492,8 @@ public final class Neureka
              *  Gradients will automatically be applied (or JITed) to tensors as soon as
              *  they are being used for calculation ({@link neureka.autograd.GraphNode} instantiation).
              *  This feature works well with JIT-Propagation.
+             *
+             * @param apply The flag determining if gradients should be applied when their tensors are used.
              */
             public void setIsApplyingGradientWhenTensorIsUsed( boolean apply ) {
                 if ( _isLocked || _currentThreadIsNotAuthorized() ) return;

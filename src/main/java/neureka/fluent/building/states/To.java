@@ -9,7 +9,7 @@ import neureka.Tsr;
  *  This method allows one to set the end point of the range whose start has previously between set
  *  in the {@link IterByOrIterFromOrAll#iterativelyFilledFrom(Object)} method...
  *
- * @param <V>
+ * @param <V> The type parameter of the second and last range index.
  */
 public interface To<V> {
 

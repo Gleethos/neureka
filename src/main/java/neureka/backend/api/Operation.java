@@ -149,6 +149,8 @@ public interface Operation
     /**
      * Arity is the number of arguments or operands
      * that this function or operation takes.
+     *
+     * @return The number of arguments expected by this operation, or -1 if an arbitrary number is accepted.
      */
     int getArity();
 
@@ -174,9 +176,7 @@ public interface Operation
      */
     boolean isIndexer();
 
-    /**
-     *  This has currently no use!
-     */
+
     @Deprecated
     boolean isDifferentiable();
 
