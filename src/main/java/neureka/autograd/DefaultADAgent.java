@@ -62,6 +62,9 @@ public final class DefaultADAgent extends Args implements ADAgent {
      *  The {@link DefaultADAgent} will adopt the argument context of the {@link neureka.backend.api.ExecutionCall}
      *  from which it was born. This is so that they can be used by any backend implementation to
      *  save variables useful to perform differentiation.
+     *
+     *  @param context A list of {@link neureka.backend.api.ExecutionCall} arguments which might be relevant to the autograd system.
+     *  @return This {@link DefaultADAgent} with the list of arguments set.
      */
     public DefaultADAgent withArgs( List<Arg> context  ) {
         for ( Arg<?> arg : context ) this.set(arg);

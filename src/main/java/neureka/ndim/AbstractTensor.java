@@ -500,6 +500,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
          *
          * @param isIntermediate The truth value determining if this tensor is not a user tensor but an internal
          *                       tensor which may be eligible for deletion by {@link Function}s consuming it.
+         * @return The tensor to which this unsafe API belongs.
          */
         Tsr<T> setIsIntermediate( boolean isIntermediate );
 
@@ -513,7 +514,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
          *  the garbage collector to kick in at a latr point in time... <br>
          *  <br>
          *
-         * @return This very tensor instance to allow for method chaining.
+         * @return The tensor wo which this unsafe API belongs to allow for method chaining.
          */
         Tsr<T> delete();
 

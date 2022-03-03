@@ -799,7 +799,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     }
 
     /**
-     * @param action
+     * @param action An action which should be applied to the graph nodes of all the partial derivatives.
      */
     public void forEachTarget( Consumer<GraphNode<V>> action ) {
         if ( _targetsToAgents == null ) return;
@@ -867,6 +867,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * <p>
      * All nodes between a Pending-Error and those requiring gradients will
      * be marked with '_relies_on_JIPProp=true'!
+     *
+     * @return The truth value determining if this graph node relies on just in time propagation.
      */
     public boolean isReliesOnJustInTimeProp() { return _reliesOnJustInTimeProp; }
 

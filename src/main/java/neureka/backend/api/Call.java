@@ -54,6 +54,7 @@ public class Call<D> {
     public Tsr<?>[] getTensors() { return _tensors; }
 
     /**
+     * @param i The index of the tensor argument which should be returned.
      * @return The {@code i}'th {@link Tsr} parameter of this {@link Call} for execution.
      */
     public Tsr<?> tensor( int i ) {

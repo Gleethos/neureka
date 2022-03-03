@@ -165,6 +165,7 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
      *  k... step size.                                                             <br>
      *
      * @param key This object is a map defining a stride and a targeted index or range of indices...
+     * @param value The tensor which ought to be assigned into a slice of this tensor.
      * @return A slice tensor or scalar value.
      */
     Tsr<V> putAt( Map<?,Integer> key, Tsr<V> value );
@@ -215,6 +216,7 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
      *  the "value" argument.
      *
      * @param key This object is a list defining a targeted index or range of indices...
+     * @param value the tensor which ought to be assigned to a slice of this tensor.
      * @return A slice tensor or scalar value.
      */
     Tsr<V> putAt( List<?> key, Tsr<V> value );
