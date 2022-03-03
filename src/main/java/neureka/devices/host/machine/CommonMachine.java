@@ -41,6 +41,9 @@ public abstract class CommonMachine extends BasicMachine {
      * <code>new MemoryThreads[] { SYSTEM, L3, L2, L1 }</code> or
      * <code>new MemoryThreads[] { SYSTEM, L2, L1 }</code> or in worst case
      * <code>new MemoryThreads[] { SYSTEM, L1 }</code>
+     *
+     * @param architecture The CPU architecture (like x86 for example).
+     * @param levels Cache levels.
      */
     protected CommonMachine(final String architecture, final BasicMachine[] levels) {
 
@@ -54,7 +57,8 @@ public abstract class CommonMachine extends BasicMachine {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals( final Object obj )
+    {
         if ( this == obj ) return true;
         if ( !super.equals(obj) ) return false;
         if ( !(obj instanceof CommonMachine) ) return false;

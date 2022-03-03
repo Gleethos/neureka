@@ -215,6 +215,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  An example of this approach would be to call the {@link #putAt(List, Tsr)} method with an empty list as key.
      *  This will be interpreted as an inline copy of the contents of the
      *  second parameter into this {@link Tsr} instance.
+     *
+     * @return A new and completely empty / unitialized {@link Tsr} instance.
      */
     public static Tsr<Object> newInstance() { return new Tsr<>(); }
 

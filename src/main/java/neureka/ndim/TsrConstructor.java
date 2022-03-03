@@ -326,6 +326,11 @@ public class TsrConstructor {
 
     /**
      *  If possible, turns the provided {@code Object} array into a memory compact array of primitive types.
+     *
+     * @param dataType The {@link DataType} of the elements in the provided array.
+     * @param values The array of values which ought to be optimized into a flat array of primitives.
+     * @param size The size of the optimized array of primitives.
+     * @return An optimized flat array of primitives.
      */
     public static Object optimizeObjectArray( DataType<?> dataType, Object[] values, int size ) {
         Object data = values;
