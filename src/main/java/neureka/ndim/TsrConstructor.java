@@ -52,6 +52,9 @@ public class TsrConstructor {
      *  is a shape array of integers which is being passed to the method... <br>
      *  <br>
      *
+     * @param newShape The shape which should be used to configure a new tensor (and its nd-configuration).
+     * @param makeVirtual A flag determining if the tensor should be actual or virtual (not fully allocated).
+     * @param autoAllocate Determines if the underlying data array should be allocated or not.
      * @param newShape An array if integers which are all greater 0 and represent the tensor dimensions.
      */
     public void configureFromNewShape( int[] newShape, boolean makeVirtual, boolean autoAllocate )

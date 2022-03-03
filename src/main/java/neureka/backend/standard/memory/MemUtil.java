@@ -59,6 +59,11 @@ public class MemUtil {
      *  this method...
      *  All provided tensors will have the {@link Tsr#isIntermediate} flag
      *  set to their original state after execution.
+     *
+     * @param tensors An array of tensors which should not be deleted during the execution of the supplied lambda.
+     * @param during A lambda producing a result during which the provided tensors should not be deleted.
+     * @param <T> The type of the result produced by the provided lambda.
+     * @return The result produced by the provided lambda.
      */
     public static <T> T keep( Tsr<?>[] tensors, Supplier<T> during ) {
         List<Tsr<?>> doNotDelete = Arrays.stream(tensors).filter(Tsr::isIntermediate).collect(Collectors.toList());
@@ -77,6 +82,12 @@ public class MemUtil {
      *  this method...
      *  Both of the provided tensors will have the {@link Tsr#isIntermediate} flag
      *  set to their original state after execution.
+     *
+     * @param a The first tensor which should not be deleted during the execution of the provided lambda.
+     * @param b The second tensor which should not be deleted during the execution of the provided lambda.
+     * @param during A lambda producing a result during whose execution the first to arguments should not be deleted.
+     * @param <T> The type of the result produced by the provided lambda.
+     * @return The result produced by the provided lambda.
      */
     public static <T> T keep( Tsr<?> a, Tsr<?> b, Supplier<T> during ) {
         List<Tsr<?>> doNotDelete = Stream.of(a, b).filter(Tsr::isIntermediate).collect(Collectors.toList());
