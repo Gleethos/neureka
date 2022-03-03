@@ -34,8 +34,8 @@ public class FunctionNode implements Function
 
     /**
      * @param type The operation which ought to be represented.
-     * @param sources
-     * @param doAD
+     * @param sources The child function nodes of this node.
+     * @param doAD A flag determining if this function should perform autograd.
      */
     public FunctionNode( Operation type, List<Function> sources, boolean doAD )
     {

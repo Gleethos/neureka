@@ -298,6 +298,8 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
 
     /**
      *  The internal implementation handling {@link #setIsVirtual(boolean)}.
+     *
+     * @param isVirtual The truth value determining if this should be made virtual or actual.
      */
     protected abstract void _setIsVirtual( boolean isVirtual );
 
@@ -411,7 +413,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
      *  </b>
      *  (Like custom backend extensions for example)
      *
-     *  <br><br>
+     * @return The unsafe API exposes methods for mutating the state of the tensor.
      */
     public abstract Unsafe<V> getUnsafe();
 

@@ -87,7 +87,10 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      *  This method returns {@link Device} instances matching
      *  the given search parameters.
      *
+     * @param deviceType The device type class which should be found.
      * @param searchKeys The search parameter and name of the requested {@link Device} instance.
+     * @param <T> The value super types of the tensors stored on the requested device.
+     * @param <D> The device type parameter.
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
     static <T, D extends Device<T>> D find( Class<D> deviceType, String... searchKeys )
