@@ -140,7 +140,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
 
     public int getJ() { return this.getValOf( Arg.VarIdx.class ); }
 
-    public ExecutionCall<D> withTensors(Tsr<?>[] tensors ) {
+    public ExecutionCall<D> withTensors( Tsr<?>... tensors ) {
         return _tensors == tensors
                 ? this
                 : new ExecutionCall<>(
@@ -148,6 +148,16 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
                         tensors, _algorithm, _arguments.getAll(Arg.class)
                     );
     }
+
+    /*// WIP
+    public ExecutionCall<D> withArgs( Arg<?>... args ) {
+        List<Arg> old = _arguments.getAll(Arg.class);
+        old.addAll(Arrays.stream(args).collect(Collectors.toList()));
+        return new ExecutionCall<>(
+                    _device, _operation, _tensors, _algorithm, old
+                );
+    }
+    */
 
     public <T extends Device<?>> ExecutionCall<T> forDeviceType( Class<T> type ) {
         assert _device.getClass() == type;
@@ -214,6 +224,9 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return getAlgorithm().supplyADAgentFor( function, call, forward );
     }
 
+    /**
+     * @param <D> The type parameter for the device targeted by the {@link ExecutionCall} built by this builder.
+     */
     public static class Builder<D extends Device<?>>
     {
         private Operation _operation;
@@ -229,20 +242,17 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
 
         public <V, D extends Device<V>> ExecutionCall<D> on(D device) {
             return new ExecutionCall<>(
-                                    device,
-                                    _operation,
-                                    _tensors,
-                                    _algorithm,
-                                    _arguments
-                            );
+                                    device, _operation,
+                                    _tensors, _algorithm, _arguments
+                                );
         }
 
-        public Builder<D> running(Operation operation) {
+        public Builder<D> running( Operation operation ) {
             _operation = operation;
             return this;
         }
 
-        public Builder<D> algorithm(Algorithm<?> algorithm) {
+        public Builder<D> algorithm( Algorithm<?> algorithm ) {
             _algorithm = algorithm;
             return this;
         }
