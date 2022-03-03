@@ -211,15 +211,9 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
 
     public ADAgent getADAgentFrom(
             Function function,
-            ExecutionCall<? extends Device<?>> call,
             boolean forward
     ) {
-        for ( Arg<?> arg : _arguments.getAll(Arg.class) ) {
-            if ( !call._arguments.has(arg.getClass()) )
-                call._arguments.set(arg);
-            // else: This should not happen.
-        }
-        return getAlgorithm().supplyADAgentFor( function, call, forward );
+        return getAlgorithm().supplyADAgentFor( function, this, forward );
     }
 
     /**

@@ -344,15 +344,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         ) {
                             _put(
                                 srcNode,
-                                call.getADAgentFrom(
+                                    call.withArgs(
+                                            Arg.DerivIdx.of(i),
+                                            Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
+                                        )
+                                        .getADAgentFrom(
                                     function,
-                                    ExecutionCall.of(call.getTensors())
-                                            .andArgs(
-                                                Arg.DerivIdx.of(i),
-                                                Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
-                                            )
-                                            .running(call.getOperation())
-                                            .on(call.getDevice()),
                                     true
                                 )
                             );
@@ -366,18 +363,15 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                     // The agent multiplies the local derivative with its stored partial derivative...
                                     Tsr<?> targetDerivative = localAgent.forward( this, localDerivative );
                                     // ...this is now the new partial derivative with respect to the target node!
-                                    this._put(
+                                    _put(
                                         targetNode,
-                                        call.getADAgentFrom(
+                                        call.withArgs(
+                                                Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
+                                                Arg.DerivIdx.of(finalI),
+                                                Arg.Derivative.of(targetDerivative)
+                                        )
+                                        .getADAgentFrom(
                                             function,
-                                            ExecutionCall.of(call.getTensors())
-                                                    .andArgs(
-                                                        Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
-                                                        Arg.DerivIdx.of(finalI),
-                                                        Arg.Derivative.of(targetDerivative)
-                                                    )
-                                                    .running(call.getOperation())
-                                                    .on(call.getDevice()),
                                             true
                                         )
                                     );
@@ -393,12 +387,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     GraphNode<V> srcNode = inputs[ i ].getGraphNode();
                     if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {
                         _put(
-                            srcNode,
-                            call.getADAgentFrom(
-                                function,
-                                call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))),
-                                false
-                            )
+                                srcNode,
+                                call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)))
+                                        .getADAgentFrom(function, false)
                         );
                     }
                 }
