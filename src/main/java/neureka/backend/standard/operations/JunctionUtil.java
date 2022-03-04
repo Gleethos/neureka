@@ -101,8 +101,10 @@ public class JunctionUtil
                                             .running( Neureka.get().backend().getOperation("*") )
                                             .on( device )
                     );
-                    tensors[ 0 ] = reduction[ 0 ];
-                } else tensors[ 0 ] = reduction[ 1 ];
+                    tensors[ 0 ] = alternative;
+                }
+                else
+                    tensors[ 0 ] = reduction[ 1 ];
             }
             return alternative;
         } 
