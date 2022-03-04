@@ -55,15 +55,9 @@ public class Power extends AbstractOperation
             {
                 if ( d < 0 ) {
                     Tsr<?>[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};
-                    alternative = traverse.execute(
-                            call.withTensors( reduction )
-                    );
-                    tensors[ 0 ] = reduction[ 0 ];
-
+                    tensors[ 0 ] = traverse.execute( call.withTensors( reduction ) );
                     reduction = Utility.offsetted(tensors, 1);
-                    alternative = traverse.execute(
-                                        call.withTensors( reduction )
-                            );
+                    alternative = traverse.execute( call.withTensors( reduction ) );
                     tensors[ 0 ] = reduction[ 0 ];
                 } else {
 
@@ -107,11 +101,11 @@ public class Power extends AbstractOperation
 
                         reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], exp};
                         alternative = traverse.execute(
-                                ExecutionCall.of(reduction)
-                                                .andArgs(Arg.DerivIdx.of(1))
-                                                .running(type)
-                                                .on(device)
-                            );
+                                                ExecutionCall.of(reduction)
+                                                            .andArgs(Arg.DerivIdx.of(1))
+                                                            .running(type)
+                                                            .on(device)
+                                            );
                         tensors[ 0 ] = reduction[ 0 ];
 
                         inner.getUnsafe().delete();

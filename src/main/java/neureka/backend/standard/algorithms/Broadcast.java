@@ -72,7 +72,7 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     inputs = new Tsr[]{ null, inputs[0], inputs[1] };
                     return CalcUtil.recursiveExecution( call.withTensors( inputs ), (executionCall, executor) -> null );
                 }
-                return CalcUtil.executeFor(caller, call, finalExecutor );
+                return CalcUtil.executeFor( caller, call, finalExecutor );
             }
         );
         setCallPreparation(
