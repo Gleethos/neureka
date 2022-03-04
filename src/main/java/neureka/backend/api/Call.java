@@ -41,7 +41,7 @@ public class Call<D> {
 
 
     protected Call( Tsr<?>[] tensors, D device, List<Arg> arguments ) {
-        _tensors = tensors;
+        _tensors = tensors.clone();
         _device = device;
         for ( Arg<?> arg : arguments ) _arguments.set(arg);
     }
