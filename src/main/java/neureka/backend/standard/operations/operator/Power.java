@@ -65,13 +65,13 @@ public class Power extends AbstractOperation
                     reduction[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true );
 
                     if ( d==0 ) {
-                        alternative = traverse.execute(
-                                            ExecutionCall.of(reduction)
+                        Tsr<?> exp = traverse.execute(
+                                                ExecutionCall.of(reduction)
                                                             .andArgs(Arg.DerivIdx.of( -1 ))
                                                             .running(Neureka.get().backend().getOperation("*"))
                                                             .on(device)
-                                        );
-                        Tsr exp = reduction[ 0 ];
+                                            );
+
                         reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], exp};
                         alternative = traverse.execute(
                                             ExecutionCall.of(reduction)
