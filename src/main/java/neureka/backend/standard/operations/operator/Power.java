@@ -73,13 +73,12 @@ public class Power extends AbstractOperation
                                             );
 
                         reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], exp};
-                        alternative = traverse.execute(
+                        tensors[ 0 ] = traverse.execute(
                                             ExecutionCall.of(reduction)
                                                             .andArgs(Arg.DerivIdx.of(0))
                                                             .running(type)
                                                             .on( device )
                                         );
-                        tensors[ 0 ] = reduction[ 0 ];
                         exp.getUnsafe().delete();
                     } else {
 
