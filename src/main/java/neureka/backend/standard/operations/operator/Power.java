@@ -103,9 +103,8 @@ public class Power extends AbstractOperation
                                                             .running(type)
                                                             .on(device)
                                             );
-                        //if ( reduction[0] != alternative )
-                        //    System.out.println("WTF");
-                        tensors[ 0 ] = reduction[ 0 ];
+
+                        tensors[ 0 ] = alternative;
 
                         inner.getUnsafe().delete();
                         exp.getUnsafe().delete();

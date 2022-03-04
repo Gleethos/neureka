@@ -40,7 +40,7 @@ public class JunctionUtil
                                                     .running( operation )
                                                     .on(device)
                                 );
-                tensors[ 0 ] = reduction[ 0 ];
+                tensors[ 0 ] = alternative;
 
                 reduction = Operation.Utility.offsetted(tensors, 1);
                 alternative = recursiveExecutor.execute(
@@ -49,7 +49,7 @@ public class JunctionUtil
                                                     .running(operation)
                                                     .on(device)
                                 );
-                tensors[ 0 ] = reduction[ 0 ];
+                tensors[ 0 ] = alternative;
             }
             return alternative;
         } else {

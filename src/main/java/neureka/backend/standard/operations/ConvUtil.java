@@ -99,7 +99,7 @@ public class ConvUtil {
                                 Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                 for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
                                 tensors[0] = CalcUtil.recursiveExecution(
-                                                            ExecutionCall.of(tensors)
+                                                            ExecutionCall.of(tensors.clone())
                                                                             .andArgs(Arg.DerivIdx.of(0))
                                                                             .running(call.getOperation())
                                                                             .on(call.getDevice()),
