@@ -148,7 +148,7 @@ public class JunctionUtil
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
                     );
-                    a = reduction[ 0 ];
+                    a = alternative;
                 }
                 else if ( d == 1 ) a = tensors[ 1 ];
                 else a = newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
@@ -163,7 +163,7 @@ public class JunctionUtil
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
                                 );
-                    b = reduction[ 0 ];
+                    b = alternative;
                 }
                 else b = newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
 
