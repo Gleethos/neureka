@@ -104,15 +104,15 @@ public class CalcUtil
         else
             tensors = srcActivation( inputs, j, -1, 1, nodes );
 
-        CalcUtil.recursiveExecution(
-                ExecutionCall.of( tensors )
-                                .andArgs( call.allMetaArgs() )
-                                .running( operation )
-                                .on( device )
-                                .setMetaArg( Arg.DerivIdx.of(-1) )
-                                .setMetaArg( Arg.VarIdx.of(-1) ),
-                executor
-            );
+        tensors[0] = CalcUtil.recursiveExecution(
+                                ExecutionCall.of( tensors )
+                                                .andArgs( call.allMetaArgs() )
+                                                .running( operation )
+                                                .on( device )
+                                                .setMetaArg( Arg.DerivIdx.of(-1) )
+                                                .setMetaArg( Arg.VarIdx.of(-1) ),
+                                executor
+                            );
 
         if ( tensors[ 0 ] == null ) // TODO: Fix this for 'left_inline'!!!
             _LOG.debug("Executing operation '"+operation.getFunction()+"' did not yield a proper return value.");
@@ -193,13 +193,13 @@ public class CalcUtil
                     if ( index >= 0 ) inner = tensors[ index ];
                     else {
                         // Optimization above did not apply, so we accumulate all the derivatives!
-                        CalcUtil.recursiveExecution(
-                                ExecutionCall.of( tensors )
-                                        .andArgs( Arg.DerivIdx.of( -1 ) )
-                                        .running( Neureka.get().backend().getOperation("+") )
-                                        .on( device ),
-                                JunctionUtil::forAdditions
-                        );
+                        tensors[0] = CalcUtil.recursiveExecution(
+                                                ExecutionCall.of( tensors )
+                                                        .andArgs( Arg.DerivIdx.of( -1 ) )
+                                                        .running( Neureka.get().backend().getOperation("+") )
+                                                        .on( device ),
+                                                JunctionUtil::forAdditions
+                                        );
                         inner = tensors[ 0 ];//-> this is now the inner derivative!
                     }
                 }
@@ -225,24 +225,24 @@ public class CalcUtil
                     }
 
                 // Use those tensors for the outer derivative:
-                CalcUtil.recursiveExecution(
-                        ExecutionCall.of( tensors )
-                                .andArgs( Arg.DerivIdx.of( d ) )
-                                .running( operation )
-                                .on( device ),
-                        executor
-                );
+                tensors[0] = CalcUtil.recursiveExecution(
+                                        ExecutionCall.of( tensors )
+                                                .andArgs( Arg.DerivIdx.of( d ) )
+                                                .running( operation )
+                                                .on( device ),
+                                        executor
+                                );
                 // At the end:
                 //...multiply inner times outer: ( if inner is not 1 entirely... )
                 if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getValueAs( double[].class )[ 0 ] == 1.0 ) ) {
                     tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
-                    CalcUtil.recursiveExecution(
-                            ExecutionCall.of( tensors )
-                                    .andArgs( Arg.DerivIdx.of( -1 ) )
-                                    .running( Neureka.get().backend().getOperation("*") )
-                                    .on( device ),
-                            null
-                    );
+                    tensors[0] = CalcUtil.recursiveExecution(
+                                            ExecutionCall.of( tensors )
+                                                    .andArgs( Arg.DerivIdx.of( -1 ) )
+                                                    .running( Neureka.get().backend().getOperation("*") )
+                                                    .on( device ),
+                                            null
+                                    );
                     for ( int i = 1; i < tensors.length; i++ )
                         _deleteIfNotIn( inputs, tensors[ i ] );
                 }
@@ -289,7 +289,7 @@ public class CalcUtil
             if ( !tensor.isDeleted() ) tensor.getUnsafe().delete();
     }
 
-    public static void recursiveExecution(
+    public static Tsr<?> recursiveExecution(
             ExecutionCall<? extends Device<?>> executionCall,
             RecursiveExecutor executor
     ) {
@@ -340,6 +340,7 @@ public class CalcUtil
                 );
 
         assert result == executionCall.tensor(0);
+        return result;
     }
 
     /**

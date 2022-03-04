@@ -70,8 +70,7 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     Tsr<?>[] inputs = {call.getTsrOfType( Number.class, offset), call.getTsrOfType( Number.class, 1+offset) };
                     Reshape.makeFit( inputs, caller.isDoingAD() );
                     inputs = new Tsr[]{ null, inputs[0], inputs[1] };
-                    CalcUtil.recursiveExecution( call.withTensors( inputs ), (executionCall, executor) -> null );
-                    return inputs[0];
+                    return CalcUtil.recursiveExecution( call.withTensors( inputs ), (executionCall, executor) -> null );
                 }
                 return CalcUtil.executeFor(caller, call, finalExecutor );
             }

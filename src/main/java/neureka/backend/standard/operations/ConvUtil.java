@@ -89,7 +89,7 @@ public class ConvUtil {
                                     : null;
 
                             for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                            CalcUtil.recursiveExecution( call.withTensors(tensors), JunctionUtil::forConvolution );
+                            tensors[0] = CalcUtil.recursiveExecution( call.withTensors(tensors), JunctionUtil::forConvolution );
                             if (tensors[ 0 ] == null)
                                 throw new IllegalStateException("Failed to execute convolution!");
                             return tensors[ 0 ];
@@ -98,13 +98,13 @@ public class ConvUtil {
                                 Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                                 Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                 for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
-                                CalcUtil.recursiveExecution(
-                                                ExecutionCall.of(tensors)
-                                                                .andArgs(Arg.DerivIdx.of(0))
-                                                                .running(call.getOperation())
-                                                                .on(call.getDevice()),
-                                                JunctionUtil::forConvolution
-                                            );
+                                tensors[0] = CalcUtil.recursiveExecution(
+                                                            ExecutionCall.of(tensors)
+                                                                            .andArgs(Arg.DerivIdx.of(0))
+                                                                            .running(call.getOperation())
+                                                                            .on(call.getDevice()),
+                                                            JunctionUtil::forConvolution
+                                                        );
                                 if ( call.getOperation() == Neureka.get().backend().getOperation("x>>") )
                                     return tensors[ 2 ];
                                 else
