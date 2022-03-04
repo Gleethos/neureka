@@ -81,14 +81,12 @@ public class Power extends AbstractOperation
                                         );
                         exp.getUnsafe().delete();
                     } else {
-
-                        alternative = traverse.execute(
+                        Tsr<?> inner = traverse.execute(
                                                 ExecutionCall.of(reduction)
                                                                 .andArgs(Arg.DerivIdx.of(d-1))
                                                                 .running(Neureka.get().backend().getOperation("*"))
                                                                 .on(device)
                                         );
-                        Tsr<?> inner = reduction[ 0 ];
 
                         reduction = new Tsr[]{ tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true ), inner, tensors[d] };
                         Tsr<?> exp = traverse.execute(
@@ -105,6 +103,8 @@ public class Power extends AbstractOperation
                                                             .running(type)
                                                             .on(device)
                                             );
+                        //if ( reduction[0] != alternative )
+                        //    System.out.println("WTF");
                         tensors[ 0 ] = reduction[ 0 ];
 
                         inner.getUnsafe().delete();
