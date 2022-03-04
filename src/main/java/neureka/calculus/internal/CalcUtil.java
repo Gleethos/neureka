@@ -301,41 +301,45 @@ public class CalcUtil
                             "One or more tensor arguments within the given ExecutionCall instance is null."
             );
 
-        _recursiveReductionOf(
-            executionCall,
-            call -> {
-                for ( Tsr<?> t : call.getTensors() )
-                    if ( t == null ) throw new IllegalArgumentException(
-                            "Device arguments may not be null!\n" +
-                                    "One or more tensor arguments within the given ExecutionCall instance is null."
-                    );
+        Tsr<?> result =
+                _recursiveReductionOf(
+                    executionCall,
+                    call -> {
+                        for ( Tsr<?> t : call.getTensors() )
+                            if ( t == null ) throw new IllegalArgumentException(
+                                    "Device arguments may not be null!\n" +
+                                            "One or more tensor arguments within the given ExecutionCall instance is null."
+                            );
 
-                call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of( call.getTensors() )
-                                                                .andArgs( call.allMetaArgs() )
-                                                                .running( call.getOperation() )
-                                                                .on( call.getDevice() )
-                                                                .forDeviceType( call.getDevice().getClass() );
-                Device<?> device = call.getDevice();
-                device.approve( call );
-                call.tensor( 0 ).setIsVirtual( false );
+                        call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of( call.getTensors() )
+                                                                        .andArgs( call.allMetaArgs() )
+                                                                        .running( call.getOperation() )
+                                                                        .on( call.getDevice() )
+                                                                        .forDeviceType( call.getDevice().getClass() );
+                        Device<?> device = call.getDevice();
+                        device.approve( call );
+                        call.tensor( 0 ).setIsVirtual( false );
 
-                Algorithm<?> algorithm = call.getAlgorithm();
-                if ( algorithm == null ) {
-                    String message = _couldNotFindSuitableAlgorithmFor( device.getClass() );
-                    _LOG.error( message );
-                    throw new IllegalStateException( message );
-                } else {
-                    ImplementationFor<Device<?>> implementation = algorithm.getImplementationFor( device );
-                    if ( implementation == null ) {
-                        String message = _couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
-                        _LOG.error( message );
-                        throw new IllegalStateException( message );
-                    }
-                    else implementation.run( (ExecutionCall<Device<?>>) call );
-                }
-            },
-            executor
-        );
+                        Algorithm<?> algorithm = call.getAlgorithm();
+                        if ( algorithm == null ) {
+                            String message = _couldNotFindSuitableAlgorithmFor( device.getClass() );
+                            _LOG.error( message );
+                            throw new IllegalStateException( message );
+                        } else {
+                            ImplementationFor<Device<?>> implementation = algorithm.getImplementationFor( device );
+                            if ( implementation == null ) {
+                                String message = _couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
+                                _LOG.error( message );
+                                throw new IllegalStateException( message );
+                            }
+                            else implementation.run( (ExecutionCall<Device<?>>) call );
+                        }
+                        return call.getResult();
+                    },
+                    executor
+                );
+
+        assert result == executionCall.tensor(0);
     }
 
     /**
@@ -359,7 +363,7 @@ public class CalcUtil
     @Contract( pure = true )
     private static Tsr<?> _recursiveReductionOf(
             final ExecutionCall<? extends Device<?>> call,
-            final Consumer<ExecutionCall<? extends Device<?>>> finalExecution,
+            final java.util.function.Function<ExecutionCall<? extends Device<?>>, Tsr<?>> finalExecution,
             final RecursiveExecutor executor
     ) {
         Device<Object> device = call.getDeviceFor(Object.class);
@@ -398,15 +402,15 @@ public class CalcUtil
                                         _recursiveReductionOf( innerCall, finalExecution, executor )
                             );
 
-        if ( result == null )
-            finalExecution.accept(
-                    ExecutionCall.of( call.getTensors() )
-                            .andArgs( call.allMetaArgs() )
-                            .running( type )
-                            .on( device )
-                            .setMetaArg( Arg.DerivIdx.of(d) )
-                );
-        else
+        if ( result == null ) {
+            tensors[ 0 ] = (Tsr<Object>) finalExecution.apply(
+                                                ExecutionCall.of(call.getTensors().clone())
+                                                        .andArgs(call.allMetaArgs())
+                                                        .running(type)
+                                                        .on(device)
+                                                        .setMetaArg(Arg.DerivIdx.of(d))
+                                        );
+        } else
             return result;
 
         for ( int i = 0; i < tensors.length; i++ )

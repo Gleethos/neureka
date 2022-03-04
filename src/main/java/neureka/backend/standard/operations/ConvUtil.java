@@ -95,20 +95,20 @@ public class ConvUtil {
                             return tensors[ 0 ];
                         } else {
                             if ( call.getValOf( Arg.DerivIdx.class ) < 0 ) {
-                                Tsr<?>[] tsrs = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
-                                Reshape.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
-                                for ( Tsr<?> t : tsrs ) t.setIsVirtual( false );
+                                Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
+                                Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
+                                for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
                                 CalcUtil.recursiveExecution(
-                                                ExecutionCall.of(tsrs)
+                                                ExecutionCall.of(tensors)
                                                                 .andArgs(Arg.DerivIdx.of(0))
                                                                 .running(call.getOperation())
                                                                 .on(call.getDevice()),
                                                 JunctionUtil::forConvolution
                                             );
                                 if ( call.getOperation() == Neureka.get().backend().getOperation("x>>") )
-                                    return tsrs[ 2 ];
+                                    return tensors[ 2 ];
                                 else
-                                    return tsrs[ 0 ];
+                                    return tensors[ 0 ];
                             }
                         }
                         return CalcUtil.defaultRecursiveExecution( caller, call );
