@@ -130,13 +130,13 @@ public class JunctionUtil
                 alternative = recursiveExecutor.execute(
                         call.withTensors( reduction )
                             );
-                tensors[ 0 ] = reduction[ 0 ];
+                tensors[ 0 ] = alternative;
 
                 reduction = Operation.Utility.offsetted(tensors, 1);
                 alternative = recursiveExecutor.execute(
                                     call.withTensors(reduction)
                             );
-                tensors[ 0 ] = reduction[ 0 ];
+                tensors[ 0 ] = alternative;
             } else {
                 Tsr<?> a;
                 if ( d > 1 ) {
