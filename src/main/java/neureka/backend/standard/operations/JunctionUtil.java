@@ -174,7 +174,7 @@ public class JunctionUtil
                                                         .on( device )
                                 );
                 alternative = recursiveExecutor.execute(
-                                        ExecutionCall.of( tensors[ 0 ], tensors[ 0 ], tensors[ d + 1 ] )
+                                        ExecutionCall.of( alternative, tensors[ 0 ], tensors[ d + 1 ] )
                                                         .andArgs(Arg.DerivIdx.of(1))
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
