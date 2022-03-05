@@ -116,30 +116,27 @@ public class JunctionUtil
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
-        Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
 
         Tsr<?> alternative = null;
-        if ( tensors.length > 3 )
+        if ( call.size() > 3 )
         {
             if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};
-                alternative = recursiveExecutor.execute(
-                        call.withTensors( reduction )
-                            );
-                tensors[ 0 ] = alternative;
+                Tsr<?>[] reduction = new Tsr[]{call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 )};
+                alternative = recursiveExecutor.execute( call.withTensors( reduction ) );
+                call.setTensor( 0, alternative );
 
-                reduction = Operation.Utility.offsetted(tensors, 1);
+                reduction = Operation.Utility.offsetted(call.getTensors(), 1);
                 alternative = recursiveExecutor.execute(
                                     call.withTensors(reduction)
                             );
-                tensors[ 0 ] = alternative;
+                call.setTensor( 0, alternative );
             } else {
                 Tsr<?> a;
                 if ( d > 1 ) {
-                    Tsr<?>[] reduction = Operation.Utility.subset(tensors, 1, 1, d+1);
-                    reduction[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true );
+                    Tsr<?>[] reduction = Operation.Utility.subset(call.getTensors(), 1, 1, d+1);
+                    reduction[ 0 ] = call.tensor( 1 ).clone().getUnsafe().setIsIntermediate( true );
                     alternative = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction )
                                                         .andArgs(Arg.DerivIdx.of(-1))
@@ -148,12 +145,12 @@ public class JunctionUtil
                     );
                     a = alternative;
                 }
-                else if ( d == 1 ) a = tensors[ 1 ];
-                else a = newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
+                else if ( d == 1 ) a = call.tensor( 1 );
+                else a = newTsrLike( (Tsr<Number>) call.tensor( 1 ), 1.0 );
                 Tsr<?> b;
-                if ( tensors.length -  d - 2  > 1 ) {
-                    Tsr<?>[] reduction = Operation.Utility.subset(tensors, 2, d+2, tensors.length-(d+2));
-                    reduction[ 1 ] = newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
+                if ( call.size() -  d - 2  > 1 ) {
+                    Tsr<?>[] reduction = Operation.Utility.subset( call.getTensors(), 2, d+2, call.size()-(d+2) );
+                    reduction[ 1 ] = newTsrLike( (Tsr<Number>) call.tensor( 1 ), 1.0 );
                     reduction[ 0 ] = reduction[ 1 ];
                     alternative = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction )
@@ -163,16 +160,16 @@ public class JunctionUtil
                                 );
                     b = alternative;
                 }
-                else b = newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
+                else b = newTsrLike( (Tsr<Number>) call.tensor( 1 ), 1.0 );
 
                 alternative = recursiveExecutor.execute(
-                                        ExecutionCall.of( tensors[ 0 ], a, b )
+                                        ExecutionCall.of( call.tensor( 0 ), a, b )
                                                         .andArgs( Arg.DerivIdx.of( -1 ) )
                                                         .running( Neureka.get().backend().getOperation("*") )
                                                         .on( device )
                                 );
                 alternative = recursiveExecutor.execute(
-                                        ExecutionCall.of( alternative, tensors[ 0 ], tensors[ d + 1 ] )
+                                        ExecutionCall.of( alternative, call.tensor( 0 ), call.tensor( d + 1 ) )
                                                         .andArgs(Arg.DerivIdx.of(1))
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
