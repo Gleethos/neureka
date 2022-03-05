@@ -47,12 +47,11 @@ public class AssignLeft extends AbstractOperation
                 .setCallPreparation(
                     call ->
                     {
-                        Tsr<?>[] tensors = call.getTensors();
-                        int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
-                        call.getTensors()[ offset ].getUnsafe().incrementVersion(call);
-                        call.getTensors()[ offset ].setIsVirtual( false );
+                        int offset = ( call.tensor( 0 ) == null ? 1 : 0 );
+                        call.tensor( offset ).getUnsafe().incrementVersion(call);
+                        call.tensor( offset ).setIsVirtual( false );
                         return
-                            ExecutionCall.of(tensors[offset], tensors[1+offset])
+                            ExecutionCall.of( call.tensor( offset ), call.tensor( 1+offset ) )
                                             .andArgs(Arg.DerivIdx.of(-1))
                                             .running(this)
                                             .on( call.getDevice() );

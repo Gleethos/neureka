@@ -59,9 +59,8 @@ public class MatMul extends AbstractOperation
                                     if ( forward ) throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
 
                                     Function matMul = Neureka.get().backend().getFunction().matMul();
-                                    Tsr<?>[] inputs = call.getTensors();
                                     int d = ( 1 + call.getValOf( Arg.DerivIdx.class ) ) % 2;
-                                    Tsr<?> derivative = inputs[ d ].T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                                    Tsr<?> derivative = call.tensor( d ).T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                                     derivative.to(call.getDevice());
                                     return ADAgent.of( derivative )
                                                   .setBackward( (node, error) -> {
