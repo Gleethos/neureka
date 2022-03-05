@@ -155,7 +155,7 @@ public class Addition extends AbstractOperation {
                     .withArity(3)
                     .andImplementation(
                         call -> {
-                            assert call.getTensors().length == 3;
+                            assert call.size() == 3;
                             if ( call.getDerivativeIndex() == 0 )
                                 call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d ).getUnsafe().setIsIntermediate( true );
                             else if ( call.getDerivativeIndex() == 1 )
@@ -194,9 +194,9 @@ public class Addition extends AbstractOperation {
                     .kernelPostfix( this.getFunction() )
                     .execution(
                         call -> {
-                            assert call.getTensors().length == 3;
+                            assert call.size() == 3;
                             if ( call.getDerivativeIndex() == 0 )
-                                call.getTensors()[0] = Tsr.of( call.getTensors()[1].shape(), 1d ).getUnsafe().setIsIntermediate( true );
+                                call.getTensors()[0] = Tsr.of( call.tensor(1).shape(), 1d ).getUnsafe().setIsIntermediate( true );
                             else if ( call.getDerivativeIndex() == 1 )
                                 call.getTensors()[0] = Tsr.of( call.tensor( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
                             else {

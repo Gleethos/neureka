@@ -76,7 +76,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
         ExecutionCall<CPU> call,
         Functions<Fun> functions
     ) {
-        int offset = ( call.getTensors().length == 3 ? 1 : 0 );
+        int offset = ( call.size() == 3 ? 1 : 0 );
         Tsr<?> t0_drn = call.tensor( 0 );
         Tsr<?> src    = call.getTensors()[offset];
 

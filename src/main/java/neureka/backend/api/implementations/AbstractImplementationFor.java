@@ -16,8 +16,8 @@ public class AbstractImplementationFor< TargetDevice extends Device<?> > impleme
 
     @Override
     public void run( ExecutionCall<TargetDevice> call ) {
-        //if (call.getTensors().length != _arity) System.out.println(call.getOperation().getFunction()+ call.getImplementation().getName()+_arity+"-"+call.getTensors().length);
-        //assert call.getTensors().length == _arity ;
+        //if (call.size() != _arity) System.out.println(call.getOperation().getFunction()+ call.getImplementation().getName()+_arity+"-"+call.size());
+        //assert call.size() == _arity ;
         _lambda.run( call );
     }
 
