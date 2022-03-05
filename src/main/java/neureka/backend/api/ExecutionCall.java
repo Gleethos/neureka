@@ -50,13 +50,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- *  This class is a simple container holding relevant
- *  arguments needed to execute on a targeted {@link Device} which
- *  is specified by the type parameter below. <br>
+ *  This class is a simple container holding reference to a targeted
+ *  {@link Device}, {@link Operation} and maybe some case specific
+ *  meta {@link neureka.calculus.args.Args} needed to execute
+ *  an array of input tensors which are also wrapped by this. <br>
  *  <br>
- *  It also holds a context components responsible for storing operation specific variables.
- *  This is Certain operations might require additionally parameters then the ones
- *  defined in this class... <br>
+ *  This class is mostly technically immutable, however the contents
+ *  of the input array may be modified in order to calculate a suitable output.
+ *  The meta arguments wrapped by this are responsible for storing operation specific variables
+ *  like for example an input index for calculating a partial derivative.
+ *  Certain operations might require other unique types of arguments... <br>
  *
  * @param <D> The Device implementation targeted by an instance of this ExecutionCall!
 */
