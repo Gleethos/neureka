@@ -43,23 +43,23 @@ public class DimTrim extends AbstractOperation
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> false )
                 .setSupplyADAgentFor(
-                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                        {
-                            int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
-                            int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
-                            if ( forward )
-                                throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
+                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                    {
+                        int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
+                        int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
+                        if ( forward )
+                            throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
 
-                            return ADAgent.of( null )
-                                    .withArgs(call.allMetaArgs())
-                                    .setForward(
-                                          (t, derivative) ->
-                                              new FunctionBuilder( Neureka.get().backend() )
-                                                      .build(f.toString(), false)
-                                                      .derive(new Tsr[]{derivative},0)
-                                    )
-                                    .setBackward( (t, error) -> _pad(error, new int[]{prefix, postfix}, true) );
-                        }
+                        return ADAgent.of( null )
+                                .withArgs(call.allMetaArgs())
+                                .setForward(
+                                      (t, derivative) ->
+                                          new FunctionBuilder( Neureka.get().backend() )
+                                                  .build(f.toString(), false)
+                                                  .derive(new Tsr[]{derivative},0)
+                                )
+                                .setBackward( (t, error) -> _pad(error, new int[]{prefix, postfix}, true) );
+                    }
                 )
                 .setExecutionDispatcher(
                     ( caller, call ) ->
@@ -94,7 +94,7 @@ public class DimTrim extends AbstractOperation
         tensor = ( newTsr ? tensor.getAt(new ArrayList<>()) : tensor );
         List<Integer> newShape = new ArrayList<>();
         List<Integer> newTranslation = new ArrayList<>();
-        List<Integer> newIdxmap = new ArrayList<>();
+        List<Integer> newIndicesMap = new ArrayList<>();
         List<Integer> newSpread = new ArrayList<>();
         List<Integer> newOffset = new ArrayList<>();
         int[] shape = tensor.getNDConf().shape();
@@ -103,21 +103,21 @@ public class DimTrim extends AbstractOperation
         for ( int i = 0; i < prefix; i++ ) {
             newShape.add( 1 );
             newTranslation.add( 1 );
-            newIdxmap.add( 1 );
+            newIndicesMap.add( 1 );
             newSpread.add( 0 );
             newOffset.add( 0 );
         }
         for ( int i = 0; i < shape.length; i++ ) {
             newShape.add(shape[ i ]);
             newTranslation.add(tensor.getNDConf().translation( i ));
-            newIdxmap.add(tensor.getNDConf().indicesMap( i ));
+            newIndicesMap.add(tensor.getNDConf().indicesMap( i ));
             newSpread.add(tensor.getNDConf().spread( i ));
             newOffset.add(tensor.getNDConf().offset( i ));
         }
         for ( int i = 0; i < postfix; i++ ) {
             newShape.add( 1 );
             newTranslation.add( 1 );
-            newIdxmap.add( 1 );
+            newIndicesMap.add( 1 );
             newSpread.add( 0 );
             newOffset.add( 0 );
         }
@@ -126,7 +126,7 @@ public class DimTrim extends AbstractOperation
                 AbstractNDC.construct(
                         newShape.stream().mapToInt( i -> i ).toArray(),
                         newTranslation.stream().mapToInt( i -> i ).toArray(),
-                        newIdxmap.stream().mapToInt( i -> i ).toArray(),
+                        newIndicesMap.stream().mapToInt( i -> i ).toArray(),
                         newSpread.stream().mapToInt( i -> i ).toArray(),
                         newOffset.stream().mapToInt( i -> i ).toArray()
                 )
@@ -142,7 +142,7 @@ public class DimTrim extends AbstractOperation
         tensor = ( newTsr ? tensor.getAt( new ArrayList<>() ).getUnsafe().setIsIntermediate( true ) : tensor );
         List<Integer> newShape = new ArrayList<>();
         List<Integer> newTranslation = new ArrayList<>();
-        List<Integer> newIdxmap = new ArrayList<>();
+        List<Integer> newIndicesMap = new ArrayList<>();
         List<Integer> newSpread = new ArrayList<>();
         List<Integer> newOffset = new ArrayList<>();
         int[] shape = tensor.getNDConf().shape();
@@ -153,7 +153,7 @@ public class DimTrim extends AbstractOperation
         for ( int i = prefix; i < shape.length-postfix; i++ ) {
             newShape.add( shape[ i ] );
             newTranslation.add( tensor.getNDConf().translation( i ) );
-            newIdxmap.add( tensor.getNDConf().indicesMap( i ) );
+            newIndicesMap.add( tensor.getNDConf().indicesMap( i ) );
             newSpread.add( tensor.getNDConf().spread( i ) );
             newOffset.add( tensor.getNDConf().offset( i ) );
         }
@@ -162,7 +162,7 @@ public class DimTrim extends AbstractOperation
                 AbstractNDC.construct(
                         newShape.stream().mapToInt( i -> i ).toArray(),
                         newTranslation.stream().mapToInt( i -> i ).toArray(),
-                        newIdxmap.stream().mapToInt( i -> i ).toArray(),
+                        newIndicesMap.stream().mapToInt( i -> i ).toArray(),
                         newSpread.stream().mapToInt( i -> i ).toArray(),
                         newOffset.stream().mapToInt( i -> i ).toArray()
                 )
