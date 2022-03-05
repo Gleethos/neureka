@@ -203,37 +203,38 @@ public class JunctionUtil
             CallExecutor recursiveExecutor,
             boolean thisIsForAddition
     ) {
-        Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation operation = call.getOperation();
 
         Tsr<?> alternative = null;
-        if ( tensors.length > 3 ) {
+        if ( call.size() > 3 ) {
             if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};
+                Tsr<?>[] reduction = new Tsr[]{call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 )};
                 alternative = recursiveExecutor.execute(
                                     ExecutionCall.of( reduction )
                                                     .andArgs(Arg.DerivIdx.of(d))
                                                     .running(operation)
                                                     .on(device)
                             );
-                tensors[ 0 ] = alternative;
+                call.setTensor( 0, alternative );
 
-                reduction = Operation.Utility.offsetted(tensors, 1);
+                reduction = Operation.Utility.offsetted(call.getTensors(), 1);
                 alternative = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction )
                                                         .andArgs(Arg.DerivIdx.of(d))
                                                         .running(operation)
                                                         .on(device)
                                 );
-                tensors[ 0 ] = alternative;
+                call.setTensor( 0, alternative );
             }
             else
-                tensors[ 0 ] = tensors[ 1 ].clone()
-                                            .getUnsafe()
-                                            .setIsIntermediate( true )
-                                            .setValue( d == 0 || thisIsForAddition ? 1f : -1f );
+                call.setTensor( 0,
+                        call.tensor( 1 ).clone()
+                           .getUnsafe()
+                           .setIsIntermediate( true )
+                           .setValue( d == 0 || thisIsForAddition ? 1f : -1f )
+                    );
         }
         return alternative;
     }

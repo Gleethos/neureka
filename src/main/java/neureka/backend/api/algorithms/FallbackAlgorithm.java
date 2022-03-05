@@ -140,12 +140,11 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     @Override
     public ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call )
     {
-        Tsr<?>[] tensors = call.getTensors();
         Device<Object> device = call.getDeviceFor(Object.class);
-        if ( tensors[ 0 ] == null ) // Creating a new tensor:
+        if ( call.tensor( 0 ) == null ) // Creating a new tensor:
         {
-            int[] shp = tensors[ 1 ].getNDConf().shape();
-            Tsr<Object> output = (Tsr<Object>) Tsr.of( tensors[ 1 ].getDataType(), shp )
+            int[] shp = call.tensor( 1 ).getNDConf().shape();
+            Tsr<Object> output = (Tsr<Object>) Tsr.of( call.tensor( 1 ).getDataType(), shp )
                                                     .getUnsafe()
                                                     .setIsIntermediate(true);
             output.setIsVirtual( false );
@@ -154,7 +153,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
             } catch ( Exception e ) {
                 e.printStackTrace();
             }
-            tensors[ 0 ] = output;
+            call.setTensor( 0, output );
         }
         return call;
     }
