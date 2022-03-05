@@ -91,7 +91,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     ) {
         super(tensors, device, arguments);
         _operation = operation;
-        _tensors   = tensors;
         _algorithm = algorithm;
         int thisArity = _tensors.length;
         if ( _operation != null && thisArity < Math.abs(_operation.getArity()) ) {

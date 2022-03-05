@@ -339,7 +339,7 @@ public class CalcUtil
                     executor
                 );
 
-        assert result == executionCall.tensor(0);
+        //assert result == executionCall.tensor(0);
         return result;
     }
 

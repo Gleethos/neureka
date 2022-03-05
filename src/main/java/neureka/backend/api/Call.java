@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public class Call<D> {
 
-    public static <V, T extends Device<V>> Call.Builder<V,T> to( T device ) { return new Builder<V,T>(device); }
+    public static <V, T extends Device<V>> Call.Builder<V,T> to( T device ) { return new Builder<V,T>( device ); }
 
     /**
      *  The tensor arguments from which an operation will either
@@ -31,12 +31,14 @@ public class Call<D> {
      *  however this is not a necessity.
      *  Some operation algorithms might use multiple argument entries as output tensors.
      */
-    protected Tsr<?>[] _tensors;
+    protected final Tsr<?>[] _tensors;
     /**
      *  This field references the device on which this ExecutionCall should be executed.
      */
     protected final D _device;
-
+    /**
+     *  Meta arguments which are usually specific to certain operations.
+     */
     protected final Args _arguments = new Args();
 
 
@@ -63,7 +65,6 @@ public class Call<D> {
 
     public void mutateTensors( int... indices ) {
         Tsr<?>[] tensors = _tensors.clone();
-        _tensors = _tensors.clone();
         for ( int i = 0; i < indices.length; i++ ) {
             _tensors[i] = tensors[indices[i]];
         }
