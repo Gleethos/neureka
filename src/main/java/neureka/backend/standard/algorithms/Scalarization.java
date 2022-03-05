@@ -35,12 +35,11 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
         );
         setCallPreparation(
             call -> {
-                Tsr<?>[] inputs = call.getTensors();
                 Device<Number> device = call.getDeviceFor(Number.class);
-                assert inputs[ 0 ] == null;  // Creating a new tensor:
+                assert call.tensor( 0 ) == null;  // Creating a new tensor:
 
-                int[] outShape = inputs[ 1 ].getNDConf().shape();
-                Class<Object> type = (Class<Object>) inputs[ 1 ].getValueClass();
+                int[] outShape = call.tensor( 1 ).getNDConf().shape();
+                Class<Object> type = (Class<Object>) call.tensor( 1 ).getValueClass();
                 Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );
                 output.setIsVirtual( false );
                 try {
@@ -48,8 +47,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                 } catch( Exception e ) {
                     e.printStackTrace();
                 }
-                inputs[ 0 ] = output;
-
+                call.setTensor( 0, output );
                 return call;
             }
         );

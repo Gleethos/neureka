@@ -48,9 +48,8 @@ public final class Identity extends AbstractOperation
         .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
         .setCallPreparation(
             call -> {
-                Tsr<?>[] tensors = call.getTensors();
-                int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
-                return ExecutionCall.of(tensors[offset], tensors[1+offset])
+                int offset = ( call.tensor( 0 ) == null ? 1 : 0 );
+                return ExecutionCall.of( call.tensor( offset ), call.tensor( 1+offset ) )
                                     .andArgs(Arg.DerivIdx.of(-1))
                                     .running(Neureka.get().backend().getOperation("idy"))
                                     .on( call.getDevice() );

@@ -55,6 +55,8 @@ public class Call<D> {
      */
     public Tsr<?>[] getTensors() { return _tensors; }
 
+    public int size() { return _tensors.length; }
+
     public void setTensor( int i, Tsr<?> t ) {
         _tensors[ i ] = t;
     }
