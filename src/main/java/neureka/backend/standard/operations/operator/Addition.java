@@ -33,13 +33,12 @@ public class Addition extends AbstractOperation {
                     {
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         assert ctxDerivative == null;
-                        Tsr<?>[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> derivative = JunctionUtil.newTsrLike(inputs[(d==0?1:0)], 0);
-                            Tsr<?> toBeDerived = JunctionUtil.newTsrLike(inputs[d], 0);
+                            Tsr<?> derivative = JunctionUtil.newTsrLike(call.tensor( d==0?1:0 ), 0);
+                            Tsr<?> toBeDerived = JunctionUtil.newTsrLike(call.tensor( d ), 0);
                             Device device = call.getDeviceFor(Number.class);
                             return ADAgent.of( derivative )
                                             .setBackward(

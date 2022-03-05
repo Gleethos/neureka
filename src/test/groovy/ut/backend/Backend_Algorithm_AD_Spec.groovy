@@ -220,7 +220,8 @@ class Backend_Algorithm_AD_Spec extends Specification
                         )
 
         then :
-            (1.._) * call.getTensors() >> new Tsr[]{derivative, derivative}
+            (0.._) * call.getTensors() >> new Tsr[]{derivative, derivative}
+            (0.._) * call.tensor(_) >> derivative
         and : 'No exception is being thrown and the agent is configured to perform backward-AD.'
             agent.hasForward()
             agent.derivative() == derivative || agent.derivative().toString({it.isMultiline=false}) == "(1x2):[  0.0 ,   0.0 ]"

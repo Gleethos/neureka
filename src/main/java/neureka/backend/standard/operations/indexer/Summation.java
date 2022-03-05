@@ -60,12 +60,11 @@ public final class Summation extends AbstractOperation
                                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
                                     .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                         }
-                        Tsr<?>[] inputs = call.getTensors();
                         int d = call.getValOf( Arg.DerivIdx.class );
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> derivative = f.executeDerive( inputs, d );
+                            Tsr<?> derivative = f.executeDerive( call.getTensors(), d );
                             return ADAgent.of( derivative )
                                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
@@ -117,11 +116,10 @@ public final class Summation extends AbstractOperation
                             .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
                             .setBackward( (node, backwardError ) -> mul.execute( backwardError, ctxDerivative ) );
 
-                Tsr<?>[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
                 if ( forward )
                 {
-                    Tsr<?> derivative = f.executeDerive( inputs, d );
+                    Tsr<?> derivative = f.executeDerive( call.getTensors(), d );
                     return ADAgent.of( derivative )
                             .setForward( ( t, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                             .setBackward( ( t, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) );
@@ -134,7 +132,7 @@ public final class Summation extends AbstractOperation
                                 "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                                 false
                         );
-                        Tsr<?> derivative = f.executeDerive( inputs, d );
+                        Tsr<?> derivative = f.executeDerive( call.getTensors(), d );
                         return ADAgent.of( derivative )
                                 .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                 .setBackward( (t, error) ->
@@ -146,7 +144,7 @@ public final class Summation extends AbstractOperation
                     }
                     else
                     {
-                        Tsr<?> derivative = f.executeDerive( inputs, d );
+                        Tsr<?> derivative = f.executeDerive( call.getTensors(), d );
                         return ADAgent.of( derivative )
                                 .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                 .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
@@ -157,11 +155,10 @@ public final class Summation extends AbstractOperation
         .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
         .setCallPreparation(
                 call -> {
-                    Tsr<?>[] tensors = call.getTensors();
                     Device<Number> device = call.getDeviceFor(Number.class);
-                    if ( tensors[ 0 ] == null ) // Creating a new tensor:
+                    if ( call.tensor( 0 ) == null ) // Creating a new tensor:
                     {
-                        int[] shp = tensors[ 1 ].getNDConf().shape();
+                        int[] shp = call.tensor( 1 ).getNDConf().shape();
                         Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                         output.setIsVirtual( false );
                         try {
@@ -169,7 +166,7 @@ public final class Summation extends AbstractOperation
                         } catch( Exception e ) {
                             e.printStackTrace();
                         }
-                        tensors[ 0 ] = output;
+                        call.setTensor( 0, output );
                     }
                     return call;
                 }
@@ -181,18 +178,9 @@ public final class Summation extends AbstractOperation
             activation.setImplementationFor(
                     CPU.class,
                     Activation.implementationForCPU()
-                        .with(Fun.F64ToF64.pair(
-                                x -> x,
-                                x -> x
-                        ))
-                        .with(Fun.F32ToF32.pair(
-                                x -> x,
-                                x -> x
-                        ))
-                        .with(Fun.I32ToI32.pair(
-                                x -> x,
-                                x -> x
-                        ))
+                        .with(Fun.F64ToF64.pair( x -> x, x -> x ))
+                        .with(Fun.F32ToF32.pair( x -> x, x -> x ))
+                        .with(Fun.I32ToI32.pair( x -> x, x -> x ))
                         .get()
             )
             .setImplementationFor(

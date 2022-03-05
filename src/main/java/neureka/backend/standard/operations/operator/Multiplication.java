@@ -95,12 +95,11 @@ public class Multiplication extends AbstractOperation
                                             .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
                                             .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                         }
-                        Tsr<?>[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> derivative = MemUtil.keep( inputs, () -> f.executeDerive( inputs, d ) );
+                            Tsr<?> derivative = MemUtil.keep( call.getTensors(), () -> f.executeDerive( call.getTensors(), d ) );
                             return ADAgent.of( derivative )
                                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );

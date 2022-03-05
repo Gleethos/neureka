@@ -67,19 +67,18 @@ public class CalcUtil
             final boolean isDoingAD,
             final RecursiveExecutor executor
     ) {
-        Tsr<?>[]  inputs = call.getTensors();
         Device<?> device = call.getDevice();
         int j = call.getJ();
         assert call.getValOf( Arg.DerivIdx.class ) == -1;
 
         Tsr<?>[] tensors =
                     operation.isIndexer()
-                        ? new Tsr[ 1 + inputs.length ]
+                        ? new Tsr[ 1 + call.size() ]
                         : new Tsr[ 1 + nodes.length  ];
 
         if ( operation.isIndexer() )
             for ( int i = 1; i < tensors.length; i++ )
-                tensors[ i ] = nodes[ 0 ].execute( inputs, i - 1 );
+                tensors[ i ] = nodes[ 0 ].execute( call.getTensors(), i - 1 );
         else
             if (
                 !isFlat && j < 0 && (
@@ -88,7 +87,7 @@ public class CalcUtil
                     operation.supportsAlgorithm(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-            tensors = srcActivation( inputs, j, -1, 0, nodes );
+            tensors = srcActivation( call.getTensors(), j, -1, 0, nodes );
             String asStr = operation.stringify(
                                                 IntStream.range( 0, nodes.length )
                                                          .mapToObj( i -> "I[" + i + "]" )
@@ -97,12 +96,12 @@ public class CalcUtil
             Tsr<?>[] finalTensors = tensors;
             Tsr<?> result = MemUtil.keep( tensors, () -> new FunctionBuilder( Neureka.get().backend() ).build( asStr, isDoingAD ).execute(finalTensors) );
             for ( int i = 1; i < tensors.length; i++ )
-                _deleteIfNotIn( inputs, tensors[ i ] );
+                _deleteIfNotIn( call.getTensors(), tensors[ i ] );
 
             return result;
         }
         else
-            tensors = srcActivation( inputs, j, -1, 1, nodes );
+            tensors = srcActivation( call.getTensors(), j, -1, 1, nodes );
 
         tensors[0] = CalcUtil.recursiveExecution(
                                 ExecutionCall.of( tensors )

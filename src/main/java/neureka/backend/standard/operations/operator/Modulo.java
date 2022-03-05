@@ -107,12 +107,11 @@ public class Modulo extends AbstractOperation {
                                         .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
                                         .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                     }
-                    Tsr<?>[] inputs = call.getTensors();
                     int d = call.getDerivativeIndex();
                     if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                     else
                     {
-                        Tsr<?> derivative = f.executeDerive( inputs, d );
+                        Tsr<?> derivative = f.executeDerive( call.getTensors(), d );
                         return ADAgent.of( derivative )
                                         .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                         .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );

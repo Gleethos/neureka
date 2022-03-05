@@ -147,15 +147,15 @@ public class MatMul extends AbstractOperation
 
     }
 
-    private static ExecutionCall<Device<Object>> _prepare( ExecutionCall call ) {
-        Tsr<?>[] tensors = call.getTensors();
+    private static ExecutionCall<Device<Object>> _prepare( ExecutionCall call )
+    {
         Device<Number> device = call.getDeviceFor(Number.class);
-        if ( tensors[ 0 ] == null ) // Creating a new tensor:
+        if ( call.tensor( 0 ) == null ) // Creating a new tensor:
         {
-            Class<Number> type = (Class<Number>) tensors[1].getDataType().getJVMTypeClass();
-            int[] shp = new int[]{ tensors[ 1 ].shape(0), tensors[ 2 ].shape(1) };
-            NDConfiguration.Layout targetLayout = tensors[1].getNDConf().getLayout();
-            tensors[2].getUnsafe().toLayout(targetLayout);
+            Class<Number> type = (Class<Number>) call.tensor(  1 ).getDataType().getJVMTypeClass();
+            int[] shp = new int[]{ call.tensor( 1 ).shape(0), call.tensor( 2 ).shape(1) };
+            NDConfiguration.Layout targetLayout = call.tensor( 1 ).getNDConf().getLayout();
+            call.tensor( 2 ).getUnsafe().toLayout(targetLayout);
             Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).getUnsafe().setIsIntermediate( true );
             output.getUnsafe().toLayout(targetLayout);
             output.setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).
@@ -164,9 +164,9 @@ public class MatMul extends AbstractOperation
             } catch ( Exception e ) {
                 e.printStackTrace();
             }
-            tensors[ 0 ] = output;
+            call.setTensor( 0, output );
         }
-        _autoClone( tensors );
+        _autoClone( call.getTensors() );
         return (ExecutionCall<Device<Object>>) call;
     }
 
