@@ -123,14 +123,14 @@ public class DimTrim extends AbstractOperation
         }
         tensor.getUnsafe()
               .setNDConf(
-                AbstractNDC.construct(
-                        newShape.stream().mapToInt( i -> i ).toArray(),
-                        newTranslation.stream().mapToInt( i -> i ).toArray(),
-                        newIndicesMap.stream().mapToInt( i -> i ).toArray(),
-                        newSpread.stream().mapToInt( i -> i ).toArray(),
-                        newOffset.stream().mapToInt( i -> i ).toArray()
-                )
-        );
+                    AbstractNDC.construct(
+                             newShape.stream().mapToInt( i -> i ).toArray(),
+                             newTranslation.stream().mapToInt( i -> i ).toArray(),
+                             newIndicesMap.stream().mapToInt( i -> i ).toArray(),
+                             newSpread.stream().mapToInt( i -> i ).toArray(),
+                             newOffset.stream().mapToInt( i -> i ).toArray()
+                     )
+              );
         return tensor;
     }
 
@@ -146,10 +146,10 @@ public class DimTrim extends AbstractOperation
         List<Integer> newSpread = new ArrayList<>();
         List<Integer> newOffset = new ArrayList<>();
         int[] shape = tensor.getNDConf().shape();
-        int prefix = 0;
-        for ( int s : shape ) if ( s == 1 ) prefix++; else break;
-        int postfix = 0;
-        for ( int i = shape.length-1; i >= 0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;
+        int[] endings = endsFrom( tensor.getNDConf().shape() );
+        int prefix  = endings[ 0 ];
+        int postfix = endings[ 1 ];
+
         for ( int i = prefix; i < shape.length-postfix; i++ ) {
             newShape.add( shape[ i ] );
             newTranslation.add( tensor.getNDConf().translation( i ) );
@@ -158,20 +158,27 @@ public class DimTrim extends AbstractOperation
             newOffset.add( tensor.getNDConf().offset( i ) );
         }
         tensor.getUnsafe()
-              .setNDConf(
-                AbstractNDC.construct(
-                        newShape.stream().mapToInt( i -> i ).toArray(),
-                        newTranslation.stream().mapToInt( i -> i ).toArray(),
-                        newIndicesMap.stream().mapToInt( i -> i ).toArray(),
-                        newSpread.stream().mapToInt( i -> i ).toArray(),
-                        newOffset.stream().mapToInt( i -> i ).toArray()
-                )
-        );
+                  .setNDConf(
+                     AbstractNDC.construct(
+                         newShape.stream().mapToInt( i -> i ).toArray(),
+                         newTranslation.stream().mapToInt( i -> i ).toArray(),
+                         newIndicesMap.stream().mapToInt( i -> i ).toArray(),
+                         newSpread.stream().mapToInt( i -> i ).toArray(),
+                         newOffset.stream().mapToInt( i -> i ).toArray()
+                     )
+                  );
         ends[ 0 ] = prefix;
         ends[ 1 ] = postfix;
         return tensor;
     }
 
+    public static int[] endsFrom( int[] shape ) {
+        int prefix = 0;
+        for ( int s : shape ) if ( s == 1 ) prefix++; else break;
+        int postfix = 0;
+        for ( int i = shape.length-1; i >= 0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;
+        return new int[]{ prefix, postfix };
+    }
 
     @Override
     public String stringify( String[] children ) {

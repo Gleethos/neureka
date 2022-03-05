@@ -94,11 +94,9 @@ public class Reshape extends AbstractOperation
             largest = t.rank();
             shape = t.getNDConf().shape();
         }
-        int prefix = 0;
-        assert shape != null;
-        for ( int s : shape ) if ( s == 1 ) prefix++; else break;
-        int postfix = 0;
-        for ( int i = shape.length-1; i>=0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;
+        int[] endings = DimTrim.endsFrom( shape );
+        int prefix = endings[0];
+        int postfix = endings[1];
         for ( int i = 0; i < tensors.length; i++ ) {
             if ( tensors[ i ].rank() != largest ) {
                 int[] oldShape = tensors[ i ].getNDConf().shape();
