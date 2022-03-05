@@ -34,7 +34,7 @@ public final class Sinus extends AbstractOperation
                     .setCanPerformForwardADFor(
                          call -> {
                              Tsr<?> last = null;
-                             for ( Tsr<?> t : call.getTensors() ) {
+                             for ( Tsr<?> t : call.inputs() ) {
                                  if ( last != null && !last.shape().equals(t.shape()) ) return false;
                                  last = t; // Note: shapes are cached!
                              }
@@ -49,9 +49,9 @@ public final class Sinus extends AbstractOperation
                     .setCallPreparation(
                          call -> {
                              Device device = call.getDevice();
-                             if ( call.tensor( 0 ) == null ) // Creating a new tensor:
+                             if ( call.input( 0 ) == null ) // Creating a new tensor:
                              {
-                                 int[] shp = call.tensor( 1 ).getNDConf().shape();
+                                 int[] shp = call.input( 1 ).getNDConf().shape();
                                  Tsr<?> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                                  output.setIsVirtual( false );
                                  try {
@@ -59,7 +59,7 @@ public final class Sinus extends AbstractOperation
                                  } catch ( Exception e ) {
                                      e.printStackTrace();
                                  }
-                                 call.setTensor( 0, output );
+                                 call.setInput( 0, output );
                              }
                              return call;
                          }

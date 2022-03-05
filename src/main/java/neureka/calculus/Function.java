@@ -196,7 +196,7 @@ public interface Function
         if ( call.getDevice() != null ) args.add(Arg.TargetDevice.of((Device<?>) call.getDevice()));
         Arg<?>[] argArray = new Arg[args.size()];
         for ( int i = 0; i < argArray.length; i++ ) argArray[i] = args.get(i);
-        return callWith(argArray).execute(call.getTensors());
+        return callWith(argArray).execute(call.inputs());
     }
 
     /**

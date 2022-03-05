@@ -36,10 +36,10 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
         setCallPreparation(
             call -> {
                 Device<Number> device = call.getDeviceFor(Number.class);
-                assert call.tensor( 0 ) == null;  // Creating a new tensor:
+                assert call.input( 0 ) == null;  // Creating a new tensor:
 
-                int[] outShape = call.tensor( 1 ).getNDConf().shape();
-                Class<Object> type = (Class<Object>) call.tensor( 1 ).getValueClass();
+                int[] outShape = call.input( 1 ).getNDConf().shape();
+                Class<Object> type = (Class<Object>) call.input( 1 ).getValueClass();
                 Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );
                 output.setIsVirtual( false );
                 try {
@@ -47,7 +47,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                 } catch( Exception e ) {
                     e.printStackTrace();
                 }
-                call.setTensor( 0, output );
+                call.setInput( 0, output );
                 return call;
             }
         );
@@ -66,7 +66,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                     call.getDevice()
                         .getExecutor()
                         .threaded(
-                            call.tensor( 0 ).size(),
+                            call.input( 0 ).size(),
                             _workloadFor( call, pairs )
                         )
         );
@@ -77,10 +77,10 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
         Functions<Fun> functions
     ) {
         int offset = ( call.size() == 3 ? 1 : 0 );
-        Tsr<?> t0_drn = call.tensor( 0 );
-        Tsr<?> src    = call.tensor( offset );
+        Tsr<?> t0_drn = call.input( 0 );
+        Tsr<?> src    = call.input( offset );
 
-        Class<?> typeClass = call.tensor( 1 ).getValueClass();
+        Class<?> typeClass = call.input( 1 ).getValueClass();
 
         CPU.RangeWorkload workload = null;
 
@@ -151,7 +151,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             };
         }
         if ( t0_drn.getData().getClass() == Object[].class ) {
-            Object value = call.tensor( 1 + offset ).getDataAs(Object[].class)[0];
+            Object value = call.input( 1 + offset ).getDataAs(Object[].class)[0];
             Fun.ObjObjToObj operation = functions.get(Fun.ObjObjToObj.class).get(call.getDerivativeIndex());
             Object[] t0_value = t0_drn.getDataAs(Object[].class);
             Object[] t1_value = src.getDataAs(Object[].class);

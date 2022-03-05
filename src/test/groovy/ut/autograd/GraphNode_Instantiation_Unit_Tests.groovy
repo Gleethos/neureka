@@ -94,7 +94,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             result.usesReverseAD()
 
         and : 'The mock objects have been called as expected.'
-            (3.._) * context.getTensors() >> inputs
+            (3.._) * context.inputs() >> inputs
             (5.._) * inputsNodeMock.getLock() >> Mock( GraphLock )
             (1.._) * function.isDoingAD() >> true
             (1.._) * payload.getDevice() >> device

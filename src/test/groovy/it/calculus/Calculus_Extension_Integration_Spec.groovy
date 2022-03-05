@@ -83,13 +83,13 @@ class Calculus_Extension_Integration_Spec extends Specification
                                                 .setCallPreparation(
                                                         call -> {
                                                              Device<?> device = call.getDevice();
-                                                            if ( call.tensor( 0 ) == null ) // Creating a new tensor:
+                                                            if ( call.input( 0 ) == null ) // Creating a new tensor:
                                                             {
-                                                                int[] shp = new int[]{call.tensor( 1 ).getNDConf().shape(0), call.tensor( 2 ).getNDConf().shape(1)}
+                                                                int[] shp = new int[]{call.input( 1 ).getNDConf().shape(0), call.input( 2 ).getNDConf().shape(1)}
                                                                 Tsr output = Tsr.of(shp, 0.0);
                                                                 output.setIsVirtual(false);
                                                                 device.store( output );
-                                                                call.setTensor( 0, output );
+                                                                call.setInput( 0, output );
                                                             }
                                                             return call;
                                                         }

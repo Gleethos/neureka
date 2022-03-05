@@ -133,7 +133,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     public Tsr<?> dispatch( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         if ( call == null ) return _handleInsteadOfDevice.dispatch( caller, call );
-        MemValidator checker = MemValidator.forInputs( call.getTensors(), ()->_handleInsteadOfDevice.dispatch( caller, call ) );
+        MemValidator checker = MemValidator.forInputs( call.inputs(), ()->_handleInsteadOfDevice.dispatch( caller, call ) );
         if ( checker.isWronglyIntermediate() ) {
             throw new IllegalStateException(
                     "Output of algorithm '" + this.getName() + "' " +
@@ -164,9 +164,9 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
     public ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         if ( call != null ) {
-            Tsr<?>[] inputs = call.getTensors().clone();
+            Tsr<?>[] inputs = call.inputs().clone();
             ExecutionCall<? extends Device<?>> prepared = _instantiateNewTensorsForExecutionIn.prepare(call);
-            Arrays.stream(prepared.getTensors())
+            Arrays.stream(prepared.inputs())
                     .filter(
                             out -> Arrays.stream(inputs)
                                     .noneMatch(in -> in == out)

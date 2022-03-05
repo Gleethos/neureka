@@ -50,7 +50,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                                         .all( t -> t.getDataType().typeClassImplements(NumericType.class) )
                                                         .isValid();
 
-                            Class<?> typeClass = Stream.of( call.getTensors() )
+                            Class<?> typeClass = Stream.of( call.inputs() )
                                                         .map( t -> t.getDataType().getTypeClass() )
                                                         .findFirst()
                                                         .get();
@@ -98,7 +98,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     @Override
     public float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
         int[] shape = null;
-        for ( Tsr<?> t : call.getTensors() ) {
+        for ( Tsr<?> t : call.inputs() ) {
             if ( t != null ) {
                 if ( shape == null ) shape = t.getNDConf().shape();
                 else if ( !Arrays.equals(shape, t.getNDConf().shape()) ) return 0.0f;
@@ -124,7 +124,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
         }
-        Tsr<?> localDerivative = MemUtil.keep( call.getTensors(), () -> function.executeDerive( call.getTensors(), call.getDerivativeIndex() ) );
+        Tsr<?> localDerivative = MemUtil.keep( call.inputs(), () -> function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );
         localDerivative.getUnsafe().setIsIntermediate( false );
         return ADAgent.of( localDerivative )
                       .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, localDerivative ) )
@@ -141,10 +141,10 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     public ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call )
     {
         Device<Object> device = call.getDeviceFor(Object.class);
-        if ( call.tensor( 0 ) == null ) // Creating a new tensor:
+        if ( call.input( 0 ) == null ) // Creating a new tensor:
         {
-            int[] shp = call.tensor( 1 ).getNDConf().shape();
-            Tsr<Object> output = (Tsr<Object>) Tsr.of( call.tensor( 1 ).getDataType(), shp )
+            int[] shp = call.input( 1 ).getNDConf().shape();
+            Tsr<Object> output = (Tsr<Object>) Tsr.of( call.input( 1 ).getDataType(), shp )
                                                     .getUnsafe()
                                                     .setIsIntermediate(true);
             output.setIsVirtual( false );
@@ -153,7 +153,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
             } catch ( Exception e ) {
                 e.printStackTrace();
             }
-            call.setTensor( 0, output );
+            call.setInput( 0, output );
         }
         return call;
     }

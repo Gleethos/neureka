@@ -39,10 +39,10 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
         setCallPreparation(
             call -> {
                 Device device = call.getDeviceFor(Number.class);
-                if ( call.tensor(  0 ) == null ) // Creating a new tensor:
+                if ( call.input(  0 ) == null ) // Creating a new tensor:
                 {
-                    int[] shape = call.tensor(  1 ).getNDConf().shape();
-                    Class<Object> type = (Class<Object>) call.tensor(  1 ).getValueClass();
+                    int[] shape = call.input(  1 ).getNDConf().shape();
+                    Class<Object> type = (Class<Object>) call.input(  1 ).getValueClass();
                     Tsr<Object> output = Tsr.of(type).withShape(shape).all( 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
                     try {
@@ -50,7 +50,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
                     } catch( Exception e ) {
                         e.printStackTrace();
                     }
-                    call.setTensor(  0, output );
+                    call.setInput(  0, output );
                 }
                 return call;
             }
@@ -97,7 +97,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
                                 call.getDevice()
                                     .getExecutor()
                                     .threaded(
-                                            call.tensor( 0 ).size(),
+                                            call.input( 0 ).size(),
                                             _newWorkloadFor(call, pairs)
                                     )
                         );
@@ -107,8 +107,8 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
             ExecutionCall<CPU> call,
             Functions<Fun> funs
     ) {
-        Tsr<?> t0_drn = call.tensor( 0 );
-        Tsr<?> t1_src = call.tensor( 1 );
+        Tsr<?> t0_drn = call.input( 0 );
+        Tsr<?> t1_src = call.input( 1 );
         Class<?> typeClass = t0_drn.getValueClass();
         Class<?> rightTypeClass = t1_src.getValueClass();
 

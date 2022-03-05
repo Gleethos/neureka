@@ -70,7 +70,7 @@ public interface ImplementationFor< TargetDevice extends Device<?> >
 
     default Tsr<?> runAndGetFirstTensor( ExecutionCall<TargetDevice> call ) {
         this.run( call );
-        return call.tensor( 0 );
+        return call.input( 0 );
     }
 
 }

@@ -64,7 +64,7 @@ public final class Summation extends AbstractOperation
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> derivative = f.executeDerive( call.getTensors(), d );
+                            Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                             return ADAgent.of( derivative )
                                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
@@ -119,7 +119,7 @@ public final class Summation extends AbstractOperation
                 int d = call.getDerivativeIndex();
                 if ( forward )
                 {
-                    Tsr<?> derivative = f.executeDerive( call.getTensors(), d );
+                    Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                     return ADAgent.of( derivative )
                             .setForward( ( t, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                             .setBackward( ( t, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) );
@@ -132,7 +132,7 @@ public final class Summation extends AbstractOperation
                                 "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                                 false
                         );
-                        Tsr<?> derivative = f.executeDerive( call.getTensors(), d );
+                        Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                         return ADAgent.of( derivative )
                                 .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                 .setBackward( (t, error) ->
@@ -144,7 +144,7 @@ public final class Summation extends AbstractOperation
                     }
                     else
                     {
-                        Tsr<?> derivative = f.executeDerive( call.getTensors(), d );
+                        Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                         return ADAgent.of( derivative )
                                 .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                 .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
@@ -156,9 +156,9 @@ public final class Summation extends AbstractOperation
         .setCallPreparation(
                 call -> {
                     Device<Number> device = call.getDeviceFor(Number.class);
-                    if ( call.tensor( 0 ) == null ) // Creating a new tensor:
+                    if ( call.input( 0 ) == null ) // Creating a new tensor:
                     {
-                        int[] shp = call.tensor( 1 ).getNDConf().shape();
+                        int[] shp = call.input( 1 ).getNDConf().shape();
                         Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                         output.setIsVirtual( false );
                         try {
@@ -166,7 +166,7 @@ public final class Summation extends AbstractOperation
                         } catch( Exception e ) {
                             e.printStackTrace();
                         }
-                        call.setTensor( 0, output );
+                        call.setInput( 0, output );
                     }
                     return call;
                 }

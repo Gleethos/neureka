@@ -52,12 +52,12 @@ public class Randomization extends AbstractOperation
                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
                 .setCallPreparation( call ->
                 {
-                    if ( call.tensor( 0 ) == null )
-                        call.setTensor( 0, call.tensor( 1 ) );
+                    if ( call.input( 0 ) == null )
+                        call.setInput( 0, call.input( 1 ) );
 
-                    call.tensor( 0 ).getUnsafe().incrementVersion(call);
+                    call.input( 0 ).getUnsafe().incrementVersion(call);
 
-                    int hash = Arrays.hashCode( call.tensor( 0 ).getNDConf().shape() );
+                    int hash = Arrays.hashCode( call.input( 0 ).getNDConf().shape() );
                     Arg.Seed seed = call.get(Arg.Seed.class);
                     if ( seed != null ) seed = Arg.Seed.of( initialScramble(seed.get() + hash) );
                     else seed = Arg.Seed.of( initialScramble(hash) );
@@ -92,7 +92,7 @@ public class Randomization extends AbstractOperation
     }
 
     private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall<?> call ) {
-        Tsr<?> tensor = call.tensor( 0 );
+        Tsr<?> tensor = call.input( 0 );
         Class<?> type = tensor.getValueClass();
         boolean isSimple = tensor.getNDConf().isSimple();
         long seed = call.getValOf(Arg.Seed.class);

@@ -60,7 +60,7 @@ public class MatMul extends AbstractOperation
 
                                     Function matMul = Neureka.get().backend().getFunction().matMul();
                                     int d = ( 1 + call.getValOf( Arg.DerivIdx.class ) ) % 2;
-                                    Tsr<?> derivative = call.tensor( d ).T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                                    Tsr<?> derivative = call.input( d ).T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                                     derivative.to(call.getDevice());
                                     return ADAgent.of( derivative )
                                                   .setBackward( (node, error) -> {
@@ -76,7 +76,7 @@ public class MatMul extends AbstractOperation
                                     if ( !caller.isFlat() )
                                         return CalcUtil.defaultRecursiveExecution( caller, call );
 
-                                    Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
+                                    Tsr<?>[] tensors = CalcUtil.srcActivation(call.inputs(), call.getJ(), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
                                     for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
                                     ExecutionCall<Device<Object>> preparedCall = _prepare( call.withTensors(tensors) );
                                     return MatMul.this.simpleMatMulAlgorithm
@@ -128,9 +128,9 @@ public class MatMul extends AbstractOperation
                             ) {
                                 new GEMM().run( call );
                             } else {
-                                int M = call.tensor(1).shape(0);
-                                int N = call.tensor(2).shape(1);
-                                int K = call.tensor(1).shape(1);
+                                int M = call.input(1).shape(0);
+                                int N = call.input(2).shape(1);
+                                int K = call.input(1).shape(1);
                                 call.getDevice()
                                         .getKernel(call)
                                         .pass(M).pass(N).pass(K)
@@ -150,12 +150,12 @@ public class MatMul extends AbstractOperation
     private static ExecutionCall<Device<Object>> _prepare( ExecutionCall call )
     {
         Device<Number> device = call.getDeviceFor(Number.class);
-        if ( call.tensor( 0 ) == null ) // Creating a new tensor:
+        if ( call.input( 0 ) == null ) // Creating a new tensor:
         {
-            Class<Number> type = (Class<Number>) call.tensor(  1 ).getDataType().getJVMTypeClass();
-            int[] shp = new int[]{ call.tensor( 1 ).shape(0), call.tensor( 2 ).shape(1) };
-            NDConfiguration.Layout targetLayout = call.tensor( 1 ).getNDConf().getLayout();
-            call.tensor( 2 ).getUnsafe().toLayout(targetLayout);
+            Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getJVMTypeClass();
+            int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };
+            NDConfiguration.Layout targetLayout = call.input( 1 ).getNDConf().getLayout();
+            call.input( 2 ).getUnsafe().toLayout(targetLayout);
             Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).getUnsafe().setIsIntermediate( true );
             output.getUnsafe().toLayout(targetLayout);
             output.setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).
@@ -164,7 +164,7 @@ public class MatMul extends AbstractOperation
             } catch ( Exception e ) {
                 e.printStackTrace();
             }
-            call.setTensor( 0, output );
+            call.setInput( 0, output );
         }
         _autoClone( call );
         return (ExecutionCall<Device<Object>>) call;
@@ -179,12 +179,12 @@ public class MatMul extends AbstractOperation
     private static void _autoClone( ExecutionCall<?> call ) {
         for ( int i = 0; i < call.size(); i++ ) {
             if (
-                    !_isSimpleRowMajorMatrix( call.tensor( i ) )
+                    !_isSimpleRowMajorMatrix( call.input( i ) )
                             &&
-                    !_isSimpleColumnMajorMatrix( call.tensor( i ) )
+                    !_isSimpleColumnMajorMatrix( call.input( i ) )
             ) {
                 _LOG.debug("Auto cloning a tensor which does not have a simple ND configuration...");
-                call.setTensor( i, call.tensor( i ).clone().getUnsafe().setIsIntermediate( true ) );
+                call.setInput( i, call.input( i ).clone().getUnsafe().setIsIntermediate( true ) );
                 /*
                     The user should do cloning explicitly because using slices
                     will cause the backend to perform auto cloning every time the

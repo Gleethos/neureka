@@ -53,15 +53,15 @@ public class Power extends AbstractOperation
             if ( call.size() > 3 )
             {
                 if ( d < 0 ) {
-                    Tsr<?>[] reduction = new Tsr[]{call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 )};
-                    call.setTensor( 0, traverse.execute( call.withTensors( reduction ) ) );
-                    reduction = Utility.offsetted( call.getTensors(), 1 );
+                    Tsr<?>[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};
+                    call.setInput( 0, traverse.execute( call.withTensors( reduction ) ) );
+                    reduction = Utility.offsetted( call.inputs(), 1 );
                     alternative = traverse.execute( call.withTensors( reduction ) );
-                    call.setTensor( 0, alternative );
+                    call.setInput( 0, alternative );
                 } else {
 
-                    Tsr<?>[] reduction = Utility.subset(call.getTensors(), 1,  2, call.size()-2);
-                    reduction[ 0 ] = call.tensor( 1 ).clone().getUnsafe().setIsIntermediate( true );
+                    Tsr<?>[] reduction = Utility.subset(call.inputs(), 1,  2, call.size()-2);
+                    reduction[ 0 ] = call.input( 1 ).clone().getUnsafe().setIsIntermediate( true );
 
                     if ( d==0 ) {
                         Tsr<?> exp = traverse.execute(
@@ -71,8 +71,8 @@ public class Power extends AbstractOperation
                                                             .on(device)
                                             );
 
-                        reduction = new Tsr[]{call.tensor( 0 ), call.tensor( 1 ), exp};
-                        call.setTensor( 0, traverse.execute(
+                        reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), exp};
+                        call.setInput( 0, traverse.execute(
                                                     ExecutionCall.of( reduction )
                                                                     .andArgs( Arg.DerivIdx.of(0) )
                                                                     .running(type)
@@ -87,7 +87,7 @@ public class Power extends AbstractOperation
                                                                 .on(device)
                                         );
 
-                        reduction = new Tsr[]{ call.tensor( 1 ).clone().getUnsafe().setIsIntermediate( true ), inner, call.tensor( d ) };
+                        reduction = new Tsr[]{ call.input( 1 ).clone().getUnsafe().setIsIntermediate( true ), inner, call.input( d ) };
                         Tsr<?> exp = traverse.execute(
                                                 ExecutionCall.of( reduction )
                                                                 .andArgs( Arg.DerivIdx.of(-1) )
@@ -95,7 +95,7 @@ public class Power extends AbstractOperation
                                                                 .on( device )
                                       );
 
-                        reduction = new Tsr[]{call.tensor( 0 ), call.tensor( 1 ), exp};
+                        reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), exp};
                         alternative = traverse.execute(
                                                 ExecutionCall.of( reduction )
                                                             .andArgs(Arg.DerivIdx.of(1))
@@ -103,7 +103,7 @@ public class Power extends AbstractOperation
                                                             .on(device)
                                             );
 
-                        call.setTensor( 0, alternative );
+                        call.setInput( 0, alternative );
 
                         inner.getUnsafe().delete();
                         exp.getUnsafe().delete();
@@ -172,7 +172,7 @@ public class Power extends AbstractOperation
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> derivative = f.executeDerive( call.getTensors(), d );
+                            Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                             return ADAgent.of( derivative )
                                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );

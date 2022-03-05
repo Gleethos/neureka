@@ -53,7 +53,7 @@ final class GraphNodeAssemblyState<V> {
      */
     public void _modeOf( ExecutionCall<? extends Device<?>> call )
     {
-        Tsr<V>[] inputs = (Tsr<V>[]) call.getTensors();
+        Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
         int resultMode = 0;
         int[] modes = new int[ inputs.length ];
         int inputMode = 0;

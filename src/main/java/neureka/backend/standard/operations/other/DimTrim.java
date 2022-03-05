@@ -65,7 +65,7 @@ public class DimTrim extends AbstractOperation
                     ( caller, call ) ->
                     {
                         Tsr<?>[] inputs = CalcUtil.srcActivation(
-                                                call.getTensors(), call.getJ(), -1, 0,
+                                                call.inputs(), call.getJ(), -1, 0,
                                                 caller.getSubFunctions().toArray(new Function[0])
                                             );
                         assert inputs.length == 1;

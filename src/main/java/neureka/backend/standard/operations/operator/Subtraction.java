@@ -156,8 +156,8 @@ public class Subtraction extends AbstractOperation
                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                             else
                             {
-                                Tsr<?> derivative = JunctionUtil.newTsrLike( call.tensor( d==0?1:0 ), 0 );
-                                Tsr<?> toBeDerived = JunctionUtil.newTsrLike( call.tensor( d ), 0 );
+                                Tsr<?> derivative = JunctionUtil.newTsrLike( call.input( d==0?1:0 ), 0 );
+                                Tsr<?> toBeDerived = JunctionUtil.newTsrLike( call.input( d ), 0 );
                                 Device device = call.getDevice();
                                 return ADAgent.of( derivative )
                                             .setBackward(

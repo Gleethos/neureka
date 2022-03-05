@@ -90,7 +90,7 @@ public class Modulo extends AbstractOperation {
             .setCanPerformForwardADFor(
                 call -> {
                     Tsr<?> last = null;
-                    for ( Tsr<?> t : call.getTensors() ) {
+                    for ( Tsr<?> t : call.inputs() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
                         last = t; // Note: shapes are cached!
                     }
@@ -111,7 +111,7 @@ public class Modulo extends AbstractOperation {
                     if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                     else
                     {
-                        Tsr<?> derivative = f.executeDerive( call.getTensors(), d );
+                        Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                         return ADAgent.of( derivative )
                                         .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                         .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
@@ -160,7 +160,7 @@ public class Modulo extends AbstractOperation {
                 .setCanPerformForwardADFor(
                     call -> {
                         Tsr<?> last = null;
-                        for ( Tsr<?> t : call.getTensors() ) {
+                        for ( Tsr<?> t : call.inputs() ) {
                             if ( last != null && !last.shape().equals(t.shape()) ) return false;
                             last = t; // Note: shapes are cached!
                         }

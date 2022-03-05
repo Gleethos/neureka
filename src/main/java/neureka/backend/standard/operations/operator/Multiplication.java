@@ -99,7 +99,7 @@ public class Multiplication extends AbstractOperation
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> derivative = MemUtil.keep( call.getTensors(), () -> f.executeDerive( call.getTensors(), d ) );
+                            Tsr<?> derivative = MemUtil.keep( call.inputs(), () -> f.executeDerive( call.inputs(), d ) );
                             return ADAgent.of( derivative )
                                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
@@ -156,9 +156,9 @@ public class Multiplication extends AbstractOperation
                     .andImplementation(
                         call -> {
                             if ( call.getDerivativeIndex() == 0 )
-                                call.setTensor( 0, call.tensor( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
+                                call.setInput( 0, call.input( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.setTensor( 0, call.tensor( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
+                                call.setInput( 0, call.input( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
                             else
                                 Scalarization.implementationForCPU()
                                     .with(Fun.F64F64ToF64.triple(
@@ -193,9 +193,9 @@ public class Multiplication extends AbstractOperation
                     .execution(
                         call -> {
                             if ( call.getDerivativeIndex() == 0 )
-                                call.setTensor( 0, call.tensor( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
+                                call.setInput( 0, call.input( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.setTensor( 0, call.tensor( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
+                                call.setInput( 0, call.input( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
                             else {
                                 int offset = (call.getTsrOfType(Number.class, 2).isVirtual() || call.getTsrOfType(Number.class, 2).size() == 1) ? 1 : 0;
                                 int gwz = call.getTsrOfType(Number.class, 0).size();

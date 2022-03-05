@@ -155,7 +155,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
                 );
     }
 
-    public Tsr<?> getResult() { return tensor(0); }
+    public Tsr<?> getResult() { return input(0); }
 
     public <T extends Device<?>> ExecutionCall<T> forDeviceType( Class<T> type ) {
         assert _device.getClass() == type;

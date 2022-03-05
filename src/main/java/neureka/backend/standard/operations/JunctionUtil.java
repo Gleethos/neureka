@@ -32,36 +32,36 @@ public class JunctionUtil
         Tsr<?> alternative = null;
         if ( call.size() > 3 ) {
             if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{ call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 ) };
+                Tsr<?>[] reduction = new Tsr[]{ call.input( 0 ), call.input( 1 ), call.input( 2 ) };
                 alternative = recursiveExecutor.execute(
                                     ExecutionCall.of( reduction )
                                                     .andArgs( Arg.DerivIdx.of(d) )
                                                     .running( operation )
                                                     .on(device)
                                 );
-                call.setTensor( 0, alternative );
+                call.setInput( 0, alternative );
 
-                reduction = Operation.Utility.offsetted(call.getTensors(), 1);
+                reduction = Operation.Utility.offsetted(call.inputs(), 1);
                 alternative = recursiveExecutor.execute(
                                     ExecutionCall.of( reduction )
                                                     .andArgs(Arg.DerivIdx.of(d))
                                                     .running(operation)
                                                     .on(device)
                                 );
-                call.setTensor( 0, alternative );
+                call.setInput( 0, alternative );
             }
             return alternative;
         } else {
             if ( call.getOperation().getOperator().equals("x") ) {
                 if ( d >= 0 ) {
-                    if ( d == 0 ) call.setTensor( 0, call.tensor( 2 ) );
-                    else call.setTensor( 0, call.tensor( 1 ) );
-                    return call.tensor( 0 );
+                    if ( d == 0 ) call.setInput( 0, call.input( 2 ) );
+                    else call.setInput( 0, call.input( 1 ) );
+                    return call.input( 0 );
                 } else {
-                    call.mutateTensors( 0, 1, 2 );
+                    call.rearrangeInputs( 0, 1, 2 );
                 }
             } else if ( call.getOperation().getOperator().equals("x"+ ((char) 187)) ) {
-                call.mutateTensors( 2, 1, 0 );
+                call.rearrangeInputs( 2, 1, 0 );
             }
             return null;
         }
@@ -78,31 +78,31 @@ public class JunctionUtil
         Tsr<?> alternative = null;
         if ( call.size() > 3 ) {
             if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{ call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 ) };
+                Tsr<?>[] reduction = new Tsr[]{ call.input( 0 ), call.input( 1 ), call.input( 2 ) };
                 alternative = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                                 );
-                call.setTensor( 0, alternative );
+                call.setInput( 0, alternative );
 
-                reduction = Operation.Utility.offsetted(call.getTensors(), 1);
+                reduction = Operation.Utility.offsetted(call.inputs(), 1);
                 alternative = recursiveExecutor.execute(
                         ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                 );
-                call.setTensor( 0, alternative );
+                call.setInput( 0, alternative );
             } else {
-                Tsr<?>[] reduction = Operation.Utility.without(call.getTensors(), 1+d);
+                Tsr<?>[] reduction = Operation.Utility.without(call.inputs(), 1+d);
                 if ( reduction.length > 2 ) {
-                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? call.tensor( 1 ).clone().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];
+                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? call.input( 1 ).clone().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];
                     alternative = recursiveExecutor.execute(
                             ExecutionCall.of( reduction )
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
                                             .running( Neureka.get().backend().getOperation("*") )
                                             .on( device )
                     );
-                    call.setTensor( 0, alternative );
+                    call.setInput( 0, alternative );
                 }
                 else
-                    call.setTensor( 0, reduction[ 1 ] );
+                    call.setInput( 0, reduction[ 1 ] );
             }
             return alternative;
         } 
@@ -123,20 +123,20 @@ public class JunctionUtil
         if ( call.size() > 3 )
         {
             if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 )};
+                Tsr<?>[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};
                 alternative = recursiveExecutor.execute( call.withTensors( reduction ) );
-                call.setTensor( 0, alternative );
+                call.setInput( 0, alternative );
 
-                reduction = Operation.Utility.offsetted(call.getTensors(), 1);
+                reduction = Operation.Utility.offsetted(call.inputs(), 1);
                 alternative = recursiveExecutor.execute(
                                     call.withTensors(reduction)
                             );
-                call.setTensor( 0, alternative );
+                call.setInput( 0, alternative );
             } else {
                 Tsr<?> a;
                 if ( d > 1 ) {
-                    Tsr<?>[] reduction = Operation.Utility.subset(call.getTensors(), 1, 1, d+1);
-                    reduction[ 0 ] = call.tensor( 1 ).clone().getUnsafe().setIsIntermediate( true );
+                    Tsr<?>[] reduction = Operation.Utility.subset(call.inputs(), 1, 1, d+1);
+                    reduction[ 0 ] = call.input( 1 ).clone().getUnsafe().setIsIntermediate( true );
                     alternative = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction )
                                                         .andArgs(Arg.DerivIdx.of(-1))
@@ -145,12 +145,12 @@ public class JunctionUtil
                     );
                     a = alternative;
                 }
-                else if ( d == 1 ) a = call.tensor( 1 );
-                else a = newTsrLike( (Tsr<Number>) call.tensor( 1 ), 1.0 );
+                else if ( d == 1 ) a = call.input( 1 );
+                else a = newTsrLike( (Tsr<Number>) call.input( 1 ), 1.0 );
                 Tsr<?> b;
                 if ( call.size() -  d - 2  > 1 ) {
-                    Tsr<?>[] reduction = Operation.Utility.subset( call.getTensors(), 2, d+2, call.size()-(d+2) );
-                    reduction[ 1 ] = newTsrLike( (Tsr<Number>) call.tensor( 1 ), 1.0 );
+                    Tsr<?>[] reduction = Operation.Utility.subset( call.inputs(), 2, d+2, call.size()-(d+2) );
+                    reduction[ 1 ] = newTsrLike( (Tsr<Number>) call.input( 1 ), 1.0 );
                     reduction[ 0 ] = reduction[ 1 ];
                     alternative = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction )
@@ -160,16 +160,16 @@ public class JunctionUtil
                                 );
                     b = alternative;
                 }
-                else b = newTsrLike( (Tsr<Number>) call.tensor( 1 ), 1.0 );
+                else b = newTsrLike( (Tsr<Number>) call.input( 1 ), 1.0 );
 
                 alternative = recursiveExecutor.execute(
-                                        ExecutionCall.of( call.tensor( 0 ), a, b )
+                                        ExecutionCall.of( call.input( 0 ), a, b )
                                                         .andArgs( Arg.DerivIdx.of( -1 ) )
                                                         .running( Neureka.get().backend().getOperation("*") )
                                                         .on( device )
                                 );
                 alternative = recursiveExecutor.execute(
-                                        ExecutionCall.of( alternative, call.tensor( 0 ), call.tensor( d + 1 ) )
+                                        ExecutionCall.of( alternative, call.input( 0 ), call.input( d + 1 ) )
                                                         .andArgs(Arg.DerivIdx.of(1))
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
@@ -210,27 +210,27 @@ public class JunctionUtil
         Tsr<?> alternative = null;
         if ( call.size() > 3 ) {
             if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 )};
+                Tsr<?>[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};
                 alternative = recursiveExecutor.execute(
                                     ExecutionCall.of( reduction )
                                                     .andArgs(Arg.DerivIdx.of(d))
                                                     .running(operation)
                                                     .on(device)
                             );
-                call.setTensor( 0, alternative );
+                call.setInput( 0, alternative );
 
-                reduction = Operation.Utility.offsetted(call.getTensors(), 1);
+                reduction = Operation.Utility.offsetted(call.inputs(), 1);
                 alternative = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction )
                                                         .andArgs(Arg.DerivIdx.of(d))
                                                         .running(operation)
                                                         .on(device)
                                 );
-                call.setTensor( 0, alternative );
+                call.setInput( 0, alternative );
             }
             else
-                call.setTensor( 0,
-                        call.tensor( 1 ).clone()
+                call.setInput( 0,
+                        call.input( 1 ).clone()
                            .getUnsafe()
                            .setIsIntermediate( true )
                            .setValue( d == 0 || thisIsForAddition ? 1f : -1f )

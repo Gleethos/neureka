@@ -34,7 +34,7 @@ public class AssignLeft extends AbstractOperation
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor(
                     call -> {
-                        if ( call.tensor( 1 ).isVirtual() || call.tensor( 1 ).size() == 1 )
+                        if ( call.input( 1 ).isVirtual() || call.input( 1 ).size() == 1 )
                             return SuitabilityPredicate.GOOD;
                         else
                             return SuitabilityPredicate.UNSUITABLE;
@@ -47,11 +47,11 @@ public class AssignLeft extends AbstractOperation
                 .setCallPreparation(
                     call ->
                     {
-                        int offset = ( call.tensor( 0 ) == null ? 1 : 0 );
-                        call.tensor( offset ).getUnsafe().incrementVersion(call);
-                        call.tensor( offset ).setIsVirtual( false );
+                        int offset = ( call.input( 0 ) == null ? 1 : 0 );
+                        call.input( offset ).getUnsafe().incrementVersion(call);
+                        call.input( offset ).setIsVirtual( false );
                         return
-                            ExecutionCall.of( call.tensor( offset ), call.tensor( 1+offset ) )
+                            ExecutionCall.of( call.input( offset ), call.input( 1+offset ) )
                                             .andArgs(Arg.DerivIdx.of(-1))
                                             .running(this)
                                             .on( call.getDevice() );
@@ -109,9 +109,9 @@ public class AssignLeft extends AbstractOperation
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
             .setCallPreparation(
                 call -> {
-                    int offset = ( call.tensor( 0 ) == null ) ? 1 : 0;
-                    call.tensor( offset ).getUnsafe().incrementVersion(call);
-                    return ExecutionCall.of( call.tensor(offset), call.tensor(1+offset) )
+                    int offset = ( call.input( 0 ) == null ) ? 1 : 0;
+                    call.input( offset ).getUnsafe().incrementVersion(call);
+                    return ExecutionCall.of( call.input(offset), call.input(1+offset) )
                                         .andArgs(Arg.DerivIdx.of(-1))
                                         .running(Neureka.get().backend().getOperation("idy"))
                                         .on( call.getDevice() );
@@ -128,7 +128,7 @@ public class AssignLeft extends AbstractOperation
                         .withArity(2)
                         .andImplementation(
                             call -> {
-                                call.tensor( 0 ).setIsVirtual( false );
+                                call.input( 0 ).setIsVirtual( false );
                                 Neureka.get().backend().getOperation("idy")
                                         .getAlgorithm( Activation.class )
                                         .getImplementationFor( CPU.class )

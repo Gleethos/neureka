@@ -35,13 +35,13 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     return SuitabilityPredicate.UNSUITABLE;
 
                 int maxRank = 0;
-                for ( Tsr<?> t : call.getTensors() )
+                for ( Tsr<?> t : call.inputs() )
                     if ( t != null && t.rank() > maxRank ) maxRank = t.rank();
 
                 for ( int i = 0; i < maxRank; i++ )
                 {
                     int currentDim = -1;
-                    for( Tsr<?> t : call.getTensors() )
+                    for( Tsr<?> t : call.inputs() )
                     {
                         if ( t != null && i < t.rank() ) {
                             if ( currentDim == -1 ) currentDim = t.shape( i );
@@ -54,7 +54,7 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         );
         setCanPerformForwardADFor( call -> {
             Tsr<?> last = null;
-            for ( Tsr<?> t : call.getTensors() ) {
+            for ( Tsr<?> t : call.inputs() ) {
                 if ( last != null && !last.shape().equals(t.shape()) ) return false;
                 last = t;
             }
@@ -78,10 +78,10 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         setCallPreparation(
             call -> {
                 Device device = call.getDevice();
-                if ( call.tensor( 0 ) == null ) // Creating a new tensor:
+                if ( call.input( 0 ) == null ) // Creating a new tensor:
                 {
-                    int[] s1 = call.tensor( 1 ).getNDConf().shape();
-                    int[] s2 = call.tensor( 2 ).getNDConf().shape();
+                    int[] s1 = call.input( 1 ).getNDConf().shape();
+                    int[] s2 = call.input( 2 ).getNDConf().shape();
 
                     assert s1.length == s2.length;
                     int[] outShape = new int[s1.length];
@@ -92,7 +92,7 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     for ( int i = 0; i < outShape.length; i++ )
                         outShape[ i ] = ( s1[ i ] == 1 ? s2[ i ] : s1[ i ] );
 
-                    Class<Object> type = (Class<Object>) call.tensor(  1 ).getValueClass();
+                    Class<Object> type = (Class<Object>) call.input(  1 ).getValueClass();
                     Tsr<?> output = Tsr.of(type).withShape(outShape).all( 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
                     try {
@@ -100,7 +100,7 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     } catch( Exception e ) {
                         e.printStackTrace();
                     }
-                    call.setTensor( 0, output );
+                    call.setInput( 0, output );
                 }
                 return call;
             }

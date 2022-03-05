@@ -120,7 +120,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
                     "Input tensors of a new GraphNode must be part of the computation graph!"
 
         and : 'The mock objects are being called as expected.'
-            1 * context.getTensors() >> inputs
+            1 * context.inputs() >> inputs
             2 * inputsNodeMock.getLock() >> Mock( GraphLock )
             0 * function.isDoingAD() >> true
             0 * payload.getDevice() >> device
@@ -159,7 +159,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
                     "The given input tensors of a new node must be part of the same locked computation graph!"
 
         and : 'The mock objects are being called as expected.'
-            1 * context.getTensors() >> inputs
+            1 * context.inputs() >> inputs
             3 * inputsNodeMock.getLock() >> Mock( GraphLock )
             1 * otherInputsNodeMock.getLock() >> Mock( GraphLock )
             0 * function.isDoingAD() >> true
@@ -199,7 +199,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
                     "Please use detached functions instead! ( 'Function.create(\"SOME_TEST_FUNCTION_STRING(...)\", false)' )\n"
 
         and : 'The mock objects have been called as expected.'
-            1 * context.getTensors() >> inputs
+            1 * context.inputs() >> inputs
             2 * inputsNodeMock.getLock() >> Mock( GraphLock )
             0 * function.isDoingAD() >> true
             1 * type.isInline() >> true

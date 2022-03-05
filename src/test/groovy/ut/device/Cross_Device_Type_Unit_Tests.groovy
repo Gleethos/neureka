@@ -152,7 +152,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             (1.._) * call.getAlgorithm() >> implementation
             1 * implementation.prepare(call) >> call
         and : 'The tensor array is being accessed to check for null. (For exception throwing)'
-            1 * call.getTensors() >> new Tsr[]{ Mock(Tsr), null }
+            1 * call.inputs() >> new Tsr[]{ Mock(Tsr), null }
         and : 'The expected exception is being thrown alongside a descriptive message.'
             def exception = thrown(IllegalArgumentException)
             exception.message == "Device arguments may not be null!\n" +

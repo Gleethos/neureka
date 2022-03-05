@@ -78,7 +78,7 @@ public class CalcUtil
 
         if ( operation.isIndexer() )
             for ( int i = 1; i < tensors.length; i++ )
-                tensors[ i ] = nodes[ 0 ].execute( call.getTensors(), i - 1 );
+                tensors[ i ] = nodes[ 0 ].execute( call.inputs(), i - 1 );
         else
             if (
                 !isFlat && j < 0 && (
@@ -87,7 +87,7 @@ public class CalcUtil
                     operation.supportsAlgorithm(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-            tensors = srcActivation( call.getTensors(), j, -1, 0, nodes );
+            tensors = srcActivation( call.inputs(), j, -1, 0, nodes );
             String asStr = operation.stringify(
                                                 IntStream.range( 0, nodes.length )
                                                          .mapToObj( i -> "I[" + i + "]" )
@@ -96,12 +96,12 @@ public class CalcUtil
             Tsr<?>[] finalTensors = tensors;
             Tsr<?> result = MemUtil.keep( tensors, () -> new FunctionBuilder( Neureka.get().backend() ).build( asStr, isDoingAD ).execute(finalTensors) );
             for ( int i = 1; i < tensors.length; i++ )
-                _deleteIfNotIn( call.getTensors(), tensors[ i ] );
+                _deleteIfNotIn( call.inputs(), tensors[ i ] );
 
             return result;
         }
         else
-            tensors = srcActivation( call.getTensors(), j, -1, 1, nodes );
+            tensors = srcActivation( call.inputs(), j, -1, 1, nodes );
 
         tensors[0] = CalcUtil.recursiveExecution(
                                 ExecutionCall.of( tensors )
@@ -159,7 +159,7 @@ public class CalcUtil
             final RecursiveExecutor executor
     ) {
         Supplier<Tsr<?>> actor = () ->
-                MemUtil.keep( call.getTensors(), () -> {
+                MemUtil.keep( call.inputs(), () -> {
                     Device<?> device = call.getDevice();
                     int d = call.getValOf( Arg.DerivIdx.class );
                     int j = call.getJ();
@@ -175,13 +175,13 @@ public class CalcUtil
                     // like so:
                     if ( operation.isIndexer() )
                         for ( int i = 1; i < tensors.length; i++ )
-                            tensors[ i ] = nodes[ 0 ].executeDerive( call.getTensors(), d, i - 1 );
+                            tensors[ i ] = nodes[ 0 ].executeDerive( call.inputs(), d, i - 1 );
                     else
                         for ( int i = 1; i < tensors.length; i++ )
                             tensors[ i ] =
                                         j >= 0
-                                            ? nodes[ i - 1 ].executeDerive( call.getTensors(), d, j )
-                                            : nodes[ i - 1 ].executeDerive( call.getTensors(), d    );
+                                            ? nodes[ i - 1 ].executeDerive( call.inputs(), d, j )
+                                            : nodes[ i - 1 ].executeDerive( call.inputs(), d    );
 
                     //...then add them all together! (is possible because of linearity...)
                     Tsr<?> inner;
@@ -206,13 +206,13 @@ public class CalcUtil
                     //...then activate (No differentiation!) the source like so:
                     if ( operation.isIndexer() ) // Indexer pass an index j of course!
                         for ( int i = 1; i < tensors.length; i++ )
-                            tensors[ i ] = nodes[ 0 ].execute( call.getTensors(), i - 1 ); // i - 1 := j
+                            tensors[ i ] = nodes[ 0 ].execute( call.inputs(), i - 1 ); // i - 1 := j
                     else
                         for ( int i = 1; i < tensors.length; i++ )
                             tensors[ i ] =
                                     j >= 0
-                                        ? nodes[ i - 1 ].execute( call.getTensors(), j )
-                                        : nodes[ i - 1 ].execute( call.getTensors() );
+                                        ? nodes[ i - 1 ].execute( call.inputs(), j )
+                                        : nodes[ i - 1 ].execute( call.inputs() );
 
                     //...get derivative index within src list:
                     for ( int i = 0; i < nodes.length; i++ )
@@ -241,7 +241,7 @@ public class CalcUtil
                                                 null
                                         );
                         for ( int i = 1; i < tensors.length; i++ )
-                            _deleteIfNotIn( call.getTensors(), tensors[ i ] );
+                            _deleteIfNotIn( call.inputs(), tensors[ i ] );
                     }
                     // done!
 
@@ -291,7 +291,7 @@ public class CalcUtil
     ) {
         executionCall = executionCall.getAlgorithm().prepare( executionCall );
 
-        for ( Tsr<?> t : executionCall.getTensors() )
+        for ( Tsr<?> t : executionCall.inputs() )
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +
                             "One or more tensor arguments within the given ExecutionCall instance is null."
@@ -301,20 +301,20 @@ public class CalcUtil
                 _recursiveReductionOf(
                     executionCall,
                     call -> {
-                        for ( Tsr<?> t : call.getTensors() )
+                        for ( Tsr<?> t : call.inputs() )
                             if ( t == null ) throw new IllegalArgumentException(
                                     "Device arguments may not be null!\n" +
                                             "One or more tensor arguments within the given ExecutionCall instance is null."
                             );
 
-                        call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of( call.getTensors() )
+                        call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of( call.inputs() )
                                                                         .andArgs( call.allMetaArgs() )
                                                                         .running( call.getOperation() )
                                                                         .on( call.getDevice() )
                                                                         .forDeviceType( call.getDevice().getClass() );
                         Device<?> device = call.getDevice();
                         device.approve( call );
-                        call.tensor( 0 ).setIsVirtual( false );
+                        call.input( 0 ).setIsVirtual( false );
 
                         Algorithm<?> algorithm = call.getAlgorithm();
                         if ( algorithm == null ) {
@@ -369,9 +369,9 @@ public class CalcUtil
 
         Consumer<Tsr<?>>[] rollbacks = new Consumer[ call.size() ];
         for ( int i = 0; i < call.size(); i++ )
-            if ( call.tensor( i ) != null && !call.tensor( i ).isOutsourced() ) {
+            if ( call.input( i ) != null && !call.input( i ).isOutsourced() ) {
                 try {
-                    device.store( call.tensor( i ) );
+                    device.store( call.input( i ) );
                 } catch ( Exception e ) {
                     e.printStackTrace();
                 }
@@ -399,9 +399,9 @@ public class CalcUtil
                             );
 
         if ( result == null ) {
-            call.setTensor( 0,
+            call.setInput( 0,
                     finalExecution.apply(
-                        ExecutionCall.of( call.getTensors() )
+                        ExecutionCall.of( call.inputs() )
                                 .andArgs(call.allMetaArgs())
                                 .running(type)
                                 .on(device)
@@ -412,10 +412,10 @@ public class CalcUtil
             return result;
 
         for ( int i = 0; i < call.size(); i++ )
-            if ( call.tensor( i ) != null && !call.tensor( i ).isUndefined() )
-                rollbacks[ i ].accept( call.tensor( i ) );
+            if ( call.input( i ) != null && !call.input( i ).isUndefined() )
+                rollbacks[ i ].accept( call.input( i ) );
 
-        return call.tensor( 0 );
+        return call.input( 0 );
     }
 
     /**

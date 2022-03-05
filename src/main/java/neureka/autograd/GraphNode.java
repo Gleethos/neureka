@@ -217,7 +217,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             a = _construct( this, out, function, null, (GraphLock) context );
         } else if ( context instanceof ExecutionCall ) {
             ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
-            Tsr<?>[] inputs = call.getTensors();
+            Tsr<?>[] inputs = call.inputs();
             /* Applying JITProp and gradients */
             Neureka.Settings.AutoGrad adSetting = Neureka.get().settings().autograd();
             if ( adSetting.isApplyingGradientWhenTensorIsUsed() ) {
@@ -285,7 +285,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             GraphLock lock
     ) {
         GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
-        Tsr<V>[] inputs = ( call == null ) ? null : (Tsr<V>[]) call.getTensors();
+        Tsr<V>[] inputs = ( call == null ) ? null : (Tsr<V>[]) call.inputs();
         if ( output == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
         a.setPayloadReferenceVersion( output.getVersion() );
         if ( !function.isDoingAD() ) return a; // Only functions with AutoDiff enabled create computation graph!
@@ -325,7 +325,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     private void _construct2( Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call )
     {
-        Tsr<V>[] inputs = ( call == null ) ? null : (Tsr<V>[]) call.getTensors();
+        Tsr<V>[] inputs = ( call == null ) ? null : (Tsr<V>[]) call.inputs();
         /* Returning if the above cannot form an AutoDiff computation graph! : */
         if ( inputs == null || !function.isFlat() ) return; // Leave nodes have!
         for ( Tsr<V> t : inputs ) if ( t.equals(output) ) return; // Output must be a unique tensor for AD!

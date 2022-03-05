@@ -37,7 +37,7 @@ public final class Identity extends AbstractOperation
         .setCanPerformForwardADFor(
             call -> {
                 Tsr<?> last = null;
-                for ( Tsr<?> t : call.getTensors() ) {
+                for ( Tsr<?> t : call.inputs() ) {
                     if ( last != null && !last.shape().equals(t.shape()) ) return false;
                     last = t; // Note: shapes are cached!
                 }
@@ -48,8 +48,8 @@ public final class Identity extends AbstractOperation
         .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
         .setCallPreparation(
             call -> {
-                int offset = ( call.tensor( 0 ) == null ? 1 : 0 );
-                return ExecutionCall.of( call.tensor( offset ), call.tensor( 1+offset ) )
+                int offset = ( call.input( 0 ) == null ? 1 : 0 );
+                return ExecutionCall.of( call.input( offset ), call.input( 1+offset ) )
                                     .andArgs(Arg.DerivIdx.of(-1))
                                     .running(Neureka.get().backend().getOperation("idy"))
                                     .on( call.getDevice() );
@@ -93,7 +93,7 @@ public final class Identity extends AbstractOperation
             .setCanPerformForwardADFor(
                     call -> {
                         Tsr<?> last = null;
-                        for ( Tsr<?> t : call.getTensors() ) {
+                        for ( Tsr<?> t : call.inputs() ) {
                             if ( last != null && !last.shape().equals(t.shape()) ) return false;
                             last = t; // Note: shapes are cached!
                         }
@@ -105,9 +105,9 @@ public final class Identity extends AbstractOperation
             .setCallPreparation(
                 call -> {
                     Device device = call.getDevice();
-                    if ( call.tensor( 0 ) == null ) // Creating a new tensor:
+                    if ( call.input( 0 ) == null ) // Creating a new tensor:
                     {
-                        int[] shp = call.tensor( 1 ).getNDConf().shape();
+                        int[] shp = call.input( 1 ).getNDConf().shape();
                         Tsr<?> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                         output.setIsVirtual( false );
                         try {
@@ -115,7 +115,7 @@ public final class Identity extends AbstractOperation
                         } catch( Exception e ) {
                             e.printStackTrace();
                         }
-                        call.setTensor( 0, output );
+                        call.setInput( 0, output );
                     }
                     return call;
                 }

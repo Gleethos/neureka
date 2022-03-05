@@ -121,7 +121,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     @Override
     public Device<V> approve(ExecutionCall<? extends Device<?>> call )
     {
-        if ( !_approveExecutionOf( call.getTensors(), call.getValOf( Arg.DerivIdx.class ), call.getOperation() ) ) {
+        if ( !_approveExecutionOf( call.inputs(), call.getValOf( Arg.DerivIdx.class ), call.getOperation() ) ) {
             throw new IllegalArgumentException("Provided execution call has not been approved by this device.");
         }
         return this;

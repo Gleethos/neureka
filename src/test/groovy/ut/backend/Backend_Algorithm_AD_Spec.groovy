@@ -34,7 +34,7 @@ class Backend_Algorithm_AD_Spec extends Specification
 
         and : 'A mock ExecutionCall.'
             def call = Mock(ExecutionCall)
-            call.getTensors() >> new Tsr<?>[0]
+            call.inputs() >> new Tsr<?>[0]
 
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
             ADAgent agent = imp.supplyADAgentFor(
@@ -87,7 +87,7 @@ class Backend_Algorithm_AD_Spec extends Specification
 
         and : 'A mock ExecutionCall.'
             def call = Mock(ExecutionCall)
-            call.getTensors() >> new Tsr[0]
+            call.inputs() >> new Tsr[0]
 
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
             ADAgent agent = imp.supplyADAgentFor(
@@ -156,9 +156,9 @@ class Backend_Algorithm_AD_Spec extends Specification
                                 false
                             )
         then :
-            (0.._) * call.getTensors() >> [Tsr.of(1), Tsr.of(2)]
+            (0.._) * call.inputs() >> [Tsr.of(1), Tsr.of(2)]
             (1.._) * call.size() >> 2
-            (1.._) * call.tensor(_) >> Tsr.of(1)
+            (1.._) * call.input(_) >> Tsr.of(1)
 
         then : 'No exception is being thrown and the agent is configured to perform backward-AD.'
             //!agent.isForward() //TODO: Fix this
@@ -220,8 +220,8 @@ class Backend_Algorithm_AD_Spec extends Specification
                         )
 
         then :
-            (0.._) * call.getTensors() >> new Tsr[]{derivative, derivative}
-            (0.._) * call.tensor(_) >> derivative
+            (0.._) * call.inputs() >> new Tsr[]{derivative, derivative}
+            (0.._) * call.input(_) >> derivative
         and : 'No exception is being thrown and the agent is configured to perform backward-AD.'
             agent.hasForward()
             agent.derivative() == derivative || agent.derivative().toString({it.isMultiline=false}) == "(1x2):[  0.0 ,   0.0 ]"

@@ -83,12 +83,12 @@ public class CLFunctionCompiler {
                                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
                                 .setCallPreparation(
                                         call -> {
-                                            if ( call.tensor( 0 ) == null ) // Creating a new tensor:
+                                            if ( call.input( 0 ) == null ) // Creating a new tensor:
                                             {
-                                                Tsr<Double> output = Tsr.of(call.tensor(1).getNDConf().shape(), 0.0);
+                                                Tsr<Double> output = Tsr.of(call.input(1).getNDConf().shape(), 0.0);
                                                 output.setIsVirtual( false );
                                                 call.getDeviceFor(Double.class).store(output);
-                                                call.setTensor( 0, output );
+                                                call.setInput( 0, output );
                                             }
                                             return call;
                                         }
@@ -105,7 +105,7 @@ public class CLFunctionCompiler {
     private void _adHocKernelFor( ExecutionCall<?> call ) {
 
         List<Tsr<Number>> args = Arrays.stream( _argPointer )
-                                    .mapToObj( p -> (Tsr<Number>) call.tensor( p + 1 ) )
+                                    .mapToObj( p -> (Tsr<Number>) call.input( p + 1 ) )
                                     .collect(Collectors.toList());
 
         args.add(0, call.getTsrOfType(Number.class, 0));

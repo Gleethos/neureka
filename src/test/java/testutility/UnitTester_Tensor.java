@@ -228,7 +228,7 @@ public class UnitTester_Tensor extends UnitTester
                                 .setCanPerformForwardADFor(
                                         call -> {
                                             Tsr<?> last = null;
-                                            for ( Tsr<?> t : call.getTensors() ) {
+                                            for ( Tsr<?> t : call.inputs() ) {
                                                 if ( last != null && !last.shape().equals(t.shape()) ) return false;
                                                 last = t; // Note: shapes are cached!
                                             }
@@ -249,7 +249,7 @@ public class UnitTester_Tensor extends UnitTester
                                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                                             else
                                             {
-                                                Tsr<?> derivative = f.executeDerive( call.getTensors(), d );
+                                                Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                                                 return ADAgent.of( derivative )
                                                         .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                                         .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
@@ -259,9 +259,9 @@ public class UnitTester_Tensor extends UnitTester
                                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
                                 .setCallPreparation(
                                         call -> {
-                                            int offset = ( call.tensor( 0 ) == null ) ? 1 : 0;
+                                            int offset = ( call.input( 0 ) == null ) ? 1 : 0;
                                             return
-                                                ExecutionCall.of(call.tensor( offset ), call.tensor( 1+offset )).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
+                                                ExecutionCall.of(call.input( offset ), call.input( 1+offset )).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
                                         }
                                 )
                                 .buildFunAlgorithm()
@@ -290,7 +290,7 @@ public class UnitTester_Tensor extends UnitTester
                                     .setCanPerformForwardADFor(
                                             call -> {
                                                 Tsr<?> last = null;
-                                                for ( Tsr<?> t : call.getTensors() ) {
+                                                for ( Tsr<?> t : call.inputs() ) {
                                                     if ( last != null && !last.shape().equals(t.shape()) ) return false;
                                                     last = t; // Note: shapes are cached!
                                                 }
@@ -307,7 +307,7 @@ public class UnitTester_Tensor extends UnitTester
                                                             .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
                                                             .setBackward( null );
                                                 }
-                                                Tsr<?>[] inputs = call.getTensors();
+                                                Tsr<?>[] inputs = call.inputs();
                                                 int d = call.getDerivativeIndex();
                                                 if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                                                 else
@@ -322,7 +322,7 @@ public class UnitTester_Tensor extends UnitTester
                                     .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
                                     .setCallPreparation(
                                             call -> {
-                                                Tsr<?>[] tsrs = call.getTensors();
+                                                Tsr<?>[] tsrs = call.inputs();
                                                 int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                                                 return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
                                             }

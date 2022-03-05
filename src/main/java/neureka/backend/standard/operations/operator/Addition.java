@@ -37,8 +37,8 @@ public class Addition extends AbstractOperation {
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> derivative = JunctionUtil.newTsrLike(call.tensor( d==0?1:0 ), 0);
-                            Tsr<?> toBeDerived = JunctionUtil.newTsrLike(call.tensor( d ), 0);
+                            Tsr<?> derivative = JunctionUtil.newTsrLike(call.input( d==0?1:0 ), 0);
+                            Tsr<?> toBeDerived = JunctionUtil.newTsrLike(call.input( d ), 0);
                             Device device = call.getDeviceFor(Number.class);
                             return ADAgent.of( derivative )
                                             .setBackward(
@@ -156,9 +156,9 @@ public class Addition extends AbstractOperation {
                         call -> {
                             assert call.size() == 3;
                             if ( call.getDerivativeIndex() == 0 )
-                                call.setTensor( 0, Tsr.of( call.tensor( 1 ).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
+                                call.setInput( 0, Tsr.of( call.input( 1 ).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.setTensor( 0, Tsr.of( call.tensor( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
+                                call.setInput( 0, Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
                             else {
                                 Scalarization.implementationForCPU()
                                     .with(Fun.F64F64ToF64.triple(
@@ -195,9 +195,9 @@ public class Addition extends AbstractOperation {
                         call -> {
                             assert call.size() == 3;
                             if ( call.getDerivativeIndex() == 0 )
-                                call.setTensor( 0, Tsr.of( call.tensor(1).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
+                                call.setInput( 0, Tsr.of( call.input(1).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.setTensor( 0, Tsr.of( call.tensor( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
+                                call.setInput( 0, Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
                             else {
                                 int gwz = call.getTsrOfType(Number.class, 0).size();
                                 float value = call.getTsrOfType(Number.class, 2).getValueAt(0).floatValue();

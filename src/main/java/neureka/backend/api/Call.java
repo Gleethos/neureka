@@ -53,11 +53,11 @@ public class Call<D> {
     /**
      * @return The {@link Tsr} parameters of this {@link Call} for execution.
      */
-    public Tsr<?>[] getTensors() { return _tensors.clone(); }
+    public Tsr<?>[] inputs() { return _tensors.clone(); }
 
     public int size() { return _tensors.length; }
 
-    public void setTensor( int i, Tsr<?> t ) {
+    public void setInput( int i, Tsr<?> t ) {
         _tensors[ i ] = t;
     }
 
@@ -65,11 +65,11 @@ public class Call<D> {
      * @param i The index of the tensor argument which should be returned.
      * @return The {@code i}'th {@link Tsr} parameter of this {@link Call} for execution.
      */
-    public Tsr<?> tensor( int i ) {
+    public Tsr<?> input( int i ) {
         return _tensors[ i ];
     }
 
-    public void mutateTensors( int... indices ) {
+    public void rearrangeInputs( int... indices ) {
         Tsr<?>[] tensors = _tensors.clone();
         for ( int i = 0; i < indices.length; i++ ) {
             _tensors[i] = tensors[indices[i]];
@@ -184,12 +184,12 @@ public class Call<D> {
         public Estimator getEstimator() { return new Estimator( _isValid ); }
 
         public Validator first( TensorCondition condition ) {
-            if ( _isValid && !condition.check( tensor( 0 ) ) ) _isValid = false;
+            if ( _isValid && !condition.check( input( 0 ) ) ) _isValid = false;
             return this;
         }
 
         public Validator last( TensorCondition condition ) {
-            if ( _isValid && !condition.check( tensor( size() - 1 ) ) ) _isValid = false;
+            if ( _isValid && !condition.check( input( size() - 1 ) ) ) _isValid = false;
             return this;
         }
 
