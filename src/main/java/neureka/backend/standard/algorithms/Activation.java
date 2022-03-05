@@ -38,12 +38,11 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
         setExecutionDispatcher( CalcUtil::defaultRecursiveExecution );
         setCallPreparation(
             call -> {
-                Tsr<?>[] inputs = call.getTensors();
                 Device device = call.getDeviceFor(Number.class);
-                if ( inputs[ 0 ] == null ) // Creating a new tensor:
+                if ( call.tensor(  0 ) == null ) // Creating a new tensor:
                 {
-                    int[] shape = inputs[ 1 ].getNDConf().shape();
-                    Class<Object> type = (Class<Object>) inputs[ 1 ].getValueClass();
+                    int[] shape = call.tensor(  1 ).getNDConf().shape();
+                    Class<Object> type = (Class<Object>) call.tensor(  1 ).getValueClass();
                     Tsr<Object> output = Tsr.of(type).withShape(shape).all( 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
                     try {
@@ -51,7 +50,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
                     } catch( Exception e ) {
                         e.printStackTrace();
                     }
-                    inputs[ 0 ] = output;
+                    call.setTensor(  0, output );
                 }
                 return call;
             }

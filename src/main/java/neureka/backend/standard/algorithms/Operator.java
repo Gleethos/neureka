@@ -37,13 +37,12 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
         setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, finalExecutor ) );
         setCallPreparation(
             call -> {
-                Tsr<?>[] inputs = call.getTensors();
                 Device<Object> device = (Device<Object>) call.getDevice();
-                if ( inputs[ 0 ] == null ) // Creating a new tensor:
+                if ( call.tensor( 0 ) == null ) // Creating a new tensor:
                 {
-                    int[] outShape = inputs[ 1 ].getNDConf().shape();
+                    int[] outShape = call.tensor( 1 ).getNDConf().shape();
 
-                    Class<Object> type = (Class<Object>) inputs[ 1 ].getValueClass();
+                    Class<Object> type = (Class<Object>) call.tensor(  1 ).getValueClass();
                     Tsr<Object> output = Tsr.of( type ).withShape( outShape ).all( 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
                     try {
@@ -51,7 +50,7 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
                     } catch( Exception e ) {
                         e.printStackTrace();
                     }
-                    inputs[ 0 ] = output;
+                    call.setTensor( 0, output );
                 }
                 return call;
             }

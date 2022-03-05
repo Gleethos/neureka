@@ -64,7 +64,7 @@ public class Call<D> {
      * @return The {@code i}'th {@link Tsr} parameter of this {@link Call} for execution.
      */
     public Tsr<?> tensor( int i ) {
-        return getTensors()[ i ];
+        return _tensors[ i ];
     }
 
     public void mutateTensors( int... indices ) {
@@ -96,7 +96,7 @@ public class Call<D> {
     }
 
     public  <V> Tsr<V> getTsrOfType( Class<V> valueTypeClass, int i ) {
-        Tsr<?>[] tensors = this.getTensors();
+        Tsr<?>[] tensors = _tensors;
         if ( valueTypeClass == null ) {
             throw new IllegalArgumentException(
                     "The provided tensor type class is null!\n" +

@@ -37,7 +37,6 @@ SOFTWARE.
 
 package neureka.backend.api;
 
-
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
@@ -80,7 +79,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      *  Choosing an algorithm occurs through the {@link ExecutionCall#_operation} variable,
      *  which is of type {@link Operation} and contains multiple algorithms for different execution call scenarios...
      */
-    private Algorithm<?> _algorithm = null;
+    private Algorithm<?> _algorithm;
 
     private ExecutionCall(
             D device,
@@ -105,7 +104,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     }
 
     public static <D extends Device<?>> Builder<D> of( Tsr<?>... tensors ) {
-        return new Builder<D>(tensors.clone());
+        return new Builder<D>(tensors);
     }
 
     /**
@@ -222,22 +221,15 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      */
     public static class Builder<D extends Device<?>>
     {
-        private Operation _operation;
         private final Tsr<?>[] _tensors;
+        private final List<Arg> _arguments = Stream.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1)).collect(Collectors.toList());
+        private Operation _operation;
         private Algorithm<?> _algorithm;
-        private final List<Arg> _arguments = Stream.of(
-                                                Arg.DerivIdx.of(-1),
-                                                Arg.VarIdx.of(-1)
-                                            )
-                                            .collect(Collectors.toList());
 
         private Builder(Tsr<?>[] tensors) { _tensors = tensors; }
 
         public <V, D extends Device<V>> ExecutionCall<D> on(D device) {
-            return new ExecutionCall<>(
-                                    device, _operation,
-                                    _tensors, _algorithm, _arguments
-                                );
+            return new ExecutionCall<>( device, _operation, _tensors, _algorithm, _arguments );
         }
 
         public Builder<D> running( Operation operation ) {

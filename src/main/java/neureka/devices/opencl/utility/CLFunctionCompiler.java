@@ -106,7 +106,7 @@ public class CLFunctionCompiler {
     private void _adHocKernelFor( ExecutionCall<?> call ) {
 
         List<Tsr<Number>> args = Arrays.stream( _argPointer )
-                                    .mapToObj( p -> (Tsr<Number>) call.getTensors()[ p + 1 ] )
+                                    .mapToObj( p -> (Tsr<Number>) call.tensor( p + 1 ) )
                                     .collect(Collectors.toList());
 
         args.add(0, call.getTsrOfType(Number.class, 0));
