@@ -107,17 +107,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return new Builder<D>(tensors);
     }
 
-    /**
-     *  Warning: This is the only method on this class which exposes
-     *  mutability to parts of the internals of an {@link ExecutionCall}.
-     *  Do not use it too extensively in order to keep complexity
-     *  to a minimum...
-     *
-     * @param arg The meta argument which ought to be stored on this {@link ExecutionCall}.
-     * @return This very instance to allow for method chaining.
-     */
-    public ExecutionCall<D> setMetaArg( Arg<?> arg ) { _arguments.set(arg); return this; }
-    
+
     public String toString() {
         String algorithmString = "?";
         if ( _algorithm != null ) {

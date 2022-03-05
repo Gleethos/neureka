@@ -45,13 +45,14 @@ public class DimTrim extends AbstractOperation
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
-                        int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
-                        int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
+                        int[] endings = endsFrom( call.input( 0 ).getNDConf().shape() );
+                        int prefix  = endings[ 0 ];
+                        int postfix = endings[ 1 ];
                         if ( forward )
                             throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
 
                         return ADAgent.of( null )
-                                .withArgs(call.allMetaArgs())
+                                .withArgs( Arg.Ends.of(endings) )
                                 .setForward(
                                       (t, derivative) ->
                                           new FunctionBuilder( Neureka.get().backend() )
@@ -74,11 +75,8 @@ public class DimTrim extends AbstractOperation
                             int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
                             int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
                             return _pad( t, new int[]{prefix, postfix}, true );
-                        } else {
-                            int[] ends = new int[ 2 ];
-                            call.setMetaArg(Arg.Ends.of(ends));
-                            return _trim( t, ends, true );
-                        }
+                        } else
+                            return _trim( t, true );
                     }
                 )
                 .setCallPreparation( call -> call )
@@ -134,7 +132,7 @@ public class DimTrim extends AbstractOperation
         return tensor;
     }
 
-    private static Tsr<?> _trim( Tsr<?> tensor, int[] ends, boolean newTsr )
+    private static Tsr<?> _trim( Tsr<?> tensor, boolean newTsr )
     {
         if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
             throw new IllegalArgumentException("Column major not yet supported for shape trimming!");
@@ -167,8 +165,7 @@ public class DimTrim extends AbstractOperation
                          newOffset.stream().mapToInt( i -> i ).toArray()
                      )
                   );
-        ends[ 0 ] = prefix;
-        ends[ 1 ] = postfix;
+
         return tensor;
     }
 

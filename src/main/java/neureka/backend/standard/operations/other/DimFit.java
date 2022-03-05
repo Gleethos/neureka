@@ -38,9 +38,6 @@ public class DimFit extends AbstractOperation
                             .setSupplyADAgentFor(
                                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                 {
-                                    //int index = call.getValOf( Arg.DerivIdx.class );
-                                    //int prefix = ((int[]) call.getAt("ends"))[ 0 ];
-                                    //int postfix = ((int[]) call.getAt("ends"))[ 1 ];
                                     if ( forward ) {
                                         throw new IllegalArgumentException("Dim-Fit operation does not support forward-AD!");
                                     }
