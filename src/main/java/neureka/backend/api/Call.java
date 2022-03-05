@@ -189,12 +189,12 @@ public class Call<D> {
         }
 
         public Validator last( TensorCondition condition ) {
-            if ( _isValid && !condition.check( tensor( getTensors().length - 1 ) ) ) _isValid = false;
+            if ( _isValid && !condition.check( tensor( size() - 1 ) ) ) _isValid = false;
             return this;
         }
 
         public Validator tensors( TensorsCondition condition ) {
-            if ( _isValid && !condition.check( getTensors() ) ) _isValid = false;
+            if ( _isValid && !condition.check( _tensors ) ) _isValid = false;
             return this;
         }
 
@@ -207,7 +207,7 @@ public class Call<D> {
         private boolean _anyMatch( TensorCondition condition )
         {
             boolean any = false;
-            for ( Tsr<?> t : getTensors() ) any = condition.check( t ) || any;
+            for ( Tsr<?> t : _tensors ) any = condition.check( t ) || any;
             return any;
         }
 
@@ -220,7 +220,7 @@ public class Call<D> {
         private boolean _anyNotNullMatch( TensorCondition condition )
         {
             boolean any = false;
-            for ( Tsr<?> t : getTensors() )
+            for ( Tsr<?> t : _tensors )
                 if ( t != null ) any = condition.check( t ) || any;
             return any;
         }
@@ -233,7 +233,7 @@ public class Call<D> {
 
         private boolean _allMatch( TensorCondition condition ) {
             boolean all = true;
-            for ( Tsr<?> t : getTensors() ) all = condition.check( t ) && all;
+            for ( Tsr<?> t : _tensors ) all = condition.check( t ) && all;
             return all;
         }
 
@@ -246,7 +246,7 @@ public class Call<D> {
         private boolean _allNotNullMatch( TensorCondition condition )
         {
             boolean all = true;
-            for ( Tsr<?> t : getTensors() )
+            for ( Tsr<?> t : _tensors )
                 if ( t != null ) all = condition.check( t ) && all;
             return all;
         }
@@ -260,7 +260,7 @@ public class Call<D> {
         private boolean _allMatch( TensorCompare compare ) {
             boolean all = true;
             Tsr<?> last = null;
-            for ( Tsr<?> current : getTensors() ) {
+            for ( Tsr<?> current : _tensors ) {
                 if ( last != null && !compare.check( last, current ) ) all = false;
                 last = current; // Note: shapes are cached!
             }
