@@ -71,39 +71,38 @@ public class JunctionUtil
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
-        Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation type = call.getOperation();
 
         Tsr<?> alternative = null;
-        if ( tensors.length > 3 ) {
+        if ( call.size() > 3 ) {
             if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{ tensors[ 0 ], tensors[ 1 ], tensors[ 2 ] };
+                Tsr<?>[] reduction = new Tsr[]{ call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 ) };
                 alternative = recursiveExecutor.execute(
-                        ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
-                );
-                tensors[ 0 ] = reduction[ 0 ];
+                                        ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
+                                );
+                call.setTensor( 0, alternative );
 
-                reduction = Operation.Utility.offsetted(tensors, 1);
+                reduction = Operation.Utility.offsetted(call.getTensors(), 1);
                 alternative = recursiveExecutor.execute(
                         ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                 );
-                tensors[ 0 ] = reduction[ 0 ];
+                call.setTensor( 0, alternative );
             } else {
-                Tsr<?>[] reduction = Operation.Utility.without(tensors, 1+d);
+                Tsr<?>[] reduction = Operation.Utility.without(call.getTensors(), 1+d);
                 if ( reduction.length > 2 ) {
-                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];
+                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? call.tensor( 1 ).clone().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];
                     alternative = recursiveExecutor.execute(
                             ExecutionCall.of( reduction )
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
                                             .running( Neureka.get().backend().getOperation("*") )
                                             .on( device )
                     );
-                    tensors[ 0 ] = alternative;
+                    call.setTensor( 0, alternative );
                 }
                 else
-                    tensors[ 0 ] = reduction[ 1 ];
+                    call.setTensor( 0, reduction[ 1 ] );
             }
             return alternative;
         } 
