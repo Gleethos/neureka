@@ -183,7 +183,7 @@ public class UnitTester_Tensor extends UnitTester
                                 (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
                                 (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
                             )
-                            .andArgs(Arg.DerivIdx.of(0))
+                            .andArgs( Arg.DerivIdx.of(0) )
                             .running(Neureka.get().backend().getOperation(((char) 171)+"x"))
                             .on(CPU.get())
                             .forDeviceType(CPU.class)
@@ -263,7 +263,7 @@ public class UnitTester_Tensor extends UnitTester
                                             Tsr<?>[] tsrs = call.getTensors();
                                             int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                                             return
-                                                    ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on(call.getDevice());
+                                                    ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
                                         }
                                 )
                                 .buildFunAlgorithm()
@@ -326,7 +326,7 @@ public class UnitTester_Tensor extends UnitTester
                                             call -> {
                                                 Tsr<?>[] tsrs = call.getTensors();
                                                 int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                                                return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on(call.getDevice());
+                                                return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
                                             }
                                     )
                                     .buildFunAlgorithm()
@@ -357,7 +357,7 @@ public class UnitTester_Tensor extends UnitTester
                                     (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
                                     (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
                             )
-                            .andArgs(Arg.DerivIdx.of(0))
+                            .andArgs( Arg.DerivIdx.of(0) )
                             .running(Neureka.get().backend().getOperation(((char) 171) + "*"))
                             .on(CPU.get())
                             .forDeviceType(CPU.class)
@@ -371,7 +371,7 @@ public class UnitTester_Tensor extends UnitTester
                                     (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
                                     (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
                             )
-                            .andArgs(Arg.DerivIdx.of(0))
+                            .andArgs( Arg.DerivIdx.of(0) )
                             .running(Neureka.get().backend().getOperation("*" + ((char) 187)))
                             .on(CPU.get())
                             .forDeviceType(CPU.class)

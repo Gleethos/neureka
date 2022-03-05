@@ -89,7 +89,7 @@ public class ConvUtil {
                                     : null;
 
                             for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                            tensors[0] = CalcUtil.recursiveExecution( call.withTensors(tensors), JunctionUtil::forConvolution );
+                            tensors[ 0 ] = CalcUtil.recursiveExecution( call.withTensors(tensors), JunctionUtil::forConvolution );
                             if (tensors[ 0 ] == null)
                                 throw new IllegalStateException("Failed to execute convolution!");
                             return tensors[ 0 ];
@@ -100,9 +100,9 @@ public class ConvUtil {
                                 for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
                                 tensors[0] = CalcUtil.recursiveExecution(
                                                             ExecutionCall.of( tensors )
-                                                                            .andArgs(Arg.DerivIdx.of(0))
-                                                                            .running(call.getOperation())
-                                                                            .on(call.getDevice()),
+                                                                            .andArgs( Arg.DerivIdx.of(0) )
+                                                                            .running( call.getOperation() )
+                                                                            .on( call.getDevice() ),
                                                             JunctionUtil::forConvolution
                                                         );
                                 if ( call.getOperation() == Neureka.get().backend().getOperation("x>>") )

@@ -66,7 +66,7 @@ public class Power extends AbstractOperation
 
                     if ( d==0 ) {
                         Tsr<?> exp = traverse.execute(
-                                                ExecutionCall.of(reduction)
+                                                ExecutionCall.of( reduction )
                                                             .andArgs(Arg.DerivIdx.of( -1 ))
                                                             .running(Neureka.get().backend().getOperation("*"))
                                                             .on(device)
@@ -74,15 +74,15 @@ public class Power extends AbstractOperation
 
                         reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], exp};
                         tensors[ 0 ] = traverse.execute(
-                                            ExecutionCall.of(reduction)
-                                                            .andArgs(Arg.DerivIdx.of(0))
+                                            ExecutionCall.of( reduction )
+                                                            .andArgs( Arg.DerivIdx.of(0) )
                                                             .running(type)
                                                             .on( device )
                                         );
                         exp.getUnsafe().delete();
                     } else {
                         Tsr<?> inner = traverse.execute(
-                                                ExecutionCall.of(reduction)
+                                                ExecutionCall.of( reduction )
                                                                 .andArgs(Arg.DerivIdx.of(d-1))
                                                                 .running(Neureka.get().backend().getOperation("*"))
                                                                 .on(device)
@@ -98,7 +98,7 @@ public class Power extends AbstractOperation
 
                         reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], exp};
                         alternative = traverse.execute(
-                                                ExecutionCall.of(reduction)
+                                                ExecutionCall.of( reduction )
                                                             .andArgs(Arg.DerivIdx.of(1))
                                                             .running(type)
                                                             .on(device)

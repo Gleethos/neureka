@@ -44,7 +44,7 @@ public class JunctionUtil
 
                 reduction = Operation.Utility.offsetted(tensors, 1);
                 alternative = recursiveExecutor.execute(
-                                    ExecutionCall.of(reduction)
+                                    ExecutionCall.of( reduction )
                                                     .andArgs(Arg.DerivIdx.of(d))
                                                     .running(operation)
                                                     .on(device)
@@ -82,13 +82,13 @@ public class JunctionUtil
             if ( d < 0 ) {
                 Tsr<?>[] reduction = new Tsr[]{ tensors[ 0 ], tensors[ 1 ], tensors[ 2 ] };
                 alternative = recursiveExecutor.execute(
-                        ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
+                        ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                 );
                 tensors[ 0 ] = reduction[ 0 ];
 
                 reduction = Operation.Utility.offsetted(tensors, 1);
                 alternative = recursiveExecutor.execute(
-                        ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
+                        ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                 );
                 tensors[ 0 ] = reduction[ 0 ];
             } else {
@@ -96,7 +96,7 @@ public class JunctionUtil
                 if ( reduction.length > 2 ) {
                     reduction[ 0 ] = ( reduction[ 0 ] == null ) ? tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];
                     alternative = recursiveExecutor.execute(
-                            ExecutionCall.of(reduction)
+                            ExecutionCall.of( reduction )
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
                                             .running( Neureka.get().backend().getOperation("*") )
                                             .on( device )
@@ -143,7 +143,7 @@ public class JunctionUtil
                     Tsr<?>[] reduction = Operation.Utility.subset(tensors, 1, 1, d+1);
                     reduction[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true );
                     alternative = recursiveExecutor.execute(
-                                        ExecutionCall.of(reduction)
+                                        ExecutionCall.of( reduction )
                                                         .andArgs(Arg.DerivIdx.of(-1))
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
@@ -158,7 +158,7 @@ public class JunctionUtil
                     reduction[ 1 ] = newTsrLike( (Tsr<Number>) tensors[ 1 ], 1.0 );
                     reduction[ 0 ] = reduction[ 1 ];
                     alternative = recursiveExecutor.execute(
-                                        ExecutionCall.of(reduction)
+                                        ExecutionCall.of( reduction )
                                                         .andArgs(Arg.DerivIdx.of(-1))
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
@@ -218,7 +218,7 @@ public class JunctionUtil
             if ( d < 0 ) {
                 Tsr<?>[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};
                 alternative = recursiveExecutor.execute(
-                                    ExecutionCall.of(reduction)
+                                    ExecutionCall.of( reduction )
                                                     .andArgs(Arg.DerivIdx.of(d))
                                                     .running(operation)
                                                     .on(device)
@@ -227,7 +227,7 @@ public class JunctionUtil
 
                 reduction = Operation.Utility.offsetted(tensors, 1);
                 alternative = recursiveExecutor.execute(
-                                        ExecutionCall.of(reduction)
+                                        ExecutionCall.of( reduction )
                                                         .andArgs(Arg.DerivIdx.of(d))
                                                         .running(operation)
                                                         .on(device)

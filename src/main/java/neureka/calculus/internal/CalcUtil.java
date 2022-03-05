@@ -405,7 +405,7 @@ public class CalcUtil
 
         if ( result == null ) {
             tensors[ 0 ] = (Tsr<Object>) finalExecution.apply(
-                                                ExecutionCall.of(call.getTensors().clone())
+                                                ExecutionCall.of( call.getTensors() )
                                                         .andArgs(call.allMetaArgs())
                                                         .running(type)
                                                         .on(device)

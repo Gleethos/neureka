@@ -117,7 +117,7 @@ public class AssignLeft extends AbstractOperation
                     return ExecutionCall.of(tensors[offset], tensors[1+offset])
                                         .andArgs(Arg.DerivIdx.of(-1))
                                         .running(Neureka.get().backend().getOperation("idy"))
-                                        .on(call.getDevice());
+                                        .on( call.getDevice() );
                 }
             )
             .buildFunAlgorithm();
