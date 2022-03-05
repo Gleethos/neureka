@@ -25,39 +25,38 @@ public class JunctionUtil
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
-        Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation operation = call.getOperation();
 
         Tsr<?> alternative = null;
-        if ( tensors.length > 3 ) {
+        if ( call.size() > 3 ) {
             if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{ tensors[ 0 ], tensors[ 1 ], tensors[ 2 ] };
+                Tsr<?>[] reduction = new Tsr[]{ call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 ) };
                 alternative = recursiveExecutor.execute(
                                     ExecutionCall.of( reduction )
                                                     .andArgs( Arg.DerivIdx.of(d) )
                                                     .running( operation )
                                                     .on(device)
                                 );
-                tensors[ 0 ] = alternative;
+                call.setTensor( 0, alternative );
 
-                reduction = Operation.Utility.offsetted(tensors, 1);
+                reduction = Operation.Utility.offsetted(call.getTensors(), 1);
                 alternative = recursiveExecutor.execute(
                                     ExecutionCall.of( reduction )
                                                     .andArgs(Arg.DerivIdx.of(d))
                                                     .running(operation)
                                                     .on(device)
                                 );
-                tensors[ 0 ] = alternative;
+                call.setTensor( 0, alternative );
             }
             return alternative;
         } else {
             if ( call.getOperation().getOperator().equals("x") ) {
                 if ( d >= 0 ) {
-                    if ( d == 0 ) tensors[ 0 ] = tensors[ 2 ];
-                    else tensors[ 0 ] = tensors[ 1 ];
-                    return tensors[ 0 ];
+                    if ( d == 0 ) call.setTensor( 0, call.tensor( 2 ) );
+                    else call.setTensor( 0, call.tensor( 1 ) );
+                    return call.tensor( 0 );
                 } else {
                     call.mutateTensors( 0, 1, 2 );
                 }
