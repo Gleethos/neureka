@@ -148,11 +148,11 @@ public final class Product extends AbstractOperation
         .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications ) )
         .setCallPreparation(
                 call -> {
-                    Tsr<?>[] tsrs = call.getTensors();
+                    Tsr<?>[] tensors = call.getTensors();
                     Device<Number> device = call.getDeviceFor(Number.class);
-                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:
+                    if ( tensors[ 0 ] == null ) // Creating a new tensor:
                     {
-                        int[] shp = tsrs[ 1 ].getNDConf().shape();
+                        int[] shp = tensors[ 1 ].getNDConf().shape();
                         Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                         output.setIsVirtual( false );
                         try {
@@ -160,7 +160,7 @@ public final class Product extends AbstractOperation
                         } catch( Exception e ) {
                             e.printStackTrace();
                         }
-                        tsrs[ 0 ] = output;
+                        call.setTensor( 0, output );
                     }
                     return call;
                 }

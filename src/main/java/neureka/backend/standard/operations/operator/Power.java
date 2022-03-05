@@ -58,7 +58,7 @@ public class Power extends AbstractOperation
                     tensors[ 0 ] = traverse.execute( call.withTensors( reduction ) );
                     reduction = Utility.offsetted(tensors, 1);
                     alternative = traverse.execute( call.withTensors( reduction ) );
-                    tensors[ 0 ] = reduction[ 0 ];
+                    tensors[ 0 ] = alternative;
                 } else {
 
                     Tsr<?>[] reduction = Utility.subset(tensors, 1,  2, tensors.length-2);
