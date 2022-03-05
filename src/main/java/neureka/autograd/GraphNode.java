@@ -379,14 +379,16 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         }
                     }
                 }
-            } else if ( this.usesReverseAD() ) {
+            }
+            else if ( this.usesReverseAD() )
+            {
                 for ( int i = 0; i < inputs.length; i++ ) {
                     GraphNode<V> srcNode = inputs[ i ].getGraphNode();
                     if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {
                         _put(
-                                srcNode,
-                                call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)))
-                                        .getADAgentFrom(function, false)
+                            srcNode,
+                            call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)))
+                                .getADAgentFrom( function, false )
                         );
                     }
                 }
@@ -538,9 +540,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @return Returns an instance of the PendingError class containing a error accumulation.
      */
     public PendingError<V> getAndRemovePendingError() {
-        PendingError<V> pe = _pendingError;
+        PendingError<V> pending = _pendingError;
         _pendingError = null;
-        return pe;
+        return pending;
     }
 
     /**
@@ -682,7 +684,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * Deletion is forbidden if this node is flagged
      * as JITProp job. This means that the node is on the path between gradients
      * and pending error objects.
-     * Only if JITProp is enabled (Neureka.instance().settings().autograd()...) this flag will
+     * Only if JITProp is enabled (Neureka.get().settings().autograd()...) this flag will
      * deviate from its default state, namely: true!
      */
     private void _deleteDerivativesRecursively() {
@@ -764,7 +766,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public void forEachDerivative( BiConsumer<GraphNode<V>, ADAgent> action ) {
         if ( _targetsToAgents == null ) return;
         _targetsToAgents.forEach(
-                ( t, agents ) -> agents.forEach( a -> action.accept( t, a ) )
+            ( t, agents ) -> agents.forEach( a -> action.accept( t, a ) )
         );
     }
 

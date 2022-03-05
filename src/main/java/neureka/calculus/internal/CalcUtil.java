@@ -330,7 +330,7 @@ public class CalcUtil
                             }
                             else implementation.run( (ExecutionCall<Device<?>>) call );
                         }
-                        return call.getResult();
+                        return call.input( 0 );
                     },
                     executor
                 );

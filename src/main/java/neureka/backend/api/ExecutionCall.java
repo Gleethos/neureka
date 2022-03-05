@@ -32,7 +32,6 @@ SOFTWARE.
     A simple class which wraps essential arguments and context data
     used for operation execution on Device instances.
 
-
 */
 
 package neureka.backend.api;
@@ -88,16 +87,16 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
             Algorithm<?> algorithm,
             List<Arg> arguments
     ) {
-        super(tensors, device, arguments);
+        super( tensors, device, arguments );
         _operation = operation;
         _algorithm = algorithm;
         int thisArity = _tensors.length;
         if ( _operation != null && thisArity < Math.abs(_operation.getArity()) ) {
             throw new IllegalArgumentException(
-                    "Trying to instantiate an '"+this.getClass().getSimpleName()+"' with an arity " +
-                    "of "+thisArity+", which is not suitable for the targeted operation '" +
-                    _operation.getClass().getSimpleName()+"' with" +
-                    ( _operation.getArity() < 0 ? " a minimum " : " the expected " ) +
+                    "Trying to instantiate an '" + this.getClass().getSimpleName() + "' with an arity " +
+                    "of " + thisArity + ", which is not suitable for the targeted operation '" +
+                    _operation.getClass().getSimpleName() + "' with " +
+                    ( _operation.getArity() < 0 ? "a minimum " : "the expected " ) +
                     "arity of "+Math.abs(_operation.getArity()) + "."
             );
         }
@@ -105,23 +104,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
 
     public static <D extends Device<?>> Builder<D> of( Tsr<?>... tensors ) {
         return new Builder<D>(tensors);
-    }
-
-
-    public String toString() {
-        String algorithmString = "?";
-        if ( _algorithm != null ) {
-            algorithmString = _algorithm.toString();
-        }
-        return this.getClass().getSimpleName()+"[" +
-                    "device="          + _device + "," +
-                    "derivativeIndex=" + getValOf( Arg.DerivIdx.class ) + "," +
-                    "operation="       + _operation + "," +
-                    "tensors="         + "[.." + _tensors.length + "..]," +
-                    "j="               + getJ() + ", " +
-                    "algorithm="       + algorithmString + "," +
-                    "context="         + _arguments.getAll(Arg.class) +
-                "]";
     }
 
     public Operation getOperation() { return _operation; }
@@ -145,7 +127,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
                 );
     }
 
-    public Tsr<?> getResult() { return input(0); }
 
     public <T extends Device<?>> ExecutionCall<T> forDeviceType( Class<T> type ) {
         assert _device.getClass() == type;
@@ -199,11 +180,26 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return false;
     }
 
-    public ADAgent getADAgentFrom(
-            Function function,
-            boolean forward
-    ) {
+    public ADAgent getADAgentFrom( Function function, boolean forward ) {
         return getAlgorithm().supplyADAgentFor( function, this, forward );
+    }
+
+    @Override
+    public String toString()
+    {
+        String algorithmString = "?";
+        if ( _algorithm != null ) {
+            algorithmString = _algorithm.toString();
+        }
+        return this.getClass().getSimpleName()+"[" +
+                "device="          + _device + "," +
+                "derivativeIndex=" + getValOf( Arg.DerivIdx.class ) + "," +
+                "operation="       + _operation + "," +
+                "tensors="         + "[.." + _tensors.length + "..]," +
+                "j="               + getJ() + ", " +
+                "algorithm="       + algorithmString + "," +
+                "context="         + _arguments.getAll(Arg.class) +
+                "]";
     }
 
     /**
