@@ -62,8 +62,7 @@ public class Randomization extends AbstractOperation
                     if ( seed != null ) seed = Arg.Seed.of( initialScramble(seed.get() + hash) );
                     else seed = Arg.Seed.of( initialScramble(hash) );
 
-                    call.setMetaArg(seed);
-                    return call;
+                    return call.withArgs(seed);
                 })
                 .buildFunAlgorithm()
                 .setImplementationFor(

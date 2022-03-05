@@ -108,8 +108,8 @@ public class CalcUtil
                                                 .andArgs( call.allMetaArgs() )
                                                 .running( operation )
                                                 .on( device )
-                                                .setMetaArg( Arg.DerivIdx.of(-1) )
-                                                .setMetaArg( Arg.VarIdx.of(-1) ),
+                                                .withArgs( Arg.DerivIdx.of(-1) )
+                                                .withArgs( Arg.VarIdx.of(-1) ),
                                 executor
                             );
 
@@ -405,7 +405,7 @@ public class CalcUtil
                                 .andArgs(call.allMetaArgs())
                                 .running(type)
                                 .on(device)
-                                .setMetaArg(Arg.DerivIdx.of(d))
+                                .withArgs( Arg.DerivIdx.of(d) )
                     )
                );
         } else
