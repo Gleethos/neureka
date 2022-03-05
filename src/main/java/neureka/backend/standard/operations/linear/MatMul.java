@@ -166,7 +166,7 @@ public class MatMul extends AbstractOperation
             }
             call.setTensor( 0, output );
         }
-        _autoClone( call.getTensors() );
+        _autoClone( call );
         return (ExecutionCall<Device<Object>>) call;
     }
 
@@ -174,17 +174,17 @@ public class MatMul extends AbstractOperation
      *  This method will clone {@link Tsr} instances if they do not
      *  possess a simple {@link neureka.ndim.config.NDConfiguration}.
      *
-     * @param tensors The tensors which ought to be cloned based on the complexity of their access patterns.
+     * @param call The execution call whose tensors ought to be cloned based on the complexity of their access patterns.
      */
-    private static void _autoClone( Tsr<?>[] tensors ) {
-        for ( int i = 0; i < tensors.length; i++ ) {
+    private static void _autoClone( ExecutionCall<?> call ) {
+        for ( int i = 0; i < call.size(); i++ ) {
             if (
-                    !_isSimpleRowMajorMatrix(tensors[i])
+                    !_isSimpleRowMajorMatrix( call.tensor( i ) )
                             &&
-                    !_isSimpleColumnMajorMatrix(tensors[i])
+                    !_isSimpleColumnMajorMatrix( call.tensor( i ) )
             ) {
                 _LOG.debug("Auto cloning a tensor which does not have a simple ND configuration...");
-                tensors[i] = tensors[i].clone().getUnsafe().setIsIntermediate( true );
+                call.setTensor( i, call.tensor( i ).clone().getUnsafe().setIsIntermediate( true ) );
                 /*
                     The user should do cloning explicitly because using slices
                     will cause the backend to perform auto cloning every time the
