@@ -72,7 +72,7 @@ public class DimTrim extends AbstractOperation
                         Tsr<?> t = inputs[ 0 ];
                         if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {
                             int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
-                            int postfix = call.getValOf(Arg.Ends.class)[ 0 ];
+                            int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
                             return _pad( t, new int[]{prefix, postfix}, true );
                         } else {
                             int[] ends = new int[ 2 ];
