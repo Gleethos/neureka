@@ -58,7 +58,7 @@ public class CPUMatMul implements ImplementationFor<CPU> {
         boolean rowMajor = ( layout == NDConfiguration.Layout.ROW_MAJOR );
 
         int[] shapeA = call.tensor( 1 ).getNDConf().shape();
-        int[] shapeB = call.getTensors()[ 2 ].getNDConf().shape();
+        int[] shapeB = call.tensor( 2 ).getNDConf().shape();
         int[] shapeC = call.tensor( 0 ).getNDConf().shape();
 
         // A * B = C // [MxK]*[KxN] = [MxN]

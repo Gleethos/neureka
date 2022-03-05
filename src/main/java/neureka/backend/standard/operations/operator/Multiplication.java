@@ -156,9 +156,9 @@ public class Multiplication extends AbstractOperation
                     .andImplementation(
                         call -> {
                             if ( call.getDerivativeIndex() == 0 )
-                                call.getTensors()[0] = call.tensor( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true );
+                                call.setTensor( 0, call.tensor( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.getTensors()[0] = call.tensor( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true );
+                                call.setTensor( 0, call.tensor( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
                             else
                                 Scalarization.implementationForCPU()
                                     .with(Fun.F64F64ToF64.triple(
@@ -193,9 +193,9 @@ public class Multiplication extends AbstractOperation
                     .execution(
                         call -> {
                             if ( call.getDerivativeIndex() == 0 )
-                                call.getTensors()[0] = call.tensor( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true );
+                                call.setTensor( 0, call.tensor( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.getTensors()[0] = call.tensor( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true );
+                                call.setTensor( 0, call.tensor( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
                             else {
                                 int offset = (call.getTsrOfType(Number.class, 2).isVirtual() || call.getTsrOfType(Number.class, 2).size() == 1) ? 1 : 0;
                                 int gwz = call.getTsrOfType(Number.class, 0).size();

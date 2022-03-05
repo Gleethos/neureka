@@ -52,8 +52,8 @@ public class Randomization extends AbstractOperation
                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
                 .setCallPreparation( call ->
                 {
-                    if ( call.getTensors()[0] == null )
-                        call.getTensors()[0] = call.tensor( 1 );
+                    if ( call.tensor( 0 ) == null )
+                        call.setTensor( 0, call.tensor( 1 ) );
 
                     call.tensor( 0 ).getUnsafe().incrementVersion(call);
 

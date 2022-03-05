@@ -348,10 +348,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                             Arg.DerivIdx.of(i),
                                             Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
                                         )
-                                        .getADAgentFrom(
-                                    function,
-                                    true
-                                )
+                                        .getADAgentFrom( function, true )
                             );
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */

@@ -78,7 +78,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
     ) {
         int offset = ( call.size() == 3 ? 1 : 0 );
         Tsr<?> t0_drn = call.tensor( 0 );
-        Tsr<?> src    = call.getTensors()[offset];
+        Tsr<?> src    = call.tensor( offset );
 
         Class<?> typeClass = call.tensor( 1 ).getValueClass();
 
@@ -151,7 +151,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             };
         }
         if ( t0_drn.getData().getClass() == Object[].class ) {
-            Object value = call.getTensors()[ 1 + offset ].getDataAs(Object[].class)[0];
+            Object value = call.tensor( 1 + offset ).getDataAs(Object[].class)[0];
             Fun.ObjObjToObj operation = functions.get(Fun.ObjObjToObj.class).get(call.getDerivativeIndex());
             Object[] t0_value = t0_drn.getDataAs(Object[].class);
             Object[] t1_value = src.getDataAs(Object[].class);
