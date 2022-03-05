@@ -368,22 +368,21 @@ public class CalcUtil
             final RecursiveExecutor executor
     ) {
         Device<Object> device = call.getDeviceFor(Object.class);
-        Tsr<Object>[] tensors = (Tsr<Object>[]) call.getTensors();
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation type = call.getOperation();
 
-        Consumer<Tsr<Object>>[] rollbacks = new Consumer[ tensors.length ];
-        for ( int i = 0; i < tensors.length; i++ )
-            if ( tensors[ i ] != null && !tensors[ i ].isOutsourced() ) {
+        Consumer<Tsr<?>>[] rollbacks = new Consumer[ call.size() ];
+        for ( int i = 0; i < call.size(); i++ )
+            if ( call.tensor( i ) != null && !call.tensor( i ).isOutsourced() ) {
                 try {
-                    device.store( tensors[ i ] );
+                    device.store( call.tensor( i ) );
                 } catch ( Exception e ) {
                     e.printStackTrace();
                 }
 
                 rollbacks[ i ] = tensor -> {
                                         try {
-                                            device.restore( tensor );
+                                            device.restore( (Tsr<Object>) tensor );
                                         } catch ( Exception e ) {
                                             e.printStackTrace();
                                         }
@@ -404,21 +403,23 @@ public class CalcUtil
                             );
 
         if ( result == null ) {
-            tensors[ 0 ] = (Tsr<Object>) finalExecution.apply(
-                                                ExecutionCall.of( call.getTensors() )
-                                                        .andArgs(call.allMetaArgs())
-                                                        .running(type)
-                                                        .on(device)
-                                                        .setMetaArg(Arg.DerivIdx.of(d))
-                                        );
+            call.setTensor( 0,
+                    finalExecution.apply(
+                        ExecutionCall.of( call.getTensors() )
+                                .andArgs(call.allMetaArgs())
+                                .running(type)
+                                .on(device)
+                                .setMetaArg(Arg.DerivIdx.of(d))
+                    )
+               );
         } else
             return result;
 
-        for ( int i = 0; i < tensors.length; i++ )
-            if ( tensors[ i ] != null && !tensors[ i ].isUndefined() )
-                rollbacks[ i ].accept(tensors[ i ]);
+        for ( int i = 0; i < call.size(); i++ )
+            if ( call.tensor( i ) != null && !call.tensor( i ).isUndefined() )
+                rollbacks[ i ].accept( call.tensor( i ) );
 
-        return tensors[ 0 ];
+        return call.tensor( 0 );
     }
 
     /**

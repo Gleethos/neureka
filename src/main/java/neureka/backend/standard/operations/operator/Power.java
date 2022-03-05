@@ -45,24 +45,23 @@ public class Power extends AbstractOperation
 
         RecursiveExecutor rja = (call, traverse)->
         {
-            Tsr<?>[] tensors = call.getTensors();
             Device<Number> device = call.getDeviceFor(Number.class);
             int d = call.getValOf( Arg.DerivIdx.class );
             Operation type = call.getOperation();
 
             Tsr<?> alternative = null;
-            if ( tensors.length > 3 )
+            if ( call.size() > 3 )
             {
                 if ( d < 0 ) {
-                    Tsr<?>[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};
-                    tensors[ 0 ] = traverse.execute( call.withTensors( reduction ) );
-                    reduction = Utility.offsetted(tensors, 1);
+                    Tsr<?>[] reduction = new Tsr[]{call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 )};
+                    call.setTensor( 0, traverse.execute( call.withTensors( reduction ) ) );
+                    reduction = Utility.offsetted( call.getTensors(), 1 );
                     alternative = traverse.execute( call.withTensors( reduction ) );
-                    tensors[ 0 ] = alternative;
+                    call.setTensor( 0, alternative );
                 } else {
 
-                    Tsr<?>[] reduction = Utility.subset(tensors, 1,  2, tensors.length-2);
-                    reduction[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true );
+                    Tsr<?>[] reduction = Utility.subset(call.getTensors(), 1,  2, call.size()-2);
+                    reduction[ 0 ] = call.tensor( 1 ).clone().getUnsafe().setIsIntermediate( true );
 
                     if ( d==0 ) {
                         Tsr<?> exp = traverse.execute(
@@ -72,13 +71,13 @@ public class Power extends AbstractOperation
                                                             .on(device)
                                             );
 
-                        reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], exp};
-                        tensors[ 0 ] = traverse.execute(
-                                            ExecutionCall.of( reduction )
-                                                            .andArgs( Arg.DerivIdx.of(0) )
-                                                            .running(type)
-                                                            .on( device )
-                                        );
+                        reduction = new Tsr[]{call.tensor( 0 ), call.tensor( 1 ), exp};
+                        call.setTensor( 0, traverse.execute(
+                                                    ExecutionCall.of( reduction )
+                                                                    .andArgs( Arg.DerivIdx.of(0) )
+                                                                    .running(type)
+                                                                    .on( device )
+                                                ));
                         exp.getUnsafe().delete();
                     } else {
                         Tsr<?> inner = traverse.execute(
@@ -88,7 +87,7 @@ public class Power extends AbstractOperation
                                                                 .on(device)
                                         );
 
-                        reduction = new Tsr[]{ tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true ), inner, tensors[d] };
+                        reduction = new Tsr[]{ call.tensor( 1 ).clone().getUnsafe().setIsIntermediate( true ), inner, call.tensor( d ) };
                         Tsr<?> exp = traverse.execute(
                                                 ExecutionCall.of( reduction )
                                                                 .andArgs( Arg.DerivIdx.of(-1) )
@@ -96,7 +95,7 @@ public class Power extends AbstractOperation
                                                                 .on( device )
                                       );
 
-                        reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], exp};
+                        reduction = new Tsr[]{call.tensor( 0 ), call.tensor( 1 ), exp};
                         alternative = traverse.execute(
                                                 ExecutionCall.of( reduction )
                                                             .andArgs(Arg.DerivIdx.of(1))
@@ -104,7 +103,7 @@ public class Power extends AbstractOperation
                                                             .on(device)
                                             );
 
-                        tensors[ 0 ] = alternative;
+                        call.setTensor( 0, alternative );
 
                         inner.getUnsafe().delete();
                         exp.getUnsafe().delete();
