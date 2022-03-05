@@ -53,9 +53,9 @@ public class ConvUtil {
                         assert d >= 0 && d <= 1;
                         assert derivative != null;
                         assert deConv != null;
-                        assert call.size() >= 2 && call.size() <= 3;
+                        assert call.arity() >= 2 && call.arity() <= 3;
                         // Now we need to remember the shape of the input which is targeted for back prop.
-                        int[] shape = call.input( call.size() > 2 ? d + 1 : d ).getNDConf().shape();
+                        int[] shape = call.input( call.arity() > 2 ? d + 1 : d ).getNDConf().shape();
                         // This is because it will be the shape of the output to the de-convolution!
                         return ADAgent.of( derivative )
                                 .setForward( null )

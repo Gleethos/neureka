@@ -154,7 +154,7 @@ public class Addition extends AbstractOperation {
                     .withArity(3)
                     .andImplementation(
                         call -> {
-                            assert call.size() == 3;
+                            assert call.arity() == 3;
                             if ( call.getDerivativeIndex() == 0 )
                                 call.setInput( 0, Tsr.of( call.input( 1 ).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
                             else if ( call.getDerivativeIndex() == 1 )
@@ -193,7 +193,7 @@ public class Addition extends AbstractOperation {
                     .kernelPostfix( this.getFunction() )
                     .execution(
                         call -> {
-                            assert call.size() == 3;
+                            assert call.arity() == 3;
                             if ( call.getDerivativeIndex() == 0 )
                                 call.setInput( 0, Tsr.of( call.input(1).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
                             else if ( call.getDerivativeIndex() == 1 )

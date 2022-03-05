@@ -111,20 +111,15 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     public int getJ() { return this.getValOf( Arg.VarIdx.class ); }
 
     public ExecutionCall<D> withTensors( Tsr<?>... tensors ) {
-        return _tensors == tensors
-                ? this
-                : new ExecutionCall<>(
-                        _device, _operation,
-                        tensors, _algorithm, _arguments.getAll(Arg.class)
-                    );
+        return new ExecutionCall<>(
+                   _device, _operation, tensors, _algorithm, _arguments.getAll(Arg.class)
+               );
     }
 
     public ExecutionCall<D> withArgs( Arg<?>... args ) {
         List<Arg> old = _arguments.getAll(Arg.class);
         old.addAll(Arrays.stream(args).collect(Collectors.toList()));
-        return new ExecutionCall<>(
-                    _device, _operation, _tensors, _algorithm, old
-                );
+        return new ExecutionCall<>( _device, _operation, _tensors, _algorithm, old );
     }
 
 
@@ -144,13 +139,16 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      * @return The {@link Algorithm} suitable for this {@link ExecutionCall}.
      */
     public Algorithm<?> getAlgorithm() {
-        if ( _algorithm != null ) return _algorithm;
-        else _algorithm = _operation.getAlgorithmFor( this );
-        if ( _algorithm == null ) {
+        if ( _algorithm != null )
+            return _algorithm;
+        else
+            _algorithm = _operation.getAlgorithmFor( this );
+
+        if ( _algorithm == null )
             _LOG.error(
                 "No suitable '"+Algorithm.class.getSimpleName()+"' implementation found for this '"+this+"'!"
             );
-        }
+
         return _algorithm;
     }
 
@@ -188,9 +186,9 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     public String toString()
     {
         String algorithmString = "?";
-        if ( _algorithm != null ) {
+        if ( _algorithm != null )
             algorithmString = _algorithm.toString();
-        }
+
         return this.getClass().getSimpleName()+"[" +
                 "device="          + _device + "," +
                 "derivativeIndex=" + getValOf( Arg.DerivIdx.class ) + "," +

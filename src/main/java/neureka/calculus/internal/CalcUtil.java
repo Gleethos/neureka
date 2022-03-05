@@ -73,7 +73,7 @@ public class CalcUtil
 
         Tsr<?>[] tensors =
                     operation.isIndexer()
-                        ? new Tsr[ 1 + call.size() ]
+                        ? new Tsr[ 1 + call.arity() ]
                         : new Tsr[ 1 + nodes.length  ];
 
         if ( operation.isIndexer() )
@@ -166,7 +166,7 @@ public class CalcUtil
                     assert d >= 0;
 
                     Tsr<?>[] tensors;
-                    if ( operation.isIndexer() ) tensors = new Tsr[ 1 + call.size() ];
+                    if ( operation.isIndexer() ) tensors = new Tsr[ 1 + call.arity() ];
                     else tensors = new Tsr[ 1 + nodes.length ];
 
                     // Chain-rule (forward AutoDiff):
@@ -367,8 +367,8 @@ public class CalcUtil
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation type = call.getOperation();
 
-        Consumer<Tsr<?>>[] rollbacks = new Consumer[ call.size() ];
-        for ( int i = 0; i < call.size(); i++ )
+        Consumer<Tsr<?>>[] rollbacks = new Consumer[ call.arity() ];
+        for (int i = 0; i < call.arity(); i++ )
             if ( call.input( i ) != null && !call.input( i ).isOutsourced() ) {
                 try {
                     device.store( call.input( i ) );
@@ -411,7 +411,7 @@ public class CalcUtil
         } else
             return result;
 
-        for ( int i = 0; i < call.size(); i++ )
+        for (int i = 0; i < call.arity(); i++ )
             if ( call.input( i ) != null && !call.input( i ).isUndefined() )
                 rollbacks[ i ].accept( call.input( i ) );
 

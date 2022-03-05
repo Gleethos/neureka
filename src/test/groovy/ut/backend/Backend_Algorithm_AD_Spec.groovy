@@ -157,7 +157,7 @@ class Backend_Algorithm_AD_Spec extends Specification
                             )
         then :
             (0.._) * call.inputs() >> [Tsr.of(1), Tsr.of(2)]
-            (1.._) * call.size() >> 2
+            (1.._) * call.arity() >> 2
             (1.._) * call.input(_) >> Tsr.of(1)
 
         then : 'No exception is being thrown and the agent is configured to perform backward-AD.'

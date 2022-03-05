@@ -76,7 +76,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
         ExecutionCall<CPU> call,
         Functions<Fun> functions
     ) {
-        int offset = ( call.size() == 3 ? 1 : 0 );
+        int offset = ( call.arity() == 3 ? 1 : 0 );
         Tsr<?> t0_drn = call.input( 0 );
         Tsr<?> src    = call.input( offset );
 

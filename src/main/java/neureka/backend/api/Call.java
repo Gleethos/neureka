@@ -20,7 +20,8 @@ import java.util.stream.Collectors;
  *
  * @param <D> The type parameter which defines the {@link Device} targeted by this {@link Call}.
  */
-public class Call<D> {
+public class Call<D>
+{
 
     public static <V, T extends Device<V>> Call.Builder<V,T> to( T device ) { return new Builder<V,T>( device ); }
 
@@ -48,6 +49,9 @@ public class Call<D> {
         for ( Arg<?> arg : arguments ) _arguments.set(arg);
     }
 
+    /**
+     * @return The device targeted by this call for execution.
+     */
     public D getDevice() { return _device; }
 
     /**
@@ -55,7 +59,10 @@ public class Call<D> {
      */
     public Tsr<?>[] inputs() { return _tensors.clone(); }
 
-    public int size() { return _tensors.length; }
+    /**
+     * @return The number of input tensors.
+     */
+    public int arity() { return _tensors.length; }
 
     public void setInput( int i, Tsr<?> t ) {
         _tensors[ i ] = t;
@@ -189,7 +196,7 @@ public class Call<D> {
         }
 
         public Validator last( TensorCondition condition ) {
-            if ( _isValid && !condition.check( input( size() - 1 ) ) ) _isValid = false;
+            if ( _isValid && !condition.check( input( arity() - 1 ) ) ) _isValid = false;
             return this;
         }
 

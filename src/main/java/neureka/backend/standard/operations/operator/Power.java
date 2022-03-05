@@ -49,18 +49,18 @@ public class Power extends AbstractOperation
             int d = call.getValOf( Arg.DerivIdx.class );
             Operation type = call.getOperation();
 
-            Tsr<?> alternative = null;
-            if ( call.size() > 3 )
+            Tsr<?> result = null;
+            if ( call.arity() > 3 )
             {
                 if ( d < 0 ) {
                     Tsr<?>[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};
                     call.setInput( 0, traverse.execute( call.withTensors( reduction ) ) );
                     reduction = Utility.offsetted( call.inputs(), 1 );
-                    alternative = traverse.execute( call.withTensors( reduction ) );
-                    call.setInput( 0, alternative );
+                    result = traverse.execute( call.withTensors( reduction ) );
+                    call.setInput( 0, result );
                 } else {
 
-                    Tsr<?>[] reduction = Utility.subset(call.inputs(), 1,  2, call.size()-2);
+                    Tsr<?>[] reduction = Utility.subset(call.inputs(), 1,  2, call.arity()-2);
                     reduction[ 0 ] = call.input( 1 ).clone().getUnsafe().setIsIntermediate( true );
 
                     if ( d==0 ) {
@@ -96,21 +96,21 @@ public class Power extends AbstractOperation
                                       );
 
                         reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), exp};
-                        alternative = traverse.execute(
+                        result = traverse.execute(
                                                 ExecutionCall.of( reduction )
                                                             .andArgs(Arg.DerivIdx.of(1))
                                                             .running(type)
                                                             .on(device)
                                             );
 
-                        call.setInput( 0, alternative );
+                        call.setInput( 0, result );
 
                         inner.getUnsafe().delete();
                         exp.getUnsafe().delete();
                     }
                 }
             }
-            return alternative;
+            return result;
         };
 
         Operator operator = new Operator( rja )

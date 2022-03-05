@@ -29,28 +29,28 @@ public class JunctionUtil
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation operation = call.getOperation();
 
-        Tsr<?> alternative = null;
-        if ( call.size() > 3 ) {
+        Tsr<?> result = null;
+        if ( call.arity() > 3 ) {
             if ( d < 0 ) {
                 Tsr<?>[] reduction = new Tsr[]{ call.input( 0 ), call.input( 1 ), call.input( 2 ) };
-                alternative = recursiveExecutor.execute(
+                result = recursiveExecutor.execute(
                                     ExecutionCall.of( reduction )
                                                     .andArgs( Arg.DerivIdx.of(d) )
                                                     .running( operation )
                                                     .on(device)
                                 );
-                call.setInput( 0, alternative );
+                call.setInput( 0, result );
 
                 reduction = Operation.Utility.offsetted(call.inputs(), 1);
-                alternative = recursiveExecutor.execute(
+                result = recursiveExecutor.execute(
                                     ExecutionCall.of( reduction )
                                                     .andArgs(Arg.DerivIdx.of(d))
                                                     .running(operation)
                                                     .on(device)
                                 );
-                call.setInput( 0, alternative );
+                call.setInput( 0, result );
             }
-            return alternative;
+            return result;
         } else {
             if ( call.getOperation().getOperator().equals("x") ) {
                 if ( d >= 0 ) {
@@ -75,36 +75,36 @@ public class JunctionUtil
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation type = call.getOperation();
 
-        Tsr<?> alternative = null;
-        if ( call.size() > 3 ) {
+        Tsr<?> result = null;
+        if ( call.arity() > 3 ) {
             if ( d < 0 ) {
                 Tsr<?>[] reduction = new Tsr[]{ call.input( 0 ), call.input( 1 ), call.input( 2 ) };
-                alternative = recursiveExecutor.execute(
+                result = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                                 );
-                call.setInput( 0, alternative );
+                call.setInput( 0, result );
 
                 reduction = Operation.Utility.offsetted(call.inputs(), 1);
-                alternative = recursiveExecutor.execute(
+                result = recursiveExecutor.execute(
                         ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                 );
-                call.setInput( 0, alternative );
+                call.setInput( 0, result );
             } else {
                 Tsr<?>[] reduction = Operation.Utility.without(call.inputs(), 1+d);
                 if ( reduction.length > 2 ) {
                     reduction[ 0 ] = ( reduction[ 0 ] == null ) ? call.input( 1 ).clone().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];
-                    alternative = recursiveExecutor.execute(
+                    result = recursiveExecutor.execute(
                             ExecutionCall.of( reduction )
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
                                             .running( Neureka.get().backend().getOperation("*") )
                                             .on( device )
                     );
-                    call.setInput( 0, alternative );
+                    call.setInput( 0, result );
                 }
                 else
                     call.setInput( 0, reduction[ 1 ] );
             }
-            return alternative;
+            return result;
         } 
         else
             return null;
@@ -119,57 +119,57 @@ public class JunctionUtil
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
 
-        Tsr<?> alternative = null;
-        if ( call.size() > 3 )
+        Tsr<?> result = null;
+        if ( call.arity() > 3 )
         {
             if ( d < 0 ) {
                 Tsr<?>[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};
-                alternative = recursiveExecutor.execute( call.withTensors( reduction ) );
-                call.setInput( 0, alternative );
+                result = recursiveExecutor.execute( call.withTensors( reduction ) );
+                call.setInput( 0, result );
 
                 reduction = Operation.Utility.offsetted(call.inputs(), 1);
-                alternative = recursiveExecutor.execute(
+                result = recursiveExecutor.execute(
                                     call.withTensors(reduction)
                             );
-                call.setInput( 0, alternative );
+                call.setInput( 0, result );
             } else {
                 Tsr<?> a;
                 if ( d > 1 ) {
                     Tsr<?>[] reduction = Operation.Utility.subset(call.inputs(), 1, 1, d+1);
                     reduction[ 0 ] = call.input( 1 ).clone().getUnsafe().setIsIntermediate( true );
-                    alternative = recursiveExecutor.execute(
+                    result = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction )
                                                         .andArgs(Arg.DerivIdx.of(-1))
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
                     );
-                    a = alternative;
+                    a = result;
                 }
                 else if ( d == 1 ) a = call.input( 1 );
-                else a = newTsrLike( (Tsr<Number>) call.input( 1 ), 1.0 );
+                else a = newTsrLike( call.input( 1 ), 1.0 );
                 Tsr<?> b;
-                if ( call.size() -  d - 2  > 1 ) {
-                    Tsr<?>[] reduction = Operation.Utility.subset( call.inputs(), 2, d+2, call.size()-(d+2) );
-                    reduction[ 1 ] = newTsrLike( (Tsr<Number>) call.input( 1 ), 1.0 );
+                if ( call.arity() -  d - 2  > 1 ) {
+                    Tsr<?>[] reduction = Operation.Utility.subset( call.inputs(), 2, d+2, call.arity()-(d+2) );
+                    reduction[ 1 ] = newTsrLike( call.input( 1 ), 1.0 );
                     reduction[ 0 ] = reduction[ 1 ];
-                    alternative = recursiveExecutor.execute(
+                    result = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction )
                                                         .andArgs(Arg.DerivIdx.of(-1))
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
                                 );
-                    b = alternative;
+                    b = result;
                 }
-                else b = newTsrLike( (Tsr<Number>) call.input( 1 ), 1.0 );
+                else b = newTsrLike( call.input( 1 ), 1.0 );
 
-                alternative = recursiveExecutor.execute(
+                result = recursiveExecutor.execute(
                                         ExecutionCall.of( call.input( 0 ), a, b )
                                                         .andArgs( Arg.DerivIdx.of( -1 ) )
                                                         .running( Neureka.get().backend().getOperation("*") )
                                                         .on( device )
                                 );
-                alternative = recursiveExecutor.execute(
-                                        ExecutionCall.of( alternative, call.input( 0 ), call.input( d + 1 ) )
+                result = recursiveExecutor.execute(
+                                        ExecutionCall.of( result, call.input( 0 ), call.input( d + 1 ) )
                                                         .andArgs(Arg.DerivIdx.of(1))
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
@@ -178,7 +178,7 @@ public class JunctionUtil
                 b.getUnsafe().delete();
             }
         }
-        return alternative;
+        return result;
     }
 
     @Contract( pure = true )
@@ -207,26 +207,26 @@ public class JunctionUtil
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation operation = call.getOperation();
 
-        Tsr<?> alternative = null;
-        if ( call.size() > 3 ) {
+        Tsr<?> result = null;
+        if ( call.arity() > 3 ) {
             if ( d < 0 ) {
                 Tsr<?>[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};
-                alternative = recursiveExecutor.execute(
+                result = recursiveExecutor.execute(
                                     ExecutionCall.of( reduction )
                                                     .andArgs(Arg.DerivIdx.of(d))
                                                     .running(operation)
                                                     .on(device)
                             );
-                call.setInput( 0, alternative );
+                call.setInput( 0, result );
 
                 reduction = Operation.Utility.offsetted(call.inputs(), 1);
-                alternative = recursiveExecutor.execute(
+                result = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction )
                                                         .andArgs(Arg.DerivIdx.of(d))
                                                         .running(operation)
                                                         .on(device)
                                 );
-                call.setInput( 0, alternative );
+                call.setInput( 0, result );
             }
             else
                 call.setInput( 0,
@@ -236,7 +236,7 @@ public class JunctionUtil
                            .setValue( d == 0 || thisIsForAddition ? 1f : -1f )
                     );
         }
-        return alternative;
+        return result;
     }
 
 
@@ -249,7 +249,7 @@ public class JunctionUtil
         t.setIsVirtual( false );
         t.setValue( value );
         try {
-            if ( template.isOutsourced() ) ( (Device<Object>) template.get( Device.class ) ).store( t );
+            if ( template.isOutsourced() ) template.get( Device.class ).store( t );
         } catch ( Exception exception ) {
             _LOG.error( "Failed storing a newly created tensor from a template tensor to its host device.", exception );
             throw exception;

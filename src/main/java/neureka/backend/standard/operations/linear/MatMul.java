@@ -177,7 +177,7 @@ public class MatMul extends AbstractOperation
      * @param call The execution call whose tensors ought to be cloned based on the complexity of their access patterns.
      */
     private static void _autoClone( ExecutionCall<?> call ) {
-        for ( int i = 0; i < call.size(); i++ ) {
+        for (int i = 0; i < call.arity(); i++ ) {
             if (
                     !_isSimpleRowMajorMatrix( call.input( i ) )
                             &&

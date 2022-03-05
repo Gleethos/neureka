@@ -42,7 +42,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                                 )
                                                 .build(
                                                         type,
-                                                        call.size() - 1,
+                                                        call.arity() - 1,
                                                         false
                                                 );
 
@@ -56,7 +56,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                                         .get();
                             if ( allNumeric )
                             {
-                                double[] inputs = new double[ call.size()-1 ];
+                                double[] inputs = new double[ call.arity()-1 ];
                                 call.getDevice()
                                     .getExecutor()
                                     .threaded(
@@ -80,7 +80,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                         ( start, end ) -> {
                                             for ( int i = start; i < end; i++ ) {
                                                 StringBuilder b = new StringBuilder();
-                                                for ( int ii = 1; ii < call.size(); ii++ ) {
+                                                for (int ii = 1; ii < call.arity(); ii++ ) {
                                                     b.append(call.getTsrOfType( Object.class, ii ).getValueAt(i));
                                                 }
                                                 setAt( call.getTsrOfType( Object.class, 0 ), i, b.toString() );
@@ -179,7 +179,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
             .threaded(
                     call.getTsrOfType( Object.class, 0 ).size(),
                     ( start, end ) -> {
-                        Object[] inputs = new Object[ call.size() - 1 ];
+                        Object[] inputs = new Object[ call.arity() - 1 ];
                         for ( int i = start; i < end; i++ ) {
                             for ( int ii = 0; ii < inputs.length; ii++ ) {
                                 inputs[ ii ] = call.getTsrOfType( Object.class, 1 + ii ).getValueAt(i);
