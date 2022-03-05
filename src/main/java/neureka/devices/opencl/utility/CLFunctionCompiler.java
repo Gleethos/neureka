@@ -83,13 +83,12 @@ public class CLFunctionCompiler {
                                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
                                 .setCallPreparation(
                                         call -> {
-                                            Tsr<?>[] args = call.getTensors();
-                                            if ( args[0] == null ) // Creating a new tensor:
+                                            if ( call.tensor( 0 ) == null ) // Creating a new tensor:
                                             {
-                                                Tsr<Double> output = Tsr.of(args[1].getNDConf().shape(), 0.0);
+                                                Tsr<Double> output = Tsr.of(call.tensor(1).getNDConf().shape(), 0.0);
                                                 output.setIsVirtual( false );
                                                 call.getDeviceFor(Double.class).store(output);
-                                                args[0] = output;
+                                                call.setTensor( 0, output );
                                             }
                                             return call;
                                         }
