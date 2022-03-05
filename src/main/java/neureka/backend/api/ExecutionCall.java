@@ -106,7 +106,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     }
 
     public static <D extends Device<?>> Builder<D> of( Tsr<?>... tensors ) {
-        return new Builder<D>(tensors);
+        return new Builder<D>(tensors.clone());
     }
 
     /**
