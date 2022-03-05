@@ -156,7 +156,9 @@ class Backend_Algorithm_AD_Spec extends Specification
                                 false
                             )
         then :
-            (1.._) * call.getTensors() >> [Tsr.of(1), Tsr.of(2)]
+            (0.._) * call.getTensors() >> [Tsr.of(1), Tsr.of(2)]
+            (1.._) * call.size() >> 2
+            (1.._) * call.tensor(_) >> Tsr.of(1)
 
         then : 'No exception is being thrown and the agent is configured to perform backward-AD.'
             //!agent.isForward() //TODO: Fix this

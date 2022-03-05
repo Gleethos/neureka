@@ -104,11 +104,10 @@ public final class Identity extends AbstractOperation
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
             .setCallPreparation(
                 call -> {
-                    Tsr<?>[] tsrs = call.getTensors();
                     Device device = call.getDevice();
-                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:
+                    if ( call.tensor( 0 ) == null ) // Creating a new tensor:
                     {
-                        int[] shp = tsrs[ 1 ].getNDConf().shape();
+                        int[] shp = call.tensor( 1 ).getNDConf().shape();
                         Tsr<?> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                         output.setIsVirtual( false );
                         try {
@@ -116,7 +115,7 @@ public final class Identity extends AbstractOperation
                         } catch( Exception e ) {
                             e.printStackTrace();
                         }
-                        tsrs[ 0 ] = output;
+                        call.setTensor( 0, output );
                     }
                     return call;
                 }

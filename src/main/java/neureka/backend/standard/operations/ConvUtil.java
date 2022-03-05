@@ -43,20 +43,19 @@ public class ConvUtil {
                         if ( forward )
                             throw new IllegalArgumentException("Convolution does not support forward-AD!");
 
-                        Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
 
                         Function deConv = new FunctionBuilder( Neureka.get().backend() ).build(
                                 "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
                                 false
                         );
-                        Tsr<?> derivative = f.derive( inputs, d );
+                        Tsr<?> derivative = f.derive( (Tsr[]) call.getTensors(), d );
                         assert d >= 0 && d <= 1;
                         assert derivative != null;
                         assert deConv != null;
-                        assert inputs.length >= 2 && inputs.length <= 3;
+                        assert call.size() >= 2 && call.size() <= 3;
                         // Now we need to remember the shape of the input which is targeted for back prop.
-                        int[] shape = inputs[ inputs.length > 2 ? d + 1 : d ].getNDConf().shape();
+                        int[] shape = call.tensor( call.size() > 2 ? d + 1 : d ).getNDConf().shape();
                         // This is because it will be the shape of the output to the de-convolution!
                         return ADAgent.of( derivative )
                                 .setForward( null )
@@ -75,12 +74,11 @@ public class ConvUtil {
                         if ( !caller.isFlat() ) return CalcUtil.defaultRecursiveExecution( caller, call );
                         if ( call.getOperation().getOperator().equals("x") ) {
 
-                            Tsr<?>[] inputs = call.getTensors();
-                            Tsr<?>[] tensors = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
+                            Tsr<?>[] tensors = new Tsr[]{null, call.tensor( 0 ), call.tensor( 1 )};
                             tensors[ 0 ] =
                                 (call.getValOf( Arg.DerivIdx.class ) < 0)
                                     ? Tsr.of(
-                                            inputs[0].getValueClass(),
+                                        call.tensor(0).getValueClass(),
                                             _shpOfCon(tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape()),
                                             0
                                         )
@@ -116,11 +114,10 @@ public class ConvUtil {
                 )
                 .setCallPreparation(
                      call -> {
-                         Tsr<?>[] tensors = call.getTensors();
                          Device<Number> device = call.getDeviceFor(Number.class);
-                         if ( tensors[ 0 ] == null ) // Creating a new tensor:
+                         if ( call.tensor( 0 ) == null ) // Creating a new tensor:
                          {
-                             int[] shp = _shpOfCon(tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape());
+                             int[] shp = _shpOfCon(call.tensor( 1 ).getNDConf().shape(), call.tensor( 2 ).getNDConf().shape());
                              Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                              output.setIsVirtual( false );
                              try {
@@ -128,7 +125,7 @@ public class ConvUtil {
                              } catch ( Exception e ) {
                                  e.printStackTrace();
                              }
-                             tensors[ 0 ] = output;
+                             call.setTensor( 0, output );
                          }
                          return call;
                      }
