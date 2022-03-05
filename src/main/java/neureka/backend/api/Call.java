@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 /**
  *  Instances of this class model simple execution calls to the backend.
  *  They can be passed to {@link neureka.calculus.Function} instances in order to get full
- *  control over the execution of the provided parameters.
+ *  control over the execution via the use of call {@link Args}.
  *  This class is the precursor class of {@link ExecutionCall} which is a more complete
- *  execution state bundle used in the backend implementations.
+ *  execution state bundle used inside the backend.
  *
  * @param <D> The type parameter which defines the {@link Device} targeted by this {@link Call}.
  */

@@ -98,6 +98,7 @@ public interface Function
     }
 
     //------------------------------------------------------------------------------------------------------------------
+    // Instance methods:
 
     /**
      *  Only branch {@link Function}s can do autograd / 'Auto-Differentiation', meaning functions
@@ -130,8 +131,14 @@ public interface Function
      */
     Function getDerivative( int index );
 
+    /**
+     * @return The child {@link Function} nodes of this {@link Function} AST.
+     */
     List<Function> getSubFunctions();
 
+    /**
+     * @return A list of all {@link Function} nodes within the abstract syntax tree defined by this.
+     */
     default List<Function> getAllFunctions() {
         List<Function> allFuns = new ArrayList<>();
         allFuns.add(this);
@@ -197,23 +204,6 @@ public interface Function
         Arg<?>[] argArray = new Arg[args.size()];
         for ( int i = 0; i < argArray.length; i++ ) argArray[i] = args.get(i);
         return callWith(argArray).execute(call.inputs());
-    }
-
-    /**
-     *  An API for calling a {@link Function} after having specified
-     *  a set of {@link Arg} instances through the {@link #callWith(Args)}
-     *  method.
-     */
-    interface CallOptions {
-        <T> Tsr<T> call( Tsr<T>... tensors );
-        <T> Tsr<T> invoke( Tsr<T>... tensors );
-        /**
-         *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
-         *
-         * @param tensors The tensors which should be sent through this function.
-         * @return The result from the execution of the provided tensors.
-         */
-        Tsr<?> execute( Tsr<?>... tensors );
     }
 
     /**
@@ -339,6 +329,24 @@ public interface Function
     //---
 
     String toString();
+
+
+    /**
+     *  An API for calling a {@link Function} after having specified
+     *  a set of {@link Arg} instances through the {@link #callWith(Args)}
+     *  method.
+     */
+    interface CallOptions {
+        <T> Tsr<T> call( Tsr<T>... tensors );
+        <T> Tsr<T> invoke( Tsr<T>... tensors );
+        /**
+         *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+         *
+         * @param tensors The tensors which should be sent through this function.
+         * @return The result from the execution of the provided tensors.
+         */
+        Tsr<?> execute( Tsr<?>... tensors );
+    }
 
 
 }
