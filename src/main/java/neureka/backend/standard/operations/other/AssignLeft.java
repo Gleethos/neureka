@@ -108,12 +108,10 @@ public class AssignLeft extends AbstractOperation
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
             .setCallPreparation(
-                call ->
-                {
-                    Tsr<?>[] tensors = call.getTensors();
-                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
-                    call.getTensors()[ offset ].getUnsafe().incrementVersion(call);
-                    return ExecutionCall.of(tensors[offset], tensors[1+offset])
+                call -> {
+                    int offset = ( call.tensor( 0 ) == null ) ? 1 : 0;
+                    call.tensor( offset ).getUnsafe().incrementVersion(call);
+                    return ExecutionCall.of( call.tensor(offset), call.tensor(1+offset) )
                                         .andArgs(Arg.DerivIdx.of(-1))
                                         .running(Neureka.get().backend().getOperation("idy"))
                                         .on( call.getDevice() );
