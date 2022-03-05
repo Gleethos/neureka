@@ -53,7 +53,7 @@ public class Call<D> {
     /**
      * @return The {@link Tsr} parameters of this {@link Call} for execution.
      */
-    public Tsr<?>[] getTensors() { return _tensors; }
+    public Tsr<?>[] getTensors() { return _tensors.clone(); }
 
     public int size() { return _tensors.length; }
 
