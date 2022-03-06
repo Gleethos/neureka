@@ -52,7 +52,7 @@ public class DimFit extends AbstractOperation
                             .setExecutionDispatcher(
                                     ( caller, call ) ->
                                     {
-                                        Tsr<?>[] inputs = CalcUtil.srcActivation(call.inputs(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
+                                        Tsr<?>[] inputs = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                                         assert call.getValOf( Arg.DerivIdx.class ) < 0;
 
                                         int largest = -1;

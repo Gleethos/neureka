@@ -68,7 +68,7 @@ public class CalcUtil
             final RecursiveExecutor executor
     ) {
         Device<?> device = call.getDevice();
-        int j = call.getJ();
+        int j = call.getValOf( Arg.VarIdx.class );
         assert call.getValOf( Arg.DerivIdx.class ) == -1;
 
         Tsr<?>[] tensors =
@@ -162,7 +162,7 @@ public class CalcUtil
                 MemUtil.keep( call.inputs(), () -> {
                     Device<?> device = call.getDevice();
                     int d = call.getValOf( Arg.DerivIdx.class );
-                    int j = call.getJ();
+                    int j = call.getValOf( Arg.VarIdx.class );
                     assert d >= 0;
 
                     Tsr<?>[] tensors;

@@ -126,8 +126,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      */
     public Operation getOperation() { return _operation; }
 
-    public int getJ() { return this.getValOf( Arg.VarIdx.class ); }
-
     /**
      *  Use this to produce a clone with a new array of input tensors.
      *
@@ -213,9 +211,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      * @param i The index targeting the position where the provided tensor should be placed.
      * @param t The {@link Tsr} which ought to be placed at position {@code i}.
      */
-    public void setInput( int i, Tsr<?> t ) {
-        _tensors[ i ] = t;
-    }
+    public void setInput( int i, Tsr<?> t ) { _tensors[ i ] = t; }
 
 
     @Override
@@ -230,7 +226,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
                 "derivativeIndex=" + getValOf( Arg.DerivIdx.class ) + "," +
                 "operation="       + _operation + "," +
                 "tensors="         + "[.." + _tensors.length + "..]," +
-                "j="               + getJ() + ", " +
+                "j="               + getValOf( Arg.VarIdx.class ) + ", " +
                 "algorithm="       + algorithmString + "," +
                 "context="         + _arguments.getAll(Arg.class) +
                 "]";
