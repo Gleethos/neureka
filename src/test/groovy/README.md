@@ -27,7 +27,7 @@ or simply does not make sense for a given reason. <br>
 ## Tests are living / executable documentation ##
 
 This testsuite ought to be viewed as documentation first and foremost!<br>
-If specifications and tests shall be added or changed then one should <br>
+If you want to add or change specifications and tests then please <br>
 keep this in mind and write them as if they are being read as such. <br>
 
 Specifications will automatically be turned into nice html reports located at "docs/spock/reports" <br>
