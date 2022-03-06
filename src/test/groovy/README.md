@@ -30,13 +30,7 @@ This testsuite ought to be viewed as documentation first and foremost!<br>
 If specifications and tests shall be added or changed then one should <br>
 keep this in mind and write them as if they are being read as such. <br>
 
-Unfortunately Neureka has not enjoyed this development philosophy from the beginning on.
-Therefore, many test cases are merely quick imports of former JUnit tests from <br>
-before the migration to the Spock-Framework. <br>
-
-Nevertheless, many Specifications can be read and understood very well. <br>
-
-They are also represented as automatically generated reports located at "docs/spock/reports" <br>
-which can even be accessed via github pages at "https://gleethos.github.io/neureka/spock/reports/index.html" <br>
+Specifications will automatically be turned into nice html reports located at "docs/spock/reports" <br>
+which can even be accessed via [github pages](https://gleethos.github.io/neureka/spock/reports/index.html). <br>
 
 
