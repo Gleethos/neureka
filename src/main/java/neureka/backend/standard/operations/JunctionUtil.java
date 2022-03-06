@@ -124,12 +124,12 @@ public class JunctionUtil
         {
             if ( d < 0 ) {
                 Tsr<?>[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};
-                result = recursiveExecutor.execute( call.withTensors( reduction ) );
+                result = recursiveExecutor.execute( call.withInputs( reduction ) );
                 call.setInput( 0, result );
 
                 reduction = Operation.Utility.offsetted(call.inputs(), 1);
                 result = recursiveExecutor.execute(
-                                    call.withTensors(reduction)
+                                    call.withInputs(reduction)
                             );
                 call.setInput( 0, result );
             } else {

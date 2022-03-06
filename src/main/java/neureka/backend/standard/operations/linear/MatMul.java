@@ -78,7 +78,7 @@ public class MatMul extends AbstractOperation
 
                                     Tsr<?>[] tensors = CalcUtil.srcActivation(call.inputs(), call.getJ(), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
                                     for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                                    ExecutionCall<Device<Object>> preparedCall = _prepare( call.withTensors(tensors) );
+                                    ExecutionCall<Device<Object>> preparedCall = _prepare( call.withInputs(tensors) );
                                     return MatMul.this.simpleMatMulAlgorithm
                                                         .getImplementationFor(call.getDeviceFor(Object.class))
                                                         .runAndGetFirstTensor(preparedCall);

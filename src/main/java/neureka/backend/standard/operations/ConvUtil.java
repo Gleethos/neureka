@@ -87,7 +87,7 @@ public class ConvUtil {
                                     : null;
 
                             for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                            tensors[ 0 ] = CalcUtil.recursiveExecution( call.withTensors(tensors), JunctionUtil::forConvolution );
+                            tensors[ 0 ] = CalcUtil.recursiveExecution( call.withInputs(tensors), JunctionUtil::forConvolution );
                             if (tensors[ 0 ] == null)
                                 throw new IllegalStateException("Failed to execute convolution!");
                             return tensors[ 0 ];

@@ -54,9 +54,9 @@ public class Power extends AbstractOperation
             {
                 if ( d < 0 ) {
                     Tsr<?>[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};
-                    call.setInput( 0, traverse.execute( call.withTensors( reduction ) ) );
+                    call.setInput( 0, traverse.execute( call.withInputs( reduction ) ) );
                     reduction = Utility.offsetted( call.inputs(), 1 );
-                    result = traverse.execute( call.withTensors( reduction ) );
+                    result = traverse.execute( call.withInputs( reduction ) );
                     call.setInput( 0, result );
                 } else {
 

@@ -128,12 +128,24 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
 
     public int getJ() { return this.getValOf( Arg.VarIdx.class ); }
 
-    public ExecutionCall<D> withTensors( Tsr<?>... tensors ) {
+    /**
+     *  Use this to produce a clone with a new array of input tensors.
+     *
+     * @param inputs The new array of input tensors for the new {@link ExecutionCall} returned by this.
+     * @return A new {@link ExecutionCall} instance with the provided array of input tensors.
+     */
+    public ExecutionCall<D> withInputs( Tsr<?>... inputs ) {
         return new ExecutionCall<>(
-                   _device, _operation, tensors, _algorithm, _arguments.getAll(Arg.class)
+                   _device, _operation, inputs, _algorithm, _arguments.getAll(Arg.class)
                );
     }
 
+    /**
+     *  Use this to produce a clone with a new set of meta arguments.
+     *
+     * @param args The new set of meta args for the new {@link ExecutionCall} returned by this.
+     * @return A new {@link ExecutionCall} instance with the provided set of meta arguments.
+     */
     public ExecutionCall<D> withArgs( Arg<?>... args ) {
         List<Arg> old = _arguments.getAll(Arg.class);
         old.addAll(Arrays.stream(args).collect(Collectors.toList()));
