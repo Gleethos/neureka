@@ -71,8 +71,7 @@ public abstract class Arg<T> implements Component<Args> {
 
     @Override
     public String toString() {
-        if ( _value == null ) return "null";
-        else return _value.toString();
+        return this.getClass().getSimpleName() + "[" + _value + "]";
     }
 
 }

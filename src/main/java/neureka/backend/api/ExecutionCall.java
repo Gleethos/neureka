@@ -95,6 +95,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      */
     private Algorithm<?> _algorithm;
 
+
     private ExecutionCall(
             D device,
             Operation operation,
@@ -222,13 +223,11 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
             algorithmString = _algorithm.toString();
 
         return this.getClass().getSimpleName()+"[" +
-                "device="          + _device + "," +
-                "derivativeIndex=" + getValOf( Arg.DerivIdx.class ) + "," +
-                "operation="       + _operation + "," +
-                "tensors="         + "[.." + _tensors.length + "..]," +
-                "j="               + getValOf( Arg.VarIdx.class ) + ", " +
-                "algorithm="       + algorithmString + "," +
-                "context="         + _arguments.getAll(Arg.class) +
+                    "inputs="         + "[.." + _tensors.length + "..]," +
+                    "device="          + _device + "," +
+                    "operation="       + _operation + "," +
+                    "algorithm="       + algorithmString + "," +
+                    "arguments=["         + _arguments.getAll(Arg.class).stream().map( a -> a.toString() ).collect(Collectors.joining(",")) + "]" +
                 "]";
     }
 
