@@ -59,7 +59,7 @@ import java.util.function.Consumer;
 public class Relation<ValType> implements Component<Tsr<ValType>>
 {
     /**
-     *  If the the tensor to which this Relation is a component
+     *  If the tensor owning this {@link Relation} component
      *  is in fact a slice, then the following field will reference
      *  the tensor from which the slice has been created. <br>
      *  This "parent" tensor is referenced strongly so that the
