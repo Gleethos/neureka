@@ -152,12 +152,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return new ExecutionCall<>( _device, _operation, _tensors, _algorithm, old );
     }
 
-
-    public <T extends Device<?>> ExecutionCall<T> forDeviceType( Class<T> type ) {
-        assert _device.getClass() == type;
-        return (ExecutionCall<T>) this;
-    }
-
     /**
      *  An {@link ExecutionCall} will either already have a targeted {@link Algorithm} defined
      *  at instantiation or otherwise it will query the associated {@link Operation}

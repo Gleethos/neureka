@@ -307,11 +307,11 @@ public class CalcUtil
                                             "One or more tensor arguments within the given ExecutionCall instance is null."
                             );
 
-                        call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of( call.inputs() )
-                                                                        .andArgs( call.allMetaArgs() )
-                                                                        .running( call.getOperation() )
-                                                                        .on( call.getDevice() )
-                                                                        .forDeviceType( call.getDevice().getClass() );
+                        call = ExecutionCall.of( call.inputs() )
+                                            .andArgs( call.allMetaArgs() )
+                                            .running( call.getOperation() )
+                                            .on( call.getDevice() );
+
                         Device<?> device = call.getDevice();
                         device.approve( call );
                         call.input( 0 ).setIsVirtual( false );

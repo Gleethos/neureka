@@ -161,7 +161,6 @@ public class UnitTester_Tensor extends UnitTester
                                 .andArgs(Arg.DerivIdx.of(-1))
                                 .running(Neureka.get().backend().getOperation("x"))
                                 .on(CPU.get())
-                                .forDeviceType(CPU.class)
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -186,7 +185,6 @@ public class UnitTester_Tensor extends UnitTester
                             .andArgs( Arg.DerivIdx.of(0) )
                             .running(Neureka.get().backend().getOperation(((char) 171)+"x"))
                             .on(CPU.get())
-                            .forDeviceType(CPU.class)
                 );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -209,7 +207,6 @@ public class UnitTester_Tensor extends UnitTester
                             .andArgs(Arg.DerivIdx.of(-1))
                             .running(Neureka.get().backend().getOperation("*"))
                             .on(CPU.get())
-                            .forDeviceType(CPU.class)
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -358,7 +355,6 @@ public class UnitTester_Tensor extends UnitTester
                             .andArgs( Arg.DerivIdx.of(0) )
                             .running(Neureka.get().backend().getOperation(((char) 171) + "*"))
                             .on(CPU.get())
-                            .forDeviceType(CPU.class)
                 );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
 
@@ -372,7 +368,6 @@ public class UnitTester_Tensor extends UnitTester
                             .andArgs( Arg.DerivIdx.of(0) )
                             .running(Neureka.get().backend().getOperation("*" + ((char) 187)))
                             .on(CPU.get())
-                            .forDeviceType(CPU.class)
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
 
