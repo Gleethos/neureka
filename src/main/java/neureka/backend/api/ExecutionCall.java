@@ -68,6 +68,18 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     private final static Logger _LOG = LoggerFactory.getLogger(ExecutionCall.class);
 
     /**
+     *  Use this factory method to build {@link ExecutionCall} instances in a readable fashion.
+     *
+     * @param tensors The input tensors for the {@link ExecutionCall}.
+     * @param <D> The device type parameter of the device which is targeted.
+     * @return A builder for an {@link ExecutionCall}.
+     */
+    public static <D extends Device<?>> Builder<D> of( Tsr<?>... tensors ) {
+        return new Builder<D>(tensors);
+    }
+
+
+    /**
      *  This is the operation type which will be applied to this execution call.
      *  It contains multiple implementations, one of which might be applicable to this call...
      */
@@ -105,10 +117,13 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         }
     }
 
-    public static <D extends Device<?>> Builder<D> of( Tsr<?>... tensors ) {
-        return new Builder<D>(tensors);
-    }
-
+    /**
+     *  This returns the operation which will ultimately process this execution call.
+     *  It contains multiple algorithms and device specific implementations,
+     *  one of which might be applicable to this call... <br><br>
+     *
+     * @return The {@link Operation} targeted by this call for execution.
+     */
     public Operation getOperation() { return _operation; }
 
     public int getJ() { return this.getValOf( Arg.VarIdx.class ); }
