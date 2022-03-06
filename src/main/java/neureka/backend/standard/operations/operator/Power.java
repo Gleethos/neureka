@@ -140,7 +140,7 @@ public class Power extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                Operator.implementationForGPU( this.getFunction() )
+                Operator.implementationForGPU( this.getIdentifier() )
                         .with( "output = pow(input1, input2);" )
                         .and(
                             "if ( d == 0 ) {                                    \n" +
@@ -202,7 +202,7 @@ public class Power extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                Broadcast.implementationForGPU( this.getFunction() )
+                Broadcast.implementationForGPU( this.getIdentifier() )
                         .with( "value += pow(src1, src2);" )
                         .and(
                             "if ( d == 0 ) {\n" +
@@ -262,7 +262,7 @@ public class Power extends AbstractOperation
                         "    output = pow( input1, value ) * log( value );        \n" +
                         "}"
                     )
-                    .kernelPostfix( this.getFunction() )
+                    .kernelPostfix( this.getIdentifier() )
                     .execution(
                         call -> {
                             int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;

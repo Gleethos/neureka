@@ -105,7 +105,7 @@ public class Addition extends AbstractOperation {
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    Operator.implementationForGPU( this.getFunction() )
+                    Operator.implementationForGPU( this.getIdentifier() )
                                     .with( "output = input1 + input2;\n" )
                                     .and( "output = 1;\n" )
             )
@@ -133,7 +133,7 @@ public class Addition extends AbstractOperation {
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    Broadcast.implementationForGPU( this.getFunction() )
+                    Broadcast.implementationForGPU( this.getIdentifier() )
                             .with( "value += src1 + src2;\n" )
                             .and( "value += src1 + src2;\n" )
                 )
@@ -190,7 +190,7 @@ public class Addition extends AbstractOperation {
                     .kernelSource( scalarization.getKernelSource() )
                     .activationSource( "output = input1 + value;\n" )
                     .differentiationSource( "output = 1;\n" )
-                    .kernelPostfix( this.getFunction() )
+                    .kernelPostfix( this.getIdentifier() )
                     .execution(
                         call -> {
                             assert call.arity() == 3;

@@ -80,14 +80,6 @@ public interface Operation
     //==================================================================================================================
 
     /**
-     *  Concrete {@link Operation} types ought to be representable by a function name.
-     *  The following ensures that this contract is met when overriding the method.
-     *
-     * @return the function name which serves as identifier when parsing {@link Function} instances.
-     */
-    String getFunction();
-
-    /**
      *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.
      *  For a given class implementing the {@link Algorithm} class, there can only be a single
      *  instance of it referenced (aka supported) by a given {@link Operation} instance.
@@ -127,12 +119,21 @@ public interface Operation
      */
     <T extends Algorithm<T>> boolean supportsAlgorithm( Class<T> type );
 
+    /**
+     *  Concrete {@link Operation} types ought to be representable by a function name.
+     *  The following ensures that this contract is met when overriding the method.
+     *
+     * @return the function name which serves as identifier when parsing {@link Function} instances.
+     */
+    String getIdentifier();
+
+
     String stringify( String[] children );
 
     /**
      *  {@link Operation} implementations and {@link Function} implementations are in a tight relationship
      *  where the {@link Function} describes an abstract syntax tree based on the syntactic information provided
-     *  by the {@link Operation} (through methods like {@link Operation#getOperator()} or {@link Operation#getFunction()}).
+     *  by the {@link Operation} (through methods like {@link Operation#getOperator()} or {@link Operation#getIdentifier()}).
      *  One important feature of the {@link Function} is the ability to create
      *  derivatives by calling the {@link Function#getDerivative(int)} method.
      *  Implementations of this {@link Function} method ought to call the method defined below in order to

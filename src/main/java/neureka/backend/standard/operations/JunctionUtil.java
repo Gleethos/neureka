@@ -142,7 +142,7 @@ public class JunctionUtil
                                                         .andArgs(Arg.DerivIdx.of(-1))
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
-                    );
+                                    );
                     a = result;
                 }
                 else if ( d == 1 ) a = call.input( 1 );

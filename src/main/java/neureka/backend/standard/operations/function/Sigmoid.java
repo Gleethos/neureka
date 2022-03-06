@@ -50,7 +50,7 @@ public final class Sigmoid extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                    Activation.implementationForGPU( this.getFunction() )
+                    Activation.implementationForGPU( this.getIdentifier() )
                             .with( "output = 1 / (1 + (float)pow((float)M_E, -input));\n" )
                             .and( "output = input * (1 - input);\n" )
             )

@@ -53,7 +53,7 @@ public class XConv extends AbstractOperation
                             .kernelSource( convolution.getKernelSource() )
                             .activationSource( "value = src1 * src2;\n" )
                             .differentiationSource( "value += handle * drain;\n" )
-                            .kernelPostfix( this.getFunction() )
+                            .kernelPostfix( this.getIdentifier() )
                             .execution(
                                 call -> {
                                     int offset = ( call.getTsrOfType( Number.class, 0 ) != null ) ? 0 : 1;

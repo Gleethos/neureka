@@ -111,12 +111,12 @@ public final class Neureka
             while ( operationIterator.hasNext() ) {
                 try {
                     Operation operation = operationIterator.next();
-                    assert operation.getFunction() != null;
+                    assert operation.getIdentifier() != null;
                     assert operation.getOperator() != null;
-                    if ( operation.getFunction() == null ) _LOG.error(_illegalStateFor( "function" ) );
+                    if ( operation.getIdentifier() == null ) _LOG.error(_illegalStateFor( "function" ) );
                     if ( operation.getOperator() == null ) _LOG.error(_illegalStateFor( "operator" ) );
                     _backend.addOperation(operation);
-                    _LOG.debug( LogUtil.format("Operation: '{}' loaded!", operation.getFunction()) );
+                    _LOG.debug( LogUtil.format("Operation: '{}' loaded!", operation.getIdentifier()) );
                 } catch ( Exception e ) {
                     _LOG.error("Failed to load operations!", e);
                 }

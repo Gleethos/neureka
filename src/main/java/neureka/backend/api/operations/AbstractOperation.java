@@ -224,7 +224,7 @@ public abstract class AbstractOperation implements Operation
     }
 
     @Override
-    public String getFunction() {
+    public String getIdentifier() {
         return _function;
     }
 

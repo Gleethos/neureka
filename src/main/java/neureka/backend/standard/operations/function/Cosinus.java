@@ -46,7 +46,7 @@ public final class Cosinus extends AbstractOperation
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    Activation.implementationForGPU( this.getFunction() )
+                    Activation.implementationForGPU( this.getIdentifier() )
                             .with( "output = cos( input );\n" )
                             .and( "output = -sin( input );\n" )
                 )

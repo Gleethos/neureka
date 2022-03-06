@@ -49,7 +49,7 @@ public final class ReLU extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                    Activation.implementationForGPU( this.getFunction() )
+                    Activation.implementationForGPU( this.getIdentifier() )
                             .with( "if (input >= 0) {  output = input; } else { output = input * (float)0.01; }\n" )
                             .and( "if (input >= 0) { output = (float)1; } else { output = (float)0.01; }\n" )
             )

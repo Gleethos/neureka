@@ -87,7 +87,7 @@ public final class Sinus extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                    Activation.implementationForGPU( this.getFunction() )
+                    Activation.implementationForGPU( this.getIdentifier() )
                             .with( "output = sin( input );\n" )
                             .and( "output = cos( input );\n" )
             )

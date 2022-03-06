@@ -244,9 +244,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 }
                 if ( function.getOperation().isInline() && child.usesAD() ) {
                     throw new IllegalStateException(
-                            "Trying to apply inline operation '" + function.getOperation().getFunction() + "'\n" +
+                            "Trying to apply inline operation '" + function.getOperation().getIdentifier() + "'\n" +
                             "on active autograd computation graph in non detached function.\n" +
-                            "Please use detached functions instead! ( 'Function.create(\"" + function.getOperation().getFunction() + "(...)\", false)' )\n"
+                            "Please use detached functions instead! ( 'Function.create(\"" + function.getOperation().getIdentifier() + "(...)\", false)' )\n"
                     );
                 }
             }

@@ -49,7 +49,7 @@ public final class Logarithm extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                    Activation.implementationForGPU( this.getFunction() )
+                    Activation.implementationForGPU( this.getIdentifier() )
                             .with( "output = log( input );\n" )
                             .and( "output = 1.0 / ( input );\n" )
             )

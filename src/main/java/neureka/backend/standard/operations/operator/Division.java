@@ -69,7 +69,7 @@ public class Division extends AbstractOperation
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    Operator.implementationForGPU( this.getFunction() )
+                    Operator.implementationForGPU( this.getIdentifier() )
                             .with( "output = input1 / input2;\n" )
                             .and(
                                     "    if ( d == 0 ) {                                   \n" +
@@ -137,7 +137,7 @@ public class Division extends AbstractOperation
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    Broadcast.implementationForGPU( this.getFunction() )
+                    Broadcast.implementationForGPU( this.getIdentifier() )
                             .with( "value = src1 / src2;\n" )
                             .and(
                                 "    if (d==0) {                                                         \n" +
@@ -196,7 +196,7 @@ public class Division extends AbstractOperation
                         "    output = -value /(float)pow(input1, 2.0f);    \n" +
                         "}                                                 \n"
                     )
-                    .kernelPostfix( this.getFunction() )
+                    .kernelPostfix( this.getIdentifier() )
                     .execution(
                         call -> {
                             int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;

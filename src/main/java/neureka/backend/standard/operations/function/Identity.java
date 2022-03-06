@@ -82,7 +82,7 @@ public final class Identity extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                Activation.implementationForGPU( this.getFunction() )
+                Activation.implementationForGPU( this.getIdentifier() )
                           .with( "output = input;\n" )
                           .and( "output = input;\n" )
             )
@@ -151,7 +151,7 @@ public final class Identity extends AbstractOperation
                     .kernelSource( scalarization.getKernelSource() )
                     .activationSource( "output = value;\n" )
                     .differentiationSource( "output = value;\n" )
-                    .kernelPostfix( this.getFunction() )
+                    .kernelPostfix( this.getIdentifier() )
                     .execution(
                         call -> {
                             Tsr<Number> t = call.getTsrOfType( Number.class, 0 );

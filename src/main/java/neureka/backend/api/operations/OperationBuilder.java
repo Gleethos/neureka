@@ -21,7 +21,7 @@ public class OperationBuilder
     private Derivator _derivator = null;
     /**
      *  Concrete {@link Operation} types ought to be representable by a function name.
-     *  This property will correspond to the {@link Operation#getFunction()} method.
+     *  This property will correspond to the {@link Operation#getIdentifier()} method.
      */
     private String _function = null;
 

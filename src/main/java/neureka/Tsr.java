@@ -1606,7 +1606,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             if ( node != null && node.getPayloadReferenceVersion() != _version ) {
                 if ( node.usesAD() || node.isUsedAsDerivative() ) {
                     String error = "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\n" +
-                                   "The following OperationType caused an internal version mismatch: '"+call.getOperation().getFunction()+"'";
+                                   "The following OperationType caused an internal version mismatch: '"+call.getOperation().getIdentifier()+"'";
                     _LOG.error( error );
                     throw new IllegalStateException( error );
                 }

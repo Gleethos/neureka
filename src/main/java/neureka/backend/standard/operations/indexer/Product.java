@@ -90,7 +90,7 @@ public final class Product extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                Broadcast.implementationForGPU( this.getFunction() )
+                Broadcast.implementationForGPU( this.getIdentifier() )
                     .with( "value = src1 * src2;\n" )
                     .and( "value += handle * drain;\n" )
             )
@@ -191,7 +191,7 @@ public final class Product extends AbstractOperation
                             .kernelSource( activation.getKernelSource() )
                             .activationSource( "output = input;" )
                             .differentiationSource( "output = 1;" )
-                            .kernelPostfix( this.getFunction() )
+                            .kernelPostfix( this.getIdentifier() )
                             .execution(
                                 call -> {
                                     int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;

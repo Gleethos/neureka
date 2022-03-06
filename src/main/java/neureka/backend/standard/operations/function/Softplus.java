@@ -52,7 +52,7 @@ public final class Softplus extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                    Activation.implementationForGPU( this.getFunction() )
+                    Activation.implementationForGPU( this.getIdentifier() )
                             .with(
                                     "output = \n" +
                                             "   (\n" +

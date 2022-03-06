@@ -46,7 +46,7 @@ public final class Absolute extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                Activation.implementationForGPU( this.getFunction() )
+                Activation.implementationForGPU( this.getIdentifier() )
                         .with( "output = fabs( input );\n" )
                         .and( "output = ( input < 0 ) ? -1 : 1;\n" )
             )

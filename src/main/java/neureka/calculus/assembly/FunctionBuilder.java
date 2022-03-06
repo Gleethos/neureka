@@ -52,14 +52,14 @@ public class FunctionBuilder
     public Function build( Operation operation, int numberOfArgs, boolean doAD )
     {
         if ( operation.isIndexer() )
-            return build( operation.getFunction() + "( I[j] )", doAD );
+            return build( operation.getIdentifier() + "( I[j] )", doAD );
 
         String args = IntStream.iterate( 0, n -> n + 1 )
                                 .limit( numberOfArgs )
                                 .mapToObj( i -> "I[" + i + "]" )
                                 .collect( Collectors.joining( ", " ) );
 
-        return build( operation.getFunction() + "(" + args + ")", doAD );
+        return build( operation.getIdentifier() + "(" + args + ")", doAD );
     }
 
     /**
@@ -214,7 +214,7 @@ public class FunctionBuilder
         );
         if ( possibleFunction != null && possibleFunction.length() > 1 ) {
             for ( int oi = 0; oi < _context.size(); oi++ ) {
-                if (_context.getOperation(oi).getFunction().equalsIgnoreCase(possibleFunction)) {
+                if (_context.getOperation(oi).getIdentifier().equalsIgnoreCase(possibleFunction)) {
                     List<String> parameters = ParseUtil.findParametersIn(
                                                                         foundComponent,
                                                                         possibleFunction.length()

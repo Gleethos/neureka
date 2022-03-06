@@ -724,12 +724,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
             chosen = ((CLImplementation) impl).getKernelFor( call ).getName();
         }
         else
-            chosen = call.getAlgorithm().getName() + "_" + call.getOperation().getFunction();
+            chosen = call.getAlgorithm().getName() + "_" + call.getOperation().getIdentifier();
 
         cl_kernel kernel = _platform.getKernel( chosen );
         if ( kernel == null )
             throw new IllegalStateException(
-                    "No kernel found for signature '" + chosen + "' for operation '" +  call.getOperation().getFunction() + "'."
+                    "No kernel found for signature '" + chosen + "' for operation '" +  call.getOperation().getIdentifier() + "'."
                 );
 
         return new KernelCaller(kernel, _queue);

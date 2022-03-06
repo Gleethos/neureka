@@ -230,7 +230,7 @@ public interface Function
                if ( validation.isWronglyIntermediate() ) {
                    throw new IllegalStateException(
                            "Output of function '" + Function.this + "' " +
-                           (Function.this.getOperation() != null ? "(" + Function.this.getOperation().getFunction() + ") " : "") +
+                           (Function.this.getOperation() != null ? "(" + Function.this.getOperation().getIdentifier() + ") " : "") +
                            "is marked as intermediate result, despite the fact " +
                            "that it is a member of the input array. " +
                            "Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged " +
@@ -240,7 +240,7 @@ public interface Function
                if ( validation.isWronglyNonIntermediate() ) {
                    throw new IllegalStateException(
                            "Output of function '" + Function.this + "' " +
-                           (Function.this.getOperation() != null ? "(" + Function.this.getOperation().getFunction() + ") " : "") +
+                           (Function.this.getOperation() != null ? "(" + Function.this.getOperation().getIdentifier() + ") " : "") +
                            "is neither marked as intermediate result nor a member of the input array. " +
                            "Tensors instantiated by operations in the backend are expected to be flagged " +
                            "as 'intermediate' in order to be eligible for deletion!"

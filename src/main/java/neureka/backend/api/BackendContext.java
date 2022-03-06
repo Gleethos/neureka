@@ -80,7 +80,7 @@ public class BackendContext implements Cloneable
     public Runner runner() { return new Runner( this, Neureka.get().backend() ); }
 
     /**
-     * This method returns an unmodifiable view of the mapping between the {@link Operation#getFunction()} / {@link Operation#getOperator()} properties
+     * This method returns an unmodifiable view of the mapping between the {@link Operation#getIdentifier()} / {@link Operation#getOperator()} properties
      * and the {@link Operation} implementation instances to which they belong.
      * Query operations on the returned map "read through" to the specified map,
      * and attempts to modify the returned map, whether direct or via its collection views,
@@ -156,7 +156,7 @@ public class BackendContext implements Cloneable
     public BackendContext addOperation(Operation operation )
     {
         _operations.add( operation );
-        String function = operation.getFunction();
+        String function = operation.getIdentifier();
         String operator = operation.getOperator();
         assert !_lookup.containsKey( operator );
         assert !_lookup.containsKey( function );
@@ -184,7 +184,7 @@ public class BackendContext implements Cloneable
      * @return The truth value determining if the provided {@link Operation} is part of this {@link BackendContext}.
      */
     public boolean hasOperation( Operation operation ) {
-        return _lookup.containsKey( operation.getFunction() );
+        return _lookup.containsKey( operation.getIdentifier() );
     }
 
     /**

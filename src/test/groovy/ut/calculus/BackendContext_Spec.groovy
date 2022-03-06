@@ -40,7 +40,7 @@ class BackendContext_Spec extends Specification
 
         when :
             1 * mockOperation.getOperator() >> ""
-            1 * mockOperation.getFunction() >> ""
+            1 * mockOperation.getIdentifier() >> ""
 
         and : 'The clone is changes its state.'
             clone.addOperation( mockOperation )

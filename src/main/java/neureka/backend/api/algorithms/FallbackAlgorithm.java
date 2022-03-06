@@ -71,7 +71,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                         }
                                     );
                             }
-                            else if ( typeClass == String.class && call.getOperation().getFunction().equals("add") )
+                            else if ( typeClass == String.class && call.getOperation().getIdentifier().equals("add") )
                             {
                                 call.getDevice()
                                     .getExecutor()
@@ -159,7 +159,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     }
 
     private void _tryExecute( ExecutionCall<CPU> call, Class<?> typeClass ) {
-        Method m = _findMethod( call.getOperation().getFunction(), typeClass );
+        Method m = _findMethod( call.getOperation().getIdentifier(), typeClass );
         if ( m == null ) {
             switch (call.getOperation().getOperator()) {
                 case "+": m = _findMethod("plus", typeClass);break;

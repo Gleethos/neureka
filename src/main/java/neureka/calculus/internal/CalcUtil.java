@@ -114,7 +114,7 @@ public class CalcUtil
                             );
 
         if ( tensors[ 0 ] == null ) // TODO: Fix this for 'left_inline'!!!
-            _LOG.debug("Executing operation '"+operation.getFunction()+"' did not yield a proper return value.");
+            _LOG.debug("Executing operation '"+operation.getIdentifier()+"' did not yield a proper return value.");
 
         return ( tensors[ 0 ] == null ? tensors[ 1 ] : tensors[ 0 ] );
     }
