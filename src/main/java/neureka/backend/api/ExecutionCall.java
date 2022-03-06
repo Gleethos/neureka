@@ -185,6 +185,18 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return getAlgorithm().supplyADAgentFor( function, this, forward );
     }
 
+    /**
+     *  Warning! This is the only way to mutate the inner state of an {@link ExecutionCall}.
+     *  Only use this to set a suitable output tensor to be returned as result.
+     *
+     * @param i The index targeting the position where the provided tensor should be placed.
+     * @param t The {@link Tsr} which ought to be placed at position {@code i}.
+     */
+    public void setInput( int i, Tsr<?> t ) {
+        _tensors[ i ] = t;
+    }
+
+
     @Override
     public String toString()
     {

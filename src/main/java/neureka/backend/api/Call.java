@@ -64,10 +64,6 @@ public class Call<D>
      */
     public int arity() { return _tensors.length; }
 
-    public void setInput( int i, Tsr<?> t ) {
-        _tensors[ i ] = t;
-    }
-
     /**
      * @param i The index of the tensor argument which should be returned.
      * @return The {@code i}'th {@link Tsr} parameter of this {@link Call} for execution.
