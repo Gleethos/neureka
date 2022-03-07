@@ -3023,12 +3023,34 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     {
         if ( type.bufferType == BufferedImage.TYPE_3BYTE_BGR )
         {
-            BufferedImage buffi = new BufferedImage( shape(1), shape(0), BufferedImage.TYPE_3BYTE_BGR );
+            _checkRankForImageConversion( type, 0, 0, 3 );
+            // We expect a tensor of shape (height x width x 3)!
+            BufferedImage image = new BufferedImage( shape(1), shape(0), BufferedImage.TYPE_3BYTE_BGR );
             byte[] data = DataConverter.instance().convert(getData(), byte[].class);
-            writeImgData(new DataBufferByte(data, data.length), buffi);
-            return buffi;
+            writeImgData(new DataBufferByte(data, data.length), image);
+            return image;
         }
         throw new IllegalArgumentException("Image type '"+type+"' not supported.");
+    }
+
+    private void _checkRankForImageConversion( ImageType type, int... pattern ) {
+        int rank = pattern.length; // The expected rank!
+        if ( this.rank() != rank ) {
+            throw new IllegalArgumentException(
+                    "Cannot create image of type '" + type.name() + "' from tensor of rank " + this.rank() + ". " +
+                    "Expected to receive tensor of rank " + rank + "."
+                );
+        }
+        for ( int i = 0; i < pattern.length; i++ ) {
+            int axisSize = pattern[ i ]; // The expected axis size!
+            if ( axisSize > 0 ) {
+                if ( axisSize != this.shape(i) ) {
+                    throw new IllegalArgumentException(
+                        ""
+                    );
+                }
+            }
+        }
     }
 
     private static void writeImgData( DataBuffer data, BufferedImage target ) {
