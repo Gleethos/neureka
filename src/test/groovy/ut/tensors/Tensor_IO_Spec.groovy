@@ -86,7 +86,7 @@ class Tensor_IO_Spec extends Specification
                     DataType.of( String.class ),
                     [ 2, 3 ],
                     ( int i, int[] indices ) -> { i + ':' + indices.toString() }
-            )
+                )
 
         then :
             t.toString() == "(2x3):[0:[0, 0], 1:[0, 1], 2:[0, 2], 3:[1, 0], 4:[1, 1], 5:[1, 2]]"
