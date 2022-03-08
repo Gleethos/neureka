@@ -18,12 +18,13 @@ class Tensor_Interop_Spec extends Specification
         then :
             var exception = thrown(IllegalArgumentException)
         and :
-            exception.message.length() > 10
+            exception.message.length() > 13
 
         where :
-            type | image                 | shape
-            Byte | ImageType.BGR_3BYTE   | [3, 5]
-            //Byte | ImageType.ARGB_1INT   | [7, 5, 3]
+            type    | image                 | shape
+            Byte    | ImageType.BGR_3BYTE   | [3, 5]
+            Integer | ImageType.ARGB_1INT   | [7, 5, 3]
+            String  | ImageType.ARGB_1INT   | [7, 5, 1]
     }
 
 }

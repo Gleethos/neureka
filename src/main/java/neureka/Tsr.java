@@ -124,10 +124,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.Raster;
+import java.awt.image.*;
 import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
@@ -3030,6 +3027,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             writeImgData(new DataBufferByte(data, data.length), image);
             return image;
         }
+        else if ( type.bufferType == BufferedImage.TYPE_INT_ARGB )
+        {
+            _checkRankForImageConversion( type, Number.class, 0, 0, 1 );
+            BufferedImage image = new BufferedImage( shape(1), shape(0), BufferedImage.TYPE_INT_ARGB );
+            int[] data = DataConverter.instance().convert(getData(), int[].class);
+            writeImgData(new DataBufferInt(data, data.length), image);
+            return image;
+        }
         throw new IllegalArgumentException("Image type '"+type+"' not supported.");
     }
 
@@ -3045,8 +3050,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             int axisSize = pattern[ i ]; // The expected axis size!
             if ( axisSize > 0 ) {
                 if ( axisSize != this.shape(i) ) {
+                    String shape = this.shape().stream().map( a -> a.toString() ).collect(Collectors.joining("x"));
                     throw new IllegalArgumentException(
-                        ""
+                        "Cannot create image of type '" + type.name() + "' from tensor with shape (" + shape + "). " +
+                        "Axis " + i + " is expected to be of size " + axisSize + "."
                     );
                 }
             }
