@@ -13,9 +13,7 @@ public class VirtualNDConfiguration extends AbstractNDC
 {
     private final int[] _shape;
 
-    private VirtualNDConfiguration( int[] shape ) {
-        _shape = _cacheArray( shape );
-    }
+    private VirtualNDConfiguration( int[] shape ) { _shape = _cacheArray( shape ); }
 
     public static VirtualNDConfiguration construct(
             int[] shape
@@ -24,77 +22,49 @@ public class VirtualNDConfiguration extends AbstractNDC
     }
 
     @Override
-    public int rank() {
-        return _shape.length;
-    }
+    public final int rank() { return _shape.length; }
 
     @Override
-    public int[] shape() {
-        return _shape;
-    }
+    public final int[] shape() { return _shape; }
 
     @Override
-    public int shape( int i ) {
-        return _shape[ i ];
-    }
+    public final int shape( int i ) { return _shape[ i ]; }
 
     @Override
-    public int[] indicesMap() {
-        return new int[rank()];
-    }
+    public final int[] indicesMap() { return new int[rank()]; }
 
     @Override
-    public int indicesMap( int i ) {
-        return 0;
-    }
+    public final int indicesMap( int i ) { return 0; }
 
     @Override
-    public int[] translation() {
-        return new int[rank()];
-    }
+    public final int[] translation() { return new int[rank()]; }
 
     @Override
-    public int translation( int i ) {
-        return 0;
-    }
+    public final int translation( int i ) { return 0; }
 
     @Override
-    public int[] spread() {
-        return new int[rank()];
-    }
+    public final int[] spread() { return new int[rank()]; }
 
     @Override
-    public int spread( int i ) {
-        return 0;
-    }
+    public final int spread( int i ) { return 0; }
 
     @Override
-    public int[] offset() {
-        return new int[rank()];
-    }
+    public final int[] offset() { return new int[rank()]; }
 
     @Override
-    public int offset( int i ) {
-        return 0;
-    }
+    public final int offset( int i ) { return 0; }
 
     @Override
-    public int indexOfIndex(int index) {
-        return 0;
-    }
+    public final int indexOfIndex(int index) { return 0; }
 
     @Override
-    public int[] indicesOfIndex(int index) {
-        return new int[rank()];
-    }
+    public final int[] indicesOfIndex(int index) { return new int[rank()]; }
 
     @Override
-    public int indexOfIndices(int[] indices) {
-        return 0;
-    }
+    public final int indexOfIndices(int[] indices) { return 0; }
 
     @Override
-    public boolean isVirtual() { return true; }
+    public final boolean isVirtual() { return true; }
 
 
 }
