@@ -9,8 +9,8 @@ import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.*;
 import neureka.backend.standard.memory.MemValidator;
 import neureka.calculus.Function;
-import neureka.calculus.internal.RecursiveExecutor;
 import neureka.calculus.implementations.FunctionNode;
+import neureka.calculus.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +66,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  It can be implemented as s simple lambda.
      */
     @Override
-    public float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
+    public final float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         return _isSuitableFor.isSuitableFor(call);
     }
@@ -77,7 +77,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  The analyzer returns a boolean truth value.
      */
     @Override
-    public boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call ) {
+    public final boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         return _canPerformForwardADFor.canPerformForwardADFor(call);
     }
@@ -88,7 +88,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  The analyzer returns a boolean truth value.
      */
     @Override
-    public boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) {
+    public final boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         return _canPerformBackwardADFor.canPerformBackwardADFor( call );
     }
@@ -104,7 +104,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  to perform said procedures.
      */
     @Override
-    public ADAgent supplyADAgentFor(Function function, ExecutionCall<? extends Device<?>> call, boolean forward ) {
+    public final ADAgent supplyADAgentFor(Function function, ExecutionCall<? extends Device<?>> call, boolean forward ) {
         _checkReadiness();
         return _supplyADAgentFor.supplyADAgentFor(function, call, forward );
     }
@@ -130,7 +130,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @return The result of the execution.
      */
     @Override
-    public Tsr<?> dispatch( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+    public final Tsr<?> dispatch( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         if ( call == null ) return _handleInsteadOfDevice.dispatch( caller, call );
         MemValidator checker = MemValidator.forInputs( call.inputs(), ()->_handleInsteadOfDevice.dispatch( caller, call ) );
@@ -161,7 +161,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @return The prepared {@link ExecutionCall} instance.
      */
     @Override
-    public ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call ) {
+    public final ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         if ( call != null ) {
             Tsr<?>[] inputs = call.inputs().clone();
@@ -182,7 +182,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @return A new concrete implementation of the {@link AbstractFunctionalAlgorithm} which
      *         is fully built and ready to be used as an {@link Operation} component.
      */
-    public C buildFunAlgorithm() {
+    public final C buildFunAlgorithm() {
         if (
             _isSuitableFor == null ||
             _canPerformForwardADFor == null ||
@@ -248,7 +248,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @param isSuitableFor The suitability predicate which determines if the algorithm is suitable or not.
      * @return This very instance to enable method chaining.
      */
-    public AbstractFunctionalAlgorithm<C> setIsSuitableFor( SuitabilityPredicate isSuitableFor ) {
+    public final AbstractFunctionalAlgorithm<C> setIsSuitableFor( SuitabilityPredicate isSuitableFor ) {
         _isSuitableFor = _checked(isSuitableFor, _isSuitableFor, SuitabilityPredicate.class);
         return this;
     }
@@ -263,7 +263,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @param canPerformForwardADFor The lambda which evaluates if a provided {@link ExecutionCall} can be forward propagated.
      * @return This very instance to enable method chaining.
      */
-    public AbstractFunctionalAlgorithm<C> setCanPerformForwardADFor( ForwardADPredicate canPerformForwardADFor ) {
+    public final AbstractFunctionalAlgorithm<C> setCanPerformForwardADFor( ForwardADPredicate canPerformForwardADFor ) {
         _canPerformForwardADFor = _checked(canPerformForwardADFor, _canPerformForwardADFor, ForwardADPredicate.class);
         return this;
     }
@@ -277,7 +277,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @param canPerformBackwardADFor A predicate lambda which determines if this algorithm can perform backward AD for a given execution call.
      * @return This very instance to enable method chaining.
      */
-    public AbstractFunctionalAlgorithm<C> setCanPerformBackwardADFor( BackwardADPredicate canPerformBackwardADFor ) {
+    public final AbstractFunctionalAlgorithm<C> setCanPerformBackwardADFor( BackwardADPredicate canPerformBackwardADFor ) {
         _canPerformBackwardADFor = _checked(canPerformBackwardADFor, _canPerformBackwardADFor, BackwardADPredicate.class);
         return this;
     }
@@ -291,7 +291,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @param supplyADAgentFor A supplier for an {@link ADAgent} containing implementation details for autograd.
      * @return This very instance to enable method chaining.
      */
-    public AbstractFunctionalAlgorithm<C> setSupplyADAgentFor( ADAgentSupplier supplyADAgentFor ) {
+    public final AbstractFunctionalAlgorithm<C> setSupplyADAgentFor( ADAgentSupplier supplyADAgentFor ) {
         _supplyADAgentFor = _checked(supplyADAgentFor, _supplyADAgentFor, ADAgentSupplier.class);
         return this;
     }
@@ -318,7 +318,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @param handleInsteadOfDevice The {@link ExecutionDispatcher} which is the main entrypoint for execution.
      * @return This very instance to enable method chaining.
      */
-    public AbstractFunctionalAlgorithm<C> setExecutionDispatcher(ExecutionDispatcher handleInsteadOfDevice ) {
+    public final AbstractFunctionalAlgorithm<C> setExecutionDispatcher(ExecutionDispatcher handleInsteadOfDevice ) {
         _handleInsteadOfDevice = _checked(handleInsteadOfDevice, _handleInsteadOfDevice, ExecutionDispatcher.class);
         return this;
     }
@@ -340,7 +340,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @param instantiateNewTensorsForExecutionIn A lambda which prepares the provided execution call (usually output instantiation).
      * @return This very instance to enable method chaining.
      */
-    public AbstractFunctionalAlgorithm<C> setCallPreparation( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
+    public final AbstractFunctionalAlgorithm<C> setCallPreparation( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
         _instantiateNewTensorsForExecutionIn = _checked(instantiateNewTensorsForExecutionIn, _instantiateNewTensorsForExecutionIn, ExecutionPreparation.class);
         return this;
     }

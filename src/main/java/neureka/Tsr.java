@@ -3018,7 +3018,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public BufferedImage asImage( ImageType type )
     {
-
         switch ( type.bufferType )
         {
             case BufferedImage.TYPE_3BYTE_BGR: {
