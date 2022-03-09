@@ -1752,7 +1752,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  "Applying" a gradient to a tensor simply means adding the values inside the gradient element-wise
      *  to the owning host tensor via an inline operation. <br>
      */
-    public void applyGradient()
+    public final void applyGradient()
     {
         /*
            If the tensor has a JITProp component then it will trigger the continuation of the back-propagation which
