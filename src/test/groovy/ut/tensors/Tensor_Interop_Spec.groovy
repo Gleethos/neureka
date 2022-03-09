@@ -2,12 +2,19 @@ package ut.tensors
 
 import neureka.Tsr
 import neureka.Tsr.ImageType
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("Tensors play well with other data structures!")
+@Narrative('''
 
+    Tensors should have good interoperability with other JDK data structures like images.
+    In this specification we define these interoperability requirements.
+
+''')
 class Tensor_Interop_Spec extends Specification
 {
-
 
     def 'Tensor can be converted to buffered images.'(
             Class<?> type, ImageType image, int... shape
