@@ -10,28 +10,28 @@ public final class VirtualNDIterator implements NDIterator
     public VirtualNDIterator( VirtualNDConfiguration ndc ) { _conf = ndc; }
 
     @Override
-    public int shape( int i ) { return _conf.shape(i); }
+    public final int shape( int i ) { return _conf.shape(i); }
 
     @Override
-    public int[] shape() { return _conf.shape(); }
+    public final int[] shape() { return _conf.shape(); }
 
     @Override
-    public void increment() {
+    public final void increment() {
         // It's virtual and therefore does nothing :)
     }
 
     @Override
-    public void decrement() {
+    public final void decrement() {
         // It's virtual and therefore does nothing :)
     }
 
     @Override
-    public int i() {
+    public final int i() {
         return 0;
     }
 
     @Override
-    public int get(int axis) {
+    public final int get(int axis) {
         throw new IllegalStateException(
                 "A virtual ND-iterator does not keep track of the iteration index! " +
                 "You cannot use this type of iterator when the data access pattern of your algorithm " +
@@ -40,7 +40,7 @@ public final class VirtualNDIterator implements NDIterator
     }
 
     @Override
-    public int[] get() {
+    public final int[] get() {
         throw new IllegalStateException(
                 "A virtual ND-iterator does not keep track of the iteration index! " +
                 "You cannot use this type of iterator when the data access pattern of your algorithm " +
@@ -49,15 +49,15 @@ public final class VirtualNDIterator implements NDIterator
     }
 
     @Override
-    public void set(int axis, int position) {
+    public final void set(int axis, int position) {
         // It's virtual and therefore does nothing :)
     }
 
     @Override
-    public void set( int[] indices ) {
+    public final void set( int[] indices ) {
         // It's virtual and therefore does nothing :)
     }
 
     @Override
-    public int rank() { return _conf.rank(); }
+    public final int rank() { return _conf.rank(); }
 }

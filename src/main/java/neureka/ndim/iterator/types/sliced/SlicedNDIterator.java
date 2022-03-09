@@ -16,52 +16,52 @@ public final class SlicedNDIterator implements NDIterator
     }
 
     @Override
-    public int shape( int i ) {
+    public final int shape( int i ) {
         return _shape[i];
     }
 
     @Override
-    public int[] shape() {
+    public final int[] shape() {
         return _shape;
     }
 
     @Override
-    public void increment() {
+    public final void increment() {
         NDConfiguration.Utility.increment( _indices, _shape );
     }
 
     @Override
-    public void decrement() {
+    public final void decrement() {
         NDConfiguration.Utility.decrement( _indices, _shape );
     }
 
     @Override
-    public int i() {
+    public final int i() {
         return _conf.indexOfIndices(_indices);
     }
 
     @Override
-    public int get( int axis ) {
+    public final int get( int axis ) {
         return _indices[ axis ];
     }
 
     @Override
-    public int[] get() {
+    public final int[] get() {
         return _indices;
     }
 
     @Override
-    public void set( int axis, int position ) {
+    public final void set( int axis, int position ) {
         _indices[ axis ] = position;
     }
 
     @Override
-    public void set( int[] indices ) {
+    public final void set( int[] indices ) {
         System.arraycopy( indices, 0, _indices, 0, indices.length );
     }
 
     @Override
-    public int rank() {
+    public final int rank() {
         return _shape.length;
     }
 
