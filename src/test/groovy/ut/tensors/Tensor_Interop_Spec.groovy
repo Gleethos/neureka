@@ -27,9 +27,11 @@ class Tensor_Interop_Spec extends Specification
             asImage.width  == shape[1]
 
         where :
-            type    | image                 | shape
-            Byte    | ImageType.BGR_3BYTE   | [3, 5, 3]
-            Integer | ImageType.ARGB_1INT   | [7, 5, 1]
+            type    | image                    | shape
+            Byte    | ImageType.BGR_3BYTE      | [3, 5, 3]
+            Integer | ImageType.ARGB_1INT      | [7, 5, 1]
+            Byte    | ImageType.ABGR_4BYTE     | [7, 5, 4]
+            Byte    | ImageType.ABGR_PRE_4BYTE | [7, 5, 4]
     }
 
 
@@ -50,6 +52,7 @@ class Tensor_Interop_Spec extends Specification
             Byte    | ImageType.BGR_3BYTE   | [3, 5]
             Integer | ImageType.ARGB_1INT   | [7, 5, 3]
             String  | ImageType.ARGB_1INT   | [7, 5, 1]
+            Byte    | ImageType.ABGR_4BYTE  | [2, 9, 3]
     }
 
 }

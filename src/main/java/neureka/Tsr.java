@@ -3018,22 +3018,33 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public BufferedImage asImage( ImageType type )
     {
-        if ( type.bufferType == BufferedImage.TYPE_3BYTE_BGR )
+
+        switch ( type.bufferType )
         {
-            _checkRankForImageConversion( type, Number.class, 0, 0, 3 );
-            // We expect a tensor of shape (height x width x 3)!
-            BufferedImage image = new BufferedImage( shape(1), shape(0), BufferedImage.TYPE_3BYTE_BGR );
-            byte[] data = DataConverter.instance().convert(getData(), byte[].class);
-            writeImgData(new DataBufferByte(data, data.length), image);
-            return image;
-        }
-        else if ( type.bufferType == BufferedImage.TYPE_INT_ARGB )
-        {
-            _checkRankForImageConversion( type, Number.class, 0, 0, 1 );
-            BufferedImage image = new BufferedImage( shape(1), shape(0), BufferedImage.TYPE_INT_ARGB );
-            int[] data = DataConverter.instance().convert(getData(), int[].class);
-            writeImgData(new DataBufferInt(data, data.length), image);
-            return image;
+            case BufferedImage.TYPE_3BYTE_BGR: {
+                _checkRankForImageConversion(type, Number.class, 0, 0, 3);
+                // We expect a tensor of shape (height x width x 3)!
+                BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
+                byte[] data = DataConverter.instance().convert(getData(), byte[].class);
+                writeImgData(new DataBufferByte(data, data.length), image);
+                return image;
+            }
+            case BufferedImage.TYPE_4BYTE_ABGR:
+            case BufferedImage.TYPE_4BYTE_ABGR_PRE:
+            {
+                _checkRankForImageConversion(type, Number.class, 0, 0, 4);
+                BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
+                byte[] data = DataConverter.instance().convert(getData(), byte[].class);
+                writeImgData(new DataBufferByte(data, data.length), image);
+                return image;
+            }
+            case BufferedImage.TYPE_INT_ARGB: {
+                _checkRankForImageConversion(type, Number.class, 0, 0, 1);
+                BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
+                int[] data = DataConverter.instance().convert(getData(), int[].class);
+                writeImgData(new DataBufferInt(data, data.length), image);
+                return image;
+            }
         }
         throw new IllegalArgumentException("Image type '"+type+"' not supported.");
     }
