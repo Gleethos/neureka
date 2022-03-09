@@ -3,6 +3,9 @@ package neureka.fluent.building.states;
 import neureka.Tsr;
 import neureka.ndim.Filler;
 
+import java.util.Arrays;
+import java.util.List;
+
 public interface IterByOrIterFromOrAll<V>
 {
     /**
@@ -16,6 +19,21 @@ public interface IterByOrIterFromOrAll<V>
      * @return The final result of the fluent tensor builder API having a tensor filled with custom values.
      */
     Tsr<V> andFill( V... values );
+
+    /**
+     *  Provide a list of values which will be used to fill
+     *  the {@link Tsr} instance returned by this last fluent builder method.
+     *  If the configured tensor is larger than the number of provided
+     *  elements, then they will simply be read multiple times until
+     *  the result has been sufficiently populated.
+     *
+     * @param values The values which will be used to populate the {@link Tsr} instance returned by this method.
+     * @return The final result of the fluent tensor builder API having a tensor filled with custom values.
+     */
+    default Tsr<V> andFill( List<V> values ) {
+        return this.andFill((V[])values.toArray());
+    }
+
 
     /**
      *  Pass a lambda to this method which will be used to populate the {@link Tsr}
