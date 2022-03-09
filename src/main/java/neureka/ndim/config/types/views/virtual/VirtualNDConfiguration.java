@@ -1,4 +1,4 @@
-package neureka.ndim.config.types.virtual;
+package neureka.ndim.config.types.views.virtual;
 
 import neureka.ndim.config.AbstractNDC;
 

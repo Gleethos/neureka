@@ -17,8 +17,10 @@ import static org.jocl.CL.*;
  * A program that queries and prints information about all
  * available devices.
  */
-public class DeviceQuery
+public final class DeviceQuery
 {
+    private DeviceQuery() {/* This is a utility class! */}
+
     /**
      * The entry point of this program
      *

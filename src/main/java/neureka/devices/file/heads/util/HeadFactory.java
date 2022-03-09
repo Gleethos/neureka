@@ -13,7 +13,7 @@ import java.util.Map;
  *  This class is a simple wrapper around "Loader" and "Saver" lambdas
  *  which instantiate FileHead classes.
  */
-public class HeadFactory
+public final class HeadFactory
 {
     public interface Loader
     {

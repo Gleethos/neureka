@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 /**
  *  A utility class for message formatting.
  */
-public class LogUtil
+public final class LogUtil
 {
     /**
      * @param withPlaceholders The {@link String} which may or may not contain placeholder in the for of "{}".

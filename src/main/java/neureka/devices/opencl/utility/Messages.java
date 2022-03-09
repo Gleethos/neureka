@@ -10,8 +10,9 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.Properties;
 
-public class Messages
+public final class Messages
 {
+    private Messages() {/* This is a utility class! */}
 
     public static String clContextCreationFailed() {
         return LogUtil.format(

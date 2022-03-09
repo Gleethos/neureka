@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DispatchUtility {
+public final class DispatchUtility {
 
-
+    private DispatchUtility() {/* This is a utility class! */}
 
     private static void _revert( int[] array ) {
         for( int i = 0; i < array.length / 2; i++ )

@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  *  Like other {@link neureka.devices.file.FileHead} implementations this class represents a file
  *  of a given type, in this case it represents a CSV file.
 */
-public class CSVHead extends AbstractFileHead<CSVHead, String>
+public final class CSVHead extends AbstractFileHead<CSVHead, String>
 {
     static {
         _LOG = LoggerFactory.getLogger( CSVHead.class );

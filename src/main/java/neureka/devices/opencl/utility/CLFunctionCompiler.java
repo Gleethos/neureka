@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class CLFunctionCompiler {
+public final class CLFunctionCompiler {
 
     private final OpenCLDevice _device;
     private final Function _functionToBeOptimized;

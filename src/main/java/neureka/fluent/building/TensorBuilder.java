@@ -60,7 +60,7 @@ import java.util.stream.IntStream;
  *
  * @param <V> The type of the values which ought to be represent by the {@link Tsr} built by this {@link TensorBuilder}.
  */
-public class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, IterByOrIterFromOrAll<V>, To<V>, Step<V>
+public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, IterByOrIterFromOrAll<V>, To<V>, Step<V>
 {
     private static final Logger _LOG = LoggerFactory.getLogger(TensorBuilder.class);
 

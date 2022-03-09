@@ -57,7 +57,7 @@ import java.util.stream.IntStream;
  *  provides useful methods to handle primitive data types and arrays
  *  of said types.
  */
-public class DataConverter
+public final class DataConverter
 {
     private final static Logger _LOG = LoggerFactory.getLogger(DataConverter.class);
 

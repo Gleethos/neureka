@@ -52,11 +52,13 @@ import java.util.function.Consumer;
  *  It loads the settings property file and interprets its contents
  *  which are then translated to the {@link neureka.Neureka.Settings}.
  */
-public class SettingsLoader
+public final class SettingsLoader
 {
     private static final Logger _LOG = LoggerFactory.getLogger(SettingsLoader.class);
     private static String _settings_source;
     private static String _setup_source;
+
+    private SettingsLoader() {/* This is a utility class! */}
 
     public static void loadProperties( Neureka instance ) {
         try (

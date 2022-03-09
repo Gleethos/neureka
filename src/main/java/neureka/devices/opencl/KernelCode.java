@@ -2,7 +2,7 @@ package neureka.devices.opencl;
 
 import java.util.Objects;
 
-public class KernelCode {
+public final class KernelCode {
 
     private final String _name;
 

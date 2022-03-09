@@ -11,7 +11,7 @@ import java.util.function.Function;
  *
  * @param <O> The type that should be cached, this may be an {@link neureka.ndim.config.NDConfiguration} or {@code int[]} array.
  */
-public class Cache<O> {
+public final class Cache<O> {
 
     private final Object[] _buffer;
     private int _size = 0;

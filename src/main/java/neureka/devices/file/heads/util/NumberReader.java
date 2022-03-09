@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NumberReader
+public final class NumberReader
 {
     private final FileInputStream _fileInputStream;
     private int _bytesRead = 0;

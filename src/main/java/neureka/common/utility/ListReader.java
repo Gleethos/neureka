@@ -12,7 +12,7 @@ import java.util.stream.Stream;
  *  information which can be used to instantiate a tensor,
  *  namely: A flat data array, a shape array and a type class.
  */
-public class ListReader {
+public final class ListReader {
 
     private final Class<?> _type;
     private final int _size;

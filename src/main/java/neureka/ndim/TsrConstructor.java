@@ -5,7 +5,7 @@ import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
+import neureka.ndim.config.types.views.virtual.VirtualNDConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,7 @@ import java.util.stream.IntStream;
  *  sits inside this class instead of polluting the already very large
  *  {@link neureka.Tsr} class.
  */
-public class TsrConstructor {
+public final class TsrConstructor {
 
     private static final Logger _LOG = LoggerFactory.getLogger(TsrConstructor.class);
 
