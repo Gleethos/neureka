@@ -94,9 +94,9 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
      */
     public abstract boolean isDeleted();
 
-    protected void _guardGet( String varName ) { _guard("Trying to access the "+varName+" of an already deleted tensor." ); }
-    protected void _guardSet( String varName ) { _guard("Trying to set the "+varName+" of an already deleted tensor." ); }
-    protected void _guardMod( String varName ) { _guard("Trying to modify the "+varName+" of an already deleted tensor." ); }
+    protected final void _guardGet( String varName ) { _guard("Trying to access the "+varName+" of an already deleted tensor." ); }
+    protected final void _guardSet( String varName ) { _guard("Trying to set the "+varName+" of an already deleted tensor." ); }
+    protected final void _guardMod( String varName ) { _guard("Trying to modify the "+varName+" of an already deleted tensor." ); }
 
     /**
      *  This method will guard the state of deleted tensors by throwing an {@link IllegalAccessError}
@@ -188,7 +188,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
      * @param data The data object which ought to be set for this array.
      *             This will be the same instance returned by {@link #getData()}.
      */
-    protected void _setData( Object data )
+    protected final void _setData( Object data )
     {
         _guardSet( "data object" );
         if ( _dataType == null ) {
@@ -269,7 +269,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
      *
      * @param size The size of the data array which ought to be allocated.
      */
-    protected void _allocate( int size ) { _data = _dataType.allocate( size ); }
+    protected final void _allocate( int size ) { _data = _dataType.allocate( size ); }
 
     /**
      *  WARNING! Virtualizing is the process of compacting the underlying data array
@@ -336,7 +336,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  <br>
      */
-    protected void _virtualize() { _data = _dataType.virtualize( _data ); }
+    protected final void _virtualize() { _data = _dataType.virtualize( _data ); }
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. <br>
@@ -348,7 +348,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
      *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
      *  size of the nd-array type... <br>
      */
-    protected void _actualize() { _data = _dataType.actualize( _data, this.size() ); }
+    protected final void _actualize() { _data = _dataType.actualize( _data, this.size() ); }
 
     protected Object _convertedDataOfType( Class<?> typeClass )
     {

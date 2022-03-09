@@ -917,7 +917,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *                     the built in automatic backpropagation system.
      * @return This very {@link Tsr} instance in order to enable method chaining.
      */
-    public Tsr<V> setRqsGradient( boolean rqsGradient ) {
+    public final Tsr<V> setRqsGradient( boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( Tsr.class );
         _setRqsGradient( rqsGradient );
         return this;
@@ -983,7 +983,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param isOutsourced The truth value which determines if this tensor should live in RAM or somewhere else.
      * @return This very instance to allow for method chaining.
      */
-    public Tsr<V> setIsOutsourced( boolean isOutsourced ) {
+    public final Tsr<V> setIsOutsourced( boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
         if ( isOutsourced )
             _setData( null );
@@ -1066,7 +1066,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return This very tensor to enable method chaining.
      */
     @Override
-    public Tsr<V> setIsVirtual( boolean isVirtual ) {
+    public final Tsr<V> setIsVirtual( boolean isVirtual ) {
 
         assert getNDConf() != null;
 
@@ -1169,7 +1169,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param applyRequested The truth value determining if the application of the gradient of this tensor is requested.
      * @return This very tensor instance in order to enable method chaining.
      */
-    public Tsr<V> setGradientApplyRequested(boolean applyRequested ) {
+    public final Tsr<V> setGradientApplyRequested(boolean applyRequested ) {
         if ( gradientApplyRequested() != applyRequested ) {
             if ( applyRequested ) {
                 if (
@@ -1356,7 +1356,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param device The {@link Device} which should host this {@link Tsr} as well as be added to its components list.
      * @return This very class to enable method chaining.
      */
-    public Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
+    public final Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
 
     /*==================================================================================================================
     |
@@ -1474,7 +1474,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     /**
      * @return The gradient of this tensor which is internally stored as component.
      */
-    public Tsr<V> getGradient() { return this.get( Tsr.class ); }
+    public final Tsr<V> getGradient() { return this.get( Tsr.class ); }
 
     /**
      * @return The device on which this tensor is stored or {@link CPU} if it is not outsourced.
@@ -1695,7 +1695,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param error A tensor which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr<V> backward( Tsr<V> error ) {
+    public final Tsr<V> backward( Tsr<V> error ) {
         LogUtil.nullArgCheck(error, "error", Tsr.class, "Cannot back-propagate 'null'!");
         if ( this.isOutsourced() ) {
             error = error.clone();
@@ -1723,7 +1723,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr<V> backward( double value ) {
+    public final Tsr<V> backward( double value ) {
         backward( Tsr.of( this.getValueClass(), getNDConf().shape(), value ) );
         return this;
     }
@@ -1741,7 +1741,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr<V> backward()
+    public final Tsr<V> backward()
     {
         backward( 1 ); // By default we back-propagate a base factor of 1.
         return this;
@@ -1792,7 +1792,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @return This very instance in order to allows for a more streamline usage of this method.
      */
-    public Tsr<V> detach() { this.remove( GraphNode.class ); return this; }
+    public final Tsr<V> detach() { this.remove( GraphNode.class ); return this; }
 
     /*
         ----------------------------
@@ -1818,7 +1818,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param labels A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    public Tsr<V> label( String[][] labels )
+    public final Tsr<V> label( String[][] labels )
     {
         _label( null, labels );
         return this;
@@ -1843,7 +1843,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param labels A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    public Tsr<V> label( String tensorName, String[][] labels )
+    public final Tsr<V> label( String tensorName, String[][] labels )
     {
         _label( tensorName, labels );
         return this;
@@ -1892,7 +1892,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param labels A nested String list containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    public Tsr<V> label( List<List<Object>> labels )
+    public final Tsr<V> label( List<List<Object>> labels )
     {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
@@ -1917,7 +1917,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param labels A nested String list containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    public Tsr<V> label( String tensorName, List<List<Object>> labels )
+    public final Tsr<V> label( String tensorName, List<List<Object>> labels )
     {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
@@ -1941,14 +1941,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
      * @return This tensor (method chaining).
      */
-    public Tsr<V> label( Map<Object, List<Object>> labels )
+    public final Tsr<V> label( Map<Object, List<Object>> labels )
     {
         LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
         this.set( new NDFrame<>( labels, this, null ) );
         return this;
     }
 
-    public Tsr<V> label( String tensorName, Map<Object, List<Object>> labels )
+    public final Tsr<V> label( String tensorName, Map<Object, List<Object>> labels )
     {
         LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
         this.set( new NDFrame<>( labels, this, tensorName ) );
@@ -1983,12 +1983,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param other The right operand of the addition.
      * @return The sum of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    public Tsr<V> plus( Tsr<V> other ) {
+    public final Tsr<V> plus( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add 'null' to a tensor!");
         return Neureka.get().backend().getAutogradFunction().plus().call( this, other );
     }
 
-    public Tsr<V> plusAssign( Tsr<V> other ) {
+    public final Tsr<V> plusAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add-assign 'null' to a tensor!");
         return Neureka.get().backend().getFunction().plusAssign().call( this, other );
     }
@@ -2003,7 +2003,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The right operand of the addition.
      * @return The sum between this instance as the left and the passed double as right operand.
      */
-    public Tsr<V> plus( double value ) { return plus( _of( this.shape(), value ) ); }
+    public final Tsr<V> plus( double value ) { return plus( _of( this.shape(), value ) ); }
 
     /**
      *  The {@link #minus(Tsr)} method will perform subtraction on
@@ -2021,12 +2021,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param other The right operand of the subtraction.
      * @return The difference between this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    public Tsr<V> minus( Tsr<V> other ) {
+    public final Tsr<V> minus( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract 'null' from a tensor!");
         return Neureka.get().backend().getAutogradFunction().minus().call( this, other );
     }
 
-    public Tsr<V> minus( V other ) {
+    public final Tsr<V> minus( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract 'null' from a tensor!");
         return minus(
                  Tsr.of((Class<V>)this.getDataType().getTypeClass())
@@ -2035,12 +2035,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         );
     }
 
-    public Tsr<V> minusAssign( Tsr<V> other ) {
+    public final Tsr<V> minusAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract-assign 'null' from a tensor!");
         return Neureka.get().backend().getFunction().minusAssign().call( this, other );
     }
 
-    public Tsr<V> minusAssign( V other ) {
+    public final Tsr<V> minusAssign( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract-assign 'null' from a tensor!");
         return minusAssign(
                 Tsr.of((Class<V>)this.getDataType().getTypeClass())
@@ -2049,7 +2049,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         );
     }
 
-    public Tsr<V> negative() {
+    public final Tsr<V> negative() {
         return Neureka.get().backend().getAutogradFunction().neg().call( this );
     }
 
@@ -2070,12 +2070,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param other The right operand of the multiplication.
      * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    public Tsr<V> multiply( Tsr<V> other ) {
+    public final Tsr<V> multiply( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply 'null' with a tensor!");
         return Neureka.get().backend().getAutogradFunction().mul().call( this, other );
     }
 
-    public Tsr<V> multiply( V other ) {
+    public final Tsr<V> multiply( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
         return multiply(
                            Tsr.of( (Class<V>) this.getDataType().getTypeClass() )
@@ -2101,28 +2101,28 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param other The right operand of the multiplication.
      * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    public Tsr<V> times( Tsr<V> other ) {
+    public final Tsr<V> times( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply 'null' with a tensor!");
         return multiply( other );
     }
 
-    public Tsr<V> times( V other ) {
+    public final Tsr<V> times( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
         return multiply( other );
     }
 
-    public Tsr<V> timesAssign( Tsr<V> other ) {
+    public final Tsr<V> timesAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply-assign 'null' to a tensor!");
         return Neureka.get().backend().getFunction().mulAssign().call( this, other );
     }
 
-    public Tsr<V> timesAssign( V other ) {
+    public final Tsr<V> timesAssign( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply-assign 'null' to a tensor!");
         return this.timesAssign( Tsr.of( this.getValueClass(), this.shape(), other ) );
     }
 
 
-    public Tsr<V> multiply( double value ) { return multiply( _of( this.shape(), value ) ); }
+    public final Tsr<V> multiply( double value ) { return multiply( _of( this.shape(), value ) ); }
 
     /**
      *  The {@link #div(Tsr)} method will produce the quotient of
@@ -2140,16 +2140,16 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param other The right operand of the division.
      * @return The quotient of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    public Tsr<V> div( Tsr<V> other ) {
+    public final Tsr<V> div( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide a tensor by 'null' (In any sense of the word)!");
         return Neureka.get().backend().getAutogradFunction().div().call( this, other );
     }
 
-    public Tsr<V> div( double value ) {
+    public final Tsr<V> div( double value ) {
         return div( _of( this.shape(), value ) );
     }
 
-    public Tsr<V> divAssign( Tsr<V> other ) {
+    public final Tsr<V> divAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
         return Neureka.get().backend().getFunction().divAssign().call( this, other );
     }
@@ -2170,20 +2170,20 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param other The right operand of the modulo operation.
      * @return The modulus of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    public Tsr<V> mod( Tsr<V> other ) {
+    public final Tsr<V> mod( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
         return Neureka.get().backend().getAutogradFunction().mod().call( this, other );
     }
 
-    public Tsr<V> mod( int other ) {
+    public final Tsr<V> mod( int other ) {
         return mod((Tsr<V>) Tsr.of(this.getNDConf().shape(), other));
     }
 
-    public Tsr<V> rem( int other ) {
+    public final Tsr<V> rem( int other ) {
         return mod((Tsr<V>) Tsr.of(this.getNDConf().shape(), other));
     }
 
-    public Tsr<V> modAssign( Tsr<V> other ) {
+    public final Tsr<V> modAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
         return Neureka.get().backend().getFunction().modAssign().call( this, other );
     }
@@ -2204,24 +2204,24 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param other The right operand, also known as exponent, of the exponentiation.
      * @return The power of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    public Tsr<V> power( Tsr<V> other ) {
+    public final Tsr<V> power( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot raise a tensor to the power of 'null'!");
         return Neureka.get().backend().getAutogradFunction().pow().call( this, other );
     }
 
-    public Tsr<V> power( double value ) {
+    public final Tsr<V> power( double value ) {
         return power( _of( this.shape(), value ) );
     }
 
     /**
      *  This method is synonymous to the {@link #power(Tsr)} method.
      */
-    public Tsr<V> xor( Tsr<V> other ) {
+    public final Tsr<V> xor( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot raise a tensor to the power of 'null'!");
         return Neureka.get().backend().getAutogradFunction().pow().call( this, other );
     }
 
-    public Tsr<V> xor( double value ) {
+    public final Tsr<V> xor( double value ) {
         return xor( _of( this.shape(), value ) );
     }
 
@@ -2236,7 +2236,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
-    public Tsr<V> T() // Transposed!
+    public final Tsr<V> T() // Transposed!
     {
         if ( this.rank() == 1 ) return this;
         else if ( this.rank() == 2 ) {
@@ -2258,7 +2258,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
-    public Tsr<V> getT() { // Transposed
+    public final Tsr<V> getT() { // Transposed
         return this.T();
     }
 
@@ -2270,7 +2270,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @return A scalar tensor which is the mean value of all values of this very tensor.
      */
-    public Tsr<V> mean() {
+    public final Tsr<V> mean() {
         Functions functions = Neureka.get().backend().getAutogradFunction();
         Tsr<V> ones = (Tsr<V>) Tsr.of( this.getValueClass(), this.getNDConf().shape(), (Object) 1 );
         Tsr<V> sum = functions.conv().call( this, ones );
@@ -2293,7 +2293,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param other The tensor which is the right part of the dot product operation.
      * @return A new tensor which is the dot product of this tensor and the passed one.
      */
-    public Tsr<V> convDot( Tsr<V> other ) {
+    public final Tsr<V> convDot( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class);
         Tsr<V> a = this;
         int[][] fitter = AbstractTensor.Utility.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );
@@ -2321,7 +2321,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param other The tensor which is the right part of the dot product operation.
      * @return A new tensor which is the dot product of this tensor and the passed one.
      */
-    public Tsr<V> dot( Tsr<V> other ) {
+    public final Tsr<V> dot( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform dot operation when second operand is 'null'!");
         if ( this.rank() != 2 && other.rank() != 2 )
             throw new IllegalStateException("Not yet implemented!"); // This is not yet available in the backend!
@@ -2336,7 +2336,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param other The right operand of the matrix multiplication.
      * @return The matrix product of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    public Tsr<V> matMul( Tsr<V> other ) {
+    public final Tsr<V> matMul( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform matrix multiplication operation when second operand is 'null'!");
         if ( this.rank() != 2 || other.rank() != 2 ) {
             String message = "Cannot perform matrix multiplication for tensors whose ranks are not both 2!\n" +
@@ -2357,7 +2357,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @return A tensor with the same underlying data but possibly trimmed shape without preceding or trailing ones.
      */
-    public Tsr<V> dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( this ); }
+    public final Tsr<V> dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( this ); }
 
     /**
      *  This method name translates to the "in" keyword in Groovy!
@@ -2412,7 +2412,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return An element located at the provided index.
      */
     @Override
-    public Tsr<V> getAt( int... indices ) {
+    public final Tsr<V> getAt( int... indices ) {
         LogUtil.nullArgCheck(indices, "indices", int[].class, "Indices array must not be 'null'!");
         return getAt( Arrays.stream( indices ).boxed().toArray() );
     }
@@ -2426,7 +2426,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A slice tensor created based on the passed keys.
      */
     @Override
-    public Tsr<V> getAt( Object... args ) {
+    public final Tsr<V> getAt( Object... args ) {
         List<Object> argsList = Arrays.asList( args );
         return getAt( argsList );
     }
@@ -2449,7 +2449,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *         strides based on the provided map values.
      */
     @Override
-    public Tsr<V> getAt( Map<?,Integer> rankToStrides )
+    public final Tsr<V> getAt( Map<?,Integer> rankToStrides )
     {
         if ( rankToStrides == null ) return this;
         // ...not a simple slice... Advanced:
@@ -2460,7 +2460,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                     );
     }
 
-    public Tsr<V> shallowCopy()
+    public final Tsr<V> shallowCopy()
     {
         if ( this.isEmpty() || this.isUndefined() ) return this;
         List<List<Integer>> ranges = new ArrayList<>();
@@ -2481,7 +2481,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A slice tensor or scalar value.
      */
     @Override
-    public Tsr<V> getAt( Object key ) {
+    public final Tsr<V> getAt( Object key ) {
         if ( key == null ) return this;
         if ( key instanceof Object[] && ((Object[]) key).length == 0 ) key = new ArrayList<>();
         if ( key instanceof List && ( (List<?>) key ).isEmpty() ) {
@@ -2531,7 +2531,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A deep copy of this tensor.
      */
     @Override
-    public Tsr<V> clone() {
+    public final Tsr<V> clone() {
         Function cloner = Neureka.get().backend().getFunction().idy();
         boolean thisIsIntermediate = this.isIntermediate();
         _setIsIntermediate( false );
@@ -2684,14 +2684,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A slice tensor or scalar value.
      */
     @Override
-    public Tsr<V> putAt( List<?> key, Tsr<V> value ) {
+    public final Tsr<V> putAt( List<?> key, Tsr<V> value ) {
         _putAtCheckFor( value );
         Tsr<V> slice = ( key == null ) ? this : getAt( key );
         return _putAt( slice, value );
     }
 
     @Override
-    public Tsr<V> putAt( int[] indices, V value ) {
+    public final Tsr<V> putAt( int[] indices, V value ) {
         if ( indices == null )
             throw new IllegalArgumentException( "Provided indices are null!" );
         if ( indices.length > this.rank() ) {
@@ -2725,7 +2725,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A slice tensor or scalar value.
      */
     @Override
-    public Tsr<V> putAt( Map<?,Integer> key, Tsr<V> value ) {
+    public final Tsr<V> putAt( Map<?,Integer> key, Tsr<V> value ) {
         _putAtCheckFor( value );
         Tsr<V> slice = ( key == null ) ? this : getAt( key );
         return _putAt( slice, value );
@@ -2798,7 +2798,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return This very tensor in order to enable method chaining.
      */
     @Override
-    public Tsr<V> setDataAt( int i, V o ) {
+    public final Tsr<V> setDataAt( int i, V o ) {
         _guardMod("data object");
         _setDataAt( i, o );
         return this;
@@ -2813,7 +2813,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return This very tensor in order to enable method chaining.
      */
     @Override
-    public Tsr<V> setValueAt( int i, V o ) {
+    public final Tsr<V> setValueAt( int i, V o ) {
         _guardMod("data object");
         NDConfiguration ndc = this.getNDConf();
         _setDataAt( ndc.indexOfIndex( i ), o );
@@ -2872,7 +2872,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The value which may be a scalar or array and will be used to populate this tensor.
      * @return This very tensor to enable method chaining.
      */
-    public Tsr<V> setValue( Object value )
+    public final Tsr<V> setValue( Object value )
     {
         if ( value instanceof float[] ) _setValue32( (float[]) value );
         else if ( value instanceof  double[] ) _setValue64( (double[]) value );
@@ -3088,7 +3088,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param error The error gradient which ought to be added to the gradient of this tensor.
      * @return This very tensor instance to enable method chaining.
      */
-    public Tsr<V> addToGradient( Tsr<V> error ) {
+    public final Tsr<V> addToGradient( Tsr<V> error ) {
         _guardSet("gradient");
         if (
                 !forComponent(
@@ -3334,25 +3334,25 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         _guardGet("unsafe API");
         return new Unsafe<V>() {
             @Override
-            public Tsr<V> setNDConf(NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return Tsr.this; }
+            public final Tsr<V> setNDConf(NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return Tsr.this; }
             @Override
             public <V> Tsr<V> toType( Class<V> typeClass ) { return Tsr.this._toType( typeClass ); }
             @Override
             public <V> Tsr<V> setDataType( DataType<V> dataType ) { return (Tsr<V>) Tsr.this._setDataType(dataType); }
             @Override
-            public Tsr<V> toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return Tsr.this; }
+            public final Tsr<V> toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return Tsr.this; }
             @Override
-            public Tsr<V> incrementVersion(ExecutionCall<?> call ) {
+            public final Tsr<V> incrementVersion(ExecutionCall<?> call ) {
                 _incrementVersionBecauseOf( call );
                 return Tsr.this;
             }
             @Override
-            public Tsr<V> setIsIntermediate( boolean isIntermediate ) {
+            public final Tsr<V> setIsIntermediate( boolean isIntermediate ) {
                 _setIsIntermediate( isIntermediate );
                 return Tsr.this;
             }
             @Override
-            public Tsr<V> delete() {
+            public final Tsr<V> delete() {
                 return Tsr.this._delete();
             }
         };
