@@ -12,39 +12,24 @@ public final class Sliced1DCIterator extends Sliced1DConfiguration implements ND
     }
 
     @Override
-    public final void increment() {
-        _d1++;
-    }
+    public final void increment() { _d1++; }
 
     @Override
-    public final void decrement() {
-        _d1--;
-    }
-
+    public final void decrement() { _d1--; }
 
     @Override
-    public final int i() {
-        return this.indexOfIndices(_d1);
-    }
+    public final int i() { return this.indexOfIndices(_d1); }
 
     @Override
-    public final int get( int axis ) {
-        return _d1;
-    }
+    public final int get( int axis ) { return _d1; }
 
     @Override
-    public final int[] get() {
-        return new int[]{_d1};
-    }
+    public final int[] get() { return new int[]{_d1}; }
 
     @Override
-    public final void set( int axis, int position ) {
-        _d1 = position;
-    }
+    public final void set( int axis, int position ) { _d1 = position; }
 
     @Override
-    public final void set( int[] indices ) {
-        _d1 = indices[0];
-    }
+    public final void set( int[] indices ) { _d1 = indices[0]; }
 
 }

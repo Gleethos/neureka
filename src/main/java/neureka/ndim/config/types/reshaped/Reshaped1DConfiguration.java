@@ -16,6 +16,7 @@ public class Reshaped1DConfiguration extends D1C {
      */
     private final int _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
 
+
     public static Reshaped1DConfiguration construct(
             int[] shape,
             int[] translation,
@@ -37,78 +38,48 @@ public class Reshaped1DConfiguration extends D1C {
     }
 
     @Override
-    public final int rank() {
-        return 1;
-    }
+    public final int rank() { return 1; }
 
     @Override
-    public final int[] shape() {
-        return new int[]{_shape};
-    }
+    public final int[] shape() { return new int[]{_shape}; }
 
     @Override
-    public final int shape( int i ) {
-        return _shape;
-    }
+    public final int shape( int i ) { return _shape; }
 
     @Override
-    public final int[] indicesMap() {
-        return new int[]{_indicesMap};
-    }
+    public final int[] indicesMap() { return new int[]{_indicesMap}; }
 
     @Override
-    public final int indicesMap(int i ) {
-        return _indicesMap;
-    }
+    public final int indicesMap(int i ) { return _indicesMap; }
 
     @Override
-    public final int[] translation() {
-        return new int[]{_translation};
-    }
+    public final int[] translation() { return new int[]{_translation}; }
 
     @Override
-    public final int translation( int i ) {
-        return _translation;
-    }
+    public final int translation( int i ) { return _translation; }
 
     @Override
-    public final int[] spread() {
-        return new int[]{1};
-    }
+    public final int[] spread() { return new int[]{1}; }
 
     @Override
-    public final int spread( int i ) {
-        return 1;
-    }
+    public final int spread( int i ) { return 1; }
 
     @Override
-    public final int[] offset() {
-        return new int[]{0};
-    }
+    public final int[] offset() { return new int[]{0}; }
 
     @Override
-    public final int offset( int i ) {
-        return 0;
-    }
+    public final int offset( int i ) { return 0; }
 
     @Override
-    public final int indexOfIndex(int index) {
-        return (index / _indicesMap) * _translation;
-    }
+    public final int indexOfIndex( int index ) { return ( index / _indicesMap ) * _translation; }
 
     @Override
-    public final int[] indicesOfIndex(int index) {
-        return new int[]{index / _indicesMap};
-    }
+    public final int[] indicesOfIndex( int index ) { return new int[]{index / _indicesMap}; }
 
     @Override
-    public final int indexOfIndices(int[] indices) {
-        return indices[ 0 ] * _translation;
-    }
+    public final int indexOfIndices( int[] indices ) { return indices[ 0 ] * _translation; }
 
     @Override
-    public final int indexOfIndices(int d1 ) {
-        return d1 * _translation;
-    }
+    public final int indexOfIndices( int d1 ) { return d1 * _translation; }
 
 }
