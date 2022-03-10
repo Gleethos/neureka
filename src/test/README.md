@@ -1,6 +1,8 @@
 # Note #
  
 Neureka relies on [Spock](https://github.com/spockframework/spock) as its primary testing framework.<br>
+Therefore, the vast majority of tests are located in the [groovy directory](groovy).
+
 If you are not familiar with Spock don't worry,
 [here is a simple introduction for writing and reading 
 Spock specifications](groovy/Example_Spec.groovy).
