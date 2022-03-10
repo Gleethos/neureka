@@ -208,49 +208,49 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
         _data = data;
     }
 
-    protected <T> void _initData( Filler<T> filler)
+    protected <T> void _initData( Filler<T> filler )
     {
         CPU.JVMExecutor executor = CPU.get().getExecutor();
         Object data = getData();
         if ( data instanceof double[] )
             executor.threaded( ( (double[]) data ).length, ( start, end ) -> {
                 for (int i = start; i < end; i++)
-                    ( (double[]) data )[i] = (double) filler.init(i, _NDConf.indicesOfIndex(i));
+                    ( (double[]) data )[i] = (Double) filler.init( i, _NDConf.indicesOfIndex(i) );
             });
         else if ( data instanceof float[] )
             executor.threaded( ( (float[]) data ).length, (start, end) -> {
                 for (int i = start; i < end; i++)
-                    ( (float[]) data )[ i ] = (float) filler.init( i, _NDConf.indicesOfIndex( i )  );
+                    ( (float[]) data )[ i ] = (Float) filler.init( i, _NDConf.indicesOfIndex( i )  );
             });
         else if ( data instanceof int[] )
             executor.threaded( ( (int[]) data ).length, (start, end) -> {
                 for (int i = start; i < end; i++)
-                    ( (int[]) data )[ i ] = (int) filler.init( i, _NDConf.indicesOfIndex( i )  );
+                    ( (int[]) data )[ i ] = (Integer) filler.init( i, _NDConf.indicesOfIndex( i )  );
             });
         else if ( data instanceof short[] )
             executor.threaded( ( (short[]) data ).length, (start, end) -> {
                 for (int i = start; i < end; i++)
-                    ( (short[]) data )[ i ] = (short) filler.init( i, _NDConf.indicesOfIndex( i )  );
+                    ( (short[]) data )[ i ] = (Short) filler.init( i, _NDConf.indicesOfIndex( i )  );
             });
         else if ( data instanceof byte[] )
             executor.threaded( ( (byte[]) data ).length, (start, end) -> {
                 for (int i = start; i < end; i++)
-                    ( (byte[]) data )[ i ] = (byte) filler.init( i, _NDConf.indicesOfIndex( i )  );
+                    ( (byte[]) data )[ i ] = (Byte) filler.init( i, _NDConf.indicesOfIndex( i )  );
             });
         else if ( data instanceof long[] )
             executor.threaded( ( (long[]) data ).length, (start, end) -> {
                 for (int i = start; i < end; i++)
-                    ( (long[]) data )[ i ] = (long) filler.init( i, _NDConf.indicesOfIndex( i )  );
+                    ( (long[]) data )[ i ] = (Long) filler.init( i, _NDConf.indicesOfIndex( i )  );
             });
         else if ( data instanceof boolean[] )
             executor.threaded( ( (boolean[]) data ).length, (start, end) -> {
                 for (int i = start; i < end; i++)
-                    ( (boolean[]) data )[ i ] = (boolean) filler.init( i, _NDConf.indicesOfIndex( i )  );
+                    ( (boolean[]) data )[ i ] = (Boolean) filler.init( i, _NDConf.indicesOfIndex( i )  );
             });
         else if ( data instanceof char[] )
             executor.threaded( ( (char[]) data ).length, (start, end) -> {
                 for (int i = start; i < end; i++)
-                    ( (char[]) data )[ i ] = (char) filler.init( i, _NDConf.indicesOfIndex( i )  );
+                    ( (char[]) data )[ i ] = (Character) filler.init( i, _NDConf.indicesOfIndex( i )  );
             });
         else
             executor.threaded( ( (Object[]) data ).length, (start, end) -> {
