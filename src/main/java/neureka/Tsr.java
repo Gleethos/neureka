@@ -1969,7 +1969,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     /**
      *  The {@link #plus(Tsr)} method will produce the sum of
-     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
@@ -2007,7 +2007,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     /**
      *  The {@link #minus(Tsr)} method will perform subtraction on
-     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
@@ -2049,6 +2049,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         );
     }
 
+    /**
+     * @return A clone of this tensor where the signs of all elements are flipped.
+     */
     public final Tsr<V> negative() {
         return Neureka.get().backend().getAutogradFunction().neg().call( this );
     }
@@ -2056,7 +2059,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     /**
      *  The {@link #multiply(Tsr)} method is synonymous with the {@link #times(Tsr)} method.
      *  Both of which will produce the product of
-     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
@@ -2075,6 +2078,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return Neureka.get().backend().getAutogradFunction().mul().call( this, other );
     }
 
+    /**
+     * @param other The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     */
     public final Tsr<V> multiply( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
         return multiply(
@@ -2087,7 +2094,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     /**
      *  The {@link #times(Tsr)} method is synonymous to the {@link #multiply(Tsr)}.
      *  Both of which will produce the product of
-     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
@@ -2106,27 +2113,43 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return multiply( other );
     }
 
+    /**
+     * @param other The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     */
     public final Tsr<V> times( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
         return multiply( other );
     }
 
+    /**
+     * @param other The tensor whose elements ought to be multiplyied and assigned to elements in this tensor.
+     * @return This instance where each value element was muliplied by the corresponding element in the provided tensor.
+     */
     public final Tsr<V> timesAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply-assign 'null' to a tensor!");
         return Neureka.get().backend().getFunction().mulAssign().call( this, other );
     }
 
+    /**
+     * @param other The value which ought to be multiplyied and assigned to each element in this tensor.
+     * @return This instance where each value element was muliplied by the provided element.
+     */
     public final Tsr<V> timesAssign( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply-assign 'null' to a tensor!");
         return this.timesAssign( Tsr.of( this.getValueClass(), this.shape(), other ) );
     }
 
 
+    /**
+     * @param value The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     */
     public final Tsr<V> multiply( double value ) { return multiply( _of( this.shape(), value ) ); }
 
     /**
      *  The {@link #div(Tsr)} method will produce the quotient of
-     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
@@ -2145,9 +2168,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return Neureka.get().backend().getAutogradFunction().div().call( this, other );
     }
 
-    public final Tsr<V> div( double value ) {
-        return div( _of( this.shape(), value ) );
-    }
+    public final Tsr<V> div( double value ) { return div( _of( this.shape(), value ) ); }
 
     public final Tsr<V> divAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
@@ -2156,7 +2177,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     /**
      *  The {@link #mod(Tsr)} method will produce the modulus of
-     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
@@ -2175,13 +2196,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return Neureka.get().backend().getAutogradFunction().mod().call( this, other );
     }
 
-    public final Tsr<V> mod( int other ) {
-        return mod((Tsr<V>) Tsr.of(this.getNDConf().shape(), other));
-    }
+    public final Tsr<V> mod( int other ) { return mod((Tsr<V>) Tsr.of(this.getNDConf().shape(), other)); }
 
-    public final Tsr<V> rem( int other ) {
-        return mod((Tsr<V>) Tsr.of(this.getNDConf().shape(), other));
-    }
+    public final Tsr<V> rem( int other ) { return mod((Tsr<V>) Tsr.of(this.getNDConf().shape(), other)); }
 
     public final Tsr<V> modAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
@@ -2190,7 +2207,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     /**
      *  The {@link #power(Tsr)} (Tsr)} method will produce the power of
-     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
@@ -2460,6 +2477,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                     );
     }
 
+    /**
+     *  This is technically the equivalent to a full slice.
+     *
+     * @return A shallow copy where the underlying data is shared with this tensor.
+     */
     public final Tsr<V> shallowCopy()
     {
         if ( this.isEmpty() || this.isUndefined() ) return this;
@@ -2690,8 +2712,16 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return _putAt( slice, value );
     }
 
+    /**
+     *  Use this to place an element at a particular position
+     *  within this tensor by providing a array of axis indices and said element.
+     *
+     * @param indices The array of axis indices defining the position for the provided item.
+     * @param item The element which ought to be placed at the indexed position.
+     * @return This tensor instance to allow for method chaining.
+     */
     @Override
-    public final Tsr<V> putAt( int[] indices, V value ) {
+    public final Tsr<V> putAt( int[] indices, V item ) {
         if ( indices == null )
             throw new IllegalArgumentException( "Provided indices are null!" );
         if ( indices.length > this.rank() ) {
@@ -2699,7 +2729,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             System.arraycopy( indices, 0, correct, 0, indices.length );
             indices = correct;
         }
-        Tsr<V> source = Tsr.of( this.getValueClass(), shape(), value );
+        Tsr<V> source = Tsr.of( this.getValueClass(), shape(), item );
         Tsr<V> slice = getAt( Arrays.stream( indices ).mapToObj( i -> i ).collect(Collectors.toList()) );
         Neureka.get().backend().getFunction().idy().call(slice, source);
         return this;
