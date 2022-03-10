@@ -2852,14 +2852,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     private void _setDataAt( int i, V o ) {
         if ( getData() instanceof Object[] ) ( (Object[]) getData() )[ i ] = o;
-        else if ( getData() instanceof float[]  ) ( (float[])  getData() )[ i ] = (float)  o;
-        else if ( getData() instanceof double[] ) ( (double[]) getData() )[ i ] = (double) o;
-        else if ( getData() instanceof int[]    ) ( (int[])    getData() )[ i ] = (int)    o;
-        else if ( getData() instanceof long[]   ) ( (long[])   getData() )[ i ] = (long)   o;
-        else if ( getData() instanceof short[]  ) ( (short[])  getData() )[ i ] = (short)  o;
-        else if ( getData() instanceof byte[]   ) ( (byte[])   getData() )[ i ] = (byte)   o;
-        else if ( getData() instanceof boolean[]) ( (boolean[])getData() )[ i ] = (boolean)o;
-        else if ( getData() instanceof char[])    ( (char[])   getData() )[ i ] = (char)o;
+        else if ( getData() instanceof float[]  ) ( (float[])  getData() )[ i ] = (Float)     o;
+        else if ( getData() instanceof double[] ) ( (double[]) getData() )[ i ] = (Double)    o;
+        else if ( getData() instanceof int[]    ) ( (int[])    getData() )[ i ] = (Integer)   o;
+        else if ( getData() instanceof long[]   ) ( (long[])   getData() )[ i ] = (Long)      o;
+        else if ( getData() instanceof short[]  ) ( (short[])  getData() )[ i ] = (Short)     o;
+        else if ( getData() instanceof byte[]   ) ( (byte[])   getData() )[ i ] = (Byte)      o;
+        else if ( getData() instanceof boolean[]) ( (boolean[])getData() )[ i ] = (Boolean)   o;
+        else if ( getData() instanceof char[])    ( (char[])   getData() )[ i ] = (Character) o;
     }
 
     /**
