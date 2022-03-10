@@ -87,44 +87,47 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      *  This method returns {@link Device} instances matching
      *  the given search parameters.
      *
+     * @param deviceType The device type class which should be found.
      * @param searchKeys The search parameter and name of the requested {@link Device} instance.
+     * @param &lt;T&gt; The value super types of the tensors stored on the requested device.
+     * @param &lt;D&gt; The device type parameter.
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
     static &lt;T, D extends Device&lt;T&gt;&gt; D find( Class&lt;D&gt; deviceType, String... searchKeys )
     {
-<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if ( deviceType == CPU.class ) return (D) CPU.get();</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if ( deviceType == CPU.class ) return (D) CPU.get();</span>
         String key;
-<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        if ( searchKeys.length == 0 ) key = &quot;&quot;;</span>
-<span class="fc" id="L98">        else key = String.join(&quot; &quot;, searchKeys).toLowerCase();</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        if ( searchKeys.length == 0 ) key = &quot;&quot;;</span>
+<span class="fc" id="L101">        else key = String.join(&quot; &quot;, searchKeys).toLowerCase();</span>
 
-<span class="fc" id="L100">        boolean justTakeFirstOne = key.equals(&quot;first&quot;);</span>
+<span class="fc" id="L103">        boolean justTakeFirstOne = key.equals(&quot;first&quot;);</span>
 
-<span class="fc" id="L102">        boolean probablyWantsGPU = Stream.of(</span>
+<span class="fc" id="L105">        boolean probablyWantsGPU = Stream.of(</span>
                                         &quot;gpu&quot;, &quot;nvidia&quot;, &quot;amd&quot;, &quot;intel&quot;, &quot;opencl&quot;, &quot;fpga&quot;, &quot;radeon&quot;, &quot;cuda&quot;, &quot;apu&quot;, &quot;graphics&quot;
                                     )
-<span class="fc" id="L105">                                    .anyMatch(key::contains);</span>
+<span class="fc" id="L108">                                    .anyMatch(key::contains);</span>
 
-<span class="fc" id="L107">        double desireForCPU = Stream.of(&quot;jvm&quot;,&quot;native&quot;,&quot;host&quot;,&quot;cpu&quot;,&quot;threaded&quot;)</span>
-<span class="fc" id="L108">                                    .mapToDouble( word -&gt; ParseUtil.similarity( word, key ) )</span>
-<span class="fc" id="L109">                                    .max()</span>
-<span class="fc" id="L110">                                    .orElse(0);</span>
+<span class="fc" id="L110">        double desireForCPU = Stream.of(&quot;jvm&quot;,&quot;native&quot;,&quot;host&quot;,&quot;cpu&quot;,&quot;threaded&quot;)</span>
+<span class="fc" id="L111">                                    .mapToDouble( word -&gt; ParseUtil.similarity( word, key ) )</span>
+<span class="fc" id="L112">                                    .max()</span>
+<span class="fc" id="L113">                                    .orElse(0);</span>
 
-<span class="fc bfc" id="L112" title="All 2 branches covered.">        if ( probablyWantsGPU ) desireForCPU /= 10; // CPU instance is most likely not meant!</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if ( probablyWantsGPU ) desireForCPU /= 10; // CPU instance is most likely not meant!</span>
 
-<span class="fc bfc" id="L114" title="All 2 branches covered.">        for ( BackendExtension extension : Neureka.get().backend().getExtensions() ) {</span>
-<span class="fc" id="L115">            BackendExtension.DeviceOption found = extension.find( key );</span>
-<span class="pc bpc" id="L116" title="2 of 4 branches missed.">            if ( found != null &amp;&amp; (deviceType.isAssignableFrom( found.device().getClass() )) ) {</span>
-<span class="fc bfc" id="L117" title="All 4 branches covered.">                if ( found.confidence() &gt; desireForCPU || justTakeFirstOne )</span>
-<span class="fc" id="L118">                    return (D) found.device();</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        for ( BackendExtension extension : Neureka.get().backend().getExtensions() ) {</span>
+<span class="fc" id="L118">            BackendExtension.DeviceOption found = extension.find( key );</span>
+<span class="pc bpc" id="L119" title="2 of 4 branches missed.">            if ( found != null &amp;&amp; (deviceType.isAssignableFrom( found.device().getClass() )) ) {</span>
+<span class="fc bfc" id="L120" title="All 4 branches covered.">                if ( found.confidence() &gt; desireForCPU || justTakeFirstOne )</span>
+<span class="fc" id="L121">                    return (D) found.device();</span>
             }
-<span class="fc" id="L120">        }</span>
+<span class="fc" id="L123">        }</span>
 
-<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if ( probablyWantsGPU )</span>
-<span class="nc" id="L123">            return null; // User wants OpenCL but cannot have it :/</span>
-<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        else if ( deviceType.isAssignableFrom( CPU.class ) )</span>
-<span class="fc" id="L125">            return (D) CPU.get();</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if ( probablyWantsGPU )</span>
+<span class="nc" id="L126">            return null; // User wants OpenCL but cannot have it :/</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        else if ( deviceType.isAssignableFrom( CPU.class ) )</span>
+<span class="fc" id="L128">            return (D) CPU.get();</span>
         else
-<span class="nc" id="L127">            return null; // We don't know what the user wants, but we do not have it :/</span>
+<span class="nc" id="L130">            return null; // We don't know what the user wants, but we do not have it :/</span>
     }
 
     /**
@@ -225,16 +228,16 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
     Operation optimizedOperationOf( Function function, String name );
 
     default Function optimizedFunctionOf( Function function, String name ) {
-<span class="fc" id="L228">        Operation optimizedOperation = optimizedOperationOf( function, name );</span>
-<span class="fc" id="L229">        BackendContext currentContext = Neureka.get().backend();</span>
-<span class="pc bpc" id="L230" title="1 of 2 branches missed.">        if ( !currentContext.hasOperation( optimizedOperation ) )</span>
-<span class="fc" id="L231">            currentContext.addOperation( optimizedOperation );</span>
+<span class="fc" id="L231">        Operation optimizedOperation = optimizedOperationOf( function, name );</span>
+<span class="fc" id="L232">        BackendContext currentContext = Neureka.get().backend();</span>
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">        if ( !currentContext.hasOperation( optimizedOperation ) )</span>
+<span class="fc" id="L234">            currentContext.addOperation( optimizedOperation );</span>
 
-<span class="fc" id="L233">        return new FunctionBuilder( currentContext )</span>
-<span class="fc" id="L234">                            .build(</span>
+<span class="fc" id="L236">        return new FunctionBuilder( currentContext )</span>
+<span class="fc" id="L237">                            .build(</span>
                                     optimizedOperation,
-<span class="fc" id="L236">                                    function.numberOfArgs(),</span>
-<span class="fc" id="L237">                                    function.isDoingAD()</span>
+<span class="fc" id="L239">                                    function.numberOfArgs(),</span>
+<span class="fc" id="L240">                                    function.isDoingAD()</span>
                             );
     }
 
@@ -253,21 +256,21 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      *         tensors back to their original devices!
      */
     default In use( Tsr&lt;V&gt; first, Tsr&lt;V&gt;... rest ) {
-<span class="fc" id="L256">        List&lt;Tsr&lt;V&gt;&gt; tensors = new ArrayList&lt;&gt;();</span>
-<span class="pc bpc" id="L257" title="1 of 2 branches missed.">        if ( first != null ) tensors.add( first );</span>
-<span class="fc bfc" id="L258" title="All 2 branches covered.">        if ( rest.length &gt; 0 )</span>
-<span class="fc" id="L259">            tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );</span>
-<span class="fc" id="L260">        Device&lt;?&gt; thisDevice = this;</span>
-<span class="fc" id="L261">        return new In() {</span>
+<span class="fc" id="L259">        List&lt;Tsr&lt;V&gt;&gt; tensors = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L260" title="1 of 2 branches missed.">        if ( first != null ) tensors.add( first );</span>
+<span class="fc bfc" id="L261" title="All 2 branches covered.">        if ( rest.length &gt; 0 )</span>
+<span class="fc" id="L262">            tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );</span>
+<span class="fc" id="L263">        Device&lt;?&gt; thisDevice = this;</span>
+<span class="fc" id="L264">        return new In() {</span>
             @Override
             public &lt;R&gt; R in( Supplier&lt;R&gt; lambda ) {
-<span class="fc" id="L264">                List&lt;Device&lt;?&gt;&gt; devices = tensors.stream().map( Tsr::getDevice ).collect( Collectors.toList() );</span>
-<span class="fc bfc" id="L265" title="All 2 branches covered.">                for ( Tsr&lt;V&gt; t : tensors ) t.to( thisDevice );</span>
-<span class="fc" id="L266">                R result = lambda.get();</span>
-<span class="fc bfc" id="L267" title="All 2 branches covered.">                for ( int i = 0; i &lt; tensors.size(); i++ ) {</span>
-<span class="pc bpc" id="L268" title="1 of 2 branches missed.">                    if ( devices.get( i ) != null ) tensors.get( i ).to( devices.get( i ) );</span>
+<span class="fc" id="L267">                List&lt;Device&lt;?&gt;&gt; devices = tensors.stream().map( Tsr::getDevice ).collect( Collectors.toList() );</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">                for ( Tsr&lt;V&gt; t : tensors ) t.to( thisDevice );</span>
+<span class="fc" id="L269">                R result = lambda.get();</span>
+<span class="fc bfc" id="L270" title="All 2 branches covered.">                for ( int i = 0; i &lt; tensors.size(); i++ ) {</span>
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">                    if ( devices.get( i ) != null ) tensors.get( i ).to( devices.get( i ) );</span>
                 }
-<span class="fc" id="L270">                return result;</span>
+<span class="fc" id="L273">                return result;</span>
             }
         };
     }

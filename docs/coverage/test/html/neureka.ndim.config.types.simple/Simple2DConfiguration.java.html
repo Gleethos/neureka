@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Simple2DConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config.types.simple</a> &gt; <span class="el_source">Simple2DConfiguration.java</span></div><h1>Simple2DConfiguration.java</h1><pre class="source lang-java linenums">package neureka.ndim.config.types.simple;
+
+import neureka.ndim.config.types.D2C;
+
+
+public class Simple2DConfiguration extends D2C //:= IMMUTABLE
+{
+    /**
+     *  The shape of the NDArray.
+     */
+    protected final int _shape1;
+    protected final int _shape2;
+    /**
+     *  The translation from a shape index (indices) to the index of the underlying data array.
+     */
+    private final int _translation1;
+    private final int _translation2;
+
+    protected Simple2DConfiguration(
+            int[] shape,
+            int[] translation
+<span class="fc" id="L22">    ) {</span>
+<span class="fc" id="L23">        _shape1 = shape[ 0 ];</span>
+<span class="fc" id="L24">        _shape2 = shape[ 1 ];</span>
+<span class="fc" id="L25">        _translation1 = translation[ 0 ];</span>
+<span class="fc" id="L26">        _translation2 = translation[ 1 ];</span>
+<span class="fc" id="L27">    }</span>
+
+    public static Simple2DConfiguration construct(
+            int[] shape,
+            int[] translation
+    ) {
+<span class="fc" id="L33">        return _cached( new Simple2DConfiguration(shape, translation) );</span>
+    }
+
+
+    @Override
+<span class="fc" id="L38">    public final int rank() { return 2; }</span>
+
+    @Override
+<span class="fc" id="L41">    public final int[] shape() { return new int[]{_shape1, _shape2}; }</span>
+
+    @Override
+<span class="fc bfc" id="L44" title="All 2 branches covered.">    public final int shape( int i ) { return ( i==0 ? _shape1 : _shape2 ); }</span>
+
+    @Override
+<span class="fc" id="L47">    public final int[] indicesMap() { return new int[]{_translation1, _translation2}; }</span>
+
+    @Override
+<span class="fc" id="L50">    public final int indicesMap( int i ) { return 1; }</span>
+
+    @Override
+<span class="fc" id="L53">    public final int[] translation() { return new int[]{_translation1, _translation2}; }</span>
+
+    @Override
+<span class="fc bfc" id="L56" title="All 2 branches covered.">    public final int translation( int i ) { return ( i==0 ? _translation1 : _translation2 ); }</span>
+
+    @Override
+<span class="fc" id="L59">    public final int[] spread() { return new int[]{1, 1}; }</span>
+
+    @Override
+<span class="fc" id="L62">    public final int spread( int i ) { return 1; }</span>
+
+    @Override
+<span class="fc" id="L65">    public final int[] offset() { return new int[]{0,0}; }</span>
+
+    @Override
+<span class="fc" id="L68">    public final int offset( int i ) { return 0; }</span>
+
+    @Override
+    public final int indexOfIndex( int index ) {
+<span class="fc" id="L72">        return (index / _translation1) * _translation1 +</span>
+                ((index %_translation1) / _translation2) * _translation2;
+    }
+
+    @Override
+    public final int[] indicesOfIndex( int index ) {
+<span class="fc" id="L78">        int[] indices = new int[ 2 ];</span>
+<span class="fc" id="L79">        indices[ 0 ] += index / _translation1;</span>
+<span class="fc" id="L80">        index %= _translation1;</span>
+<span class="fc" id="L81">        indices[ 1 ] += index / _translation2;</span>
+<span class="fc" id="L82">        return indices;</span>
+    }
+
+    @Override
+    public final int indexOfIndices( int[] indices ) {
+<span class="fc" id="L87">        int i = 0;</span>
+<span class="fc" id="L88">        i += indices[ 0 ] * _translation1;</span>
+<span class="fc" id="L89">        i += indices[ 1 ] * _translation2;</span>
+<span class="fc" id="L90">        return i;</span>
+    }
+
+    @Override
+    public final int indexOfIndices( int d1, int d2 ) {
+<span class="fc" id="L95">        int i = 0;</span>
+<span class="fc" id="L96">        i += d1 * _translation1;</span>
+<span class="fc" id="L97">        i += d2 * _translation2;</span>
+<span class="fc" id="L98">        return i;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

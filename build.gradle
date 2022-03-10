@@ -62,7 +62,7 @@ plugins {
 compileJava { options.encoding = "UTF-8" } // Allows for '"' characters in comments for example...
 
 String PROJECT = "neureka"
-String VERSION = "0.14.0"
+String VERSION = "0.15.0"
 String GROUP_ID = "com.github.gleethos"
 String BASENAME = "neureka"
 
@@ -153,7 +153,7 @@ dependencies {
 
     // Core library dependencies :
     implementation 'org.jocl:jocl:2.0.4' //-> Internal dependency!
-    implementation 'org.jetbrains:annotations:22.0.0'
+    implementation 'org.jetbrains:annotations:23.0.0'
 
     //---
         // Multi-Release-Jar :
@@ -164,7 +164,7 @@ dependencies {
     //---
 
     // Logging :
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.32'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
     //---
         // Multi-Release-Jar :
         java11Implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.32'
@@ -175,13 +175,13 @@ dependencies {
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     //-----------------------------------------------------
     // mandatory dependencies for using Spock
-    testImplementation "org.codehaus.groovy:groovy:3.0.8"
+    testImplementation 'org.codehaus.groovy:groovy:3.0.10'
     testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0")
     testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
     testImplementation 'com.athaydes:spock-reports:2.2.0-groovy-3.0'//, { transitive = false }
 
-    testImplementation 'org.slf4j:slf4j-api:1.7.35'  // LOGGING
-    testRuntimeClasspath 'org.slf4j:slf4j-simple:1.7.35'
+    testImplementation 'org.slf4j:slf4j-api:1.7.36'  // LOGGING
+    testRuntimeClasspath 'org.slf4j:slf4j-simple:1.7.36'
 
     testRuntimeOnly group: 'net.bytebuddy', name: 'byte-buddy', version: '1.11.15' // allows mocking of classes (in addition to interfaces)
     testRuntimeOnly group: 'org.objenesis', name: 'objenesis', version: '3.2'      // allows mocking of classes without default constructor (together with ByteBuddy or CGLIB)

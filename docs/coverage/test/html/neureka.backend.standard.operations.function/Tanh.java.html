@@ -49,7 +49,7 @@ public final class Tanh extends AbstractOperation
             )
 <span class="fc" id="L50">            .setImplementationFor(</span>
                 OpenCLDevice.class,
-<span class="fc" id="L52">                    Activation.implementationForGPU( this.getFunction() )</span>
+<span class="fc" id="L52">                    Activation.implementationForGPU( this.getIdentifier() )</span>
 <span class="fc" id="L53">                            .with( &quot;output = input/pow(1+pow(input, 2.0f), 0.5f);\n&quot; )</span>
 <span class="fc" id="L54">                            .and( &quot;output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n&quot; )</span>
             )

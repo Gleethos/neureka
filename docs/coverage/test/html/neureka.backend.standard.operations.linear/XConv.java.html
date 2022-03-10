@@ -53,7 +53,7 @@ public class XConv extends AbstractOperation
 <span class="fc" id="L53">                            .kernelSource( convolution.getKernelSource() )</span>
 <span class="fc" id="L54">                            .activationSource( &quot;value = src1 * src2;\n&quot; )</span>
 <span class="fc" id="L55">                            .differentiationSource( &quot;value += handle * drain;\n&quot; )</span>
-<span class="fc" id="L56">                            .kernelPostfix( this.getFunction() )</span>
+<span class="fc" id="L56">                            .kernelPostfix( this.getIdentifier() )</span>
 <span class="fc" id="L57">                            .execution(</span>
                                 call -&gt; {
 <span class="pc bpc" id="L59" title="1 of 2 branches missed.">                                    int offset = ( call.getTsrOfType( Number.class, 0 ) != null ) ? 0 : 1;</span>

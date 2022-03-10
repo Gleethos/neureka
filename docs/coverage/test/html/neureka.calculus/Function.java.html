@@ -98,6 +98,7 @@ public interface Function
     }
 
     //------------------------------------------------------------------------------------------------------------------
+    // Instance methods:
 
     /**
      *  Only branch {@link Function}s can do autograd / 'Auto-Differentiation', meaning functions
@@ -130,40 +131,46 @@ public interface Function
      */
     Function getDerivative( int index );
 
+    /**
+     * @return The child {@link Function} nodes of this {@link Function} AST.
+     */
     List&lt;Function&gt; getSubFunctions();
 
+    /**
+     * @return A list of all {@link Function} nodes within the abstract syntax tree defined by this.
+     */
     default List&lt;Function&gt; getAllFunctions() {
-<span class="fc" id="L136">        List&lt;Function&gt; allFuns = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L137">        allFuns.add(this);</span>
-<span class="fc bfc" id="L138" title="All 2 branches covered.">        for ( Function fun : this.getSubFunctions() ) {</span>
-<span class="fc" id="L139">            allFuns.addAll(fun.getAllFunctions());</span>
-<span class="fc" id="L140">        }</span>
-<span class="fc" id="L141">        return allFuns;</span>
+<span class="fc" id="L143">        List&lt;Function&gt; allFuns = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L144">        allFuns.add(this);</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        for ( Function fun : this.getSubFunctions() ) {</span>
+<span class="fc" id="L146">            allFuns.addAll(fun.getAllFunctions());</span>
+<span class="fc" id="L147">        }</span>
+<span class="fc" id="L148">        return allFuns;</span>
     }
 
     default int numberOfArgs() {
-<span class="fc" id="L145">        return (int) getAllFunctions()</span>
-<span class="fc" id="L146">                        .stream()</span>
-<span class="fc" id="L147">                        .filter( fun -&gt; fun instanceof FunctionInput )</span>
-<span class="fc" id="L148">                        .map( fun -&gt; (FunctionInput) fun )</span>
-<span class="fc" id="L149">                        .mapToInt( FunctionInput::index )</span>
-<span class="fc" id="L150">                        .distinct()</span>
-<span class="fc" id="L151">                        .count();</span>
+<span class="fc" id="L152">        return (int) getAllFunctions()</span>
+<span class="fc" id="L153">                        .stream()</span>
+<span class="fc" id="L154">                        .filter( fun -&gt; fun instanceof FunctionInput )</span>
+<span class="fc" id="L155">                        .map( fun -&gt; (FunctionInput) fun )</span>
+<span class="fc" id="L156">                        .mapToInt( FunctionInput::index )</span>
+<span class="fc" id="L157">                        .distinct()</span>
+<span class="fc" id="L158">                        .count();</span>
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
-<span class="nc" id="L156">    default double call( double input )   { return call( new double[]{input} ); }</span>
-<span class="nc" id="L157">    default double invoke( double input ) { return call( input               ); }</span>
+<span class="nc" id="L163">    default double call( double input )   { return call( new double[]{input} ); }</span>
+<span class="nc" id="L164">    default double invoke( double input ) { return call( input               ); }</span>
 
     //------------------------------------------------------------------------------------------------------------------
 
     double call( double[] inputs, int j );
-<span class="nc" id="L162">    default double invoke( double[] inputs, int j ) { return call( inputs, j ); }</span>
+<span class="nc" id="L169">    default double invoke( double[] inputs, int j ) { return call( inputs, j ); }</span>
 
 
-<span class="fc" id="L165">    default double call( double... inputs )   { return call( inputs, -1 ); }</span>
-<span class="nc" id="L166">    default double invoke( double... inputs ) { return call( inputs        ); }</span>
+<span class="fc" id="L172">    default double call( double... inputs )   { return call( inputs, -1 ); }</span>
+<span class="nc" id="L173">    default double invoke( double... inputs ) { return call( inputs        ); }</span>
 
 
     double derive( double[] inputs, int index, int j );
@@ -172,15 +179,15 @@ public interface Function
     //------------------------------------------------------------------------------------------------------------------
 
     default &lt;T, D extends Device&lt;T&gt;&gt; Tsr&lt;T&gt; call( Call.Builder&lt;T, D&gt; call ) {
-<span class="nc" id="L175">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) execute( call.get() );</span>
-<span class="nc" id="L176">        result.getUnsafe().setIsIntermediate(false);</span>
-<span class="nc" id="L177">        return result;</span>
+<span class="nc" id="L182">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) execute( call.get() );</span>
+<span class="nc" id="L183">        result.getUnsafe().setIsIntermediate(false);</span>
+<span class="nc" id="L184">        return result;</span>
     }
 
     default &lt;T, D extends Device&lt;T&gt;&gt; Tsr&lt;T&gt; invoke( Call.Builder&lt;T, D&gt; call ) {
-<span class="fc" id="L181">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) execute( call.get() );</span>
-<span class="fc" id="L182">        result.getUnsafe().setIsIntermediate(false);</span>
-<span class="fc" id="L183">        return result;</span>
+<span class="fc" id="L188">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) execute( call.get() );</span>
+<span class="fc" id="L189">        result.getUnsafe().setIsIntermediate(false);</span>
+<span class="fc" id="L190">        return result;</span>
     }
 
     /**
@@ -192,12 +199,137 @@ public interface Function
             convert the call to a format compatible with the backend!
             For that we simply need a list of arguments and tensors.
          */
-<span class="fc" id="L195">        List&lt;Arg&gt; args = call.allMetaArgs();</span>
-<span class="pc bpc" id="L196" title="1 of 2 branches missed.">        if ( call.getDevice() != null ) args.add(Arg.TargetDevice.of((Device&lt;?&gt;) call.getDevice()));</span>
-<span class="fc" id="L197">        Arg&lt;?&gt;[] argArray = new Arg[args.size()];</span>
-<span class="fc bfc" id="L198" title="All 2 branches covered.">        for ( int i = 0; i &lt; argArray.length; i++ ) argArray[i] = args.get(i);</span>
-<span class="fc" id="L199">        return callWith(argArray).execute(call.getTensors());</span>
+<span class="fc" id="L202">        List&lt;Arg&gt; args = call.allMetaArgs();</span>
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">        if ( call.getDevice() != null ) args.add(Arg.TargetDevice.of((Device&lt;?&gt;) call.getDevice()));</span>
+<span class="fc" id="L204">        Arg&lt;?&gt;[] argArray = new Arg[args.size()];</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">        for ( int i = 0; i &lt; argArray.length; i++ ) argArray[i] = args.get(i);</span>
+<span class="fc" id="L206">        return callWith(argArray).execute(call.inputs());</span>
     }
+
+    /**
+     * @param arguments A set of arguments you want to supply to this function for further
+     *                  control over the execution.
+     *
+     * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
+     */
+<span class="fc" id="L215">    default CallOptions callWith( Arg&lt;?&gt;... arguments ) { return callWith( Args.of( arguments ) ); }</span>
+
+    /**
+     * @param arguments A set of arguments you want to supply to this function for further
+     *                  control over the execution.
+     *
+     * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
+     */
+    default CallOptions callWith( Args arguments ) {
+<span class="fc" id="L224">       return new CallOptions() {</span>
+<span class="fc" id="L225">           @SafeVarargs @Override public final &lt;T&gt; Tsr&lt;T&gt; call(    Tsr&lt;T&gt;... tensors ) { return (Tsr&lt;T&gt;) this.execute( tensors ); }</span>
+<span class="fc" id="L226">           @SafeVarargs @Override public final &lt;T&gt; Tsr&lt;T&gt; invoke(  Tsr&lt;T&gt;... tensors ) { return (Tsr&lt;T&gt;) this.execute( tensors ); }</span>
+           @Override public Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... tensors )
+           {
+<span class="fc" id="L229">               MemValidator validation = MemValidator.forInputs( tensors, ()-&gt;Function.this.execute( arguments, tensors ) );</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">               if ( validation.isWronglyIntermediate() ) {</span>
+<span class="fc" id="L231">                   throw new IllegalStateException(</span>
+                           &quot;Output of function '&quot; + Function.this + &quot;' &quot; +
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">                           (Function.this.getOperation() != null ? &quot;(&quot; + Function.this.getOperation().getIdentifier() + &quot;) &quot; : &quot;&quot;) +</span>
+                           &quot;is marked as intermediate result, despite the fact &quot; +
+                           &quot;that it is a member of the input array. &quot; +
+                           &quot;Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged &quot; +
+                           &quot;as 'intermediate', because they are not eligible for deletion!&quot;
+                   );
+               }
+<span class="fc bfc" id="L240" title="All 2 branches covered.">               if ( validation.isWronglyNonIntermediate() ) {</span>
+<span class="fc" id="L241">                   throw new IllegalStateException(</span>
+                           &quot;Output of function '&quot; + Function.this + &quot;' &quot; +
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">                           (Function.this.getOperation() != null ? &quot;(&quot; + Function.this.getOperation().getIdentifier() + &quot;) &quot; : &quot;&quot;) +</span>
+                           &quot;is neither marked as intermediate result nor a member of the input array. &quot; +
+                           &quot;Tensors instantiated by operations in the backend are expected to be flagged &quot; +
+                           &quot;as 'intermediate' in order to be eligible for deletion!&quot;
+                   );
+               }
+<span class="fc" id="L249">               MemUtil.autoDelete( tensors );</span>
+<span class="fc" id="L250">               return validation.getResult();</span>
+           }
+       };
+    }
+
+    default &lt;T&gt; Tsr&lt;T&gt; call( Args arguments, Tsr&lt;T&gt;... tensors ) {
+<span class="nc" id="L256">        Tsr&lt;T&gt; result = callWith( arguments ).call( tensors );</span>
+<span class="nc" id="L257">        return result.getUnsafe().setIsIntermediate(false);</span>
+    }
+
+    default &lt;T&gt; Tsr&lt;T&gt; invoke( Args arguments, Tsr&lt;T&gt;... tensors ) {
+<span class="nc" id="L261">        Tsr&lt;T&gt; result = callWith( arguments ).invoke( tensors );</span>
+<span class="nc" id="L262">        return result.getUnsafe().setIsIntermediate(false);</span>
+    }
+
+    /**
+     *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other function.&lt;/b&gt;
+     */
+    Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... tensors );
+
+    /**
+     *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other function.&lt;/b&gt;
+     */
+<span class="fc" id="L273">    default Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... inputs ) { return execute( inputs, -1 ); }</span>
+
+    /**
+     *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other function.&lt;/b&gt;
+     */
+<span class="fc" id="L278">    default Tsr&lt;?&gt; execute( Tsr&lt;?&gt;[] inputs, int j ) { return callWith(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j))).execute(inputs); }</span>
+    /**
+     *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other function.&lt;/b&gt;
+     */
+<span class="fc" id="L282">    default Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index, int j ) { return callWith(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j))).execute(inputs); }</span>
+    /**
+     *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other function.&lt;/b&gt;
+     */
+<span class="fc" id="L286">    default Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index ) { return executeDerive( inputs, index, -1 ); }</span>
+
+    //------------------------------------------------------------------------------------------------------------------
+
+<span class="fc" id="L290">    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt; input )   { return call( new Tsr[]{ input } ); }</span>
+<span class="fc" id="L291">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt; input ) { return call( input );            }</span>
+
+<span class="fc" id="L293">    default &lt;T&gt; Tsr&lt;T&gt; call( List&lt;Tsr&lt;T&gt;&gt; input )   { return call( input.toArray(new Tsr[ 0 ]) ); }</span>
+<span class="nc" id="L294">    default &lt;T&gt; Tsr&lt;T&gt; invoke( List&lt;Tsr&lt;T&gt;&gt; input ) { return call( input );                       }</span>
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;[] inputs, int j )   {
+<span class="nc" id="L299">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) execute( inputs, j );</span>
+<span class="nc" id="L300">        return result.getUnsafe().setIsIntermediate(false);</span>
+    }
+
+<span class="nc" id="L303">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;[] inputs, int j ) { return call( inputs, j );             }</span>
+
+    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;... inputs )   {
+<span class="fc" id="L306">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) execute( inputs );</span>
+<span class="fc" id="L307">        return result.getUnsafe().setIsIntermediate(false);</span>
+    }
+
+<span class="fc" id="L310">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;... inputs ) { return call( inputs );             }</span>
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    default &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int d, int j ) {
+<span class="nc" id="L315">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) executeDerive( inputs, d, j );</span>
+<span class="nc" id="L316">        return result.getUnsafe().setIsIntermediate(false);</span>
+    }
+
+    default &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int d ) {
+<span class="fc" id="L320">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) executeDerive( inputs, d );</span>
+<span class="fc" id="L321">        return result.getUnsafe().setIsIntermediate(false);</span>
+    }
+
+    //---
+
+<span class="nc" id="L326">    default &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index, int j ) { return derive( inputs.toArray( new Tsr[ 0 ] ), index, j ); }</span>
+<span class="fc" id="L327">    default &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index )        { return derive( inputs.toArray( new Tsr[ 0 ] ), index ); }</span>
+
+    //---
+
+    String toString();
+
 
     /**
      *  An API for calling a {@link Function} after having specified
@@ -215,130 +347,6 @@ public interface Function
          */
         Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... tensors );
     }
-
-    /**
-     * @param arguments A set of arguments you want to supply to this function for further
-     *                  control over the execution.
-     *
-     * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
-     */
-<span class="fc" id="L225">    default CallOptions callWith( Arg&lt;?&gt;... arguments ) { return callWith( Args.of( arguments ) ); }</span>
-
-    /**
-     * @param arguments A set of arguments you want to supply to this function for further
-     *                  control over the execution.
-     *
-     * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
-     */
-    default CallOptions callWith( Args arguments ) {
-<span class="fc" id="L234">       return new CallOptions() {</span>
-<span class="fc" id="L235">           @SafeVarargs @Override public final &lt;T&gt; Tsr&lt;T&gt; call(    Tsr&lt;T&gt;... tensors ) { return (Tsr&lt;T&gt;) this.execute( tensors ); }</span>
-<span class="fc" id="L236">           @SafeVarargs @Override public final &lt;T&gt; Tsr&lt;T&gt; invoke(  Tsr&lt;T&gt;... tensors ) { return (Tsr&lt;T&gt;) this.execute( tensors ); }</span>
-           @Override public Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... tensors )
-           {
-<span class="fc" id="L239">               MemValidator validation = MemValidator.forInputs( tensors, ()-&gt;Function.this.execute( arguments, tensors ) );</span>
-<span class="fc bfc" id="L240" title="All 2 branches covered.">               if ( validation.isWronglyIntermediate() ) {</span>
-<span class="fc" id="L241">                   throw new IllegalStateException(</span>
-                           &quot;Output of function '&quot; + Function.this + &quot;' &quot; +
-<span class="pc bpc" id="L243" title="1 of 2 branches missed.">                           (Function.this.getOperation() != null ? &quot;(&quot; + Function.this.getOperation().getFunction() + &quot;) &quot; : &quot;&quot;) +</span>
-                           &quot;is marked as intermediate result, despite the fact &quot; +
-                           &quot;that it is a member of the input array. &quot; +
-                           &quot;Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged &quot; +
-                           &quot;as 'intermediate', because they are not eligible for deletion!&quot;
-                   );
-               }
-<span class="fc bfc" id="L250" title="All 2 branches covered.">               if ( validation.isWronglyNonIntermediate() ) {</span>
-<span class="fc" id="L251">                   throw new IllegalStateException(</span>
-                           &quot;Output of function '&quot; + Function.this + &quot;' &quot; +
-<span class="pc bpc" id="L253" title="1 of 2 branches missed.">                           (Function.this.getOperation() != null ? &quot;(&quot; + Function.this.getOperation().getFunction() + &quot;) &quot; : &quot;&quot;) +</span>
-                           &quot;is neither marked as intermediate result nor a member of the input array. &quot; +
-                           &quot;Tensors instantiated by operations in the backend are expected to be flagged &quot; +
-                           &quot;as 'intermediate' in order to be eligible for deletion!&quot;
-                   );
-               }
-<span class="fc" id="L259">               MemUtil.autoDelete( tensors );</span>
-<span class="fc" id="L260">               return validation.getResult();</span>
-           }
-       };
-    }
-
-    default &lt;T&gt; Tsr&lt;T&gt; call( Args arguments, Tsr&lt;T&gt;... tensors ) {
-<span class="nc" id="L266">        Tsr&lt;T&gt; result = callWith( arguments ).call( tensors );</span>
-<span class="nc" id="L267">        return result.getUnsafe().setIsIntermediate(false);</span>
-    }
-
-    default &lt;T&gt; Tsr&lt;T&gt; invoke( Args arguments, Tsr&lt;T&gt;... tensors ) {
-<span class="nc" id="L271">        Tsr&lt;T&gt; result = callWith( arguments ).invoke( tensors );</span>
-<span class="nc" id="L272">        return result.getUnsafe().setIsIntermediate(false);</span>
-    }
-
-    /**
-     *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other function.&lt;/b&gt;
-     */
-    Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... tensors );
-
-    /**
-     *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other function.&lt;/b&gt;
-     */
-<span class="fc" id="L283">    default Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... inputs ) { return execute( inputs, -1 ); }</span>
-
-    /**
-     *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other function.&lt;/b&gt;
-     */
-<span class="fc" id="L288">    default Tsr&lt;?&gt; execute( Tsr&lt;?&gt;[] inputs, int j ) { return callWith(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j))).execute(inputs); }</span>
-    /**
-     *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other function.&lt;/b&gt;
-     */
-<span class="fc" id="L292">    default Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index, int j ) { return callWith(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j))).execute(inputs); }</span>
-    /**
-     *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other function.&lt;/b&gt;
-     */
-<span class="fc" id="L296">    default Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index ) { return executeDerive( inputs, index, -1 ); }</span>
-
-    //------------------------------------------------------------------------------------------------------------------
-
-<span class="fc" id="L300">    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt; input )   { return call( new Tsr[]{ input } ); }</span>
-<span class="fc" id="L301">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt; input ) { return call( input );            }</span>
-
-<span class="fc" id="L303">    default &lt;T&gt; Tsr&lt;T&gt; call( List&lt;Tsr&lt;T&gt;&gt; input )   { return call( input.toArray(new Tsr[ 0 ]) ); }</span>
-<span class="nc" id="L304">    default &lt;T&gt; Tsr&lt;T&gt; invoke( List&lt;Tsr&lt;T&gt;&gt; input ) { return call( input );                       }</span>
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;[] inputs, int j )   {
-<span class="nc" id="L309">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) execute( inputs, j );</span>
-<span class="nc" id="L310">        return result.getUnsafe().setIsIntermediate(false);</span>
-    }
-
-<span class="nc" id="L313">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;[] inputs, int j ) { return call( inputs, j );             }</span>
-
-    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;... inputs )   {
-<span class="fc" id="L316">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) execute( inputs );</span>
-<span class="fc" id="L317">        return result.getUnsafe().setIsIntermediate(false);</span>
-    }
-
-<span class="fc" id="L320">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;... inputs ) { return call( inputs );             }</span>
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    default &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int d, int j ) {
-<span class="nc" id="L325">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) executeDerive( inputs, d, j );</span>
-<span class="nc" id="L326">        return result.getUnsafe().setIsIntermediate(false);</span>
-    }
-
-    default &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int d ) {
-<span class="fc" id="L330">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) executeDerive( inputs, d );</span>
-<span class="fc" id="L331">        return result.getUnsafe().setIsIntermediate(false);</span>
-    }
-
-    //---
-
-<span class="nc" id="L336">    default &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index, int j ) { return derive( inputs.toArray( new Tsr[ 0 ] ), index, j ); }</span>
-<span class="fc" id="L337">    default &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index )        { return derive( inputs.toArray( new Tsr[ 0 ] ), index ); }</span>
-
-    //---
-
-    String toString();
 
 
 }

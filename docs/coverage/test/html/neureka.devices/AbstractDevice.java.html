@@ -121,7 +121,7 @@ public abstract class AbstractDevice&lt;V&gt; extends AbstractBaseDevice&lt;V&gt
     @Override
     public Device&lt;V&gt; approve(ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
     {
-<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        if ( !_approveExecutionOf( call.getTensors(), call.getValOf( Arg.DerivIdx.class ), call.getOperation() ) ) {</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        if ( !_approveExecutionOf( call.inputs(), call.getValOf( Arg.DerivIdx.class ), call.getOperation() ) ) {</span>
 <span class="nc" id="L125">            throw new IllegalArgumentException(&quot;Provided execution call has not been approved by this device.&quot;);</span>
         }
 <span class="fc" id="L127">        return this;</span>

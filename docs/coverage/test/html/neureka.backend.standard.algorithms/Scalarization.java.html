@@ -35,41 +35,39 @@ import org.jetbrains.annotations.Contract;
         );
 <span class="fc" id="L36">        setCallPreparation(</span>
             call -&gt; {
-<span class="fc" id="L38">                Tsr&lt;?&gt;[] inputs = call.getTensors();</span>
-<span class="fc" id="L39">                Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
-<span class="pc bpc" id="L40" title="2 of 4 branches missed.">                assert inputs[ 0 ] == null;  // Creating a new tensor:</span>
+<span class="fc" id="L38">                Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
+<span class="pc bpc" id="L39" title="2 of 4 branches missed.">                assert call.input( 0 ) == null;  // Creating a new tensor:</span>
 
-<span class="fc" id="L42">                int[] outShape = inputs[ 1 ].getNDConf().shape();</span>
-<span class="fc" id="L43">                Class&lt;Object&gt; type = (Class&lt;Object&gt;) inputs[ 1 ].getValueClass();</span>
-<span class="fc" id="L44">                Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );</span>
-<span class="fc" id="L45">                output.setIsVirtual( false );</span>
+<span class="fc" id="L41">                int[] outShape = call.input( 1 ).getNDConf().shape();</span>
+<span class="fc" id="L42">                Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input( 1 ).getValueClass();</span>
+<span class="fc" id="L43">                Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L44">                output.setIsVirtual( false );</span>
                 try {
-<span class="fc" id="L47">                    device.store( output );</span>
-<span class="nc" id="L48">                } catch( Exception e ) {</span>
-<span class="nc" id="L49">                    e.printStackTrace();</span>
-<span class="fc" id="L50">                }</span>
-<span class="fc" id="L51">                inputs[ 0 ] = output;</span>
-
-<span class="fc" id="L53">                return call;</span>
+<span class="fc" id="L46">                    device.store( output );</span>
+<span class="nc" id="L47">                } catch( Exception e ) {</span>
+<span class="nc" id="L48">                    e.printStackTrace();</span>
+<span class="fc" id="L49">                }</span>
+<span class="fc" id="L50">                call.setInput( 0, output );</span>
+<span class="fc" id="L51">                return call;</span>
             }
         );
-<span class="fc" id="L56">    }</span>
+<span class="fc" id="L54">    }</span>
 
 
     public String getKernelSource() {
-<span class="fc" id="L60">        return Neureka.get().utility().readResource(&quot;kernels/scalarization_template.cl&quot;);</span>
+<span class="fc" id="L58">        return Neureka.get().utility().readResource(&quot;kernels/scalarization_template.cl&quot;);</span>
     }
 
 
     public static Functions.Builder&lt;Fun&gt; implementationForCPU() {
-<span class="fc" id="L65">        return Functions.implementation(</span>
+<span class="fc" id="L63">        return Functions.implementation(</span>
                 3,
                 (call, pairs) -&gt;
-<span class="fc" id="L68">                    call.getDevice()</span>
-<span class="fc" id="L69">                        .getExecutor()</span>
-<span class="fc" id="L70">                        .threaded(</span>
-<span class="fc" id="L71">                            call.tensor( 0 ).size(),</span>
-<span class="fc" id="L72">                            _workloadFor( call, pairs )</span>
+<span class="fc" id="L66">                    call.getDevice()</span>
+<span class="fc" id="L67">                        .getExecutor()</span>
+<span class="fc" id="L68">                        .threaded(</span>
+<span class="fc" id="L69">                            call.input( 0 ).size(),</span>
+<span class="fc" id="L70">                            _workloadFor( call, pairs )</span>
                         )
         );
     }
@@ -78,107 +76,107 @@ import org.jetbrains.annotations.Contract;
         ExecutionCall&lt;CPU&gt; call,
         Functions&lt;Fun&gt; functions
     ) {
-<span class="fc bfc" id="L81" title="All 2 branches covered.">        int offset = ( call.getTensors().length == 3 ? 1 : 0 );</span>
-<span class="fc" id="L82">        Tsr&lt;?&gt; t0_drn = call.tensor( 0 );</span>
-<span class="fc" id="L83">        Tsr&lt;?&gt; src    = call.getTensors()[offset];</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        int offset = ( call.arity() == 3 ? 1 : 0 );</span>
+<span class="fc" id="L80">        Tsr&lt;?&gt; t0_drn = call.input( 0 );</span>
+<span class="fc" id="L81">        Tsr&lt;?&gt; src    = call.input( offset );</span>
 
-<span class="fc" id="L85">        Class&lt;?&gt; typeClass = call.tensor( 1 ).getValueClass();</span>
+<span class="fc" id="L83">        Class&lt;?&gt; typeClass = call.input( 1 ).getValueClass();</span>
 
-<span class="fc" id="L87">        CPU.RangeWorkload workload = null;</span>
+<span class="fc" id="L85">        CPU.RangeWorkload workload = null;</span>
 
-<span class="fc bfc" id="L89" title="All 2 branches covered.">        if ( typeClass == Double.class ) {</span>
-<span class="fc" id="L90">            double value = call.getTsrOfType(Number.class, 1 + offset).getDataAs(double[].class)[0];</span>
-<span class="fc" id="L91">            Fun.F64F64ToF64 operation = functions.get(Fun.F64F64ToF64.class).get(call.getDerivativeIndex());</span>
-<span class="fc" id="L92">            double[] t0_value = t0_drn.getDataAs(double[].class);</span>
-<span class="fc" id="L93">            double[] t1_value = src.getDataAs(double[].class);</span>
-<span class="fc" id="L94">            workload = ( i, end ) -&gt; {</span>
-<span class="fc" id="L95">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
-<span class="fc" id="L96">                NDIterator srcIdx = NDIterator.of(src);</span>
-<span class="fc" id="L97">                t0Idx.set(t0_drn.indicesOfIndex(i));</span>
-<span class="fc" id="L98">                srcIdx.set(src.indicesOfIndex(i));</span>
-<span class="fc bfc" id="L99" title="All 2 branches covered.">                while ( i &lt; end ) // increment on drain accordingly:</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if ( typeClass == Double.class ) {</span>
+<span class="fc" id="L88">            double value = call.getTsrOfType(Number.class, 1 + offset).getDataAs(double[].class)[0];</span>
+<span class="fc" id="L89">            Fun.F64F64ToF64 operation = functions.get(Fun.F64F64ToF64.class).get(call.getDerivativeIndex());</span>
+<span class="fc" id="L90">            double[] t0_value = t0_drn.getDataAs(double[].class);</span>
+<span class="fc" id="L91">            double[] t1_value = src.getDataAs(double[].class);</span>
+<span class="fc" id="L92">            workload = ( i, end ) -&gt; {</span>
+<span class="fc" id="L93">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L94">                NDIterator srcIdx = NDIterator.of(src);</span>
+<span class="fc" id="L95">                t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L96">                srcIdx.set(src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">                while ( i &lt; end ) // increment on drain accordingly:</span>
                 {
                     // setInto _value in drn:
-<span class="fc" id="L102">                    t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);</span>
+<span class="fc" id="L100">                    t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);</span>
                     // increment on drain:
-<span class="fc" id="L104">                    t0Idx.increment();</span>
-<span class="fc" id="L105">                    srcIdx.increment();</span>
+<span class="fc" id="L102">                    t0Idx.increment();</span>
+<span class="fc" id="L103">                    srcIdx.increment();</span>
                     //NDConfiguration.Utility.increment(t0Idx, t0Shp);
-<span class="fc" id="L107">                    i++;</span>
+<span class="fc" id="L105">                    i++;</span>
                 }
-<span class="fc" id="L109">            };</span>
+<span class="fc" id="L107">            };</span>
         }
-<span class="fc bfc" id="L111" title="All 2 branches covered.">        if ( typeClass == Float.class ) {</span>
-<span class="fc" id="L112">            float value = call.getTsrOfType(Number.class, 1 + offset).getDataAs(float[].class)[0];</span>
-<span class="fc" id="L113">            Fun.F32F32ToF32 operation = functions.get(Fun.F32F32ToF32.class).get(call.getDerivativeIndex());</span>
-<span class="fc" id="L114">            float[] t0_value = t0_drn.getDataAs(float[].class);</span>
-<span class="fc" id="L115">            float[] t1_value = src.getDataAs(float[].class);</span>
-<span class="fc" id="L116">            workload = ( i, end ) -&gt; {</span>
-<span class="fc" id="L117">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
-<span class="fc" id="L118">                NDIterator srcIdx = NDIterator.of(src);</span>
-<span class="fc" id="L119">                t0Idx.set(t0_drn.indicesOfIndex(i));</span>
-<span class="fc" id="L120">                srcIdx.set(src.indicesOfIndex(i));</span>
-<span class="fc bfc" id="L121" title="All 2 branches covered.">                while (i &lt; end) // increment on drain accordingly:</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if ( typeClass == Float.class ) {</span>
+<span class="fc" id="L110">            float value = call.getTsrOfType(Number.class, 1 + offset).getDataAs(float[].class)[0];</span>
+<span class="fc" id="L111">            Fun.F32F32ToF32 operation = functions.get(Fun.F32F32ToF32.class).get(call.getDerivativeIndex());</span>
+<span class="fc" id="L112">            float[] t0_value = t0_drn.getDataAs(float[].class);</span>
+<span class="fc" id="L113">            float[] t1_value = src.getDataAs(float[].class);</span>
+<span class="fc" id="L114">            workload = ( i, end ) -&gt; {</span>
+<span class="fc" id="L115">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L116">                NDIterator srcIdx = NDIterator.of(src);</span>
+<span class="fc" id="L117">                t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L118">                srcIdx.set(src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">                while (i &lt; end) // increment on drain accordingly:</span>
                 {
                     // setInto _value in drn:
-<span class="fc" id="L124">                    t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);</span>
+<span class="fc" id="L122">                    t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);</span>
                     // increment on drain:
-<span class="fc" id="L126">                    t0Idx.increment();</span>
-<span class="fc" id="L127">                    srcIdx.increment();</span>
+<span class="fc" id="L124">                    t0Idx.increment();</span>
+<span class="fc" id="L125">                    srcIdx.increment();</span>
                     //NDConfiguration.Utility.increment(t0Idx, t0Shp);
-<span class="fc" id="L129">                    i++;</span>
+<span class="fc" id="L127">                    i++;</span>
                 }
-<span class="fc" id="L131">            };</span>
+<span class="fc" id="L129">            };</span>
         }
-<span class="fc bfc" id="L133" title="All 2 branches covered.">        if ( typeClass == Integer.class ) {</span>
-<span class="fc" id="L134">            int value = call.getTsrOfType(Number.class, 1 + offset).getDataAs(int[].class)[0];</span>
-<span class="fc" id="L135">            Fun.I32I32ToI32 operation = functions.get(Fun.I32I32ToI32.class).get(call.getDerivativeIndex());</span>
-<span class="fc" id="L136">            int[] t0_value = t0_drn.getDataAs(int[].class);</span>
-<span class="fc" id="L137">            int[] t1_value = src.getDataAs(int[].class);</span>
-<span class="fc" id="L138">            workload = ( i, end ) -&gt; {</span>
-<span class="fc" id="L139">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
-<span class="fc" id="L140">                NDIterator srcIdx = NDIterator.of(src);</span>
-<span class="fc" id="L141">                t0Idx.set(t0_drn.indicesOfIndex(i));</span>
-<span class="fc" id="L142">                srcIdx.set(src.indicesOfIndex(i));</span>
-<span class="fc bfc" id="L143" title="All 2 branches covered.">                while (i &lt; end) // increment on drain accordingly:</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if ( typeClass == Integer.class ) {</span>
+<span class="fc" id="L132">            int value = call.getTsrOfType(Number.class, 1 + offset).getDataAs(int[].class)[0];</span>
+<span class="fc" id="L133">            Fun.I32I32ToI32 operation = functions.get(Fun.I32I32ToI32.class).get(call.getDerivativeIndex());</span>
+<span class="fc" id="L134">            int[] t0_value = t0_drn.getDataAs(int[].class);</span>
+<span class="fc" id="L135">            int[] t1_value = src.getDataAs(int[].class);</span>
+<span class="fc" id="L136">            workload = ( i, end ) -&gt; {</span>
+<span class="fc" id="L137">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L138">                NDIterator srcIdx = NDIterator.of(src);</span>
+<span class="fc" id="L139">                t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L140">                srcIdx.set(src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">                while (i &lt; end) // increment on drain accordingly:</span>
                 {
                     // setInto _value in drn:
-<span class="fc" id="L146">                    t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);</span>
+<span class="fc" id="L144">                    t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);</span>
                     // increment on drain:
-<span class="fc" id="L148">                    t0Idx.increment();</span>
-<span class="fc" id="L149">                    srcIdx.increment();</span>
+<span class="fc" id="L146">                    t0Idx.increment();</span>
+<span class="fc" id="L147">                    srcIdx.increment();</span>
                     //NDConfiguration.Utility.increment(t0Idx, t0Shp);
-<span class="fc" id="L151">                    i++;</span>
+<span class="fc" id="L149">                    i++;</span>
                 }
-<span class="fc" id="L153">            };</span>
+<span class="fc" id="L151">            };</span>
         }
-<span class="fc bfc" id="L155" title="All 2 branches covered.">        if ( t0_drn.getData().getClass() == Object[].class ) {</span>
-<span class="fc" id="L156">            Object value = call.getTensors()[ 1 + offset ].getDataAs(Object[].class)[0];</span>
-<span class="fc" id="L157">            Fun.ObjObjToObj operation = functions.get(Fun.ObjObjToObj.class).get(call.getDerivativeIndex());</span>
-<span class="fc" id="L158">            Object[] t0_value = t0_drn.getDataAs(Object[].class);</span>
-<span class="fc" id="L159">            Object[] t1_value = src.getDataAs(Object[].class);</span>
-<span class="fc" id="L160">            workload = ( i, end ) -&gt; {</span>
-<span class="fc" id="L161">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
-<span class="fc" id="L162">                NDIterator srcIdx = NDIterator.of(src);</span>
-<span class="fc" id="L163">                t0Idx.set(t0_drn.indicesOfIndex(i));</span>
-<span class="fc" id="L164">                srcIdx.set(src.indicesOfIndex(i));</span>
-<span class="fc bfc" id="L165" title="All 2 branches covered.">                while (i &lt; end) // increment on drain accordingly:</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        if ( t0_drn.getData().getClass() == Object[].class ) {</span>
+<span class="fc" id="L154">            Object value = call.input( 1 + offset ).getDataAs(Object[].class)[0];</span>
+<span class="fc" id="L155">            Fun.ObjObjToObj operation = functions.get(Fun.ObjObjToObj.class).get(call.getDerivativeIndex());</span>
+<span class="fc" id="L156">            Object[] t0_value = t0_drn.getDataAs(Object[].class);</span>
+<span class="fc" id="L157">            Object[] t1_value = src.getDataAs(Object[].class);</span>
+<span class="fc" id="L158">            workload = ( i, end ) -&gt; {</span>
+<span class="fc" id="L159">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L160">                NDIterator srcIdx = NDIterator.of(src);</span>
+<span class="fc" id="L161">                t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L162">                srcIdx.set(src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">                while (i &lt; end) // increment on drain accordingly:</span>
                 {
                     // setInto _value in drn:
-<span class="fc" id="L168">                    t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);</span>
+<span class="fc" id="L166">                    t0_value[t0Idx.i()] = operation.invoke(t1_value[srcIdx.i()], value);</span>
                     // increment on drain:
-<span class="fc" id="L170">                    t0Idx.increment();</span>
-<span class="fc" id="L171">                    srcIdx.increment();</span>
+<span class="fc" id="L168">                    t0Idx.increment();</span>
+<span class="fc" id="L169">                    srcIdx.increment();</span>
                     //NDConfiguration.Utility.increment(t0Idx, t0Shp);
-<span class="fc" id="L173">                    i++;</span>
+<span class="fc" id="L171">                    i++;</span>
                 }
-<span class="fc" id="L175">            };</span>
+<span class="fc" id="L173">            };</span>
         }
 
-<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        if ( workload == null )</span>
-<span class="nc" id="L179">            throw new IllegalArgumentException(&quot;&quot;);</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        if ( workload == null )</span>
+<span class="nc" id="L177">            throw new IllegalArgumentException(&quot;&quot;);</span>
         else
-<span class="fc" id="L181">            return workload;</span>
+<span class="fc" id="L179">            return workload;</span>
     }
 
 }

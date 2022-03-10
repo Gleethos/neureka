@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Simple1DConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config.types.simple</a> &gt; <span class="el_source">Simple1DConfiguration.java</span></div><h1>Simple1DConfiguration.java</h1><pre class="source lang-java linenums">package neureka.ndim.config.types.simple;
+
+import neureka.ndim.config.types.D1C;
+
+
+public class Simple1DConfiguration extends D1C //:= IMMUTABLE
+{
+    /**
+     *  The shape of the NDArray.
+     */
+    protected final int _shape;
+    /**
+     *  The translation from a shape index (indices) to the index of the underlying data array.
+     */
+    private final int _translation_and_indicesMap;
+
+
+    public static Simple1DConfiguration construct(
+            int[] shape,
+            int[] translation
+    ) {
+<span class="fc" id="L22">        return _cached( new Simple1DConfiguration(shape[ 0 ], translation[ 0 ]) );</span>
+    }
+
+    protected Simple1DConfiguration(
+            int shape,
+            int translation
+<span class="fc" id="L28">    ) {</span>
+<span class="fc" id="L29">        _shape = shape;</span>
+<span class="fc" id="L30">        _translation_and_indicesMap = translation;</span>
+<span class="fc" id="L31">    }</span>
+
+    @Override
+<span class="fc" id="L34">    public final int rank() { return 1; }</span>
+
+    @Override
+<span class="fc" id="L37">    public final int[] shape() { return new int[]{_shape}; }</span>
+
+    @Override
+<span class="fc" id="L40">    public final int shape( int i ) { return _shape; }</span>
+
+    @Override
+<span class="fc" id="L43">    public final int[] indicesMap() { return new int[]{_translation_and_indicesMap}; }</span>
+
+    @Override
+<span class="fc" id="L46">    public final int indicesMap( int i ) { return _translation_and_indicesMap; }</span>
+
+    @Override
+<span class="fc" id="L49">    public final int[] translation() { return new int[]{_translation_and_indicesMap}; }</span>
+
+    @Override
+<span class="fc" id="L52">    public final int translation( int i ) { return _translation_and_indicesMap; }</span>
+
+    @Override
+<span class="fc" id="L55">    public final int[] spread() { return new int[]{1}; }</span>
+
+    @Override
+<span class="fc" id="L58">    public final int spread( int i ) { return 1; }</span>
+
+    @Override
+<span class="fc" id="L61">    public final int[] offset() { return new int[]{0}; }</span>
+
+    @Override
+<span class="fc" id="L64">    public final int offset( int i ) { return 0; }</span>
+
+    @Override
+<span class="fc" id="L67">    public final int indexOfIndex( int index ) { return index; }</span>
+
+    @Override
+<span class="fc" id="L70">    public final int[] indicesOfIndex( int index ) { return new int[]{index / _translation_and_indicesMap}; }</span>
+
+    @Override
+<span class="fc" id="L73">    public final int indexOfIndices( int[] indices ) { return indices[ 0 ] * _translation_and_indicesMap; }</span>
+
+    @Override
+<span class="fc" id="L76">    public final int indexOfIndices( int d1 ) { return d1 * _translation_and_indicesMap; }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

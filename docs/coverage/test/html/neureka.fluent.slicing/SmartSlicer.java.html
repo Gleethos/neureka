@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SmartSlicer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.fluent.slicing</a> &gt; <span class="el_source">SmartSlicer.java</span></div><h1>SmartSlicer.java</h1><pre class="source lang-java linenums">package neureka.fluent.slicing;
+
+import neureka.Tsr;
+import neureka.framing.NDFrame;
+import neureka.fluent.slicing.states.AxisOrGet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+/**
+ *  This class is responsible for receiving any input and trying to interpret it so that a
+ *  slice can be formed.
+ */
+<span class="nc" id="L17">public class SmartSlicer {</span>
+
+    /**
+     *  An interface provided by sl4j which enables a modular logging backend!
+     */
+<span class="fc" id="L22">    private static Logger _LOG = LoggerFactory.getLogger(SmartSlicer.class); // Why is this not final ? : For unit testing!</span>
+
+    public static &lt;ValType&gt; Tsr&lt;ValType&gt; slice(
+            Object[] ranges,
+            Tsr&lt;ValType&gt; source,
+            SliceBuilder.CreationCallback&lt;ValType&gt; callback
+    ) {
+<span class="fc" id="L29">        AxisOrGet&lt;ValType&gt; sliceBuilder = new SliceBuilder&lt;&gt;(source, callback);</span>
+<span class="fc" id="L30">        List&lt;Object&gt; rangeList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L31">        List&lt;Integer&gt; stepsList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        for (Object range : ranges ) {</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">            if ( range instanceof Map) {</span>
+<span class="fc" id="L34">                rangeList.addAll(((Map&lt;?, ?&gt;) range).keySet());</span>
+<span class="fc" id="L35">                stepsList.addAll(((Map&lt;?, Integer&gt;) range).values());</span>
+            }
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            else if ( range instanceof int[] ) {</span>
+<span class="fc" id="L38">                List&lt;Integer&gt; intList = new ArrayList&lt;&gt;(((int[]) range).length);</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">                for ( int ii : (int[]) range ) intList.add(ii);</span>
+<span class="fc" id="L40">                rangeList.add(intList);</span>
+<span class="fc" id="L41">                stepsList.add(1);</span>
+<span class="fc" id="L42">            }</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            else if ( range instanceof String[] ) {</span>
+<span class="fc" id="L44">                List&lt;String&gt; strList = new ArrayList&lt;&gt;(((String[]) range).length);</span>
+<span class="fc" id="L45">                strList.addAll(Arrays.asList((String[]) range));</span>
+<span class="fc" id="L46">                rangeList.add(strList);</span>
+<span class="fc" id="L47">                stepsList.add(1);</span>
+<span class="fc" id="L48">            }</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            else if ( Iterable.class.isAssignableFrom( range.getClass() ) ) {</span>
+<span class="fc" id="L50">                Iterable&lt;Object&gt; iterableRange = (Iterable&lt;Object&gt;)  range;</span>
+<span class="fc" id="L51">                Iterator&lt;Object&gt; iterator = iterableRange.iterator();</span>
+<span class="fc" id="L52">                Object first = iterator.next();</span>
+<span class="fc" id="L53">                Object last = null;</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">                while (iterator.hasNext() ) {</span>
+<span class="fc" id="L55">                    last = iterator.next();</span>
+                }
+<span class="fc bfc" id="L57" title="All 2 branches covered.">                if ( last == null ) last = first;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">                if ( first instanceof Number ) first = ((Number) first).intValue();</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">                if ( last instanceof Number ) last = ((Number) last).intValue();</span>
+<span class="fc" id="L60">                rangeList.add(Stream.of( first, last ).collect(Collectors.toList()));</span>
+<span class="fc" id="L61">                stepsList.add(1);</span>
+<span class="fc" id="L62">            }</span>
+            else {
+<span class="fc" id="L64">                rangeList.add( range );</span>
+<span class="fc" id="L65">                stepsList.add(1);</span>
+            }
+        }
+
+<span class="fc" id="L69">        ranges = rangeList.toArray();</span>
+
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        for ( int i = 0; i &lt; ranges.length; i++ ) {</span>
+<span class="fc" id="L72">            int first = 0;</span>
+<span class="fc" id="L73">            int last = 0;</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            if ( !( ranges[ i ] instanceof  List ) ) {</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">                if ( ranges[ i ] instanceof Integer ) {</span>
+<span class="fc" id="L76">                    first = (Integer) ranges[ i ];</span>
+<span class="fc" id="L77">                    last = (Integer) ranges[ i ];</span>
+                } else {
+<span class="fc" id="L79">                    NDFrame&lt;?&gt; frame = source.get( NDFrame.class );</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">                    if ( frame != null ) {</span>
+<span class="fc" id="L81">                        int position = frame.atAxis( i ).getIndexAtAlias( ranges[i] );</span>
+                                    //frame.get( ranges[ i ], i );
+<span class="fc" id="L83">                        first = position;</span>
+<span class="fc" id="L84">                        last = position;</span>
+<span class="fc" id="L85">                    } else {</span>
+<span class="nc" id="L86">                        String message = &quot;Given &quot;+ NDFrame.class.getSimpleName()+&quot; key at axis &quot; + ( i ) + &quot; not found!&quot;;</span>
+<span class="nc" id="L87">                        _LOG.error( message );</span>
+<span class="nc" id="L88">                        throw new IllegalStateException( message );</span>
+                    }
+<span class="fc" id="L90">                }</span>
+            } else {
+<span class="fc" id="L92">                ranges[ i ] = ( (List&lt;?&gt;) ranges[ i ] ).toArray();</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                ranges[ i ] = ( ( (Object[]) ranges[ i ] )[ 0 ] instanceof List )</span>
+<span class="fc" id="L94">                        ? ( (List&lt;?&gt;) ( (Object[]) ranges[ i ] )[ 0 ] ).toArray()</span>
+<span class="fc" id="L95">                        : ( (Object[]) ranges[ i ] );</span>
+<span class="pc bpc" id="L96" title="1 of 4 branches missed.">                if (</span>
+                        !( ( (Object[]) ( ranges[ i ] ) )[ 0 ] instanceof Integer )
+                                || !( ( (Object[]) ranges[ i ] )[ ( (Object[]) ( ranges[ i ] ) ).length - 1 ] instanceof Integer )
+                ) {
+<span class="fc" id="L100">                    NDFrame&lt;?&gt; frame = source.get( NDFrame.class );</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">                    if ( !( ( (Object[]) (ranges[ i ]) )[ 0 ] instanceof Integer ) ) {</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">                        if ( frame != null ) {</span>
+<span class="fc" id="L103">                            first =</span>
+                                    frame
+<span class="fc" id="L105">                                        .atAxis( i )</span>
+<span class="fc" id="L106">                                        .getIndexAtAlias( ( (Object[]) ranges[ i ])[ 0 ] );</span>
+                        }
+                    }
+<span class="nc" id="L109">                    else first = (Integer) ( (Object[]) ranges[ i ] )[ 0 ];</span>
+
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">                    if ( !( ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ] instanceof Integer )  ) {</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">                        if ( frame != null ) {</span>
+<span class="fc" id="L113">                            last =</span>
+                                    frame
+<span class="fc" id="L115">                                        .atAxis( i )</span>
+<span class="fc" id="L116">                                        .getIndexAtAlias(</span>
+                                                ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ]
+                                        );
+                        }
+                    }
+<span class="nc" id="L121">                    else last = (Integer) ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ];</span>
+
+<span class="fc" id="L123">                } else {</span>
+<span class="fc" id="L124">                    first = (Integer)( (Object[]) ranges[ i ] )[ 0 ];</span>
+<span class="fc" id="L125">                    last = (Integer) ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ];</span>
+                }
+            }
+
+<span class="fc" id="L129">            sliceBuilder =</span>
+                    sliceBuilder
+<span class="fc" id="L131">                        .axis( i )</span>
+<span class="fc" id="L132">                        .from( first )</span>
+<span class="fc" id="L133">                        .to( last )</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">                        .step( stepsList.isEmpty() ? 1 : stepsList.get( i ) );</span>
+
+        }
+<span class="fc" id="L137">        return sliceBuilder.get();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

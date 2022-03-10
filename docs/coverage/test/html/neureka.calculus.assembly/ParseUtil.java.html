@@ -239,8 +239,8 @@ import java.util.List;
     /**
      *  This method tries to find the next best operation {@link String} the user might have meant.
      *
-     * @param expression
-     * @return
+     * @param expression The expression which should be interpreted as something similar.
+     * @return Something similar or null if the expression is not similar enough.
      */
     @Contract( pure = true )
     public static String assumptionBasedOn( String expression ) {

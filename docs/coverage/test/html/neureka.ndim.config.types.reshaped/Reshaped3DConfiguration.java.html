@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Reshaped3DConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config.types.reshaped</a> &gt; <span class="el_source">Reshaped3DConfiguration.java</span></div><h1>Reshaped3DConfiguration.java</h1><pre class="source lang-java linenums">package neureka.ndim.config.types.reshaped;
+
+import neureka.ndim.config.types.D3C;
+
+public class Reshaped3DConfiguration extends D3C {
+    /**
+     *  The shape of the NDArray.
+     */
+    protected final int _shape1;
+    protected final int _shape2;
+    protected final int _shape3;
+    /**
+     *  The translation from a shape index (indices) to the index of the underlying data array.
+     */
+    private final int _translation1;
+    private final int _translation2;
+    private final int _translation3;
+    /**
+     *  The mapping of idx array.
+     */
+    private final int _indicesMap1;
+    private final int _indicesMap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
+    private final int _indicesMap3;
+
+
+    protected Reshaped3DConfiguration(
+            int[] shape,
+            int[] translation,
+            int[] indicesMap
+<span class="fc" id="L30">    ) {</span>
+<span class="fc" id="L31">        _shape1 = shape[ 0 ];</span>
+<span class="fc" id="L32">        _shape2 = shape[ 1 ];</span>
+<span class="fc" id="L33">        _shape3 = shape[ 2 ];</span>
+<span class="fc" id="L34">        _translation1 = translation[ 0 ];</span>
+<span class="fc" id="L35">        _translation2 = translation[ 1 ];</span>
+<span class="fc" id="L36">        _translation3 = translation[ 2 ];</span>
+<span class="fc" id="L37">        _indicesMap1 = indicesMap[ 0 ];</span>
+<span class="fc" id="L38">        _indicesMap2 = indicesMap[ 1 ];</span>
+<span class="fc" id="L39">        _indicesMap3 = indicesMap[ 2 ];</span>
+<span class="fc" id="L40">    }</span>
+
+    public static Reshaped3DConfiguration construct(
+            int[] shape,
+            int[] translation,
+            int[] indicesMap
+    ) {
+<span class="fc" id="L47">        return _cached( new Reshaped3DConfiguration(shape, translation, indicesMap) );</span>
+    }
+
+    @Override
+    public final int rank() {
+<span class="fc" id="L52">        return 3;</span>
+    }
+
+    @Override
+    public final int[] shape() {
+<span class="fc" id="L57">        return new int[]{_shape1, _shape2, _shape3};</span>
+    }
+
+    @Override
+    public final int shape( int i ) {
+<span class="fc bfc" id="L62" title="All 4 branches covered.">        return (i==0)?_shape1:(i==1)?_shape2:_shape3;</span>
+    }
+
+    @Override
+    public final int[] indicesMap() {
+<span class="fc" id="L67">        return new int[]{_indicesMap1, _indicesMap2, _indicesMap3};</span>
+    }
+
+    @Override
+    public final int indicesMap(int i ) {
+<span class="nc bnc" id="L72" title="All 4 branches missed.">        return (i==0)?_indicesMap1:(i==1)?_indicesMap2:_indicesMap3;</span>
+    }
+
+    @Override
+    public final int[] translation() {
+<span class="fc" id="L77">        return new int[]{_translation1, _translation2, _translation3};</span>
+    }
+
+    @Override
+    public final int translation( int i ) {
+<span class="nc bnc" id="L82" title="All 4 branches missed.">        return (i==0)?_translation1:(i==1)?_translation2:_translation3;</span>
+    }
+
+    @Override
+    public final int[] spread() {
+<span class="fc" id="L87">        return new int[]{1, 1, 1};</span>
+    }
+
+    @Override
+    public final int spread( int i ) {
+<span class="fc" id="L92">        return 1;</span>
+    }
+
+    @Override
+    public final int[] offset() {
+<span class="fc" id="L97">        return new int[]{0, 0, 0};</span>
+    }
+
+    @Override
+    public final int offset( int i ) {
+<span class="fc" id="L102">        return 0;</span>
+    }
+
+    @Override
+    public final int indexOfIndex(int index) {
+        int indices1, indices2, indices3;
+<span class="fc" id="L108">        indices1 = index / _indicesMap1;</span>
+<span class="fc" id="L109">        index %= _indicesMap1;</span>
+<span class="fc" id="L110">        indices2 = index / _indicesMap2;</span>
+<span class="fc" id="L111">        index %= _indicesMap2;</span>
+<span class="fc" id="L112">        indices3 = index / _indicesMap3;</span>
+<span class="fc" id="L113">        return indices1 * _translation1 +</span>
+                indices2 * _translation2 +
+                indices3 * _translation3;
+    }
+
+    @Override
+    public final int[] indicesOfIndex(int index) {
+        int indices1, indices2, indices3;
+<span class="fc" id="L121">        indices1 = index / _indicesMap1;</span>
+<span class="fc" id="L122">        index %= _indicesMap1;</span>
+<span class="fc" id="L123">        indices2 = index / _indicesMap2;</span>
+<span class="fc" id="L124">        index %= _indicesMap2;</span>
+<span class="fc" id="L125">        indices3 = index / _indicesMap3;</span>
+<span class="fc" id="L126">        return new int[]{indices1, indices2, indices3};</span>
+    }
+
+    @Override
+    public final int indexOfIndices(int[] indices) {
+<span class="fc" id="L131">        return indices[ 0 ] * _translation1 +</span>
+                indices[ 1 ] * _translation2 +
+                indices[ 2 ] * _translation3;
+    }
+
+    @Override
+    public final int indexOfIndices(int d1, int d2, int d3 ) {
+<span class="fc" id="L138">        return d1 * _translation1 +</span>
+               d2 * _translation2 +
+               d3 * _translation3;
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

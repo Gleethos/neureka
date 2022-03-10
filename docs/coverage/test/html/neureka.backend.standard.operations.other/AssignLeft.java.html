@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AssignLeft.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.operations.other</a> &gt; <span class="el_source">AssignLeft.java</span></div><h1>AssignLeft.java</h1><pre class="source lang-java linenums">package neureka.backend.standard.operations.other;
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.standard.algorithms.internal.Fun;
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.standard.algorithms.Scalarization;
+import neureka.backend.standard.implementations.CLImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
+import neureka.calculus.internal.CalcUtil;
+import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
+import neureka.devices.host.CPU;
+import neureka.devices.opencl.OpenCLDevice;
+
+public class AssignLeft extends AbstractOperation
+{
+    public AssignLeft() {
+<span class="fc" id="L23">        super(</span>
+            new OperationBuilder()
+<span class="fc" id="L25">                    .setFunction(         &quot;left_inline&quot;  )</span>
+<span class="fc" id="L26">                    .setOperator(         &quot;&lt;&quot;            )</span>
+<span class="fc" id="L27">                    .setArity(            -2             )</span>
+<span class="fc" id="L28">                    .setIsOperator(       true           )</span>
+<span class="fc" id="L29">                    .setIsIndexer(        false          )</span>
+<span class="fc" id="L30">                    .setIsDifferentiable( false          )</span>
+<span class="fc" id="L31">                    .setIsInline(         true           )</span>
+        );
+
+<span class="fc" id="L34">        Scalarization scalarization = new Scalarization()</span>
+<span class="fc" id="L35">                .setIsSuitableFor(</span>
+                    call -&gt; {
+<span class="fc bfc" id="L37" title="All 4 branches covered.">                        if ( call.input( 1 ).isVirtual() || call.input( 1 ).size() == 1 )</span>
+<span class="fc" id="L38">                            return SuitabilityPredicate.GOOD;</span>
+                        else
+<span class="fc" id="L40">                            return SuitabilityPredicate.UNSUITABLE;</span>
+                    }
+                )
+<span class="pc" id="L43">                .setCanPerformBackwardADFor( call -&gt; false )</span>
+<span class="pc" id="L44">                .setCanPerformForwardADFor( call -&gt; false )</span>
+<span class="fc" id="L45">                .setSupplyADAgentFor( getDefaultAlgorithm() )</span>
+<span class="fc" id="L46">                .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)</span>
+<span class="fc" id="L47">                .setCallPreparation(</span>
+                    call -&gt;
+                    {
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">                        int offset = ( call.input( 0 ) == null ? 1 : 0 );</span>
+<span class="fc" id="L51">                        call.input( offset ).getUnsafe().incrementVersion(call);</span>
+<span class="fc" id="L52">                        call.input( offset ).setIsVirtual( false );</span>
+<span class="fc" id="L53">                        return</span>
+<span class="fc" id="L54">                            ExecutionCall.of( call.input( offset ), call.input( 1+offset ) )</span>
+<span class="fc" id="L55">                                            .andArgs(Arg.DerivIdx.of(-1))</span>
+<span class="fc" id="L56">                                            .running(this)</span>
+<span class="fc" id="L57">                                            .on( call.getDevice() );</span>
+                    }
+                )
+<span class="fc" id="L60">                .buildFunAlgorithm();</span>
+
+<span class="fc" id="L62">        setAlgorithm(</span>
+            Scalarization.class,
+<span class="fc" id="L64">            scalarization.setImplementationFor(</span>
+                CPU.class,
+<span class="fc" id="L66">                Scalarization.implementationForCPU()</span>
+<span class="fc" id="L67">                    .with(Fun.F64F64ToF64.of( ( a, b ) -&gt; b ))</span>
+<span class="fc" id="L68">                    .with(Fun.F32F32ToF32.of( ( a, b ) -&gt; b ))</span>
+<span class="pc" id="L69">                    .with(Fun.F32F32ToF32.of( ( a, b ) -&gt; b ))</span>
+<span class="fc" id="L70">                    .with(Fun.ObjObjToObj.of( ( a, b ) -&gt; b ))</span>
+<span class="fc" id="L71">                    .get()</span>
+            )
+<span class="fc" id="L73">            .setImplementationFor(</span>
+                OpenCLDevice.class,
+                CLImplementation
+<span class="fc" id="L76">                    .compiler()</span>
+<span class="fc" id="L77">                    .arity( 2 )</span>
+<span class="fc" id="L78">                    .kernelSource( scalarization.getKernelSource() )</span>
+<span class="fc" id="L79">                    .activationSource( &quot;output = value;\n&quot; )</span>
+<span class="fc" id="L80">                    .differentiationSource( &quot;output = value;\n&quot; )</span>
+<span class="fc" id="L81">                    .kernelPostfix( this.getIdentifier() )</span>
+<span class="fc" id="L82">                    .execution(</span>
+                        call -&gt; {
+<span class="fc" id="L84">                            Tsr&lt;Number&gt; t = call.getTsrOfType( Number.class, 0 );</span>
+<span class="fc" id="L85">                            int gwz = t.size();</span>
+<span class="fc" id="L86">                            call.getDevice()</span>
+<span class="fc" id="L87">                                .getKernel(call)</span>
+<span class="fc" id="L88">                                .passAllOf( t )</span>
+<span class="fc" id="L89">                                .passAllOf( t )</span>
+<span class="fc" id="L90">                                .pass( call.getTsrOfType( Number.class, 1 ).getValueAs( float[].class )[ 0 ] )</span>
+<span class="fc" id="L91">                                .pass( t.rank() )</span>
+<span class="fc" id="L92">                                .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
+<span class="fc" id="L93">                                .call( gwz );</span>
+<span class="fc" id="L94">                        }</span>
+                    )
+<span class="fc" id="L96">                    .build()</span>
+            )
+        );
+
+<span class="fc" id="L100">        Activation activation = new Activation()</span>
+<span class="fc" id="L101">            .setIsSuitableFor(</span>
+<span class="fc" id="L102">                    call -&gt; call.validate()</span>
+<span class="fc" id="L103">                            .allNotNull( t -&gt; t.getDataType().typeClassImplements(Object.class) )</span>
+<span class="fc" id="L104">                            .basicSuitability()</span>
+            )
+<span class="pc" id="L106">            .setCanPerformBackwardADFor( call -&gt; false )</span>
+<span class="pc" id="L107">            .setCanPerformForwardADFor( call -&gt; false )</span>
+<span class="fc" id="L108">            .setSupplyADAgentFor( getDefaultAlgorithm() )</span>
+<span class="fc" id="L109">            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )</span>
+<span class="fc" id="L110">            .setCallPreparation(</span>
+                call -&gt; {
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">                    int offset = ( call.input( 0 ) == null ) ? 1 : 0;</span>
+<span class="fc" id="L113">                    call.input( offset ).getUnsafe().incrementVersion(call);</span>
+<span class="fc" id="L114">                    return ExecutionCall.of( call.input(offset), call.input(1+offset) )</span>
+<span class="fc" id="L115">                                        .andArgs(Arg.DerivIdx.of(-1))</span>
+<span class="fc" id="L116">                                        .running(Neureka.get().backend().getOperation(&quot;idy&quot;))</span>
+<span class="fc" id="L117">                                        .on( call.getDevice() );</span>
+                }
+            )
+<span class="fc" id="L120">            .buildFunAlgorithm();</span>
+
+<span class="fc" id="L122">        setAlgorithm(</span>
+            Activation.class,
+            activation
+<span class="fc" id="L125">                .setImplementationFor(</span>
+                    CPU.class,
+                    CPUImplementation
+<span class="fc" id="L128">                        .withArity(2)</span>
+<span class="fc" id="L129">                        .andImplementation(</span>
+                            call -&gt; {
+<span class="fc" id="L131">                                call.input( 0 ).setIsVirtual( false );</span>
+<span class="fc" id="L132">                                Neureka.get().backend().getOperation(&quot;idy&quot;)</span>
+<span class="fc" id="L133">                                        .getAlgorithm( Activation.class )</span>
+<span class="fc" id="L134">                                        .getImplementationFor( CPU.class )</span>
+<span class="fc" id="L135">                                        .run(call);</span>
+<span class="fc" id="L136">                            }</span>
+                        )
+                )
+<span class="fc" id="L139">                .setImplementationFor(</span>
+                    OpenCLDevice.class,
+<span class="fc" id="L141">                    Activation.implementationForGPU( this.getIdentifier() )</span>
+<span class="fc" id="L142">                            .with( &quot;output = input;\n&quot; )</span>
+<span class="fc" id="L143">                            .and( &quot;output = input;\n&quot; )</span>
+            )
+        );
+<span class="fc" id="L146">    }</span>
+
+
+    @Override
+    public String stringify( String[] children ) {
+<span class="fc" id="L151">        StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
+<span class="fc" id="L153">            reconstructed.append( children[ i ] );</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) reconstructed.append(&quot; &lt;- &quot;);</span>
+        }
+<span class="fc" id="L156">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+    }
+
+    @Override
+    public String asDerivative( Function[] children, int derivationIndex) {
+<span class="nc" id="L161">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
+<span class="nc" id="L166">            return src[ 0 ].call( inputs, j );</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

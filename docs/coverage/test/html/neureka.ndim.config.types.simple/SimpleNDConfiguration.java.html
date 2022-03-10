@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleNDConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config.types.simple</a> &gt; <span class="el_source">SimpleNDConfiguration.java</span></div><h1>SimpleNDConfiguration.java</h1><pre class="source lang-java linenums">package neureka.ndim.config.types.simple;
+
+import neureka.ndim.config.AbstractNDC;
+
+import java.util.Arrays;
+
+public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
+{
+
+    /**
+     *  The shape of the NDArray.
+     */
+    protected final int[] _shape;
+    /**
+     *  The translation from a shape index (indices) to the index of the underlying data array.
+     */
+    private final int[] _translation_and_indicesMap;
+
+
+    protected SimpleNDConfiguration(
+            int[] shape, int[] translation
+<span class="fc" id="L22">    ) {</span>
+<span class="fc" id="L23">        _shape = _cacheArray( shape );</span>
+<span class="fc" id="L24">        _translation_and_indicesMap = _cacheArray( translation );</span>
+<span class="fc" id="L25">    }</span>
+
+    public static SimpleNDConfiguration construct(
+            int[] shape,
+            int[] translation
+    ) {
+<span class="fc" id="L31">        return _cached( new SimpleNDConfiguration( shape, translation ) );</span>
+    }
+
+    @Override
+    public final int rank() {
+<span class="fc" id="L36">        return _shape.length;</span>
+    }
+
+    @Override
+    public final int[] shape() {
+<span class="fc" id="L41">        return _shape;</span>
+    }
+
+    @Override
+    public final int shape( int i ) {
+<span class="fc" id="L46">        return _shape[ i ];</span>
+    }
+
+    @Override
+    public final int[] indicesMap() {
+<span class="fc" id="L51">        return _translation_and_indicesMap;</span>
+    }
+
+    @Override
+    public final int indicesMap( int i ) {
+<span class="fc" id="L56">        return _translation_and_indicesMap[ i ];</span>
+    }
+
+    @Override
+    public final int[] translation() {
+<span class="fc" id="L61">        return _translation_and_indicesMap;</span>
+    }
+
+    @Override
+    public final int translation( int i ) {
+<span class="fc" id="L66">        return _translation_and_indicesMap[ i ];</span>
+    }
+
+    @Override
+    public final int[] spread() {
+<span class="fc" id="L71">        int[] newSpread = new int[ _shape.length ];</span>
+<span class="fc" id="L72">        Arrays.fill( newSpread, 1 );</span>
+<span class="fc" id="L73">        return newSpread;</span>
+    }
+
+    @Override
+    public final int spread( int i ) {
+<span class="fc" id="L78">        return 1;</span>
+    }
+
+    @Override
+    public final int[] offset() {
+<span class="fc" id="L83">        return new int[ _shape.length ];</span>
+    }
+
+    @Override
+    public final int offset( int i ) {
+<span class="fc" id="L88">        return 0;</span>
+    }
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public final int indexOfIndex( int index ) {
+<span class="fc" id="L96">        return indexOfIndices( indicesOfIndex( index ) );</span>
+    }
+
+    @Override
+    public final int[] indicesOfIndex( int index ) {
+<span class="fc" id="L101">        int[] indices = new int[ _shape.length ];</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        for ( int ii=0; ii&lt;rank(); ii++ ) {</span>
+<span class="fc" id="L103">            indices[ ii ] += index / _translation_and_indicesMap[ ii ];</span>
+<span class="fc" id="L104">            index %= _translation_and_indicesMap[ ii ];</span>
+        }
+<span class="fc" id="L106">        return indices;</span>
+    }
+
+    @Override
+    public final int indexOfIndices( int[] indices ) {
+<span class="fc" id="L111">        int i = 0;</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ ) i += indices[ ii ] * _translation_and_indicesMap[ ii ];</span>
+<span class="fc" id="L113">        return i;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

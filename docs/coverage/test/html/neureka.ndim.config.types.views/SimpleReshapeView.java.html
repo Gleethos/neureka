@@ -44,67 +44,67 @@ public class SimpleReshapeView extends AbstractNDC
 <span class="fc" id="L44">    }</span>
 
     @Override
-    public int rank() {
+    public final int rank() {
 <span class="fc" id="L48">        return _shape.length;</span>
     }
 
     @Override
-    public int[] shape() {
+    public final int[] shape() {
 <span class="fc" id="L53">        return _shape;</span>
     }
 
     @Override
-    public int shape( int i ) {
+    public final int shape( int i ) {
 <span class="nc" id="L58">        return _shape[ i ];</span>
     }
 
     @Override
-    public int[] indicesMap() {
+    public final int[] indicesMap() {
 <span class="nc" id="L63">        return _indicesMap;</span>
     }
 
     @Override
-    public int indicesMap(int i ) {
+    public final int indicesMap(int i ) {
 <span class="nc" id="L68">        return _indicesMap[ i ];</span>
     }
 
     @Override
-    public int[] translation() {
+    public final int[] translation() {
 <span class="fc" id="L73">        return _translation;</span>
     }
 
     @Override
-    public int translation( int i ) {
+    public final int translation( int i ) {
 <span class="nc" id="L78">        return _translation[ i ];</span>
     }
 
     @Override
-    public int[] spread() {
+    public final int[] spread() {
 <span class="nc" id="L83">        return _spread;</span>
     }
 
     @Override
-    public int spread( int i ) {
+    public final int spread( int i ) {
 <span class="fc" id="L88">        return _spread[ i ];</span>
     }
 
     @Override
-    public int[] offset() {
+    public final int[] offset() {
 <span class="nc" id="L93">        return _offset;</span>
     }
 
     @Override
-    public int offset( int i ) {
+    public final int offset( int i ) {
 <span class="fc" id="L98">        return _offset[ i ];</span>
     }
 
     @Override
-    public int indexOfIndex(int index) {
+    public final int indexOfIndex(int index) {
 <span class="fc" id="L103">        return indexOfIndices( indicesOfIndex(index) );</span>
     }
 
     @Override
-    public int[] indicesOfIndex( int index ) {
+    public final int[] indicesOfIndex( int index ) {
 <span class="fc" id="L108">        int[] indices = new int[ _shape.length ];</span>
 <span class="fc bfc" id="L109" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
 <span class="fc" id="L110">            indices[ ii ] += index / _indicesMap[ ii ];</span>
@@ -114,7 +114,7 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int indexOfIndices( int[] indices ) {
+    public final int indexOfIndices( int[] indices ) {
 <span class="fc" id="L118">        int[] innerIdx = _rearrange( indices, _form, _formTranslator );</span>
 <span class="fc" id="L119">        return _toBeViewed.indexOfIndices( innerIdx );</span>
     }

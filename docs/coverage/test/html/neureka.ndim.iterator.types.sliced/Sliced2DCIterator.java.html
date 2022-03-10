@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Sliced2DCIterator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.iterator.types.sliced</a> &gt; <span class="el_source">Sliced2DCIterator.java</span></div><h1>Sliced2DCIterator.java</h1><pre class="source lang-java linenums">package neureka.ndim.iterator.types.sliced;
+
+import neureka.ndim.config.types.sliced.Sliced2DConfiguration;
+import neureka.ndim.iterator.NDIterator;
+
+public final class Sliced2DCIterator extends Sliced2DConfiguration implements NDIterator
+{
+<span class="fc" id="L8">    private int _d1 = 0;</span>
+<span class="fc" id="L9">    private int _d2 = 0;</span>
+
+    public Sliced2DCIterator(Sliced2DConfiguration ndc) {
+<span class="fc" id="L12">        super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );</span>
+<span class="fc" id="L13">    }</span>
+
+
+    @Override
+    public final void increment() {
+<span class="fc" id="L18">        _d2++;</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        if ( _d2 == _shape2 ) {</span>
+<span class="fc" id="L20">            _d2 = 0;</span>
+<span class="fc" id="L21">            _d1++;</span>
+        }
+<span class="fc" id="L23">    }</span>
+
+    @Override
+    public final void decrement() {
+<span class="fc" id="L27">        _d2--;</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        if ( _d2 == -1 ) {</span>
+<span class="fc" id="L29">            _d2 = _shape2 - 1;</span>
+<span class="fc" id="L30">            _d1--;</span>
+        }
+<span class="fc" id="L32">    }</span>
+
+    @Override
+    public final int i() {
+<span class="fc" id="L36">        return this.indexOfIndices( _d1, _d2 );</span>
+    }
+
+    @Override
+    public final int get( int axis ) {
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        return ( axis == 0 ) ? _d1 : _d2;</span>
+    }
+
+    @Override
+    public final int[] get() {
+<span class="fc" id="L46">        return new int[]{ _d1, _d2 };</span>
+    }
+
+    @Override
+    public final void set( int axis, int position ) {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if ( axis == 0 ) _d1 = position;</span>
+<span class="fc" id="L52">        else _d2 = position;</span>
+<span class="fc" id="L53">    }</span>
+
+    @Override
+    public final void set( int[] indices ) {
+<span class="fc" id="L57">        _d1 = indices[ 0 ];</span>
+<span class="fc" id="L58">        _d2 = indices[ 1 ];</span>
+<span class="fc" id="L59">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

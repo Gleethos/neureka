@@ -24,7 +24,7 @@ import java.util.List;
 <span class="fc" id="L24">        super(&quot;operator&quot;);</span>
 <span class="fc" id="L25">        setIsSuitableFor(</span>
             call -&gt; {
-<span class="fc bfc" id="L27" title="All 2 branches covered.">                List&lt;Integer&gt; shape = ( call.tensor( 0 ) == null ) ? call.tensor( 1 ).shape() : call.tensor( 0 ).shape();</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">                List&lt;Integer&gt; shape = ( call.input( 0 ) == null ) ? call.input( 1 ).shape() : call.input( 0 ).shape();</span>
 <span class="fc" id="L28">                int size = shape.stream().reduce(1, ( x, y ) -&gt; x * y );</span>
 <span class="fc" id="L29">                return call.validate()</span>
 <span class="fc bfc" id="L30" title="All 4 branches covered.">                        .allNotNull( t -&gt; t.size() == size &amp;&amp; shape.equals( t.shape() ) )</span>
@@ -37,64 +37,63 @@ import java.util.List;
 <span class="fc" id="L37">        setExecutionDispatcher( (caller, call) -&gt; CalcUtil.executeFor( caller, call, finalExecutor ) );</span>
 <span class="fc" id="L38">        setCallPreparation(</span>
             call -&gt; {
-<span class="fc" id="L40">                Tsr&lt;?&gt;[] inputs = call.getTensors();</span>
-<span class="fc" id="L41">                Device&lt;Object&gt; device = (Device&lt;Object&gt;) call.getDevice();</span>
-<span class="pc bpc" id="L42" title="1 of 2 branches missed.">                if ( inputs[ 0 ] == null ) // Creating a new tensor:</span>
+<span class="fc" id="L40">                Device&lt;Object&gt; device = (Device&lt;Object&gt;) call.getDevice();</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">                if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
                 {
-<span class="fc" id="L44">                    int[] outShape = inputs[ 1 ].getNDConf().shape();</span>
+<span class="fc" id="L43">                    int[] outShape = call.input( 1 ).getNDConf().shape();</span>
 
-<span class="fc" id="L46">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) inputs[ 1 ].getValueClass();</span>
-<span class="fc" id="L47">                    Tsr&lt;Object&gt; output = Tsr.of( type ).withShape( outShape ).all( 0.0 ).getUnsafe().setIsIntermediate( true );</span>
-<span class="fc" id="L48">                    output.setIsVirtual( false );</span>
+<span class="fc" id="L45">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getValueClass();</span>
+<span class="fc" id="L46">                    Tsr&lt;Object&gt; output = Tsr.of( type ).withShape( outShape ).all( 0.0 ).getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L47">                    output.setIsVirtual( false );</span>
                     try {
-<span class="fc" id="L50">                        device.store( output );</span>
-<span class="nc" id="L51">                    } catch( Exception e ) {</span>
-<span class="nc" id="L52">                        e.printStackTrace();</span>
-<span class="fc" id="L53">                    }</span>
-<span class="fc" id="L54">                    inputs[ 0 ] = output;</span>
+<span class="fc" id="L49">                        device.store( output );</span>
+<span class="nc" id="L50">                    } catch( Exception e ) {</span>
+<span class="nc" id="L51">                        e.printStackTrace();</span>
+<span class="fc" id="L52">                    }</span>
+<span class="fc" id="L53">                    call.setInput( 0, output );</span>
                 }
-<span class="fc" id="L56">                return call;</span>
+<span class="fc" id="L55">                return call;</span>
             }
         );
-<span class="fc" id="L59">    }</span>
+<span class="fc" id="L58">    }</span>
 
     public static WithForward&lt;String&gt; implementationForGPU(String postfix ) {
-<span class="fc" id="L62">        return</span>
+<span class="fc" id="L61">        return</span>
             forward -&gt;
-<span class="fc" id="L64">                backward -&gt;</span>
-<span class="fc" id="L65">                    CLImplementation</span>
-<span class="fc" id="L66">                        .compiler()</span>
-<span class="fc" id="L67">                        .arity( 3 )</span>
-<span class="fc" id="L68">                        .kernelSource( Neureka.get().utility().readResource(&quot;kernels/operator_template.cl&quot;) )</span>
-<span class="fc" id="L69">                        .activationSource( forward )</span>
-<span class="fc" id="L70">                        .differentiationSource( backward )</span>
-<span class="fc" id="L71">                        .kernelPostfix( postfix )</span>
-<span class="fc" id="L72">                        .execution(</span>
+<span class="fc" id="L63">                backward -&gt;</span>
+<span class="fc" id="L64">                    CLImplementation</span>
+<span class="fc" id="L65">                        .compiler()</span>
+<span class="fc" id="L66">                        .arity( 3 )</span>
+<span class="fc" id="L67">                        .kernelSource( Neureka.get().utility().readResource(&quot;kernels/operator_template.cl&quot;) )</span>
+<span class="fc" id="L68">                        .activationSource( forward )</span>
+<span class="fc" id="L69">                        .differentiationSource( backward )</span>
+<span class="fc" id="L70">                        .kernelPostfix( postfix )</span>
+<span class="fc" id="L71">                        .execution(</span>
                             call -&gt; {
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">                                int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;</span>
-<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                                int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();</span>
-<span class="fc" id="L76">                                call.getDevice()</span>
-<span class="fc" id="L77">                                    .getKernel(call)</span>
-<span class="fc" id="L78">                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )</span>
-<span class="fc" id="L79">                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )</span>
-<span class="fc" id="L80">                                    .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )</span>
-<span class="fc" id="L81">                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )</span>
-<span class="fc" id="L82">                                    .pass( call.getDerivativeIndex() )</span>
-<span class="fc" id="L83">                                    .call( gwz );</span>
-<span class="fc" id="L84">                            }</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">                                int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">                                int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();</span>
+<span class="fc" id="L75">                                call.getDevice()</span>
+<span class="fc" id="L76">                                    .getKernel(call)</span>
+<span class="fc" id="L77">                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )</span>
+<span class="fc" id="L78">                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )</span>
+<span class="fc" id="L79">                                    .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )</span>
+<span class="fc" id="L80">                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )</span>
+<span class="fc" id="L81">                                    .pass( call.getDerivativeIndex() )</span>
+<span class="fc" id="L82">                                    .call( gwz );</span>
+<span class="fc" id="L83">                            }</span>
                         )
-<span class="fc" id="L86">                        .build();</span>
+<span class="fc" id="L85">                        .build();</span>
     }
 
     public static Functions.Builder&lt;Fun&gt; implementationForCPU() {
-<span class="fc" id="L90">        return Functions.implementation(</span>
+<span class="fc" id="L89">        return Functions.implementation(</span>
                 3,
                 (call, pairs) -&gt;
-<span class="fc" id="L93">                    call.getDevice()</span>
-<span class="fc" id="L94">                        .getExecutor()</span>
-<span class="fc" id="L95">                        .threaded(</span>
-<span class="fc" id="L96">                            call.getTsrOfType( Number.class, 0 ).size(),</span>
-<span class="fc" id="L97">                            _newWorkloadFor( call, pairs )</span>
+<span class="fc" id="L92">                    call.getDevice()</span>
+<span class="fc" id="L93">                        .getExecutor()</span>
+<span class="fc" id="L94">                        .threaded(</span>
+<span class="fc" id="L95">                            call.getTsrOfType( Number.class, 0 ).size(),</span>
+<span class="fc" id="L96">                            _newWorkloadFor( call, pairs )</span>
                         )
             );
     }
@@ -105,28 +104,28 @@ import java.util.List;
             Functions&lt;Fun&gt; pairs
     ) {
 
-<span class="fc" id="L108">        FunArray&lt;Fun.F64F64ToF64&gt; funF64 = pairs.get(Fun.F64F64ToF64.class);</span>
-<span class="fc" id="L109">        FunArray&lt;Fun.F32F32ToF32&gt; funF32 = pairs.get(Fun.F32F32ToF32.class);</span>
-<span class="fc" id="L110">        FunArray&lt;Fun.I32I32ToI32&gt; funI32 = pairs.get(Fun.I32I32ToI32.class);</span>
-<span class="fc" id="L111">        Class&lt;?&gt; typeClass = call.tensor( 1 ).getValueClass();</span>
+<span class="fc" id="L107">        FunArray&lt;Fun.F64F64ToF64&gt; funF64 = pairs.get(Fun.F64F64ToF64.class);</span>
+<span class="fc" id="L108">        FunArray&lt;Fun.F32F32ToF32&gt; funF32 = pairs.get(Fun.F32F32ToF32.class);</span>
+<span class="fc" id="L109">        FunArray&lt;Fun.I32I32ToI32&gt; funI32 = pairs.get(Fun.I32I32ToI32.class);</span>
+<span class="fc" id="L110">        Class&lt;?&gt; typeClass = call.input( 1 ).getValueClass();</span>
 
-<span class="fc" id="L113">        int d = call.getDerivativeIndex();</span>
+<span class="fc" id="L112">        int d = call.getDerivativeIndex();</span>
 
-<span class="fc" id="L115">        CPU.RangeWorkload workload = null;</span>
+<span class="fc" id="L114">        CPU.RangeWorkload workload = null;</span>
 
-<span class="fc bfc" id="L117" title="All 2 branches covered.">        if ( typeClass == Double.class )</span>
-<span class="fc" id="L118">            workload = _newWorkloadF64(  call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 ), funF64.get(d) );</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if ( typeClass == Double.class )</span>
+<span class="fc" id="L117">            workload = _newWorkloadF64(  call.input( 0 ), call.input( 1 ), call.input( 2 ), funF64.get(d) );</span>
 
-<span class="fc bfc" id="L120" title="All 2 branches covered.">        if ( typeClass == Float.class )</span>
-<span class="fc" id="L121">            workload = _newWorkloadF32(  call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 ), funF32.get(d) );</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if ( typeClass == Float.class )</span>
+<span class="fc" id="L120">            workload = _newWorkloadF32(  call.input( 0 ), call.input( 1 ), call.input( 2 ), funF32.get(d) );</span>
 
-<span class="fc bfc" id="L123" title="All 2 branches covered.">        if ( typeClass == Integer.class )</span>
-<span class="fc" id="L124">            workload = _newWorkloadI32(  call.tensor( 0 ), call.tensor( 1 ), call.tensor( 2 ), funI32.get(d) );</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if ( typeClass == Integer.class )</span>
+<span class="fc" id="L123">            workload = _newWorkloadI32(  call.input( 0 ), call.input( 1 ), call.input( 2 ), funI32.get(d) );</span>
 
-<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if ( workload == null )</span>
-<span class="nc" id="L127">            throw new IllegalArgumentException(&quot;&quot;);</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if ( workload == null )</span>
+<span class="nc" id="L126">            throw new IllegalArgumentException(&quot;&quot;);</span>
         else
-<span class="fc" id="L129">            return workload;</span>
+<span class="fc" id="L128">            return workload;</span>
     }
 
 
@@ -135,43 +134,43 @@ import java.util.List;
             Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             Fun.F64F64ToF64 operation
     ) {
-<span class="fc" id="L138">        t1_src.setIsVirtual( false );</span>
-<span class="fc" id="L139">        t2_src.setIsVirtual( false );</span>
-<span class="fc" id="L140">        double[] t0_val = (double[]) t0_drn.getData();</span>
-<span class="fc" id="L141">        double[] t1_val = t1_src.getDataAs( double[].class );</span>
-<span class="fc" id="L142">        double[] t2_val = t2_src.getDataAs( double[].class );</span>
+<span class="fc" id="L137">        t1_src.setIsVirtual( false );</span>
+<span class="fc" id="L138">        t2_src.setIsVirtual( false );</span>
+<span class="fc" id="L139">        double[] t0_val = (double[]) t0_drn.getData();</span>
+<span class="fc" id="L140">        double[] t1_val = t1_src.getDataAs( double[].class );</span>
+<span class="fc" id="L141">        double[] t2_val = t2_src.getDataAs( double[].class );</span>
 
-<span class="pc bpc" id="L144" title="2 of 4 branches missed.">        assert t0_val != null;</span>
-<span class="pc bpc" id="L145" title="2 of 4 branches missed.">        assert t1_val != null;</span>
-<span class="pc bpc" id="L146" title="2 of 4 branches missed.">        assert t2_val != null;</span>
+<span class="pc bpc" id="L143" title="2 of 4 branches missed.">        assert t0_val != null;</span>
+<span class="pc bpc" id="L144" title="2 of 4 branches missed.">        assert t1_val != null;</span>
+<span class="pc bpc" id="L145" title="2 of 4 branches missed.">        assert t2_val != null;</span>
 
-<span class="fc bfc" id="L148" title="All 6 branches covered.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
+<span class="fc bfc" id="L147" title="All 6 branches covered.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
 
-<span class="pc bpc" id="L150" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
-<span class="nc" id="L151">            return (start, end) -&gt; t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );</span>
+<span class="pc bpc" id="L149" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
+<span class="nc" id="L150">            return (start, end) -&gt; t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );</span>
         } else {
-<span class="fc bfc" id="L153" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L154">                return  (start, end) -&gt; {</span>
-<span class="fc bfc" id="L155" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);</span>
-<span class="fc" id="L156">                };</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">            if ( isSimple )</span>
+<span class="fc" id="L153">                return  (start, end) -&gt; {</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);</span>
+<span class="fc" id="L155">                };</span>
             else
-<span class="fc" id="L158">                return (i, end) -&gt; {</span>
-<span class="fc" id="L159">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
-<span class="fc" id="L160">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
-<span class="fc" id="L161">                    NDIterator t2Idx = NDIterator.of(t2_src);</span>
-<span class="fc" id="L162">                    t0Idx.set(t0_drn.indicesOfIndex(i));</span>
-<span class="fc" id="L163">                    t1Idx.set(t1_src.indicesOfIndex(i));</span>
-<span class="fc" id="L164">                    t2Idx.set(t2_src.indicesOfIndex(i));</span>
-<span class="fc bfc" id="L165" title="All 2 branches covered.">                    while ( i &lt; end ) {//increment on drain accordingly:</span>
+<span class="fc" id="L157">                return (i, end) -&gt; {</span>
+<span class="fc" id="L158">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L159">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
+<span class="fc" id="L160">                    NDIterator t2Idx = NDIterator.of(t2_src);</span>
+<span class="fc" id="L161">                    t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L162">                    t1Idx.set(t1_src.indicesOfIndex(i));</span>
+<span class="fc" id="L163">                    t2Idx.set(t2_src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                    while ( i &lt; end ) {//increment on drain accordingly:</span>
                         //setInto _value in drn:
-<span class="fc" id="L167">                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);</span>
+<span class="fc" id="L166">                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);</span>
                         //increment on drain:
-<span class="fc" id="L169">                        t0Idx.increment();</span>
-<span class="fc" id="L170">                        t1Idx.increment();</span>
-<span class="fc" id="L171">                        t2Idx.increment();</span>
-<span class="fc" id="L172">                        i++;</span>
+<span class="fc" id="L168">                        t0Idx.increment();</span>
+<span class="fc" id="L169">                        t1Idx.increment();</span>
+<span class="fc" id="L170">                        t2Idx.increment();</span>
+<span class="fc" id="L171">                        i++;</span>
                     }
-<span class="fc" id="L174">                };</span>
+<span class="fc" id="L173">                };</span>
         }
     }
 
@@ -180,44 +179,44 @@ import java.util.List;
             Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             Fun.F32F32ToF32 operation
     ) {
-<span class="fc" id="L183">        t1_src.setIsVirtual( false );</span>
-<span class="fc" id="L184">        t2_src.setIsVirtual( false );</span>
+<span class="fc" id="L182">        t1_src.setIsVirtual( false );</span>
+<span class="fc" id="L183">        t2_src.setIsVirtual( false );</span>
 
-<span class="fc" id="L186">        float[] t0_val = (float[]) t0_drn.getData();</span>
-<span class="fc" id="L187">        float[] t1_val = t1_src.getDataAs( float[].class );</span>
-<span class="fc" id="L188">        float[] t2_val = t2_src.getDataAs( float[].class );</span>
+<span class="fc" id="L185">        float[] t0_val = (float[]) t0_drn.getData();</span>
+<span class="fc" id="L186">        float[] t1_val = t1_src.getDataAs( float[].class );</span>
+<span class="fc" id="L187">        float[] t2_val = t2_src.getDataAs( float[].class );</span>
 
-<span class="pc bpc" id="L190" title="2 of 4 branches missed.">        assert t0_val != null;</span>
-<span class="pc bpc" id="L191" title="2 of 4 branches missed.">        assert t1_val != null;</span>
-<span class="pc bpc" id="L192" title="2 of 4 branches missed.">        assert t2_val != null;</span>
+<span class="pc bpc" id="L189" title="2 of 4 branches missed.">        assert t0_val != null;</span>
+<span class="pc bpc" id="L190" title="2 of 4 branches missed.">        assert t1_val != null;</span>
+<span class="pc bpc" id="L191" title="2 of 4 branches missed.">        assert t2_val != null;</span>
 
-<span class="pc bpc" id="L194" title="1 of 6 branches missed.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
+<span class="pc bpc" id="L193" title="1 of 6 branches missed.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
 
-<span class="pc bpc" id="L196" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
-<span class="nc" id="L197">            return (start, end) -&gt; t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );</span>
+<span class="pc bpc" id="L195" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
+<span class="nc" id="L196">            return (start, end) -&gt; t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );</span>
         } else {
-<span class="fc bfc" id="L199" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L200">                return  (start, end) -&gt; {</span>
-<span class="fc bfc" id="L201" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);</span>
-<span class="fc" id="L202">                };</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">            if ( isSimple )</span>
+<span class="fc" id="L199">                return  (start, end) -&gt; {</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);</span>
+<span class="fc" id="L201">                };</span>
             else
-<span class="fc" id="L204">                return (i, end) -&gt; {</span>
-<span class="fc" id="L205">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
-<span class="fc" id="L206">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
-<span class="fc" id="L207">                    NDIterator t2Idx = NDIterator.of(t2_src);</span>
-<span class="fc" id="L208">                    t0Idx.set(t0_drn.indicesOfIndex(i));</span>
-<span class="fc" id="L209">                    t1Idx.set(t1_src.indicesOfIndex(i));</span>
-<span class="fc" id="L210">                    t2Idx.set(t2_src.indicesOfIndex(i));</span>
-<span class="fc bfc" id="L211" title="All 2 branches covered.">                    while ( i &lt; end ) {//increment on drain accordingly:</span>
+<span class="fc" id="L203">                return (i, end) -&gt; {</span>
+<span class="fc" id="L204">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L205">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
+<span class="fc" id="L206">                    NDIterator t2Idx = NDIterator.of(t2_src);</span>
+<span class="fc" id="L207">                    t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L208">                    t1Idx.set(t1_src.indicesOfIndex(i));</span>
+<span class="fc" id="L209">                    t2Idx.set(t2_src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">                    while ( i &lt; end ) {//increment on drain accordingly:</span>
                         //setInto _value in drn:
-<span class="fc" id="L213">                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);</span>
+<span class="fc" id="L212">                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);</span>
                         //increment on drain:
-<span class="fc" id="L215">                        t0Idx.increment();</span>
-<span class="fc" id="L216">                        t1Idx.increment();</span>
-<span class="fc" id="L217">                        t2Idx.increment();</span>
-<span class="fc" id="L218">                        i++;</span>
+<span class="fc" id="L214">                        t0Idx.increment();</span>
+<span class="fc" id="L215">                        t1Idx.increment();</span>
+<span class="fc" id="L216">                        t2Idx.increment();</span>
+<span class="fc" id="L217">                        i++;</span>
                     }
-<span class="fc" id="L220">                };</span>
+<span class="fc" id="L219">                };</span>
         }
     }
 
@@ -227,43 +226,43 @@ import java.util.List;
             Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             Fun.I32I32ToI32 operation
     ) {
-<span class="fc" id="L230">        t1_src.setIsVirtual( false );</span>
-<span class="fc" id="L231">        t2_src.setIsVirtual( false );</span>
-<span class="fc" id="L232">        int[] t0_val = (int[]) t0_drn.getData();</span>
-<span class="fc" id="L233">        int[] t1_val = t1_src.getDataAs( int[].class );</span>
-<span class="fc" id="L234">        int[] t2_val = t2_src.getDataAs( int[].class );</span>
+<span class="fc" id="L229">        t1_src.setIsVirtual( false );</span>
+<span class="fc" id="L230">        t2_src.setIsVirtual( false );</span>
+<span class="fc" id="L231">        int[] t0_val = (int[]) t0_drn.getData();</span>
+<span class="fc" id="L232">        int[] t1_val = t1_src.getDataAs( int[].class );</span>
+<span class="fc" id="L233">        int[] t2_val = t2_src.getDataAs( int[].class );</span>
 
-<span class="pc bpc" id="L236" title="2 of 4 branches missed.">        assert t0_val != null;</span>
-<span class="pc bpc" id="L237" title="2 of 4 branches missed.">        assert t1_val != null;</span>
-<span class="pc bpc" id="L238" title="2 of 4 branches missed.">        assert t2_val != null;</span>
+<span class="pc bpc" id="L235" title="2 of 4 branches missed.">        assert t0_val != null;</span>
+<span class="pc bpc" id="L236" title="2 of 4 branches missed.">        assert t1_val != null;</span>
+<span class="pc bpc" id="L237" title="2 of 4 branches missed.">        assert t2_val != null;</span>
 
-<span class="pc bpc" id="L240" title="1 of 6 branches missed.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
+<span class="pc bpc" id="L239" title="1 of 6 branches missed.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
 
-<span class="pc bpc" id="L242" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
-<span class="nc" id="L243">            return (start, end) -&gt; t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );</span>
+<span class="pc bpc" id="L241" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
+<span class="nc" id="L242">            return (start, end) -&gt; t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );</span>
         } else {
-<span class="fc bfc" id="L245" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L246">                return  (start, end) -&gt; {</span>
-<span class="fc bfc" id="L247" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);</span>
-<span class="fc" id="L248">                };</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">            if ( isSimple )</span>
+<span class="fc" id="L245">                return  (start, end) -&gt; {</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);</span>
+<span class="fc" id="L247">                };</span>
             else
-<span class="fc" id="L250">                return (i, end) -&gt; {</span>
-<span class="fc" id="L251">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
-<span class="fc" id="L252">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
-<span class="fc" id="L253">                    NDIterator t2Idx = NDIterator.of(t2_src);</span>
-<span class="fc" id="L254">                    t0Idx.set(t0_drn.indicesOfIndex(i));</span>
-<span class="fc" id="L255">                    t1Idx.set(t1_src.indicesOfIndex(i));</span>
-<span class="fc" id="L256">                    t2Idx.set(t2_src.indicesOfIndex(i));</span>
-<span class="fc bfc" id="L257" title="All 2 branches covered.">                    while ( i &lt; end ) {//increment on drain accordingly:</span>
+<span class="fc" id="L249">                return (i, end) -&gt; {</span>
+<span class="fc" id="L250">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L251">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
+<span class="fc" id="L252">                    NDIterator t2Idx = NDIterator.of(t2_src);</span>
+<span class="fc" id="L253">                    t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L254">                    t1Idx.set(t1_src.indicesOfIndex(i));</span>
+<span class="fc" id="L255">                    t2Idx.set(t2_src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">                    while ( i &lt; end ) {//increment on drain accordingly:</span>
                         //setInto _value in drn:
-<span class="fc" id="L259">                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);</span>
+<span class="fc" id="L258">                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);</span>
                         //increment on drain:
-<span class="fc" id="L261">                        t0Idx.increment();</span>
-<span class="fc" id="L262">                        t1Idx.increment();</span>
-<span class="fc" id="L263">                        t2Idx.increment();</span>
-<span class="fc" id="L264">                        i++;</span>
+<span class="fc" id="L260">                        t0Idx.increment();</span>
+<span class="fc" id="L261">                        t1Idx.increment();</span>
+<span class="fc" id="L262">                        t2Idx.increment();</span>
+<span class="fc" id="L263">                        i++;</span>
                     }
-<span class="fc" id="L266">                };</span>
+<span class="fc" id="L265">                };</span>
         }
     }
 
@@ -272,18 +271,18 @@ import java.util.List;
 
         private final T _a, _d1, _d2;
 
-<span class="fc" id="L275">        public FunTriple(T a, T d, T d2 ) {</span>
-<span class="fc" id="L276">            _a  = a; _d1 = d; _d2 = d2;</span>
-<span class="fc" id="L277">        }</span>
+<span class="fc" id="L274">        public FunTriple(T a, T d, T d2 ) {</span>
+<span class="fc" id="L275">            _a  = a; _d1 = d; _d2 = d2;</span>
+<span class="fc" id="L276">        }</span>
 
         @Override
         public T get(int derivativeIndex) {
-<span class="fc bfc" id="L281" title="All 4 branches covered.">            return ( derivativeIndex &lt; 0 ? _a : ( derivativeIndex == 0 ) ? _d1 : _d2 );</span>
+<span class="fc bfc" id="L280" title="All 4 branches covered.">            return ( derivativeIndex &lt; 0 ? _a : ( derivativeIndex == 0 ) ? _d1 : _d2 );</span>
         }
 
         @Override
         public Class&lt;T&gt; getType() {
-<span class="fc" id="L286">            return (Class&lt;T&gt;) _a.getClass();</span>
+<span class="fc" id="L285">            return (Class&lt;T&gt;) _a.getClass();</span>
         }
     }
 

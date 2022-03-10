@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TensorBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.fluent.building</a> &gt; <span class="el_source">TensorBuilder.java</span></div><h1>TensorBuilder.java</h1><pre class="source lang-java linenums">package neureka.fluent.building;
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
+import neureka.devices.Device;
+import neureka.devices.host.CPU;
+import neureka.dtype.DataType;
+import neureka.fluent.building.states.*;
+import neureka.ndim.Filler;
+import neureka.ndim.config.NDConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
+/**
+ *  This class exposes a fluent builder API for creating {@link Tsr} instances.
+ *  An simple example would be:
+ * &lt;pre&gt;{@code
+ *
+ *    Tsr.of(Double.class)
+ *          .withShape( 2, 3, 4 )
+ *          .iterativelyFilledBy( 5, 3, 5 )
+ *
+ * }&lt;/pre&gt;
+ *
+ * It is also possible to define a range using the API to populate the tensor with values:
+ * &lt;pre&gt;{@code
+ *
+ *    Tsr.of(Double.class)
+ *          .withShape( 2, 3, 4 )
+ *          .iterativelyFilledFrom( 2 ).to( 9 ).step( 2 )
+ *
+ * }&lt;/pre&gt;
+ *
+ * If one needs a simple scalar then the following shortcut is possible:
+ * &lt;pre&gt;{@code
+ *
+ *    Tsr.of(Float.class).scalar( 3f )
+ *
+ * }&lt;/pre&gt;
+ *
+ * This principle works for vectors as well:
+ * &lt;pre&gt;{@code
+ *
+ *     Tsr.of(Byte.class).vector( 2, 5, 6, 7, 8 )
+ *
+ * }&lt;/pre&gt;
+ * For more fine-grained control over the initialization one can
+ * pass an initialization lambda to the API:
+ * &lt;pre&gt;{@code
+ *
+ *     Tsr.of(Byte.class).withShape(2, 3).andWhere( (i, indices) -&gt; i * 5 - 30 )
+ *
+ * }&lt;/pre&gt;
+ *
+ * @param &lt;V&gt; The type of the values which ought to be represent by the {@link Tsr} built by this {@link TensorBuilder}.
+ */
+public final class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDevice&lt;V&gt;, IterByOrIterFromOrAll&lt;V&gt;, To&lt;V&gt;, Step&lt;V&gt;
+{
+<span class="fc" id="L65">    private static final Logger _LOG = LoggerFactory.getLogger(TensorBuilder.class);</span>
+
+    private final DataType&lt;V&gt; _dataType;
+    private int[] _shape;
+    private V _from;
+    private V _to;
+<span class="fc" id="L71">    private Device&lt;V&gt; _device = (Device&lt;V&gt;) CPU.get();</span>
+
+
+    public TensorBuilder(
+            Class&lt;V&gt; typeClass
+<span class="fc" id="L76">    ) {</span>
+<span class="fc" id="L77">        _dataType = DataType.of( typeClass );</span>
+<span class="fc" id="L78">    }</span>
+
+    private Tsr&lt;V&gt; _get( Object value ) {
+<span class="fc" id="L81">        return Tsr.of( _dataType, _shape, value ).to( _device );</span>
+    }
+
+
+    private Tsr&lt;V&gt; _get( Filler&lt;V&gt; filler ) {
+<span class="fc" id="L86">        return Tsr.of( _dataType, _shape, filler ).to( _device );</span>
+    }
+
+    /**
+     * @param values The values which will recurrently populate the returned {@link Tsr} with values until it is filled.
+     * @return A new {@link Tsr} instance populated by the array of values supplied to this method.
+     */
+    @SafeVarargs
+    @Override
+    public final Tsr&lt;V&gt; andFill( V... values ) {
+<span class="fc" id="L96">        return _get( values );</span>
+    }
+
+    /**
+     *  This method receives an {@link Filler} lambda which will be
+     *  used to populate the {@link Tsr} instance produced by this API with values.
+     *
+     * @param filler The {@link Filler} which ought to populate the returned {@link Tsr}.
+     * @return A new {@link Tsr} instance populated by the lambda supplied to this method.
+     */
+    @Override
+<span class="fc" id="L107">    public Tsr&lt;V&gt; andWhere( Filler&lt;V&gt; filler ) { return _get( filler ); }</span>
+
+    @Override
+<span class="fc" id="L110">    public To&lt;V&gt; iterativelyFilledFrom( V index ) { _from = _checked(index); return this; }</span>
+
+    @Override
+<span class="fc" id="L113">    public Tsr&lt;V&gt; all( V value ) { return _get( value ); }</span>
+
+    @Override
+    public Tsr&lt;V&gt; andSeed( Object seed ) {
+<span class="fc" id="L117">        Class&lt;V&gt; type = (Class&lt;V&gt;) _dataType.getJVMTypeClass();</span>
+<span class="fc" id="L118">        Class&lt;?&gt; seedType = seed.getClass();</span>
+        try {
+<span class="fc" id="L120">            Function random = Neureka.get().backend().getFunction().random();</span>
+<span class="fc bfc" id="L121" title="All 4 branches covered.">            if (type == Double.class &amp;&amp; seedType == Long.class)</span>
+<span class="fc" id="L122">                return random.callWith(Arg.Seed.of((Long) seed)).call( _get( 0d ) );</span>
+<span class="fc bfc" id="L123" title="All 4 branches covered.">            else if (type == Float.class &amp;&amp; seedType == Long.class)</span>
+<span class="fc" id="L124">                return random.callWith(Arg.Seed.of((Long) seed)).call( _get( 0f ) );</span>
+            else
+<span class="fc" id="L126">                return Tsr.of(type, _shape, seed.toString()).to(_device);</span>
+<span class="fc" id="L127">        } catch ( Exception e ) {</span>
+<span class="fc" id="L128">            IllegalArgumentException exception =</span>
+                    new IllegalArgumentException(
+                         &quot;Could not create a random tensor for type '&quot;+type+&quot;'!&quot;
+                    );
+<span class="fc" id="L132">            _LOG.error( exception.getMessage(), e );</span>
+<span class="fc" id="L133">            throw exception;</span>
+        }
+    }
+
+    @Override
+    public IterByOrIterFromOrAll&lt;V&gt; withShape( int... shape ) {
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        if ( shape == null )</span>
+<span class="fc" id="L140">            throw new IllegalArgumentException(&quot;Cannot instantiate a tensor with shape 'null'!&quot;);</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if ( shape.length == 0 )</span>
+<span class="fc" id="L142">            throw new IllegalArgumentException(&quot;Cannot instantiate a tensor without shape arguments.&quot;);</span>
+<span class="fc" id="L143">        _shape = shape;</span>
+<span class="fc" id="L144">        return this;</span>
+    }
+
+    @Override
+    public Tsr&lt;V&gt; vector( Object[] values ) {
+<span class="fc" id="L149">        _shape = new int[]{ values.length };</span>
+<span class="fc" id="L150">        return _get( values );</span>
+    }
+
+    @Override
+    public Tsr&lt;V&gt; scalar( V value ) {
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">        if ( value != null ) {</span>
+<span class="fc" id="L156">            value = _checked( value );</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">            if ( value.getClass() != _dataType.getJVMTypeClass() )</span>
+<span class="nc" id="L158">                throw new IllegalArgumentException(&quot;Provided value is of the wrong type!&quot;);</span>
+        }
+<span class="fc" id="L160">        _shape = new int[]{ 1 };</span>
+<span class="fc" id="L161">        return _get( value );</span>
+    }
+
+    /**
+     *  This method makes sure that the data provided by the user is indeed of the right type
+     *  by converting it if possible to the previously provided data type.
+     *
+     * @param o The scalar value which may need to be converted to the provided data type.
+     * @return The value converted to the type defined by the provided {@link #_dataType}.
+     */
+    private V _checked( V o ) {
+<span class="fc" id="L172">        Class&lt;?&gt; jvmType = _dataType.getJVMTypeClass();</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if ( Number.class.isAssignableFrom(jvmType) ) {</span>
+<span class="pc bpc" id="L174" title="1 of 4 branches missed.">            if ( o instanceof Number &amp;&amp; o.getClass() != jvmType ) {</span>
+<span class="fc" id="L175">                Number n = (Number) o;</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">                if ( jvmType == Integer.class ) return (V) ((Integer) n.intValue());</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">                if ( jvmType == Double.class  ) return (V) ((Double) n.doubleValue());</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">                if ( jvmType == Short.class   ) return (V) ((Short) n.shortValue());</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">                if ( jvmType == Byte.class    ) return (V) ((Byte) n.byteValue());</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">                if ( jvmType == Long.class    ) return (V) ((Long) n.longValue());</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                if ( jvmType == Float.class   ) return (V) ((Float) n.floatValue());</span>
+            }
+        }
+<span class="fc" id="L184">        return o;</span>
+    }
+
+    @Override
+<span class="fc" id="L188">    public Step&lt;V&gt; to( V index ) { _to = _checked(index); return this; }</span>
+
+    @Override
+    public Tsr&lt;V&gt; step( double size ) {
+<span class="fc" id="L192">        int tensorSize = _size();</span>
+<span class="fc" id="L193">        Object data = null;</span>
+<span class="fc" id="L194">        int itemLimit = _size();</span>
+<span class="fc" id="L195">        int itemIndex = 0;</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if ( _dataType == DataType.of( Integer.class ) ) {</span>
+<span class="fc" id="L197">            List&lt;Integer&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L198" title="All 4 branches covered.">            for ( int index = ((Integer) _from); index &lt;= ((Integer)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L199">                range.add( index );</span>
+<span class="fc" id="L200">                itemIndex++;</span>
+            }
+<span class="fc" id="L202">            data = IntStream.iterate( 0, i -&gt; i + 1 )</span>
+<span class="fc" id="L203">                            .limit( tensorSize )</span>
+<span class="fc" id="L204">                            .map( i -&gt; range.get( i % range.size() ) )</span>
+<span class="fc" id="L205">                            .toArray();</span>
+<span class="fc" id="L206">        }</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        else if ( _dataType == DataType.of( Double.class ) ) {</span>
+<span class="fc" id="L208">            List&lt;Double&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L209" title="1 of 4 branches missed.">            for ( double index = ((Double) _from); index &lt;= ((Double)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L210">                range.add( index );</span>
+<span class="fc" id="L211">                itemIndex++;</span>
+            }
+<span class="fc" id="L213">            data = IntStream.iterate( 0, i -&gt; i + 1 )</span>
+<span class="fc" id="L214">                            .limit( tensorSize )</span>
+<span class="fc" id="L215">                            .mapToDouble( i -&gt; range.get( i % range.size() ) )</span>
+<span class="fc" id="L216">                            .toArray();</span>
+<span class="fc" id="L217">        }</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        else if ( _dataType == DataType.of( Long.class ) ) {</span>
+<span class="fc" id="L219">            List&lt;Long&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L220" title="1 of 4 branches missed.">            for ( long index = ((Long) _from); index &lt;= ((Long)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L221">                range.add( index );</span>
+<span class="fc" id="L222">                itemIndex++;</span>
+            }
+<span class="fc" id="L224">            data = IntStream.iterate( 0, i -&gt; i + 1 )</span>
+<span class="fc" id="L225">                    .limit( tensorSize )</span>
+<span class="fc" id="L226">                    .mapToLong( i -&gt; range.get( i % range.size() ) )</span>
+<span class="fc" id="L227">                    .toArray();</span>
+<span class="fc" id="L228">        }</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">        else if ( _dataType == DataType.of( Float.class ) ) {</span>
+<span class="fc" id="L230">            List&lt;Float&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L231" title="All 4 branches covered.">            for ( double index = ((Float) _from); index &lt;= ((Float)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L232">                range.add( (float) index );</span>
+<span class="fc" id="L233">                itemIndex++;</span>
+            }
+<span class="fc" id="L235">            float[] primData = new float[tensorSize];</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; tensorSize; ii ++) {</span>
+<span class="fc" id="L237">                primData[ii] = range.get( ii % range.size() );</span>
+            }
+<span class="fc" id="L239">            data = primData;</span>
+<span class="fc" id="L240">        }</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">        else if ( _dataType == DataType.of( Byte.class ) ) {</span>
+<span class="fc" id="L242">            List&lt;Byte&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L243" title="1 of 4 branches missed.">            for ( byte index = ((Byte) _from); index &lt;= ((Byte)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L244">                range.add( index );</span>
+<span class="fc" id="L245">                itemIndex++;</span>
+            }
+<span class="fc" id="L247">            byte[] primData = new byte[tensorSize];</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; tensorSize; ii ++) {</span>
+<span class="fc" id="L249">                primData[ii] = range.get( ii % range.size() );</span>
+            }
+<span class="fc" id="L251">            data = primData;</span>
+<span class="fc" id="L252">        }</span>
+<span class="nc bnc" id="L253" title="All 4 branches missed.">        else if ( _from instanceof Comparable &amp;&amp; _to instanceof Comparable ) {</span>
+            //data = new ObjectRange( (Comparable&lt;V&gt;) _from, (Comparable&lt;V&gt;) _to ).step( (int) size );
+<span class="nc" id="L255">            throw new IllegalStateException(&quot;Cannot form a range for the provided elements...&quot;);</span>
+            // TODO: make it possible to have ranges like 'a' to 'z'...
+        }
+<span class="fc" id="L258">        return _get( data );</span>
+    }
+
+    private int _size() {
+<span class="fc" id="L262">        int size = 1;</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">        for ( int axis : _shape ) size *= axis;</span>
+<span class="fc" id="L264">        return size;</span>
+    }
+
+    @Override
+    public WithShapeOrScalarOrVector&lt;V&gt; on( Device&lt;V&gt; device ) {
+<span class="fc" id="L269">        _device = device;</span>
+<span class="fc" id="L270">        return this;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

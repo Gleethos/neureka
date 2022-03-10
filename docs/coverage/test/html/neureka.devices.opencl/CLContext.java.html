@@ -34,7 +34,7 @@ import static org.jocl.CL.clGetPlatformIDs;
  *  instance will directly or indirectly reference kernels, memory objects and other concepts
  *  exposed by OpenCL...
  */
-public class CLContext implements BackendExtension
+public final class CLContext implements BackendExtension
 {
 <span class="fc" id="L39">    private static Logger _LOG = LoggerFactory.getLogger(CLContext.class);</span>
 
@@ -128,16 +128,21 @@ public class CLContext implements BackendExtension
 <span class="fc" id="L128">        return new DeviceOption( result, score );</span>
     }
 
+    /**
+     *  This method will free all the resources occupied by this context,
+     *  meaning that all platforms and their devices will be disposed.
+     *  Their kernels will be removed and their tensors restored.
+     */
     @Override
     public void dispose() {
-<span class="fc bfc" id="L133" title="All 2 branches covered.">        for ( OpenCLPlatform platform : _platforms ) {</span>
-<span class="fc bfc" id="L134" title="All 2 branches covered.">            for ( OpenCLDevice device : platform.getDevices() ) {</span>
-<span class="fc" id="L135">                device.dispose();</span>
-<span class="fc" id="L136">            }</span>
-<span class="fc" id="L137">            platform.dispose();</span>
-<span class="fc" id="L138">        }</span>
-<span class="fc" id="L139">        _platforms.clear();</span>
-<span class="fc" id="L140">    }</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        for ( OpenCLPlatform platform : _platforms ) {</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">            for ( OpenCLDevice device : platform.getDevices() ) {</span>
+<span class="fc" id="L140">                device.dispose();</span>
+<span class="fc" id="L141">            }</span>
+<span class="fc" id="L142">            platform.dispose();</span>
+<span class="fc" id="L143">        }</span>
+<span class="fc" id="L144">        _platforms.clear();</span>
+<span class="fc" id="L145">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -62,29 +62,45 @@ public final class DefaultADAgent extends Args implements ADAgent {
      *  The {@link DefaultADAgent} will adopt the argument context of the {@link neureka.backend.api.ExecutionCall}
      *  from which it was born. This is so that they can be used by any backend implementation to
      *  save variables useful to perform differentiation.
+     *
+     *  @param context A list of {@link neureka.backend.api.ExecutionCall} arguments which might be relevant to the autograd system.
+     *  @return This {@link DefaultADAgent} with the list of arguments set.
      */
     public DefaultADAgent withArgs( List&lt;Arg&gt; context  ) {
-<span class="fc bfc" id="L67" title="All 2 branches covered.">        for ( Arg&lt;?&gt; arg : context ) this.set(arg);</span>
-<span class="fc" id="L68">        return this;</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        for ( Arg&lt;?&gt; arg : context ) this.set(arg);</span>
+<span class="nc" id="L71">        return this;</span>
+    }
+
+    /**
+     *  The {@link DefaultADAgent} will adopt the argument context of the {@link neureka.backend.api.ExecutionCall}
+     *  from which it was born. This is so that they can be used by any backend implementation to
+     *  save variables useful to perform differentiation.
+     *
+     *  @param context An array of {@link neureka.backend.api.ExecutionCall} arguments which might be relevant to the autograd system.
+     *  @return This {@link DefaultADAgent} with the list of arguments set.
+     */
+    public DefaultADAgent withArgs( Arg&lt;?&gt;... context  ) {
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        for ( Arg&lt;?&gt; arg : context ) this.set(arg);</span>
+<span class="fc" id="L84">        return this;</span>
     }
 
     @Override
-<span class="fc" id="L72">    public &lt;T&gt; Tsr&lt;T&gt; forward( GraphNode&lt;T&gt; target, Tsr&lt;T&gt; derivative ) { return (Tsr&lt;T&gt;) _forward.execute( target, derivative); }</span>
+<span class="fc" id="L88">    public &lt;T&gt; Tsr&lt;T&gt; forward( GraphNode&lt;T&gt; target, Tsr&lt;T&gt; derivative ) { return (Tsr&lt;T&gt;) _forward.execute( target, derivative); }</span>
 
     @Override
-<span class="fc" id="L75">    public &lt;T&gt; Tsr&lt;T&gt; backward( GraphNode&lt;T&gt; target, Tsr&lt;T&gt; error ) { return (Tsr&lt;T&gt;) _backward.execute( target, error ); }</span>
+<span class="fc" id="L91">    public &lt;T&gt; Tsr&lt;T&gt; backward( GraphNode&lt;T&gt; target, Tsr&lt;T&gt; error ) { return (Tsr&lt;T&gt;) _backward.execute( target, error ); }</span>
 
     @Override
     public Tsr&lt;?&gt; derivative() {
-<span class="fc" id="L79">        Arg.Derivative arg = get(Arg.Derivative.class);</span>
-<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if ( arg != null ) return (Tsr&lt;?&gt;) arg.get(); else return null;</span>
+<span class="fc" id="L95">        Arg.Derivative arg = get(Arg.Derivative.class);</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        if ( arg != null ) return (Tsr&lt;?&gt;) arg.get(); else return null;</span>
     }
 
     @Override
-<span class="fc" id="L84">    public boolean hasForward() { return has(Arg.Derivative.class); }</span>
+<span class="fc" id="L100">    public boolean hasForward() { return has(Arg.Derivative.class); }</span>
 
     @Override
-<span class="nc bnc" id="L87" title="All 2 branches missed.">    public boolean hasBackward() { return _backward != null; }</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">    public boolean hasBackward() { return _backward != null; }</span>
 
     /**
      *  An {@link ADAgent} also contains a context of variables which have been
@@ -100,10 +116,10 @@ public final class DefaultADAgent extends Args implements ADAgent {
      */
     @Override
     public String toString() {
-<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if ( this.derivative() != null ) return derivative().toString();</span>
-<span class="fc" id="L104">        return getAll(Arg.class).stream()</span>
-<span class="fc" id="L105">                .map( key -&gt; key.getClass().getSimpleName() + &quot;=&quot; + get(key.getClass()) )</span>
-<span class="fc" id="L106">                .collect( Collectors.joining( &quot;, &quot;, &quot;{&quot;, &quot;}&quot; ) );</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        if ( this.derivative() != null ) return derivative().toString();</span>
+<span class="fc" id="L120">        return getAll(Arg.class).stream()</span>
+<span class="fc" id="L121">                .map( key -&gt; key.getClass().getSimpleName() + &quot;=&quot; + get(key.getClass()) )</span>
+<span class="fc" id="L122">                .collect( Collectors.joining( &quot;, &quot;, &quot;{&quot;, &quot;}&quot; ) );</span>
     }
 
 

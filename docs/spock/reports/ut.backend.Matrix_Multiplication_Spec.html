@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Feb 25 23:22:21 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Thu Mar 10 17:53:58 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>4.122 seconds</td>
+<td>4.016 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -370,7 +370,7 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>def C = new double[M*N]</pre>
+<pre class='block-source'>var C = new double[M*N]</pre>
 </td>
 </tr>
 <tr>
@@ -378,7 +378,7 @@ div.footer {
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>SimpleMatMul.execute(A, B, C, M, K, N)</pre>
+<pre class='block-source'>CPUMatMul.execute(true, A, B, C, M, K, N)</pre>
 </td>
 </tr>
 <tr>

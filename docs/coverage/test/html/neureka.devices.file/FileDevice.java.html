@@ -67,7 +67,7 @@ import java.util.stream.Collectors;
     private void _updateFolderView() {
 <span class="fc" id="L68">        _loadable.clear();</span>
 <span class="fc" id="L69">        File dir = new File( _directory );</span>
-<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if ( ! dir.exists() ) dir.mkdirs();</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if ( ! dir.exists() ) dir.mkdirs();</span>
         else {
 <span class="fc" id="L72">            List&lt;String&gt; found = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L73">            File[] files = dir.listFiles();</span>
@@ -76,7 +76,7 @@ import java.util.stream.Collectors;
 <span class="fc" id="L76">                    int i = file.getName().lastIndexOf( '.' );</span>
 <span class="pc bpc" id="L77" title="1 of 2 branches missed.">                    if ( i &gt; 0 ) {</span>
 <span class="fc" id="L78">                        String extension = file.getName().substring( i + 1 );</span>
-<span class="fc bfc" id="L79" title="All 2 branches covered.">                        if ( FileHead.FACTORY.hasLoader( extension ) ) found.add( file.getName() );</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                        if ( FileHead.FACTORY.hasLoader( extension ) ) found.add( file.getName() );</span>
                     }
                 }
 <span class="fc" id="L82">                _loadable.addAll( found ); // TODO! -&gt; Update so that new files will be detected...</span>

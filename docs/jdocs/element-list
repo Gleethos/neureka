@@ -49,7 +49,7 @@ neureka.ndim.config.types.reshaped
 neureka.ndim.config.types.simple
 neureka.ndim.config.types.sliced
 neureka.ndim.config.types.views
-neureka.ndim.config.types.virtual
+neureka.ndim.config.types.views.virtual
 neureka.ndim.iterator
 neureka.ndim.iterator.types.reshaped
 neureka.ndim.iterator.types.simple

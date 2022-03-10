@@ -52,14 +52,14 @@ import java.util.stream.IntStream;
     public Function build( Operation operation, int numberOfArgs, boolean doAD )
     {
 <span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if ( operation.isIndexer() )</span>
-<span class="nc" id="L55">            return build( operation.getFunction() + &quot;( I[j] )&quot;, doAD );</span>
+<span class="nc" id="L55">            return build( operation.getIdentifier() + &quot;( I[j] )&quot;, doAD );</span>
 
 <span class="fc" id="L57">        String args = IntStream.iterate( 0, n -&gt; n + 1 )</span>
 <span class="fc" id="L58">                                .limit( numberOfArgs )</span>
 <span class="fc" id="L59">                                .mapToObj( i -&gt; &quot;I[&quot; + i + &quot;]&quot; )</span>
 <span class="fc" id="L60">                                .collect( Collectors.joining( &quot;, &quot; ) );</span>
 
-<span class="fc" id="L62">        return build( operation.getFunction() + &quot;(&quot; + args + &quot;)&quot;, doAD );</span>
+<span class="fc" id="L62">        return build( operation.getIdentifier() + &quot;(&quot; + args + &quot;)&quot;, doAD );</span>
     }
 
     /**
@@ -214,7 +214,7 @@ import java.util.stream.IntStream;
         );
 <span class="fc bfc" id="L215" title="All 4 branches covered.">        if ( possibleFunction != null &amp;&amp; possibleFunction.length() &gt; 1 ) {</span>
 <span class="pc bpc" id="L216" title="1 of 2 branches missed.">            for ( int oi = 0; oi &lt; _context.size(); oi++ ) {</span>
-<span class="fc bfc" id="L217" title="All 2 branches covered.">                if (_context.getOperation(oi).getFunction().equalsIgnoreCase(possibleFunction)) {</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">                if (_context.getOperation(oi).getIdentifier().equalsIgnoreCase(possibleFunction)) {</span>
 <span class="fc" id="L218">                    List&lt;String&gt; parameters = ParseUtil.findParametersIn(</span>
                                                                         foundComponent,
 <span class="fc" id="L220">                                                                        possibleFunction.length()</span>

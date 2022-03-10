@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Feb 25 23:22:13 CET 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Thu Mar 10 17:53:57 CET 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>2.101 seconds</td>
+<td>0.741 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -438,15 +438,14 @@ run {
                                                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
                                                 .setCallPreparation(
                                                         call -&gt; {
-                                                            Tsr&lt;?&gt;[] tsrs = call.getTensors();
-                                                            Device&lt;?&gt; device = call.getDevice();
-                                                            if (tsrs[0] == null) // Creating a new tensor:
+                                                             Device&lt;?&gt; device = call.getDevice();
+                                                            if ( call.input( 0 ) == null ) // Creating a new tensor:
                                                             {
-                                                                int[] shp = new int[]{tsrs[1].getNDConf().shape()[0], tsrs[2].getNDConf().shape()[1]}
+                                                                int[] shp = new int[]{call.input( 1 ).getNDConf().shape(0), call.input( 2 ).getNDConf().shape(1)}
                                                                 Tsr output = Tsr.of(shp, 0.0);
                                                                 output.setIsVirtual(false);
                                                                 device.store( output );
-                                                                tsrs[0] = output;
+                                                                call.setInput( 0, output );
                                                             }
                                                             return call;
                                                         }

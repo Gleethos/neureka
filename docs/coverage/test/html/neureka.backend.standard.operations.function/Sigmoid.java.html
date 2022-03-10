@@ -50,7 +50,7 @@ public final class Sigmoid extends AbstractOperation
             )
 <span class="fc" id="L51">            .setImplementationFor(</span>
                 OpenCLDevice.class,
-<span class="fc" id="L53">                    Activation.implementationForGPU( this.getFunction() )</span>
+<span class="fc" id="L53">                    Activation.implementationForGPU( this.getIdentifier() )</span>
 <span class="fc" id="L54">                            .with( &quot;output = 1 / (1 + (float)pow((float)M_E, -input));\n&quot; )</span>
 <span class="fc" id="L55">                            .and( &quot;output = input * (1 - input);\n&quot; )</span>
             )

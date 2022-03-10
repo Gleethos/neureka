@@ -52,7 +52,7 @@ public final class Softplus extends AbstractOperation
             )
 <span class="fc" id="L53">            .setImplementationFor(</span>
                 OpenCLDevice.class,
-<span class="fc" id="L55">                    Activation.implementationForGPU( this.getFunction() )</span>
+<span class="fc" id="L55">                    Activation.implementationForGPU( this.getIdentifier() )</span>
 <span class="fc" id="L56">                            .with(</span>
                                     &quot;output = \n&quot; +
                                             &quot;   (\n&quot; +

@@ -19,7 +19,7 @@ import neureka.ndim.AbstractTensor;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
-<span class="pc bpc" id="L22" title="1 of 2 branches missed.">public class Reshape extends AbstractOperation</span>
+public class Reshape extends AbstractOperation
 {
     public Reshape()
     {
@@ -54,7 +54,7 @@ import org.jetbrains.annotations.Contract;
 <span class="fc" id="L54">                .setExecutionDispatcher(</span>
                     ( caller, call ) -&gt;
                     {
-<span class="fc" id="L57">                        Tsr&lt;?&gt;[] inputs = CalcUtil.srcActivation( call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );</span>
+<span class="fc" id="L57">                        Tsr&lt;?&gt;[] inputs = CalcUtil.srcActivation( call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );</span>
 <span class="fc" id="L58">                        int[] newForm = new int[ inputs.length - 1 ];</span>
 <span class="fc bfc" id="L59" title="All 2 branches covered.">                        for ( int i = 0; i &lt; inputs.length - 1; i++ )</span>
 <span class="fc" id="L60">                            newForm[ i ] = ( (Number) inputs[ i ].getValueAt( 0 ) ).intValue();</span>
@@ -94,107 +94,105 @@ import org.jetbrains.annotations.Contract;
 <span class="fc" id="L94">            largest = t.rank();</span>
 <span class="fc" id="L95">            shape = t.getNDConf().shape();</span>
         }
-<span class="fc" id="L97">        int prefix = 0;</span>
-<span class="pc bpc" id="L98" title="2 of 4 branches missed.">        assert shape != null;</span>
-<span class="fc bfc" id="L99" title="All 4 branches covered.">        for ( int s : shape ) if ( s == 1 ) prefix++; else break;</span>
-<span class="fc" id="L100">        int postfix = 0;</span>
-<span class="fc bfc" id="L101" title="All 4 branches covered.">        for ( int i = shape.length-1; i&gt;=0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;</span>
-<span class="fc bfc" id="L102" title="All 2 branches covered.">        for ( int i = 0; i &lt; tensors.length; i++ ) {</span>
-<span class="fc bfc" id="L103" title="All 2 branches covered.">            if ( tensors[ i ].rank() != largest ) {</span>
-<span class="fc" id="L104">                int[] oldShape = tensors[ i ].getNDConf().shape();</span>
-<span class="fc" id="L105">                int[] newReshape = new int[ largest ];</span>
-<span class="fc" id="L106">                int padding = largest - oldShape.length;</span>
+<span class="fc" id="L97">        int[] endings = DimTrim.endsFrom( shape );</span>
+<span class="fc" id="L98">        int prefix = endings[0];</span>
+<span class="fc" id="L99">        int postfix = endings[1];</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        for ( int i = 0; i &lt; tensors.length; i++ ) {</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if ( tensors[ i ].rank() != largest ) {</span>
+<span class="fc" id="L102">                int[] oldShape = tensors[ i ].getNDConf().shape();</span>
+<span class="fc" id="L103">                int[] newReshape = new int[ largest ];</span>
+<span class="fc" id="L104">                int padding = largest - oldShape.length;</span>
 
-<span class="fc bfc" id="L108" title="All 2 branches covered.">                int handle = ( postfix &lt;= prefix ) ? padding : largest - padding;</span>
-<span class="fc bfc" id="L109" title="All 4 branches covered.">                for ( int ii = 0; ii &lt; handle; ii++ ) newReshape[ ii ] = ( postfix &lt;= prefix ) ? -1 : ii;</span>
-<span class="fc bfc" id="L110" title="All 4 branches covered.">                for ( int ii = handle; ii &lt; largest; ii++ ) newReshape[ ii ] = ( postfix &lt;= prefix ) ? ii - padding : -1;</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">                int handle = ( postfix &lt;= prefix ) ? padding : largest - padding;</span>
+<span class="fc bfc" id="L107" title="All 4 branches covered.">                for ( int ii = 0; ii &lt; handle; ii++ ) newReshape[ ii ] = ( postfix &lt;= prefix ) ? -1 : ii;</span>
+<span class="fc bfc" id="L108" title="All 4 branches covered.">                for ( int ii = handle; ii &lt; largest; ii++ ) newReshape[ ii ] = ( postfix &lt;= prefix ) ? ii - padding : -1;</span>
 
-<span class="fc" id="L112">                Function f = Function.of(</span>
-<span class="fc" id="L113">                        AbstractTensor.Utility.shapeString( newReshape ) + &quot;:(I[ 0 ])&quot;,</span>
+<span class="fc" id="L110">                Function f = Function.of(</span>
+<span class="fc" id="L111">                        AbstractTensor.Utility.shapeString( newReshape ) + &quot;:(I[ 0 ])&quot;,</span>
                         doesAD
                 );
-<span class="fc" id="L116">                tensors[ i ] = f.execute( tensors[ i ] );</span>
+<span class="fc" id="L114">                tensors[ i ] = f.execute( tensors[ i ] );</span>
             }
         }
 
-<span class="fc" id="L120">    }</span>
+<span class="fc" id="L118">    }</span>
 
 
     public static int[] invert( int[] reshape )
     {
-<span class="fc" id="L125">        int reverseLength = 0;</span>
-<span class="fc bfc" id="L126" title="All 2 branches covered.">        for ( int e : reshape ) {</span>
-<span class="fc bfc" id="L127" title="All 2 branches covered.">            if ( e &gt;= 0 ) reverseLength++;</span>
+<span class="fc" id="L123">        int reverseLength = 0;</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        for ( int e : reshape ) {</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">            if ( e &gt;= 0 ) reverseLength++;</span>
         }
-<span class="fc" id="L129">        int[] reversed = new int[ reverseLength ];</span>
-<span class="fc" id="L130">        int reshape_i = 0;</span>
-<span class="fc" id="L131">        int reverse_i = 0;</span>
-<span class="fc bfc" id="L132" title="All 2 branches covered.">        while ( reverse_i &lt; reverseLength ) {</span>
-<span class="fc bfc" id="L133" title="All 2 branches covered.">            if ( reshape[ reshape_i ] &gt;= 0 ) {</span>
-<span class="fc" id="L134">                reversed[ reshape[ reshape_i ] ] = reshape_i;</span>
-<span class="fc" id="L135">                reverse_i++;</span>
+<span class="fc" id="L127">        int[] reversed = new int[ reverseLength ];</span>
+<span class="fc" id="L128">        int reshape_i = 0;</span>
+<span class="fc" id="L129">        int reverse_i = 0;</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        while ( reverse_i &lt; reverseLength ) {</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            if ( reshape[ reshape_i ] &gt;= 0 ) {</span>
+<span class="fc" id="L132">                reversed[ reshape[ reshape_i ] ] = reshape_i;</span>
+<span class="fc" id="L133">                reverse_i++;</span>
             }
-<span class="fc" id="L137">            reshape_i++;</span>
+<span class="fc" id="L135">            reshape_i++;</span>
         }
-<span class="fc" id="L139">        return reversed;</span>
+<span class="fc" id="L137">        return reversed;</span>
     }
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L144">        java.util.function.Function&lt;String, Boolean&gt; isConstantNumeric =</span>
+<span class="fc" id="L142">        java.util.function.Function&lt;String, Boolean&gt; isConstantNumeric =</span>
                 s -&gt; {
                     try {
-<span class="fc" id="L147">                        Double.parseDouble(s);</span>
-<span class="fc" id="L148">                        return true;</span>
-<span class="fc" id="L149">                    } catch (Exception e) { return false; }</span>
+<span class="fc" id="L145">                        Double.parseDouble(s);</span>
+<span class="fc" id="L146">                        return true;</span>
+<span class="fc" id="L147">                    } catch (Exception e) { return false; }</span>
                 };
-<span class="fc" id="L151">        StringBuilder reconstructed = new StringBuilder();</span>
-<span class="fc" id="L152">        reconstructed.insert(0, &quot;[&quot;);</span>
-<span class="fc bfc" id="L153" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
-<span class="fc bfc" id="L154" title="All 2 branches covered.">            if ( i == children.length - 1 ) {</span>
-<span class="fc" id="L155">                reconstructed.append(&quot;]:(&quot;).append(</span>
-<span class="pc bpc" id="L156" title="1 of 2 branches missed.">                        ( isConstantNumeric.apply( children[ i ] ) )</span>
-<span class="nc" id="L157">                                ? children[ i ].split(&quot;\\.&quot;)[ 0 ]</span>
-<span class="fc" id="L158">                                : children[ i ]</span>
-<span class="fc" id="L159">                ).append(&quot;)&quot;);</span>
+<span class="fc" id="L149">        StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc" id="L150">        reconstructed.insert(0, &quot;[&quot;);</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">            if ( i == children.length - 1 ) {</span>
+<span class="fc" id="L153">                reconstructed.append(&quot;]:(&quot;).append(</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">                        ( isConstantNumeric.apply( children[ i ] ) )</span>
+<span class="nc" id="L155">                                ? children[ i ].split(&quot;\\.&quot;)[ 0 ]</span>
+<span class="fc" id="L156">                                : children[ i ]</span>
+<span class="fc" id="L157">                ).append(&quot;)&quot;);</span>
             } else
-<span class="fc" id="L161">                reconstructed.append(</span>
-<span class="pc bpc" id="L162" title="1 of 2 branches missed.">                        ( isConstantNumeric.apply( children[ i ] ) )</span>
-<span class="fc" id="L163">                                ? children[ i ].split(&quot;\\.&quot;)[ 0 ]</span>
-<span class="nc" id="L164">                                : children[ i ]</span>
+<span class="fc" id="L159">                reconstructed.append(</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">                        ( isConstantNumeric.apply( children[ i ] ) )</span>
+<span class="fc" id="L161">                                ? children[ i ].split(&quot;\\.&quot;)[ 0 ]</span>
+<span class="nc" id="L162">                                : children[ i ]</span>
                 );
 
-<span class="fc bfc" id="L167" title="All 2 branches covered.">            if ( i &lt; children.length - 2 )</span>
-<span class="fc" id="L168">                reconstructed.append(&quot;,&quot;);</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">            if ( i &lt; children.length - 2 )</span>
+<span class="fc" id="L166">                reconstructed.append(&quot;,&quot;);</span>
         }
-<span class="fc" id="L170">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+<span class="fc" id="L168">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L175">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L173">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src )
     {
-<span class="nc" id="L181">            return src[ 0 ].call( inputs, j );</span>
+<span class="nc" id="L179">            return src[ 0 ].call( inputs, j );</span>
     }
 
 
     @Contract(pure = true)
     private static void _shapeCheck( int[] newShp, Tsr&lt;?&gt; t ) {
-<span class="pc bpc" id="L187" title="1 of 2 branches missed.">        if ( NDConfiguration.Utility.sizeOfShape( newShp ) != t.size() ) {</span>
-<span class="nc" id="L188">            throw new IllegalArgumentException(</span>
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        if ( NDConfiguration.Utility.sizeOfShape( newShp ) != t.size() ) {</span>
+<span class="nc" id="L186">            throw new IllegalArgumentException(</span>
                     &quot;New shape does not match tensor size!&quot; +
                             &quot; (&quot; +
-<span class="nc" id="L191">                            AbstractTensor.Utility.shapeString( newShp ) +</span>
-<span class="nc bnc" id="L192" title="All 2 branches missed.">                            ((NDConfiguration.Utility.sizeOfShape( newShp ) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) +</span>
-<span class="nc" id="L193">                            AbstractTensor.Utility.shapeString(t.getNDConf().shape()) + &quot;&quot; +</span>
+<span class="nc" id="L189">                            AbstractTensor.Utility.shapeString( newShp ) +</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                            ((NDConfiguration.Utility.sizeOfShape( newShp ) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) +</span>
+<span class="nc" id="L191">                            AbstractTensor.Utility.shapeString(t.getNDConf().shape()) + &quot;&quot; +</span>
                             &quot;)&quot;
             );
         }
-<span class="fc" id="L197">    }</span>
+<span class="fc" id="L195">    }</span>
     
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

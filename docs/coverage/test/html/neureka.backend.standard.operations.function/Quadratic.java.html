@@ -48,7 +48,7 @@ public final class Quadratic extends AbstractOperation
             )
 <span class="fc" id="L49">            .setImplementationFor(</span>
                 OpenCLDevice.class,
-<span class="fc" id="L51">                    Activation.implementationForGPU( this.getFunction() )</span>
+<span class="fc" id="L51">                    Activation.implementationForGPU( this.getIdentifier() )</span>
 <span class="fc" id="L52">                            .with( &quot;output = input*input;\n&quot; )</span>
 <span class="fc" id="L53">                            .and( &quot;output = 2*input;\n&quot; )</span>
             )
