@@ -21,7 +21,7 @@ import java.io.IOException;
  *  Like other {@link neureka.devices.file.FileHead} implementations of this class represents a file
  *  of a given type, in this case it represents a JPEG file.
  */
-public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
+public final class JPEGHead extends AbstractFileHead<JPEGHead, Number>
 {
     static {
         _LOG = LoggerFactory.getLogger( JPEGHead.class );

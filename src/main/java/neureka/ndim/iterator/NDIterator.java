@@ -45,7 +45,7 @@ import neureka.ndim.config.types.simple.Simple3DConfiguration;
 import neureka.ndim.config.types.sliced.Sliced1DConfiguration;
 import neureka.ndim.config.types.sliced.Sliced2DConfiguration;
 import neureka.ndim.config.types.sliced.Sliced3DConfiguration;
-import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
+import neureka.ndim.config.types.views.virtual.VirtualNDConfiguration;
 import neureka.ndim.iterator.types.reshaped.Reshaped2DCIterator;
 import neureka.ndim.iterator.types.reshaped.Reshaped3DCIterator;
 import neureka.ndim.iterator.types.simple.Simple1DCIterator;

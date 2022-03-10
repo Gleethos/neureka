@@ -48,62 +48,62 @@ public class Reshaped3DConfiguration extends D3C {
     }
 
     @Override
-    public int rank() {
+    public final int rank() {
         return 3;
     }
 
     @Override
-    public int[] shape() {
+    public final int[] shape() {
         return new int[]{_shape1, _shape2, _shape3};
     }
 
     @Override
-    public int shape( int i ) {
+    public final int shape( int i ) {
         return (i==0)?_shape1:(i==1)?_shape2:_shape3;
     }
 
     @Override
-    public int[] indicesMap() {
+    public final int[] indicesMap() {
         return new int[]{_indicesMap1, _indicesMap2, _indicesMap3};
     }
 
     @Override
-    public int indicesMap(int i ) {
+    public final int indicesMap(int i ) {
         return (i==0)?_indicesMap1:(i==1)?_indicesMap2:_indicesMap3;
     }
 
     @Override
-    public int[] translation() {
+    public final int[] translation() {
         return new int[]{_translation1, _translation2, _translation3};
     }
 
     @Override
-    public int translation( int i ) {
+    public final int translation( int i ) {
         return (i==0)?_translation1:(i==1)?_translation2:_translation3;
     }
 
     @Override
-    public int[] spread() {
+    public final int[] spread() {
         return new int[]{1, 1, 1};
     }
 
     @Override
-    public int spread( int i ) {
+    public final int spread( int i ) {
         return 1;
     }
 
     @Override
-    public int[] offset() {
+    public final int[] offset() {
         return new int[]{0, 0, 0};
     }
 
     @Override
-    public int offset( int i ) {
+    public final int offset( int i ) {
         return 0;
     }
 
     @Override
-    public int indexOfIndex(int index) {
+    public final int indexOfIndex(int index) {
         int indices1, indices2, indices3;
         indices1 = index / _indicesMap1;
         index %= _indicesMap1;
@@ -116,7 +116,7 @@ public class Reshaped3DConfiguration extends D3C {
     }
 
     @Override
-    public int[] indicesOfIndex(int index) {
+    public final int[] indicesOfIndex(int index) {
         int indices1, indices2, indices3;
         indices1 = index / _indicesMap1;
         index %= _indicesMap1;
@@ -127,14 +127,14 @@ public class Reshaped3DConfiguration extends D3C {
     }
 
     @Override
-    public int indexOfIndices(int[] indices) {
+    public final int indexOfIndices(int[] indices) {
         return indices[ 0 ] * _translation1 +
                 indices[ 1 ] * _translation2 +
                 indices[ 2 ] * _translation3;
     }
 
     @Override
-    public int indexOfIndices(int d1, int d2, int d3 ) {
+    public final int indexOfIndices(int d1, int d2, int d3 ) {
         return d1 * _translation1 +
                d2 * _translation2 +
                d3 * _translation3;

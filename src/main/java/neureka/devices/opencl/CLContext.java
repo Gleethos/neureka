@@ -34,7 +34,7 @@ import static org.jocl.CL.clGetPlatformIDs;
  *  instance will directly or indirectly reference kernels, memory objects and other concepts
  *  exposed by OpenCL...
  */
-public class CLContext implements BackendExtension
+public final class CLContext implements BackendExtension
 {
     private static Logger _LOG = LoggerFactory.getLogger(CLContext.class);
 

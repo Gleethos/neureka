@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  *  Like other {@link neureka.devices.file.FileHead} implementations this class represents a file
  *  of a given type, in this case it represents a IDX file.
 */
-public class IDXHead extends AbstractFileHead<IDXHead, Number>
+public final class IDXHead extends AbstractFileHead<IDXHead, Number>
 {
     static {
         _LOG = LoggerFactory.getLogger( IDXHead.class );

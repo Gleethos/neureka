@@ -3,7 +3,7 @@ package neureka.devices.opencl.utility;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
-public class WeakTensorReference<T> extends WeakReference<T>
+public final class WeakTensorReference<T> extends WeakReference<T>
 {
     /**
      * Creates a new phantom reference that refers to the given object and

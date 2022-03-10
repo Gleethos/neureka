@@ -6,7 +6,7 @@ import java.util.function.Supplier;
  *  This is simply a mutable container for configuring how {@link neureka.Tsr}
  *  instances ought to be converted to {@link String}s.
  */
-public class TsrStringSettings {
+public final class TsrStringSettings {
 
     private final Supplier<Boolean> _notModifyable;
     private int _cellSize;

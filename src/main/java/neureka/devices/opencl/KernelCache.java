@@ -3,7 +3,7 @@ package neureka.devices.opencl;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class KernelCache {
+public final class KernelCache {
 
     private final static int CAPACITY = 256;
 
