@@ -26,7 +26,8 @@ import java.util.stream.Collectors;
 public class Addition extends AbstractOperation {
 
     private final Broadcast _broadcast =
-            new Broadcast((executionCall, executor) -> null)
+            (Broadcast)
+                new Broadcast((executionCall, executor) -> null)
                 .setCanPerformBackwardADFor( call -> true )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->

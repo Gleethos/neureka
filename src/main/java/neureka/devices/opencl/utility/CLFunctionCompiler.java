@@ -93,11 +93,8 @@ public final class CLFunctionCompiler {
                                             return call;
                                         }
                                 )
-                                .setImplementationFor(
-                                        OpenCLDevice.class,
-                                        this::_adHocKernelFor
-                                )
                                 .buildFunAlgorithm()
+                                .setImplementationFor( OpenCLDevice.class, this::_adHocKernelFor )
                 );
     }
 

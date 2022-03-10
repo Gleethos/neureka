@@ -34,8 +34,7 @@ public class Reshape extends AbstractOperation
                 .setIsInline(         false      )
         );
         setAlgorithm(
-            FunAlgorithm.class,
-            Algorithm
+                Algorithm
                 .withName( "reshape" )
                 .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
                 .setCanPerformBackwardADFor( call -> true )
