@@ -37,77 +37,77 @@ public class Reshaped1DConfiguration extends D1C {
     }
 
     @Override
-    public int rank() {
+    public final int rank() {
         return 1;
     }
 
     @Override
-    public int[] shape() {
+    public final int[] shape() {
         return new int[]{_shape};
     }
 
     @Override
-    public int shape( int i ) {
+    public final int shape( int i ) {
         return _shape;
     }
 
     @Override
-    public int[] indicesMap() {
+    public final int[] indicesMap() {
         return new int[]{_indicesMap};
     }
 
     @Override
-    public int indicesMap(int i ) {
+    public final int indicesMap(int i ) {
         return _indicesMap;
     }
 
     @Override
-    public int[] translation() {
+    public final int[] translation() {
         return new int[]{_translation};
     }
 
     @Override
-    public int translation( int i ) {
+    public final int translation( int i ) {
         return _translation;
     }
 
     @Override
-    public int[] spread() {
+    public final int[] spread() {
         return new int[]{1};
     }
 
     @Override
-    public int spread( int i ) {
+    public final int spread( int i ) {
         return 1;
     }
 
     @Override
-    public int[] offset() {
+    public final int[] offset() {
         return new int[]{0};
     }
 
     @Override
-    public int offset( int i ) {
+    public final int offset( int i ) {
         return 0;
     }
 
     @Override
-    public int indexOfIndex(int index) {
+    public final int indexOfIndex(int index) {
         return (index / _indicesMap) * _translation;
     }
 
     @Override
-    public int[] indicesOfIndex(int index) {
+    public final int[] indicesOfIndex(int index) {
         return new int[]{index / _indicesMap};
     }
 
     @Override
-    public int indexOfIndices(int[] indices) {
+    public final int indexOfIndices(int[] indices) {
         return indices[ 0 ] * _translation;
     }
 
     @Override
-    public int indexOfIndices(int d1 ) {
+    public final int indexOfIndices(int d1 ) {
         return d1 * _translation;
     }
 

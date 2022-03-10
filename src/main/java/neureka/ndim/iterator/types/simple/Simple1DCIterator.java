@@ -49,11 +49,4 @@ public final class Simple1DCIterator extends Simple1DConfiguration implements ND
         _d1 = indices[0];
     }
 
-    @Override
-    public final int rank() {
-        return 1;
-    }
-
-
-
 }

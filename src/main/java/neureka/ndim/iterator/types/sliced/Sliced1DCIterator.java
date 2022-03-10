@@ -47,11 +47,4 @@ public final class Sliced1DCIterator extends Sliced1DConfiguration implements ND
         _d1 = indices[0];
     }
 
-    @Override
-    public final int rank() {
-        return 1;
-    }
-
-
-
 }
