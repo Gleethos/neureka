@@ -562,9 +562,13 @@ public class GraphNode<V> implements Component<Tsr<V>>
         } else {
             pendingNodes.forEach( n -> {
                 if ( !n._pendingError.isFullyAccumulated() ) {
-                    _LOG.error(
+                    throw new IllegalStateException(
                             "Pending error in graph node '"+ n +"' has not received expected accumulation. " +
-                            ""
+                            "Please examine function " + n._function + " and its underlying operations " +
+                            n._function.getAllFunctions()
+                                    .stream()
+                                    .map( f -> f.getOperation().getIdentifier() )
+                                    .collect(Collectors.joining(", ")) + "!"
                     );
                 }
                 n.backward( n._pendingError.getAccumulatedError() ); // Continue back-propagation recursively!

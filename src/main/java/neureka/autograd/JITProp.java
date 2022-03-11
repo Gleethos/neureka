@@ -24,8 +24,10 @@ public final class JITProp<ValType> implements Component<Tsr<ValType>>
      * @param pendings A set of GraphNode&lt;ValType&gt; instance which are saved for future backprop continuation.
      */
     public void addPending( Set<GraphNode<ValType>> pendings ) {
-        if ( pendings.isEmpty() ) throw new IllegalStateException("Trying to add empty pending errors set to JITProp.");
-        if ( !isDone() ) throw new IllegalStateException("Trying to add pending errors to JITProp which is done.");
+        if ( pendings.isEmpty() )
+            throw new IllegalStateException("Trying to add empty pending errors set to JITProp.");
+        if ( !isDone() )
+            throw new IllegalStateException("Trying to add pending errors to JITProp which is done.");
         _pending.addAll( pendings );
     }
 
@@ -67,11 +69,13 @@ public final class JITProp<ValType> implements Component<Tsr<ValType>>
         _pending.forEach( n -> {
             if ( _finished == null || !_finished.contains( n ) ) {
                 PendingError<ValType> pe = n.getAndRemovePendingError();
-                if ( !pe.isFullyAccumulated() ) throw new IllegalStateException("Pending error has not received expected accumulation.");
+                if ( !pe.isFullyAccumulated() )
+                    throw new IllegalStateException("Pending error has not received expected accumulation.");
                 n.backwardJIT( pe.getAccumulatedError() ); // Continue back-prop recursively!
             }
         });
-        if ( pendingCount() > 0 ) throw new IllegalStateException("Pending error has not received expected accumulation.");
+        if ( pendingCount() > 0 )
+            throw new IllegalStateException("Pending error has not received expected accumulation.");
         _pending = null;
     }
 

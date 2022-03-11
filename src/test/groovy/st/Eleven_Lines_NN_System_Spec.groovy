@@ -89,6 +89,25 @@ class Eleven_Lines_NN_System_Spec extends Specification {
     }
 
 
+    def 'One can write a simple float based neural network in less than 11 lines of java like code using the "@" operator!'()
+    {
+        given :
+            var X = Tsr.ofDoubles().withShape(4,3).andFill(0d, 0d, 1d, 0d, 1d, 1d, 1d, 0d, 1d, 1d, 1d, 1d);
+            var y = Tsr.ofDoubles().withShape(1,4).andFill(0d, 1d, 1d, 0d).T();
+            var W1 = Tsr.ofRandom(Double.class, 3, 4).setRqsGradient(true);
+            var W2 = Tsr.ofRandom(Double.class, 4, 1).setRqsGradient(true);
+            for ( int i = 0; i < 60; i++ ) {
+                var l2 = Tsr.of("sig(",Tsr.of("sig(",X,"@",W1,")"),"@",W2,")");
+                l2.backward(Tsr.of(y,"-",l2)); // Back-propagating the error!
+                W1.applyGradient(); W2.applyGradient();
+            }
+
+        expect :
+            W1.data == [-0.9115492136933212, -2.8053196189337415, -0.2518010600685076, -1.3116921909681862, -0.6594293130862794, 2.5123812135829553, -1.0514473377002078, -1.2928097640444751, 1.3971567790475048, 2.203909930839897, -0.6782812239543352, 2.738543835064307]
+            W2.data == [0.1390771364808861, -1.8305543533070094, -0.7491036073708567, 1.874957973207181]
+    }
+
+
     def 'The pseudo random number generator works as expected for the weights used in the 11 line NN examples!'()
     {
         given :
