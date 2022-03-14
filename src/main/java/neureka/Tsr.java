@@ -233,27 +233,27 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  A simple example would be: {@code Tsr.of(a,'*',b)}.
      *
      * @param a The left operand.
-     * @param operator The operator, which may be '+', '-', '*'...
+     * @param o The operator, which may be '+', '-', '*'...
      * @param b The right operand.
      * @param <T> The value item type parameter for the involved tensors.
      * @return The result of the operation defined by the provided character.
      */
-    public static <T> Tsr<T> of( Tsr<T> a, char operator, Tsr<T> b ) { return _of( a, operator, b ); }
+    public static <T> Tsr<T> of( Tsr<T> a, char o, Tsr<T> b ) { return _of( a, String.valueOf(o), b ); }
 
     /**
      *  Use this to conveniently operate on 3 tensors.
      *  A simple example would be: {@code Tsr.of(a,'*',b,'+',c)}.
      *
      * @param a The first and left most operand.
-     * @param operator1 The first operator, which may be '+', '-', '*'...
+     * @param o1 The first operator, which may be '+', '-', '*'...
      * @param b The second operand.
-     * @param operator2 The second operator, which may also be '+', '-', '*'...
+     * @param o2 The second operator, which may also be '+', '-', '*'...
      * @param c The third and last operand.
      * @param <T> The value item type parameter for the involved tensors.
      * @return The result of the operations defined by the 2 provided characters.
      */
-    public static <T> Tsr<T> of( Tsr<T> a, char operator1, Tsr<T> b, char operator2, Tsr<T> c ) {
-        return _of( a, operator1, b, operator2, c );
+    public static <T> Tsr<T> of( Tsr<T> a, char o1, Tsr<T> b, char o2, Tsr<T> c ) {
+        return _of( a, String.valueOf(o1), b, String.valueOf(o2), c );
     }
 
     /**
@@ -284,7 +284,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      */
     public static <T> Tsr<T> of( String e1, Tsr<T> a, char o, Tsr<T> b, String e2 ) {
-        return _of( e1, a, o, e2 );
+        return _of( e1, a, String.valueOf(o), b, e2 );
     }
 
     /**
