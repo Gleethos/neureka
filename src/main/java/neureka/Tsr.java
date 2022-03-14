@@ -257,6 +257,37 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
+     *  Use this to conveniently operate on a tensor.
+     *  A simple example would be: {@code Tsr.of("sig(tanh(",a,"))")}.
+     *
+     * @param e1 The first part of the string expression defining how the provided tensor should be processed.
+     * @param a The tensor which ought to be sent to whatever is defined by the provided expressions.
+     * @param e2 The latter part of the expression defining how the provided tensor should be executed.
+     * @param <T> The value item type parameter for the involved tensor.
+     * @return The result of the operation(s) defined by the provided strings.
+     */
+    public static <T> Tsr<T> of( String e1, Tsr<T> a, String e2 ) {
+        return _of( e1, a, e2 );
+    }
+
+    /**
+     *  Use this to conveniently operate on 2 tensors.
+     *  A simple example would be: {@code Tsr.of("relu(",a,'-',b,")*2")}.
+     *
+     * @param e1 The first part of the string expression defining how the provided tensor should be processed.
+     * @param a The first tensor which ought to be sent to whatever function is defined by the provided expressions.
+     * @param o An operator combining both {@code a} and {@link b} to form a result.
+     * @param b The second tensor and right operand which ought to be sent to whatever function is defined by the provided expressions.
+     * @param e2 The latter part of the expression defining how the provided tensor should be executed.
+     * @param <T> The value item type parameter for the involved tensor.
+     * @return The result of the operation(s) defined by the provided strings.
+     *
+     */
+    public static <T> Tsr<T> of( String e1, Tsr<T> a, char o, Tsr<T> b, String e2 ) {
+        return _of( e1, a, o, e2 );
+    }
+
+    /**
      *  This static {@link Tsr} factory method tries to interpret the provided
      *  arguments to create the instance the use might wants.
      *

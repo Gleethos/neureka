@@ -97,7 +97,7 @@ class Eleven_Lines_NN_System_Spec extends Specification {
             var W1 = Tsr.ofRandom(Double.class, 3, 4).setRqsGradient(true);
             var W2 = Tsr.ofRandom(Double.class, 4, 1).setRqsGradient(true);
             for ( int i = 0; i < 60; i++ ) {
-                var l2 = Tsr.of("sig(",Tsr.of("sig(",X,"@",W1,")"),"@",W2,")");
+                var l2 = Tsr.of("sig(",Tsr.of("sig(",X,'@'as char,W1,")"),"@",W2,")");
                 l2.backward(Tsr.of(y,"-",l2)); // Back-propagating the error!
                 W1.applyGradient(); W2.applyGradient();
             }
