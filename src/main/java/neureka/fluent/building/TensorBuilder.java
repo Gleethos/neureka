@@ -25,7 +25,7 @@ import java.util.stream.IntStream;
  *
  *    Tsr.of(Double.class)
  *          .withShape( 2, 3, 4 )
- *          .iterativelyFilledBy( 5, 3, 5 )
+ *          .andFill( 5, 3, 5 )
  *
  * }</pre>
  *
@@ -124,7 +124,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
             else if (type == Float.class && seedType == Long.class)
                 return random.callWith(Arg.Seed.of((Long) seed)).call( _get( 0f ) );
             else
-                return Tsr.of(type, _shape, seed.toString()).to(_device);
+                return Tsr.of( type, _shape, seed.toString() ).to( _device );
         } catch ( Exception e ) {
             IllegalArgumentException exception =
                     new IllegalArgumentException(
@@ -173,12 +173,12 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
         if ( Number.class.isAssignableFrom(jvmType) ) {
             if ( o instanceof Number && o.getClass() != jvmType ) {
                 Number n = (Number) o;
-                if ( jvmType == Integer.class ) return (V) ((Integer) n.intValue());
-                if ( jvmType == Double.class  ) return (V) ((Double) n.doubleValue());
-                if ( jvmType == Short.class   ) return (V) ((Short) n.shortValue());
-                if ( jvmType == Byte.class    ) return (V) ((Byte) n.byteValue());
-                if ( jvmType == Long.class    ) return (V) ((Long) n.longValue());
-                if ( jvmType == Float.class   ) return (V) ((Float) n.floatValue());
+                if ( jvmType == Integer.class ) return (V) ((Integer) n.intValue()   );
+                if ( jvmType == Double.class  ) return (V) ((Double)  n.doubleValue());
+                if ( jvmType == Short.class   ) return (V) ((Short)   n.shortValue() );
+                if ( jvmType == Byte.class    ) return (V) ((Byte)    n.byteValue()  );
+                if ( jvmType == Long.class    ) return (V) ((Long)    n.longValue()  );
+                if ( jvmType == Float.class   ) return (V) ((Float)   n.floatValue() );
             }
         }
         return o;
