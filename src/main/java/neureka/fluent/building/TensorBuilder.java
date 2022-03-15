@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
 
 /**
  *  This class exposes a fluent builder API for creating {@link Tsr} instances.
- *  An simple example would be:
+ *  A simple example would be:
  * <pre>{@code
  *
  *    Tsr.of(Double.class)
