@@ -92,7 +92,7 @@ class OpenCLDevice_Integration_Spec extends Specification
     def 'The "getValue()" method of an outsourced tensor will return the expected array type.'()
     {
         given : 'A new tensor.'
-            Tsr t = Tsr.ofShape( 1, 2 )
+            Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)
 
         expect : 'This tensor is initially of type "Double", meaning it is backed by a "double[]" array internally...'
             t.dataType == DataType.of( Double.class )
@@ -120,7 +120,7 @@ class OpenCLDevice_Integration_Spec extends Specification
     def 'The "getData()" method of an outsourced tensor will return null when outsourced.'()
     {
         given : 'A new tensor belonging to the first found OpenCLDevice instance.'
-            Tsr t = Tsr.ofShape( 1, 2 )
+            Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)
 
         expect : 'The tensor start with having data stored within.'
             t.data != null

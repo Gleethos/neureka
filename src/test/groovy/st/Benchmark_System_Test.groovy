@@ -45,12 +45,12 @@ class Benchmark_System_Test extends Specification
 
     def 'Tensor can be constructed by passing List instances.'()
     {
-        when : Tsr t = Tsr.ofShape(1, 3, 6 )
+        when : Tsr t = Tsr.ofDoubles().withShape(1, 3, 6 ).all(0)
         then :
             assert !t.toString().contains("empty")
             assert t.toString().contains("(1x3x6)")
 
-        when : t = Tsr.ofShape([1, 3.0, 6])
+        when : t = Tsr.ofDoubles().withShape(1, 3, 6).all(0)
         then :
             assert !t.toString().contains("empty")
             assert t.toString().contains("(1x3x6):[0.0, 0.0, 0.0")

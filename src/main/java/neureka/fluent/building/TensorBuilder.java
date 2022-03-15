@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
@@ -136,8 +137,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
 
     @Override
     public IterByOrIterFromOrAll<V> withShape( int... shape ) {
-        if ( shape == null )
-            throw new IllegalArgumentException("Cannot instantiate a tensor with shape 'null'!");
+        LogUtil.nullArgCheck(shape, "shape", int[].class, "Cannot create a tensor without shape!");
         if ( shape.length == 0 )
             throw new IllegalArgumentException("Cannot instantiate a tensor without shape arguments.");
         _shape = shape;

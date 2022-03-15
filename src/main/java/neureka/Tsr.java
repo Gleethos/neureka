@@ -370,7 +370,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 numberOfTensors++;
             }
         }
-        boolean doAD = true;
         Tsr<T>[] tensors = new Tsr[ numberOfTensors ];
         StringBuilder f = new StringBuilder();
         int ti = 0;
@@ -387,7 +386,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 );
         }
         if ( tensors.length == 0 || tensors[0] == null) return new Tsr<>();
-        return Function.of( f.toString(), doAD ).call( tensors );
+        return Function.of( f.toString(), true ).call( tensors );
     }
 
 
@@ -423,9 +422,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A new {@link Tsr} instance created based on a shape and a seed.
      */
     public static Tsr<Double> of( List<? extends Number> shape, String seed ) {
-        int[] shp = new int[ shape.size() ];
-        for ( int i = 0; i < shp.length; i++ ) shp[ i ] = shape.get( i ).intValue();
-        return of( Double.class, shp, seed );
+        int[] shapeArray = new int[ shape.size() ];
+        for ( int i = 0; i < shapeArray.length; i++ ) shapeArray[ i ] = shape.get( i ).intValue();
+        return of( Double.class, shapeArray, seed );
     }
 
     /**
@@ -459,11 +458,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public static <V> Tsr<V> of( int[] shape, List<V> value ) {
         Class<V> typeClass = (Class<V>) Object.class;
         if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
-        return Tsr.of(
-                    DataType.of(typeClass),
-                    shape,
-                    value
-                );
+        return Tsr.of( DataType.of(typeClass), shape, value );
     }
 
     /**
@@ -473,9 +468,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param conf A list of either values or nested lists which are themselves either or.
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
-    public static Tsr<Object> of( List<Object> conf ) {
-        return of( (Class<Object>) null, conf );
-    }
+    public static Tsr<Object> of( List<Object> conf ) { return of( (Class<Object>) null, conf ); }
 
     /**
      *  This factory method will turn a list of values or nested lists of values into a {@link Tsr}
@@ -512,25 +505,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             resultData = result.getData().parallelStream().map( v -> converter.convert(v, targetType) ).toArray();
         }
         return Tsr.of( DataType.of(resultType), shape, resultData );
-    }
-
-
-    /**
-     * @param axesSizes A list of numbers which will be interpreted as shape array.
-     * @return A tensor for storing numbers.
-     */
-    public static Tsr<Number> ofShape( List<? extends Number> axesSizes ) {
-        return ofShape( axesSizes.toArray( new Number[0] ) );
-    }
-
-    /**
-     * @param axesSizes An array of numbers which will be interpreted as shape array.
-     * @return A tensor for storing numbers.
-     */
-    @SafeVarargs
-    public static <T extends Number> Tsr<Number> ofShape( T... axesSizes ) {
-        int[] shape = Arrays.stream( axesSizes ).mapToInt( Number::intValue ).toArray();
-        return Tsr.ofShape( shape );
     }
 
     /**
@@ -680,8 +654,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     private Tsr( int[] shape, short[] value ) { createConstructionAPI().constructForShorts( shape, value ); }
 
-    public static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new Tsr<>( valueType, shape, seed ); }
-
     /**
      *  Constructs a vector of booleans based on the provided array.
      *
@@ -693,16 +665,22 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     private Tsr( int[] shape, boolean[] value ) { createConstructionAPI().constructForBooleans( shape, value ); }
 
     /**
-     *  See {@link #of(Class, int[], String)}
-     *  ...and {@link #of(List, String)}
+     *  Use this to construct and return a seeded tensor of the specified type.
+     *
+     * @param valueType The type class of the items stored by the resulting tensor.
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param seed An abitrary {@link String} whose hash will be used to as a seed.
+     * @param <V> The type parameter of individual tensor items.
+     * @return A newly created and seeded tensor of the provided type and shape.
+     */
+    public static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new Tsr<>( valueType, shape, seed ); }
+
+    /**
+     *  See {@link #of(Class, int[], String)} and {@link #of(List, String)}
      */
     private Tsr( Class<V> valueType, int[] shape, String seed ) {
         createConstructionAPI().constructSeeded( valueType, shape, seed );
     }
-
-    public static Tsr<Number> ofShape( int[] shape ) { return new Tsr<>( shape ); }
-
-    private Tsr( int[] shape ) { _constructAndAllocate( shape, true ); }
 
     public static Tsr<Double> of( int[] shape, double value ) { return new Tsr<>( shape, value ); }
 
@@ -714,23 +692,26 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     public static <V> Tsr<V> of( DataType<V> type, int[] shape ) { return new Tsr<>( shape, type ); }
 
-
     private Tsr( int[] shape, DataType<?> type )
     {
         _setDataType( DataType.of( type.getTypeClass() ) );
         _constructAndAllocate( shape, true );
     }
 
-    public static <V> Tsr<V> of( Class<V> typeClass, int[] shape, Object data ) { return of( DataType.of(typeClass), shape, data ); }
+    public static <V> Tsr<V> of( Class<V> typeClass, int[] shape, Object data ) {
+        return of( DataType.of(typeClass), shape, data );
+    }
 
-    public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, Object data ) { return of( DataType.of(typeClass), shape.stream().mapToInt(i -> i).toArray(), data ); }
+    public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, Object data ) {
+        return of( DataType.of(typeClass), shape.stream().mapToInt(i -> i).toArray(), data );
+    }
 
     public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, List<V> data ) {
-        return Tsr.of(
-                    DataType.of( typeClass ),
-                    shape.stream().mapToInt( e -> e ).toArray(),
-                    data
-                );
+        return of( DataType.of( typeClass ), shape.stream().mapToInt( e -> e ).toArray(), data );
+    }
+
+    public static <V> Tsr<V> of( DataType<V> dataType, List<Integer> shape,  List<V> data ) {
+        return of( dataType, shape.stream().mapToInt( i -> i ).toArray(), data.toArray() );
     }
 
     /**
@@ -749,14 +730,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new Tsr<>( shape, dataType, data ); }
 
     private Tsr( int[] shape, DataType<?> dataType, Object data ) { createConstructionAPI().tryConstructing( shape, dataType, data ); }
-
-    public static <V> Tsr<V> of( DataType<V> dataType, List<Integer> shape,  List<V> data ) {
-        return Tsr.of(
-                dataType,
-                shape.stream().mapToInt( i -> i ).toArray(),
-                data.toArray()
-        );
-    }
 
     // Inner construction layer:
 

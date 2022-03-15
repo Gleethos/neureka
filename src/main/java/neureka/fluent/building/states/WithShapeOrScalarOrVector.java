@@ -1,6 +1,9 @@
 package neureka.fluent.building.states;
 
 import neureka.Tsr;
+import neureka.common.utility.LogUtil;
+
+import java.util.List;
 
 public interface WithShapeOrScalarOrVector<V>
 {
@@ -13,6 +16,22 @@ public interface WithShapeOrScalarOrVector<V>
      * @return The next step in the call transition graph of this fluent builder API.
      */
     IterByOrIterFromOrAll<V> withShape( int... shape );
+
+    /**
+     *  Define a tensor shape by passing a list of numbers to this method,
+     *  which represent the shape of the {@link Tsr} that should be built.
+     *  This should be called immediately after having specified the type of the tensor.
+     *
+     * @param shape The shape list of the {@link Tsr} that should be built.
+     * @return The next step in the call transition graph of this fluent builder API.
+     */
+    default <N extends Number> IterByOrIterFromOrAll<V> withShape( List<N> shape ) {
+        LogUtil.nullArgCheck(shape, "shape", List.class, "Cannot create a tensor without shape!");
+        return this.withShape(
+          shape.stream().mapToInt( n -> n.intValue() ).toArray()
+        );
+    }
+
 
     /**
      *  This method created and return a vector {@link Tsr} instance

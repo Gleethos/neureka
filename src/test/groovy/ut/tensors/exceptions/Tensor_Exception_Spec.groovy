@@ -155,14 +155,17 @@ class Tensor_Exception_Spec extends Specification
 
     }
 
-    def 'Building a tensor with "null" as shape argument throws an exception.'() {
-
+    def 'Building a tensor with "null" as shape argument throws an exception.'()
+    {
         when :
-            var t = Tsr.ofInts().withShape(null).all(0)
-
+            Tsr.ofInts().withShape((List)null).all(0)
         then :
             thrown(IllegalArgumentException)
 
+        when :
+            Tsr.ofInts().withShape((int[])null).all(0)
+        then :
+            thrown(IllegalArgumentException)
     }
 
 }
