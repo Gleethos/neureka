@@ -336,7 +336,7 @@ public final class TsrConstructor {
         Object data = values;
         IntStream indices = IntStream.iterate( 0, i -> i + 1 ).limit(size);
         if ( size > 1_000 ) indices = indices.parallel();
-        indices = indices.map(i -> i % values.length );
+        indices = indices.map( i -> i % values.length );
         if      ( dataType == DataType.of(Double.class)  ) data = indices.mapToDouble( i -> (Double) values[i] ).toArray();
         else if ( dataType == DataType.of(Integer.class) ) data = indices.map( i -> (Integer) values[i] ).toArray();
         else if ( dataType == DataType.of(Long.class)    ) data = indices.mapToLong( i -> (Long) values[i] ).toArray();

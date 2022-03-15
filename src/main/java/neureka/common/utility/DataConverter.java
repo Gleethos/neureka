@@ -172,8 +172,8 @@ public final class DataConverter
 
         _set( Object[].class, int[].class, data -> {
             return
-                IntStream.range(0, data.length).parallel()
-                    .map( i -> {
+               Utility.intStream( 1_000, data.length )
+                   .map( i -> {
                         if ( data[ i ] instanceof Number )
                             return ( (Number) data[ i ] ).intValue();
                         else if ( data[ i ] instanceof String )
@@ -275,56 +275,49 @@ public final class DataConverter
 
         public float[] toFloatArray( Function<Integer, Number> source ) {
             float[] data = new float[ _size ];
-            IntStream.range( 0, _size )
-                    .parallel()
+            Utility.intStream( 1_500, _size )
                     .forEach( i -> data[i] = source.apply(_access.map(i)).floatValue());
             return data;
         }
 
         public byte[] toByteArray( Function<Integer, Number> source ) {
             byte[] data = new byte[ _size ];
-            IntStream.range( 0, _size )
-                    .parallel()
+            Utility.intStream( 1_500, _size )
                     .forEach( i -> data[i] = source.apply(_access.map(i)).byteValue() );
             return data;
         }
 
         public long[] toLongArray( Function<Integer, Number> source ) {
             long[] data = new long[ _size ];
-            IntStream.range( 0, _size )
-                    .parallel()
+            Utility.intStream( 1_500, _size )
                     .forEach( i -> data[i] = source.apply(_access.map(i)).longValue());
             return data;
         }
 
         public int[] toIntArray( Function<Integer, Number> source ) {
             int[] data = new int[ _size ];
-            IntStream.range( 0, _size )
-                    .parallel()
+            Utility.intStream( 1_500, _size )
                     .forEach( i -> data[i] = source.apply(_access.map(i)).intValue());
             return data;
         }
 
         public double[] toDoubleArray( Function<Integer, Number> source ) {
             double[] data = new double[ _size ];
-            IntStream.range( 0, _size )
-                    .parallel()
+            Utility.intStream( 1_500, _size )
                     .forEach( i -> data[i] = source.apply(_access.map(i)).doubleValue() );
             return data;
         }
 
         public short[] toShortArray( Function<Integer, Number> source ) {
             short[] data = new short[ _size ];
-            IntStream.range( 0, _size )
-                    .parallel()
+            Utility.intStream( 1_500, _size )
                     .forEach( i -> data[i] = source.apply(_access.map(i)).shortValue() );
             return data;
         }
 
         public Object[] toObjectArray( Function<Integer, Object> source ) {
             Object[] data = new Object[ _size ];
-            IntStream.range( 0, _size )
-                    .parallel()
+            Utility.intStream( 1_500, _size )
                     .forEach( i -> data[i] = source.apply(_access.map(i)) );
             return data;
         }
@@ -904,6 +897,22 @@ public final class DataConverter
             }
             return data;
         }
+
+        /**
+         *  Use this to create a range based {@link IntStream}
+         *  which is only parallel if the provided threshold
+         *  smaller than the provided workload size.
+         *
+         * @param parallelThreshold If the {@code workload} is larger than the threshold then the returned stream will be parallel.
+         * @param workload The number of integers processed by the returned stream.
+         * @return A sequential or parallel {@link IntStream}.
+         */
+        public static IntStream intStream( int parallelThreshold, int workload ) {
+            IntStream stream = IntStream.range( 0, workload );
+            if ( workload >= parallelThreshold ) return stream.parallel();
+            else return stream;
+        }
+
     }
 
 

@@ -311,7 +311,7 @@ public class FunctionBuilder
         if ( components.size() > arity && arity > 1 ) {
             String newComponent =
                     "(" +
-                            IntStream.iterate(0, n -> n + 1)
+                            IntStream.iterate( 0, n -> n + 1 )
                              .limit(arity)
                              .mapToObj( components::get )
                              .collect(Collectors.joining( operator )) +
