@@ -276,7 +276,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @param e1 The first part of the string expression defining how the provided tensor should be processed.
      * @param a The first tensor which ought to be sent to whatever function is defined by the provided expressions.
-     * @param o An operator combining both {@code a} and {@link b} to form a result.
+     * @param o An operator combining both {@code a} and {@code b} to form a result.
      * @param b The second tensor and right operand which ought to be sent to whatever function is defined by the provided expressions.
      * @param e2 The latter part of the expression defining how the provided tensor should be executed.
      * @param <T> The value item type parameter for the involved tensor.
@@ -286,6 +286,28 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public static <T> Tsr<T> of( String e1, Tsr<T> a, char o, Tsr<T> b, String e2 ) {
         return _of( e1, a, String.valueOf(o), b, e2 );
     }
+
+    /**
+     *  Use this to conveniently operate on 3 tensors.
+     *  A simple example would be:
+     *  {@code Tsr.of("abs((",a,"-",b,") * ",c,")")}.
+     *
+     * @param e1 The first part of the expression which would typically be used to define a function name.
+     * @param a The first argument.
+     * @param e2 The second part of the expression, which might be an operation.
+     * @param b The second argument.
+     * @param e3 The third part of the expression...
+     * @param c The third argument.
+     * @param e4 The last part of the expression which should syntactically match the other expression...
+     * @param <T> The type parameter for the involved tensors.
+     * @return The result of the calculation defined by the provided expressions and arguments.
+     */
+    public static <T> Tsr<T> of(
+            String e1, Tsr<T> a, String e2, Tsr<T> b, String e3, Tsr<T> c, String e4
+    ) {
+        return _of( e1, a, e2, b, e3, c, e4 );
+    }
+
 
     /**
      *  This static {@link Tsr} factory method tries to interpret the provided

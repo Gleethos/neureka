@@ -92,8 +92,8 @@ class Eleven_Lines_NN_System_Spec extends Specification {
     def 'One can write a simple double based neural network in less than 11 lines of java like code using the "@" operator!'()
     {
         given :
-            var X = Tsr.ofDoubles().withShape(4,3).andFill(0d, 0d, 1d, 0d, 1d, 1d, 1d, 0d, 1d, 1d, 1d, 1d);
-            var y = Tsr.ofDoubles().withShape(1,4).andFill(0d, 1d, 1d, 0d).T();
+            var X  = Tsr.ofDoubles().withShape(4,3).andFill(0d, 0d, 1d, 0d, 1d, 1d, 1d, 0d, 1d, 1d, 1d, 1d);
+            var y  = Tsr.ofDoubles().withShape(1,4).andFill(0d, 1d, 1d, 0d).T();
             var W1 = Tsr.ofRandom(Double.class, 3, 4).setRqsGradient(true);
             var W2 = Tsr.ofRandom(Double.class, 4, 1).setRqsGradient(true);
             for ( int i = 0; i < 60; i++ ) {
