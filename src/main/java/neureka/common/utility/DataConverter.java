@@ -169,6 +169,22 @@ public final class DataConverter
         _set( Byte[].class,      byte[].class,    Utility::objBytesToPrimBytes );
         _set( Boolean[].class,   boolean[].class, Utility::objBooleansToPrimBooleans );
         _set( Character[].class, char[].class,    Utility::objCharsToPrimChars );
+
+        _set( Object[].class, int[].class, data -> {
+            return
+                IntStream.range(0, data.length).parallel()
+                    .map( i -> {
+                        if ( data[ i ] instanceof Number )
+                            return ( (Number) data[ i ] ).intValue();
+                        else if ( data[ i ] instanceof String )
+                            return (int) Double.parseDouble( (String) data[ i ] );
+                        else
+                            throw new IllegalArgumentException(
+                                "Cannot convert type '"+data[ i ].getClass().getSimpleName()+"' to int!"
+                            );
+                    })
+                    .toArray();
+        });
     }
 
     /**

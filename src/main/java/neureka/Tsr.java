@@ -335,7 +335,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (List<?>) args[ 1 ] ).toArray() : args[ 1 ];
         if ( args[ 0 ] instanceof Object[] ) {
             if ( ( (Object[]) args[ 0 ] )[ 0 ] instanceof Integer || ((Object[])args[ 0 ])[ 0 ] instanceof Double) {
-                args[ 0 ] = _intArray( (Object[]) args[ 0 ] );
+                args[ 0 ] = DataConverter.instance().convert((Object[]) args[ 0 ], int[].class);
             }
         }
         //CASES:
@@ -736,16 +736,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     private void _constructAndAllocate(int[] shape, boolean virtual )
     {
         createConstructionAPI().configureFromNewShape( shape, virtual, true );
-    }
-
-    private static int[] _intArray( Object[] arg ) {
-        int length = arg.length;
-        int[] array = new int[ length ];
-        for ( int i = 0; i < length; i++ ) {
-            if ( arg[ i ] instanceof Double ) array[ i ] = ( (Double) arg[ i ] ).intValue();
-            else array[ i ] = (Integer) arg[ i ];
-        }
-        return array;
     }
 
     /*
@@ -2576,7 +2566,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             boolean allInt = true;
             for ( Object o : (Object[]) key ) allInt = allInt && o instanceof Integer;
             if ( allInt && ( (Object[]) key ).length == rank() ) {
-                int[] newOffset = _intArray((Object[]) key);
+                int[] newOffset = DataConverter.instance().convert((Object[]) key, int[].class);
                 for ( int i = 0; i < this.rank(); i++ )
                     newOffset[ i ] = ( newOffset[ i ] < 0 ) ? getNDConf().shape( i ) + newOffset[ i ] : newOffset[ i ];
                 for ( int i = 0; i < this.rank(); i++ )
@@ -2586,7 +2576,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             boolean hasScale = false;
             for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
             return SmartSlicer.slice(
-                    ( allInt ? new Object[]{ _intArray( (Object[]) key ) } : (Object[]) key ),
+                    ( allInt ? new Object[]{ DataConverter.instance().convert((Object[]) key, int[].class) } : (Object[]) key ),
                     this,
                     this::_sliceOf
             );
