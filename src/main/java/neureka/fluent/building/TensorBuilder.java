@@ -108,7 +108,11 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
     public Tsr<V> andWhere( Filler<V> filler ) { return _get( filler ); }
 
     @Override
-    public To<V> iterativelyFilledFrom( V index ) { _from = _checked(index); return this; }
+    public To<V> iterativelyFilledFrom( V index ) {
+        LogUtil.nullArgCheck(index, "index", _dataType.getJVMTypeClass(), "Cannot create a range where the last index is undefined!");
+        _from = _checked(index);
+        return this;
+    }
 
     @Override
     public Tsr<V> all( V value ) { return _get( value ); }
@@ -146,6 +150,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
 
     @Override
     public Tsr<V> vector( Object[] values ) {
+        LogUtil.nullArgCheck(values, "values", Object[].class, "Cannot create a vector without data array!");
         _shape = new int[]{ values.length };
         return _get( values );
     }
@@ -232,10 +237,10 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
                 range.add( (float) index );
                 itemIndex++;
             }
-            float[] primData = new float[tensorSize];
-            for ( int ii = 0; ii < tensorSize; ii ++) {
-                primData[ii] = range.get( ii % range.size() );
-            }
+            float[] primData = new float[ tensorSize ];
+            for ( int ii = 0; ii < tensorSize; ii++ )
+                primData[ ii ] = range.get( ii % range.size() );
+
             data = primData;
         }
         else if ( _dataType == DataType.of( Byte.class ) ) {
@@ -244,10 +249,10 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
                 range.add( index );
                 itemIndex++;
             }
-            byte[] primData = new byte[tensorSize];
-            for ( int ii = 0; ii < tensorSize; ii ++) {
-                primData[ii] = range.get( ii % range.size() );
-            }
+            byte[] primData = new byte[ tensorSize ];
+            for ( int ii = 0; ii < tensorSize; ii++ )
+                primData[ ii ] = range.get( ii % range.size() );
+
             data = primData;
         }
         else if ( _from instanceof Comparable && _to instanceof Comparable ) {
@@ -266,6 +271,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
 
     @Override
     public WithShapeOrScalarOrVector<V> on( Device<V> device ) {
+        LogUtil.nullArgCheck(device, "device", Device.class, "Cannot create a tensor with an undefined device!");
         _device = device;
         return this;
     }
