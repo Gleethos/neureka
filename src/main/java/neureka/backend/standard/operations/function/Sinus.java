@@ -27,34 +27,11 @@ public final class Sinus extends AbstractOperation
                 .setIsDifferentiable( true     )
                 .setIsInline(         false    )
         );
-
-        Activation operationAlgorithm =
-                new Activation()
-                    .setSupplyADAgentFor( getDefaultAlgorithm() )
-                    .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
-                    .setCallPreparation(
-                         call -> {
-                             Device device = call.getDevice();
-                             if ( call.input( 0 ) == null ) // Creating a new tensor:
-                             {
-                                 int[] shp = call.input( 1 ).getNDConf().shape();
-                                 Tsr<?> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
-                                 output.setIsVirtual( false );
-                                 try {
-                                     device.store( output );
-                                 } catch ( Exception e ) {
-                                     e.printStackTrace();
-                                 }
-                                 call.setInput( 0, output );
-                             }
-                             return call;
-                         }
-                    )
-                    .buildFunAlgorithm();
-
         setAlgorithm(
-            Activation.class,
-            operationAlgorithm.setImplementationFor(
+            new Activation()
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .buildFunAlgorithm()
+            .setImplementationFor(
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(

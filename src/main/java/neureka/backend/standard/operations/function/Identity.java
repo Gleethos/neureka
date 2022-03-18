@@ -31,24 +31,11 @@ public final class Identity extends AbstractOperation
                     .setIsDifferentiable( true     )
                     .setIsInline(         false    )
         );
-
-        Activation operationAlgorithm = new Activation()
-        .setSupplyADAgentFor( getDefaultAlgorithm() )
-        .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
-        .setCallPreparation(
-            call -> {
-                int offset = ( call.input( 0 ) == null ? 1 : 0 );
-                return ExecutionCall.of( call.input( offset ), call.input( 1+offset ) )
-                                    .andArgs(Arg.DerivIdx.of(-1))
-                                    .running(Neureka.get().backend().getOperation("idy"))
-                                    .on( call.getDevice() );
-            }
-        )
-        .buildFunAlgorithm();
-
         setAlgorithm(
-            Activation.class,
-            operationAlgorithm.setImplementationFor(
+            new Activation()
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .buildFunAlgorithm()
+            .setImplementationFor(
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(

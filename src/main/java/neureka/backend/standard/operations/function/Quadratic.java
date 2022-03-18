@@ -22,14 +22,11 @@ public final class Quadratic extends AbstractOperation
                     .setIsDifferentiable( true   )
                     .setIsInline(         false  )
         );
-
-        Activation operationAlgorithm = new Activation()
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
-            .buildFunAlgorithm();
-
         setAlgorithm(
-            Activation.class,
-            operationAlgorithm.setImplementationFor(
+            new Activation()
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .buildFunAlgorithm()
+            .setImplementationFor(
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(
@@ -49,8 +46,8 @@ public final class Quadratic extends AbstractOperation
             .setImplementationFor(
                 OpenCLDevice.class,
                     Activation.implementationForGPU( this.getIdentifier() )
-                            .with( "output = input*input;\n" )
-                            .and( "output = 2*input;\n" )
+                            .with( "output = input * input;\n" )
+                            .and( "output = 2 * input;\n" )
             )
         );
     }

@@ -23,14 +23,11 @@ public final class Tanh extends AbstractOperation
                 .setIsDifferentiable( true      )
                 .setIsInline(         false     )
         );
-
-        Activation operationAlgorithm = new Activation()
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
-            .buildFunAlgorithm();
-
         setAlgorithm(
-            Activation.class,
-            operationAlgorithm.setImplementationFor(
+            new Activation()
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .buildFunAlgorithm()
+            .setImplementationFor(
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(

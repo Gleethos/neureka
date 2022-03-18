@@ -24,15 +24,10 @@ public final class Softplus extends AbstractOperation
                     .setIsDifferentiable( true          )
                     .setIsInline(         false         )
         );
-
-        Activation operationAlgorithm = new Activation()
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
-            .buildFunAlgorithm();
-
-
         setAlgorithm(
-            Activation.class,
-            operationAlgorithm
+            new Activation()
+                .setSupplyADAgentFor( getDefaultAlgorithm() )
+                .buildFunAlgorithm()
                 .setImplementationFor(
                 CPU.class,
                 Activation.implementationForCPU()
