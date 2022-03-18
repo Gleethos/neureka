@@ -32,44 +32,24 @@ public final class Softplus extends AbstractOperation
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(
-                        x -> Math.log(1d + Math.pow(Math.E, x)),
-                        x -> 1d / (1d + Math.pow(Math.E, -x))
+                        x -> Math.log( 1d + Math.exp( x ) ),
+                        x -> 1d / ( 1d + Math.exp( -x ) )
                     ))
                     .with(Fun.F32ToF32.pair(
-                        x -> (float) Math.log(1 + Math.pow(Math.E, x)),
-                        x -> (float) (1f / (1f + Math.pow(Math.E, -x)))
+                        x -> (float) Math.log(1 + Math.exp( x ) ),
+                        x -> (float) ( 1f / ( 1f + Math.exp( -x ) ) )
                     ))
                     .with(Fun.I32ToI32.pair(
-                        x -> (int) Math.round(Math.log(1 + Math.pow(Math.E, x))),
-                        x -> (int) Math.round(1d / (1d + Math.pow(Math.E, -x)))
+                        x -> (int) Math.round( Math.log( 1 + Math.exp( x ) ) ),
+                        x -> (int) Math.round( 1d / ( 1d + Math.exp( -x ) ) )
                     ))
                     .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,
                     Activation.implementationForGPU( this.getIdentifier() )
-                            .with(
-                                    "output = \n" +
-                                            "   (\n" +
-                                            "        (float) log(\n" +
-                                            "            1+pow(\n" +
-                                            "                (float)\n" +
-                                            "                M_E,\n" +
-                                            "                (float)\n" +
-                                            "                input\n" +
-                                            "            )\n" +
-                                            "        )\n" +
-                                            "    );"
-                            )
-                            .and(
-                                    "output =\n" +
-                                            "    1 /\n" +
-                                            "        (1 + (float) pow(\n" +
-                                            "                (float)M_E,\n" +
-                                            "                (float)input\n" +
-                                            "            )\n" +
-                                            "        );\n"
-                            )
+                            .with("output = log( 1.0f + exp( input ) );")
+                            .and("output = 1.0f / ( 1.0f + exp( -input ) );\n")
             )
         );
     }
@@ -96,7 +76,7 @@ public final class Softplus extends AbstractOperation
 
     @Contract(pure = true)
     public static double calculate(double input, boolean derive ) {
-        if ( !derive ) return Math.log(1 + Math.pow(Math.E, input));
+        if ( !derive ) return Math.log(1 + Math.exp( input));
         else return Sigmoid.calculate(input, false);
     }
 
