@@ -198,6 +198,10 @@ class Calculus_Stress_Test extends Specification
             Float  | 'fast_tanh(i0)*100 % i0' || [1791804151, 1791804151]
             Integer| 'fast_tanh(i0)*100 % i0' || [-1171493818,  -1171493818]
 
+            Double | 'quick_tanh(i0)*100 % i0' || [-1627096169, -1627096169]
+            Float  | 'quick_tanh(i0)*100 % i0' || [-1112662242, -1112662242]
+            Integer| 'quick_tanh(i0)*100 % i0' || [-634381565,  -634381565]
+
             Double | 'random(i0)'        || [-2059799883, 276852681]
             Float  | 'random(i0)'        || [-2100773274, -590726536]
     }

@@ -5,6 +5,13 @@ import neureka.calculus.Function;
 
 public class Measure {
 
+    public static void measure(String taskName, int warmup, Runnable task) {
+        for ( int i = 0; i < warmup; i++ )
+            task.run();
+
+        System.out.println("It took "+seconds(task)+" seconds to complete "+taskName+"!");
+    }
+
     public static double seconds(Runnable task) {
         final long OVERHEAD = 1100; // (Can be up to 1500)
         long startTime = System.nanoTime();

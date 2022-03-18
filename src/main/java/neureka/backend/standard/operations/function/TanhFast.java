@@ -10,9 +10,9 @@ import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-public class FastTanh extends AbstractOperation
+public class TanhFast extends AbstractOperation
 {
-    public FastTanh()
+    public TanhFast()
     {
         super (
                 new OperationBuilder()
@@ -62,8 +62,8 @@ public class FastTanh extends AbstractOperation
     @Override
     public String stringify( String[] children ) {
         String expression = String.join( ", ", children );
-        if ( expression.startsWith("(") && expression.endsWith(")") ) return "tanh" + expression;
-        return "tanh" + "(" + expression + ")";
+        if ( expression.startsWith("(") && expression.endsWith(")") ) return getIdentifier() + expression;
+        return getIdentifier() + "(" + expression + ")";
     }
 
     @Override

@@ -10,7 +10,8 @@ neureka.backend.standard.operations.function.Sigmoid
 neureka.backend.standard.operations.function.Sinus
 neureka.backend.standard.operations.function.Softplus
 neureka.backend.standard.operations.function.Tanh
-neureka.backend.standard.operations.function.FastTanh
+neureka.backend.standard.operations.function.TanhFast
+neureka.backend.standard.operations.function.TanhQuick
 neureka.backend.standard.operations.function.Logarithm
 
 # indexer :

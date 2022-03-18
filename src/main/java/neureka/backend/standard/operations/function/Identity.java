@@ -149,8 +149,8 @@ public final class Identity extends AbstractOperation
     @Override
     public String stringify( String[] children ) {
         String expression = String.join( ", ", children );
-        if ( expression.startsWith("(") && expression.endsWith(")") ) return "idy" + expression;
-        return "idy" + "(" + expression + ")";
+        if ( expression.startsWith("(") && expression.endsWith(")") ) return getIdentifier() + expression;
+        return getIdentifier() + "(" + expression + ")";
     }
 
     @Override

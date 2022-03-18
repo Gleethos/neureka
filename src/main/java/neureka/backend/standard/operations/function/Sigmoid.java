@@ -57,8 +57,8 @@ public final class Sigmoid extends AbstractOperation
     @Override
     public String stringify( String[] children ) {
         String expression = String.join( ", ", children );
-        if ( expression.startsWith("(") && expression.endsWith(")") ) return "sig" + expression;
-        return "sig" + "(" + expression + ")";
+        if ( expression.startsWith("(") && expression.endsWith(")") ) return getIdentifier() + expression;
+        return getIdentifier() + "(" + expression + ")";
     }
 
     @Override

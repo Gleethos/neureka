@@ -47,6 +47,7 @@ class Calculus_Parsing_Spec extends Specification
 
         where : 'The following expressions and expected exception messages are being used :'
             equation                                    || expected
+            "fast_tanh(i0*i1)"                          || "fast_tanh(I[0] * I[1])"
             "ig0*(igj)xI[g1]"                           || "((Ig[0] * Ig[j]) x Ig[1])"
             "sumJs(ij)"                                 || "sumJs(I[j])"
             "sumJs(1*(4-2/ij))"                         || "sumJs(1.0 * (4.0 - (2.0 / I[j])))"

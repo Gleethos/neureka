@@ -44,7 +44,7 @@ class Calculus_Integration_Spec extends Specification
     ) {
         given : "A new Function instance created from ${equation}."
             Function f = new FunctionBuilder( Neureka.get().backend() ).build(equation, true) // TODO : test with 'doAD' : false!
-
+            println f
         and : 'The result is being calculated by invoking the Function instance.'
             Tsr<?> result = ( index != null ? f.derive( inputs, index ) : f.call( inputs ) )
             List<Double> value = result.getValueAs(double[].class) as List<Double>
@@ -61,8 +61,10 @@ class Calculus_Integration_Spec extends Specification
             "quad(sumJs(Ij))"                | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -5d])]                    | null  || [[2]:[16d, 9d]]
             "tanh(sumJs(Ij))"                | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.999329299739067, -0.9640275800758169]]
             "tanh(i0*i1)"                    | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | 0     || [[2]:[0.029598111496320634, -1.8005623907413337E-6]]
-            "fast_tanh(i0*i1)"               | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.9950547536867305, -0.9999997749296758]]
+            "fast_tanh(i0*i1)"               | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.9486832980505138, -0.9922778767136677]]
             "fast_tanh(i0*i1)"               | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | 0     || [[2]:[0.09486832980505137, -0.00763290674395129]]
+            "quick_tanh(i0*i1)"              | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.75, -0.8888888888888888]]
+            "quick_tanh(i0*i1)"              | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | 0     || [[2]:[0.1875, -0.04938271604938271]]
             "softplus(prodJs(Ij-2))"         | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.31326168751822286, 0.6931471805599453]]
             "softplus([-1, 0, -2, -2](Ij-2))"| [Tsr.of([2, 4], [10d,12d,16d,21d,33d,66d,222d,15d])]             | null  || [[1,2,2,2]:[8.000335406372896, 10.000045398899218, 14.000000831528373, 19.000000005602796, 31.000000000000036, 64.0, 220.0, 13.000002260326852]]
             "softplus(i0*i1)*i2"             | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| 1     || [[2]:[-0.0018221023888012908, 0.2845552390654007]]

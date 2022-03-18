@@ -56,8 +56,8 @@ public final class Absolute extends AbstractOperation
     @Override
     public String stringify( String[] children ) {
         String expression = String.join( ", ", children );
-        if ( expression.startsWith("(") && expression.endsWith(")") ) return "abs" + expression;
-        return "abs" + "(" + expression + ")";
+        if ( expression.startsWith("(") && expression.endsWith(")") ) return getIdentifier() + expression;
+        return getIdentifier() + "(" + expression + ")";
     }
 
     @Override
