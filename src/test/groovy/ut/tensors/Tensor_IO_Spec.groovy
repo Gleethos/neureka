@@ -318,7 +318,7 @@ class Tensor_IO_Spec extends Specification
             !y.isLeave()
             y.belongsToGraph()
             x.belongsToGraph()
-            y.toString().contains("[1]:(0.97014E0)")
+            y.toString().contains("[1]:(0.99932E0)")
     }
 
     def 'A tensor produced by the static "Tsr.Create.newRandom(shape)" has expected "random" value.'()

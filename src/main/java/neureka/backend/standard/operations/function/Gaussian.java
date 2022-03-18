@@ -48,16 +48,16 @@ public final class Gaussian extends AbstractOperation
                 CPU.class,
                 Activation.implementationForCPU()
                     .with(Fun.F64ToF64.pair(
-                        x -> Math.pow(Math.E, -Math.pow(x, 2)),
-                        x -> -2 * x * Math.pow(Math.E, -Math.pow(x, 2))
+                        x -> Math.exp( -( x * x ) ),
+                        x -> -2 * x * Math.exp( -( x * x ) )
                     ))
                     .with(Fun.F32ToF32.pair(
-                        x -> (float) Math.pow(Math.E, -Math.pow(x, 2)),
-                        x -> (float) (-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
+                        x -> (float) Math.exp( -( x * x ) ),
+                        x -> (float) ( -2 * x * Math.exp( -( x * x ) ) )
                     ))
                     .with(Fun.I32ToI32.pair(
-                        x -> (int) Math.round(Math.pow(Math.E, -Math.pow(x, 2))),
-                        x -> (int) Math.round(-2 * x * Math.pow(Math.E, -Math.pow(x, 2)))
+                        x -> (int) Math.round( Math.exp( -( x * x ) ) ),
+                        x -> (int) Math.round( -2 * x * Math.exp( -( x * x ) ) )
                     ))
                     .get()
             )
