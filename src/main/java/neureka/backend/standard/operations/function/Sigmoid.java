@@ -78,11 +78,11 @@ public final class Sigmoid extends AbstractOperation
     }
 
     @Contract(pure = true)
-    public static double calculate(double input, boolean derive ) {
-        if ( !derive ) return 1 / ( 1 + Math.pow(Math.E, -input) );
+    public static double calculate( double input, boolean derive ) {
+        if ( !derive ) return 1 / ( 1 + Math.exp( -input ) );
         else {
             double sig = calculate(input, false);
-            return sig * (1 - sig);
+            return sig * ( 1 - sig );
         }
     }
 
