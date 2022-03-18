@@ -64,19 +64,8 @@ public final class Gaussian extends AbstractOperation
             .setImplementationFor(
                 OpenCLDevice.class,
                     Activation.implementationForGPU( this.getIdentifier() )
-                        .with(
-                                "output =\n" +
-                                        "    (float)pow(\n" +
-                                        "        (float)M_E,\n" +
-                                        "        -(float)pow(\n" +
-                                        "            (float)input,\n" +
-                                        "            (float)2\n" +
-                                        "        )\n" +
-                                        "    );\n"
-                        )
-                        .and(
-                                "output = 1 / (1 + (float)pow((float)M_E, -input));\n"
-                        )
+                        .with("output = exp( -( input * input ) );\n" )
+                        .and("output = -2 * input * exp( -( input * input ) );\n")
             )
         );
     }

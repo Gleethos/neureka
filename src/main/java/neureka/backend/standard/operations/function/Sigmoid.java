@@ -52,7 +52,7 @@ public final class Sigmoid extends AbstractOperation
                 OpenCLDevice.class,
                     Activation.implementationForGPU( this.getIdentifier() )
                             .with( "output = 1 / ( 1 + (float) exp(-input) );\n" )
-                            .and( "output = input * (1 - input);\n" )
+                            .and( "output = input * ( 1 - input );\n" )
             )
         );
     }
