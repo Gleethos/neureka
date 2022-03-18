@@ -242,7 +242,13 @@ public class FunctionBuilder
         if ( assumed.trim().equals("") ) component = cleaned;
         else component = assumed + cleaned;
         // Let's try again:
-        return build( component, doAD );
+        Function result;
+        try {
+            result = build( component, doAD );
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to parse expression '"+component+"'! Cause: "+e.getCause());
+        }
+        return result;
     }
 
     private Function _buildOperators(

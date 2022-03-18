@@ -73,7 +73,7 @@ public class ParseUtil
         String possibleOperation = exp.substring( i + 1, ii );
         return ParseUtil.isAnOperation( possibleOperation )
                 &&
-               ( exp.charAt(i) == 'j' || !Character.isLetter(exp.charAt(i)) );
+               ( exp.charAt(i) == 'j' || !(Character.isLetter(exp.charAt(i)) || exp.charAt(i) == '_') );
     }
 
     @Contract( pure = true )

@@ -16,6 +16,8 @@
     void _cfg_of_cfg(__global int* cfg, int* prv_cfg, int rank);
     int _i_of_i(int i, int* cfg, int rank);
 
+    float fast_inverse_sqrt( float n );
+
 //======================================================================================================================
 
     __kernel void activation_template(
