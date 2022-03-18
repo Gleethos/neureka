@@ -23,7 +23,7 @@ public class OperationBuilder
      *  Concrete {@link Operation} types ought to be representable by a function name.
      *  This property will correspond to the {@link Operation#getIdentifier()} method.
      */
-    private String _function = null;
+    private String _identifier = null;
 
     private String _operator = null;
     /**
@@ -68,7 +68,7 @@ public class OperationBuilder
 
     public Derivator getDerivator() { return _derivator; }
 
-    public String getFunction() { return _function; }
+    public String getIdentifier() { return _identifier; }
 
     public String getOperator() { return _operator; }
 
@@ -82,47 +82,47 @@ public class OperationBuilder
 
     public Boolean getIsInline() { return _isInline; }
 
-    public OperationBuilder setStringifier(Stringifier stringifier) {
+    public OperationBuilder setStringifier( Stringifier stringifier ) {
         _stringifier = stringifier;
         return this;
     }
 
-    public OperationBuilder setDerivator(Derivator derivator) {
+    public OperationBuilder setDerivator( Derivator derivator ) {
         _derivator = derivator;
         return this;
     }
 
-    public OperationBuilder setFunction(String function) {
-        _function = function;
+    public OperationBuilder setIdentifier( String identifier ) {
+        _identifier = identifier;
         return this;
     }
 
-    public OperationBuilder setOperator(String operator) {
+    public OperationBuilder setOperator( String operator ) {
         _operator = operator;
         return this;
     }
 
-    public OperationBuilder setArity(Integer arity) {
+    public OperationBuilder setArity( int arity ) {
         _arity = arity;
         return this;
     }
 
-    public OperationBuilder setIsOperator(Boolean isOperator) {
+    public OperationBuilder setIsOperator( boolean isOperator ) {
         _isOperator = isOperator;
         return this;
     }
 
-    public OperationBuilder setIsIndexer(Boolean isIndexer) {
+    public OperationBuilder setIsIndexer( boolean isIndexer ) {
         _isIndexer = isIndexer;
         return this;
     }
 
-    public OperationBuilder setIsDifferentiable(Boolean isDifferentiable) {
+    public OperationBuilder setIsDifferentiable( boolean isDifferentiable ) {
         _isDifferentiable = isDifferentiable;
         return this;
     }
 
-    public OperationBuilder setIsInline(Boolean isInline) {
+    public OperationBuilder setIsInline( boolean isInline ) {
         _isInline = isInline;
         return this;
     }
@@ -131,7 +131,7 @@ public class OperationBuilder
 
     private List<String> _listOfMissingProperties() {
         List<String> missing = new ArrayList<>();
-        if ( _function         == null ) missing.add( "function" );
+        if ( _identifier       == null ) missing.add( "identifier" );
         if ( _operator         == null ) missing.add( "operator" );
         if ( _arity            == null ) missing.add( "arity" );
         if ( _isOperator       == null ) missing.add( "isOperator" );
@@ -162,11 +162,6 @@ public class OperationBuilder
                 @Override
                 public double calculate( double[] inputs, int j, int d, Function[] src ) {
                     return src[ 0 ].call( inputs, j );
-                }
-
-                @Override
-                public String toString() {
-                    return "Anonymous" + super.toString();
                 }
             };
     }

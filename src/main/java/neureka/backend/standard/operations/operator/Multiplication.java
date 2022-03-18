@@ -32,7 +32,7 @@ public class Multiplication extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setFunction(         "multiply"    )
+                        .setIdentifier(         "multiply"    )
                         .setOperator(         "*"        )
                         .setArity(            -1         )
                         .setIsOperator(       true       )

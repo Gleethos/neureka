@@ -15,7 +15,7 @@ public final class Cosinus extends AbstractOperation
     {
         super (
             new OperationBuilder()
-                .setFunction(         "cos"  )
+                .setIdentifier(         "cos"  )
                 .setOperator(         "cos"  )
                 .setArity(            1      )
                 .setIsOperator(       false  )

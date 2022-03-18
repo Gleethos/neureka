@@ -14,7 +14,7 @@ public final class Quadratic extends AbstractOperation
     public Quadratic() {
         super(
             new OperationBuilder()
-                    .setFunction(         "quad"  )
+                    .setIdentifier(         "quad"  )
                     .setOperator(         "quad"  )
                     .setArity(            1      )
                     .setIsOperator(       false  )

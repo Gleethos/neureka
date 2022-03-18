@@ -22,7 +22,7 @@ public class AssignLeft extends AbstractOperation
     public AssignLeft() {
         super(
             new OperationBuilder()
-                    .setFunction(         "left_inline"  )
+                    .setIdentifier(         "left_inline"  )
                     .setOperator(         "<"            )
                     .setArity(            -2             )
                     .setIsOperator(       true           )

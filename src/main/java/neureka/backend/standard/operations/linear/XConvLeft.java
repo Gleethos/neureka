@@ -11,7 +11,7 @@ public class XConvLeft extends AbstractOperation {
     public XConvLeft() {
         super(
                 new OperationBuilder()
-                        .setFunction(         "inv_convolve_mul_left"    )
+                        .setIdentifier(         "inv_convolve_mul_left"    )
                         .setOperator(         ((char) 171) + "x"         )
                         .setArity(            3                         )
                         .setIsOperator(       true        )

@@ -15,7 +15,7 @@ public final class Sigmoid extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                .setFunction(         "sig"    )
+                .setIdentifier(         "sig"    )
                 .setOperator(         "sig"    )
                 .setArity(            1        )
                 .setIsOperator(       false    )

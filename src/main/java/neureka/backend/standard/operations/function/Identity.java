@@ -1,8 +1,6 @@
 package neureka.backend.standard.operations.function;
 
-import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -23,7 +21,7 @@ public final class Identity extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                    .setFunction(         "idy"    )
+                    .setIdentifier(         "idy"    )
                     .setOperator(         "idy"    )
                     .setArity(            1        )
                     .setIsOperator(       false    )

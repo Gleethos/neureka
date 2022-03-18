@@ -21,7 +21,7 @@ public class DimFit extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setFunction(         "dimfit"    )
+                        .setIdentifier(         "dimfit"    )
                         .setOperator(         "dimfit"    )
                         .setArity(            -1          )
                         .setIsOperator(       false       )

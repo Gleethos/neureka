@@ -11,7 +11,7 @@ public class XConvRight extends AbstractOperation {
     public XConvRight() {
         super(
             new OperationBuilder()
-                    .setFunction(         "inv_convolve_mul_right"    )
+                    .setIdentifier(         "inv_convolve_mul_right"    )
                     .setOperator(         "x" + ((char) 187)         )
                     .setArity(            3                         )
                     .setIsOperator(       true        )

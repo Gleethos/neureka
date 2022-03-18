@@ -66,7 +66,7 @@ public class Addition extends AbstractOperation {
     {
         super (
                 new OperationBuilder()
-                        .setFunction(         "add"      )
+                        .setIdentifier(         "add"      )
                         .setOperator(         "+"        )
                         .setArity(            -1         )
                         .setIsOperator(       true       )

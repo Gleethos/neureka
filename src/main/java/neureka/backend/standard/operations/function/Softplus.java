@@ -16,7 +16,7 @@ public final class Softplus extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                    .setFunction(         "softplus"    )
+                    .setIdentifier(         "softplus"    )
                     .setOperator(         "softplus"    )
                     .setArity(            1             )
                     .setIsOperator(       false         )

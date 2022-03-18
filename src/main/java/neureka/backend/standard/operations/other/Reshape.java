@@ -8,7 +8,6 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
-import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
@@ -25,7 +24,7 @@ public class Reshape extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                .setFunction(         "reshape"  )
+                .setIdentifier(         "reshape"  )
                 .setOperator(         ","        )
                 .setArity(            -1         )
                 .setIsOperator(       true       )

@@ -31,7 +31,7 @@ public class Power extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setFunction(         "power"    )
+                        .setIdentifier(         "power"    )
                         .setOperator(         "^"        )
                         .setArity(            -1         )
                         .setIsOperator(       true       )

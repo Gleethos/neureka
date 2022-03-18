@@ -35,7 +35,7 @@ public final class Summation extends AbstractOperation
     {
         super (
                 new OperationBuilder()
-                        .setFunction(         "sumJs"    )
+                        .setIdentifier(         "sumJs"    )
                         .setOperator(         "sumJs"    )
                         .setArity(            1           )
                         .setIsOperator(       false       )

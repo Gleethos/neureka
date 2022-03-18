@@ -27,7 +27,7 @@ public class Modulo extends AbstractOperation {
     {
         super(
                 new OperationBuilder()
-                        .setFunction(         "modulo"    )
+                        .setIdentifier(         "modulo"    )
                         .setOperator(         "%"         )
                         .setArity(            -1          )
                         .setIsOperator(       true        )

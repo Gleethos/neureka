@@ -15,7 +15,7 @@ public final class ReLU extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                    .setFunction(         "relu"    )
+                    .setIdentifier(         "relu"    )
                     .setOperator(         "relu"    )
                     .setArity(            1        )
                     .setIsOperator(       false    )

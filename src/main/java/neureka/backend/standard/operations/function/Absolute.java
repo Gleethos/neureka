@@ -15,7 +15,7 @@ public final class Absolute extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                .setFunction(         "abs"   )
+                .setIdentifier(         "abs"   )
                 .setOperator(         "abs"   )
                 .setArity(            1       )
                 .setIsOperator(       false   )

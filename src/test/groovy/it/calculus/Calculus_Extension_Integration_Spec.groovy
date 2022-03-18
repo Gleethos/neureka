@@ -49,7 +49,7 @@ class Calculus_Extension_Integration_Spec extends Specification
                     .addOperation(
                             Operation
                                 .builder()
-                                .setFunction('test_function')
+                                .setIdentifier('test_function')
                                 .setOperator('test_function')
                                 .setArity(-1)
                                 .setIsIndexer(false)

@@ -31,7 +31,7 @@ public class MatMul extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setFunction(         "matMul"    )
+                        .setIdentifier(         "matMul"    )
                         .setOperator(         "@"         )
                         .setArity(            2           )
                         .setIsOperator(       true        )

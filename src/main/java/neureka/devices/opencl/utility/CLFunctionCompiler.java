@@ -50,7 +50,7 @@ public final class CLFunctionCompiler {
             numberOfArgs = -1; // The function is an indexer which means that it can have any number of arguments...
         return Operation
                 .builder()
-                .setFunction( _functionName )
+                .setIdentifier( _functionName )
                 .setOperator( _functionName )
                 .setArity( numberOfArgs )
                 .setIsIndexer( numberOfArgs < 0 )

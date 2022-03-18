@@ -28,7 +28,7 @@ public class Division extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setFunction(         "divide"   )
+                        .setIdentifier(         "divide"   )
                         .setOperator(         "/"        )
                         .setArity(            -1         )
                         .setIsOperator(       true       )

@@ -27,7 +27,7 @@ public class DimTrim extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setFunction(         "dimtrim"   )
+                        .setIdentifier(         "dimtrim"   )
                         .setOperator(         "dimtrim"   )
                         .setArity(            1           )
                         .setIsOperator(       false       )

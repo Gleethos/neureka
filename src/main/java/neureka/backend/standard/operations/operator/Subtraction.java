@@ -29,7 +29,7 @@ public class Subtraction extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setFunction(         "subtract"    )
+                        .setIdentifier(         "subtract"    )
                         .setOperator(         "-"        )
                         .setArity(            -1         )
                         .setIsOperator(       true       )

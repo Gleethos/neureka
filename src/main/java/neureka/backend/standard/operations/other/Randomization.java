@@ -35,7 +35,7 @@ public class Randomization extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                .setFunction(         "random"   )
+                .setIdentifier(         "random"   )
                 .setOperator(         "rand"     )
                 .setArity(            1          )
                 .setIsOperator(       true       )

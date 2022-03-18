@@ -5,7 +5,6 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.calculus.Function;
-import neureka.calculus.internal.CalcUtil;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
@@ -16,7 +15,7 @@ public final class Gaussian extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                    .setFunction(         "gaus"    )
+                    .setIdentifier(         "gaus"    )
                     .setOperator(         "gaus"    )
                     .setArity(            1         )
                     .setIsOperator(       false     )

@@ -15,7 +15,7 @@ public final class Logarithm extends AbstractOperation
     {
         super (
             new OperationBuilder()
-                    .setFunction(         "ln"  )
+                    .setIdentifier(         "ln"  )
                     .setOperator(         "ln"  )
                     .setArity(            1      )
                     .setIsOperator(       false  )

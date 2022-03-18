@@ -1,14 +1,10 @@
 package neureka.backend.standard.operations.function;
 
-import neureka.Tsr;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
-import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
-import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
@@ -19,7 +15,7 @@ public final class Sinus extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                .setFunction(         "sin"    )
+                .setIdentifier(         "sin"    )
                 .setOperator(         "sin"    )
                 .setArity(            1        )
                 .setIsOperator(       false    )

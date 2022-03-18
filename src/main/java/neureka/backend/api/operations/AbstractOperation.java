@@ -101,7 +101,7 @@ public abstract class AbstractOperation implements Operation
     {
         builder.dispose();
 
-        _function         = builder.getFunction();
+        _function         = builder.getIdentifier();
         _arity            = builder.getArity();
         _operator         = builder.getOperator();
         _isOperator       = builder.getIsOperator();
@@ -114,7 +114,7 @@ public abstract class AbstractOperation implements Operation
     //==================================================================================================================
 
     @Override
-    public Algorithm<?>[] getAllAlgorithms() {
+    public final Algorithm<?>[] getAllAlgorithms() {
         return _algorithms.values().toArray(new Algorithm[0]);
     }
 
@@ -131,7 +131,7 @@ public abstract class AbstractOperation implements Operation
      * @return The instance of the specified type if any exists within this {@link Operation}.
      */
     @Override
-    public <T extends Algorithm<T>> T getAlgorithm( Class<T> type ) {
+    public final <T extends Algorithm<T>> T getAlgorithm( Class<T> type ) {
         T found = (T) _algorithms.get( type );
         if ( found == null ) // Maybe the provided type is a superclass of one of the entries...
             return _algorithms.entrySet()
@@ -153,7 +153,7 @@ public abstract class AbstractOperation implements Operation
      * @return The truth value determining if this {@link Operation} contains an instance of the specified {@link Algorithm} type.
      */
     @Override
-    public <T extends Algorithm<T>> boolean supportsAlgorithm( Class<T> type ) {
+    public final <T extends Algorithm<T>> boolean supportsAlgorithm( Class<T> type ) {
         return _algorithms.containsKey( type );
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractOperation implements Operation
      * @return This very {@link Operation} instance to enable method chaining on it.
      */
     @Override
-    public <T extends Algorithm<T>> Operation setAlgorithm( Class<T> type, T instance ) {
+    public final <T extends Algorithm<T>> Operation setAlgorithm( Class<T> type, T instance ) {
         if ( _algorithms.containsKey( type ) )
             throw new IllegalArgumentException(
                         "Algorithm of type '"+type.getSimpleName()+"' already defined for this operation!"
@@ -182,7 +182,7 @@ public abstract class AbstractOperation implements Operation
     //==================================================================================================================
 
     @Override
-    public <T extends Algorithm<T>> Algorithm<T> getAlgorithmFor( ExecutionCall<?> call ) {
+    public final <T extends Algorithm<T>> Algorithm<T> getAlgorithmFor( ExecutionCall<?> call ) {
         float bestScore = 0f;
         Algorithm<T> bestImpl = null;
         for( Algorithm<?> impl : _algorithms.values() ) {
@@ -214,7 +214,7 @@ public abstract class AbstractOperation implements Operation
     //==================================================================================================================
 
     @Override
-    public <T extends Algorithm<T>> boolean supports( Class<T> implementation ) {
+    public final <T extends Algorithm<T>> boolean supports( Class<T> implementation ) {
         return _algorithms.containsKey( implementation );
     }
 
@@ -253,12 +253,12 @@ public abstract class AbstractOperation implements Operation
         return _isInline;
     }
 
-    public Algorithm<?> getDefaultAlgorithm() {
+    public final Algorithm<?> getDefaultAlgorithm() {
         return _defaultAlgorithm;
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         String asString = this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode());
         asString = asString + "[identifier='" + _function + "',operator='"+_operator+"']";
         return asString;

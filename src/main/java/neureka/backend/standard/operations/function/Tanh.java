@@ -15,7 +15,7 @@ public final class Tanh extends AbstractOperation
     {
         super (
             new OperationBuilder()
-                .setFunction(         "tanh"    )
+                .setIdentifier(         "tanh"    )
                 .setOperator(         "tanh"    )
                 .setArity(            1         )
                 .setIsOperator(       false     )
