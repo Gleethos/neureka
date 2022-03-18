@@ -27,17 +27,6 @@ public final class Gaussian extends AbstractOperation
         );
 
         Activation operationAlgorithm = new Activation()
-            .setCanPerformBackwardADFor( call -> true )
-            .setCanPerformForwardADFor(
-                call -> {
-                    Tsr<?> last = null;
-                for ( Tsr<?> t : call.inputs() ) {
-                    if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                    last = t; // Note: shapes are cached!
-                }
-                return true;
-                }
-            )
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
             .buildFunAlgorithm();
