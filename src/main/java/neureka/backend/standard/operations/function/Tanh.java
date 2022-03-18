@@ -50,8 +50,8 @@ public final class Tanh extends AbstractOperation
             .setImplementationFor(
                 OpenCLDevice.class,
                     Activation.implementationForGPU( this.getIdentifier() )
-                            .with( "output = input/pow(1+pow(input, 2.0f), 0.5f);\n" )
-                            .and( "output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n" )
+                            .with( "output = tanh(input);\n" )
+                            .and( "output = 1 - pow( tanh(input), 2.0f );\n" )
             )
         );
 
@@ -79,12 +79,9 @@ public final class Tanh extends AbstractOperation
 
     @Contract(pure = true)
     public static double calculate(double input, boolean derive ) {
-        final double pow = Math.pow((1 + Math.pow(input, 2)), 0.5);
-        if ( !derive ) {
-            return input / pow;
-        } else {
-            return (1 - Math.pow((input / pow), 2));
-        }
+        final double tanh = Math.tanh( input );
+        if ( !derive ) return tanh;
+        else return 1 - Math.pow( tanh, 2 ) ;
     }
 
 }
