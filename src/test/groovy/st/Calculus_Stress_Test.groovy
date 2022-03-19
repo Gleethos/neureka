@@ -187,8 +187,8 @@ class Calculus_Stress_Test extends Specification
             type   |  funExpression      || expected
 
             Double | 'gaus(i0)*100 % i0' || [-853255121,  -853255121]
-            Float  | 'gaus(i0)*100 % i0' || [ 372017212,   372017212]
-            Integer| 'gaus(i0)*100 % i0' || [ 505931563,   505931563]
+            Float  | 'gaus(i0)*100 % i0' || [-1410818458, -1410818458]
+            Integer| 'gaus(i0)*100 % i0' || [ 566202463,   566202463]
 
             Double | 'tanh(i0)*100 % i0' || [361719754, 361719754]
             Float  | 'tanh(i0)*100 % i0' || [-1213389248, -1213389248]
