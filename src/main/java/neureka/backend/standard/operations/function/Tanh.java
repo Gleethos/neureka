@@ -56,7 +56,6 @@ public final class Tanh extends AbstractActivationOperation
 
     @Override protected float _derive( float x ) { return (float) (1 - Math.pow( _tanh( x ), 2 )); }
 
-
     private static double _tanh( double x ) { return 2 / ( 1 + Math.exp( -x * 2 ) ) - 1; }
 
     private static float _tanh( float x ) { return (float) (2 / ( 1 + Math.exp( -x * 2 ) ) - 1); }

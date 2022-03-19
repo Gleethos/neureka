@@ -36,13 +36,13 @@ abstract class AbstractActivationOperation extends AbstractOperation {
 
     protected abstract double _activate(double x);
 
-    protected abstract float _activate(float x);
+    protected float _activate(float x) { return (float) _activate( (double) x ); }
 
     protected int _activate(int x) { return (int) Math.round( _activate( (double) x ) ); }
 
     protected abstract double _derive(double x);
 
-    protected abstract float _derive(float x);
+    protected float _derive(float x) { return (float) _derive( (double) x ); }
 
     protected int _derive(int x) { return (int) Math.round( _derive( (double) x ) ); }
 
