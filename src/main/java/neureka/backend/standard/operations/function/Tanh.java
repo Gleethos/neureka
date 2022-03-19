@@ -1,11 +1,6 @@
 package neureka.backend.standard.operations.function;
 
-import neureka.backend.api.operations.OperationBuilder;
-import neureka.backend.standard.algorithms.Activation;
-import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.calculus.Function;
-import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
 
 public final class Tanh extends AbstractActivationOperation
 {
