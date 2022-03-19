@@ -190,13 +190,13 @@ class Calculus_Stress_Test extends Specification
             Float  | 'gaus(i0)*100 % i0' || [ 372017212,   372017212]
             Integer| 'gaus(i0)*100 % i0' || [ 505931563,   505931563]
 
-            Double | 'tanh(i0)*100 % i0' || [-1952063254, -1952063254]
+            Double | 'tanh(i0)*100 % i0' || [361719754, 361719754]
             Float  | 'tanh(i0)*100 % i0' || [-1213389248, -1213389248]
             Integer| 'tanh(i0)*100 % i0' || [-634381565,  -634381565]
 
             Double | 'fast_tanh(i0)*100 % i0' || [-41932067, -41932067]
             Float  | 'fast_tanh(i0)*100 % i0' || [1791804151, 1791804151]
-            Integer| 'fast_tanh(i0)*100 % i0' || [-1171493818,  -1171493818]
+            Integer| 'fast_tanh(i0)*100 % i0' || [-634381565,  -634381565]
 
             Double | 'quick_tanh(i0)*100 % i0' || [-1627096169, -1627096169]
             Float  | 'quick_tanh(i0)*100 % i0' || [-1112662242, -1112662242]

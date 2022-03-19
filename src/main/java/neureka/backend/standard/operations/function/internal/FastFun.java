@@ -17,7 +17,7 @@ public class FastFun {
         return x;
     }
 
-    public static float invSqrt(float x) {
+    public static float invSqrt( float x ) {
         float xhalf = 0.5f * x;
         int i = Float.floatToIntBits(x);
         i = 0x5f3759df - (i >> 1);

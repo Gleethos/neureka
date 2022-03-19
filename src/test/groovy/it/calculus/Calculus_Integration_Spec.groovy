@@ -59,8 +59,8 @@ class Calculus_Integration_Spec extends Specification
         where :
             equation                         | inputs                                                           | index || expected
             "quad(sumJs(Ij))"                | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -5d])]                    | null  || [[2]:[16d, 9d]]
-            "tanh(sumJs(Ij))"                | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.999329299739067, -0.9640275800758169]]
-            "tanh(i0*i1)"                    | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | 0     || [[2]:[0.029598111496320634, -1.8005623907413337E-6]]
+            "tanh(sumJs(Ij))"                | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.9993292997390673, -0.9640275800758169]]
+            "tanh(i0*i1)"                    | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | 0     || [[2]:[0.0295981114963193, -1.8005623907413337E-6]]
             "fast_tanh(i0*i1)"               | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.9486832980505138, -0.9922778767136677]]
             "fast_tanh(i0*i1)"               | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | 0     || [[2]:[0.09486832980505137, -0.00763290674395129]]
             "quick_tanh(i0*i1)"              | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.75, -0.8888888888888888]]
