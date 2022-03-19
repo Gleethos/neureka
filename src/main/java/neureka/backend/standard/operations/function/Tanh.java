@@ -9,46 +9,24 @@ import neureka.devices.opencl.OpenCLDevice;
 
 public final class Tanh extends AbstractActivationOperation
 {
-    public Tanh()
-    {
-        super (
-            new OperationBuilder()
-                .setIdentifier(         "tanh"    )
-                .setOperator(         "tanh"    )
-                .setArity(            1         )
-                .setIsOperator(       false     )
-                .setIsIndexer(        false     )
-                .setIsDifferentiable( true      )
-                .setIsInline(         false     )
-        );
-        setAlgorithm(
-            new Activation()
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
-            .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                Activation.implementationForCPU()
-                    .with(Fun.F64ToF64.pair(this::_activate, this::_derive))
-                    .with(Fun.F32ToF32.pair(this::_activate, this::_derive))
-                    .with(Fun.I32ToI32.pair(this::_activate, this::_derive))
-                    .get()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                Activation.implementationForGPU( this.getIdentifier() )
-                        .with( "output = tanh(input);\n" )
-                        .and( "output = 1 - pow( tanh(input), 2.0f );\n" )
-            )
-        );
-
-    }
+    public Tanh() { super( "tanh" ); }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
         throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
-    @Override protected double _activate( double x ) { return 2 / ( 1 + Math.exp( -x * 2 ) ) - 1; }
+    @Override
+    protected String _activationCode() {
+        return "output = tanh(input);\n";
+    }
+
+    @Override
+    protected String _derivationCode() {
+        return "output = 1 - pow( tanh(input), 2.0f );\n";
+    }
+
+    @Override protected double _activate(double x ) { return 2 / ( 1 + Math.exp( -x * 2 ) ) - 1; }
 
     @Override protected float _activate( float x ) { return (float) (2 / ( 1 + Math.exp( -x * 2 ) ) - 1); }
 

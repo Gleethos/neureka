@@ -180,6 +180,9 @@ dependencies {
     testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
     testImplementation 'com.athaydes:spock-reports:2.2.0-groovy-3.0'//, { transitive = false }
 
+    testImplementation group: 'org.apache.commons', name: 'commons-math3', version: '3.4'
+    testImplementation group: 'net.jafama', name: 'jafama', version: '2.1.0'
+
     testImplementation 'org.slf4j:slf4j-api:1.7.36'  // LOGGING
     testRuntimeClasspath 'org.slf4j:slf4j-simple:1.7.36'
 

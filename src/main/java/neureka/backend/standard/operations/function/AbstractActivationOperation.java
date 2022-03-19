@@ -2,14 +2,46 @@ package neureka.backend.standard.operations.function;
 
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.calculus.Function;
+import neureka.devices.host.CPU;
+import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
 abstract class AbstractActivationOperation extends AbstractOperation {
 
-    AbstractActivationOperation(OperationBuilder builder)
+    AbstractActivationOperation(String identifier)
     {
-        super(builder);
+        super(
+            new OperationBuilder()
+                .setIdentifier(       identifier    )
+                .setOperator(         identifier    )
+                .setArity(            1             )
+                .setIsOperator(       false         )
+                .setIsIndexer(        false         )
+                .setIsDifferentiable( true          )
+                .setIsInline(         false         )
+        );
+        setAlgorithm(
+            new Activation()
+                .setSupplyADAgentFor( getDefaultAlgorithm() )
+                .buildFunAlgorithm()
+                .setImplementationFor(
+                    CPU.class,
+                    Activation.implementationForCPU()
+                        .with(Fun.F64ToF64.pair(this::_activate, this::_derive))
+                        .with(Fun.F32ToF32.pair(this::_activate, this::_derive))
+                        .with(Fun.I32ToI32.pair(this::_activate, this::_derive))
+                        .get()
+                )
+                .setImplementationFor(
+                    OpenCLDevice.class,
+                    Activation.implementationForGPU( this.getIdentifier() )
+                            .with( _activationCode() )
+                            .and( _derivationCode() )
+                )
+        );
     }
 
     @Override
@@ -33,6 +65,10 @@ abstract class AbstractActivationOperation extends AbstractOperation {
         else
             return _derive( input ) ;
     }
+
+    protected abstract String _activationCode();
+
+    protected abstract String _derivationCode();
 
     protected abstract double _activate(double x);
 
