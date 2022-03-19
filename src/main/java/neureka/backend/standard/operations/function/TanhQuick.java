@@ -6,7 +6,6 @@ import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.calculus.Function;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import org.jetbrains.annotations.Contract;
 
 public class TanhQuick extends AbstractActivationOperation
 {

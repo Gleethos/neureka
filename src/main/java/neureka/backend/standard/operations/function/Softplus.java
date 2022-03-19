@@ -77,7 +77,7 @@ public final class Softplus extends AbstractOperation
     @Contract(pure = true)
     public static double calculate(double input, boolean derive ) {
         if ( !derive ) return Math.log(1 + Math.exp( input));
-        else return Sigmoid.calculate(input, false);
+        else return Sigmoid.sig(input);
     }
 
 
