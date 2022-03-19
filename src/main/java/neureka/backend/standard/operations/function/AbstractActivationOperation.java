@@ -21,10 +21,9 @@ abstract class AbstractActivationOperation extends AbstractOperation {
 
     @Override
     public final double calculate( double[] inputs, int j, int d, Function[] src ) {
-        return calculate(
-                src[ 0 ].call( inputs, j ),
-                d >= 0
-        ) * ( ( d < 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );
+        boolean derive = d >= 0;
+        double inner = ( !derive ? 1 : src[ 0 ].derive( inputs, d, j ) );
+        return calculate( src[ 0 ].call( inputs, j ),  derive ) * inner;
     }
 
     @Contract(pure = true)
