@@ -184,26 +184,30 @@ class Calculus_Stress_Test extends Specification
             Arrays.hashCode(result2.data) == expected[1]
 
         where :
-            type   |  funExpression      || expected
+            type   |  funExpression            || expected
 
-            Double | 'gaus(i0)*100 % i0' || [-853255121,  -853255121]
-            Float  | 'gaus(i0)*100 % i0' || [-1410818458, -1410818458]
-            Integer| 'gaus(i0)*100 % i0' || [ 566202463,   566202463]
+            Double | 'gaus(i0)*100 % i0'       || [-853255121,  -853255121]
+            Float  | 'gaus(i0)*100 % i0'       || [-1410818458, -1410818458]
+            Integer| 'gaus(i0)*100 % i0'       || [ 566202463,   566202463]
 
-            Double | 'tanh(i0)*100 % i0' || [361719754, 361719754]
-            Float  | 'tanh(i0)*100 % i0' || [-1213389248, -1213389248]
-            Integer| 'tanh(i0)*100 % i0' || [-634381565,  -634381565]
+            Double | 'tanh(i0)*100 % i0'       || [361719754, 361719754]
+            Float  | 'tanh(i0)*100 % i0'       || [-1213389248, -1213389248]
+            Integer| 'tanh(i0)*100 % i0'       || [-634381565,  -634381565]
 
-            Double | 'fast_tanh(i0)*100 % i0' || [-41932067, -41932067]
-            Float  | 'fast_tanh(i0)*100 % i0' || [1791804151, 1791804151]
-            Integer| 'fast_tanh(i0)*100 % i0' || [-634381565,  -634381565]
+            Double | 'fast_tanh(i0)*100 % i0'  || [-41932067, -41932067]
+            Float  | 'fast_tanh(i0)*100 % i0'  || [1791804151, 1791804151]
+            Integer| 'fast_tanh(i0)*100 % i0'  || [-634381565,  -634381565]
+
+            Double | 'fast_gaus(i0)+i0'        || [1214521048, 1214521048]
+            Float  | 'fast_gaus(i0)+i0'        || [614466683, 614466683]
+            Integer| 'fast_gaus(i0)+i0'        || [-1351535318, -1351535318]
 
             Double | 'quick_tanh(i0)*100 % i0' || [-1627096169, -1627096169]
             Float  | 'quick_tanh(i0)*100 % i0' || [-1112662242, -1112662242]
             Integer| 'quick_tanh(i0)*100 % i0' || [-634381565,  -634381565]
 
-            Double | 'random(i0)'        || [-2059799883, 276852681]
-            Float  | 'random(i0)'        || [-2100773274, -590726536]
+            Double | 'random(i0)'              || [-2059799883, 276852681]
+            Float  | 'random(i0)'              || [-2100773274, -590726536]
     }
 
 

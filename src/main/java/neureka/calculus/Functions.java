@@ -32,6 +32,7 @@ public class Functions {
     private final Function _quickTanh;
     private final Function _sigmoid;
     private final Function _gaus;
+    private final Function _fastGaus;
     private final Function _ln;
 
     public Functions( boolean doingAD ) {
@@ -61,6 +62,7 @@ public class Functions {
         _quickTanh = Function.of( "quick_tanh(I[0])",          doingAD );
         _sigmoid = Function.of( "sig(I[0])",                   doingAD );
         _gaus = Function.of("gaus(I[0])",                      doingAD );
+        _fastGaus = Function.of("fast_gaus(I[0])",             doingAD );
         _ln = Function.of("ln(I[0])",                          doingAD );
     }
 
@@ -197,6 +199,16 @@ public class Functions {
      * @return A gaussian {@link Function} based on: {@code Math.exp( -( x * x ) )}.
      */
     public final Function gaus () { return _gaus; }
+
+    /**
+     * @return A quasi gaussian {@link Function} based on: {@code 1 / ( 1 + x * x )}.
+     */
+    public final Function getFastGaus () { return _fastGaus; }
+
+    /**
+     * @return A quasi gaussian {@link Function} based on: {@code 1 / ( 1 + x * x )}.
+     */
+    public final Function fastGaus () { return _fastGaus; }
 
     /**
      * @return A natural log {@link Function} based on: {@code Math.log( x )}.

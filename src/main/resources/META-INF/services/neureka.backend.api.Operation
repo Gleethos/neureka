@@ -3,6 +3,7 @@
 neureka.backend.standard.operations.function.Absolute
 neureka.backend.standard.operations.function.Cosinus
 neureka.backend.standard.operations.function.Gaussian
+neureka.backend.standard.operations.function.GaussianFast
 neureka.backend.standard.operations.function.Identity
 neureka.backend.standard.operations.function.Quadratic
 neureka.backend.standard.operations.function.ReLU

@@ -11,15 +11,9 @@ public final class Sigmoid extends AbstractActivationOperation
         throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
-    @Override
-    protected String _activationCode() {
-        return "output = 1 / ( 1 + (float) exp(-input) );\n";
-    }
+    @Override protected String _activationCode() { return "output = 1 / ( 1 + (float) exp(-input) );\n"; }
 
-    @Override
-    protected String _derivationCode() {
-        return "output = input * ( 1 - input );\n";
-    }
+    @Override protected String _derivationCode() { return "output = input * ( 1 - input );\n"; }
 
     @Override protected double _activate(double x) { return sig(x); }
 

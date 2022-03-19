@@ -1,6 +1,8 @@
 package ut.calculus
 
+import neureka.Neureka
 import neureka.Tsr
+import neureka.calculus.Function
 import neureka.calculus.args.Args
 import spock.lang.Specification
 
@@ -101,6 +103,30 @@ class Calculus_Function_Spec extends Specification {
             !t1.isIntermediate()
             !t2.isIntermediate()
             t3.isIntermediate()
+    }
+
+    def 'The library context exposes a set of useful functions.'(
+            Function function
+    ) {
+        expect :
+            function.toString() == expected
+        where :
+            function                                     || expected
+            Neureka.get().backend.function.ln            || 'ln(I[0])'
+            Neureka.get().backend.function.ln()          || 'ln(I[0])'
+            Neureka.get().backend.function.gaus          || 'gaus(I[0])'
+            Neureka.get().backend.function.gaus()        || 'gaus(I[0])'
+            Neureka.get().backend.function.fastGaus      || 'fast_gaus(I[0])'
+            Neureka.get().backend.function.fastGaus()    || 'fast_gaus(I[0])'
+            Neureka.get().backend.function.sigmoid       || 'sig(I[0])'
+            Neureka.get().backend.function.sigmoid()     || 'sig(I[0])'
+            Neureka.get().backend.function.tanh          || 'tanh(I[0])'
+            Neureka.get().backend.function.tanh()        || 'tanh(I[0])'
+            Neureka.get().backend.function.fastTanh      || 'fast_tanh(I[0])'
+            Neureka.get().backend.function.fastTanh()    || 'fast_tanh(I[0])'
+            Neureka.get().backend.function.quickTanh     || 'quick_tanh(I[0])'
+            Neureka.get().backend.function.quickTanh()   || 'quick_tanh(I[0])'
+
     }
 
 }
