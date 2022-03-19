@@ -27,6 +27,11 @@ public class Functions {
     private final Function _matMul;
     private final Function _transpose2D;
     private final Function _random;
+    private final Function _tanh;
+    private final Function _fastTanh;
+    private final Function _quickTanh;
+    private final Function _sigmoid;
+    private final Function _gaus;
 
     public Functions( boolean doingAD ) {
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
@@ -50,130 +55,149 @@ public class Functions {
         _matMul = Function.of("I[0] @ I[1]",                   doingAD );
         _transpose2D = Function.of("[1, 0]:(I[0])",            doingAD );
         _random = Function.of("random(I[0])",                  doingAD );
+        _tanh = Function.of( "tanh(I[0])",                     doingAD );
+        _fastTanh = Function.of( "fast_tanh(I[0])",            doingAD );
+        _quickTanh = Function.of( "quick_tanh(I[0])",          doingAD );
+        _sigmoid = Function.of( "sig(I[0])",                   doingAD );
+        _gaus = Function.of("gaus(I[0])",                               doingAD );
     }
 
-    public Function getDimTrim() { return _dimTrim; }
+    public final Function getDimTrim() { return _dimTrim; }
 
-    public Function getIdy() { return _idy; }
+    public final Function dimTrim() { return _dimTrim; }
 
-    public Function getConv() { return _conv; }
+    public final Function getIdy() { return _idy; }
 
-    public Function getPlus() { return _plus; }
+    public final Function idy() { return _idy; }
 
-    public Function getPlusAssign() { return _plusAssign; }
+    public final Function getConv() { return _conv; }
 
-    public Function getMinus() { return _minus; }
+    public final Function conv() { return _conv; }
 
-    public Function getMinusAssign() { return _minusAssign; }
+    public final Function getPlus() { return _plus; }
 
-    public Function getDiv() { return _div; }
+    public final Function plus() { return _plus; }
 
-    public Function getDivAssign() { return _divAssign; }
+    public final Function getPlusAssign() { return _plusAssign; }
 
-    public Function getPow() { return _pow; }
+    public final Function plusAssign() { return _plusAssign; }
 
-    public Function getPowAssign() { return _powAssign; }
+    public final Function getMinus() { return _minus; }
 
-    public Function getMul() { return _mul; }
+    public final Function minus() { return _minus; }
 
-    public Function getMulAssign() { return _mulAssign; }
+    public final Function getMinusAssign() { return _minusAssign; }
 
-    public Function getAdd() { return _add; }
+    public final Function minusAssign() { return _minusAssign; }
 
-    public Function getAddAssign() { return _addAssign; }
+    public final Function getDiv() { return _div; }
 
-    public Function getMod() { return _mod; }
+    public final Function div() { return _div; }
 
-    public Function getModAssign() { return _modAssign; }
+    public final Function getDivAssign() { return _divAssign; }
 
-    public Function getNeg() { return _neg; }
+    public final Function divAssign() { return _divAssign; }
 
-    public Function getMatMul() { return _matMul; }
+    public final Function getPow() { return _pow; }
 
-    public Function getTranspose2D() { return _transpose2D; }
+    public final Function pow() { return _pow; }
 
-    public Function getRandom() { return _random; }
+    public final Function getPowAssign() { return _powAssign; }
 
-    public Function dimTrim() {
-        return _dimTrim;
-    }
+    public final Function powAssign() { return _powAssign; }
 
-    public Function idy() {
-        return _idy;
-    }
+    public final Function getMul() { return _mul; }
 
-    public Function conv() {
-        return _conv;
-    }
+    public final Function mul() { return _mul; }
 
-    public Function plus() {
-        return _plus;
-    }
+    public final Function getMulAssign() { return _mulAssign; }
 
-    public Function plusAssign() {
-        return _plusAssign;
-    }
+    public final Function mulAssign() { return _mulAssign; }
 
-    public Function minus() {
-        return _minus;
-    }
+    public final Function getAdd() { return _add; }
 
-    public Function minusAssign() {
-        return _minusAssign;
-    }
+    public final Function add() { return _add; }
 
-    public Function div() {
-        return _div;
-    }
+    public final Function getAddAssign() { return _addAssign; }
 
-    public Function divAssign() {
-        return _divAssign;
-    }
+    public final Function addAssign() { return _addAssign; }
 
-    public Function pow() {
-        return _pow;
-    }
+    public final Function getMod() { return _mod; }
 
-    public Function powAssign() {
-        return _powAssign;
-    }
+    public final Function mod() { return _mod; }
 
-    public Function mul() {
-        return _mul;
-    }
+    public final Function getModAssign() { return _modAssign; }
 
-    public Function mulAssign() {
-        return _mulAssign;
-    }
+    public final Function modAssign() { return _modAssign; }
 
-    public Function add() {
-        return _add;
-    }
+    public final Function getNeg() { return _neg; }
 
-    public Function addAssign() {
-        return _addAssign;
-    }
+    public final Function neg() { return _neg; }
 
-    public Function mod() {
-        return _mod;
-    }
+    public final Function getMatMul() { return _matMul; }
 
-    public Function modAssign() {
-        return _modAssign;
-    }
+    public final Function matMul() { return _matMul; }
 
-    public Function neg() {
-        return _neg;
-    }
+    public final Function getTranspose2D() { return _transpose2D; }
 
-    public Function matMul() { return _matMul; }
+    public final Function transpose2D() { return _transpose2D; }
 
-    public Function transpose2D() { return _transpose2D; }
+    public final Function getRandom() { return _random; }
 
-    public Function random() { return _random; }
+    public final Function random() { return _random; }
+
+    /**
+     * @return A tanh {@link Function} based on: {@code 2 / ( 1 + Math.exp( -x * 2 ) ) - 1}.
+     */
+    public final Function getTanh () { return _tanh; }
+
+    /**
+     * @return A tanh {@link Function} based on: {@code 2 / ( 1 + Math.exp( -x * 2 ) ) - 1}.
+     */
+    public final Function tanh () { return _tanh; }
+
+    /**
+     * @return A fast quasi tanh {@link Function} based on: {@code x * FastFun.invSqrt( 1 + x * x )}.
+     */
+    public final Function getFastTanh () { return _fastTanh; }
+
+    /**
+     * @return A fast quasi tanh {@link Function} based on: {@code x * FastFun.invSqrt( 1 + x * x )}.
+     */
+    public final Function fastTanh () { return _fastTanh; }
+
+    /**
+     * @return A very fast quasi tanh {@link Function} based on: {@code x / ( 1 + Math.abs( x ) )}.
+     */
+    public final Function getQuickTanh () { return _quickTanh; }
+
+    /**
+     * @return A very fast quasi tanh {@link Function} based on: {@code x / ( 1 + Math.abs( x ) )}.
+     */
+    public final Function quickTanh () { return _quickTanh; }
+
+    /**
+     * @return A sigmoid {@link Function} based on: {@code 1 / ( 1 + Math.exp( -x ) )}.
+     */
+    public final Function getSigmoid () { return _sigmoid; }
+
+    /**
+     * @return A sigmoid {@link Function} based on: {@code 1 / ( 1 + Math.exp( -x ) )}.
+     */
+    public final Function sigmoid () { return _sigmoid; }
+
+    /**
+     * @return A gaussian {@link Function} based on: {@code Math.exp( -( x * x ) )}.
+     */
+    public final Function getGaus () { return _gaus; }
+
+    /**
+     * @return A gaussian {@link Function} based on: {@code Math.exp( -( x * x ) )}.
+     */
+    public final Function gaus () { return _gaus; }
 
     @Override
-    public String toString() {
+    public final String toString() {
         String state =
                 Arrays.stream(this.getClass().getDeclaredFields())
                       .map( field -> {
