@@ -32,6 +32,7 @@ public class Functions {
     private final Function _quickTanh;
     private final Function _sigmoid;
     private final Function _gaus;
+    private final Function _ln;
 
     public Functions( boolean doingAD ) {
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
@@ -59,7 +60,8 @@ public class Functions {
         _fastTanh = Function.of( "fast_tanh(I[0])",            doingAD );
         _quickTanh = Function.of( "quick_tanh(I[0])",          doingAD );
         _sigmoid = Function.of( "sig(I[0])",                   doingAD );
-        _gaus = Function.of("gaus(I[0])",                               doingAD );
+        _gaus = Function.of("gaus(I[0])",                      doingAD );
+        _ln = Function.of("ln(I[0])",                          doingAD );
     }
 
     public final Function getDimTrim() { return _dimTrim; }
@@ -195,6 +197,17 @@ public class Functions {
      * @return A gaussian {@link Function} based on: {@code Math.exp( -( x * x ) )}.
      */
     public final Function gaus () { return _gaus; }
+
+    /**
+     * @return A natural log {@link Function} based on: {@code Math.log( x )}.
+     */
+    public final Function getLn () { return _ln; }
+
+    /**
+     * @return A natural log {@link Function} based on: {@code Math.log( x )}.
+     */
+    public final Function ln() { return _ln; }
+
 
     @Override
     public final String toString() {
