@@ -40,6 +40,7 @@ public class Functions {
     private final Function _sin;
     private final Function _cos;
     private final Function _softplus;
+    private final Function _silu;
 
     public Functions( boolean doingAD ) {
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
@@ -76,6 +77,7 @@ public class Functions {
         _sin  = Function.of("sin(I[0])",                       doingAD );
         _cos  = Function.of("cos(I[0])",                       doingAD );
         _softplus  = Function.of("softplus(I[0])",             doingAD );
+        _silu  = Function.of("silu(I[0])",                     doingAD );
     }
 
     public final Function getDimTrim() { return _dimTrim; }
@@ -291,6 +293,26 @@ public class Functions {
      * @return A softplus {@link Function} based on: {@code Math.log( 1 + Math.exp( x ) )}.
      */
     public final Function softplus() { return _softplus; }
+
+    /**
+     *  The SiLu activation function, also known as the swish function, is defined as {@code x * sigmoid(x)}.
+     *  It is a smooth, non-monotonic function that consistently matches
+     *  or outperforms ReLU on deep networks,
+     *  it is unbounded above and bounded below.
+     *
+     * @return A SiLu {@link Function} (also known as swish) based on: {@code x / ( 1 + Math.exp( -x ) )}.
+     */
+    public final Function getSilu() { return _silu; }
+
+    /**
+     *  The SiLu activation function, also known as the swish function, is defined as {@code x * sigmoid(x)}.
+     *  It is a smooth, non-monotonic function that consistently matches
+     *  or outperforms ReLU on deep networks,
+     *  it is unbounded above and bounded below.
+     *
+     * @return A SiLu {@link Function} (also known as swish) based on: {@code x / ( 1 + Math.exp( -x ) )}.
+     */
+    public final Function silu() { return _silu; }
 
 
 
