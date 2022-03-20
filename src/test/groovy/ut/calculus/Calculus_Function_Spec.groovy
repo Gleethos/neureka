@@ -137,6 +137,8 @@ class Calculus_Function_Spec extends Specification {
             Neureka.get().backend.function.sin           || 'sin(I[0])'
             Neureka.get().backend.function.cos()         || 'cos(I[0])'
             Neureka.get().backend.function.cos           || 'cos(I[0])'
+            Neureka.get().backend.function.softplus()    || 'softplus(I[0])'
+            Neureka.get().backend.function.softplus      || 'softplus(I[0])'
 
     }
 

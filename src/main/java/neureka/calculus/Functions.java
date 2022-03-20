@@ -39,6 +39,7 @@ public class Functions {
     private final Function _abs;
     private final Function _sin;
     private final Function _cos;
+    private final Function _softplus;
 
     public Functions( boolean doingAD ) {
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
@@ -74,6 +75,7 @@ public class Functions {
         _abs  = Function.of("abs(I[0])",                       doingAD );
         _sin  = Function.of("sin(I[0])",                       doingAD );
         _cos  = Function.of("cos(I[0])",                       doingAD );
+        _softplus  = Function.of("softplus(I[0])",             doingAD );
     }
 
     public final Function getDimTrim() { return _dimTrim; }
@@ -279,6 +281,17 @@ public class Functions {
      * @return A cosine {@link Function} based on: {@code Math.cos(x)}.
      */
     public final Function cos() { return _cos; }
+
+    /**
+     * @return A softplus {@link Function} based on: {@code Math.log( 1 + Math.exp( x ) )}.
+     */
+    public final Function getSoftplus() { return _softplus; }
+
+    /**
+     * @return A softplus {@link Function} based on: {@code Math.log( 1 + Math.exp( x ) )}.
+     */
+    public final Function softplus() { return _softplus; }
+
 
 
     @Override
