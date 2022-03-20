@@ -126,6 +126,17 @@ class Calculus_Function_Spec extends Specification {
             Neureka.get().backend.function.fastTanh()    || 'fast_tanh(I[0])'
             Neureka.get().backend.function.quickTanh     || 'quick_tanh(I[0])'
             Neureka.get().backend.function.quickTanh()   || 'quick_tanh(I[0])'
+            Neureka.get().backend.function.quickTanh     || 'quick_tanh(I[0])'
+            Neureka.get().backend.function.quad()        || 'quad(I[0])'
+            Neureka.get().backend.function.quad          || 'quad(I[0])'
+            Neureka.get().backend.function.relu()        || 'relu(I[0])'
+            Neureka.get().backend.function.relu          || 'relu(I[0])'
+            Neureka.get().backend.function.abs()         || 'abs(I[0])'
+            Neureka.get().backend.function.abs           || 'abs(I[0])'
+            Neureka.get().backend.function.sin()         || 'sin(I[0])'
+            Neureka.get().backend.function.sin           || 'sin(I[0])'
+            Neureka.get().backend.function.cos()         || 'cos(I[0])'
+            Neureka.get().backend.function.cos           || 'cos(I[0])'
 
     }
 

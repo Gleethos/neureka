@@ -34,6 +34,11 @@ public class Functions {
     private final Function _gaus;
     private final Function _fastGaus;
     private final Function _ln;
+    private final Function _quad;
+    private final Function _relu;
+    private final Function _abs;
+    private final Function _sin;
+    private final Function _cos;
 
     public Functions( boolean doingAD ) {
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
@@ -64,6 +69,11 @@ public class Functions {
         _gaus = Function.of("gaus(I[0])",                      doingAD );
         _fastGaus = Function.of("fast_gaus(I[0])",             doingAD );
         _ln = Function.of("ln(I[0])",                          doingAD );
+        _quad = Function.of("quad(I[0])",                      doingAD );
+        _relu = Function.of("relu(I[0])",                      doingAD );
+        _abs  = Function.of("abs(I[0])",                       doingAD );
+        _sin  = Function.of("sin(I[0])",                       doingAD );
+        _cos  = Function.of("cos(I[0])",                       doingAD );
     }
 
     public final Function getDimTrim() { return _dimTrim; }
@@ -153,52 +163,52 @@ public class Functions {
     /**
      * @return A tanh {@link Function} based on: {@code 2 / ( 1 + Math.exp( -x * 2 ) ) - 1}.
      */
-    public final Function getTanh () { return _tanh; }
+    public final Function getTanh() { return _tanh; }
 
     /**
      * @return A tanh {@link Function} based on: {@code 2 / ( 1 + Math.exp( -x * 2 ) ) - 1}.
      */
-    public final Function tanh () { return _tanh; }
+    public final Function tanh() { return _tanh; }
 
     /**
      * @return A fast quasi tanh {@link Function} based on: {@code x * FastFun.invSqrt( 1 + x * x )}.
      */
-    public final Function getFastTanh () { return _fastTanh; }
+    public final Function getFastTanh() { return _fastTanh; }
 
     /**
      * @return A fast quasi tanh {@link Function} based on: {@code x * FastFun.invSqrt( 1 + x * x )}.
      */
-    public final Function fastTanh () { return _fastTanh; }
+    public final Function fastTanh() { return _fastTanh; }
 
     /**
      * @return A very fast quasi tanh {@link Function} based on: {@code x / ( 1 + Math.abs( x ) )}.
      */
-    public final Function getQuickTanh () { return _quickTanh; }
+    public final Function getQuickTanh() { return _quickTanh; }
 
     /**
      * @return A very fast quasi tanh {@link Function} based on: {@code x / ( 1 + Math.abs( x ) )}.
      */
-    public final Function quickTanh () { return _quickTanh; }
+    public final Function quickTanh() { return _quickTanh; }
 
     /**
      * @return A sigmoid {@link Function} based on: {@code 1 / ( 1 + Math.exp( -x ) )}.
      */
-    public final Function getSigmoid () { return _sigmoid; }
+    public final Function getSigmoid() { return _sigmoid; }
 
     /**
      * @return A sigmoid {@link Function} based on: {@code 1 / ( 1 + Math.exp( -x ) )}.
      */
-    public final Function sigmoid () { return _sigmoid; }
+    public final Function sigmoid() { return _sigmoid; }
 
     /**
      * @return A gaussian {@link Function} based on: {@code Math.exp( -( x * x ) )}.
      */
-    public final Function getGaus () { return _gaus; }
+    public final Function getGaus() { return _gaus; }
 
     /**
      * @return A gaussian {@link Function} based on: {@code Math.exp( -( x * x ) )}.
      */
-    public final Function gaus () { return _gaus; }
+    public final Function gaus() { return _gaus; }
 
     /**
      * @return A quasi gaussian {@link Function} based on: {@code 1 / ( 1 + x * x )}.
@@ -213,12 +223,62 @@ public class Functions {
     /**
      * @return A natural log {@link Function} based on: {@code Math.log( x )}.
      */
-    public final Function getLn () { return _ln; }
+    public final Function getLn() { return _ln; }
 
     /**
      * @return A natural log {@link Function} based on: {@code Math.log( x )}.
      */
     public final Function ln() { return _ln; }
+
+    /**
+     * @return A quadratic {@link Function} based on: {@code x * x}.
+     */
+    public final Function getQuad() { return _quad; }
+
+    /**
+     * @return A quadratic {@link Function} based on: {@code x * x}.
+     */
+    public final Function quad() { return _quad; }
+
+    /**
+     * @return A rectified linear unit {@link Function} based on: {@code ( x >= 0 ? x : x * .01 )}.
+     */
+    public final Function getRelu() { return _relu; }
+
+    /**
+     * @return A rectified linear unit {@link Function} based on: {@code ( x >= 0 ? x : x * .01 )}.
+     */
+    public final Function relu() { return _relu; }
+
+    /**
+     * @return An absolute {@link Function} based on: {@code Math.abs(x)}.
+     */
+    public final Function getAbs() { return _abs; }
+
+    /**
+     * @return An absolute {@link Function} based on: {@code Math.abs(x)}.
+     */
+    public final Function abs() { return _abs; }
+
+    /**
+     * @return A sine {@link Function} based on: {@code Math.sin(x)}.
+     */
+    public final Function getSin() { return _sin; }
+
+    /**
+     * @return A sine {@link Function} based on: {@code Math.sin(x)}.
+     */
+    public final Function sin() { return _sin; }
+
+    /**
+     * @return A cosine {@link Function} based on: {@code Math.cos(x)}.
+     */
+    public final Function getCos() { return _cos; }
+
+    /**
+     * @return A cosine {@link Function} based on: {@code Math.cos(x)}.
+     */
+    public final Function cos() { return _cos; }
 
 
     @Override
