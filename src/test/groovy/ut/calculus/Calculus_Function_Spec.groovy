@@ -124,9 +124,9 @@ class Calculus_Function_Spec extends Specification {
             Neureka.get().backend.function.tanh()        || 'tanh(I[0])'
             Neureka.get().backend.function.fastTanh      || 'fast_tanh(I[0])'
             Neureka.get().backend.function.fastTanh()    || 'fast_tanh(I[0])'
-            Neureka.get().backend.function.softsign || 'softsign(I[0])'
-            Neureka.get().backend.function.softsign() || 'softsign(I[0])'
-            Neureka.get().backend.function.softsign || 'softsign(I[0])'
+            Neureka.get().backend.function.softsign      || 'softsign(I[0])'
+            Neureka.get().backend.function.softsign()    || 'softsign(I[0])'
+            Neureka.get().backend.function.softsign      || 'softsign(I[0])'
             Neureka.get().backend.function.quad()        || 'quad(I[0])'
             Neureka.get().backend.function.quad          || 'quad(I[0])'
             Neureka.get().backend.function.relu()        || 'relu(I[0])'
@@ -139,6 +139,8 @@ class Calculus_Function_Spec extends Specification {
             Neureka.get().backend.function.cos           || 'cos(I[0])'
             Neureka.get().backend.function.softplus()    || 'softplus(I[0])'
             Neureka.get().backend.function.softplus      || 'softplus(I[0])'
+            Neureka.get().backend.function.silu()        || 'silu(I[0])'
+            Neureka.get().backend.function.silu          || 'silu(I[0])'
 
     }
 

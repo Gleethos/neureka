@@ -210,5 +210,50 @@ class Calculus_Stress_Test extends Specification
             Float  | 'random(i0)'              || [-2100773274, -590726536]
     }
 
+    def 'Activation functions work across types.'(
+            Class<?> type, String funExpression, boolean derive, Object expected
+    ) {
+        given : 'We create a function based on the provided expression.'
+            var func = Function.of(funExpression)
+        and : 'We use a large prime number to size our tensors in order to stress workload divisibility.'
+            var PRIME_SIZE_1 = 3
+            var PRIME_SIZE_2 = 5
+        and : 'We create 2 tensors storing the same values, one sliced and the other a normal tensor.'
+            var t1 = Tsr.of(type).withShape(PRIME_SIZE_1).andSeed("Seitan")
+            var t2 = Tsr.of(type).withShape(PRIME_SIZE_2).all(0)[1..3]
+            t2[0..t2.size-1] = t1
+
+        expect : 'The types of both tensors should match what was provided during instantiation.'
+            t1.dataType == DataType.of(type)
+            t1.valueClass == type
+            t2.dataType == DataType.of(type)
+            t2.valueClass == type
+
+        when : 'We apply the function to both tensors...'
+            var result1 = ( !derive ? func(t1) : func.derive([t1], 0) )
+            var result2 = ( !derive ? func(t2) : func.derive([t2], 0) )
+        then : 'First we ensure that both tensors have the correct value/element type.'
+            result1.valueClass == type
+            result2.valueClass == type
+        and : 'The underlying data object should match the data array type as is defined by the data type!'
+            result1.data.class == result1.dataType.dataArrayType()
+            result2.data.class == result2.dataType.dataArrayType()
+
+        and : 'The data of the first non slice tensor as well as its slice should be as expected.'
+            result1.value == expected
+            result2.value == expected
+
+        where :
+        type   |  funExpression   | derive || expected
+
+        Double | 'silu(i0)'       | false  || [2.1135352025452363, -0.23397468505726102, 1.0477889390530153] as double[]
+        Float  | 'silu(i0)'       | false  || [2.1135352, -0.23397468, 1.047789] as float[]
+        Integer| 'silu(i0)'       | false  || [0, 1766941311, 0] as int[]
+
+        Double | 'silu(i0)'       | true   || [1.099546086132034, 0.17280584920363537, 1.0100270613327957] as double[]
+        Float  | 'silu(i0)'       | true   || [1.0995461, 0.17280585, 1.010027] as float[]
+        Integer| 'silu(i0)'       | true   || [0, 1, 0] as int[]
+    }
+
 
 }
