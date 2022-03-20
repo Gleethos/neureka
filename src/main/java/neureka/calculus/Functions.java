@@ -29,7 +29,7 @@ public class Functions {
     private final Function _random;
     private final Function _tanh;
     private final Function _fastTanh;
-    private final Function _quickTanh;
+    private final Function _softsign;
     private final Function _sigmoid;
     private final Function _gaus;
     private final Function _fastGaus;
@@ -65,7 +65,7 @@ public class Functions {
         _random = Function.of("random(I[0])",                  doingAD );
         _tanh = Function.of( "tanh(I[0])",                     doingAD );
         _fastTanh = Function.of( "fast_tanh(I[0])",            doingAD );
-        _quickTanh = Function.of( "quick_tanh(I[0])",          doingAD );
+        _softsign = Function.of( "softsign(I[0])",            doingAD );
         _sigmoid = Function.of( "sig(I[0])",                   doingAD );
         _gaus = Function.of("gaus(I[0])",                      doingAD );
         _fastGaus = Function.of("fast_gaus(I[0])",             doingAD );
@@ -185,12 +185,12 @@ public class Functions {
     /**
      * @return A very fast quasi tanh {@link Function} based on: {@code x / ( 1 + Math.abs( x ) )}.
      */
-    public final Function getQuickTanh() { return _quickTanh; }
+    public final Function getSoftsign() { return _softsign; }
 
     /**
      * @return A very fast quasi tanh {@link Function} based on: {@code x / ( 1 + Math.abs( x ) )}.
      */
-    public final Function quickTanh() { return _quickTanh; }
+    public final Function softsign() { return _softsign; }
 
     /**
      * @return A sigmoid {@link Function} based on: {@code 1 / ( 1 + Math.exp( -x ) )}.

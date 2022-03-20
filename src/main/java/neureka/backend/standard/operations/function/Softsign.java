@@ -2,9 +2,9 @@ package neureka.backend.standard.operations.function;
 
 import neureka.calculus.Function;
 
-public class TanhQuick extends AbstractActivationOperation
+public class Softsign extends AbstractActivationOperation
 {
-    public TanhQuick() { super("quick_tanh"); }
+    public Softsign() { super("softsign"); }
 
     @Override
     public String asDerivative(Function[] children, int derivationIndex) {
