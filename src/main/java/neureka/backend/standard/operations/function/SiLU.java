@@ -21,7 +21,7 @@ public class SiLU extends AbstractActivationOperation
 
     @Override protected String _derivationCode() {
         return "float sig = 1.0f / ( 1.0f + exp( -input ) );" +
-               "output = sig + ( x * sig * ( 1.0f - sig ) );\n";
+               "output = sig + ( input * sig * ( 1.0f - sig ) );\n";
     }
 
     @Override protected double _activate(double x) { return silu(x); }

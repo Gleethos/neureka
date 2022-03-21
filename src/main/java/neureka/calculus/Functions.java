@@ -40,7 +40,8 @@ public class Functions {
     private final Function _sin;
     private final Function _cos;
     private final Function _softplus;
-    private final Function _silu;
+    private final Function _silu; // Also known as swish!
+    private final Function _gelu;
 
     public Functions( boolean doingAD ) {
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
@@ -78,6 +79,7 @@ public class Functions {
         _cos  = Function.of("cos(I[0])",                       doingAD );
         _softplus  = Function.of("softplus(I[0])",             doingAD );
         _silu  = Function.of("silu(I[0])",                     doingAD );
+        _gelu  = Function.of("gelu(I[0])",                              doingAD );
     }
 
     public final Function getDimTrim() { return _dimTrim; }
@@ -313,6 +315,16 @@ public class Functions {
      * @return A SiLu {@link Function} (also known as swish) based on: {@code x / ( 1 + Math.exp( -x ) )}.
      */
     public final Function silu() { return _silu; }
+
+    /**
+     * @return A GeLU {@link Function} based on: {@code x / ( 1 + Math.exp( -x * 1.702 ) )}.
+     */
+    public final Function getGelu() { return _gelu; }
+
+    /**
+     * @return A GeLU {@link Function} based on: {@code x / ( 1 + Math.exp( -x * 1.702 ) )}.
+     */
+    public final Function gelu() { return _gelu; }
 
 
 

@@ -251,7 +251,7 @@ class Calculus_Stress_Test extends Specification
         Integer| 'silu(i0)'       | false  || [0, 1766941311, 0] as int[]
 
         Double | 'silu(i0)'       | true   || [1.099546086132034, 0.17280584920363537, 1.0100270613327957] as double[]
-        Float  | 'silu(i0)'       | true   || [1.0995461, 0.17280585, 1.010027] as float[]
+        Float  | 'silu(i0)'       | true   || [1.0995461, 0.17280586, 1.010027] as float[]
         Integer| 'silu(i0)'       | true   || [0, 1, 0] as int[]
     }
 
