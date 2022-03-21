@@ -253,6 +253,14 @@ class Calculus_Stress_Test extends Specification
         Double | 'silu(i0)'       | true   || [1.099546086132034, 0.17280584920363537, 1.0100270613327957] as double[]
         Float  | 'silu(i0)'       | true   || [1.0995461, 0.17280586, 1.010027] as float[]
         Integer| 'silu(i0)'       | true   || [0, 1, 0] as int[]
+
+        Double | 'gelu(i0)'       | false  || [2.277196975563254, -0.16328256348702017, 1.200361889401775] as double[]
+        Float  | 'gelu(i0)'       | false  || [2.2771971, -0.16328256, 1.2003618] as float[]
+        Integer| 'gelu(i0)'       | false  || [0, 1766941311, 0] as int[]
+
+        Double | 'gelu(i0)'       | true   || [1.0543057750427323, 0.016077333534953053, 1.0988343517880281] as double[]
+        Float  | 'gelu(i0)'       | true   || [1.0543058, 0.01607734, 1.0988343] as float[]
+        Integer| 'gelu(i0)'       | true   || [0, 1, 0] as int[]
     }
 
 
