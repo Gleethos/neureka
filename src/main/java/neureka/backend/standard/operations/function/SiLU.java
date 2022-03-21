@@ -8,9 +8,9 @@ import neureka.calculus.Function;
  *  or outperforms ReLU on deep networks,
  *  it is unbounded above and bounded below.
  */
-public class SiLu extends AbstractActivationOperation
+public class SiLU extends AbstractActivationOperation
 {
-    public SiLu() { super( "silu" ); }
+    public SiLU() { super( "silu" ); }
 
     @Override
     public String asDerivative(Function[] children, int derivationIndex) {
@@ -21,8 +21,7 @@ public class SiLu extends AbstractActivationOperation
 
     @Override protected String _derivationCode() {
         return "float sig = 1.0f / ( 1.0f + exp( -input ) );" +
-               "float silu = sig * input;" +
-               "output = silu + sig * ( 1.0f - silu );\n";
+               "output = sig + ( x * sig * ( 1.0f - sig ) );\n";
     }
 
     @Override protected double _activate(double x) { return silu(x); }
@@ -32,15 +31,13 @@ public class SiLu extends AbstractActivationOperation
     @Override
     protected double _derive(double x) {
         double sig = Sigmoid.sig(x);
-        double silu = sig * x;
-        return silu + sig * ( 1d - silu );
+        return sig + ( x * sig * ( 1d - sig ) );
     }
 
     @Override
     protected float _derive(float x) {
         float sig = (float) Sigmoid.sig(x);
-        float silu = sig * x;
-        return silu + sig * ( 1f - silu );
+        return sig + (x * sig * ( 1f - sig ) );
     }
 
     public static double silu(double x) { return x * Sigmoid.sig(x); }
