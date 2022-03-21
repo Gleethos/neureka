@@ -37,7 +37,7 @@ public class SiLU extends AbstractActivationOperation
     @Override
     protected float _derive(float x) {
         float sig = (float) Sigmoid.sig(x);
-        return sig + (x * sig * ( 1f - sig ) );
+        return sig + ( x * sig * ( 1f - sig ) );
     }
 
     public static double silu(double x) { return x * Sigmoid.sig(x); }

@@ -14,7 +14,7 @@ neureka.backend.standard.operations.function.Tanh
 neureka.backend.standard.operations.function.TanhFast
 neureka.backend.standard.operations.function.Softsign
 neureka.backend.standard.operations.function.Logarithm
-neureka.backend.standard.operations.function.SiLu
+neureka.backend.standard.operations.function.SiLU
 
 # indexer :
 neureka.backend.standard.operations.indexer.Summation
