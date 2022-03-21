@@ -2,10 +2,17 @@ package neureka.backend.standard.operations.function;
 
 import neureka.calculus.Function;
 
+/**
+ *  The GELU activation function is based on the standard Gaussian cumulative distribution function
+ *  and is defined as {@code x Φ( x )} and implemented as {@code x * sigmoid(x * 1.702)}.
+ *  The GELU non-linearity weighs inputs by their percentile,
+ *  rather than gates inputs by their sign as in ReLUs ( x 1 x > 0 ).
+ *  Consequently, the GELU can be thought of as a smoother ReLU.
+ */
 public class GeLU extends AbstractActivationOperation
 {
-    private static double MOD_F64 = 1.702;
-    private static float  MOD_F32 = 1.702f;
+    private static final double MOD_F64 = 1.702;
+    private static final float  MOD_F32 = 1.702f;
 
     public GeLU() { super( "gelu" ); }
 

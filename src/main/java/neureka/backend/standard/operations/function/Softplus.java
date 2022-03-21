@@ -2,7 +2,10 @@ package neureka.backend.standard.operations.function;
 
 import neureka.calculus.Function;
 
-
+/**
+ *  SoftPlus is a smooth approximation to the ReLU function and can be used
+ *  to constrain the output of a machine to always be positive.
+ */
 public final class Softplus extends AbstractActivationOperation
 {
     public Softplus() { super( "softplus" ); }

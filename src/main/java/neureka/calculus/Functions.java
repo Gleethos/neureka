@@ -1,5 +1,7 @@
 package neureka.calculus;
 
+import neureka.backend.standard.operations.function.Tanh;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -187,11 +189,23 @@ public class Functions {
     public final Function fastTanh() { return _fastTanh; }
 
     /**
+     *  The softsign function, defined as {@code x / ( 1 + Math.abs( x ) )},
+     *  is a computationally cheap 0 centered activation function
+     *  which rescales the inputs between -1 and 1, very much like the {@link Tanh} function.
+     *  The softsign function converges polynomially and is computationally cheaper than the
+     *  tanh function which converges exponentially.
+     *
      * @return A very fast quasi tanh {@link Function} based on: {@code x / ( 1 + Math.abs( x ) )}.
      */
     public final Function getSoftsign() { return _softsign; }
 
     /**
+     *  The softsign function, defined as {@code x / ( 1 + Math.abs( x ) )},
+     *  is a computationally cheap 0 centered activation function
+     *  which rescales the inputs between -1 and 1, very much like the {@link Tanh} function.
+     *  The softsign function converges polynomially and is computationally cheaper than the
+     *  tanh function which converges exponentially.
+     *
      * @return A very fast quasi tanh {@link Function} based on: {@code x / ( 1 + Math.abs( x ) )}.
      */
     public final Function softsign() { return _softsign; }
@@ -287,11 +301,17 @@ public class Functions {
     public final Function cos() { return _cos; }
 
     /**
+     *  SoftPlus is a smooth approximation to the ReLU function and can be
+     *  used to constrain the output of a machine to always be positive.
+     *
      * @return A softplus {@link Function} based on: {@code Math.log( 1 + Math.exp( x ) )}.
      */
     public final Function getSoftplus() { return _softplus; }
 
     /**
+     *  SoftPlus is a smooth approximation to the ReLU function and can be
+     *  used to constrain the output of a machine to always be positive.
+     *
      * @return A softplus {@link Function} based on: {@code Math.log( 1 + Math.exp( x ) )}.
      */
     public final Function softplus() { return _softplus; }
