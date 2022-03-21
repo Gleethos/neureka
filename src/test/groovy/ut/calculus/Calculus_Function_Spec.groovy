@@ -143,6 +143,8 @@ class Calculus_Function_Spec extends Specification {
             Neureka.get().backend.function.silu          || 'silu(I[0])'
             Neureka.get().backend.function.gelu()        || 'gelu(I[0])'
             Neureka.get().backend.function.gelu          || 'gelu(I[0])'
+            Neureka.get().backend.function.selu()        || 'selu(I[0])'
+            Neureka.get().backend.function.selu          || 'selu(I[0])'
 
     }
 

@@ -2,6 +2,17 @@ package neureka.backend.standard.operations.function;
 
 import neureka.calculus.Function;
 
+/**
+ * The Scaled Exponential Linear Unit, or SELU, is an activation
+ * functions that induce self-normalizing properties.
+ * The SELU activation function is implemented as:
+ * <i>{@code
+ *      if      ( x >  0 ) return SCALE * x;
+ *      else if ( x <= 0 ) return SCALE * ALPHA * (Math.exp(x) - 1);
+ *      else               return Float.NaN;
+ * }</i><br>
+ * ...where {@code ALPHA == 1.6733} and {@code SCALE == 1.0507}.
+ */
 public class SeLU extends AbstractActivationOperation
 {
     private static final double ALPHA = 1.6732632423543772848170429916717;

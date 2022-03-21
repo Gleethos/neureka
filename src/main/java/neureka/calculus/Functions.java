@@ -44,6 +44,7 @@ public class Functions {
     private final Function _softplus;
     private final Function _silu; // Also known as swish!
     private final Function _gelu;
+    private final Function _selu;
 
     public Functions( boolean doingAD ) {
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
@@ -81,7 +82,8 @@ public class Functions {
         _cos  = Function.of("cos(I[0])",                       doingAD );
         _softplus  = Function.of("softplus(I[0])",             doingAD );
         _silu  = Function.of("silu(I[0])",                     doingAD );
-        _gelu  = Function.of("gelu(I[0])",                              doingAD );
+        _gelu  = Function.of("gelu(I[0])",                     doingAD );
+        _selu  = Function.of("selu(I[0])",                     doingAD );
     }
 
     public final Function getDimTrim() { return _dimTrim; }
@@ -346,6 +348,35 @@ public class Functions {
      */
     public final Function gelu() { return _gelu; }
 
+    /**
+     * The Scaled Exponential Linear Unit, or SELU, is an activation
+     * functions that induce self-normalizing properties.
+     * The SELU activation function is implemented as:
+     * <i>{@code
+     *      if      ( x >  0 ) return SCALE * x;
+     *      else if ( x <= 0 ) return SCALE * ALPHA * (Math.exp(x) - 1);
+     *      else               return Float.NaN;
+     * }</i><br>
+     * ...where {@code ALPHA == 1.6733} and {@code SCALE == 1.0507}.
+     *
+     * @return A SeLU {@link Function}.
+     */
+    public final Function getSelu() { return _selu; }
+
+    /**
+     * The Scaled Exponential Linear Unit, or SELU, is an activation
+     * functions that induce self-normalizing properties.
+     * The SELU activation function is implemented as:
+     * <i>{@code
+     *          if      ( x >  0 ) return SCALE * x;
+     *          else if ( x <= 0 ) return SCALE * ALPHA * Math.exp(x);
+     *          else               return Double.NaN;
+     * }</i><br>
+     * ...where {@code ALPHA == 1.6733} and {@code SCALE == 1.0507}.
+     *
+     * @return A SeLU {@link Function}.
+     */
+    public final Function selu() { return _selu; }
 
 
     @Override
