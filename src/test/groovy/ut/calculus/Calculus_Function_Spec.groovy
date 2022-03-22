@@ -2,9 +2,12 @@ package ut.calculus
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.calculus.Function
+import neureka.calculus.Functions
 import neureka.calculus.args.Args
 import spock.lang.Specification
+
+import java.util.function.Function
+import java.util.function.Supplier
 
 class Calculus_Function_Spec extends Specification {
 
@@ -106,45 +109,50 @@ class Calculus_Function_Spec extends Specification {
     }
 
     def 'The library context exposes a set of useful functions.'(
-            Function function
+            String expected,
+            Function<Functions, neureka.calculus.Function> fun
     ) {
         expect :
-            function.toString() == expected
+            fun.apply(Neureka.get().backend.function).toString() == expected
+            !fun.apply(Neureka.get().backend.function).isDoingAD()
+        and :
+            fun.apply(Neureka.get().backend.autogradFunction).toString() == expected
+            fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()
         where :
-            function                                     || expected
-            Neureka.get().backend.function.ln            || 'ln(I[0])'
-            Neureka.get().backend.function.ln()          || 'ln(I[0])'
-            Neureka.get().backend.function.gaus          || 'gaus(I[0])'
-            Neureka.get().backend.function.gaus()        || 'gaus(I[0])'
-            Neureka.get().backend.function.fastGaus      || 'fast_gaus(I[0])'
-            Neureka.get().backend.function.fastGaus()    || 'fast_gaus(I[0])'
-            Neureka.get().backend.function.sigmoid       || 'sig(I[0])'
-            Neureka.get().backend.function.sigmoid()     || 'sig(I[0])'
-            Neureka.get().backend.function.tanh          || 'tanh(I[0])'
-            Neureka.get().backend.function.tanh()        || 'tanh(I[0])'
-            Neureka.get().backend.function.fastTanh      || 'fast_tanh(I[0])'
-            Neureka.get().backend.function.fastTanh()    || 'fast_tanh(I[0])'
-            Neureka.get().backend.function.softsign      || 'softsign(I[0])'
-            Neureka.get().backend.function.softsign()    || 'softsign(I[0])'
-            Neureka.get().backend.function.softsign      || 'softsign(I[0])'
-            Neureka.get().backend.function.quad()        || 'quad(I[0])'
-            Neureka.get().backend.function.quad          || 'quad(I[0])'
-            Neureka.get().backend.function.relu()        || 'relu(I[0])'
-            Neureka.get().backend.function.relu          || 'relu(I[0])'
-            Neureka.get().backend.function.abs()         || 'abs(I[0])'
-            Neureka.get().backend.function.abs           || 'abs(I[0])'
-            Neureka.get().backend.function.sin()         || 'sin(I[0])'
-            Neureka.get().backend.function.sin           || 'sin(I[0])'
-            Neureka.get().backend.function.cos()         || 'cos(I[0])'
-            Neureka.get().backend.function.cos           || 'cos(I[0])'
-            Neureka.get().backend.function.softplus()    || 'softplus(I[0])'
-            Neureka.get().backend.function.softplus      || 'softplus(I[0])'
-            Neureka.get().backend.function.silu()        || 'silu(I[0])'
-            Neureka.get().backend.function.silu          || 'silu(I[0])'
-            Neureka.get().backend.function.gelu()        || 'gelu(I[0])'
-            Neureka.get().backend.function.gelu          || 'gelu(I[0])'
-            Neureka.get().backend.function.selu()        || 'selu(I[0])'
-            Neureka.get().backend.function.selu          || 'selu(I[0])'
+             expected          || fun
+             'ln(I[0])'        || {Functions it -> it.ln            }
+             'ln(I[0])'        || {Functions it -> it.ln()          }
+             'gaus(I[0])'      || {Functions it -> it.gaus          }
+             'gaus(I[0])'      || {Functions it -> it.gaus()        }
+             'fast_gaus(I[0])' || {Functions it -> it.fastGaus      }
+             'fast_gaus(I[0])' || {Functions it -> it.fastGaus()    }
+             'sig(I[0])'       || {Functions it -> it.sigmoid       }
+             'sig(I[0])'       || {Functions it -> it.sigmoid()     }
+             'tanh(I[0])'      || {Functions it -> it.tanh          }
+             'tanh(I[0])'      || {Functions it -> it.tanh()        }
+             'fast_tanh(I[0])' || {Functions it -> it.fastTanh      }
+             'fast_tanh(I[0])' || {Functions it -> it.fastTanh()    }
+             'softsign(I[0])'  || {Functions it -> it.softsign      }
+             'softsign(I[0])'  || {Functions it -> it.softsign()    }
+             'softsign(I[0])'  || {Functions it -> it.softsign      }
+             'quad(I[0])'      || {Functions it -> it.quad()        }
+             'quad(I[0])'      || {Functions it -> it.quad          }
+             'relu(I[0])'      || {Functions it -> it.relu()        }
+             'relu(I[0])'      || {Functions it -> it.relu          }
+             'abs(I[0])'       || {Functions it -> it.abs()         }
+             'abs(I[0])'       || {Functions it -> it.abs           }
+             'sin(I[0])'       || {Functions it -> it.sin()         }
+             'sin(I[0])'       || {Functions it -> it.sin           }
+             'cos(I[0])'       || {Functions it -> it.cos()         }
+             'cos(I[0])'       || {Functions it -> it.cos           }
+             'softplus(I[0])'  || {Functions it -> it.softplus()    }
+             'softplus(I[0])'  || {Functions it -> it.softplus      }
+             'silu(I[0])'      || {Functions it -> it.silu()        }
+             'silu(I[0])'      || {Functions it -> it.silu          }
+             'gelu(I[0])'      || {Functions it -> it.gelu()        }
+             'gelu(I[0])'      || {Functions it -> it.gelu          }
+             'selu(I[0])'      || {Functions it -> it.selu()        }
+             'selu(I[0])'      || {Functions it -> it.selu          }
 
     }
 
