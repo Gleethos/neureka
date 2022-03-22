@@ -25,13 +25,13 @@ public final class Tanh extends AbstractActivationOperation
 
     @Override protected float _activate( float x ) { return (float) (2 / ( 1 + Math.exp( -x * 2 ) ) - 1); }
 
-    @Override protected double _derive( double x ) { return  1 - Math.pow( _tanh( x ), 2 ); }
+    @Override protected double _derive( double x ) { return  1 - Math.pow( tanh( x ), 2 ); }
 
-    @Override protected float _derive( float x ) { return (float) (1 - Math.pow( _tanh( x ), 2 )); }
+    @Override protected float _derive( float x ) { return (float) (1 - Math.pow( tanh( x ), 2 )); }
 
-    private static double _tanh( double x ) { return 2 / ( 1 + Math.exp( -x * 2 ) ) - 1; }
+    public static double tanh( double x ) { return 2 / ( 1 + Math.exp( -x * 2 ) ) - 1; }
 
-    private static float _tanh( float x ) { return (float) (2 / ( 1 + Math.exp( -x * 2 ) ) - 1); }
+    public static float tanh( float x ) { return (float) (2 / ( 1 + Math.exp( -x * 2 ) ) - 1); }
 
 }
 

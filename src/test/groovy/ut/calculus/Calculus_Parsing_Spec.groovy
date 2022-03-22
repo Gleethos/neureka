@@ -66,7 +66,7 @@ class Calculus_Parsing_Spec extends Specification
             "((tanh(i0)"                                || "tanh(I[0])"
             '($$(gaus(i0*()'                            || "gaus(I[0] * 0.0)"
             "rrlu(i0)"                                  || "relu(I[0])"
-            "th(i0)*gas(i0+I1)"                         || "(tanh(I[0]) * gaus(I[0] + I[1]))"
+            "th(i0)*gaaus(i0+I1)"                       || "(tanh(I[0]) * gaus(I[0] + I[1]))"
             "dimtrim(I[0])"                             || "dimtrim(I[0])"
             "add(I[0], 3, 3/I[1])"                      || "(I[0] + 3.0 + (3.0 / I[1]))"
             "multiply(1, 4, -2, I[1])"                  || "(1.0 * 4.0 * -2.0 * I[1])"

@@ -249,7 +249,7 @@ public class ParseUtil
         for (int i = 0; i< Neureka.get().backend().size(); i++ ) {
             double s = similarity( expression, Neureka.get().backend().getOperation( i ).getOperator() );
             if ( largest == -1 ) largest = s;
-            else if (s > largest) {
+            else if ( s > largest ) {
                 best = i;
                 largest = s;
             }

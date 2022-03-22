@@ -269,6 +269,23 @@ class Calculus_Stress_Test extends Specification
         Double | 'selu(i0)'       | true   || [1.0507009873554805, 0.8645619513449402, 1.0507009873554805] as double[]
         Float  | 'selu(i0)'       | true   || [1.050701, 0.864562, 1.050701] as float[]
         Integer| 'selu(i0)'       | true   || [0, 1, 0] as int[]
+
+        Double | 'gatu(i0)'       | false  || [0.9999999999724318, -0.34306006539262235, 0.9813017567906377] as double[]
+        Float  | 'gatu(i0)'       | false  || [1.0, -0.34306008, 0.9813018] as float[]
+        Integer| 'gatu(i0)'       | false  || [-1, 1, -1] as int[]
+
+        Double | 'gatu(i0)'       | true   || [8.91084539489384E-10, 1.3334362950250542, 0.19541950892083282] as double[]
+        Float  | 'gatu(i0)'       | true   || [0.0, 1.3334364, 0.19541931] as float[]
+        Integer| 'gatu(i0)'       | true   || [0, 0, 0] as int[]
+
+        Double | 'gasu(i0)'       | false  || [0.9259465197053056, -0.2633824974845539, 0.6998385035320221] as double[]
+        Float  | 'gasu(i0)'       | false  || [0.92594653, -0.2633825, 0.6998385] as float[]
+        Integer| 'gasu(i0)'       | false  || [-1, 1, -1] as int[]
+
+        Double | 'gasu(i0)'       | true   || [0.08862831427395856, 0.8200403847459871, 0.47525473491026016] as double[]
+        Float  | 'gasu(i0)'       | true   || [0.0886283, 0.8200404, 0.47525474] as float[]
+        Integer| 'gasu(i0)'       | true   || [0, 0, 0] as int[]
+
     }
 
 
