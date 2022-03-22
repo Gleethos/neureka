@@ -149,8 +149,18 @@ public final class DataConverter
         _set( List.class, long[].class,   thing -> thing.stream().mapToLong(   i -> (long)   i ).toArray() );
 
         _set( BigInteger.class, Double.class, BigInteger::doubleValue );
+        _set( BigInteger.class, Float.class, BigInteger::floatValue );
+        _set( BigInteger.class, Long.class, BigInteger::longValue );
+        _set( BigInteger.class, Integer.class, BigInteger::intValue );
+        _set( BigInteger.class, Short.class, BigInteger::shortValue );
+        _set( BigInteger.class, Byte.class, BigInteger::byteValue );
 
         _set( BigDecimal.class, Double.class, BigDecimal::doubleValue );
+        _set( BigDecimal.class, Float.class, BigDecimal::floatValue );
+        _set( BigDecimal.class, Long.class, BigDecimal::longValue );
+        _set( BigDecimal.class, Integer.class, BigDecimal::intValue );
+        _set( BigDecimal.class, Short.class, BigDecimal::shortValue );
+        _set( BigDecimal.class, Byte.class, BigDecimal::byteValue );
 
         _set( Integer.class, Double.class, Integer::doubleValue );
         _set( Integer.class, Float.class,  Integer::floatValue );
