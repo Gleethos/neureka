@@ -27,6 +27,8 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                     int offset = ( tensors.length == 2 ? 0 : 1 );
                     if ( tensors[1+offset].size() > 1 && !tensors[1+offset].isVirtual() ) return false;
                     return
+                        (tensors.length == 2 && tensors[0] == null && tensors[1] != null)
+                        ||
                         //tensors[1+offset].shape().stream().allMatch( d -> d == 1 )
                         //||
                         tensors[offset].shape().equals(tensors[1+offset].shape());
@@ -54,7 +56,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
     }
 
 
-    public String getKernelSource() {
+    public static String getKernelSource() {
         return Neureka.get().utility().readResource("kernels/scalarization_template.cl");
     }
 
