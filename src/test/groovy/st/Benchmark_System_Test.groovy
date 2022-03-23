@@ -70,7 +70,7 @@ class Benchmark_System_Test extends Specification
 
         and : 'A String instance for the result hash is being instantiated and the expected hash.'
             String hash = ""
-            String expected = "13f4f656e8035b2668cc2ca88de4e118"
+            String expected = "7084fb60f29fcce1ac96c2bee9c37b37"
 
         when : 'The benchmark script is being called...'
             Map<String,List<Double>> result = session(

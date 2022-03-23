@@ -157,9 +157,9 @@ class Calculus_Integration_Spec extends Specification
         and :
             result3.isIntermediate()
         and :
-            result1.toString() == "(5):[2.0, 1.25, 1.09E0, 5.0, 65.0]"
-            result2.toString() == "(5):[2.0, 1.25, 1.09E0, 5.0, 65.0]"
-            result3.toString() == "(5):[2.0, 1.25, 1.09E0, 5.0, 65.0]"
+            result1.toString() == "(5):[2.0, 1.25, 1.09, 5.0, 65.0]"
+            result2.toString() == "(5):[2.0, 1.25, 1.09, 5.0, 65.0]"
+            result3.toString() == "(5):[2.0, 1.25, 1.09, 5.0, 65.0]"
 
 
 

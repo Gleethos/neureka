@@ -35,14 +35,14 @@ public class BroadSystemTest
             Function tanh = new FunctionBuilder(Neureka.get().backend()).build("tanh(i0)", true);
             Function tenxx = new FunctionBuilder(Neureka.get().backend()).build("i0*100", true);
             z = tenxx.call(tanh.call(x));
-            tester.testTensor(z, new String[]{"[1]:(9.9668E0)"});
+            tester.testTensor(z, new String[]{"[1]:(9.9668)"});
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
             z.backward(Tsr.of(new int[]{1}, 1d));
-            tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0066E0)"});
-            tester.testTensor(z, new String[]{"[1]:(9.9668E0); ->d[1]:(99.0066E0)"});
+            tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0066)"});
+            tester.testTensor(z, new String[]{"[1]:(9.9668); ->d[1]:(99.0066)"});
             tester.testContains(
                     z.toString("dgc"),
-                    new String[]{"[1]:(9.9668E0); ->d[1]:(99.0066E0)"},
+                    new String[]{"[1]:(9.9668); ->d[1]:(99.0066)"},
                     "test double formatting"
             );
             tester.testContains(
@@ -57,14 +57,14 @@ public class BroadSystemTest
             Function tanh = new FunctionBuilder(Neureka.get().backend()).build("tanh(i0)", true);
             Function tenxx = new FunctionBuilder(Neureka.get().backend()).build("i0*100", true);
             z = tenxx.call(tanh.call(x));
-            tester.testTensor(z, new String[]{"[1]:(9.9668E0)"});
+            tester.testTensor(z, new String[]{"[1]:(9.9668)"});
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
             z.backward(Tsr.of(new int[]{1}, 1d));
-            tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0066E0)"});
-            tester.testTensor(z, new String[]{"[1]:(9.9668E0); ->ddeleted"});
+            tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0066)"});
+            tester.testTensor(z, new String[]{"[1]:(9.9668); ->ddeleted"});
             tester.testContains(
                     z.toString("dgc"),
-                    new String[]{"[1]:(9.9668E0); ->ddelete"},
+                    new String[]{"[1]:(9.9668); ->ddelete"},
                     "test double formatting"
             );
             tester.testContains(
@@ -167,15 +167,15 @@ public class BroadSystemTest
                 new Tsr[]{tensor1, tensor2},
                 "lig(tanh(I[0]*I[1]*2)*I[1])",
                 new String[]{
-                        "[2]:(4.01815E0, 4.01815E0); ",
-                        "=>d|[ [2]:(3.92806E0, 3.92806E0) ]|" +
-                                ":t{ [2]:(0.99999E0, 0.99999E0); ",
-                                        "=>d|[ [2]:(202.505E-15, 202.505E-15) ]|" +
+                        "[2]:(4.01815, 4.01815); ",
+                        "=>d|[ [2]:(3.92806, 3.92806) ]|" +
+                                ":t{ [2]:(0.99999, 0.99999); ",
+                                        "=>d|[ [2]:(202.505e-15, 202.505e-15) ]|" +
                                                 ":t{ [2]:(4.0, 4.0) }",
-                                        "=>d|[ [2]:(405.009E-15, 405.009E-15) ]|" +
+                                        "=>d|[ [2]:(405.009e-15, 405.009e-15) ]|" +
                                                 ":t{ [2]:(2.0, 2.0) }",
                                 "}, ",
-                        "=>d|[ [2]:(0.98201E0, 0.98201E0) ]|" +
+                        "=>d|[ [2]:(0.98201, 0.98201) ]|" +
                                 ":t{ [2]:(4.0, 4.0) }"
                 }
         );
@@ -233,7 +233,7 @@ public class BroadSystemTest
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1},
                 "cos(tanh(lig(i0)))",
-                new String[]{"[2]:(0.64856E0, 0.56366E0); =>d|[ [2]:(-0.14000E0, -0.04020E0) ]|:t{ [2]:(1.0, 2.0) }"}
+                new String[]{"[2]:(0.64856, 0.56366); =>d|[ [2]:(-0.14000, -0.04020) ]|:t{ [2]:(1.0, 2.0) }"}
         );
         //---
         //=====================

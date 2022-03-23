@@ -95,7 +95,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             Tsr y = ( s * 4 ) ^ 1.5
 
         then :
-             y.toString() == '(1x1):[22.6274E0]; ->d(1x1):[16.9706E0]'
+             y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'
 
         where:
             device << [ Device.find('gpu'), CPU.get() ]

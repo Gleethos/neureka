@@ -196,9 +196,9 @@ class Tensor_IO_Spec extends Specification
     def 'Passing String seed to tensor produces expected values.'()
     {
         when : Tsr r = Tsr.of([2, 2], "jnrejn")
-        then : r.toString().contains("0.02600E0, -2.06129E0, -0.48373E0, 0.94884E0")
+        then : r.toString().contains("0.02600, -2.06129, -0.48373, 0.94884")
         when : r = Tsr.of([2, 2], "jnrejn2")
-        then : !r.toString().contains("0.02600E0, -2.06129E0, -0.48373E0, 0.94884E0")
+        then : !r.toString().contains("0.02600, -2.06129, -0.48373, 0.94884")
     }
 
     def 'Tensor value type can not be changed by passing float or double arrays to it.'()
@@ -318,7 +318,7 @@ class Tensor_IO_Spec extends Specification
             !y.isLeave()
             y.belongsToGraph()
             x.belongsToGraph()
-            y.toString().contains("[1]:(0.99932E0)")
+            y.toString().contains("[1]:(0.99932)")
     }
 
     def 'A tensor produced by the static "Tsr.Create.newRandom(shape)" has expected "random" value.'()
@@ -333,16 +333,16 @@ class Tensor_IO_Spec extends Specification
             Tsr x = Tsr.ofRandom(Double, shape)
 
         then : '...the newly created variable x is as expected!'
-            x.toString().contains("[4]:(-1.04829E0, -0.40245E0, -0.04347E0, -1.4921E0)")
+            x.toString().contains("[4]:(-1.04829, -0.40245, -0.04347, -1.4921)")
         when : 'Again using the "andSeed" method with a long seed...'
             x = Tsr.ofDoubles().withShape(shape).andSeed(106605040595L)
         then : '...the newly created variable x is as expected!'
-            x.toString().contains("[4]:(0.22266E0, 0.65678E0, -0.83154E0, 0.68019E0)")
+            x.toString().contains("[4]:(0.22266, 0.65678, -0.83154, 0.68019)")
 
         when : 'Again using the "andSeed" method with a long seed and with float as data type...'
             x = Tsr.ofFloats().withShape(shape).andSeed(106605040595L)
         then : '...the newly created variable x is as expected!'
-            x.toString().contains("[4]:(0.22266E0, 0.65678E0, -0.83154E0, 0.68019E0)")
+            x.toString().contains("[4]:(0.22266, 0.65678, -0.83154, 0.68019)")
     }
 
 

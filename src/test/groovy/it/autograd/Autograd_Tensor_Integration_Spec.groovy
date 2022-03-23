@@ -161,7 +161,7 @@ class Autograd_Tensor_Integration_Spec extends Specification
             y = Tsr.of("(2^i0^i1^i2^2", x, b, w)
         then :
             y.toString().contains("[1]:(4.0);")
-            y.toString().contains(" ->d[1]:(1.38629E0)")
+            y.toString().contains(" ->d[1]:(1.38629)")
         and : y.valueClass == type
             //TODO: add tests using more then 1 function and check if the graph is being built correctly!
         where :

@@ -491,7 +491,8 @@ public final class TsrAsString
                 vStr =  vStr.contains(".")    ? vStr : vStr.replace("E0",".0");
             }
         }
-        return vStr;
+        if ( vStr.endsWith("E0") ) vStr = vStr.substring(0, vStr.length()-2);
+        return vStr.replace("E", "e");
     }
 
     /**

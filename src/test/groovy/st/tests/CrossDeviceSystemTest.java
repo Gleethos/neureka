@@ -59,7 +59,7 @@ public class CrossDeviceSystemTest
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1}, "lig(I[0])",
                 new String[]{
-                        "[3x5]:(2.12693E0, 3.04859E0, 5.00672E0, 0.01814E0, 6.00248E0, 2.12693E0, 0.00671E0, 0.12692E0, 0.31326E0, 2.12693E0, 4.01815E0, 0.31326E0, 1.31326E0, 2.12693E0, 7.00091E0)"
+                        "[3x5]:(2.12693, 3.04859, 5.00672, 0.01814, 6.00248, 2.12693, 0.00671, 0.12692, 0.31326, 2.12693, 4.01815, 0.31326, 1.31326, 2.12693, 7.00091)"
                 });
         //===================
         tensor1 = Tsr.of(new int[]{2}, 3);
@@ -162,7 +162,7 @@ public class CrossDeviceSystemTest
         listOfTensors.add(b);
         listOfTensors.add(w);
         y = Tsr.of("(2^i0^i1^i2^2", x, b, w);
-        tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.38629E0)"});
+        tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.38629)"});
         tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
 
         //====
@@ -187,7 +187,7 @@ public class CrossDeviceSystemTest
         listOfTensors.add(w);
         y = Tsr.of("(12/i0/i1/i2/2", x, b, w);//12/3/0.5/4/2 .... 12 * 1/ (0.0625)
         //listOfTensors.add(y);
-        tester.testTensor(y, new String[]{"[1]:(1.0);", " ->d[1]:(-0.33333E0)"});
+        tester.testTensor(y, new String[]{"[1]:(1.0);", " ->d[1]:(-0.33333)"});
         tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
         //---
         //---------------------------------------------

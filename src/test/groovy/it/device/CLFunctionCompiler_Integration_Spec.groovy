@@ -64,7 +64,7 @@ class CLFunctionCompiler_Integration_Spec extends Specification {
             Tsr result = optimized( t1, t2, t3 )
 
         then : '...the result should look as follows:'
-            result.toString() == "(1):[1.6E0]"
+            result.toString() == "(1):[1.6]"
 
         and : 'We expect that the device has an underlying kernel with the following name:'
             device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")

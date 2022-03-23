@@ -122,7 +122,7 @@ class Tensor_State_Spec extends Specification
         expect : 'When we convert the tensor to a String via the flag "f" (formatted).'
             t.toString(
                     { TsrStringSettings it -> it.setHasSlimNumbers(false).setIsScientific(true).setIsCellBound(false).setIsMultiline(false).setCellSize(3) }
-            ) == "(2x3):[0.0, 0.33333E0, 0.66666E0, 1.0, 0.0, 0.33333E0]"
+            ) == "(2x3):[0.0, 0.33333, 0.66666, 1.0, 0.0, 0.33333]"
         and : 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
             t.toString(
                 { TsrStringSettings it -> it.setHasSlimNumbers(true).setIsScientific(true).setCellSize(0) }
