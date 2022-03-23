@@ -59,7 +59,7 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
                 backward ->
                     CLImplementation
                         .compiler()
-                        .arity( 3 )
+                        .arity( -1 )
                         .kernelSource( Neureka.get().utility().readResource("kernels/operator_template.cl") )
                         .activationSource( forward )
                         .differentiationSource( backward )
@@ -83,7 +83,7 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
 
     public static Functions.Builder<Fun> implementationForCPU() {
         return Functions.implementation(
-                3,
+                -1,
                 (call, pairs) ->
                     call.getDevice()
                         .getExecutor()

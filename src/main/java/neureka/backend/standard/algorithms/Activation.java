@@ -92,7 +92,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
 
     public static Functions.Builder<Fun> implementationForCPU() {
         return Functions.implementation(
-                        3,
+                        1,
                             (call, pairs) ->
                                 call.getDevice()
                                     .getExecutor()

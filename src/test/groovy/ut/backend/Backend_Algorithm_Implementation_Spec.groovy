@@ -136,6 +136,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             clExecutor.run( call )
 
         then : 'The mock objects are being called as expected.'
+            (0.._) * call.arity() >> 3
             (1.._) * call.getTsrOfType( Number.class, 0) >> tensor
             (1.._) * tensor.size() >> 0
             (1.._) * call.getDevice() >> device

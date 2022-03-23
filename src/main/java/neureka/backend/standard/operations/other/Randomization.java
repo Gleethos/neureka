@@ -68,7 +68,7 @@ public class Randomization extends AbstractOperation
                 .setImplementationFor(
                     CPU.class,
                     CPUImplementation
-                        .withArity(3)
+                        .withArity(1)
                         .andImplementation(
                             call ->
                                 call

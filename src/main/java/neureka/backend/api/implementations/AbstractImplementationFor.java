@@ -6,7 +6,7 @@ import neureka.devices.Device;
 
 public class AbstractImplementationFor< TargetDevice extends Device<?> > implements ImplementationFor<TargetDevice>
 {
-    private int _arity = -1;
+    private int _arity;
     private final ImplementationFor<TargetDevice> _lambda;
 
     public AbstractImplementationFor( ImplementationFor<TargetDevice> implementationLambda, int arity ) {
@@ -16,7 +16,14 @@ public class AbstractImplementationFor< TargetDevice extends Device<?> > impleme
 
     @Override
     public void run( ExecutionCall<TargetDevice> call ) {
-        //if (call.size() != _arity) System.out.println(call.getOperation().getFunction()+ call.getImplementation().getName()+_arity+"-"+call.size());
+        if ( _arity >= 0 ) {
+            int arity1 = call.arity();
+            int arity2 = arity1 - 1; // The first tensor might be the output!
+            if (arity1 != _arity && arity2 != _arity)
+                throw new IllegalArgumentException(
+                    "Expected arity "+_arity+" or "+(_arity + 1)+", but encountered arity "+arity1+" for execution call '"+call+"'."
+                );
+        }
         //assert call.size() == _arity ;
         _lambda.run( call );
     }
