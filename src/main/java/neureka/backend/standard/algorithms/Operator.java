@@ -13,24 +13,20 @@ import neureka.calculus.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
+import neureka.ndim.NDimensional;
 import neureka.ndim.iterator.NDIterator;
 import org.jetbrains.annotations.Contract;
-
-import java.util.List;
 
 public final class Operator extends AbstractFunctionalAlgorithm<Operator>
 {
     public Operator( RecursiveExecutor finalExecutor ) {
         super("operator");
         setIsSuitableFor(
-            call -> {
-                List<Integer> shape = ( call.input( 0 ) == null ) ? call.input( 1 ).shape() : call.input( 0 ).shape();
-                int size = shape.stream().reduce(1, ( x, y ) -> x * y );
-                return call.validate()
-                        .allNotNull( t -> t.size() == size && shape.equals( t.shape() ) )
-                        .allNotNull( t -> t.getDataType().typeClassImplements( NumericType.class ) )
-                        .basicSuitability();
-            }
+            call -> call.validate()
+                    .allNotNullHaveSame(NDimensional::size)
+                    .allNotNullHaveSame(NDimensional::shape)
+                    .allNotNull( t -> t.getDataType().typeClassImplements( NumericType.class ) )
+                    .basicSuitability()
         );
         setCanPerformBackwardADFor( call -> true );
         setCanPerformForwardADFor( call -> true );

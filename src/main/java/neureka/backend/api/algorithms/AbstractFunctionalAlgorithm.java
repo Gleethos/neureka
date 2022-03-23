@@ -4,6 +4,7 @@ package neureka.backend.api.algorithms;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
+import neureka.backend.api.Call;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.*;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 /**
  *  This is the base class for implementations of the {@link Algorithm} interface.

@@ -13,6 +13,7 @@ import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
+import neureka.ndim.NDimensional;
 import org.jetbrains.annotations.Contract;
 
 abstract class AbstractActivationOperation extends AbstractOperation {
@@ -51,14 +52,7 @@ abstract class AbstractActivationOperation extends AbstractOperation {
             new Scalarization()
             .setCanPerformBackwardADFor( call -> true )
             .setCanPerformForwardADFor(
-                call -> {
-                    Tsr<?> last = null;
-                    for ( Tsr<?> t : call.inputs() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
-                }
+                call -> call.validate().allNotNullHaveSame(NDimensional::shape).isValid()
             )
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
@@ -84,22 +78,22 @@ abstract class AbstractActivationOperation extends AbstractOperation {
             .setImplementationFor(
                 CPU.class,
                 Scalarization.implementationForCPU()
-                        .with(Fun.F64F64ToF64.triple(
-                                ( a, b ) -> _activate(b),
-                                ( a, b ) -> _derive(b), // Deriving at input 0
-                                ( a, b ) -> _derive(b)  // Deriving input 1
-                        ))
-                        .with(Fun.F32F32ToF32.triple(
-                                ( a, b ) -> _activate(b),
-                                ( a, b ) -> _derive(b), // Deriving at input 0
-                                ( a, b ) -> _derive(b)  // Deriving input 1
-                        ))
-                        .with(Fun.I32I32ToI32.triple(
-                                ( a, b ) -> _activate(b),
-                                ( a, b ) -> _derive(b), // Deriving at input 0
-                                ( a, b ) -> _derive(b)  // Deriving input 1
-                        ))
-                        .get()
+                    .with(Fun.F64F64ToF64.triple(
+                        ( a, b ) -> _activate(b),
+                        ( a, b ) -> _derive(b), // Deriving at input 0
+                        ( a, b ) -> _derive(b)  // Deriving input 1
+                    ))
+                    .with(Fun.F32F32ToF32.triple(
+                        ( a, b ) -> _activate(b),
+                        ( a, b ) -> _derive(b), // Deriving at input 0
+                        ( a, b ) -> _derive(b)  // Deriving input 1
+                    ))
+                    .with(Fun.I32I32ToI32.triple(
+                        ( a, b ) -> _activate(b),
+                        ( a, b ) -> _derive(b), // Deriving at input 0
+                        ( a, b ) -> _derive(b)  // Deriving input 1
+                    ))
+                    .get()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

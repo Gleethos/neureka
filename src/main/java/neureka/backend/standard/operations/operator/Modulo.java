@@ -19,6 +19,7 @@ import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
+import neureka.ndim.NDimensional;
 import org.jetbrains.annotations.Contract;
 
 public class Modulo extends AbstractOperation {
@@ -27,7 +28,7 @@ public class Modulo extends AbstractOperation {
     {
         super(
                 new OperationBuilder()
-                        .setIdentifier(         "modulo"    )
+                        .setIdentifier(       "modulo"    )
                         .setOperator(         "%"         )
                         .setArity(            -1          )
                         .setIsOperator(       true        )
@@ -142,11 +143,11 @@ public class Modulo extends AbstractOperation {
                 Broadcast.implementationForGPU( this.getIdentifier() )
                         .with( "value = ((int)src1) % ((int)src2);\n" )
                         .and(
-                                "if ( d == 0 ) {\n" +
-                                        "    value += (1/handle) * drain;\n" +//TODO: this is probably wrong!
-                                        "} else {\n" +
-                                        "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
-                                        "}"
+                            "if ( d == 0 ) {\n" +
+                            "    value += (1/handle) * drain;\n" +//TODO: this is probably wrong!
+                            "} else {\n" +
+                            "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
+                            "}"
                         )
             )
         );
@@ -158,14 +159,7 @@ public class Modulo extends AbstractOperation {
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor(
-                    call -> {
-                        Tsr<?> last = null;
-                        for ( Tsr<?> t : call.inputs() ) {
-                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                            last = t; // Note: shapes are cached!
-                        }
-                        return true;
-                    }
+                    call -> call.validate().allNotNullHaveSame(NDimensional::shape).isValid()
                 )
                 .setSupplyADAgentFor( getDefaultAlgorithm() )
                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
@@ -228,8 +222,6 @@ public class Modulo extends AbstractOperation {
 
     }
 
-
-
     @Contract(pure = true)
     public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {
@@ -242,8 +234,6 @@ public class Modulo extends AbstractOperation {
         }
         else return src[ 0 ].derive( inputs, d );
     }
-
-    @Contract(pure = true)
 
     @Override
     public String stringify( String[] children ) {

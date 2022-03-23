@@ -8,6 +8,7 @@ import neureka.devices.Device;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -234,6 +235,26 @@ public class Call<D>
             return this;
         }
 
+        public Validator allNotNullHaveSame( TensorProperty propertySource ) {
+            if ( !_allHaveSame( propertySource ) ) _isValid = false;
+            return this;
+        }
+
+        private boolean _allHaveSame( TensorProperty propertySource ) {
+            Object last = null;
+            boolean firstWasSet = false;
+            for ( Tsr<?> t : inputs() ) {
+                if ( t != null ) {
+                    Object current = propertySource.propertyOf(t);
+                    if ( !Objects.equals(last, current) && firstWasSet )
+                        return false;
+                    last = current; // Note: shapes are cached!
+                    firstWasSet = true;
+                }
+            }
+            return true;
+        }
+
         private boolean _allMatch( TensorCondition condition ) {
             boolean all = true;
             for ( Tsr<?> t : _tensors ) all = condition.check( t ) && all;
@@ -322,6 +343,7 @@ public class Call<D>
 
     }
 
+    public interface TensorProperty     { Object  propertyOf( Tsr<?> tensor ); }
     public interface TensorCompare      { boolean check( Tsr<?> first, Tsr<?> second ); }
     public interface TensorsCondition   { boolean check( Tsr<?>[] tensors ); }
     public interface TensorCondition    { boolean check( Tsr<?> tensor ); }
