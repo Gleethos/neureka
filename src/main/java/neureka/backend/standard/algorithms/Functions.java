@@ -8,6 +8,12 @@ import neureka.devices.host.CPU;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  A simple container for various scalar based functions, which will be used
+ *  by various algorithms like {@link Activation} and {@link Broadcast} to apply them to many elements in parallel.
+ *
+ * @param <F>
+ */
 public final class Functions<F extends Fun> {
 
     private final List<FunArray<F>> _functions = new ArrayList<>();
@@ -17,13 +23,7 @@ public final class Functions<F extends Fun> {
     ) {
         return new Builder<F>(
                 arity,
-                (call, pairs) ->
-                    call.getDevice()
-                            .getExecutor()
-                            .threaded(
-                                    call.input( 0 ).size(),
-                                    composed.get( call, pairs )
-                            )
+                composed
         );
     }
 
@@ -46,10 +46,17 @@ public final class Functions<F extends Fun> {
         private final int _arity;
 
         private Builder(
-                int arity, FunImplementation<F> composed
+                int arity, FunWorkloadFinder<F> composed
         ) {
             _arity = arity;
-            _implementation = composed;
+            _implementation =
+                    (call, pairs) ->
+                            call.getDevice()
+                                    .getExecutor()
+                                    .threaded(
+                                            call.input( 0 ).size(),
+                                            composed.get( call, pairs )
+                                    );
         }
 
         public <T extends F, P extends FunArray<T>> Builder<F> with( P fun ) {
