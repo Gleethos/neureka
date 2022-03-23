@@ -82,18 +82,8 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
     }
 
     public static Functions.Builder<Fun> implementationForCPU() {
-        return Functions.implementation(
-                -1,
-                (call, pairs) ->
-                    call.getDevice()
-                        .getExecutor()
-                        .threaded(
-                            call.getTsrOfType( Number.class, 0 ).size(),
-                            _newWorkloadFor( call, pairs )
-                        )
-            );
+        return Functions.implementation( -1, Operator::_newWorkloadFor );
     }
-
 
     private static CPU.RangeWorkload _newWorkloadFor(
             ExecutionCall<CPU> call,

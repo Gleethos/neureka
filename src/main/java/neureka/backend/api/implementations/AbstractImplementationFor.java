@@ -6,7 +6,7 @@ import neureka.devices.Device;
 
 public class AbstractImplementationFor< TargetDevice extends Device<?> > implements ImplementationFor<TargetDevice>
 {
-    private int _arity;
+    private final int _arity;
     private final ImplementationFor<TargetDevice> _lambda;
 
     public AbstractImplementationFor( ImplementationFor<TargetDevice> implementationLambda, int arity ) {

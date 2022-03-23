@@ -2,10 +2,7 @@ package neureka.backend.standard.algorithms;
 
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.implementations.AbstractImplementationFor;
-import neureka.backend.standard.algorithms.internal.Fun;
-import neureka.backend.standard.algorithms.internal.FunArray;
-import neureka.backend.standard.algorithms.internal.FunImplementation;
-import neureka.backend.standard.algorithms.internal.FunPair;
+import neureka.backend.standard.algorithms.internal.*;
 import neureka.devices.host.CPU;
 
 import java.util.ArrayList;
@@ -16,9 +13,18 @@ public final class Functions<F extends Fun> {
     private final List<FunArray<F>> _functions = new ArrayList<>();
 
     public static <F extends Fun, P extends FunPair<F>> Builder<F> implementation(
-            int arity, FunImplementation<F> composed
+            int arity, FunWorkloadFinder<F> composed
     ) {
-        return new Builder<F>( arity, composed );
+        return new Builder<F>(
+                arity,
+                (call, pairs) ->
+                    call.getDevice()
+                            .getExecutor()
+                            .threaded(
+                                    call.input( 0 ).size(),
+                                    composed.get( call, pairs )
+                            )
+        );
     }
 
     private Functions( List<FunArray<F>> fun ) {

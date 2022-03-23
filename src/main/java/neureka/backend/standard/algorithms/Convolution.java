@@ -29,18 +29,8 @@ public final class Convolution extends AbstractFunctionalAlgorithm<Convolution>
 
 
     public static Functions.Builder<Fun> implementationForCPU() {
-        return Functions.implementation(
-                    3,
-                    (call, pairs) ->
-                            call.getDevice()
-                                .getExecutor()
-                                .threaded(
-                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                        _newWorkloadFor( call, pairs )
-                                )
-                );
+        return Functions.implementation( 3, Convolution::_newWorkloadFor );
     }
-
 
     private static CPU.RangeWorkload _newWorkloadFor(
             ExecutionCall<CPU> call,
