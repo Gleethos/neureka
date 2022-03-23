@@ -75,7 +75,7 @@ public class AssignLeft extends AbstractOperation
                 CLImplementation
                     .compiler()
                     .arity( 2 )
-                    .kernelSource( scalarization.getKernelSource() )
+                    .kernelSource( Scalarization.getKernelSource() )
                     .activationSource( "output = value;\n" )
                     .differentiationSource( "output = value;\n" )
                     .kernelPostfix( this.getIdentifier() )
@@ -112,7 +112,6 @@ public class AssignLeft extends AbstractOperation
                     int offset = ( call.input( 0 ) == null ) ? 1 : 0;
                     call.input( offset ).getUnsafe().incrementVersion(call);
                     return ExecutionCall.of( call.input(offset), call.input(1+offset) )
-                                        .andArgs(Arg.DerivIdx.of(-1))
                                         .running(Neureka.get().backend().getOperation("idy"))
                                         .on( call.getDevice() );
                 }

@@ -186,7 +186,7 @@ public class Multiplication extends AbstractOperation
                 CLImplementation
                     .compiler()
                     .arity( 3 )
-                    .kernelSource( scalarization.getKernelSource() )
+                    .kernelSource( Scalarization.getKernelSource() )
                     .activationSource( "output = input1 * value;\n" )
                     .differentiationSource( "if ( d == 0 ) {output = value;}else{output = input1;}\n" )
                     .kernelPostfix( this.getIdentifier() )

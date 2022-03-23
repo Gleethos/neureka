@@ -188,7 +188,7 @@ public class Addition extends AbstractOperation {
                 CLImplementation
                     .compiler()
                     .arity( 3 )
-                    .kernelSource( scalarization.getKernelSource() )
+                    .kernelSource( Scalarization.getKernelSource() )
                     .activationSource( "output = input1 + value;\n" )
                     .differentiationSource( "output = 1;\n" )
                     .kernelPostfix( this.getIdentifier() )

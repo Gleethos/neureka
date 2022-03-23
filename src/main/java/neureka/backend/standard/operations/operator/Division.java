@@ -187,7 +187,7 @@ public class Division extends AbstractOperation
                 CLImplementation
                     .compiler()
                     .arity( 3 )
-                    .kernelSource( scalarization.getKernelSource() )
+                    .kernelSource( Scalarization.getKernelSource() )
                     .activationSource( "output = input1 / value;\n" )
                     .differentiationSource(
                         "if (d==0) {                                       \n" +

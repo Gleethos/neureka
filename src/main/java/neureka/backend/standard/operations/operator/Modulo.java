@@ -192,7 +192,7 @@ public class Modulo extends AbstractOperation {
                 CLImplementation
                     .compiler()
                     .arity( 3 )
-                    .kernelSource( scalarization.getKernelSource() )
+                    .kernelSource( Scalarization.getKernelSource() )
                     .activationSource( "output = ((int)input1) % ((int)value);     \n" )
                     .differentiationSource(
                         "if ( d == 0 ) {                               \n" +
