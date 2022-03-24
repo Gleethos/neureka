@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.standard.algorithms.ScalarActivation;
 import neureka.backend.standard.algorithms.ScalarBroadcast;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.algorithms.internal.Fun;
@@ -57,24 +58,6 @@ abstract class AbstractActivationOperation extends AbstractOperation {
             )
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
-            .setCallPreparation(
-                call -> {
-                    Device device = call.getDevice();
-                    if ( call.input( 0 ) == null ) // Creating a new tensor:
-                    {
-                        int[] shp = call.input( 1 ).getNDConf().shape();
-                        Tsr<?> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
-                        output.setIsVirtual( false );
-                        try {
-                            device.store( output );
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        call.setInput( 0, output );
-                    }
-                    return call;
-                }
-            )
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
@@ -83,6 +66,25 @@ abstract class AbstractActivationOperation extends AbstractOperation {
                         .with(Fun.F32ToF32.pair(this::_activate, this::_derive))
                         .with(Fun.I32ToI32.pair(this::_activate, this::_derive))
                         .get()
+            )
+        );
+
+        setAlgorithm(
+            new ScalarActivation(Fun.F64ToF64.pair(this::_activate, this::_derive))
+            .setCanPerformBackwardADFor( call -> true )
+            .setCanPerformForwardADFor(
+                call -> call.validate().allNotNullHaveSame(NDimensional::shape).isValid()
+            )
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
+            .buildFunAlgorithm()
+            .setImplementationFor(
+                    CPU.class,
+                    ScalarActivation.implementationForCPU()
+                            .with(Fun.F64ToF64.pair(this::_activate, this::_derive))
+                            .with(Fun.F32ToF32.pair(this::_activate, this::_derive))
+                            .with(Fun.I32ToI32.pair(this::_activate, this::_derive))
+                            .get()
             )
         );
     }

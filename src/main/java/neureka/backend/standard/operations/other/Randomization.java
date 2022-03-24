@@ -92,6 +92,7 @@ public class Randomization extends AbstractOperation
 
     private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall<?> call ) {
         Tsr<?> tensor = call.input( 0 );
+        tensor.setIsVirtual(false);
         Class<?> type = tensor.getValueClass();
         boolean isSimple = tensor.getNDConf().isSimple();
         long seed = call.getValOf(Arg.Seed.class);

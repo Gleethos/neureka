@@ -547,6 +547,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public <T extends Number> Device<Number> write(Tsr<T> tensor, Object value) {
+        if ( value instanceof Number ) {
+            if      ( tensor.getValueClass() == Float.class  ) this.write( tensor, new float[]{((Number) value).floatValue()} );
+            else if ( tensor.getValueClass() == Double.class ) this.write( tensor, new double[]{((Number) value).doubleValue()} );
+            else throw new IllegalArgumentException("Tensor type '"+tensor.getValueClass().getSimpleName()+"' not supported.");
+        }
         if (value instanceof double[]) return overwrite64((Tsr<Number>) tensor, (double[]) value);
         else if (value instanceof float[]) return overwrite32((Tsr<Number>) tensor, (float[]) value);
         return this;

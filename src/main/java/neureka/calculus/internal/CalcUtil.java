@@ -314,7 +314,6 @@ public class CalcUtil
 
                         Device<?> device = call.getDevice();
                         device.approve( call );
-                        call.input( 0 ).setIsVirtual( false );
 
                         Algorithm<?> algorithm = call.getAlgorithm();
                         if ( algorithm == null ) {

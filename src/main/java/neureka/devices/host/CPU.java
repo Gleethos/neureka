@@ -234,7 +234,7 @@ public class CPU extends AbstractDevice<Number>
         public void threaded( int workloadSize, RangeWorkload workload )
         {
             int cores = get().getCoreCount();
-            cores = ( cores == 0 ) ? 1 : cores;
+            cores = ( cores == 0 ? 1 : cores );
             if ( workloadSize >= _MIN_THREADED_WORKLOAD_SIZE && ( ( workloadSize / cores ) >= _MIN_WORKLOAD_PER_THREAD) ) {
                 threaded(0, workloadSize, workload );
             }

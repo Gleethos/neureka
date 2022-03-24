@@ -145,6 +145,8 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         Tsr<Number> t1_src = call.getTsrOfType( Number.class, 1 );
         Tsr<Number> t2_src = call.getTsrOfType( Number.class, 2 );
 
+        t0_drn.setIsVirtual(false);
+
         Class<?> typeClass = t0_drn.getValueClass();
 
         int d = call.getDerivativeIndex();

@@ -2895,7 +2895,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     private void _setDataAt( int i, V o ) {
-        if ( getData() instanceof Object[] ) ( (Object[]) getData() )[ i ] = o;
+        if ( this.isOutsourced() ) {
+            getDevice().write( this, o );
+        }
+        else if ( getData() instanceof Object[] ) ( (Object[]) getData() )[ i ] = o;
         else if ( getData() instanceof float[]  ) ( (float[])  getData() )[ i ] = (Float)     o;
         else if ( getData() instanceof double[] ) ( (double[]) getData() )[ i ] = (Double)    o;
         else if ( getData() instanceof int[]    ) ( (int[])    getData() )[ i ] = (Integer)   o;
@@ -3260,13 +3263,24 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     public <A> A getValueAs( Class<A> arrayTypeClass ) {
-        if ( arrayTypeClass == double[].class ) return (A) _value64();
-        if ( arrayTypeClass == float[].class  ) return (A) _value32();
-        if ( this.isVirtual() )
+        Object data;
+        DataType type;
+        if ( arrayTypeClass == double[].class ) {
+            data = _value64();
+            type = DataType.of(Double.class);
+        } else if ( arrayTypeClass == float[].class  ) {
+            data = _value32();
+            type = DataType.of(Float.class);
+        } else {
+            data = this.getData();
+            type = this.getDataType();
+        }
+        if ( this.isVirtual() && data != null )
             return DataConverter.instance().convert(
-                        getDataType().actualize( this.getData(), this.size() ),
+                        type.actualize( data, this.size() ),
                         arrayTypeClass
             );
+        if ( data != null ) return (A) data;
         return (A) getData();
     }
 
