@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**
@@ -94,6 +95,18 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
     @SafeVarargs
     @Override
     public final Tsr<V> andFill( V... values ) {
+        LogUtil.nullArgCheck( values, "values", _dataType.getJVMTypeClass(), "Cannot fill a tensor will a value array that is null!" );
+        if ( values.length > 0 ) {
+            V first = values[0];
+            if ( values.length == 1 ) return this.all( first );
+            else if ( values.length <= 42 ) {
+                for ( V value : values ) {
+                    if ( !Objects.equals(first, value) )
+                        return _get( values );
+                }
+                return this.all( first );
+            }
+        }
         return _get( values );
     }
 
