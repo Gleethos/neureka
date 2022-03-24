@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.standard.algorithms.ScalarBroadcast;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -49,7 +50,7 @@ abstract class AbstractActivationOperation extends AbstractOperation {
         );
 
         setAlgorithm(
-            new Scalarization()
+            new ScalarBroadcast(Fun.F64ToF64.pair(this::_activate, this::_derive))
             .setCanPerformBackwardADFor( call -> true )
             .setCanPerformForwardADFor(
                 call -> call.validate().allNotNullHaveSame(NDimensional::shape).isValid()
@@ -77,47 +78,11 @@ abstract class AbstractActivationOperation extends AbstractOperation {
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
-                Scalarization.implementationForCPU()
-                    .with(Fun.F64F64ToF64.triple(
-                        ( a, b ) -> _activate(b),
-                        ( a, b ) -> _derive(b), // Deriving at input 0
-                        ( a, b ) -> _derive(b)  // Deriving input 1
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> _activate(b),
-                        ( a, b ) -> _derive(b), // Deriving at input 0
-                        ( a, b ) -> _derive(b)  // Deriving input 1
-                    ))
-                    .with(Fun.I32I32ToI32.triple(
-                        ( a, b ) -> _activate(b),
-                        ( a, b ) -> _derive(b), // Deriving at input 0
-                        ( a, b ) -> _derive(b)  // Deriving input 1
-                    ))
-                    .get()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                CLImplementation.compiler()
-                    .arity( 2 )
-                    .kernelSource( Scalarization.getKernelSource() )
-                    .activationSource( _activationCode() )
-                    .differentiationSource( _derivationCode() )
-                    .kernelPostfix( this.getIdentifier() )
-                    .execution(
-                        call -> {
-                            Tsr<Number> t = call.getTsrOfType( Number.class, 0 );
-                            int gwz = t.size();
-                            call.getDevice()
-                                    .getKernel(call)
-                                    .passAllOf(t)
-                                    .passAllOf(t)
-                                    .pass((float)call.getTsrOfType( Number.class, 1 ).getDataAs( double[].class )[ 0 ])
-                                    .pass(t.rank())
-                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                    .call( gwz );
-                        }
-                    )
-                    .build()
+                ScalarBroadcast.implementationForCPU()
+                        .with(Fun.F64ToF64.pair(this::_activate, this::_derive))
+                        .with(Fun.F32ToF32.pair(this::_activate, this::_derive))
+                        .with(Fun.I32ToI32.pair(this::_activate, this::_derive))
+                        .get()
             )
         );
     }

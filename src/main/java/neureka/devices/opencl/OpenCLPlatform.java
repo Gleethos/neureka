@@ -99,6 +99,7 @@ public class OpenCLPlatform {
                 "convolution_template.cl",
                 "operator_template.cl",
                 "scalarization_template.cl",
+                "scalar_broadcast.cl",
                 "utility.cl"
         };
         for ( String name : fileNames )

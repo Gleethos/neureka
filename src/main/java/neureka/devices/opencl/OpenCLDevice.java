@@ -735,6 +735,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return new KernelCaller(kernel, _queue);
     }
 
+    public KernelCaller getKernel(String name) {
+        cl_kernel kernel = _platform.getKernel( name );
+        if ( kernel == null )
+            throw new IllegalStateException("No kernel found with name '" + name + "'.");
+        return new KernelCaller(kernel, _queue);
+    }
+
     @Override
     protected boolean _approveExecutionOf(Tsr<?>[] tensors, int d, Operation type) {
         return true;

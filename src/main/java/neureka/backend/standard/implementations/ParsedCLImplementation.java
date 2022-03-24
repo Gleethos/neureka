@@ -43,7 +43,9 @@ public class ParsedCLImplementation extends CLImplementation {
     ) {
         super( lambda, arity );
         boolean templateFound;
-        if (kernelSource.contains("__kernel")) {
+        if ( activationSource == null && differentiationSource == null )
+            _kernel = new KernelCode( postfix, kernelSource );
+        else if (kernelSource.contains("__kernel")) {
             String[] parts = kernelSource.split("__kernel")[ 1 ].split("\\(")[ 0 ].split(" ");
 
             templateFound = parts[parts.length - 1].contains("template");
