@@ -1,18 +1,13 @@
 package neureka.backend.standard.operations.function;
 
-import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.ScalarActivation;
 import neureka.backend.standard.algorithms.ScalarBroadcast;
-import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.algorithms.internal.Fun;
-import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
 import neureka.calculus.internal.CalcUtil;
-import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.NDimensional;
