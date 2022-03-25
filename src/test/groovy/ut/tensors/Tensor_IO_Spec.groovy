@@ -98,10 +98,10 @@ class Tensor_IO_Spec extends Specification
     {
         when : 'Instantiating a tensor using an initializer lambda...'
             Tsr t = Tsr.of(
-                    DataType.of( Double.class ),
-                    [ 2, 3 ],
-                    ( int i, int[] indices ) -> { (i - 2) as Double }
-            )
+                        DataType.of( Double.class ),
+                        [ 2, 3 ],
+                        ( int i, int[] indices ) -> { (i - 2) as Double }
+                    )
 
         then : 'The tensor has been initialized with the expected values:'
             t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"
@@ -216,6 +216,7 @@ class Tensor_IO_Spec extends Specification
         then : '...the tensor will change as expected.'
             !(x.getValue() instanceof float[])
             !(x.unsafe.data instanceof float[])
+            !(x.data instanceof float[])
             x.getValueAs( float[].class )[ 0 ]==5.0f
             x.getValueAs( double[].class )[0]==5.0d
 
@@ -227,6 +228,7 @@ class Tensor_IO_Spec extends Specification
         then : '...once again the tensor changes as expected.'
             x.getValue() instanceof double[]
             x.unsafe.data instanceof double[]
+            x.data instanceof double[]
             x.getValueAs( float[].class )[ 0 ]==4.0f
             x.getValueAs( double[].class )[0]==4.0d
 
@@ -254,6 +256,7 @@ class Tensor_IO_Spec extends Specification
         then :
             !(x.getValue() instanceof double[])
             !(x.unsafe.data instanceof double[])
+            !(x.data instanceof double[])
             x.getValueAs( float[].class )[ 0 ]==7.0f
             x.getValueAs( double[].class )[0]==7.0d
 
@@ -270,12 +273,14 @@ class Tensor_IO_Spec extends Specification
         then :
             x.getValue() instanceof float[]
             x.unsafe.data instanceof float[]
+            x.data instanceof float[]
             x.getValueAs( float[].class )[ 0 ]==3.0f
 
         when : x.unsafe.toType( Double.class )
         then :
             x.getValue() instanceof double[]
             x.unsafe.data instanceof double[]
+            x.data instanceof double[]
             x.getValueAs( float[].class )[ 0 ]==3.0f
     }
 
@@ -291,6 +296,7 @@ class Tensor_IO_Spec extends Specification
             t.shape() == shape
         and :
             t.unsafe.data == data
+            t.data == data
         and :
             t.value == data
 
@@ -414,6 +420,7 @@ class Tensor_IO_Spec extends Specification
             t.getDataAt( 1 ) == element
         and :
             t.unsafe.data == expected
+            t.data == expected
 
         when :
             t = Tsr.of(type).withShape(shape).andFill(data)
@@ -423,6 +430,7 @@ class Tensor_IO_Spec extends Specification
             t.getValueAt( 1 ) == element
         and :
             t.unsafe.data == expected
+            t.data == expected
 
         where :
             type     | shape | data                             | element        || expected
