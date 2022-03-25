@@ -7,7 +7,6 @@ import spock.lang.Specification
 
 class Tensor_Building_Spec extends Specification
 {
-
     def 'Tensors can be created fluently.'(
             Class<Object> type, Object value, Object data
     ) {
@@ -22,6 +21,7 @@ class Tensor_Building_Spec extends Specification
 
         and : '...also it will contain the expected data.'
             t.unsafe.data == data
+            t.data.length == 6
 
         and : 'The tensor will have the shape we passed to the builder.'
             t.shape() == [3, 2]
@@ -47,11 +47,9 @@ class Tensor_Building_Spec extends Specification
     }
 
 
-
     def 'Range based tensors can be created fluently.'(
             Class<Object> type, Number from, Number to, double step, Object data
     ) {
-
         given : 'We create a range based Tsr instance using the fluent builder API.'
             Tsr<?> t = Tsr.of( type )
                             .withShape( 3, 2 )
@@ -62,6 +60,8 @@ class Tensor_Building_Spec extends Specification
 
         and : '...also it will contain the expected data.'
             t.unsafe.data == data
+            t.data == data
+
 
         and : 'The tensor will have the shape we passed to the builder.'
             t.shape() == [3, 2]
@@ -87,8 +87,6 @@ class Tensor_Building_Spec extends Specification
             Float.class   | 0f   as float   | 1f     as float   |   0.2f || [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]       as float[]
             Byte.class    | -5   as byte    | 6      as byte    |   2    || [-5, -3, -1, 1, 3, 5]                as byte[]
             Long.class    | -65  as long    | 45     as long    |   5    || [-65, -60, -55, -50, -45, -40]       as long[]
-
-
     }
 
     def 'Value based tensors can be created fluently.'(
@@ -105,6 +103,7 @@ class Tensor_Building_Spec extends Specification
 
         and : '...also it will contain the expected data.'
             t.unsafe.data == expected
+            t.data == expected
 
         and : 'The tensor will have the shape we passed to the builder.'
             t.shape() == [3, 2]
@@ -147,6 +146,7 @@ class Tensor_Building_Spec extends Specification
 
         and : '...also it will contain the expected data.'
             t.unsafe.data == expected
+            t.data == expected
 
         and : 'The tensor will have the shape we passed to the builder.'
             t.shape() == [3, 2]
@@ -192,6 +192,7 @@ class Tensor_Building_Spec extends Specification
 
         and : '...also it will contain the expected data.'
             t.unsafe.data == expected
+            t.data == expected
 
         and : 'The tensor will have the shape we passed to the builder.'
             t.shape() == [3, 2]
@@ -232,6 +233,7 @@ class Tensor_Building_Spec extends Specification
 
         and : '...also it will contain the expected data.'
             t.unsafe.data == data
+            t.data == data
 
         and : 'The tensor will have a one dimensional shape of the same length as the provided data array.'
             t.shape() == [values.length]
@@ -268,6 +270,7 @@ class Tensor_Building_Spec extends Specification
 
         and : '...also it will contain the expected data.'
             t.unsafe.data == data
+            t.data == data
 
         and : 'The tensor will have a one dimensional shape of 1.'
             t.shape() == [1]
