@@ -101,7 +101,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             };
         }
         if ( typeClass == Float.class ) {
-            float value = call.getTsrOfType(Number.class, 1 + offset).getDataAs(float[].class)[0];
+            float value = call.getTsrOfType(Number.class, 1 + offset).at(0).get().floatValue();
             Fun.F32F32ToF32 operation = functions.get(Fun.F32F32ToF32.class).get(call.getDerivativeIndex());
             float[] t0_value = t0_drn.getDataAs(float[].class);
             float[] t1_value = src.getDataAs(float[].class);
@@ -144,7 +144,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                 }
             };
         }
-        if ( t0_drn.getData().getClass() == Object[].class ) {
+        if ( t0_drn.getUnsafe().getData().getClass() == Object[].class ) {
             Object value = call.input( 1 + offset ).getDataAs(Object[].class)[0];
             Fun.ObjObjToObj operation = functions.get(Fun.ObjObjToObj.class).get(call.getDerivativeIndex());
             Object[] t0_value = t0_drn.getDataAs(Object[].class);

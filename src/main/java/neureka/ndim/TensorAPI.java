@@ -272,4 +272,22 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
      */
     default V getValueAt( int... indices ) { return getDataAt( getNDConf().indexOfIndices( indices ) ); }
 
+    default Access<V> at( int... indices ) {
+        return new Access<V>() {
+            @Override
+            public V get() { return getValueAt( indices ); }
+
+            @Override
+            public void set(V value) { putAt( indices, value ); }
+        };
+    }
+
+    interface Access<V> {
+
+        V get();
+
+        void set( V value );
+
+    }
+
 }

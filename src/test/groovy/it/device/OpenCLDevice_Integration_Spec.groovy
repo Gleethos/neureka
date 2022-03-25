@@ -123,12 +123,12 @@ class OpenCLDevice_Integration_Spec extends Specification
             Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)
 
         expect : 'The tensor start with having data stored within.'
-            t.data != null
+            t.unsafe.data != null
 
         when : 'The tensor is being stored on the device...'
             t.to(Device.find('first'))
         and : 'The tensor value is being fetched...'
-            def data = t.getData()
+            def data = t.unsafe.data
 
         then : 'The value variable is null.'
             data == null
@@ -522,7 +522,7 @@ class OpenCLDevice_Integration_Spec extends Specification
             Tsr B = Tsr.of( [K,N], data2    ).unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
             Tsr C = Tsr.of( [M,N], 0f ).unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
 
-            var reference = A.matMul(B).value // CPU execution for reference!
+            var reference = A.matMul(B).data // CPU execution for reference!
 
             A.to( device )
             B.to( device )
@@ -603,7 +603,7 @@ class OpenCLDevice_Integration_Spec extends Specification
                     .call( global, local )
 
         then :
-            C.value == reference // GPU should produce the same as CPU!
+            C.data == reference // GPU should produce the same as CPU!
         and :
             C.toString({it.setRowLimit(50)}) == expected
 

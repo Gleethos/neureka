@@ -112,11 +112,11 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
         if ( typeClass == Double.class )
         {
             Fun.F64ToF64 fun = funs.get(Fun.F64ToF64.class).get(d);
-            double[] t0_value = (double[]) t0_drn.getData();
+            double[] t0_value = (double[]) t0_drn.getUnsafe().getData();
 
             if ( rightTypeClass == Integer.class )
             {
-                int[] t1_value = (int[]) t1_src.getData();
+                int[] t1_value = (int[]) t1_src.getUnsafe().getData();
                 workload = (i, end) -> {
                     NDIterator t0Idx = NDIterator.of(t0_drn);
                     NDIterator t1Idx = NDIterator.of(t1_src);
@@ -160,7 +160,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
         {
             Fun.F32ToF32 fun = funs.get(Fun.F32ToF32.class).get(d);
             assert fun != null;
-            float[] t0_value = (float[]) t0_drn.getData();
+            float[] t0_value = (float[]) t0_drn.getUnsafe().getData();
             float[] t1_value = t1_src.getDataAs(float[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -186,7 +186,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
         {
             Fun.I32ToI32 fun = funs.get(Fun.I32ToI32.class).get(d);
             assert fun != null;
-            int[] t0_value = (int[]) t0_drn.getData();
+            int[] t0_value = (int[]) t0_drn.getUnsafe().getData();
             int[] t1_value = t1_src.getDataAs(int[].class);
             if ( isSimple )
                 workload = (start, end) -> {

@@ -127,14 +127,8 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
      */
     public DataType<?> getDataType() { _guardGet("data type"); return _dataType; }
 
-    /**
-     *  This returns the underlying raw data object of this tensor.
-     *  Contrary to the {@link Tsr#getValue()} ()} method, this one will
-     *  return an unbiased view on the data of this tensor.
-     *
-     * @return The raw data object underlying this tensor.
-     */
-    public Object getData() { _guardGet("data object"); return _data; }
+    protected Object _getData() { _guardGet("data object"); return _data; }
+
 
     /**
      * @return The type class of individual value items within this {@link Tsr} instance.
@@ -211,7 +205,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
     protected <T> void _initData( Filler<T> filler )
     {
         CPU.JVMExecutor executor = CPU.get().getExecutor();
-        Object data = getData();
+        Object data = _getData();
         if ( data instanceof double[] )
             executor.threaded( ( (double[]) data ).length, ( start, end ) -> {
                 for (int i = start; i < end; i++)
@@ -321,7 +315,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
                         @Override public void setConf( NDConfiguration conf    ) { nda.getUnsafe().setNDConf(   conf ); }
                         @Override public void setData( Object o                ) { nda._setData(      o  ); }
                         @Override public void allocate( int size               ) { nda._allocate(   size ); }
-                        @Override public Object getData()                        { return nda.getData();    }
+                        @Override public Object getData()                        { return nda._getData();    }
                         @Override public void setIsVirtual( boolean isVirtual )  { nda._setIsVirtual( isVirtual ); }
                     }
                 );
@@ -362,7 +356,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
             return targetType.readForeignDataFrom( iterator(), this.size() );
         }
         else
-            return DataConverter.instance().convert( getData(), newDT.getTypeClass() );
+            return DataConverter.instance().convert( _getData(), newDT.getTypeClass() );
     }
 
     /**
@@ -518,6 +512,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
          */
         Tsr<T> delete();
 
+        Object getData();
     }
 
     /**

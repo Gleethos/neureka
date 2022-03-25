@@ -60,11 +60,11 @@ class Tensor_Delete_Exception_Spec extends Specification
             t.isDeleted()
 
         when : 'Trying to access the data object...'
-            t.getData()
+            t.unsafe.getData()
 
         then : 'This should lead to a descriptive exception.'
             def exception = thrown(IllegalAccessError)
-            exception.message == "Trying to access the data object of an already deleted tensor."
+            exception.message == "Trying to access the unsafe API of an already deleted tensor."
 
     }
 

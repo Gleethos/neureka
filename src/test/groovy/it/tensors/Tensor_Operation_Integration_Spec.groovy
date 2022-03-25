@@ -155,7 +155,7 @@ class Tensor_Operation_Integration_Spec extends Specification
         then :
             r === t
         and :
-            ( r.data as float[] ) == [1.0588075, 1.4017555, 1.2537496, -1.3897222, 1.0374786, 0.743316, 1.1692946, 1.3977289] as float[]
+            ( r.unsafe.data as float[] ) == [1.0588075, 1.4017555, 1.2537496, -1.3897222, 1.0374786, 0.743316, 1.1692946, 1.3977289] as float[]
 
         when :
             r = f.callWith(Arg.Seed.of(42)).call(t)
@@ -163,7 +163,7 @@ class Tensor_Operation_Integration_Spec extends Specification
         then :
             r === t
         and :
-            ( r.data as float[] ) == [2.2639139286289724, -0.2763464310754003, 0.3719153742868813, -0.9768504740489802, 0.5154099159307729, 1.1608137295804097, 2.1905023977046336, -0.5449569795660217] as float[]
+            ( r.unsafe.data as float[] ) == [2.2639139286289724, -0.2763464310754003, 0.3719153742868813, -0.9768504740489802, 0.5154099159307729, 1.1608137295804097, 2.1905023977046336, -0.5449569795660217] as float[]
 
         where :
             type << [Double, Float]
@@ -180,7 +180,7 @@ class Tensor_Operation_Integration_Spec extends Specification
 
         when :
             f.callWith(Arg.Seed.of(-73L)).call(t)
-            var stats = new Statistics( t.data as double[] )
+            var stats = new Statistics( t.unsafe.data as double[] )
         then :
             -0.05d < stats.mean && stats.mean < 0.05d
         and :
@@ -587,7 +587,7 @@ class Tensor_Operation_Integration_Spec extends Specification
             result2.valueClass == type
 
         and : 'The data of the first (non slice) tensor should be as expected.'
-            result1.data == expected instanceof Map ? expected['r1'] : expected
+            result1.unsafe.data == expected instanceof Map ? expected['r1'] : expected
         and : 'As well the value of the slice tensor (Its data would be a sparse array).'
             result2.value == expected instanceof Map ? expected['r2'] : expected
 

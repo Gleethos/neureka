@@ -21,7 +21,7 @@ class Tensor_Building_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.data == data
+            t.unsafe.data == data
 
         and : 'The tensor will have the shape we passed to the builder.'
             t.shape() == [3, 2]
@@ -61,7 +61,7 @@ class Tensor_Building_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.data == data
+            t.unsafe.data == data
 
         and : 'The tensor will have the shape we passed to the builder.'
             t.shape() == [3, 2]
@@ -104,7 +104,7 @@ class Tensor_Building_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.data == expected
+            t.unsafe.data == expected
 
         and : 'The tensor will have the shape we passed to the builder.'
             t.shape() == [3, 2]
@@ -146,7 +146,7 @@ class Tensor_Building_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.data == expected
+            t.unsafe.data == expected
 
         and : 'The tensor will have the shape we passed to the builder.'
             t.shape() == [3, 2]
@@ -191,7 +191,7 @@ class Tensor_Building_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.data == expected
+            t.unsafe.data == expected
 
         and : 'The tensor will have the shape we passed to the builder.'
             t.shape() == [3, 2]
@@ -231,7 +231,7 @@ class Tensor_Building_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.data == data
+            t.unsafe.data == data
 
         and : 'The tensor will have a one dimensional shape of the same length as the provided data array.'
             t.shape() == [values.length]
@@ -267,7 +267,7 @@ class Tensor_Building_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.data == data
+            t.unsafe.data == data
 
         and : 'The tensor will have a one dimensional shape of 1.'
             t.shape() == [1]

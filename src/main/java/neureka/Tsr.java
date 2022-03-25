@@ -349,7 +349,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 Tsr<T> t = new Tsr<>();
                 t._setDataType( DataType.of( args[1].getClass() ) );
                 t._constructAndAllocate( (int[]) args[0], true );
-                ((Object[])t.getData())[0] = args[1];
+                ((Object[])t._getData())[0] = args[1];
                 return t;
             }
         }
@@ -1065,7 +1065,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                                 })
                     );
                 }
-            ) && getData() == null
+            ) && _getData() == null
         ) {
             _setIsVirtual( true );
             _allocate( 1 ); // Only a single value representing the rest.
@@ -1128,17 +1128,17 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 throw exception;
             }
             if ( isVirtual ) {
-                if ( getData() != null ) _virtualize();
+                if ( _getData() != null ) _virtualize();
             }
             else _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-            createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, getData() == null );
+            createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, _getData() == null );
             if ( isVirtual ) {
                 Relation<V> relation = get( Relation.class );
                 if ( relation!=null )
                     relation.foreachChild( c -> {
-                                c._setData( getData());
+                                c._setData( _getData());
                                 c.setIsVirtual( true );
                             });
             } else {
@@ -1158,7 +1158,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 throw new IllegalStateException( message );
             }
         }
-        else if ( isVirtual && getData() == null ) _allocate( 1 ); //> Only a single value representing the rest.
+        else if ( isVirtual && _getData() == null ) _allocate( 1 ); //> Only a single value representing the rest.
         return this;
     }
 
@@ -1402,6 +1402,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public final Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
 
+    public final Tsr<V> to( String deviceType ) { return this.to(Device.find(deviceType)); }
+
     /*==================================================================================================================
     |
     |       §(4) : PROPERTIES :
@@ -1419,7 +1421,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @return The truth value determining if this tensor has data.
      */
-    public boolean isEmpty() { return getData() == null && !this.isOutsourced(); }
+    public boolean isEmpty() { return _getData() == null && !this.isOutsourced(); }
 
     /**
      *  A tensor is "undefined" if it has either no {@link NDConfiguration} implementation instance
@@ -1669,7 +1671,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     {
         if ( tensor == null ) return this;
         _setDataType( tensor.getDataType() );
-        _setData( tensor.getData() );
+        _setData( tensor._getData() );
         _setNDConf( tensor.getNDConf() );
         _flags = tensor._flags;
         _transferFrom( tensor );
@@ -2647,7 +2649,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         this.setIsVirtual( false );
         Tsr<V> subset = new Tsr<>();
         subset._setDataType( this.getDataType() );
-        subset._setData( this.getData() );
+        subset._setData( _getData() );
         int[] newTranslation = getNDConf().translation();
         int[] newIndicesMap = this.getNDConf().getLayout().newTranslationFor( newShape );
 
@@ -2852,15 +2854,15 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 return (V)(Double)( (OpenCLDevice) device ).value64f( (Tsr<Number>) this, i );
             }
         }
-        else if ( getData() instanceof float[] )  return (V)(Float)  ( (float[]) getData())[ i ];
-        else if ( getData() instanceof double[] ) return (V)(Double) ( (double[]) getData())[ i ];
-        else if ( getData() instanceof short[] )  return (V)(Short)  ( (short[]) getData())[ i ];
-        else if ( getData() instanceof int[] )    return (V)(Integer)( (int[]) getData())[ i ];
-        else if ( getData() instanceof byte[] )   return (V)(Byte)   ( (byte[]) getData())[ i ];
-        else if ( getData() instanceof long[] )   return (V)(Long)   ( (long[]) getData())[ i ];
-        else if ( getData() instanceof boolean[] )return (V)(Boolean)( (boolean[]) getData())[ i ];
-        else if ( getData() instanceof char[] )   return (V)(Character)( (char[]) getData())[ i ];
-        else return ( (V[]) getData())[ i ];
+        else if ( _getData() instanceof float[] )  return (V)(Float)  ( (float[])   _getData())[ i ];
+        else if ( _getData() instanceof double[] ) return (V)(Double) ( (double[])  _getData())[ i ];
+        else if ( _getData() instanceof short[] )  return (V)(Short)  ( (short[])   _getData())[ i ];
+        else if ( _getData() instanceof int[] )    return (V)(Integer)( (int[])     _getData())[ i ];
+        else if ( _getData() instanceof byte[] )   return (V)(Byte)   ( (byte[])    _getData())[ i ];
+        else if ( _getData() instanceof long[] )   return (V)(Long)   ( (long[])    _getData())[ i ];
+        else if ( _getData() instanceof boolean[] )return (V)(Boolean)( (boolean[]) _getData())[ i ];
+        else if ( _getData() instanceof char[] )   return (V)(Character)( (char[])  _getData())[ i ];
+        else return ( (V[]) _getData())[ i ];
         return null;
     }
 
@@ -2898,15 +2900,15 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         if ( this.isOutsourced() ) {
             getDevice().write( this, o );
         }
-        else if ( getData() instanceof Object[] ) ( (Object[]) getData() )[ i ] = o;
-        else if ( getData() instanceof float[]  ) ( (float[])  getData() )[ i ] = (Float)     o;
-        else if ( getData() instanceof double[] ) ( (double[]) getData() )[ i ] = (Double)    o;
-        else if ( getData() instanceof int[]    ) ( (int[])    getData() )[ i ] = (Integer)   o;
-        else if ( getData() instanceof long[]   ) ( (long[])   getData() )[ i ] = (Long)      o;
-        else if ( getData() instanceof short[]  ) ( (short[])  getData() )[ i ] = (Short)     o;
-        else if ( getData() instanceof byte[]   ) ( (byte[])   getData() )[ i ] = (Byte)      o;
-        else if ( getData() instanceof boolean[]) ( (boolean[])getData() )[ i ] = (Boolean)   o;
-        else if ( getData() instanceof char[])    ( (char[])   getData() )[ i ] = (Character) o;
+        else if ( _getData() instanceof Object[] ) ( (Object[]) _getData() )[ i ] = o;
+        else if ( _getData() instanceof float[]  ) ( (float[])  _getData() )[ i ] = (Float)     o;
+        else if ( _getData() instanceof double[] ) ( (double[]) _getData() )[ i ] = (Double)    o;
+        else if ( _getData() instanceof int[]    ) ( (int[])    _getData() )[ i ] = (Integer)   o;
+        else if ( _getData() instanceof long[]   ) ( (long[])   _getData() )[ i ] = (Long)      o;
+        else if ( _getData() instanceof short[]  ) ( (short[])  _getData() )[ i ] = (Short)     o;
+        else if ( _getData() instanceof byte[]   ) ( (byte[])   _getData() )[ i ] = (Byte)      o;
+        else if ( _getData() instanceof boolean[]) ( (boolean[])_getData() )[ i ] = (Boolean)   o;
+        else if ( _getData() instanceof char[])    ( (char[])   _getData() )[ i ] = (Character) o;
     }
 
     /**
@@ -2914,14 +2916,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     private void _setValue64( double[] value ) {
         if ( this.isOutsourced() ) this.get( Device.class ).write( this, value );
-        else if ( getData() == null ) {
+        else if ( _getData() == null ) {
             _setDataType( DataType.of( F64.class ) );
             _setData( value );
         }
-        else if ( getData() instanceof float[] )
-            for ( int i = 0; i < value.length; i++ ) ( (float[]) getData())[ i ] = (float) value[ i ];
-        else if ( getData() instanceof double[] )
-            System.arraycopy(value, 0, getData(), 0, value.length);
+        else if ( _getData() instanceof float[] )
+            for ( int i = 0; i < value.length; i++ ) ( (float[]) _getData())[ i ] = (float) value[ i ];
+        else if ( _getData() instanceof double[] )
+            System.arraycopy(value, 0, _getData(), 0, value.length);
     }
 
     /**
@@ -2929,14 +2931,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     private void _setValue32( float[] value ) {
         if ( this.isOutsourced() ) this.get( Device.class ).write( this, value );
-        else if ( getData() == null ) {
+        else if ( _getData() == null ) {
             _setDataType( DataType.of( F32.class ) );
             _setData( value );
         }
-        else if ( getData() instanceof float[] )
-            System.arraycopy(value, 0, getData(), 0, value.length);
-        else if ( getData() instanceof double[] )
-            for ( int i = 0; i < value.length; i++ ) ( (double[]) getData())[ i ] = value[ i ];
+        else if ( _getData() instanceof float[] )
+            System.arraycopy(value, 0, _getData(), 0, value.length);
+        else if ( _getData() instanceof double[] )
+            for ( int i = 0; i < value.length; i++ ) ( (double[]) _getData())[ i ] = value[ i ];
     }
 
     /**
@@ -2955,18 +2957,18 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         else if ( value instanceof  double[] ) _setValue64( (double[]) value );
         else if ( value instanceof Float ) {
             this.setIsVirtual( true );
-            if ( getData() instanceof float[] ) ( (float[]) getData())[ 0 ] = (Float) value;
-            else ( (double[]) getData())[ 0 ] = ( (Float) value ).doubleValue();
+            if ( _getData() instanceof float[] ) ( (float[]) _getData())[ 0 ] = (Float) value;
+            else ( (double[]) _getData())[ 0 ] = ( (Float) value ).doubleValue();
         } else if ( value instanceof Double ) {
             this.setIsVirtual( true );
-            if ( getData() instanceof double[] ) ( (double[]) getData())[ 0 ] = (Double) value;
-            else ( (float[]) getData() )[ 0 ] = ( (Double) value ).floatValue();
+            if ( _getData() instanceof double[] ) ( (double[]) _getData())[ 0 ] = (Double) value;
+            else ( (float[]) _getData() )[ 0 ] = ( (Double) value ).floatValue();
         } else if ( value instanceof Integer ) {
             this.setIsVirtual( true );
-            ( (int[]) getData() )[ 0 ] = (Integer) value;
+            ( (int[]) _getData() )[ 0 ] = (Integer) value;
         } else if ( value instanceof Long ) {
             this.setIsVirtual( true );
-            ( (long[]) getData() )[ 0 ] = (Long) value;
+            ( (long[]) _getData() )[ 0 ] = (Long) value;
         } else if ( value instanceof int[] ) {
             _setData( value );
             setIsVirtual( false );
@@ -2989,16 +2991,43 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return this;
     }
 
-    public Object getValue() { // TODO : Make this what it is supposed to be!!! (returning a copy of the targeted data)
+
+    /**
+     *  This returns the underlying raw data object of this tensor.
+     *  Contrary to the {@link Tsr#getValue()} ()} method, this one will
+     *  return an unbiased view on the data of this tensor.
+     *
+     * @return The raw data object underlying this tensor.
+     */
+    public Object getData() {
+        _guardGet("data object");
         if ( this.isOutsourced() ) {
             Device<V> device = get( Device.class );
             if ( device != null )
                 return device.valueFor( this );
             else
-                return getData();
+                return getUnsafe().getData();
         }
-        else if ( !this.isVirtual() ) return getData();
-        else return getDataType().actualize( getData(), this.size() );
+        else if ( !this.isVirtual() ) return getUnsafe().getData();
+        else return getDataType().actualize( getUnsafe().getData(), this.size() );
+    }
+
+
+    public Object getValue() { // TODO : Make this what it is supposed to be!!! (returning a copy of the targeted data)
+        _guardGet("value object");
+        if ( this.isOutsourced() ) {
+            Device<V> device = get( Device.class );
+            if ( device != null )
+                return device.valueFor( this );
+        }
+        if ( !this.isVirtual() ) {
+            if ( this.getNDConf().isSimple() )
+                return _getData();
+            else
+                return this.clone()._getData();
+        }
+        else if ( _getData() == null ) return null;
+        else return getDataType().actualize( _getData(), this.size() );
     }
 
     /*==================================================================================================================
@@ -3022,7 +3051,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return CPU.get() // This little API will temporarily migrate this to the JVM.
                 .use( (Tsr<Number>) this )
                 .in( () -> {
-                    Object data = getData();
+                    Object data = _getData();
                     DataConverter.ForTensor map = new DataConverter.ForTensor( this );
                     if ( data == null ) {
                         if ( this.isOutsourced() )
@@ -3035,19 +3064,19 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                     if ( Number.class.isAssignableFrom(typeClass) ) {
                         java.util.function.Function<Integer, Number> access = null;
                         if ( this.getValueClass() == Integer.class ) {
-                            int[] sourceData = (int[]) this.getData();
+                            int[] sourceData = (int[]) _getData();
                             access = (i -> (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));
                         } else if (this.getValueClass() == Double.class) {
-                            double[] sourceData = (double[]) this.getData();
+                            double[] sourceData = (double[]) _getData();
                             access = (i -> (Number) mapper.apply((V) Double.valueOf(sourceData[i])));
                         } else if (this.getValueClass() == Float.class) {
-                            float[] sourceData = (float[]) this.getData();
+                            float[] sourceData = (float[]) _getData();
                             access = (i -> (Number) mapper.apply((V) Float.valueOf(sourceData[i])));
                         } else if (this.getValueClass() == Short.class) {
-                            short[] sourceData = (short[]) this.getData();
+                            short[] sourceData = (short[]) _getData();
                             access = (i -> (Number) mapper.apply((V) Short.valueOf(sourceData[i])));
                         } else if (this.getValueClass() == Byte.class) {
-                            byte[] sourceData = (byte[]) this.getData();
+                            byte[] sourceData = (byte[]) _getData();
                             access = (i -> (Number) mapper.apply((V) Byte.valueOf(sourceData[i])));
                         } else
                             throw new IllegalArgumentException(failMessage);
@@ -3063,19 +3092,19 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                     } else {
                         java.util.function.Function<Integer, Object> access = null;
                         if ( this.getValueClass() == Integer.class ) {
-                            int[] sourceData = (int[]) this.getData();
+                            int[] sourceData = (int[]) _getData();
                             access = (i -> mapper.apply((V) Integer.valueOf(sourceData[i])));
                         } else if ( this.getValueClass() == Double.class ) {
-                            double[] sourceData = (double[]) this.getData();
+                            double[] sourceData = (double[]) _getData();
                             access = (i -> mapper.apply((V) Double.valueOf(sourceData[i])));
                         } else if ( this.getValueClass() == Float.class ) {
-                            float[] sourceData = (float[]) this.getData();
+                            float[] sourceData = (float[]) _getData();
                             access = (i -> mapper.apply((V) Float.valueOf(sourceData[i])));
                         } else if ( this.getValueClass() == Short.class ) {
-                            short[] sourceData = (short[]) this.getData();
+                            short[] sourceData = (short[]) _getData();
                             access = (i -> mapper.apply((V) Short.valueOf(sourceData[i])));
                         } else if ( this.getValueClass() == Byte.class ) {
-                            byte[] sourceData = (byte[]) this.getData();
+                            byte[] sourceData = (byte[]) _getData();
                             access = (i -> mapper.apply((V) Byte.valueOf(sourceData[i])));
                         } else
                             throw new IllegalArgumentException(failMessage);
@@ -3101,7 +3130,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 _checkRankForImageConversion(type, Number.class, 0, 0, 3);
                 // We expect a tensor of shape (height x width x 3)!
                 BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
-                byte[] data = DataConverter.instance().convert(getData(), byte[].class);
+                byte[] data = DataConverter.instance().convert( _getData(), byte[].class);
                 writeImgData(new DataBufferByte(data, data.length), image);
                 return image;
             }
@@ -3110,14 +3139,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             {
                 _checkRankForImageConversion(type, Number.class, 0, 0, 4);
                 BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
-                byte[] data = DataConverter.instance().convert(getData(), byte[].class);
+                byte[] data = DataConverter.instance().convert( _getData(), byte[].class);
                 writeImgData(new DataBufferByte(data, data.length), image);
                 return image;
             }
             case BufferedImage.TYPE_INT_ARGB: {
                 _checkRankForImageConversion(type, Number.class, 0, 0, 1);
                 BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
-                int[] data = DataConverter.instance().convert(getData(), int[].class);
+                int[] data = DataConverter.instance().convert( _getData(), int[].class);
                 writeImgData(new DataBufferInt(data, data.length), image);
                 return image;
             }
@@ -3272,7 +3301,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             data = _value32();
             type = DataType.of(Float.class);
         } else {
-            data = this.getData();
+            data = _getData();
             type = this.getDataType();
         }
         if ( this.isVirtual() && data != null )
@@ -3281,24 +3310,24 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                         arrayTypeClass
             );
         if ( data != null ) return (A) data;
-        return (A) getData();
+        return (A) _getData();
     }
 
     public <A> A getDataAs( Class<A> arrayTypeClass ) {
         if ( this.isOutsourced() ) {
             return getValueAs( arrayTypeClass );
         }
-        return DataConverter.instance().convert( getData(), arrayTypeClass );
+        return DataConverter.instance().convert( _getData(), arrayTypeClass );
     }
 
     private double[] _value64() {
         Device<V> found = this.get( Device.class );
-        if ( getData() == null && this.isOutsourced() && found != null ) {
+        if ( _getData() == null && this.isOutsourced() && found != null ) {
             if ( found instanceof OpenCLDevice )
                 return ( (OpenCLDevice) found).value64f( (Tsr<Number>) this );
             else return null;
         }
-        double[] newValue = DataConverter.instance().convert( getData(), double[].class );
+        double[] newValue = DataConverter.instance().convert( _getData(), double[].class );
 
         if ( this.isVirtual() && newValue != null && this.size() > 1 ) {
 
@@ -3311,11 +3340,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     private float[] _value32() {
         Device<V> found = this.get( Device.class );
-        if ( getData() == null && this.isOutsourced() && found != null ) {
+        if ( _getData() == null && this.isOutsourced() && found != null ) {
             if ( found instanceof OpenCLDevice )
                 return ( (OpenCLDevice) found ).value32f( (Tsr<Number>) this);
         }
-        float[] newValue = DataConverter.instance().convert( getData(), float[].class );
+        float[] newValue = DataConverter.instance().convert( _getData(), float[].class );
         if ( this.isVirtual() && newValue != null ) {
             newValue = new float[ this.size() ];
             Arrays.fill( newValue, newValue[ 0 ] );
@@ -3442,6 +3471,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             @Override
             public final Tsr<V> delete() {
                 return Tsr.this._delete();
+            }
+
+            @Override
+            public Object getData() {
+                return _getData();
             }
         };
     }

@@ -5,6 +5,7 @@ import neureka.Tsr
 import neureka.dtype.DataType
 import neureka.dtype.custom.I8
 import neureka.view.TsrStringSettings
+import spock.lang.IgnoreIf
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
@@ -60,7 +61,7 @@ class Tensor_State_Spec extends Specification
         expect : 'The tensor has the targeted type, shape and data array!'
             t.valueClass == type
             t.shape() == shape
-            t.data == expected
+            t.unsafe.data == expected
 
         where :
             type   | list        || shape    | expected
@@ -165,23 +166,23 @@ class Tensor_State_Spec extends Specification
         expect: 'The first tensor has the expected internals and produces the correct String representation.'
             t1.toString(settings) == expected
             t1.dataType == DataType.of( Float.class )
-            t1.data instanceof float[]
+            t1.unsafe.data instanceof float[]
         and : 'The second tensor has the expected internals and produces the correct String representation.'
             t2.toString(settings) == expected
             t2.dataType == DataType.of( Double.class )
-            t2.data instanceof double[]
+            t2.unsafe.data instanceof double[]
         and : 'The third tensor has the expected internals and produces the correct String representation.'
             t3.toString(settings).replace(' ','') == expected.replace('.0','  ').replace(' ','')
             t3.dataType == DataType.of( Integer.class )
-            t3.data instanceof int[]
+            t3.unsafe.data instanceof int[]
         and : 'The fourth tensor has the expected internals and produces the correct String representation.'
             t4.toString(settings).replace(' ','') == expected.replace('.0','  ').replace(' ','')
             t4.dataType == DataType.of( Short.class )
-            t4.data instanceof short[]
+            t4.unsafe.data instanceof short[]
         and : 'The fifth tensor has the expected internals and produces the correct String representation.'
             t5.toString(settings).replace(' ','') == expected.replace('.0','  ').replace(' ','')
             t5.dataType == DataType.of( Byte.class )
-            t5.data instanceof byte[]
+            t5.unsafe.data instanceof byte[]
 
         where : 'The print configurations codes "mode", a common shape and expected String representation will be supplied:'
             shape     | mode | expected
@@ -208,19 +209,19 @@ class Tensor_State_Spec extends Specification
             t.getValueAs( float[].class  ) == [6] as float[]
             t.getDataAs( double[].class ) == [6] as double[]
             t.getDataAs( float[].class  ) == [6] as float[]
-            t.data == [6] as double[]
+            t.unsafe.data == [6] as double[]
             t.value == [6] as double[]
 
         when: 'The flag "isOutsourced" is being set to false...'
             t.setIsOutsourced( true )
         then: 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
-            !(t.data instanceof double[]) && !(t.data instanceof float[])
+            !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
             t.getValueAs( double[].class ) == null
             t.getValueAs( float[].class  ) == null
             t.getDataAs( double[].class ) == null
             t.getDataAs( float[].class  ) == null
-            t.data == null
+            t.unsafe.data == null
             t.value == null
         when: 'The "isOutsourced" flag is set to its original state...'
             t.setIsOutsourced( false )
@@ -229,7 +230,7 @@ class Tensor_State_Spec extends Specification
             t.getValueAs( float[].class  ) == [0] as float[]
             t.getDataAs( double[].class ) == [0] as double[]
             t.getDataAs( float[].class  ) == [0] as float[]
-            t.data == [0] as double[]
+            t.unsafe.data == [0] as double[]
             t.value == [0] as double[]
             t.isVirtual()
 
@@ -245,18 +246,18 @@ class Tensor_State_Spec extends Specification
             t.setIsOutsourced( true )
         then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
-            !(t.data instanceof double[]) && !(t.data instanceof float[])
+            !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
             t.dataType.getTypeClass() == Neureka.get().settings().dtype().defaultDataTypeClass
             t.getValueAs( double[].class ) == null
             t.getValueAs( float[].class ) == null
-            t.data == null
+            t.unsafe.data == null
             t.value == null
         when : 'The "isOutsourced" flag is set to its original state...'
             t.setIsOutsourced( false )
         then : 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
             t.getValueAs( double[].class ) == [0, 0] as double[]
             t.getValueAs( float[].class ) == [0, 0] as float[]
-            t.data == [0] as double[]
+            t.unsafe.data == [0] as double[]
             t.value == [0, 0] as double[]
             t.isVirtual()
     }
@@ -270,27 +271,54 @@ class Tensor_State_Spec extends Specification
             !t.isOutsourced()
             t.getValueAs( double[].class ) == [0, 0] as double[]
             t.getValueAs( float[].class ) == [0, 0] as float[]
-            t.data == [0] as byte[]
+            t.unsafe.data == [0] as byte[]
             t.value == [0, 0] as byte[]
             t.isVirtual()
         when : 'The flag "isOutsourced" is being set to false...'
             t.setIsOutsourced( true )
         then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
-            !(t.data instanceof double[]) && !(t.data instanceof float[])
+            !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
             t.dataType.getTypeClass() == I8.class
             t.getValueAs( double[].class ) == null
             t.getValueAs( float[].class ) == null
-            t.data == null
+            t.unsafe.data == null
             t.value == null
         when : 'The "isOutsourced" flag is set to its original state...'
             t.setIsOutsourced( false )
         then : 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
             t.getValueAs( double[].class ) == [0, 0] as double[]
             t.getValueAs( float[].class ) == [0, 0] as float[]
-            t.data == [0] as byte[]
+            t.unsafe.data == [0] as byte[]
             t.value == [0, 0] as byte[]
             t.isVirtual()
     }
+
+    @IgnoreIf({ device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    def 'The data and the value of a tensor a 2 different things!'(
+        String device
+    ) {
+        given : 'We create a simple vector:'
+            var v = Tsr.ofFloats().withShape(3).andFill(-2, 4, 8)
+        and : 'And then we store it on the device we want to test.'
+            v.to(device)
+
+        when : 'We create a slice of the above vector, a scalar...'
+            var s = v.slice().axis(0).at(1).get()
+
+        then : 'The slice contains the expected value with respect to the slice parent...'
+            v.at(1).get() == s.at(0).get()
+
+        and : 'They both do not share the same value array.'
+            v.value != s.value
+        and : 'They so however share the same underlying data.'
+            v.unsafe.data == s.unsafe.data
+        and :
+            s.value == [4]
+
+        where : 'We test the following devices:'
+            device << ['CPU']
+    }
+
 
 }

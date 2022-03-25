@@ -107,7 +107,7 @@ class FileHead_Spec extends Specification
             loaded.dataType.getTypeClass() == I16.class
             loaded.dataType == DataType.of( I16.class )
         and : 'It contains the correct array type.'
-            loaded.data instanceof short[]
+            loaded.unsafe.data instanceof short[]
 
         and : 'The "IDXHead" instance has the expected state :'
             idx.valueSize == 28 * 28

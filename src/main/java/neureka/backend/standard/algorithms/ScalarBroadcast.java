@@ -156,7 +156,7 @@ public class ScalarBroadcast extends AbstractFunctionalAlgorithm<ScalarBroadcast
                 }
             };
         }
-        if ( t0_drn.getData().getClass() == Object[].class ) {
+        if ( t0_drn.getUnsafe().getData().getClass() == Object[].class ) {
             Object value = src.getDataAs(Object[].class)[0];
             Fun.ObjToObj operation = functions.get(Fun.ObjToObj.class).get(call.getDerivativeIndex());
             Object[] t0_value = t0_drn.getDataAs(Object[].class);

@@ -326,7 +326,7 @@ public final class TsrAsString
     private void _stringifyAllValues()
     {
         int max = _rowLimit;
-        Object data = ( _tensor.getData() == null ? _tensor.getValue() : _tensor.getData() );
+        Object data = ( _tensor.getUnsafe().getData() == null ? _tensor.getData() : _tensor.getUnsafe().getData() );
         ValStringifier getter = _createValStringifierAndFormatter( data );
         int size = _tensor.size();
         int trim = ( size - max );
@@ -412,7 +412,7 @@ public final class TsrAsString
             }
             _$( Util.indent( dim ) );
             _$( _legacy ? "( " : "[ " );
-            ValStringifier getter = _createValStringifierAndFormatter( _tensor.getValue() );
+            ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );
             NDValStringifier fun = _tensor.isVirtual()
                                         ? iarr -> getter.stringify( 0 )
                                         : iarr -> getter.stringify( _tensor.indexOfIndices( iarr ) );

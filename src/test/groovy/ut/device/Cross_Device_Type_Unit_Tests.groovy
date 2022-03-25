@@ -306,7 +306,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             b.isOutsourced()
         and :
             device.has( a )
-            b.data == null
+            b.unsafe.data == null
             device.has( b )
             device.size() == initialSize
 

@@ -28,7 +28,7 @@ public interface AxisOrGet<V>  {
      *  returning the resulting {@link Tsr} instance based on the previously
      *  specified slice configuration...
      *
-     * @return An new {@link Tsr} instance which is a slice of the original tensor.
+     * @return A new {@link Tsr} instance which is a slice of the original tensor.
      */
     Tsr<V> get();
 

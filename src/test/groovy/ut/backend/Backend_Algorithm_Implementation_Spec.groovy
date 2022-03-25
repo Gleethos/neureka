@@ -9,6 +9,7 @@ import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Algorithm
 import neureka.backend.standard.algorithms.Activation
 import neureka.backend.standard.algorithms.Operator
+import neureka.ndim.AbstractTensor
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
@@ -83,6 +84,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             var call = Mock( ExecutionCall )
             var device = Mock( CPU )
             var tensor = Mock( Tsr )
+            var unsafe = Mock(AbstractTensor.Unsafe)
             var ndConf = Mock(NDConfiguration)
             var hostExecutor = imp.getImplementationFor( CPU.class )
             var nativeExecutor = Mock( CPU.JVMExecutor )
@@ -91,6 +93,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             hostExecutor.run( call )
 
         then : 'The mock objects are being called as expected.'
+            (0.._) * tensor.getUnsafe() >> unsafe
             (1.._) * call.getDevice() >> device
             1 * device.getExecutor() >> nativeExecutor
             1 * nativeExecutor.threaded( _, _ )
@@ -102,7 +105,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             (1.._) * tensor.size() >> 0
             (0.._) * tensor.valueClass >> Double
             (0.._) * tensor.getDataAs(double[]) >> new double[0]
-            (1.._) * tensor.getData() >> new double[0]
+            (0.._) * unsafe.getData() >> new double[0]
             (1.._) * tensor.getNDConf() >> ndConf
             (1.._) * ndConf.isSimple() >> false
 

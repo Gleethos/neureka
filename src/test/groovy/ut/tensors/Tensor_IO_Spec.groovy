@@ -215,7 +215,7 @@ class Tensor_IO_Spec extends Specification
 
         then : '...the tensor will change as expected.'
             !(x.getValue() instanceof float[])
-            !(x.data instanceof float[])
+            !(x.unsafe.data instanceof float[])
             x.getValueAs( float[].class )[ 0 ]==5.0f
             x.getValueAs( double[].class )[0]==5.0d
 
@@ -226,7 +226,7 @@ class Tensor_IO_Spec extends Specification
 
         then : '...once again the tensor changes as expected.'
             x.getValue() instanceof double[]
-            x.data instanceof double[]
+            x.unsafe.data instanceof double[]
             x.getValueAs( float[].class )[ 0 ]==4.0f
             x.getValueAs( double[].class )[0]==4.0d
 
@@ -253,7 +253,7 @@ class Tensor_IO_Spec extends Specification
 
         then :
             !(x.getValue() instanceof double[])
-            !(x.data instanceof double[])
+            !(x.unsafe.data instanceof double[])
             x.getValueAs( float[].class )[ 0 ]==7.0f
             x.getValueAs( double[].class )[0]==7.0d
 
@@ -269,13 +269,13 @@ class Tensor_IO_Spec extends Specification
         when : x.unsafe.toType( Float.class )
         then :
             x.getValue() instanceof float[]
-            x.data instanceof float[]
+            x.unsafe.data instanceof float[]
             x.getValueAs( float[].class )[ 0 ]==3.0f
 
         when : x.unsafe.toType( Double.class )
         then :
             x.getValue() instanceof double[]
-            x.data instanceof double[]
+            x.unsafe.data instanceof double[]
             x.getValueAs( float[].class )[ 0 ]==3.0f
     }
 
@@ -290,7 +290,7 @@ class Tensor_IO_Spec extends Specification
         and :
             t.shape() == shape
         and :
-            t.data == data
+            t.unsafe.data == data
         and :
             t.value == data
 
@@ -413,7 +413,7 @@ class Tensor_IO_Spec extends Specification
         then :
             t.getDataAt( 1 ) == element
         and :
-            t.data == expected
+            t.unsafe.data == expected
 
         when :
             t = Tsr.of(type).withShape(shape).andFill(data)
@@ -422,7 +422,7 @@ class Tensor_IO_Spec extends Specification
         then :
             t.getValueAt( 1 ) == element
         and :
-            t.data == expected
+            t.unsafe.data == expected
 
         where :
             type     | shape | data                             | element        || expected

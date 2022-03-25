@@ -72,8 +72,8 @@ class Calculus_Stress_Test extends Specification
                         "101, -4.5" +
                     "]"
         and :
-            (device instanceof OpenCLDevice) || t.data == [198.0, -6.5, 36.0, -2.5, 2.0, 6.5, 101.0, 0.0, 15.0, 4.0, 146.0, 13.0, 400.0, 17.0, 194.0, 15.5, 101.0, -4.5]
-            (device instanceof OpenCLDevice) || source.data == [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -4.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 2.0, -4.0, -3.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 2.0, -4.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0]
+            (device instanceof OpenCLDevice) || t.unsafe.data == [198.0, -6.5, 36.0, -2.5, 2.0, 6.5, 101.0, 0.0, 15.0, 4.0, 146.0, 13.0, 400.0, 17.0, 194.0, 15.5, 101.0, -4.5]
+            (device instanceof OpenCLDevice) || source.unsafe.data == [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -4.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 2.0, -4.0, -3.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 2.0, -4.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0]
 
         where :
            device << [CPU.get(), Device.find('gpu')]
@@ -176,12 +176,12 @@ class Calculus_Stress_Test extends Specification
             result1.valueClass == type
             result2.valueClass == type
         and : 'The underlying data object should match the data array type as is defined by the data type!'
-            result1.data.class == result1.dataType.dataArrayType()
-            result2.data.class == result2.dataType.dataArrayType()
+            result1.unsafe.data.class == result1.dataType.dataArrayType()
+            result2.unsafe.data.class == result2.dataType.dataArrayType()
 
         and : 'The data of the first non slice tensor as well as its slice should be as expected.'
-            Arrays.hashCode(result1.data) == expected[0]
-            Arrays.hashCode(result2.data) == expected[1]
+            Arrays.hashCode(result1.unsafe.data) == expected[0]
+            Arrays.hashCode(result2.unsafe.data) == expected[1]
 
         where :
             type   |  funExpression            || expected
@@ -224,9 +224,9 @@ class Calculus_Stress_Test extends Specification
             t2[0..t2.size-1] = t1
 
         expect : 'The types of both tensors should match what was provided during instantiation.'
-            t1.dataType == DataType.of(type)
+            t1.dataType   == DataType.of(type)
             t1.valueClass == type
-            t2.dataType == DataType.of(type)
+            t2.dataType   == DataType.of(type)
             t2.valueClass == type
 
         when : 'We apply the function to both tensors...'
@@ -236,8 +236,8 @@ class Calculus_Stress_Test extends Specification
             result1.valueClass == type
             result2.valueClass == type
         and : 'The underlying data object should match the data array type as is defined by the data type!'
-            result1.data.class == result1.dataType.dataArrayType()
-            result2.data.class == result2.dataType.dataArrayType()
+            result1.unsafe.data.class == result1.dataType.dataArrayType()
+            result2.unsafe.data.class == result2.dataType.dataArrayType()
 
         and : 'The data of the first non slice tensor as well as its slice should be as expected.'
             result1.value == expected

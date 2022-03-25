@@ -63,7 +63,7 @@ class FileDevice_Unit_Tests extends Specification
             new File( path + '/' + filename + '.idx' ).exists()
 
         and : 'Tensor "a" does no longer have a value (stored in RAM).'
-            a.data == null
+            a.unsafe.data == null
 
         when : 'Freeing the tensor...'
             device.free( a )
@@ -101,7 +101,7 @@ class FileDevice_Unit_Tests extends Specification
             }
 
         and : 'Tensor "a" does no longer have a value (stored in RAM).'
-            a.data == null
+            a.unsafe.data == null
 
         and : 'The tensor is now of the expected data-type.'
             a.dataType == DataType.of( dataTypeClass )
