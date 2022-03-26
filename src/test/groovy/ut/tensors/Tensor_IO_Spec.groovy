@@ -259,9 +259,34 @@ class Tensor_IO_Spec extends Specification
             !(x.data instanceof double[])
             x.getValueAs( float[].class )[ 0 ]==7.0f
             x.getValueAs( double[].class )[0]==7.0d
-
     }
 
+    def 'We turn a tensor into a scalar value or string through the "as" operator!'()
+    {
+        given : 'A tensor of 3 floats:'
+            var t = Tsr.ofFloats().vector(42, 42, 42)
+
+        expect : 'We can now turn the tensor int other data types!'
+            (t as Integer) == 42
+            (t as Double) == 42
+            (t as Short) == 42
+            (t as Byte) == 42
+            (t as Long) == 42
+        and : 'Also use it instead of the "toString" method.'
+            (t as String) == t.toString()
+    }
+
+    def 'We can re-populate a tensor of shorts from a single scalar value!'() {
+
+        given : 'A tensor of 3 floats:'
+            var t = Tsr.ofShorts().vector(42, 666, 73)
+
+        when : 'We call the "setValue" method with a scalar value passed to it...'
+            t.setValue(5)
+
+        then :
+            t.value == [5, 5, 5] as short[]
+    }
 
     def 'Tensors value type can be changed by calling "toType(...)".'()
     {

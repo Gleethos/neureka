@@ -1,8 +1,8 @@
 package ut.tensors.exceptions
 
+import groovy.transform.CompileDynamic
 import neureka.Neureka
 import neureka.Tsr
-import org.slf4j.Logger
 import spock.lang.Narrative
 import spock.lang.Shared
 import spock.lang.Specification
@@ -20,10 +20,11 @@ import java.util.function.Consumer
     occurred so that the user can correct this misuse.
 
 ''')
+@CompileDynamic
 class Tensor_Exception_Spec extends Specification
 {
 
-    @Shared def oldStream
+    @Shared PrintStream oldStream
 
     def setupSpec() {
         reportHeader """
@@ -49,18 +50,14 @@ class Tensor_Exception_Spec extends Specification
     def "Trying to inject an empty tensor into another causes fitting exception."()
     {
         given : 'A new tensor instance used for exception testing.'
-            Tsr t = Tsr.of([6, 6], -1)
+            Tsr<Integer> t = Tsr.of([6, 6], -1)
 
         when : 'We try to inject an empty tensor whose size does of course not match...'
-            t[[1..3], [1..3]] = Tsr.newInstance()
+            t[[1..3], [1..3]] = Tsr.newInstance() as Tsr<Integer>
 
         then : 'The expected message is being thrown, which tells us that '
             def exception = thrown(IllegalArgumentException)
             assert exception.message.contains("Provided tensor is empty! Empty tensors cannot be injected.")
-
-        // TODO: FIX THE FOLLOWING:
-        //and : 'The exception has also been logged.'
-        //    1 * Tsr._LOG.error( "Provided tensor is empty! Empty tensors cannot be injected." )
     }
 
     def 'Passing null to various methods of the tensor API will throw exceptions.'(
@@ -112,15 +109,11 @@ class Tensor_Exception_Spec extends Specification
             Tsr t = Tsr.of( [2, 3], -1..6 )
 
         when : 'A nonsensical object is being passed to the tensor.'
-            t[ Integer.class ]
+            t[ [null] ]
 
         then : 'An exception is being thrown which tells us about it.'
             def exception = thrown(IllegalArgumentException)
-            exception.message.contains(
-                    "Cannot create tensor slice from key of type 'java.lang.Class'!"
-            )
-        and : 'The logger logs the exception message!'
-            1 * System.err.println( "[Test worker] ERROR neureka.Tsr - Cannot create tensor slice from key of type 'java.lang.Class'!" )
+            exception.message.contains("List of indices/ranges may not contain entries which are null!")
     }
 
 
@@ -153,6 +146,18 @@ class Tensor_Exception_Spec extends Specification
         then :
             thrown(IllegalArgumentException)
 
+    }
+
+    def 'Casting a tensor as something unusual will cuas an exception to be thrown.'()
+    {
+        given : 'We have a regular tensor of 2 bytes!'
+            var t = Tsr.ofBytes().withShape(2).andFill(-1, 2)
+
+        when : 'We try to convert the tensor to an instance of type "Random"...'
+            t as Random
+
+        then : 'This will obviously leat to an exception being thrown.'
+            thrown(IllegalArgumentException)
     }
 
     def 'Building a tensor with "null" as shape argument throws an exception.'()

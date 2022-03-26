@@ -164,12 +164,21 @@ public final class DataConverter
 
         _set( Integer.class, Double.class, Integer::doubleValue );
         _set( Integer.class, Float.class,  Integer::floatValue );
-        _set( Integer.class, Short.class,  Integer::shortValue );
         _set( Integer.class, Byte.class,   Integer::byteValue );
+        _set( Integer.class, Short.class,  Integer::shortValue );
+        _set( Integer.class, Long.class,   Integer::longValue );
 
         _set( Double.class, Float.class,   Double::floatValue );
         _set( Double.class, Integer.class, Double::intValue );
         _set( Double.class, Byte.class,    Double::byteValue );
+        _set( Double.class, Short.class,   Double::shortValue );
+        _set( Double.class, Long.class,    Double::longValue );
+
+        _set( Float.class, Double.class,  Float::doubleValue );
+        _set( Float.class, Integer.class, Float::intValue );
+        _set( Float.class, Byte.class,    Float::byteValue );
+        _set( Float.class, Short.class,   Float::shortValue );
+        _set( Float.class, Long.class,    Float::longValue );
 
         _set( Float[].class,     float[].class,   Utility::objFloatsToPrimFloats );
         _set( Integer[].class,   int[].class,     Utility::objIntsToPrimInts );

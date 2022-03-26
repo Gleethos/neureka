@@ -2335,18 +2335,24 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public final Tsr<V> mean() {
         Functions functions = Neureka.get().backend().getAutogradFunction();
-        Tsr<V> ones = (Tsr<V>) Tsr.of( this.getValueClass(), this.getNDConf().shape(), (Object) 1 );
+        Tsr<V> sum = sum();
+        Tsr<V> result = functions.div().call( sum, Tsr.of( this.getValueClass(), new int[]{1}, this.size() ) );
+        sum.getUnsafe().delete();
+        return result;
+    }
+
+    public final Tsr<V> sum() {
+        Functions functions = Neureka.get().backend().getAutogradFunction();
+        Tsr<V> ones = Tsr.of( this.getValueClass(), this.getNDConf().shape(), 1 );
         Tsr<V> sum = functions.conv().call( this, ones );
         if ( !ones.has(GraphNode.class) || !ones.getGraphNode().isUsedAsDerivative() )
             ones.getUnsafe().delete();
         if ( sum == null )
             throw new IllegalStateException(
                     "Failed to calculate sum using convolution! Shapes: "+
-                    Arrays.toString(this.getNDConf().shape())+"x"+Arrays.toString(ones.getNDConf().shape())
+                            Arrays.toString(this.getNDConf().shape())+"x"+Arrays.toString(ones.getNDConf().shape())
             );
-        Tsr<V> result = functions.div().call( sum, Tsr.of( this.getValueClass(), new int[]{1}, this.size() ) );
-        sum.getUnsafe().delete();
-        return result;
+        return sum;
     }
 
     /**
@@ -2549,10 +2555,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A slice tensor or scalar value.
      */
     @Override
-    public final Tsr<V> getAt( Object key ) {
-        if ( key == null ) return this;
-        if ( key instanceof Object[] && ((Object[]) key).length == 0 ) key = new ArrayList<>();
-        if ( key instanceof List && ( (List<?>) key ).isEmpty() ) {
+    public final Tsr<V> getAt( List<?> key ) {
+        LogUtil.nullArgCheck( key, "key", List.class );
+        if ( key.stream().anyMatch( i -> i == null ) )
+            throw new IllegalArgumentException("List of indices/ranges may not contain entries which are null!");
+        if ( key.isEmpty() ) {
             /*
                 An empty List instance is being interpreted as
                 the request to create an identical slice, meaning that the
@@ -2562,31 +2569,25 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             return shallowCopy();
         }
 
-        key = ( key instanceof List ? ((List<?>) key).toArray() : key );
+        Object[] indices = key.toArray();
 
-        if ( key instanceof Object[] ) {
-            boolean allInt = true;
-            for ( Object o : (Object[]) key ) allInt = allInt && o instanceof Integer;
-            if ( allInt && ( (Object[]) key ).length == rank() ) {
-                int[] newOffset = DataConverter.instance().convert((Object[]) key, int[].class);
-                for ( int i = 0; i < this.rank(); i++ )
-                    newOffset[ i ] = ( newOffset[ i ] < 0 ) ? getNDConf().shape( i ) + newOffset[ i ] : newOffset[ i ];
-                for ( int i = 0; i < this.rank(); i++ )
-                    ((Object[])key)[ i ] = newOffset[ i ];
-                allInt = false;
-            }
-            boolean hasScale = false;
-            for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
-            return SmartSlicer.slice(
-                    ( allInt ? new Object[]{ DataConverter.instance().convert((Object[]) key, int[].class) } : (Object[]) key ),
-                    this,
-                    this::_sliceOf
-            );
-        } else {
-            String message = "Cannot create tensor slice from key of type '" + key.getClass().getName() + "'!";
-            _LOG.error( message );
-            throw new IllegalArgumentException( message );
+        boolean allInt = true;
+        for ( Object o : indices ) allInt = allInt && o instanceof Integer;
+        if ( allInt && indices.length == rank() ) {
+            int[] newOffset = DataConverter.instance().convert(indices, int[].class);
+            for ( int i = 0; i < this.rank(); i++ )
+                newOffset[ i ] = ( newOffset[ i ] < 0 ) ? getNDConf().shape( i ) + newOffset[ i ] : newOffset[ i ];
+            for ( int i = 0; i < this.rank(); i++ )
+                indices[ i ] = newOffset[ i ];
+            allInt = false;
         }
+        boolean hasScale = false;
+        for ( Object o : indices ) hasScale = hasScale || o instanceof Map;
+        return SmartSlicer.slice(
+                ( allInt ? new Object[]{ DataConverter.instance().convert(indices, int[].class) } : indices ),
+                this,
+                this::_sliceOf
+        );
     }
 
     /**
@@ -2775,9 +2776,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             System.arraycopy( indices, 0, correct, 0, indices.length );
             indices = correct;
         }
-        Tsr<V> source = Tsr.of( this.getValueClass(), shape(), item );
-        Tsr<V> slice = getAt( Arrays.stream( indices ).mapToObj( i -> i ).collect(Collectors.toList()) );
-        Neureka.get().backend().getFunction().idy().call(slice, source);
+        setDataAt( getNDConf().indexOfIndices(indices), item );
         return this;
     }
 
@@ -2953,40 +2952,30 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public final Tsr<V> setValue( Object value )
     {
-        if ( value instanceof float[] ) _setValue32( (float[]) value );
-        else if ( value instanceof  double[] ) _setValue64( (double[]) value );
-        else if ( value instanceof Float ) {
+        LogUtil.nullArgCheck( value, "value", Object.class );
+        boolean success = true;
+        if ( value.getClass().isArray() ) {
+            if ( value instanceof float[] ) _setValue32( (float[]) value );
+            else if ( value instanceof  double[] ) _setValue64( (double[]) value );
+            else {
+                if      ( value instanceof int[]    ) _setData( value );
+                else if ( value instanceof short[]  ) _setData( value );
+                else if ( value instanceof long[]   ) _setData( value );
+                else if ( value instanceof byte[]   ) _setData( value );
+                else if ( value instanceof Object[] ) _setData( value );
+                else success = false;
+                setIsVirtual( false );
+            }
+        } else if ( Number.class.isAssignableFrom(value.getClass()) ) {
             this.setIsVirtual( true );
-            if ( _getData() instanceof float[] ) ( (float[]) _getData())[ 0 ] = (Float) value;
-            else ( (double[]) _getData())[ 0 ] = ( (Float) value ).doubleValue();
-        } else if ( value instanceof Double ) {
-            this.setIsVirtual( true );
-            if ( _getData() instanceof double[] ) ( (double[]) _getData())[ 0 ] = (Double) value;
-            else ( (float[]) _getData() )[ 0 ] = ( (Double) value ).floatValue();
-        } else if ( value instanceof Integer ) {
-            this.setIsVirtual( true );
-            ( (int[]) _getData() )[ 0 ] = (Integer) value;
-        } else if ( value instanceof Long ) {
-            this.setIsVirtual( true );
-            ( (long[]) _getData() )[ 0 ] = (Long) value;
-        } else if ( value instanceof int[] ) {
-            _setData( value );
-            setIsVirtual( false );
-        } else if ( value instanceof short[] ) {
-            _setData( value );
-            setIsVirtual( false );
-        } else if ( value instanceof long[] ) {
-            _setData( value );
-            setIsVirtual( false );
-        } else if ( value instanceof byte[] ) {
-            _setData( value );
-            setIsVirtual( false );
-        } else if ( value instanceof Object[] ) {
-            _setData( value );
-            setIsVirtual( false );
-        } else
+            value = DataConverter.instance().convert( value, this.valueClass() );
+            this.at(0).set((V) value);
+        }
+        else success = false;
+
+        if ( !success )
             _LOG.warn(
-                    "Failed to set value array of type '"+value.getClass().getSimpleName()+"'!"
+                    "Failed to set value of type '"+value.getClass().getSimpleName()+"'!"
             );
         return this;
     }
@@ -3222,36 +3211,22 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This method constitutes a pure operation producing a new tensor instance
-     *  which is a deep copy of this original tensor and contains data whose
-     *  elements have been converted to a new data type, namely :<br>
-     *  The type specified by the argument <br>
-     *  <br>
-     *  The method does not change this tensor, which is why the operation is pure.
-     *  Important to note is that the method will return instances of the specified
-     *  type but merely another tensor containing elements of that type...
-     *  The name of this method for example translates to the "as" operator
-     *  found in Groovy, so the following code : <i>" myTensor as Double "</i> <br>
-     *  would not return a Double instance!<br>
-     *  <br>
-     *
-     * @param typeClass The class which is the target of the underlying type conversion...
-     * @param <T> The value type of the tensor that will be returned.
-     * @return A new tensor which hosting the supplied type.
+     * @param typeClass The class which is the target of the type conversion.
+     * @param <T> The type parameter of the type that will be returned.
+     * @return An instance of the supplied type class.
      */
-    public <T> Tsr<T> asType( Class<T> typeClass )
+    public <T> T asType( Class<T> typeClass )
     {
-        if ( typeClass == Tsr.class ) return (Tsr<T>) this.slice().get();
-        DataType<?> newDT = DataType.of( typeClass );
-        Object newData;
-        if ( this.isOutsourced() ) {
-            Device<V> device = get( Device.class );
-            device.restore( this );
-            newData = _convertedDataOfType( typeClass );
-            device.store( this );
+        LogUtil.nullArgCheck( typeClass, "typeClass", Class.class );
+        if ( typeClass == Tsr.class ) return (T) this;
+        if ( Number.class.isAssignableFrom(this.valueClass()) && Number.class.isAssignableFrom(typeClass) ) {
+            DataConverter converter = DataConverter.instance();
+            return (T) converter.convert( mean().at(0).get(), typeClass );
         }
-        else newData = _convertedDataOfType( typeClass );
-        return new Tsr<>( this.getNDConf().shape(), newDT, newData );
+        if ( typeClass == String.class )
+            return (T) this.toString();
+
+        throw new IllegalArgumentException("Failed to convert this tensor of type '"+getDataType()+"' to '"+typeClass+"'!");
     }
 
     /**

@@ -111,6 +111,16 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
     default Tsr<V> get( Number i ) { return getAt( i ); }
 
     /**
+     *  This method enables tensor slicing!
+     *  It takes a key of various types and configures a slice
+     *  tensor which shares the same underlying data as the original tensor.
+     *
+     * @param key This object might be a wide range of objects including maps, lists or arrays...
+     * @return A slice tensor or scalar value.
+     */
+    default Tsr<V> get( Object key ) { return getAt( key ); }
+
+    /**
      *  This method is most useful when used in Groovy
      *  where defining maps is done through square brackets,
      *  making it possible to slice tensors like so: <br>
@@ -137,17 +147,7 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
      * @param key This object might be a wide range of objects including maps, lists or arrays...
      * @return A slice tensor or scalar value.
      */
-    Tsr<V> getAt( Object key );
-
-    /**
-     *  This method enables tensor slicing!
-     *  It takes a key of various types and configures a slice
-     *  tensor which shares the same underlying data as the original tensor.
-     *
-     * @param key This object might be a wide range of objects including maps, lists or arrays...
-     * @return A slice tensor or scalar value.
-     */
-    default Tsr<V> get( Object key ) { return getAt( key ); }
+    Tsr<V> getAt( List<?> key );
 
     /**
      *  This method enables assigning a provided tensor to be a subset of this tensor!
