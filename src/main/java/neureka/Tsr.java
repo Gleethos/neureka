@@ -2487,20 +2487,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  The following method enables the creation of tensor slices which access
-     *  the same underlying data (possibly from a different view).
-     *  The method name also translates to the subscript operator in Groovy.
-     *
-     * @param args An arbitrary number of arguments which can be used for slicing.
-     * @return A slice tensor created based on the passed keys.
-     */
-    @Override
-    public final Tsr<V> getAt( Object... args ) {
-        List<Object> argsList = Arrays.asList( args );
-        return getAt( argsList );
-    }
-
-    /**
      *  This method is most useful when used in Groovy
      *  where defining maps is done through square brackets,
      *  making it possible to slice tensors like so: <br>

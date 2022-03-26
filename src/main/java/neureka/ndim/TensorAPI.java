@@ -3,6 +3,7 @@ package neureka.ndim;
 import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,10 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
      * @param args An arbitrary number of arguments which can be used for slicing.
      * @return A slice tensor created based on the passed keys.
      */
-    Tsr<V> getAt( Object... args );
+    default Tsr<V> getAt( Object... args ) {
+        List<Object> argsList = Arrays.asList( args );
+        return getAt( argsList );
+    }
 
     /**
      *  The following method enables the creation of tensor slices which access

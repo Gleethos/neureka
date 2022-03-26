@@ -276,16 +276,17 @@ class Tensor_IO_Spec extends Specification
             (t as String) == t.toString()
     }
 
-    def 'We can re-populate a tensor of shorts from a single scalar value!'() {
-
+    def 'We can re-populate a tensor of shorts from a single scalar value!'()
+    {
         given : 'A tensor of 3 floats:'
             var t = Tsr.ofShorts().vector(42, 666, 73)
 
         when : 'We call the "setValue" method with a scalar value passed to it...'
             t.setValue(5)
-
-        then :
+        then : 'The value of the tensor will be an array of 3 shorts.'
             t.value == [5, 5, 5] as short[]
+        and : 'We now expect the tensor to be virtual, because it stores only a single type of value.'
+            t.isVirtual()
     }
 
     def 'Tensors value type can be changed by calling "toType(...)".'()
