@@ -276,17 +276,31 @@ class Tensor_IO_Spec extends Specification
             (t as String) == t.toString()
     }
 
-    def 'We can re-populate a tensor of shorts from a single scalar value!'()
-    {
+    @IgnoreIf({ device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    def 'We can re-populate a tensor of shorts from a single scalar value!'(
+         String device, Class<?> type
+    ) {
         given : 'A tensor of 3 floats:'
-            var t = Tsr.ofShorts().vector(42, 666, 73)
+            var t = Tsr.of(type).vector(42, 666, 73)
+        and : 'We store the tensor on the given device, to ensure that it work there as well.'
+            t.to(device)
 
         when : 'We call the "setValue" method with a scalar value passed to it...'
             t.setValue(5)
-        then : 'The value of the tensor will be an array of 3 shorts.'
-            t.value == [5, 5, 5] as short[]
+        then : 'The value of the tensor will be an array of 3.'
+            t.value == [5, 5, 5]
         and : 'We now expect the tensor to be virtual, because it stores only a single type of value.'
             t.isVirtual()
+
+        where :
+            device | type
+            'CPU'  | Byte
+            'CPU'  | Integer
+            'CPU'  | Long
+            'CPU'  | Double
+            'CPU'  | Short
+            'CPU'  | Float
+            'GPU'  | Float
     }
 
     def 'Tensors value type can be changed by calling "toType(...)".'()

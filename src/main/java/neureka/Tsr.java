@@ -2992,8 +2992,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         _guardGet("value object");
         if ( this.isOutsourced() ) {
             Device<V> device = get( Device.class );
-            if ( device != null )
-                return device.valueFor( this );
+            if ( device != null ) {
+                if ( this.getNDConf().isSimple() )
+                    return device.valueFor( this );
+                else
+                    return device.valueFor( this.clone().setIsVirtual( false ) );
+            }
         }
         if ( !this.isVirtual() ) {
             if ( this.getNDConf().isSimple() )

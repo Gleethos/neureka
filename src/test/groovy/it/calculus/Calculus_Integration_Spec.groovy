@@ -54,8 +54,8 @@ class Calculus_Integration_Spec extends Specification
             Tsr<?> result = ( index != null ? f.derive( inputs, index ) : f.call( inputs ) )
             List<Double> value = result.getValueAs(double[].class) as List<Double>
 
-        expect : "The calculated result ${result} should be equal to expected ${expected}."
-            value == expected.values().first()
+        expect : "The calculated result ${result} should be (ruffly) equal to expected ${expected}."
+            (0..<value.size()).every {equals(value[it], expected.values().first()[it], 1e-6)}
 
         and : 'The shape is as expected as well : '
             result.shape == expected.keySet().first()
@@ -176,5 +176,8 @@ class Calculus_Integration_Spec extends Specification
     }
 
 
+    private static boolean equals(Number v1, Number v2, delta) {
+        return (v1 == v2) || (v1 - v2).abs() <= delta
+    }
 
 }
