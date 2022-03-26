@@ -24,9 +24,9 @@ class OpenCL_GEMM_Unit_Spec extends Specification {
             new GEMM().run( call )
 
         then :
-            (1.._) * call.getTsrOfType(Float, 0) >> c
-            (1.._) * call.getTsrOfType(Float, 1) >> a
-            (1.._) * call.getTsrOfType(Float, 2) >> b
+            (1.._) * call.input(Float, 0) >> c
+            (1.._) * call.input(Float, 1) >> a
+            (1.._) * call.input(Float, 2) >> b
             (1.._) * call.getDevice() >> device
             (1.._) * device.hasAdHocKernel("fast_CM_MM_3x4x2") >> false
             (1.._) * device.compileAdHocKernel("fast_CM_MM_3x4x2", _) >> device

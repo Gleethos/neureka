@@ -1,6 +1,7 @@
 package neureka.ndim;
 
 import neureka.Tsr;
+import neureka.common.utility.LogUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -270,7 +271,19 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
      * @param indices The index array which targets a single value item within this tensor.
      * @return The found raw value item targeted by the provided index array.
      */
-    default V getValueAt( int... indices ) { return getDataAt( getNDConf().indexOfIndices( indices ) ); }
+    default V getValueAt( int... indices ) {
+        LogUtil.nullArgCheck( indices, "indices", int[].class, "Cannot find tensor value without indices!" );
+        if ( indices.length == 0 ) throw new IllegalArgumentException("Index array may not be empty!");
+        if ( indices.length < this.rank() ) {
+            if ( indices.length == 1 ) return getDataAt( getNDConf().indexOfIndex( indices[0] ) );
+            else {
+                int[] allIndices = new int[this.rank()];
+                System.arraycopy( indices, 0, allIndices, 0, indices.length );
+                return getDataAt( getNDConf().indexOfIndices( allIndices ) );
+            }
+        }
+        return getDataAt( getNDConf().indexOfIndices( indices ) );
+    }
 
     default Access<V> at( int... indices ) {
         return new Access<V>() {

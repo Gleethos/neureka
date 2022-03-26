@@ -72,15 +72,15 @@ public class CPUMatMul implements ImplementationFor<CPU> {
 
         Class<?> type = call.input( 0 ).getDataType().getJVMTypeClass();
         if ( type == Double.class ) {
-            double[] A = (double[]) call.getTsrOfType(Double.class, 1).getUnsafe().getData();
-            double[] B = (double[]) call.getTsrOfType(Double.class, 2).getUnsafe().getData();
-            double[] C = (double[]) call.getTsrOfType(Double.class, 0).getUnsafe().getData();
+            double[] A = (double[]) call.input(Double.class, 1).getUnsafe().getData();
+            double[] B = (double[]) call.input(Double.class, 2).getUnsafe().getData();
+            double[] C = (double[]) call.input(Double.class, 0).getUnsafe().getData();
 
             execute( rowMajor, A, B, C, aRows, aCols, bCols );
         } else if ( type == Float.class ) {
-            float[] A = (float[]) call.getTsrOfType(Float.class, 1).getUnsafe().getData();
-            float[] B = (float[]) call.getTsrOfType(Float.class, 2).getUnsafe().getData();
-            float[] C = (float[]) call.getTsrOfType(Float.class, 0).getUnsafe().getData();
+            float[] A = (float[]) call.input(Float.class, 1).getUnsafe().getData();
+            float[] B = (float[]) call.input(Float.class, 2).getUnsafe().getData();
+            float[] C = (float[]) call.input(Float.class, 0).getUnsafe().getData();
 
             execute( rowMajor, A, B, C, aRows, aCols, bCols );
         }

@@ -100,9 +100,9 @@ class Calculus_Extension_Integration_Spec extends Specification
                                                             .withArity(3)
                                                             .andImplementation(
                                                                 (call) -> {
-                                                                    Tsr drn = call.getTsrOfType(Number.class, 0)
-                                                                    Tsr src1 = call.getTsrOfType(Number.class, 1)
-                                                                    Tsr src2 = call.getTsrOfType(Number.class, 2)
+                                                                    Tsr drn = call.input(Number.class, 0)
+                                                                    Tsr src1 = call.input(Number.class, 1)
+                                                                    Tsr src2 = call.input(Number.class, 2)
                                                                     assert src1.shape(1) == src2.shape(0)
 
                                                                     //for ( int i=0; i<clContext.getGws(); i++ ) {

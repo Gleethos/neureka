@@ -134,9 +134,9 @@ public class MatMul extends AbstractOperation
                                 call.getDevice()
                                         .getKernel(call)
                                         .pass(M).pass(N).pass(K)
-                                        .pass(call.getTsrOfType(Number.class, 1))
-                                        .pass(call.getTsrOfType(Number.class, 2))
-                                        .pass(call.getTsrOfType(Number.class, 0))
+                                        .pass(call.input(Number.class, 1))
+                                        .pass(call.input(Number.class, 2))
+                                        .pass(call.input(Number.class, 0))
                                         .call(new long[]{M, N}, null);
                             }
                         })

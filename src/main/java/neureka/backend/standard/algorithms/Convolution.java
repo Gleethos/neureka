@@ -36,9 +36,9 @@ public final class Convolution extends AbstractFunctionalAlgorithm<Convolution>
             ExecutionCall<CPU> call,
             Functions<Fun> funs
     ) {
-        Tsr<Number> t0_drn = call.getTsrOfType( Number.class, 0 );
-        Tsr<Number> t1_src = call.getTsrOfType( Number.class, 1 );
-        Tsr<Number> t2_src = call.getTsrOfType( Number.class, 2 );
+        Tsr<Number> t0_drn = call.input( Number.class, 0 );
+        Tsr<Number> t1_src = call.input( Number.class, 1 );
+        Tsr<Number> t2_src = call.input( Number.class, 2 );
 
         Class<?> typeClass = t0_drn.getValueClass();
 

@@ -62,12 +62,12 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         });
         setExecutionDispatcher(
             ( caller, call ) -> {
-                int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
+                int offset = ( call.input( Number.class, 0 ) == null ) ? 1 : 0;
                 if (
-                    call.getTsrOfType( Number.class, offset).shape().size() != call.getTsrOfType( Number.class, 1+offset).shape().size()
+                    call.input( Number.class, offset).shape().size() != call.input( Number.class, 1+offset).shape().size()
                 ) // Creating a new tensor:
                 {
-                    Tsr<?>[] inputs = {call.getTsrOfType( Number.class, offset), call.getTsrOfType( Number.class, 1+offset) };
+                    Tsr<?>[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };
                     Reshape.makeFit( inputs, caller.isDoingAD() );
                     inputs = new Tsr[]{ null, inputs[0], inputs[1] };
                     return CalcUtil.recursiveExecution( call.withInputs( inputs ), (executionCall, executor) -> null );
@@ -119,13 +119,13 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                         .kernelPostfix( postfix )
                         .execution(
                             call -> {
-                                int offset = ( call.getTsrOfType( Number.class, 0 ) != null ) ? 0 : 1;
-                                int gwz = ( call.getTsrOfType( Number.class, 0 ) != null ) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                int offset = ( call.input( Number.class, 0 ) != null ) ? 0 : 1;
+                                int gwz = ( call.input( Number.class, 0 ) != null ) ? call.input( Number.class, 0 ).size() : call.input( Number.class, 1 ).size();
                                 call.getDevice().getKernel(call)
-                                        .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                        .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                        .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
-                                        .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                        .passAllOf( call.input( Number.class, offset ) )
+                                        .passAllOf( call.input( Number.class, offset + 1 ) )
+                                        .passAllOf( call.input( Number.class, offset + 2 ) )
+                                        .pass( call.input( Number.class, 0 ).rank() )
                                         .pass( call.getValOf( Arg.DerivIdx.class ) )
                                         .call( gwz );
                             }
@@ -141,9 +141,9 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
             ExecutionCall<CPU> call,
             Functions<Fun> pairs
     ) {
-        Tsr<Number> t0_drn = call.getTsrOfType( Number.class, 0 );
-        Tsr<Number> t1_src = call.getTsrOfType( Number.class, 1 );
-        Tsr<Number> t2_src = call.getTsrOfType( Number.class, 2 );
+        Tsr<Number> t0_drn = call.input( Number.class, 0 );
+        Tsr<Number> t1_src = call.input( Number.class, 1 );
+        Tsr<Number> t2_src = call.input( Number.class, 2 );
 
         t0_drn.setIsVirtual(false);
 

@@ -13,9 +13,9 @@ public class GEMM implements ImplementationFor<OpenCLDevice> {
     @Override
     public void run( ExecutionCall<OpenCLDevice> call) {
 
-            Tsr<Float> c = call.getTsrOfType(Float.class, 0);
-            Tsr<Float> a = call.getTsrOfType(Float.class, 1);
-            Tsr<Float> b = call.getTsrOfType(Float.class, 2);
+            Tsr<Float> c = call.input(Float.class, 0);
+            Tsr<Float> a = call.input(Float.class, 1);
+            Tsr<Float> b = call.input(Float.class, 2);
 
             int M = a.shape(0);
             int K = a.shape(1);

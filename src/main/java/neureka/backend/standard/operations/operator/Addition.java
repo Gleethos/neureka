@@ -200,14 +200,14 @@ public class Addition extends AbstractOperation {
                             else if ( call.getDerivativeIndex() == 1 )
                                 call.setInput( 0, Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
                             else {
-                                int gwz = call.getTsrOfType(Number.class, 0).size();
-                                float value = call.getTsrOfType(Number.class, 2).getValueAt(0).floatValue();
+                                int gwz = call.input(Number.class, 0).size();
+                                float value = call.input(Number.class, 2).getValueAt(0).floatValue();
                                 call.getDevice()
                                     .getKernel(call)
-                                    .passAllOf(call.getTsrOfType(Number.class, 0))
-                                    .passAllOf(call.getTsrOfType(Number.class, 1))
+                                    .passAllOf(call.input(Number.class, 0))
+                                    .passAllOf(call.input(Number.class, 1))
                                     .pass(value)
-                                    .pass(call.getTsrOfType(Number.class, 0).rank())
+                                    .pass(call.input(Number.class, 0).rank())
                                     .pass(call.getValOf(Arg.DerivIdx.class))
                                     .call(gwz);
                             }

@@ -197,14 +197,14 @@ public class Multiplication extends AbstractOperation
                             else if ( call.getDerivativeIndex() == 1 )
                                 call.setInput( 0, call.input( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
                             else {
-                                int offset = (call.getTsrOfType(Number.class, 2).isVirtual() || call.getTsrOfType(Number.class, 2).size() == 1) ? 1 : 0;
-                                int gwz = call.getTsrOfType(Number.class, 0).size();
+                                int offset = (call.input(Number.class, 2).isVirtual() || call.input(Number.class, 2).size() == 1) ? 1 : 0;
+                                int gwz = call.input(Number.class, 0).size();
                                 call.getDevice()
                                     .getKernel(call)
-                                    .passAllOf(call.getTsrOfType(Number.class, 0))
-                                    .passAllOf(call.getTsrOfType(Number.class, 0 + offset))
-                                    .pass((float) call.getTsrOfType(Number.class, 1 + offset).getDataAs( double[].class )[0])
-                                    .pass(call.getTsrOfType(Number.class, 0).rank())
+                                    .passAllOf(call.input(Number.class, 0))
+                                    .passAllOf(call.input(Number.class, 0 + offset))
+                                    .pass((float) call.input(Number.class, 1 + offset).getDataAs( double[].class )[0])
+                                    .pass(call.input(Number.class, 0).rank())
                                     .pass(call.getValOf(Arg.DerivIdx.class))
                                     .call(gwz);
                             }

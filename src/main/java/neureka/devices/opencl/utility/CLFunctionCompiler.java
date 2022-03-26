@@ -105,7 +105,7 @@ public final class CLFunctionCompiler {
                                     .mapToObj( p -> (Tsr<Number>) call.input( p + 1 ) )
                                     .collect(Collectors.toList());
 
-        args.add(0, call.getTsrOfType(Number.class, 0));
+        args.add(0, call.input(Number.class, 0));
 
         List<String> types = args.stream()
                                     .map( CLFunctionCompiler::_clTypeOf )

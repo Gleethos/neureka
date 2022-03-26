@@ -79,7 +79,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
         CPU.RangeWorkload workload = null;
 
         if ( typeClass == Double.class ) {
-            double value = call.getTsrOfType(Number.class, 1 + offset).getDataAs(double[].class)[0];
+            double value = call.input(Number.class, 1 + offset).at(0).get().doubleValue();
             Fun.F64F64ToF64 operation = functions.get(Fun.F64F64ToF64.class).get(call.getDerivativeIndex());
             double[] t0_value = t0_drn.getDataAs(double[].class);
             double[] t1_value = src.getDataAs(double[].class);
@@ -101,7 +101,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             };
         }
         if ( typeClass == Float.class ) {
-            float value = call.getTsrOfType(Number.class, 1 + offset).at(0).get().floatValue();
+            float value = call.input(Number.class, 1 + offset).at(0).get().floatValue();
             Fun.F32F32ToF32 operation = functions.get(Fun.F32F32ToF32.class).get(call.getDerivativeIndex());
             float[] t0_value = t0_drn.getDataAs(float[].class);
             float[] t1_value = src.getDataAs(float[].class);
@@ -123,7 +123,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             };
         }
         if ( typeClass == Integer.class ) {
-            int value = call.getTsrOfType(Number.class, 1 + offset).getDataAs(int[].class)[0];
+            int value = call.input(Number.class, 1 + offset).at(0).get().intValue();
             Fun.I32I32ToI32 operation = functions.get(Fun.I32I32ToI32.class).get(call.getDerivativeIndex());
             int[] t0_value = t0_drn.getDataAs(int[].class);
             int[] t1_value = src.getDataAs(int[].class);
@@ -145,7 +145,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             };
         }
         if ( t0_drn.getUnsafe().getData().getClass() == Object[].class ) {
-            Object value = call.input( 1 + offset ).getDataAs(Object[].class)[0];
+            Object value = call.input( 1 + offset ).at(0).get();
             Fun.ObjObjToObj operation = functions.get(Fun.ObjObjToObj.class).get(call.getDerivativeIndex());
             Object[] t0_value = t0_drn.getDataAs(Object[].class);
             Object[] t1_value = src.getDataAs(Object[].class);

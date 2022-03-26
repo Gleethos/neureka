@@ -75,7 +75,7 @@ public class Randomization extends AbstractOperation
                                 .getDevice()
                                 .getExecutor()
                                 .threaded(
-                                    call.getTsrOfType( Number.class, 0 ).size(),
+                                    call.input( Number.class, 0 ).size(),
                                     _newWorkloadFor( call )
                                 )
                         )

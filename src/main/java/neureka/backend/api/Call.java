@@ -101,7 +101,7 @@ public class Call<D>
         return this.getValOf( Arg.DerivIdx.class );
     }
 
-    public  <V> Tsr<V> getTsrOfType( Class<V> valueTypeClass, int i ) {
+    public  <V> Tsr<V> input( Class<V> valueTypeClass, int i ) {
         Tsr<?>[] tensors = _tensors;
         if ( valueTypeClass == null ) {
             throw new IllegalArgumentException(

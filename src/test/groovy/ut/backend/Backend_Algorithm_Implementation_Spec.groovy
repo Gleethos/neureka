@@ -99,9 +99,9 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             1 * nativeExecutor.threaded( _, _ )
             (0.._) * call.inputs() >> new Tsr[]{ tensor, tensor, tensor }
             (0.._) * call.input({it >= 0 && it <= 2}) >> tensor
-            (0.._) * call.getTsrOfType( Number.class, 0 ) >> tensor
+            (0.._) * call.input( Number.class, 0 ) >> tensor
             (0.._) * call.input(0) >> tensor
-            (0.._) * call.getTsrOfType( Number.class, 1 ) >> tensor
+            (0.._) * call.input( Number.class, 1 ) >> tensor
             (1.._) * tensor.size() >> 0
             (0.._) * tensor.valueClass >> Double
             (0.._) * tensor.getDataAs(double[]) >> new double[0]
@@ -141,7 +141,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
 
         then : 'The mock objects are being called as expected.'
             (0.._) * call.arity() >> 3
-            (1.._) * call.getTsrOfType( Number.class, 0) >> tensor
+            (1.._) * call.input( Number.class, 0) >> tensor
             (1.._) * tensor.size() >> 0
             (1.._) * call.getDevice() >> device
              1 * device.getKernel(call) >> kernel

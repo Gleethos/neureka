@@ -81,13 +81,13 @@ public class AssignLeft extends AbstractOperation
                     .kernelPostfix( this.getIdentifier() )
                     .execution(
                         call -> {
-                            Tsr<Number> t = call.getTsrOfType( Number.class, 0 );
+                            Tsr<Number> t = call.input( Number.class, 0 );
                             int gwz = t.size();
                             call.getDevice()
                                 .getKernel(call)
                                 .passAllOf( t )
                                 .passAllOf( t )
-                                .pass( call.getTsrOfType( Number.class, 1 ).getValueAs( float[].class )[ 0 ] )
+                                .pass( call.input( Number.class, 1 ).getValueAs( float[].class )[ 0 ] )
                                 .pass( t.rank() )
                                 .pass( call.getValOf( Arg.DerivIdx.class ) )
                                 .call( gwz );

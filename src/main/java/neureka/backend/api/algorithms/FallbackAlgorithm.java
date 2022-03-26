@@ -60,13 +60,13 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                 call.getDevice()
                                     .getExecutor()
                                     .threaded(
-                                        call.getTsrOfType( Number.class, 0 ).size(),
+                                        call.input( Number.class, 0 ).size(),
                                         ( start, end ) -> {
                                             for ( int i = start; i < end; i++ ) {
                                                 for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                                    inputs[ ii ] = call.getTsrOfType( Number.class, 1 + ii ).getValueAs( double[].class )[ i ];
+                                                    inputs[ ii ] = call.input( Number.class, 1 + ii ).getValueAs( double[].class )[ i ];
                                                 }
-                                                call.getTsrOfType( Number.class, 0 ).getDataAs( double[].class )[ i ] = f.call( inputs );
+                                                call.input( Number.class, 0 ).getDataAs( double[].class )[ i ] = f.call( inputs );
                                             }
                                         }
                                     );
@@ -76,14 +76,14 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                 call.getDevice()
                                     .getExecutor()
                                     .threaded(
-                                        call.getTsrOfType( Object.class, 0 ).size(),
+                                        call.input( Object.class, 0 ).size(),
                                         ( start, end ) -> {
                                             for ( int i = start; i < end; i++ ) {
                                                 StringBuilder b = new StringBuilder();
                                                 for (int ii = 1; ii < call.arity(); ii++ ) {
-                                                    b.append(call.getTsrOfType( Object.class, ii ).getValueAt(i));
+                                                    b.append(call.input( Object.class, ii ).getValueAt(i));
                                                 }
-                                                setAt( call.getTsrOfType( Object.class, 0 ), i, b.toString() );
+                                                setAt( call.input( Object.class, 0 ), i, b.toString() );
                                             }
                                         }
                                     );
@@ -177,14 +177,14 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
             .getDevice()
             .getExecutor()
             .threaded(
-                    call.getTsrOfType( Object.class, 0 ).size(),
+                    call.input( Object.class, 0 ).size(),
                     ( start, end ) -> {
                         Object[] inputs = new Object[ call.arity() - 1 ];
                         for ( int i = start; i < end; i++ ) {
                             for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                inputs[ ii ] = call.getTsrOfType( Object.class, 1 + ii ).getValueAt(i);
+                                inputs[ ii ] = call.input( Object.class, 1 + ii ).getValueAt(i);
                             }
-                            setAt( call.getTsrOfType( Object.class, 0 ), i, _tryExecute(finalMethod, inputs, 0));
+                            setAt( call.input( Object.class, 0 ), i, _tryExecute(finalMethod, inputs, 0));
                         }
                     }
             );
