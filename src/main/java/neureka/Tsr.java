@@ -2980,23 +2980,29 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public Object getData() {
         _guardGet("data object");
+        return _getData( true );
+    }
+
+    private Object _getData( boolean clone ) {
         if ( this.isOutsourced() ) {
             Device<V> device = get( Device.class );
             if ( device != null )
                 return device.dataFor( this );
         }
         Object data = this.getUnsafe().getData();
-        if ( data instanceof double[]  ) return ( (double[] ) data );
-        if ( data instanceof float[]   ) return ( (float[]  ) data );
-        if ( data instanceof byte[]    ) return ( (byte[]   ) data );
-        if ( data instanceof short[]   ) return ( (short[]  ) data );
-        if ( data instanceof int[]     ) return ( (int[]    ) data );
-        if ( data instanceof long[]    ) return ( (long[]   ) data );
-        if ( data instanceof char[]    ) return ( (char[]   ) data );
-        if ( data instanceof boolean[] ) return ( (boolean[]) data );
+        if ( clone ) {
+            if (data instanceof double[]) return ((double[]) data).clone();
+            if (data instanceof float[]) return ((float[]) data).clone();
+            if (data instanceof byte[]) return ((byte[]) data).clone();
+            if (data instanceof short[]) return ((short[]) data).clone();
+            if (data instanceof int[]) return ((int[]) data).clone();
+            if (data instanceof long[]) return ((long[]) data).clone();
+            if (data instanceof char[]) return ((char[]) data).clone();
+            if (data instanceof boolean[]) return ((boolean[]) data).clone();
+            //if ( data instanceof Object[] ) return ((Object[]) data)
+        }
         return data;
     }
-
 
     public Object getValue() { // TODO : Make this what it is supposed to be!!! (returning a copy of the targeted data)
         _guardGet("value object");
@@ -3393,6 +3399,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             @Override public Tsr<V> delete() { return Tsr.this._delete(); }
 
             @Override public Object getData() { return _getData(); }
+
+            @Override
+            public <A> A getDataAs( Class<A> arrayTypeClass ) {
+                return DataConverter.instance().convert( _getData(false), arrayTypeClass );
+            }
         };
     }
 

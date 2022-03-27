@@ -79,9 +79,9 @@ public final class Convolution extends AbstractFunctionalAlgorithm<Convolution>
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
-        double[] t0_value = t0_drn.getDataAs( double[].class );
-        double[] t1_value = t1_src.getDataAs( double[].class );
-        double[] t2_value = t2_src.getDataAs( double[].class );
+        double[] t0_value = (double[]) t0_drn.getUnsafe().getData();
+        double[] t1_value = t1_src.getUnsafe().getDataAs( double[].class );
+        double[] t2_value = t2_src.getUnsafe().getDataAs( double[].class );
 
         while ( i < end )
         {//increment on drain accordingly:
@@ -152,9 +152,13 @@ public final class Convolution extends AbstractFunctionalAlgorithm<Convolution>
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
-        double[] t0_value = t0_drn.getDataAs( double[].class );
-        double[] t1_value = t1_src.getDataAs( double[].class );
-        double[] t2_value = t2_src.getDataAs( double[].class );
+        double[] t0_value = (double[]) t0_drn.getUnsafe().getData();
+        double[] t1_value = t1_src.getUnsafe().getDataAs( double[].class );
+        double[] t2_value = t2_src.getUnsafe().getDataAs( double[].class );
+
+        assert t0_value != null;
+        assert t1_value != null;
+        assert t2_value != null;
 
         // Incrementing if 'i>0' so that all indexes match:
         for ( int ii = 0; ii < i; ii++ ) {
@@ -245,9 +249,9 @@ public final class Convolution extends AbstractFunctionalAlgorithm<Convolution>
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
-        float[] t0_value = t0_drn.getDataAs( float[].class );
-        float[] t1_value = t1_src.getDataAs( float[].class );
-        float[] t2_value = t2_src.getDataAs( float[].class );
+        float[] t0_value = t0_drn.getUnsafe().getDataAs( float[].class );
+        float[] t1_value = t1_src.getUnsafe().getDataAs( float[].class );
+        float[] t2_value = t2_src.getUnsafe().getDataAs( float[].class );
 
         while ( i < end )
         { // increment on drain accordingly:
@@ -317,9 +321,9 @@ public final class Convolution extends AbstractFunctionalAlgorithm<Convolution>
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
-        float[] t0_value = t0_drn.getDataAs( float[].class );
-        float[] t1_value = t1_src.getDataAs( float[].class );
-        float[] t2_value = t2_src.getDataAs( float[].class );
+        float[] t0_value = t0_drn.getUnsafe().getDataAs( float[].class );
+        float[] t1_value = t1_src.getUnsafe().getDataAs( float[].class );
+        float[] t2_value = t2_src.getUnsafe().getDataAs( float[].class );
 
         // Incrementing if 'i>0' so that all indexes match:
         for ( int ii = 0; ii < i; ii++ ) {

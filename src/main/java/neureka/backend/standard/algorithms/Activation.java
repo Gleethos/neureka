@@ -134,7 +134,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
             }
             else
             {
-                double[] t1_value = t1_src.getDataAs(double[].class);
+                double[] t1_value = t1_src.getUnsafe().getDataAs(double[].class);
                 if ( isSimple )
                     workload = (start, end) -> {
                         for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);
@@ -161,7 +161,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
             Fun.F32ToF32 fun = funs.get(Fun.F32ToF32.class).get(d);
             assert fun != null;
             float[] t0_value = (float[]) t0_drn.getUnsafe().getData();
-            float[] t1_value = t1_src.getDataAs(float[].class);
+            float[] t1_value = t1_src.getUnsafe().getDataAs(float[].class);
             if ( isSimple )
                 workload = (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);
@@ -187,7 +187,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
             Fun.I32ToI32 fun = funs.get(Fun.I32ToI32.class).get(d);
             assert fun != null;
             int[] t0_value = (int[]) t0_drn.getUnsafe().getData();
-            int[] t1_value = t1_src.getDataAs(int[].class);
+            int[] t1_value = t1_src.getUnsafe().getDataAs(int[].class);
             if ( isSimple )
                 workload = (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);

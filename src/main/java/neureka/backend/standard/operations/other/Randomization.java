@@ -100,7 +100,7 @@ public class Randomization extends AbstractOperation
         if ( type == Double.class ) {
             if ( isSimple )
                 return (i, end) -> {
-                    double[] t0_value = tensor.getDataAs(double[].class);
+                    double[] t0_value = tensor.getUnsafe().getDataAs(double[].class);
                     double[] gaussian = {0, 0};
                     if ( i % 2 == 1 ) {
                         gaussianFrom(seed + i - 1, gaussian);
@@ -118,7 +118,7 @@ public class Randomization extends AbstractOperation
                 return (i, end) -> {
                     NDIterator t0Idx = NDIterator.of(tensor);
                     t0Idx.set(tensor.indicesOfIndex(i));
-                    double[] t0_value = tensor.getDataAs(double[].class);
+                    double[] t0_value = tensor.getUnsafe().getDataAs(double[].class);
                     double[] gaussian = {0, 0};
                     if ( i % 2 == 1 ) {
                         gaussianFrom(seed + i - 1, gaussian);
@@ -135,7 +135,7 @@ public class Randomization extends AbstractOperation
         } else {
             if ( isSimple )
                 return (i, end) -> {
-                    float[] t0_value = tensor.getDataAs(float[].class);
+                    float[] t0_value = tensor.getUnsafe().getDataAs(float[].class);
                     double[] gaussian = {0, 0};
                     if ( i % 2 == 1 ) {
                         gaussianFrom(seed + i - 1, gaussian);
@@ -153,7 +153,7 @@ public class Randomization extends AbstractOperation
                 return (i, end) -> {
                     NDIterator t0Idx = NDIterator.of(tensor);
                     t0Idx.set(tensor.indicesOfIndex(i));
-                    float[] t0_value = tensor.getDataAs(float[].class);
+                    float[] t0_value = tensor.getUnsafe().getDataAs(float[].class);
                     double[] gaussian = {0, 0};
                     if ( i % 2 == 1 ) {
                         gaussianFrom(seed + i - 1, gaussian);

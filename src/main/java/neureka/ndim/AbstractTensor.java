@@ -521,6 +521,9 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
          * @return The raw data object underlying this tensor.
          */
         Object getData();
+
+        <A> A getDataAs( Class<A> arrayTypeClass );
+
     }
 
     /**

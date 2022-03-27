@@ -498,13 +498,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
         Pointer p;
         int size;
         if ( fp == 1 ) {
-            float[] data = tensor.getDataAs(float[].class);
+            float[] data = tensor.getUnsafe().getDataAs(float[].class);
             assert !isVirtual || data.length == 1;
             data = (data == null ? new float[tensor.size()] : data);
             p = Pointer.to(data);
             size = data.length;
         } else {
-            double[] data = tensor.getDataAs(double[].class);
+            double[] data = tensor.getUnsafe().getDataAs(double[].class);
             assert !isVirtual || data.length == 1;
             data = (data == null ? new double[tensor.size()] : data);
             p = Pointer.to(data);

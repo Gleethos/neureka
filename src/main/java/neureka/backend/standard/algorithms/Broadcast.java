@@ -183,9 +183,9 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         t0Idx.set( t0_drn.indicesOfIndex( i ) );
         t1Idx.set( t0_drn.indicesOfIndex( i ) );
         NDIterator t2Idx = NDIterator.of( t2_src, NDIterator.NonVirtual.TRUE );
-        double[] t0_value = t0_drn.getDataAs( double[].class );
-        double[] t1_value = t1_src.getDataAs( double[].class );
-        double[] t2_value = t2_src.getDataAs( double[].class );
+        double[] t0_value = t0_drn.getUnsafe().getDataAs( double[].class );
+        double[] t1_value = t1_src.getUnsafe().getDataAs( double[].class );
+        double[] t2_value = t2_src.getUnsafe().getDataAs( double[].class );
 
         if ( d < 0 ) {
             while ( i < end ) {//increment on drain accordingly:
@@ -284,9 +284,9 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         t0Idx.set( t0_drn.indicesOfIndex( i ) );
         t1Idx.set( t0_drn.indicesOfIndex( i ) );
         NDIterator t2Idx = NDIterator.of( t2_src, NDIterator.NonVirtual.TRUE );
-        float[] t0_value = t0_drn.getDataAs( float[].class );
-        float[] t1_value = t1_src.getDataAs( float[].class );
-        float[] t2_value = t2_src.getDataAs( float[].class );
+        float[] t0_value = t0_drn.getUnsafe().getDataAs( float[].class );
+        float[] t1_value = t1_src.getUnsafe().getDataAs( float[].class );
+        float[] t2_value = t2_src.getUnsafe().getDataAs( float[].class );
 
         if ( d < 0 ) {
             while ( i < end ) {//increment on drain accordingly:
