@@ -116,7 +116,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             (t.getValueAs( double[].class ) as List<Float>) == expected
 
         when : 'The same underlying data is being queried by calling the device...'
-            def result = (0..<t.size()).collect{device.valueFor(t, it)}
+            def result = (0..<t.size()).collect{device.dataFor(t, it)}
 
         then : 'This new result also contains the same elements.'
             result == expected

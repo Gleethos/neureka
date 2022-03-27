@@ -96,22 +96,16 @@ public class MemValidator {
     /**
      * @return Is {@code true} if the result tensor is wrongfully flagged as intermediate (see {@link Tsr#isIntermediate()}).
      */
-    public boolean isWronglyIntermediate() {
-        return _wronglyIntermediate;
-    }
+    public boolean isWronglyIntermediate() { return _wronglyIntermediate; }
 
     /**
      * @return Is {@code true} if the result tensor is wrongfully flagged as non-intermediate (see {@link Tsr#isIntermediate()}).
      */
-    public boolean isWronglyNonIntermediate() {
-        return _wronglyNonIntermediate;
-    }
+    public boolean isWronglyNonIntermediate() { return _wronglyNonIntermediate; }
 
     /**
      * @return The result tensor returned by the {@link Supplier} lambda passed to this {@link MemValidator}.
      */
-    public Tsr<?> getResult() {
-        return _result;
-    }
+    public Tsr<?> getResult() { return _result; }
 
 }

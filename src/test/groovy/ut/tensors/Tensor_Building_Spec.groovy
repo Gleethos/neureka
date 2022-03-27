@@ -21,7 +21,8 @@ class Tensor_Building_Spec extends Specification
 
         and : '...also it will contain the expected data.'
             t.unsafe.data == data
-            t.data.length == 6
+            t.data.length == 1
+            t.value.length == 6
 
         and : 'The tensor will have the shape we passed to the builder.'
             t.shape() == [3, 2]

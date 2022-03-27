@@ -64,7 +64,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                         ( start, end ) -> {
                                             for ( int i = start; i < end; i++ ) {
                                                 for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                                    inputs[ ii ] = call.input( Number.class, 1 + ii ).getValueAs( double[].class )[ i ];
+                                                    inputs[ ii ] = call.input( Number.class, 1 + ii ).at( i ).get().doubleValue();
                                                 }
                                                 call.input( Number.class, 0 ).getDataAs( double[].class )[ i ] = f.call( inputs );
                                             }

@@ -229,12 +229,12 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T extends Object> Object valueFor( Tsr<T> tensor ) {
+    public <T extends Object> Object dataFor(Tsr<T> tensor ) {
         return tensor.getValue();
     }
 
     @Override
-    public <T extends Object> Object valueFor( Tsr<T> tensor, int index ) {
+    public <T extends Object> Object dataFor(Tsr<T> tensor, int index ) {
         return tensor.getValueAt( index );
     }
 

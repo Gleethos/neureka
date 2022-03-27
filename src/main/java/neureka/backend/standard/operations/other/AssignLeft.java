@@ -87,7 +87,7 @@ public class AssignLeft extends AbstractOperation
                                 .getKernel(call)
                                 .passAllOf( t )
                                 .passAllOf( t )
-                                .pass( call.input( Number.class, 1 ).getValueAs( float[].class )[ 0 ] )
+                                .pass( call.input( Number.class, 1 ).at(0).get().floatValue() )
                                 .pass( t.rank() )
                                 .pass( call.getValOf( Arg.DerivIdx.class ) )
                                 .call( gwz );

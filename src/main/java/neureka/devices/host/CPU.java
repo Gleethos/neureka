@@ -88,10 +88,10 @@ public class CPU extends AbstractDevice<Number>
     public <T extends Number> Device<Number> write( Tsr<T> tensor, Object value ) { return this; }
 
     @Override
-    public <T extends Number> Object valueFor( Tsr<T> tensor ) { return tensor.getValue(); }
+    public <T extends Number> Object dataFor(Tsr<T> tensor ) { return tensor.getValue(); }
 
     @Override
-    public <T extends Number> Number valueFor( Tsr<T> tensor, int index ) { return tensor.getValueAt( index ); }
+    public <T extends Number> Number dataFor(Tsr<T> tensor, int index ) { return tensor.getValueAt( index ); }
 
     @Override
     public CPU restore( Tsr<Number> tensor ) { return this; }

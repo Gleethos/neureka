@@ -512,6 +512,14 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
          */
         Tsr<T> delete();
 
+        /**
+         *  This returns the underlying raw data object of this tensor.
+         *  Contrary to the {@link Tsr#getValue()} ()} method, this one will
+         *  return an unbiased view on the raw data of this tensor.
+         *  Be careful using this, as it exposes mutable state!
+         *
+         * @return The raw data object underlying this tensor.
+         */
         Object getData();
     }
 

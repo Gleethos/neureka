@@ -78,10 +78,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @param searchKeys The search parameter and name of the requested {@link Device} instance.
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
-    static Device<Object> find( String... searchKeys )
-    {
-        return find( Device.class, searchKeys );
-    }
+    static Device<Object> find( String... searchKeys ) { return find( Device.class, searchKeys ); }
 
     /**
      *  This method returns {@link Device} instances matching
@@ -219,9 +216,9 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     <T extends V> Device<V> updateNDConf( Tsr<T> tensor );
 
-    <T extends V> Object valueFor( Tsr<T> tensor );
+    <T extends V> Object dataFor( Tsr<T> tensor );
 
-    <T extends V> V valueFor( Tsr<T> tensor, int index );
+    <T extends V> V dataFor( Tsr<T> tensor, int index );
 
     Collection<Tsr<V>> getTensors();
 

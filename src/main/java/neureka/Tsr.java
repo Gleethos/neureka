@@ -2968,23 +2968,33 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
 
     /**
-     *  This returns the underlying raw data object of this tensor.
-     *  Contrary to the {@link Tsr#getValue()} ()} method, this one will
-     *  return an unbiased view on the data of this tensor.
+     *  This returns an unprocessed version of the underlying data of this tensor.
+     *  If this tensor is outsourced (stored on a device), then the data will be loaded
+     *  into an array and returned by this method.
+     *  Do not expect the returned array to be actually stored within the tensor itself!
+     *  Contrary to the {@link Tsr#getValue()} method, this one will
+     *  return the data in an unbiased form, where for example a virtual (see {@link #isVirtual()})
+     *  tensor will have this method return an array of length 1.
      *
-     * @return The raw data object underlying this tensor.
+     * @return An unbiased copy of the underlying data of this tensor.
      */
     public Object getData() {
         _guardGet("data object");
         if ( this.isOutsourced() ) {
             Device<V> device = get( Device.class );
             if ( device != null )
-                return device.valueFor( this );
-            else
-                return getUnsafe().getData();
+                return device.dataFor( this );
         }
-        else if ( !this.isVirtual() ) return getUnsafe().getData();
-        else return getDataType().actualize( getUnsafe().getData(), this.size() );
+        Object data = this.getUnsafe().getData();
+        if ( data instanceof double[]  ) return ( (double[] ) data );
+        if ( data instanceof float[]   ) return ( (float[]  ) data );
+        if ( data instanceof byte[]    ) return ( (byte[]   ) data );
+        if ( data instanceof short[]   ) return ( (short[]  ) data );
+        if ( data instanceof int[]     ) return ( (int[]    ) data );
+        if ( data instanceof long[]    ) return ( (long[]   ) data );
+        if ( data instanceof char[]    ) return ( (char[]   ) data );
+        if ( data instanceof boolean[] ) return ( (boolean[]) data );
+        return data;
     }
 
 
@@ -2994,19 +3004,19 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             Device<V> device = get( Device.class );
             if ( device != null ) {
                 if ( this.getNDConf().isSimple() )
-                    return device.valueFor( this );
+                    return device.dataFor( this );
                 else
-                    return device.valueFor( this.clone().setIsVirtual( false ) );
+                    return device.dataFor( this.clone().setIsVirtual( false ) );
             }
         }
-        if ( !this.isVirtual() ) {
-            if ( this.getNDConf().isSimple() )
-                return _getData();
-            else
-                return this.clone()._getData();
+        if ( this.isVirtual() ) {
+            if ( _getData() == null ) return null;
+            else return getDataType().actualize( _getData(), this.size() );
         }
-        else if ( _getData() == null ) return null;
-        else return getDataType().actualize( _getData(), this.size() );
+        else if ( this.getNDConf().isSimple() )
+            return _getData();
+        else
+            return this.clone()._getData();
     }
 
     /*==================================================================================================================
@@ -3257,64 +3267,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     public <A> A getValueAs( Class<A> arrayTypeClass ) {
-        Object data;
-        DataType type;
-        if ( arrayTypeClass == double[].class ) {
-            data = _value64();
-            type = DataType.of(Double.class);
-        } else if ( arrayTypeClass == float[].class  ) {
-            data = _value32();
-            type = DataType.of(Float.class);
-        } else {
-            data = _getData();
-            type = this.getDataType();
-        }
-        if ( this.isVirtual() && data != null )
-            return DataConverter.instance().convert(
-                        type.actualize( data, this.size() ),
-                        arrayTypeClass
-            );
-        if ( data != null ) return (A) data;
-        return (A) _getData();
+        return (A) DataConverter.instance().convert( getValue(), arrayTypeClass );
     }
 
     public <A> A getDataAs( Class<A> arrayTypeClass ) {
-        if ( this.isOutsourced() ) {
-            return getValueAs( arrayTypeClass );
-        }
-        return DataConverter.instance().convert( _getData(), arrayTypeClass );
-    }
-
-    private double[] _value64() {
-        Device<V> found = this.get( Device.class );
-        if ( _getData() == null && this.isOutsourced() && found != null ) {
-            if ( found instanceof OpenCLDevice )
-                return ( (OpenCLDevice) found).value64f( (Tsr<Number>) this );
-            else return null;
-        }
-        double[] newValue = DataConverter.instance().convert( _getData(), double[].class );
-
-        if ( this.isVirtual() && newValue != null && this.size() > 1 ) {
-
-           double[] value = new double[ this.size() ];
-           Arrays.fill( value, newValue[ 0 ] );
-           return value;
-        }
-        return newValue;
-    }
-
-    private float[] _value32() {
-        Device<V> found = this.get( Device.class );
-        if ( _getData() == null && this.isOutsourced() && found != null ) {
-            if ( found instanceof OpenCLDevice )
-                return ( (OpenCLDevice) found ).value32f( (Tsr<Number>) this);
-        }
-        float[] newValue = DataConverter.instance().convert( _getData(), float[].class );
-        if ( this.isVirtual() && newValue != null ) {
-            newValue = new float[ this.size() ];
-            Arrays.fill( newValue, newValue[ 0 ] );
-        }
-        return newValue;
+        return DataConverter.instance().convert( getData(), arrayTypeClass );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3416,32 +3373,26 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         _guardGet("unsafe API");
         return new Unsafe<V>() {
             @Override
-            public final Tsr<V> setNDConf(NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return Tsr.this; }
+            public Tsr<V> setNDConf(NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return Tsr.this; }
             @Override
             public <V> Tsr<V> toType( Class<V> typeClass ) { return Tsr.this._toType( typeClass ); }
             @Override
             public <V> Tsr<V> setDataType( DataType<V> dataType ) { return (Tsr<V>) Tsr.this._setDataType(dataType); }
             @Override
-            public final Tsr<V> toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return Tsr.this; }
+            public Tsr<V> toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return Tsr.this; }
             @Override
-            public final Tsr<V> incrementVersion(ExecutionCall<?> call ) {
+            public Tsr<V> incrementVersion(ExecutionCall<?> call ) {
                 _incrementVersionBecauseOf( call );
                 return Tsr.this;
             }
             @Override
-            public final Tsr<V> setIsIntermediate( boolean isIntermediate ) {
+            public Tsr<V> setIsIntermediate(boolean isIntermediate ) {
                 _setIsIntermediate( isIntermediate );
                 return Tsr.this;
             }
-            @Override
-            public final Tsr<V> delete() {
-                return Tsr.this._delete();
-            }
+            @Override public Tsr<V> delete() { return Tsr.this._delete(); }
 
-            @Override
-            public Object getData() {
-                return _getData();
-            }
+            @Override public Object getData() { return _getData(); }
         };
     }
 

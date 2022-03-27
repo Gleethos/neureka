@@ -500,13 +500,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if ( fp == 1 ) {
             float[] data = tensor.getDataAs(float[].class);
             assert !isVirtual || data.length == 1;
-            data = (data == null) ? new float[tensor.size()] : data;
+            data = (data == null ? new float[tensor.size()] : data);
             p = Pointer.to(data);
             size = data.length;
         } else {
             double[] data = tensor.getDataAs(double[].class);
             assert !isVirtual || data.length == 1;
-            data = (data == null) ? new double[tensor.size()] : data;
+            data = (data == null ? new double[tensor.size()] : data);
             p = Pointer.to(data);
             size = data.length;
         }
@@ -698,12 +698,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public <T extends Number> Object valueFor(Tsr<T> tensor) {
+    public <T extends Number> Object dataFor(Tsr<T> tensor) {
         return value32f((Tsr<Number>) tensor);
     }
 
     @Override
-    public <T extends Number> Number valueFor(Tsr<T> tensor, int index) {
+    public <T extends Number> Number dataFor(Tsr<T> tensor, int index) {
         return value32f((Tsr<Number>) tensor, index);
     }
 
