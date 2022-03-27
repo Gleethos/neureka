@@ -11,14 +11,18 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- *  A simple container for various scalar based functions, which will be used
- *  by various algorithms like {@link Activation} and {@link Broadcast} to apply them to many elements in parallel.
+ *  A simple container for various tuples of scalar based functions for specific data types,
+ *  which will be used by various algorithms like {@link Activation} and
+ *  {@link Broadcast} to apply them to many elements in parallel.
+ *  Instances of this will be constructed through the
+ *  {@link Functions.Builder} which exposes the {@link Functions.Builder#with(FunTuple)} method
+ *  for registering {@link FunTuple}s.
  *
  * @param <F>
  */
 public final class Functions<F extends Fun> {
 
-    private final List<FunArray<F>> _functions = new ArrayList<>();
+    private final List<FunTuple<F>> _functions = new ArrayList<>();
 
     public static <F extends Fun, P extends FunPair<F>> Builder<F> implementation(
             int arity, FunWorkloadFinder<F> composed
@@ -35,21 +39,21 @@ public final class Functions<F extends Fun> {
     ) {
         return new Builder<F>( arity, workSizeSupplier, composed );
     }
-    private Functions( List<FunArray<F>> fun ) {
+    private Functions( List<FunTuple<F>> fun ) {
         _functions.addAll(fun);
     }
 
-    public <T extends F> FunArray<T> get( Class<T> type ) {
-        for ( FunArray<F> p : _functions )
+    public <T extends F> FunTuple<T> get(Class<T> type ) {
+        for ( FunTuple<F> p : _functions )
             if ( type.isAssignableFrom( p.getType() ) )
-                return (FunArray<T>) p;
+                return (FunTuple<T>) p;
 
         throw new IllegalArgumentException("Function of type '"+type.getSimpleName()+"' not found!");
     }
 
     public static class Builder<F extends Fun>
     {
-        private final List<FunArray<F>> _functions = new ArrayList<>();
+        private final List<FunTuple<F>> _functions = new ArrayList<>();
         private final FunImplementation<F> _implementation;
         private final int _arity;
 
@@ -67,8 +71,8 @@ public final class Functions<F extends Fun> {
                                     );
         }
 
-        public <T extends F, P extends FunArray<T>> Builder<F> with( P fun ) {
-            _functions.add((FunArray<F>) fun);
+        public <T extends F, P extends FunTuple<T>> Builder<F> with(P fun ) {
+            _functions.add((FunTuple<F>) fun);
             return this;
         }
 

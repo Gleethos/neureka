@@ -5,7 +5,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.standard.algorithms.internal.Fun;
-import neureka.backend.standard.algorithms.internal.FunArray;
+import neureka.backend.standard.algorithms.internal.FunTuple;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Contract;
 
 public class ScalarActivation extends AbstractFunctionalAlgorithm<ScalarActivation>
 {
-    public ScalarActivation(FunArray<Fun.F64ToF64> funs) {
+    public ScalarActivation(FunTuple<Fun.F64ToF64> funs) {
         super("scalar activation");
         setCanPerformBackwardADFor( call -> true );
         setCanPerformForwardADFor( call -> true );

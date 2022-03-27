@@ -18,7 +18,7 @@ public interface Fun
     {
         float invoke( float x );
 
-        static FunArray<F32ToF32> pair( F32ToF32 activation, F32ToF32 derivation ) {
+        static FunTuple<F32ToF32> pair(F32ToF32 activation, F32ToF32 derivation ) {
             return new FunPair<>( activation, derivation );
         }
     }
@@ -27,7 +27,7 @@ public interface Fun
     {
         int invoke( int x );
 
-        static FunArray<I32ToI32> pair( I32ToI32 activation, I32ToI32 derivation ) {
+        static FunTuple<I32ToI32> pair(I32ToI32 activation, I32ToI32 derivation ) {
             return new FunPair<>( activation, derivation );
         }
     }
@@ -36,7 +36,7 @@ public interface Fun
     {
         Object invoke( Object x );
 
-        static FunArray<ObjToObj> pair( ObjToObj activation, ObjToObj derivation ) {
+        static FunTuple<ObjToObj> pair(ObjToObj activation, ObjToObj derivation ) {
             return new FunPair<>( activation, derivation );
         }
     }
@@ -45,7 +45,7 @@ public interface Fun
     {
         Object invoke( Object x, Object y );
 
-        static FunArray<ObjObjToObj> triple(
+        static FunTuple<ObjObjToObj> triple(
                 ObjObjToObj activation,
                 ObjObjToObj derivation,
                 ObjObjToObj derivation2
@@ -53,7 +53,7 @@ public interface Fun
             return new Operator.FunTriple<>( activation, derivation, derivation2 );
         }
 
-        static FunArray<ObjObjToObj> of( ObjObjToObj activation ) {
+        static FunTuple<ObjObjToObj> of(ObjObjToObj activation ) {
             return new Operator.FunTriple<>( activation, null, null );
         }
     }
@@ -62,7 +62,7 @@ public interface Fun
     {
         double invoke( double x, double y );
 
-        static FunArray<F64F64ToF64> triple(
+        static FunTuple<F64F64ToF64> triple(
                 F64F64ToF64 activation,
                 F64F64ToF64 derivation1,
                 F64F64ToF64 derivation2
@@ -70,7 +70,7 @@ public interface Fun
             return new Operator.FunTriple<>(activation, derivation1, derivation2);
         }
 
-        static FunArray<F64F64ToF64> of( F64F64ToF64 activation ) {
+        static FunTuple<F64F64ToF64> of(F64F64ToF64 activation ) {
             return new Operator.FunTriple<>(activation, null, null);
         }
     }
@@ -79,7 +79,7 @@ public interface Fun
     {
         float invoke(float x, float y);
 
-        static FunArray<F32F32ToF32> triple(
+        static FunTuple<F32F32ToF32> triple(
                 F32F32ToF32 activation,
                 F32F32ToF32 derivation1,
                 F32F32ToF32 derivation2
@@ -87,7 +87,7 @@ public interface Fun
             return new Operator.FunTriple<>(activation, derivation1, derivation2);
         }
 
-        static FunArray<F32F32ToF32> of( F32F32ToF32 activation ) {
+        static FunTuple<F32F32ToF32> of(F32F32ToF32 activation ) {
             return new Operator.FunTriple<>(activation, null, null);
         }
     }
@@ -96,7 +96,7 @@ public interface Fun
     {
         int invoke( int x, int y );
 
-        static FunArray<I32I32ToI32> triple(
+        static FunTuple<I32I32ToI32> triple(
                 I32I32ToI32 activation,
                 I32I32ToI32 derivation1,
                 I32I32ToI32 derivation2

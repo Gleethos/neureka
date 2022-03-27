@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.standard.algorithms.internal.Fun;
-import neureka.backend.standard.algorithms.internal.FunArray;
+import neureka.backend.standard.algorithms.internal.FunTuple;
 import neureka.backend.standard.algorithms.internal.WithForward;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.internal.CalcUtil;
@@ -90,9 +90,9 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
             Functions<Fun> pairs
     ) {
 
-        FunArray<Fun.F64F64ToF64> funF64 = pairs.get(Fun.F64F64ToF64.class);
-        FunArray<Fun.F32F32ToF32> funF32 = pairs.get(Fun.F32F32ToF32.class);
-        FunArray<Fun.I32I32ToI32> funI32 = pairs.get(Fun.I32I32ToI32.class);
+        FunTuple<Fun.F64F64ToF64> funF64 = pairs.get(Fun.F64F64ToF64.class);
+        FunTuple<Fun.F32F32ToF32> funF32 = pairs.get(Fun.F32F32ToF32.class);
+        FunTuple<Fun.I32I32ToI32> funI32 = pairs.get(Fun.I32I32ToI32.class);
         Class<?> typeClass = call.input( 1 ).getValueClass();
 
         int d = call.getDerivativeIndex();
@@ -253,7 +253,7 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
     }
 
 
-    public static class FunTriple<T extends Fun> implements FunArray<T> {
+    public static class FunTriple<T extends Fun> implements FunTuple<T> {
 
         private final T _a, _d1, _d2;
 
