@@ -68,19 +68,19 @@ public class CPUMatMul implements ImplementationFor<CPU> {
         int bCols = shapeB[1];
 
         if ( aCols != bRows )
-            throw new IllegalArgumentException("A:Rows: " + aCols + " did not match B:Columns " + bRows + ".");
+            throw new IllegalArgumentException("'A' matrix rows " + aCols + " did not match 'B' matrix columns " + bRows + ".");
 
         Class<?> type = call.input( 0 ).getDataType().getJVMTypeClass();
         if ( type == Double.class ) {
-            double[] A = (double[]) call.input(Double.class, 1).getUnsafe().getData();
-            double[] B = (double[]) call.input(Double.class, 2).getUnsafe().getData();
-            double[] C = (double[]) call.input(Double.class, 0).getUnsafe().getData();
+            double[] A = call.input(Double.class, 1).getUnsafe().getDataAs(double[].class);
+            double[] B = call.input(Double.class, 2).getUnsafe().getDataAs(double[].class);
+            double[] C = call.input(Double.class, 0).getUnsafe().getDataForWriting(double[].class);
 
             execute( rowMajor, A, B, C, aRows, aCols, bCols );
         } else if ( type == Float.class ) {
-            float[] A = (float[]) call.input(Float.class, 1).getUnsafe().getData();
-            float[] B = (float[]) call.input(Float.class, 2).getUnsafe().getData();
-            float[] C = (float[]) call.input(Float.class, 0).getUnsafe().getData();
+            float[] A = call.input(Float.class, 1).getUnsafe().getDataAs(float[].class);
+            float[] B = call.input(Float.class, 2).getUnsafe().getDataAs(float[].class);
+            float[] C = call.input(Float.class, 0).getUnsafe().getDataForWriting(float[].class);
 
             execute( rowMajor, A, B, C, aRows, aCols, bCols );
         }

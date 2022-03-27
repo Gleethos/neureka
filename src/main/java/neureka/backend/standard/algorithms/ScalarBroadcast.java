@@ -91,7 +91,7 @@ public class ScalarBroadcast extends AbstractFunctionalAlgorithm<ScalarBroadcast
         if ( typeClass == Double.class ) {
             double value = src.at(0).get().doubleValue();
             Fun.F64ToF64 operation = functions.get(Fun.F64ToF64.class).get(call.getDerivativeIndex());
-            double[] t0_value = t0_drn.getUnsafe().getDataAs(double[].class);
+            double[] t0_value = t0_drn.getUnsafe().getDataForWriting(double[].class);
             double finalValue = operation.invoke(value);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
@@ -113,7 +113,7 @@ public class ScalarBroadcast extends AbstractFunctionalAlgorithm<ScalarBroadcast
         if ( typeClass == Float.class ) {
             float value = src.at(0).get().floatValue();
             Fun.F32ToF32 operation = functions.get(Fun.F32ToF32.class).get(call.getDerivativeIndex());
-            float[] t0_value = t0_drn.getUnsafe().getDataAs(float[].class);
+            float[] t0_value = t0_drn.getUnsafe().getDataForWriting(float[].class);
             float finalValue = operation.invoke(value);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
@@ -135,7 +135,7 @@ public class ScalarBroadcast extends AbstractFunctionalAlgorithm<ScalarBroadcast
         if ( typeClass == Integer.class ) {
             int value = src.at(0).get().intValue();
             Fun.I32ToI32 operation = functions.get(Fun.I32ToI32.class).get(call.getDerivativeIndex());
-            int[] t0_value = t0_drn.getUnsafe().getDataAs(int[].class);
+            int[] t0_value = t0_drn.getUnsafe().getDataForWriting(int[].class);
             int finalValue = operation.invoke(value);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
@@ -157,7 +157,7 @@ public class ScalarBroadcast extends AbstractFunctionalAlgorithm<ScalarBroadcast
         if ( t0_drn.getUnsafe().getData().getClass() == Object[].class ) {
             Object value = src.at(0).get();
             Fun.ObjToObj operation = functions.get(Fun.ObjToObj.class).get(call.getDerivativeIndex());
-            Object[] t0_value = t0_drn.getUnsafe().getDataAs(Object[].class);
+            Object[] t0_value = t0_drn.getUnsafe().getDataForWriting(Object[].class);
             Object finalValue = operation.invoke(value);
             workload = (i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
