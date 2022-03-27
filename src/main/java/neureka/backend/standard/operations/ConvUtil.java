@@ -61,11 +61,11 @@ public class ConvUtil {
                                 .setForward( null )
                                 .setBackward(
                                     (node, error) ->
-                                            deConv.execute(
-                                                    error,
-                                                    derivative,
-                                                    Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )
-                                            )
+                                        deConv.execute(
+                                            error,
+                                            derivative,
+                                            Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )
+                                        )
                                 );
                     }
                 )
@@ -73,13 +73,12 @@ public class ConvUtil {
                     ( caller, call ) -> {
                         if ( !caller.isFlat() ) return CalcUtil.defaultRecursiveExecution( caller, call );
                         if ( call.getOperation().getOperator().equals("x") ) {
-
                             Tsr<?>[] tensors = new Tsr[]{null, call.input( 0 ), call.input( 1 )};
                             tensors[ 0 ] =
                                 (call.getValOf( Arg.DerivIdx.class ) < 0)
                                     ? Tsr.of(
                                         call.input(0).getValueClass(),
-                                            _shpOfCon(tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape()),
+                                            _shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
                                             0
                                         )
                                         .getUnsafe()
@@ -88,7 +87,7 @@ public class ConvUtil {
 
                             for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
                             tensors[ 0 ] = CalcUtil.recursiveExecution( call.withInputs(tensors), JunctionUtil::forConvolution );
-                            if (tensors[ 0 ] == null)
+                            if ( tensors[ 0 ] == null )
                                 throw new IllegalStateException("Failed to execute convolution!");
                             return tensors[ 0 ];
                         } else {
@@ -96,7 +95,7 @@ public class ConvUtil {
                                 Tsr<?>[] tensors = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                                 Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                 for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
-                                tensors[0] = CalcUtil.recursiveExecution(
+                                tensors[ 0 ] = CalcUtil.recursiveExecution(
                                                             ExecutionCall.of( tensors )
                                                                             .andArgs( Arg.DerivIdx.of(0) )
                                                                             .running( call.getOperation() )
@@ -117,7 +116,7 @@ public class ConvUtil {
                          Device<Number> device = call.getDeviceFor(Number.class);
                          if ( call.input( 0 ) == null ) // Creating a new tensor:
                          {
-                             int[] shp = _shpOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
+                             int[] shp = _shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
                              Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                              output.setIsVirtual( false );
                              try {
@@ -140,10 +139,10 @@ public class ConvUtil {
     }
 
     @Contract(pure = true)
-    private static int[] _shpOfCon( int[] shp1, int[] shp2 ) {
-        int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
-        for ( int i = 0; i < shp1.length && i < shp2.length; i++ )
-            shape[ i ] = Math.abs( shp1[ i ] - shp2[ i ] ) + 1;
+    private static int[] _shapeOfCon( int[] shape1, int[] shape2 ) {
+        int[] shape = new int[ ( shape1.length + shape2.length ) / 2 ];
+        for ( int i = 0; i < shape1.length && i < shape2.length; i++ )
+            shape[ i ] = Math.abs( shape1[ i ] - shape2[ i ] ) + 1;
         return shape;
     }
 }

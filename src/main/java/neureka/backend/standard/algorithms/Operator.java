@@ -22,7 +22,8 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
     public Operator( RecursiveExecutor finalExecutor ) {
         super("operator");
         setIsSuitableFor(
-            call -> call.validate()
+            call -> call
+                    .validate()
                     .allNotNullHaveSame(NDimensional::size)
                     .allNotNullHaveSame(NDimensional::shape)
                     .allNotNull( t -> t.getDataType().typeClassImplements( NumericType.class ) )
@@ -89,7 +90,6 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
             ExecutionCall<CPU> call,
             Functions<Fun> pairs
     ) {
-
         FunTuple<Fun.F64F64ToF64> funF64 = pairs.get(Fun.F64F64ToF64.class);
         FunTuple<Fun.F32F32ToF32> funF32 = pairs.get(Fun.F32F32ToF32.class);
         FunTuple<Fun.I32I32ToI32> funI32 = pairs.get(Fun.I32I32ToI32.class);

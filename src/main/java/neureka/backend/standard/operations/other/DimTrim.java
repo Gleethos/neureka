@@ -9,10 +9,10 @@ import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
-import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
@@ -22,7 +22,6 @@ import java.util.List;
 
 public class DimTrim extends AbstractOperation
 {
-
     public DimTrim()
     {
         super(

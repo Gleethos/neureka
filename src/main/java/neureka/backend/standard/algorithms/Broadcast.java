@@ -28,8 +28,8 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
             {
                 boolean isInvalid =
                             !call.validate()
-                                .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                                .isValid();
+                                 .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
+                                 .isValid();
 
                 if ( isInvalid )
                     return SuitabilityPredicate.UNSUITABLE;
@@ -55,14 +55,14 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         setCanPerformForwardADFor( call -> {
             Tsr<?> last = null;
             for ( Tsr<?> t : call.inputs() ) {
-                if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                if ( last != null && !last.shape().equals( t.shape() ) ) return false;
                 last = t;
             }
             return true;
         });
         setExecutionDispatcher(
             ( caller, call ) -> {
-                int offset = ( call.input( Number.class, 0 ) == null ) ? 1 : 0;
+                int offset = ( call.input( Number.class, 0 ) == null ? 1 : 0 );
                 if (
                     call.input( Number.class, offset).shape().size() != call.input( Number.class, 1+offset).shape().size()
                 ) // Creating a new tensor:
@@ -121,13 +121,14 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                             call -> {
                                 int offset = ( call.input( Number.class, 0 ) != null ) ? 0 : 1;
                                 int gwz = ( call.input( Number.class, 0 ) != null ) ? call.input( Number.class, 0 ).size() : call.input( Number.class, 1 ).size();
-                                call.getDevice().getKernel(call)
-                                        .passAllOf( call.input( Number.class, offset ) )
-                                        .passAllOf( call.input( Number.class, offset + 1 ) )
-                                        .passAllOf( call.input( Number.class, offset + 2 ) )
-                                        .pass( call.input( Number.class, 0 ).rank() )
-                                        .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                        .call( gwz );
+                                call.getDevice()
+                                    .getKernel(call)
+                                    .passAllOf( call.input( Number.class, offset ) )
+                                    .passAllOf( call.input( Number.class, offset + 1 ) )
+                                    .passAllOf( call.input( Number.class, offset + 2 ) )
+                                    .pass( call.input( Number.class, 0 ).rank() )
+                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                    .call( gwz );
                             }
                         )
                         .build();
@@ -162,7 +163,9 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         }
 
         if ( workload == null )
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException(
+                    "Failed to find an implementation for tensor with type '"+typeClass.getSimpleName()+"'!"
+                );
         else
             return workload;
     }

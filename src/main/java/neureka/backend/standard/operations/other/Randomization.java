@@ -35,7 +35,7 @@ public class Randomization extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                .setIdentifier(         "random"   )
+                .setIdentifier(       "random"   )
                 .setOperator(         "rand"     )
                 .setArity(            1          )
                 .setIsOperator(       true       )
@@ -90,7 +90,8 @@ public class Randomization extends AbstractOperation
 
     }
 
-    private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall<?> call ) {
+    private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall<?> call )
+    {
         Tsr<?> tensor = call.input( 0 );
         tensor.setIsVirtual(false);
         Class<?> type = tensor.getValueClass();
