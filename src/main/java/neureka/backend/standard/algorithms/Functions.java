@@ -3,7 +3,10 @@ package neureka.backend.standard.algorithms;
 import neureka.backend.api.Call;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.implementations.AbstractImplementationFor;
-import neureka.backend.standard.algorithms.internal.*;
+import neureka.backend.standard.algorithms.internal.Fun;
+import neureka.backend.standard.algorithms.internal.FunImplementation;
+import neureka.backend.standard.algorithms.internal.FunTuple;
+import neureka.backend.standard.algorithms.internal.FunWorkloadFinder;
 import neureka.devices.host.CPU;
 
 import java.util.ArrayList;
@@ -24,7 +27,8 @@ public final class Functions<F extends Fun> {
 
     private final List<FunTuple<F>> _functions = new ArrayList<>();
 
-    public static <F extends Fun, P extends FunPair<F>> Builder<F> implementation(
+
+    public static <F extends Fun> Builder<F> implementation(
             int arity, FunWorkloadFinder<F> composed
     ) {
         return new Builder<F>(
@@ -34,14 +38,15 @@ public final class Functions<F extends Fun> {
         );
     }
 
-    public static <F extends Fun, P extends FunPair<F>> Builder<F> implementation(
+    public static <F extends Fun> Builder<F> implementation(
             int arity, Function<Call<?>, Integer> workSizeSupplier, FunWorkloadFinder<F> composed
     ) {
         return new Builder<F>( arity, workSizeSupplier, composed );
     }
-    private Functions( List<FunTuple<F>> fun ) {
-        _functions.addAll(fun);
-    }
+
+
+    private Functions( List<FunTuple<F>> fun ) { _functions.addAll(fun); }
+
 
     public <T extends F> FunTuple<T> get(Class<T> type ) {
         for ( FunTuple<F> p : _functions )
@@ -58,7 +63,9 @@ public final class Functions<F extends Fun> {
         private final int _arity;
 
         private Builder(
-                int arity, Function<Call<?>, Integer> workSizeSupplier, FunWorkloadFinder<F> composed
+                int arity,
+                Function<Call<?>, Integer> workSizeSupplier,
+                FunWorkloadFinder<F> composed
         ) {
             _arity = arity;
             _implementation =
@@ -71,16 +78,16 @@ public final class Functions<F extends Fun> {
                                     );
         }
 
-        public <T extends F, P extends FunTuple<T>> Builder<F> with(P fun ) {
+        public <T extends F, P extends FunTuple<T>> Builder<F> with( P fun ) {
             _functions.add((FunTuple<F>) fun);
             return this;
         }
 
         public ImplementationFor<CPU> get() {
             return new AbstractImplementationFor<>(
-                    call -> _implementation.get(call, new Functions<F>(_functions)),
+                    call -> _implementation.get( call, new Functions<F>( _functions ) ),
                     _arity
-            );
+                );
         }
 
     }

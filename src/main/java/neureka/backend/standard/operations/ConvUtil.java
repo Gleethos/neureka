@@ -6,10 +6,10 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.operations.other.Reshape;
-import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import org.jetbrains.annotations.Contract;
 
