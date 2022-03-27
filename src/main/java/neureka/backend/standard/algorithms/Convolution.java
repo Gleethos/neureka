@@ -79,7 +79,7 @@ public final class Convolution extends AbstractFunctionalAlgorithm<Convolution>
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
-        double[] t0_value = (double[]) t0_drn.getUnsafe().getData();
+        double[] t0_value = t0_drn.getUnsafe().getDataForWriting( double[].class );
         double[] t1_value = t1_src.getUnsafe().getDataAs( double[].class );
         double[] t2_value = t2_src.getUnsafe().getDataAs( double[].class );
 
@@ -152,7 +152,7 @@ public final class Convolution extends AbstractFunctionalAlgorithm<Convolution>
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
-        double[] t0_value = (double[]) t0_drn.getUnsafe().getData();
+        double[] t0_value = t0_drn.getUnsafe().getDataForWriting( double[].class );
         double[] t1_value = t1_src.getUnsafe().getDataAs( double[].class );
         double[] t2_value = t2_src.getUnsafe().getDataAs( double[].class );
 

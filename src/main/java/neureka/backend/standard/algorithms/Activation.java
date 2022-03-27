@@ -112,7 +112,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
         if ( typeClass == Double.class )
         {
             Fun.F64ToF64 fun = funs.get(Fun.F64ToF64.class).get(d);
-            double[] t0_value = (double[]) t0_drn.getUnsafe().getData();
+            double[] t0_value = t0_drn.getUnsafe().getDataForWriting( double[].class );
 
             if ( rightTypeClass == Integer.class )
             {
@@ -160,7 +160,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
         {
             Fun.F32ToF32 fun = funs.get(Fun.F32ToF32.class).get(d);
             assert fun != null;
-            float[] t0_value = (float[]) t0_drn.getUnsafe().getData();
+            float[] t0_value = t0_drn.getUnsafe().getDataForWriting( float[].class );
             float[] t1_value = t1_src.getUnsafe().getDataAs(float[].class);
             if ( isSimple )
                 workload = (start, end) -> {

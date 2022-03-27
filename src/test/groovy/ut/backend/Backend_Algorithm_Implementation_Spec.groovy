@@ -106,6 +106,8 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             (0.._) * tensor.valueClass >> Double
             (0.._) * tensor.getDataAs(double[]) >> new double[0]
             (0.._) * unsafe.getData() >> new double[0]
+            (0.._) * unsafe.getDataAs(double[]) >> new double[0]
+            (0.._) * unsafe.getDataForWriting(double[]) >> new double[0]
             (1.._) * tensor.getNDConf() >> ndConf
             (1.._) * ndConf.isSimple() >> false
 

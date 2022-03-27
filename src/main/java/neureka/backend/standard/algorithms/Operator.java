@@ -122,13 +122,13 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
     ) {
         t1_src.setIsVirtual( false );
         t2_src.setIsVirtual( false );
-        double[] t0_val = (double[]) t0_drn.getUnsafe().getData();
+        double[] t0_val = t0_drn.getUnsafe().getDataForWriting( double[].class );
         double[] t1_val = t1_src.getUnsafe().getDataAs( double[].class );
         double[] t2_val = t2_src.getUnsafe().getDataAs( double[].class );
 
         assert t0_val != null;
-        //assert t1_val != null;
-        //assert t2_val != null;
+        assert t1_val != null;
+        assert t2_val != null;
 
         boolean isSimple = t0_drn.getNDConf().isSimple() && t1_src.getNDConf().isSimple() && t2_src.getNDConf().isSimple();
 
@@ -168,7 +168,7 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
         t1_src.setIsVirtual( false );
         t2_src.setIsVirtual( false );
 
-        float[] t0_val = (float[]) t0_drn.getUnsafe().getData();
+        float[] t0_val = t0_drn.getUnsafe().getDataForWriting( float[].class );
         float[] t1_val = t1_src.getUnsafe().getDataAs( float[].class );
         float[] t2_val = t2_src.getUnsafe().getDataAs( float[].class );
 

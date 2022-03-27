@@ -42,6 +42,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.calculus.Function;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.utility.DataConverter;
+import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
@@ -523,6 +524,31 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
         Object getData();
 
         <A> A getDataAs( Class<A> arrayTypeClass );
+
+        /**
+         *  Use this to access the underlying writable data of this tensor if
+         *  you want to modify it.
+         *  This method will ensure that you receive an instance of whatever array type you provide
+         *  or throw descriptive exceptions to make sure that any unwanted behaviour does not
+         *  spread further in the backend.
+         *
+         * @param arrayTypeClass The expected array type underlying the tensor.
+         * @param <A> The type parameter of the provided type class.
+         * @return The underlying data array of this tensor.
+         */
+        default <A> A getDataForWriting( Class<A> arrayTypeClass ) {
+            LogUtil.nullArgCheck( arrayTypeClass, "arrayTypeClass", Class.class, "Array type must not be null!" );
+            if ( !arrayTypeClass.isArray() )
+                throw new IllegalArgumentException("Provided type is not an array type.");
+            Object data = Unsafe.this.getData();
+            if ( data == null )
+                throw new IllegalStateException("Could not find writable tensor data for this tensor (Maybe this tensor is stored on a device?).");
+
+            if ( !arrayTypeClass.isAssignableFrom(data.getClass()) )
+                throw new IllegalStateException("The data of this tensor does not match the expect type! Expected '"+arrayTypeClass+"' but got '"+data.getClass()+"'.");
+
+            return (A) data;
+        }
 
     }
 
