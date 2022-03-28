@@ -280,7 +280,7 @@ class Tensor_IO_Spec extends Specification
     def 'We can re-populate a tensor of shorts from a single scalar value!'(
          String device, Class<?> type
     ) {
-        given : 'A tensor of 3 floats:'
+        given : 'A tensor of 3 numbers:'
             var t = Tsr.of(type).vector(42, 666, 73)
         and : 'We store the tensor on the given device, to ensure that it work there as well.'
             t.to(device)
@@ -308,7 +308,7 @@ class Tensor_IO_Spec extends Specification
     def 'We can manipulate the underlying data array of a tensor through the unsafe API.'(
             String device, Class<?> type
     ) {
-        given : 'A tensor of 3 floats:'
+        given : 'A tensor of 3 numbers:'
             var t = Tsr.of(type).vector(42, 666, 73)
         and : 'We store the tensor on the given device, to ensure that it work there as well.'
             t.to(device)
@@ -327,6 +327,9 @@ class Tensor_IO_Spec extends Specification
             s.value == [-9]
         and : 'Also in the slice parent!'
             t.value == [42, -9, 73]
+        and : 'Both tensors should have the same data array!'
+            s.data  == [42, -9, 73]
+            t.data  == [42, -9, 73]
 
         where :
             device | type
