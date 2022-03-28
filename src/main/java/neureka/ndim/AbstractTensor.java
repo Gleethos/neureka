@@ -181,7 +181,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
 
     /**
      * @param data The data object which ought to be set for this array.
-     *             This will be the same instance returned by {@link #getData()}.
+     *             This will be the same instance returned by {@link #_getData()}.
      */
     protected final void _setData( Object data )
     {
@@ -524,6 +524,15 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
         Object getData();
 
         <A> A getDataAs( Class<A> arrayTypeClass );
+
+        /**
+         *  A tensor ought to have some way to selectively modify its underlying data array.
+         *  This method simply overrides an element within this data array sitting at position "i".
+         * @param i The index of the data array entry which ought to be addressed.
+         * @param o The object which ought to be placed at the requested position.
+         * @return This very tensor in order to enable method chaining.
+         */
+        Tsr<T> setDataAt( int i, T o );
 
         /**
          *  Use this to access the underlying writable data of this tensor if

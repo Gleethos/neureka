@@ -78,7 +78,7 @@ class Tensor_Delete_Exception_Spec extends Specification
             t.isDeleted()
 
         when : 'Trying to modify the data object...'
-            t.setDataAt(0, 7)
+            t.unsafe.setDataAt(0, 7)
 
         then : 'This should lead to a descriptive exception.'
             def exception = thrown(IllegalAccessError)

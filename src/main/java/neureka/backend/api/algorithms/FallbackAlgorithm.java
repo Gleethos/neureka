@@ -191,7 +191,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     }
 
     private static void setAt( Tsr<Object> t, int i, Object o ) {
-        t.setDataAt( t.getNDConf().indexOfIndex( i ), o );
+        t.getUnsafe().setDataAt( t.getNDConf().indexOfIndex( i ), o );
     }
 
     private static Object _tryExecute( Method m, Object[] args, int offset ) {

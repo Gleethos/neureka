@@ -455,7 +455,7 @@ class Tensor_IO_Spec extends Specification
         given :
             var t = Tsr.of(type).withShape(shape).andFill(data)
         when :
-            t.setDataAt( 1, element )
+            t.unsafe.setDataAt( 1, element )
         then :
             t.getDataAt( 1 ) == element
         and :
