@@ -303,6 +303,43 @@ class Tensor_IO_Spec extends Specification
             'GPU'  | Float
     }
 
+
+    @IgnoreIf({ device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    def 'We can manipulate the underlying data array of a tensor through the unsafe API.'(
+            String device, Class<?> type
+    ) {
+        given : 'A tensor of 3 floats:'
+            var t = Tsr.of(type).vector(42, 666, 73)
+        and : 'We store the tensor on the given device, to ensure that it work there as well.'
+            t.to(device)
+
+        when : 'We create a slice which should internally reference the same data as the slice parent.'
+            var s = t[1]
+        then : 'The slice has the expected state!'
+            s.isSlice()
+            s.value == [666]
+            s.data  == [42, 666, 73]
+
+        when : 'We call the "setData" method with a scalar value passed to it...'
+            s.unsafe.setDataAt(1, -9)
+
+        then : 'The change will be reflected in the slice...'
+            s.value == [-9]
+        and : 'Also in the slice parent!'
+            t.value == [42, -9, 73]
+
+        where :
+            device | type
+            'CPU'  | Double
+            'CPU'  | Float
+            //'CPU'  | Byte
+            //'CPU'  | Integer
+            //'CPU'  | Long
+            //'CPU'  | Short
+            //'GPU'  | Float
+    }
+
+
     def 'Tensors value type can be changed by calling "toType(...)".'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'

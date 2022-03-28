@@ -125,6 +125,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
@@ -2871,12 +2872,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             getDevice().write( this, o );
         }
         else if ( _getData() instanceof Object[] ) ( (Object[]) _getData() )[ i ] = o;
-        else if ( _getData() instanceof float[]  ) ( (float[])  _getData() )[ i ] = (Float)     o;
-        else if ( _getData() instanceof double[] ) ( (double[]) _getData() )[ i ] = (Double)    o;
-        else if ( _getData() instanceof int[]    ) ( (int[])    _getData() )[ i ] = (Integer)   o;
-        else if ( _getData() instanceof long[]   ) ( (long[])   _getData() )[ i ] = (Long)      o;
-        else if ( _getData() instanceof short[]  ) ( (short[])  _getData() )[ i ] = (Short)     o;
-        else if ( _getData() instanceof byte[]   ) ( (byte[])   _getData() )[ i ] = (Byte)      o;
+        else if ( _getData() instanceof float[]  ) ( (float[])  _getData() )[ i ] = ( (Number) o ).floatValue();
+        else if ( _getData() instanceof double[] ) ( (double[]) _getData() )[ i ] = ( (Number) o ).doubleValue();
+        else if ( _getData() instanceof int[]    ) ( (int[])    _getData() )[ i ] = ( (Number) o ).intValue();
+        else if ( _getData() instanceof long[]   ) ( (long[])   _getData() )[ i ] = ( (Number) o ).longValue();
+        else if ( _getData() instanceof short[]  ) ( (short[])  _getData() )[ i ] = ( (Number) o ).shortValue();
+        else if ( _getData() instanceof byte[]   ) ( (byte[])   _getData() )[ i ] = ( (Number) o ).byteValue();
         else if ( _getData() instanceof boolean[]) ( (boolean[])_getData() )[ i ] = (Boolean)   o;
         else if ( _getData() instanceof char[])    ( (char[])   _getData() )[ i ] = (Character) o;
     }
@@ -3005,7 +3006,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             else return getDataType().actualize( _getData(), this.size() );
         }
         else if ( this.getNDConf().isSimple() )
-            return _getData();
+            return getData();
         else
             return this.clone()._getData();
     }
