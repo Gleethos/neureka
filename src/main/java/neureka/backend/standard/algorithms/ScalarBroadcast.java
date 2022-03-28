@@ -7,7 +7,6 @@ import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.standard.algorithms.internal.FunTuple;
-import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -53,7 +52,7 @@ public class ScalarBroadcast extends AbstractFunctionalAlgorithm<ScalarBroadcast
         setImplementationFor(
             OpenCLDevice.class,
             call -> {
-                double value =  funs.get( call.getValOf( Arg.DerivIdx.class ) ).invoke( call.input( Number.class, 1 ).at(0).get().doubleValue() );
+                double value =  funs.getFor( call ).invoke( call.input( Number.class, 1 ).at(0).get().doubleValue() );
                 Tsr<Number> t = call.input( Number.class, 0 );
                 int gwz = t.size();
                 call.getDevice()
@@ -90,7 +89,7 @@ public class ScalarBroadcast extends AbstractFunctionalAlgorithm<ScalarBroadcast
 
         if ( typeClass == Double.class ) {
             double value = src.at(0).get().doubleValue();
-            Fun.F64ToF64 operation = functions.get(Fun.F64ToF64.class).get(call.getDerivativeIndex());
+            Fun.F64ToF64 operation = functions.get(Fun.F64ToF64.class).getFor( call );
             double[] t0_value = t0_drn.getUnsafe().getDataForWriting(double[].class);
             double finalValue = operation.invoke(value);
             workload = ( i, end ) -> {
@@ -112,7 +111,7 @@ public class ScalarBroadcast extends AbstractFunctionalAlgorithm<ScalarBroadcast
         }
         if ( typeClass == Float.class ) {
             float value = src.at(0).get().floatValue();
-            Fun.F32ToF32 operation = functions.get(Fun.F32ToF32.class).get(call.getDerivativeIndex());
+            Fun.F32ToF32 operation = functions.get(Fun.F32ToF32.class).getFor( call );
             float[] t0_value = t0_drn.getUnsafe().getDataForWriting(float[].class);
             float finalValue = operation.invoke(value);
             workload = ( i, end ) -> {
@@ -134,7 +133,7 @@ public class ScalarBroadcast extends AbstractFunctionalAlgorithm<ScalarBroadcast
         }
         if ( typeClass == Integer.class ) {
             int value = src.at(0).get().intValue();
-            Fun.I32ToI32 operation = functions.get(Fun.I32ToI32.class).get(call.getDerivativeIndex());
+            Fun.I32ToI32 operation = functions.get(Fun.I32ToI32.class).getFor( call );
             int[] t0_value = t0_drn.getUnsafe().getDataForWriting(int[].class);
             int finalValue = operation.invoke(value);
             workload = ( i, end ) -> {
@@ -156,7 +155,7 @@ public class ScalarBroadcast extends AbstractFunctionalAlgorithm<ScalarBroadcast
         }
         if ( t0_drn.getUnsafe().getData().getClass() == Object[].class ) {
             Object value = src.at(0).get();
-            Fun.ObjToObj operation = functions.get(Fun.ObjToObj.class).get(call.getDerivativeIndex());
+            Fun.ObjToObj operation = functions.get(Fun.ObjToObj.class).getFor( call );
             Object[] t0_value = t0_drn.getUnsafe().getDataForWriting(Object[].class);
             Object finalValue = operation.invoke(value);
             workload = (i, end ) -> {
