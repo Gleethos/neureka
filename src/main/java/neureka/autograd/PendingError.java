@@ -16,7 +16,7 @@ public final class PendingError<ValType>
     }
 
     public void accumulate( Tsr<?> error ) {
-        Tsr[] inputs = new Tsr[]{ _accumulatedError, error };
+        Tsr[] inputs = { _accumulatedError, error };
         MemUtil.keep( inputs, () -> {
                     new FunctionBuilder(
                                 Neureka.get().backend()
@@ -36,11 +36,8 @@ public final class PendingError<ValType>
         return this.getClass().getSimpleName()+"[toBeReceived=" + _toBeReceived + ",accumulatedError=" + _accumulatedError + "]";
     }
 
-    public int getToBeReceived() {
-        return _toBeReceived;
-    }
+    public int getToBeReceived() { return _toBeReceived; }
 
-    public Tsr<ValType> getAccumulatedError() {
-        return _accumulatedError;
-    }
+    public Tsr<ValType> getAccumulatedError() { return _accumulatedError; }
+
 }

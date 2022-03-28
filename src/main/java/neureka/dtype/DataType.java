@@ -46,8 +46,8 @@ import java.util.function.Consumer;
 
 /**
  *  This class is a Multiton implementation for wrapping and representing type classes.
- *  Every DataType instance uniquely wraps a Class instance which will always differ
- *  from instances wrapped by other DataType instances.
+ *  Every {@link DataType} instance uniquely wraps a {@link Class} instance which will always differ
+ *  from instances wrapped by other {@link DataType} instances.
  *  This is because the Multiton implementation utilizes a hash map where classes are the
  *  keys and their corresponding values are DataType instances.
  *

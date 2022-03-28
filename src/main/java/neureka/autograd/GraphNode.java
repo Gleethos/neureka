@@ -344,11 +344,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         ) {
                             _put(
                                 srcNode,
-                                    call.withArgs(
-                                            Arg.DerivIdx.of(i),
-                                            Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
-                                        )
-                                        .getADAgentFrom( function, true )
+                                call.withArgs(
+                                        Arg.DerivIdx.of(i),
+                                        Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
+                                    )
+                                    .getADAgentFrom( function, true )
                             );
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
@@ -363,9 +363,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                     _put(
                                         targetNode,
                                         call.withArgs(
-                                                Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
-                                                Arg.DerivIdx.of(finalI),
-                                                Arg.Derivative.of(targetDerivative)
+                                            Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
+                                            Arg.DerivIdx.of(finalI),
+                                            Arg.Derivative.of(targetDerivative)
                                         )
                                         .getADAgentFrom(
                                             function,
@@ -457,9 +457,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * @param newLock The new lock of this GraphNode.
      */
-    public synchronized void obtainLocking( GraphLock newLock ) {
-        _lock = newLock;
-    }
+    public synchronized void obtainLocking( GraphLock newLock ) { _lock = newLock; }
 
     /**
      * This node (and the corresponding tensor) was not created by a function! (it's a leave tensor)
@@ -470,9 +468,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     public boolean isGraphLeave() {
         if ( this.isLeave() ) return true;
-        for ( GraphNode<V> p : _parents ) {
+        for ( GraphNode<V> p : _parents )
             if ( p.getLock() != this.getLock() ) return true;
-        }
+
         return false;
     }
 

@@ -44,7 +44,5 @@ public class GraphLock
     /**
      * @return Returns true if the graph is locked.
      */
-    public boolean isLocked() {
-        return _isLocked;
-    }
+    public boolean isLocked() { return _isLocked; }
 }
