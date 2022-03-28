@@ -103,6 +103,9 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
         Class<?> typeClass = t0_drn.getValueClass();
         Class<?> rightTypeClass = t1_src.getValueClass();
 
+        assert !t0_drn.isVirtual();
+        assert !t1_src.isVirtual();
+
         boolean isSimple = t0_drn.getNDConf().isSimple() && t1_src.getNDConf().isSimple();
 
         int d = call.getDerivativeIndex();
@@ -208,10 +211,62 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
                     }
                 };
         }
+        else if ( typeClass == Byte.class )
+        {
+            Fun.I8ToI8 fun = funs.get(Fun.I8ToI8.class).get(d);
+            assert fun != null;
+            byte[] t0_value = (byte[]) t0_drn.getUnsafe().getData();
+            byte[] t1_value = t1_src.getUnsafe().getDataAs(byte[].class);
+            if ( isSimple )
+                workload = (start, end) -> {
+                    for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);
+                };
+            else
+                workload = (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of( t0_drn );
+                    NDIterator t1Idx = NDIterator.of( t1_src );
+                    t0Idx.set( t0_drn.indicesOfIndex( i ) );
+                    t1Idx.set( t0_drn.indicesOfIndex( i ) );
+                    while ( i < end ) { // increment on drain accordingly:
+                        //setInto _value in drn:
+                        t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);
+                        //increment on drain:
+                        t0Idx.increment();
+                        t1Idx.increment();
+                        i++;
+                    }
+                };
+        }
+        else if ( typeClass == Short.class )
+        {
+            Fun.I16ToI16 fun = funs.get(Fun.I16ToI16.class).get(d);
+            assert fun != null;
+            short[] t0_value = (short[]) t0_drn.getUnsafe().getData();
+            short[] t1_value = t1_src.getUnsafe().getDataAs(short[].class);
+            if ( isSimple )
+                workload = (start, end) -> {
+                    for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);
+                };
+            else
+                workload = (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of( t0_drn );
+                    NDIterator t1Idx = NDIterator.of( t1_src );
+                    t0Idx.set( t0_drn.indicesOfIndex( i ) );
+                    t1Idx.set( t0_drn.indicesOfIndex( i ) );
+                    while ( i < end ) { // increment on drain accordingly:
+                        //setInto _value in drn:
+                        t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);
+                        //increment on drain:
+                        t0Idx.increment();
+                        t1Idx.increment();
+                        i++;
+                    }
+                };
+        }
 
         if ( workload == null ) {
             throw new IllegalArgumentException(
-                "Operand types '"+typeClass.getSimpleName()+"' and '"+rightTypeClass.getSimpleName()+"'."
+                "Operand types '"+typeClass.getSimpleName()+"' and '"+rightTypeClass.getSimpleName()+"' not supported."
             );
         }
 

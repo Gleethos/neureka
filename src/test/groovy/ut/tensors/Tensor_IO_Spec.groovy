@@ -309,7 +309,7 @@ class Tensor_IO_Spec extends Specification
             String device, Class<?> type
     ) {
         given : 'A tensor of 3 numbers:'
-            var t = Tsr.of(type).vector(42, 666, 73)
+            var t = Tsr.of(type).vector(42, 66, 73)
         and : 'We store the tensor on the given device, to ensure that it work there as well.'
             t.to(device)
 
@@ -317,8 +317,8 @@ class Tensor_IO_Spec extends Specification
             var s = t[1]
         then : 'The slice has the expected state!'
             s.isSlice()
-            s.value == [666]
-            s.data  == [42, 666, 73]
+            s.value == [66]
+            s.data  == [42, 66, 73]
 
         when : 'We call the "setData" method with a scalar value passed to it...'
             s.unsafe.setDataAt(1, -9)
@@ -335,10 +335,10 @@ class Tensor_IO_Spec extends Specification
             device | type
             'CPU'  | Double
             'CPU'  | Float
-            //'CPU'  | Byte
+            'CPU'  | Byte
+            'CPU'  | Short
             //'CPU'  | Integer
             //'CPU'  | Long
-            //'CPU'  | Short
             //'GPU'  | Float
     }
 

@@ -32,6 +32,24 @@ public interface Fun
         }
     }
 
+    interface I8ToI8 extends Fun
+    {
+        byte invoke( byte x );
+
+        static FunTuple<I8ToI8> pair(I8ToI8 activation, I8ToI8 derivation ) {
+            return new FunPair<>( activation, derivation );
+        }
+    }
+
+    interface I16ToI16 extends Fun
+    {
+        short invoke( short x );
+
+        static FunTuple<I16ToI16> pair(I16ToI16 activation, I16ToI16 derivation ) {
+            return new FunPair<>( activation, derivation );
+        }
+    }
+
     interface ObjToObj extends Fun
     {
         Object invoke( Object x );

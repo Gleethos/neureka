@@ -100,7 +100,9 @@ public class AssignLeft extends AbstractOperation
             .setIsSuitableFor(
                 call -> call.validate()
                         .allNotNull( t -> t.getDataType().typeClassImplements(Object.class) )
-                        .basicSuitability()
+                        .allNotNull( t -> !t.isVirtual() )
+                        .tensors( tensors -> tensors.length == 2 || tensors.length == 3 )
+                        .suitabilityIfValid(SuitabilityPredicate.EXCELLENT)
             )
             .setCanPerformBackwardADFor( call -> false )
             .setCanPerformForwardADFor( call -> false )
@@ -108,7 +110,7 @@ public class AssignLeft extends AbstractOperation
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
             .setCallPreparation(
                     call -> {
-                        int offset = ( call.input( 0 ) == null ) ? 1 : 0;
+                        int offset = ( call.input( 0 ) == null ? 1 : 0 );
                         call.input( offset ).getUnsafe().incrementVersion(call);
                         return ExecutionCall.of( call.input(offset), call.input(1+offset) )
                                 .running(Neureka.get().backend().getOperation("idy"))

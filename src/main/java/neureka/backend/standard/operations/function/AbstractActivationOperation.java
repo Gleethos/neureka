@@ -35,6 +35,8 @@ abstract class AbstractActivationOperation extends AbstractOperation {
                         .with(Fun.F64ToF64.pair(this::_activate, this::_derive))
                         .with(Fun.F32ToF32.pair(this::_activate, this::_derive))
                         .with(Fun.I32ToI32.pair(this::_activate, this::_derive))
+                        .with(Fun.I8ToI8.pair(this::_activate, this::_derive))
+                        .with(Fun.I16ToI16.pair(this::_activate, this::_derive))
                         .get()
                 )
                 .setImplementationFor(
@@ -60,6 +62,8 @@ abstract class AbstractActivationOperation extends AbstractOperation {
                         .with(Fun.F64ToF64.pair(this::_activate, this::_derive))
                         .with(Fun.F32ToF32.pair(this::_activate, this::_derive))
                         .with(Fun.I32ToI32.pair(this::_activate, this::_derive))
+                        .with(Fun.I8ToI8.pair(this::_activate, this::_derive))
+                        .with(Fun.I16ToI16.pair(this::_activate, this::_derive))
                         .get()
             )
         );
@@ -79,6 +83,8 @@ abstract class AbstractActivationOperation extends AbstractOperation {
                             .with(Fun.F64ToF64.pair(this::_activate, this::_derive))
                             .with(Fun.F32ToF32.pair(this::_activate, this::_derive))
                             .with(Fun.I32ToI32.pair(this::_activate, this::_derive))
+                            .with(Fun.I8ToI8.pair(this::_activate, this::_derive))
+                            .with(Fun.I16ToI16.pair(this::_activate, this::_derive))
                             .get()
             )
         );
@@ -112,14 +118,22 @@ abstract class AbstractActivationOperation extends AbstractOperation {
 
     protected abstract double _activate(double x);
 
-    protected float _activate(float x) { return (float) _activate( (double) x ); }
-
-    protected int _activate(int x) { return (int) Math.round( _activate( (double) x ) ); }
-
     protected abstract double _derive(double x);
+
+    protected float _activate(float x) { return (float) _activate( (double) x ); }
 
     protected float _derive(float x) { return (float) _derive( (double) x ); }
 
+    protected int _activate(int x) { return (int) Math.round( _activate( (double) x ) ); }
+
     protected int _derive(int x) { return (int) Math.round( _derive( (double) x ) ); }
+
+    protected byte _activate(byte x) { return (byte) Math.round( _activate( (double) x ) ); }
+
+    protected byte _derive(byte x) { return (byte) Math.round( _derive( (double) x ) ); }
+
+    protected short _activate(short x) { return (short) Math.round( _activate( (double) x ) ); }
+
+    protected short _derive(short x) { return (short) Math.round( _derive( (double) x ) ); }
 
 }
