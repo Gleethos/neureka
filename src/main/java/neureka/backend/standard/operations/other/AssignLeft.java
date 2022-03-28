@@ -33,66 +33,66 @@ public class AssignLeft extends AbstractOperation
 
         setAlgorithm(
             Scalarization.class,
-                new Scalarization()
-                .setIsSuitableFor(
-                   call -> {
-                       if ( call.input( 1 ).isVirtual() || call.input( 1 ).size() == 1 )
-                           return SuitabilityPredicate.GOOD;
-                       else
-                           return SuitabilityPredicate.UNSUITABLE;
-                   }
-                )
-                .setCanPerformBackwardADFor( call -> false )
-                .setCanPerformForwardADFor( call -> false )
-                .setSupplyADAgentFor( getDefaultAlgorithm() )
-                .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
-                .setCallPreparation(
-                    call -> {
-                        int offset = ( call.input( 0 ) == null ? 1 : 0 );
-                        call.input( offset ).getUnsafe().incrementVersion(call);
-                        call.input( offset ).setIsVirtual( false );
-                        return
-                            ExecutionCall.of( call.input( offset ), call.input( 1+offset ) )
-                                    .andArgs(Arg.DerivIdx.of(-1))
-                                    .running(this)
-                                    .on( call.getDevice() );
-                    }
-                )
-                .buildFunAlgorithm()
-                .setImplementationFor(
-                    CPU.class,
-                    Scalarization.implementationForCPU()
-                        .with(Fun.F64F64ToF64.of( ( a, b ) -> b ))
-                        .with(Fun.F32F32ToF32.of( ( a, b ) -> b ))
-                        .with(Fun.F32F32ToF32.of( ( a, b ) -> b ))
-                        .with(Fun.ObjObjToObj.of( ( a, b ) -> b ))
-                        .get()
-                )
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    CLImplementation
-                        .compiler()
-                        .arity( 2 )
-                        .kernelSource( Scalarization.getKernelSource() )
-                        .activationSource( "output = value;\n" )
-                        .differentiationSource( "output = value;\n" )
-                        .kernelPostfix( this.getIdentifier() )
-                        .execution(
-                            call -> {
-                                Tsr<Number> t = call.input( Number.class, 0 );
-                                int gwz = t.size();
-                                call.getDevice()
-                                    .getKernel(call)
-                                    .passAllOf( t )
-                                    .passAllOf( t )
-                                    .pass( call.input( Number.class, 1 ).at(0).get().floatValue() )
-                                    .pass( t.rank() )
-                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                    .call( gwz );
-                            }
-                        )
-                        .build()
-                )
+            new Scalarization()
+            .setIsSuitableFor(
+               call -> {
+                   if ( call.input( 1 ).isVirtual() || call.input( 1 ).size() == 1 )
+                       return SuitabilityPredicate.GOOD;
+                   else
+                       return SuitabilityPredicate.UNSUITABLE;
+               }
+            )
+            .setCanPerformBackwardADFor( call -> false )
+            .setCanPerformForwardADFor( call -> false )
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
+            .setCallPreparation(
+                call -> {
+                    int offset = ( call.input( 0 ) == null ? 1 : 0 );
+                    call.input( offset ).getUnsafe().incrementVersion(call);
+                    call.input( offset ).setIsVirtual( false );
+                    return
+                        ExecutionCall.of( call.input( offset ), call.input( 1+offset ) )
+                                .andArgs(Arg.DerivIdx.of(-1))
+                                .running(this)
+                                .on( call.getDevice() );
+                }
+            )
+            .buildFunAlgorithm()
+            .setImplementationFor(
+                CPU.class,
+                Scalarization.implementationForCPU()
+                    .with(Fun.F64F64ToF64.of( ( a, b ) -> b ))
+                    .with(Fun.F32F32ToF32.of( ( a, b ) -> b ))
+                    .with(Fun.F32F32ToF32.of( ( a, b ) -> b ))
+                    .with(Fun.ObjObjToObj.of( ( a, b ) -> b ))
+                    .get()
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation
+                    .compiler()
+                    .arity( 2 )
+                    .kernelSource( Scalarization.getKernelSource() )
+                    .activationSource( "output = value;\n" )
+                    .differentiationSource( "output = value;\n" )
+                    .kernelPostfix( this.getIdentifier() )
+                    .execution(
+                        call -> {
+                            Tsr<Number> t = call.input( Number.class, 0 );
+                            int gwz = t.size();
+                            call.getDevice()
+                                .getKernel(call)
+                                .passAllOf( t )
+                                .passAllOf( t )
+                                .pass( call.input( Number.class, 1 ).at(0).get().floatValue() )
+                                .pass( t.rank() )
+                                .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                .call( gwz );
+                        }
+                    )
+                    .build()
+            )
         );
 
         setAlgorithm(
