@@ -2868,6 +2868,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     private void _setDataAt( int i, V o ) {
+        if ( this.isVirtual() ) this.setIsVirtual( false );
         if ( this.isOutsourced() ) {
             getDevice().write( this, o );
         }

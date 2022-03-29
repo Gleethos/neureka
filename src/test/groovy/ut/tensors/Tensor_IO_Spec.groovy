@@ -342,6 +342,39 @@ class Tensor_IO_Spec extends Specification
             //'GPU'  | Float
     }
 
+    @IgnoreIf({ device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    def 'When we try to manipulate the underlying data array of a virtual tensor then it will become actual.'(
+            String device, Class<?> type
+    ) {
+        given : 'A tensor of 3 numbers:'
+            var t = Tsr.of(type).vector(1, 1, 1)
+        and : 'We store the tensor on the given device, to ensure that it work there as well.'
+            t.to(device)
+
+        expect :
+            t.isVirtual()
+            t.value == [1, 1, 1]
+            t.data == [1]
+
+        when :
+            t.unsafe.setDataAt(2, 42)
+
+        then :
+            !t.isVirtual()
+            t.value == [1, 1, 42]
+            t.data == [1, 1, 42]
+
+        where :
+            device | type
+            'CPU'  | Double
+            'CPU'  | Float
+            'CPU'  | Byte
+            'CPU'  | Short
+            //'CPU'  | Integer
+            //'CPU'  | Long
+            //'GPU'  | Float
+    }
+
 
     def 'Tensors value type can be changed by calling "toType(...)".'()
     {

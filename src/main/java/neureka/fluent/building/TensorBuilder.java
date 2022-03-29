@@ -10,7 +10,6 @@ import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.fluent.building.states.*;
 import neureka.ndim.Filler;
-import neureka.ndim.config.NDConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +108,21 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
         }
         return _get( values );
     }
+    /*
+    private <T> boolean _isAllOne(T[] values) {
+        if ( values.length > 0 ) {
+            T first = values[0];
+            if ( values.length == 1 ) return true;
+            else if ( values.length <= 42 ) {
+                for ( T value : values ) {
+                    if ( !Objects.equals(first, value) )
+                        return false;
+                }
+                return true;
+            }
+        }
+        return false;
+    }*/
 
     /**
      *  This method receives an {@link Filler} lambda which will be
