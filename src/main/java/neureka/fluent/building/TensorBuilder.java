@@ -95,20 +95,10 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
     @Override
     public final Tsr<V> andFill( V... values ) {
         LogUtil.nullArgCheck( values, "values", _dataType.getJVMTypeClass(), "Cannot fill a tensor will a value array that is null!" );
-        if ( values.length > 0 ) {
-            V first = values[0];
-            if ( values.length == 1 ) return this.all( first );
-            else if ( values.length <= 42 ) {
-                for ( V value : values ) {
-                    if ( !Objects.equals(first, value) )
-                        return _get( values );
-                }
-                return this.all( first );
-            }
-        }
+        if ( _isAllOne(values) ) return _get( values[0] );
         return _get( values );
     }
-    /*
+
     private <T> boolean _isAllOne(T[] values) {
         if ( values.length > 0 ) {
             T first = values[0];
@@ -122,7 +112,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
             }
         }
         return false;
-    }*/
+    }
 
     /**
      *  This method receives an {@link Filler} lambda which will be
@@ -179,6 +169,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
     public Tsr<V> vector( Object[] values ) {
         LogUtil.nullArgCheck(values, "values", Object[].class, "Cannot create a vector without data array!");
         _shape = new int[]{ values.length };
+        if ( _isAllOne(values) ) return _get( values[0] );
         return _get( values );
     }
 

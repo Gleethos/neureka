@@ -2763,7 +2763,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             System.arraycopy( indices, 0, correct, 0, indices.length );
             indices = correct;
         }
-        getUnsafe().setDataAt( getNDConf().indexOfIndices(indices), item );
+        if ( this.isVirtual() ) this.setIsVirtual( false );
+        int i = getNDConf().indexOfIndices(indices);
+        getUnsafe().setDataAt( i, item );
         return this;
     }
 
@@ -2868,7 +2870,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     private void _setDataAt( int i, V o ) {
-        if ( this.isVirtual() ) this.setIsVirtual( false );
+        if ( this.isVirtual() && i > 0 )
+            throw new IllegalArgumentException("There is no data item at index "+i+" for this virtual tensor!");
         if ( this.isOutsourced() ) {
             getDevice().write( this, o );
         }
@@ -2942,7 +2945,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         } else if ( Number.class.isAssignableFrom(value.getClass()) ) {
             this.setIsVirtual( true );
             value = DataConverter.instance().convert( value, this.valueClass() );
-            this.at(0).set((V) value);
+            this.getUnsafe().setDataAt( 0, (V) value );
         }
         else success = false;
 
@@ -3393,7 +3396,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             }
 
             @Override
-            public final Tsr<V> setDataAt( int i, V o ) {
+            public Tsr<V> setDataAt( int i, V o ) {
                 _guardMod("data object");
                 _setDataAt( i, o );
                 return Tsr.this;

@@ -286,7 +286,7 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
             public V get() { return getValueAt( indices ); }
 
             @Override
-            public void set(V value) { putAt( indices, value ); }
+            public void set( V value ) { putAt( indices, value ); }
         };
     }
 

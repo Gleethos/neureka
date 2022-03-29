@@ -357,7 +357,7 @@ class Tensor_IO_Spec extends Specification
             t.data == [1]
 
         when :
-            t.unsafe.setDataAt(2, 42)
+            t.at(2).set(42)
 
         then :
             !t.isVirtual()
