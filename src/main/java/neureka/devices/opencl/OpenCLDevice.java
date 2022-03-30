@@ -358,8 +358,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
             throw new IllegalArgumentException(message);
         }
         double[] value = tensor.isVirtual()
-                ? _value64f(tensor.get(cl_tsr.class), 1, 0)
-                : value64f(tensor);
+                ? DataConverter.Utility.floatToDouble(_value( new float[1], tensor, 0 ))
+                : DataConverter.Utility.floatToDouble(_value( new float[tensor.size()], tensor, 0 ));
 
         free(tensor);
         tensor.forComponent(Tsr.class, this::restore);
@@ -561,7 +561,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     protected <T extends Number> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int limit ) {
-        overwrite( tensor, 0, Data.                                                                 of(array, offset, limit-start));
+        overwrite( tensor, 0, Data.of(array, offset, limit-start) );
     }
 
     private static class Data
@@ -619,7 +619,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
     }
 
-    public Device<Number> overwrite(
+    private Device<Number> overwrite(
             Tsr<?> tensor, int offset, Data data
     ) {
         if ( data.getLength() == 0 ) return this;
@@ -682,12 +682,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         else _add(newOwner, null, migration);
     }
 
-    private double[] value64f(Tsr<Number> tensor) {
-        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
-        return _value64f(clt, clt.value.size, 0);
-    }
-
-
     private <A> A _value( A array, Tsr<Number> tensor, int offset ) {
         Data data = Data.of( array );
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
@@ -695,7 +689,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 _queue,
                 clt.value.data,
                 CL_TRUE,
-                offset * 8L, // one double == eight byte
+                (long) offset * data.getItemSize(), // one double == eight byte
                 (long) data.getItemSize() * data.getLength(),
                 data.getPointer(),
                 0,
@@ -705,67 +699,15 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return (A) data._data;
     }
 
-
-    private double[] _value64f(cl_tsr<?, ?> clt, int size, int offset) {
-        if (clt.fp == 1) return DataConverter.Utility.floatToDouble(_value32f(clt, size, offset));
-        else {
-            double[] data = new double[size];
-            clEnqueueReadBuffer(
-                    _queue,
-                    clt.value.data,
-                    CL_TRUE,
-                    offset * 8L, // one double == eight byte
-                    (long) Sizeof.cl_double * data.length,
-                    Pointer.to(data),
-                    0,
-                    null,
-                    null
-            );
-            return data;
-        }
-    }
-
-    public float[] value32f(Tsr<Number> tensor) {
-        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
-        return _value32f(clt, clt.value.size, 0);
-    }
-
-    private float[] _value32f(cl_tsr<?, ?> clt, int size, int offset) {
-        if (clt.fp == 1) {
-            float[] data = new float[size];
-            clEnqueueReadBuffer(
-                    _queue,
-                    clt.value.data,
-                    CL_TRUE,
-                    offset * 4L, // one float == four bytes !
-                    (long) Sizeof.cl_float * data.length,
-                    Pointer.to(data),
-                    0,
-                    null,
-                    null
-            );
-            return data;
-        } else return DataConverter.Utility.doubleToFloat(_value64f(clt, size, offset));
-    }
-
     @Override
-    public <T extends Number> Object dataFor(Tsr<T> tensor) {
-        return value32f((Tsr<Number>) tensor);
+    public <T extends Number> Object dataFor( Tsr<T> tensor ) {
+        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        return _value(new float[clt.value.size], (Tsr<Number>) tensor, 0);
     }
 
     @Override
     public <T extends Number> Number dataFor(Tsr<T> tensor, int index) {
-        return value32f((Tsr<Number>) tensor, index);
-    }
-
-    public double value64f(Tsr<Number> tensor, int index) {
-        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
-        return _value64f(clt, 1, index)[0];
-    }
-
-    public float value32f(Tsr<Number> tensor, int index) {
-        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
-        return _value32f(clt, 1, index)[0];
+        return _value(new float[1], (Tsr<Number>) tensor, index)[0];
     }
 
     /**

@@ -2839,7 +2839,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         if ( this.isOutsourced() ) {
             Device<V> device = this.get( Device.class );
             if ( device instanceof OpenCLDevice ) {
-                return (V)(Double)( (OpenCLDevice) device ).value64f( (Tsr<Number>) this, i );
+                return (V)( (OpenCLDevice) device ).dataFor( (Tsr<Number>) this, i );
             }
         }
         else if ( _getData() instanceof float[] )  return (V)(Float)  ( (float[])   _getData())[ i ];
