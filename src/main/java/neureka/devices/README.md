@@ -15,7 +15,7 @@ Tensors *"need to know were they are located at"* while *"devices need to know w
 Therefore, the following two ways of marrying both types exist : <br>
 
 ```
-myTensor.set( myDevice );
+myTensor.to( myDevice );
 ```
 ... or ...
 ```
