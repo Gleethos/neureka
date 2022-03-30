@@ -109,17 +109,17 @@ public class CPU extends AbstractDevice<Number>
     }
 
     @Override
-    protected <T extends Number, A> A _readArray(Tsr<T> tensor, Class<A> arrayType, int start, int limit) {
+    protected <T extends Number, A> A _readArray(Tsr<T> tensor, Class<A> arrayType, int start, int size) {
         return null;
     }
 
     @Override
-    protected <T extends Number> void _writeItem(Tsr<T> tensor, T item, int start, int limit) {
+    protected <T extends Number> void _writeItem(Tsr<T> tensor, T item, int start, int size) {
 
     }
 
     @Override
-    protected <T extends Number> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int limit) {
+    protected <T extends Number> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int size) {
 
     }
 

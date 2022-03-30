@@ -191,7 +191,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         Source<V> write( V item );
         Source<V> write( Object array, int offset );
         V readAt( int index );
-        <A> A readArray( Class<A> arrayType, int start, int limit );
+        <A> A readArray( Class<A> arrayType, int start, int size );
     }
 
     interface Source<V> {

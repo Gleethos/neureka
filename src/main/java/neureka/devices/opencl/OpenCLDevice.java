@@ -538,7 +538,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
 
     @Override
-    public <T extends Number> Device<Number> write(Tsr<T> tensor, Object value) {
+    public <T extends Number> Device<Number> write( Tsr<T> tensor, Object value ) {
         overwrite( tensor, 0, Data.of(value));
         return this;
     }
@@ -546,22 +546,22 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     protected <T extends Number> T _readItem( Tsr<T> tensor, int index ) {
-        return null;
+        return (T) Float.valueOf(_value(new float[1], (Tsr<Number>) tensor, index)[0]);
     }
 
     @Override
-    protected <T extends Number, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int limit ) {
-        return null;
+    protected <T extends Number, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size ) {
+        return (A) _value(new float[size], (Tsr<Number>) tensor, start);
     }
 
     @Override
-    protected <T extends Number> void _writeItem( Tsr<T> tensor, T item, int start, int limit ) {
-
+    protected <T extends Number> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
+        overwrite( tensor, start, Data.of(item, 0, size) );
     }
 
     @Override
-    protected <T extends Number> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int limit ) {
-        overwrite( tensor, 0, Data.of(array, offset, limit-start) );
+    protected <T extends Number> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size ) {
+        overwrite( tensor, start, Data.of(array, offset, size) );
     }
 
     private static class Data
@@ -578,8 +578,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         private Data( Object data, int start, int size ) {
             if ( data instanceof Number ) {
-                if      ( data instanceof Float  ) data = new float[] { ((Float)(data)) };
-                else if ( data instanceof Double ) data = new double[] { ((Double)(data)) };
+                float[] newData = new float[size];
+                Arrays.fill( newData, ((Number)(data)).floatValue() );
+                data = newData;
+                // TODO: if ( data instanceof Double )
             }
             // NOTE: Currently we only support floats!
             data = DataConverter.instance().convert( data, float[].class );

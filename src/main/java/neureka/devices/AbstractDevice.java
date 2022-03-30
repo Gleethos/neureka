@@ -142,7 +142,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
                 return new Source<T>() {
                     @Override
                     public void intoRange(int start, int limit) {
-                        _writeItem( tensor, item, start, limit );
+                        _writeItem( tensor, item, start, limit-start );
                     }
                     @Override
                     public void fully() {
@@ -155,7 +155,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
                 return new Source<T>() {
                     @Override
                     public void intoRange(int start, int limit) {
-                        _writeArray( tensor, array, offset, start, limit );
+                        _writeArray( tensor, array, offset, start, limit-start );
                     }
                     @Override
                     public void fully() {
@@ -168,18 +168,18 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
                 return _readItem( tensor, index );
             }
             @Override
-            public <A> A readArray(Class<A> arrayType, int start, int limit) {
-                return _readArray( tensor, arrayType, start, limit );
+            public <A> A readArray( Class<A> arrayType, int start, int size ) {
+                return _readArray( tensor, arrayType, start, size );
             }
         };
     }
 
     protected abstract <T extends V> T _readItem( Tsr<T> tensor, int index );
 
-    protected abstract <T extends V, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int limit );
+    protected abstract <T extends V, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size );
 
-    protected abstract <T extends V> void _writeItem( Tsr<T> tensor, T item, int start, int limit );
+    protected abstract <T extends V> void _writeItem( Tsr<T> tensor, T item, int start, int size );
 
-    protected abstract <T extends V> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int limit );
+    protected abstract <T extends V> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size );
 
 }
