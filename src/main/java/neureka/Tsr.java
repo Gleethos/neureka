@@ -159,7 +159,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  The default device is an instance of the {@link CPU} class. <br>
      *  This field is a reference to this default device implementation.
      */
-    private static final Device<Number> _CPU;
+    private static final Device<Object> _CPU;
 
     /**
      *  This field contains multiple flags.
@@ -2842,16 +2842,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 return (V)( (OpenCLDevice) device ).dataFor( (Tsr<Number>) this, i );
             }
         }
-        else if ( _getData() instanceof float[] )  return (V)(Float)  ( (float[])   _getData())[ i ];
-        else if ( _getData() instanceof double[] ) return (V)(Double) ( (double[])  _getData())[ i ];
-        else if ( _getData() instanceof short[] )  return (V)(Short)  ( (short[])   _getData())[ i ];
-        else if ( _getData() instanceof int[] )    return (V)(Integer)( (int[])     _getData())[ i ];
-        else if ( _getData() instanceof byte[] )   return (V)(Byte)   ( (byte[])    _getData())[ i ];
-        else if ( _getData() instanceof long[] )   return (V)(Long)   ( (long[])    _getData())[ i ];
-        else if ( _getData() instanceof boolean[] )return (V)(Boolean)( (boolean[]) _getData())[ i ];
-        else if ( _getData() instanceof char[] )   return (V)(Character)( (char[])  _getData())[ i ];
-        else return ( (V[]) _getData())[ i ];
-        return null;
+        return getDevice().dataFor( this, i );
     }
 
     /**
@@ -3034,7 +3025,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
            So, therefore, we invite it back home for dinner!
          */
         return CPU.get() // This little API will temporarily migrate this to the JVM.
-                .use( (Tsr<Number>) this )
+                .use( (Tsr<Object>) this )
                 .in( () -> {
                     Object data = _getData();
                     DataConverter.ForTensor map = new DataConverter.ForTensor( this );

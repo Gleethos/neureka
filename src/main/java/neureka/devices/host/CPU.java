@@ -27,7 +27,7 @@ import java.util.function.IntSupplier;
  *  This means that they are implicitly "stored" on the {@link CPU} device.
  *  The class is also a singleton instead of being part of a {@link neureka.backend.api.BackendExtension}.
  */
-public class CPU extends AbstractDevice<Number>
+public class CPU extends AbstractDevice<Object>
 {
     private static final Logger _LOG = LoggerFactory.getLogger( CPU.class );
     private static final CPU _INSTANCE;
@@ -44,7 +44,7 @@ public class CPU extends AbstractDevice<Number>
     }
 
     private final JVMExecutor _executor = new JVMExecutor();
-    private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<>());
+    private final Set<Tsr<Object>> _tensors = Collections.newSetFromMap(new WeakHashMap<>());
 
     private CPU() { super(); }
 
@@ -85,70 +85,83 @@ public class CPU extends AbstractDevice<Number>
     }
 
     @Override
-    public <T extends Number> Device<Number> write( Tsr<T> tensor, Object value ) { return this; }
+    public <T extends Object> Device<Object> write( Tsr<T> tensor, Object value ) { return this; }
 
     @Override
-    public <T extends Number> Object dataFor(Tsr<T> tensor ) { return tensor.getValue(); }
+    public <T extends Object> Object dataFor(Tsr<T> tensor ) {
+        return tensor.getData();
+    }
 
     @Override
-    public <T extends Number> Number dataFor(Tsr<T> tensor, int index ) { return tensor.getValueAt( index ); }
+    public <T extends Object> Object dataFor(Tsr<T> tensor, int index ) {
+        Object data = tensor.getUnsafe().getData();
+        if      ( data instanceof float[] )  return (T)(Float)  ( (float[])   data)[ index ];
+        else if ( data instanceof double[] ) return (T)(Double) ( (double[])  data)[ index ];
+        else if ( data instanceof short[] )  return (T)(Short)  ( (short[])   data)[ index ];
+        else if ( data instanceof int[] )    return (T)(Integer)( (int[])     data)[ index ];
+        else if ( data instanceof byte[] )   return (T)(Byte)   ( (byte[])    data)[ index ];
+        else if ( data instanceof long[] )   return (T)(Long)   ( (long[])    data)[ index ];
+        else if ( data instanceof boolean[] )return (T)(Boolean)( (boolean[]) data)[ index ];
+        else if ( data instanceof char[] )   return (T)(Character)( (char[])  data)[ index ];
+        else return (T)( (Object[]) data)[ index ];
+    }
 
     @Override
-    public CPU restore( Tsr<Number> tensor ) { return this; }
+    public CPU restore( Tsr<Object> tensor ) { return this; }
 
     @Override
-    public <T extends Number> CPU store( Tsr<T> tensor ) {
+    public <T extends Object> CPU store( Tsr<T> tensor ) {
         //super.store(tensor);
-        _tensors.add( (Tsr<Number>) tensor);
+        _tensors.add( (Tsr<Object>) tensor);
         return this;
     }
 
     @Override
-    protected <T extends Number> T _readItem(Tsr<T> tensor, int index) {
+    protected <T extends Object> T _readItem(Tsr<T> tensor, int index) {
         return null;
     }
 
     @Override
-    protected <T extends Number, A> A _readArray(Tsr<T> tensor, Class<A> arrayType, int start, int size) {
+    protected <T extends Object, A> A _readArray(Tsr<T> tensor, Class<A> arrayType, int start, int size) {
         return null;
     }
 
     @Override
-    protected <T extends Number> void _writeItem(Tsr<T> tensor, T item, int start, int size) {
+    protected <T extends Object> void _writeItem(Tsr<T> tensor, T item, int start, int size) {
 
     }
 
     @Override
-    protected <T extends Number> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int size) {
+    protected <T extends Object> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int size) {
 
     }
 
     @Override
-    public <T extends Number> CPU store( Tsr<T> tensor, Tsr<T> parent ) {
-        _tensors.add( (Tsr<Number>) tensor);
-        _tensors.add( (Tsr<Number>) parent);
+    public <T extends Object> CPU store( Tsr<T> tensor, Tsr<T> parent ) {
+        _tensors.add( (Tsr<Object>) tensor);
+        _tensors.add( (Tsr<Object>) parent);
         return this;
     }
 
     @Override
-    public <T extends Number> boolean has( Tsr<T> tensor ) { return _tensors.contains( tensor ); }
+    public <T extends Object> boolean has( Tsr<T> tensor ) { return _tensors.contains( tensor ); }
 
     @Override
-    public <T extends Number> CPU free( Tsr<T> tensor ) {
+    public <T extends Object> CPU free( Tsr<T> tensor ) {
         _tensors.remove( tensor );
         return this;
     }
 
     @Override
-    public <T extends Number> CPU swap( Tsr<T> former, Tsr<T> replacement ) { return this; }
+    public <T extends Object> CPU swap( Tsr<T> former, Tsr<T> replacement ) { return this; }
 
     @Override
-    public <T extends Number> Device<Number> updateNDConf( Tsr<T> tensor ) {
+    public <T extends Object> Device<Object> updateNDConf( Tsr<T> tensor ) {
         return this;
     }
 
     @Override
-    public Collection<Tsr<Number>> getTensors() { return _tensors; }
+    public Collection<Tsr<Object>> getTensors() { return _tensors; }
 
     @Override
     public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }
@@ -161,7 +174,7 @@ public class CPU extends AbstractDevice<Number>
      * @return The truth value determining if this {@link Device} ought to be added to a tensor (Here always false!).
      */
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tsr<Object>> changeRequest ) {
         super.update( changeRequest );
         return false; // This type of device can not be a component simply because it is the default device
     }
