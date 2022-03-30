@@ -132,4 +132,54 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
         tensor.set( (Component) this ); // This way we move the storing procedure to the update function!
         return this;
     }
+
+    @Override
+    public <T extends V> Access<T> access( Tsr<T> tensor )
+    {
+        return new Access<T>() {
+            @Override
+            public Source<T> write(T item) {
+                return new Source<T>() {
+                    @Override
+                    public void intoRange(int start, int limit) {
+                        _writeItem( tensor, item, start, limit );
+                    }
+                    @Override
+                    public void fully() {
+                        _writeItem( tensor, item, 0, tensor.size() );
+                    }
+                };
+            }
+            @Override
+            public Source<T> write(Object array, int offset) {
+                return new Source<T>() {
+                    @Override
+                    public void intoRange(int start, int limit) {
+                        _writeArray( tensor, array, offset, start, limit );
+                    }
+                    @Override
+                    public void fully() {
+                        _writeArray( tensor, array, offset, 0, tensor.size() );
+                    }
+                };
+            }
+            @Override
+            public T readAt(int index) {
+                return _readItem( tensor, index );
+            }
+            @Override
+            public <A> A readArray(Class<A> arrayType, int start, int limit) {
+                return _readArray( tensor, arrayType, start, limit );
+            }
+        };
+    }
+
+    protected abstract <T extends V> T _readItem( Tsr<T> tensor, int index );
+
+    protected abstract <T extends V, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int limit );
+
+    protected abstract <T extends V> void _writeItem( Tsr<T> tensor, T item, int start, int limit );
+
+    protected abstract <T extends V> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int limit );
+
 }

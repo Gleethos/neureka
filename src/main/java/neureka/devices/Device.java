@@ -185,6 +185,21 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     <T extends V> Device<V> write( Tsr<T> tensor, Object value );
 
+    <T extends V> Access<T> access( Tsr<T> tensor );
+
+    interface Access<V> {
+        Source<V> write( V item );
+        Source<V> write( Object array, int offset );
+        V readAt( int index );
+        <A> A readArray( Class<A> arrayType, int start, int limit );
+    }
+
+    interface Source<V> {
+        default void at(int index) { intoRange(index, index+1); }
+        void intoRange(int start, int limit);
+        void fully();
+    }
+
     /**
      *  This method is used internally mostly and should not be used in most cases.    <br><br>
      *

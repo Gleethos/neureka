@@ -211,15 +211,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null
         );
         _cleaning(this, () -> clReleaseCommandQueue(_queue));
-        //Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-        //    _mapping.forEach((k, v) -> {
-        //        if (v.value.event!=null) clWaitForEvents(1, new cl_event[]{v.value.event});
-        //        clReleaseMemObject(v.config);
-        //        clReleaseMemObject(v.value.data);
-        //    });
-        //    clReleaseCommandQueue(_queue);
-        //    clReleaseContext(_context);
-        //}));
     }
 
     public String toString() {
@@ -369,6 +360,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         double[] value = tensor.isVirtual()
                 ? _value64f(tensor.get(cl_tsr.class), 1, 0)
                 : value64f(tensor);
+
         free(tensor);
         tensor.forComponent(Tsr.class, this::restore);
         tensor.setValue(value);
@@ -547,59 +539,99 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public <T extends Number> Device<Number> write(Tsr<T> tensor, Object value) {
-        if ( value instanceof Number ) {
-            if      ( tensor.getValueClass() == Float.class  ) this.write( tensor, new float[]{((Number) value).floatValue()} );
-            else if ( tensor.getValueClass() == Double.class ) this.write( tensor, new double[]{((Number) value).doubleValue()} );
-            else throw new IllegalArgumentException("Tensor type '"+tensor.getValueClass().getSimpleName()+"' not supported.");
-        }
-        if (value instanceof double[]) return overwrite64((Tsr<Number>) tensor, (double[]) value);
-        else if (value instanceof float[]) return overwrite32((Tsr<Number>) tensor, (float[]) value);
+        overwrite( tensor, 0, Data.of(value));
         return this;
     }
 
 
-    public Device<Number> overwrite64(Tsr<Number> tensor, double[] value) {
-        if (value.length == 0) return this;
-        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
-        if (clt.fp == 1) overwrite32(tensor, DataConverter.Utility.doubleToFloat(value));
-        else {
-            if (clt.value.event != null) clWaitForEvents(1, new cl_event[]{clt.value.event});
-            clt.value.event = new cl_event();
-            clEnqueueWriteBuffer(
-                    _queue,
-                    clt.value.data,
-                    CL_FALSE,
-                    0,
-                    (long) Sizeof.cl_double * value.length,
-                    Pointer.to(value),
-                    0,
-                    null,
-                    clt.value.event
-            );
-        }
-        return this;
+    @Override
+    protected <T extends Number> T _readItem( Tsr<T> tensor, int index ) {
+        return null;
     }
 
+    @Override
+    protected <T extends Number, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int limit ) {
+        return null;
+    }
 
-    public Device<Number> overwrite32(Tsr<Number> tensor, float[] value) {
-        if (value.length == 0) return this;
+    @Override
+    protected <T extends Number> void _writeItem( Tsr<T> tensor, T item, int start, int limit ) {
+
+    }
+
+    @Override
+    protected <T extends Number> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int limit ) {
+        overwrite( tensor, 0, Data.                                                                 of(array, offset, limit-start));
+    }
+
+    private static class Data
+    {
+        private final Object _data;
+
+        public static Data of( Object data ) {
+            return new Data( data, 0, lengthOf(data) );
+        }
+
+        public static Data of( Object data, int start, int size ) {
+            return new Data( data, start, size );
+        }
+
+        private Data( Object data, int start, int size ) {
+            if ( data instanceof Number ) {
+                if      ( data instanceof Float  ) data = new float[] { ((Float)(data)) };
+                else if ( data instanceof Double ) data = new double[] { ((Double)(data)) };
+            }
+            // NOTE: Currently we only support floats!
+            data = DataConverter.instance().convert( data, float[].class );
+            // TODO: Enable this for more types:
+            float[] array = (float[]) data;
+            if ( start > 0 ) {
+                float[] newData = new float[size];
+                System.arraycopy(array, start, newData, 0, newData.length);
+                _data = newData;
+            }
+            else _data = data;
+        }
+
+        Pointer getPointer() {
+            if ( _data instanceof float[] ) return Pointer.to((float[])_data);
+            if ( _data instanceof double[] ) return Pointer.to((double[])_data);
+            throw new IllegalStateException();
+        }
+
+        long getLength() {
+            if ( _data instanceof float[] ) return ((float[])_data).length;
+            if ( _data instanceof double[] ) return ((double[])_data).length;
+            throw new IllegalStateException();
+        }
+
+        int getItemSize() {
+            if ( _data instanceof float[] ) return Sizeof.cl_float;
+            if ( _data instanceof double[] ) return Sizeof.cl_double;
+            throw new IllegalStateException();
+        }
+
+        private static int lengthOf( Object o ) {
+            if ( o instanceof Number ) return 1;
+            if ( o instanceof float[] ) return ((float[])o).length;
+            if ( o instanceof double[] ) return ((double[])o).length;
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public Device<Number> overwrite(
+            Tsr<?> tensor, int offset, Data data
+    ) {
+        if ( data.getLength() == 0 ) return this;
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
-        if (clt.fp == 1) {
-            if (clt.value.event != null) clWaitForEvents(1, new cl_event[]{clt.value.event});
-            clt.value.event = new cl_event();
-            clEnqueueWriteBuffer(
-                    _queue,
-                    clt.value.data,
-                    CL_TRUE,
-                    0,
-                    (long) Sizeof.cl_float * value.length,
-                    Pointer.to(value),
-                    0,
-                    null,
-                    clt.value.event
-            );
-        } else overwrite64(tensor, DataConverter.Utility.floatToDouble(value));
-
+        if (clt.value.event != null) clWaitForEvents(1, new cl_event[]{clt.value.event});
+        clt.value.event = new cl_event();
+        clEnqueueWriteBuffer(
+                _queue, clt.value.data, CL_TRUE,
+                offset, (long) data.getItemSize() * data.getLength(),
+                data.getPointer(), 0, null,
+                clt.value.event
+        );
         return this;
     }
 
@@ -650,10 +682,29 @@ public class OpenCLDevice extends AbstractDevice<Number>
         else _add(newOwner, null, migration);
     }
 
-    public double[] value64f(Tsr<Number> tensor) {
+    private double[] value64f(Tsr<Number> tensor) {
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
         return _value64f(clt, clt.value.size, 0);
     }
+
+
+    private <A> A _value( A array, Tsr<Number> tensor, int offset ) {
+        Data data = Data.of( array );
+        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        clEnqueueReadBuffer(
+                _queue,
+                clt.value.data,
+                CL_TRUE,
+                offset * 8L, // one double == eight byte
+                (long) data.getItemSize() * data.getLength(),
+                data.getPointer(),
+                0,
+                null,
+                null
+        );
+        return (A) data._data;
+    }
+
 
     private double[] _value64f(cl_tsr<?, ?> clt, int size, int offset) {
         if (clt.fp == 1) return DataConverter.Utility.floatToDouble(_value32f(clt, size, offset));
@@ -752,31 +803,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return true;
     }
 
-    /*
-    // The following are two potentially important methods for future features.
-
-    private void _releaseEvents(Tsr[] tsrs) {
-        for(Tsr<Number> t : tsrs) {
-            if ( t.get(cl_tsr.class).value.event != null ) {
-                clReleaseEvent(t.get(cl_tsr.class).value.event);
-                t.get(cl_tsr.class).value.event = null;
-            }
-        }
-    }
-
-    private cl_event[] _getWaitList(Tsr[] tsrs) {
-        List<cl_event> list = new ArrayList<>();
-        for (Tsr<Number> t : tsrs) {
-            cl_event event = t.get(cl_tsr.class).value.event;
-            if (event != null && !list.contains(event)) {
-                list.add(event);
-            }
-        }
-        return list.toArray(new cl_event[ 0 ]);
-    }
-    */
-
-
     /*==================================================================================================================
     |
     |       §(4) : OPENCL PROPERTIES
@@ -858,17 +884,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return (int) (DeviceQuery.getLong(_deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE) / 1024);
     }
 
-    /*
-    public boolean queueExecIsOrdered() {
-        long queueProperties = DeviceQuery.getLong(_did, CL_DEVICE_QUEUE_PROPERTIES);//Deprecation!
-        return ((queueProperties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) != 0);
-    }
-
-    public boolean queueProfilingIsEnabled() {
-        long queueProperties = DeviceQuery.getLong(_did, CL_DEVICE_QUEUE_PROPERTIES);
-        return ((queueProperties & CL_QUEUE_PROFILING_ENABLE) != 0);
-    }
-    */
     public int imageSupport() {
         return DeviceQuery.getInt(_deviceId, CL_DEVICE_IMAGE_SUPPORT);
     }

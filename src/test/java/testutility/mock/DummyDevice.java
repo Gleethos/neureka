@@ -18,6 +18,11 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public <T extends Object> Device<Object> write( Tsr<T> tensor, Object value ) { return this; }
 
     @Override
+    public <T> Access<T> access(Tsr<T> tensor) {
+        return null;
+    }
+
+    @Override
     public Device<Object> restore( Tsr tensor ) { return this; }
 
     @Override

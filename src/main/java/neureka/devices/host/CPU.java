@@ -104,6 +104,26 @@ public class CPU extends AbstractDevice<Number>
     }
 
     @Override
+    protected <T extends Number> T _readItem(Tsr<T> tensor, int index) {
+        return null;
+    }
+
+    @Override
+    protected <T extends Number, A> A _readArray(Tsr<T> tensor, Class<A> arrayType, int start, int limit) {
+        return null;
+    }
+
+    @Override
+    protected <T extends Number> void _writeItem(Tsr<T> tensor, T item, int start, int limit) {
+
+    }
+
+    @Override
+    protected <T extends Number> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int limit) {
+
+    }
+
+    @Override
     public <T extends Number> CPU store( Tsr<T> tensor, Tsr<T> parent ) {
         _tensors.add( (Tsr<Number>) tensor);
         _tensors.add( (Tsr<Number>) parent);

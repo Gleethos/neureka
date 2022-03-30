@@ -214,6 +214,11 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
+    public <T> Access<T> access(Tsr<T> tensor) {
+        throw new IllegalAccessError("FileDevice instances do not support access yet.");
+    }
+
+    @Override
     public <T extends Object> Device<Object> swap( Tsr<T> former, Tsr<T> replacement ) {
         return null;
     }
