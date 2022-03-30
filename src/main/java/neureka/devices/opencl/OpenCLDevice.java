@@ -707,11 +707,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return _readArray( tensor, float[].class, 0, clt.value.size );
     }
 
-    @Override
-    public <T extends Number> Number dataFor(Tsr<T> tensor, int index) {
-        return _readItem( tensor, index );
-    }
-
     /**
      * @param call The {@link ExecutionCall} which will be queried for a {@link CLImplementation} holding the kernel.
      * @return The kernel call which uses the builder pattern to receive kernel arguments.

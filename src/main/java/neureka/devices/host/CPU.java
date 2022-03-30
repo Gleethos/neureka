@@ -93,20 +93,6 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <T extends Object> Object dataFor(Tsr<T> tensor, int index ) {
-        Object data = tensor.getUnsafe().getData();
-        if      ( data instanceof float[] )  return (T)(Float)  ( (float[])   data)[ index ];
-        else if ( data instanceof double[] ) return (T)(Double) ( (double[])  data)[ index ];
-        else if ( data instanceof short[] )  return (T)(Short)  ( (short[])   data)[ index ];
-        else if ( data instanceof int[] )    return (T)(Integer)( (int[])     data)[ index ];
-        else if ( data instanceof byte[] )   return (T)(Byte)   ( (byte[])    data)[ index ];
-        else if ( data instanceof long[] )   return (T)(Long)   ( (long[])    data)[ index ];
-        else if ( data instanceof boolean[] )return (T)(Boolean)( (boolean[]) data)[ index ];
-        else if ( data instanceof char[] )   return (T)(Character)( (char[])  data)[ index ];
-        else return (T)( (Object[]) data)[ index ];
-    }
-
-    @Override
     public CPU restore( Tsr<Object> tensor ) { return this; }
 
     @Override
@@ -117,8 +103,17 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected <T extends Object> T _readItem(Tsr<T> tensor, int index) {
-        return null;
+    protected <T extends Object> T _readItem( Tsr<T> tensor, int index ) {
+        Object data = tensor.getUnsafe().getData();
+        if      ( data instanceof float[] )  return (T)(Float)  ( (float[])   data)[ index ];
+        else if ( data instanceof double[] ) return (T)(Double) ( (double[])  data)[ index ];
+        else if ( data instanceof short[] )  return (T)(Short)  ( (short[])   data)[ index ];
+        else if ( data instanceof int[] )    return (T)(Integer)( (int[])     data)[ index ];
+        else if ( data instanceof byte[] )   return (T)(Byte)   ( (byte[])    data)[ index ];
+        else if ( data instanceof long[] )   return (T)(Long)   ( (long[])    data)[ index ];
+        else if ( data instanceof boolean[] )return (T)(Boolean)( (boolean[]) data)[ index ];
+        else if ( data instanceof char[] )   return (T)(Character)( (char[])  data)[ index ];
+        else return (T)( (Object[]) data)[ index ];
     }
 
     @Override

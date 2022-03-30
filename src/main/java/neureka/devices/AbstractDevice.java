@@ -134,6 +134,11 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     }
 
     @Override
+    public final <T extends V> T dataFor( Tsr<T> tensor, int index ) {
+        return _readItem( tensor, index );
+    }
+
+    @Override
     public <T extends V> Access<T> access( Tsr<T> tensor )
     {
         return new Access<T>() {
@@ -154,7 +159,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             public Source<T> write(Object array, int offset) {
                 return new Source<T>() {
                     @Override
-                    public void intoRange(int start, int limit) {
+                    public void intoRange( int start, int limit ) {
                         _writeArray( tensor, array, offset, start, limit-start );
                     }
                     @Override
@@ -164,7 +169,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
                 };
             }
             @Override
-            public T readAt(int index) {
+            public T readAt( int index ) {
                 return _readItem( tensor, index );
             }
             @Override
