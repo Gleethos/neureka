@@ -704,11 +704,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     public <T extends Number> Object dataFor( Tsr<T> tensor ) {
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
-        return _value(new float[clt.value.size], (Tsr<Number>) tensor, 0);
+        return _readArray( tensor, float[].class, 0, clt.value.size );
     }
 
     @Override
     public <T extends Number> Number dataFor(Tsr<T> tensor, int index) {
+        //return _readItem( tensor, index );
         return _value(new float[1], (Tsr<Number>) tensor, index)[0];
     }
 
