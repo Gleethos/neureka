@@ -107,13 +107,13 @@ public final class TsrConstructor {
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
             if ( constructAllFromOne( shape, data ) ) return;
 
-        if (      data instanceof double[]  ) constructForDoubles( shape, (double[]) data );
-        else if ( data instanceof float[]   ) constructForFloats( shape, (float[]) data );
-        else if ( data instanceof int[]     ) constructForInts( shape, (int[]) data );
-        else if ( data instanceof byte[]    ) constructForBytes( shape, (byte[]) data );
-        else if ( data instanceof short[]   ) constructForShorts( shape, (short[]) data );
-        else if ( data instanceof boolean[] ) constructForBooleans( shape, (boolean[]) data );
-        else if ( data instanceof long[]    ) constructForLongs( shape, (long[]) data );
+        if (      data instanceof double[]  ) _constructForDoubles( shape, (double[]) data );
+        else if ( data instanceof float[]   ) _constructForFloats( shape, (float[]) data );
+        else if ( data instanceof int[]     ) _constructForInts( shape, (int[]) data );
+        else if ( data instanceof byte[]    ) _constructForBytes( shape, (byte[]) data );
+        else if ( data instanceof short[]   ) _constructForShorts( shape, (short[]) data );
+        else if ( data instanceof boolean[] ) _constructForBooleans( shape, (boolean[]) data );
+        else if ( data instanceof long[]    ) _constructForLongs( shape, (long[]) data );
         else {
             _API.setType(dataType);
             configureFromNewShape(shape, false, false);
@@ -127,7 +127,7 @@ public final class TsrConstructor {
                 ( data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
             }
         }
-        return TsrConstructor.optimizeObjectArray(dataType, data, size);
+        return _optimizeObjectArray(dataType, data, size);
     }
 
     public boolean constructAllFromOne( int[] shape, Object data ) {
@@ -221,7 +221,7 @@ public final class TsrConstructor {
                         value[ i ] = DataConverter.instance().convert( matrix.get( mi ).get( ni ), Double.class );
                     }
                 }
-                constructForDoubles( shape, value );
+                _constructForDoubles( shape, value );
             } else {
                 String message = "Provided nested list(s) do not form a regular matrix.";
                 _LOG.error( message );
@@ -230,7 +230,7 @@ public final class TsrConstructor {
         }
     }
 
-    public void constructForDoubles( int[] shape, double[] value )
+    private void _constructForDoubles(int[] shape, double[] value )
     {
         int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( F64.class ) );
@@ -242,7 +242,7 @@ public final class TsrConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    public void constructForFloats( int[] shape, float[] value )
+    private void _constructForFloats(int[] shape, float[] value )
     {
         int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( F32.class ) );
@@ -253,7 +253,7 @@ public final class TsrConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    public void constructForInts( int[] shape, int[] value )
+    private void _constructForInts(int[] shape, int[] value )
     {
         int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( I32.class ) );
@@ -264,7 +264,7 @@ public final class TsrConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    public void constructForShorts( int[] shape, short[] value )
+    private void _constructForShorts(int[] shape, short[] value )
     {
         int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( I16.class ) );
@@ -275,7 +275,7 @@ public final class TsrConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    public void constructForBooleans( int[] shape, boolean[] value )
+    private void _constructForBooleans(int[] shape, boolean[] value )
     {
         int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( Boolean.class ) );
@@ -286,7 +286,7 @@ public final class TsrConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    public void constructForBytes( int[] shape, byte[] value )
+    private void _constructForBytes(int[] shape, byte[] value )
     {
         int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( I8.class ) );
@@ -297,7 +297,7 @@ public final class TsrConstructor {
         configureFromNewShape( shape, false, false );
     }
 
-    public void constructForLongs( int[] shape, long[] value )
+    private void _constructForLongs(int[] shape, long[] value )
     {
         int size = NDConfiguration.Utility.sizeOfShape( shape );
         _API.setType( DataType.of( I64.class ) );
@@ -342,7 +342,7 @@ public final class TsrConstructor {
      * @param size The size of the optimized array of primitives.
      * @return An optimized flat array of primitives.
      */
-    public static Object optimizeObjectArray( DataType<?> dataType, Object[] values, int size ) {
+    private static Object _optimizeObjectArray(DataType<?> dataType, Object[] values, int size ) {
         Object data = values;
         IntStream indices = IntStream.iterate( 0, i -> i + 1 ).limit(size);
         if ( size > 1_000 ) indices = indices.parallel();
