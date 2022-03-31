@@ -87,7 +87,8 @@ public final class TsrConstructor {
         }
     }
 
-    public void tryConstructing( int[] shape, DataType<?> dataType, Object data ) {
+    public void tryConstructing( int[] shape, DataType<?> dataType, Object data )
+    {
         int size = NDConfiguration.Utility.sizeOfShape( shape );
         if ( data instanceof List<?> ) {
             List<?> range = (List<?>) data;
@@ -106,9 +107,18 @@ public final class TsrConstructor {
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
             if ( constructAllFromOne( shape, data ) ) return;
 
-        _API.setType( dataType );
-        configureFromNewShape( shape, false, false );
-        _API.setData( data );
+        if (      data instanceof double[]  ) constructForDoubles( shape, (double[]) data );
+        else if ( data instanceof float[]   ) constructForFloats( shape, (float[]) data );
+        else if ( data instanceof int[]     ) constructForInts( shape, (int[]) data );
+        else if ( data instanceof byte[]    ) constructForBytes( shape, (byte[]) data );
+        else if ( data instanceof short[]   ) constructForShorts( shape, (short[]) data );
+        else if ( data instanceof boolean[] ) constructForBooleans( shape, (boolean[]) data );
+        else if ( data instanceof long[]    ) constructForLongs( shape, (long[]) data );
+        else {
+            _API.setType(dataType);
+            configureFromNewShape(shape, false, false);
+            _API.setData(data);
+        }
     }
 
     private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {

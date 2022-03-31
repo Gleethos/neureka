@@ -127,11 +127,19 @@ class Cross_Device_Type_Unit_Tests extends Specification
         then : 'This other result also contains the same elements.'
             result == expected
 
+        when :
+            result = (0..<t.size()).collect{device.access(t).readArray(float[], it, 1)[0]}
+        then : 'This other result also contains the same elements.'
+            result == expected
+
 
         where : 'The following data is being used for tensor instantiation :'
             device                | shape           | data                                               || expected
             Device.find("cpu")    | new int[]{3, 2} | new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}    || [-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]
             Device.find("cpu")    | new int[]{3, 2} | new double[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}    || [-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]
+
+            //Device.find("cpu")    | new int[]{3, 2} | new int[]{-5, -2, 1, -12, 3, -2}                   || [-5, -2, 1, -12, 3, -2]
+            //Device.find("cpu")    | new int[]{3, 2} | new int[]{-1, -1,-1,  80, 3, -2}                   || [-1, -1,-1,  80, 3, -2]
 
             Device.find("openCL") | new int[]{3, 2} | new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}    || [-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]
             Device.find("openCL") | new int[]{3, 2} | new double[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}    || [-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]

@@ -591,9 +591,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar double tensor.
      */
-    public static Tsr<Double> of( double value ) { return new Tsr<>(value); }
-
-    private Tsr( double value ) { createConstructionAPI().constructAllFromOne( new int[]{ 1 }, value ); }
+    public static Tsr<Double> of( double value ) { return Tsr.of( Double.class, new int[]{ 1 }, value ); }
 
     /**
      *  Constructs a vector of floats based on the provided array.
@@ -601,9 +599,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of floats from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of floats.
      */
-    public static Tsr<Float> of( float... value ) { return new Tsr<>( value ); }
-
-    private Tsr( float[] value ) { createConstructionAPI().constructForFloats( new int[]{ value.length }, value ); }
+    public static Tsr<Float> of( float... value ) { return Tsr.of( Float.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of doubles based on the provided array.
@@ -611,9 +607,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of doubles from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of doubles.
      */
-    public static Tsr<Double> of( double... value ) { return new Tsr<>( value ); }
-
-    private Tsr( double[] value ) { createConstructionAPI().constructForDoubles( new int[]{ value.length }, value ); }
+    public static Tsr<Double> of( double... value ) { return Tsr.of( Double.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of bytes based on the provided array.
@@ -621,9 +615,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of bytes from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of bytes.
      */
-    public static Tsr<Byte> of( byte... value ) { return new Tsr<>( value ); }
-
-    private Tsr( byte[] value ) { createConstructionAPI().constructForBytes( new int[]{ value.length }, value ); }
+    public static Tsr<Byte> of( byte... value ) { return Tsr.of( Byte.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of ints based on the provided array.
@@ -631,9 +623,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of ints from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of ints.
      */
-    public static Tsr<Integer> of( int... value ) { return new Tsr<>( new int[]{ value.length }, value ); }
-
-    private Tsr( int[] shape, int[] value ) { createConstructionAPI().constructForInts( shape, value ); }
+    public static Tsr<Integer> of( int... value ) { return Tsr.of( Integer.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of longs based on the provided array.
@@ -641,9 +631,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of longs from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of longs.
      */
-    public static Tsr<Long> of( long... value ) { return new Tsr<>( new int[]{ value.length }, value ); }
-
-    private Tsr( int[] shape, long[] value ) { createConstructionAPI().constructForLongs( shape, value ); }
+    public static Tsr<Long> of( long... value ) { return Tsr.of( Long.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of shorts based on the provided array.
@@ -651,9 +639,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of shorts from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of shorts.
      */
-    public static Tsr<Short> of( short... value ) { return new Tsr<>( new int[]{ value.length }, value ); }
-
-    private Tsr( int[] shape, short[] value ) { createConstructionAPI().constructForShorts( shape, value ); }
+    public static Tsr<Short> of( short... value ) { return Tsr.of( Short.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of booleans based on the provided array.
@@ -661,9 +647,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of booleans from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of shorts.
      */
-    public static Tsr<Short> of( boolean... value ) { return new Tsr<>( new int[]{ value.length }, value ); }
-
-    private Tsr( int[] shape, boolean[] value ) { createConstructionAPI().constructForBooleans( shape, value ); }
+    public static Tsr<Boolean> of( boolean... value ) { return Tsr.of( Boolean.class, new int[]{ value.length }, value ); }
 
     /**
      *  Use this to construct and return a seeded tensor of the specified type.
@@ -683,13 +667,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         createConstructionAPI().constructSeeded( valueType, shape, seed );
     }
 
-    public static Tsr<Double> of( int[] shape, double value ) { return new Tsr<>( shape, value ); }
+    public static Tsr<Double> of( int[] shape, double value ) { return Tsr.of( Double.class, shape, value ); }
 
-    private Tsr( int[] shape, double value ) { createConstructionAPI().constructAllFromOne( shape, value ); }
+    public static Tsr<Double> of( int[] shape, double[] value ) { return Tsr.of( Double.class, shape, value ); }
 
-    public static Tsr<Double> of( int[] shape, double[] value ) { return new Tsr<>( shape, value ); }
-
-    private Tsr( int[] shape, double[] value ) { createConstructionAPI().constructForDoubles( shape, value ); }
 
     public static <V> Tsr<V> of( DataType<V> type, int[] shape ) { return new Tsr<>( shape, type ); }
 

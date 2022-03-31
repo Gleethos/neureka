@@ -3,6 +3,7 @@ package neureka.devices.host;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
+import neureka.common.utility.DataConverter;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.devices.host.concurrent.Parallelism;
@@ -18,6 +19,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntSupplier;
+import java.util.stream.IntStream;
 
 /**
  *  The CPU class, one of many implementations of the {@link Device} interface,
@@ -117,8 +119,21 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected <T extends Object, A> A _readArray(Tsr<T> tensor, Class<A> arrayType, int start, int size) {
-        return null;
+    protected <T extends Object, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size )
+    {
+        if ( arrayType == float[].class ) {
+            float[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), float[].class);
+            float[] data = new float[size];
+            System.arraycopy(source, start, data, 0, size);
+            return (A) data;
+        } else if ( arrayType == double[].class ){
+            double[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), double[].class);
+            return (A) java.util.Arrays.stream(source, start, start + size).toArray();
+        } else if ( arrayType == int[].class ){
+            int[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), int[].class);
+            return (A) java.util.Arrays.stream(source, start, start + size).toArray();
+        }
+        throw new IllegalArgumentException("Array type '"+arrayType+"' not supported!");
     }
 
     @Override
