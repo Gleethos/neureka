@@ -673,6 +673,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     public static Tsr<Integer> of( int[] shape, int[] value ) { return Tsr.of( Integer.class, shape, value ); }
 
+    public static Tsr<Byte> of( int[] shape, byte[] value ) { return Tsr.of( Byte.class, shape, value ); }
+
+    public static Tsr<Long> of( int[] shape, long[] value ) { return Tsr.of( Long.class, shape, value ); }
+
     public static <V> Tsr<V> of( DataType<V> type, int[] shape ) { return new Tsr<>( shape, type ); }
 
     private Tsr( int[] shape, DataType<?> type )
