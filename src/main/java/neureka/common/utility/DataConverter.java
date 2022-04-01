@@ -151,6 +151,21 @@ public final class DataConverter
         _set( List.class, int[].class,    thing -> thing.stream().mapToInt(    i -> convert(i, Integer.class) ).toArray() );
         _set( List.class, double[].class, thing -> thing.stream().mapToDouble( i -> convert(i, Double.class) ).toArray() );
         _set( List.class, long[].class,   thing -> thing.stream().mapToLong(   i -> convert(i, Long.class) ).toArray() );
+        _set( List.class, short[].class, thing -> {
+            short[] array = new short[thing.size()];
+            IntStream.range(0,array.length).parallel().forEach( i -> array[i] = convert(thing.get(i), Short.class) );
+            return array;
+        });
+        _set( List.class, byte[].class, thing -> {
+            byte[] array = new byte[thing.size()];
+            IntStream.range(0,array.length).parallel().forEach( i -> array[i] = convert(thing.get(i), Byte.class) );
+            return array;
+        });
+        _set( List.class, float[].class, thing -> {
+            float[] array = new float[thing.size()];
+            IntStream.range(0,array.length).parallel().forEach( i -> array[i] = convert(thing.get(i), Float.class) );
+            return array;
+        });
 
         _set( BigInteger.class, Double.class, BigInteger::doubleValue );
         _set( BigInteger.class, Float.class, BigInteger::floatValue );
