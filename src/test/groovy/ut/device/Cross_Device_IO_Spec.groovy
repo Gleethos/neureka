@@ -36,14 +36,15 @@ class Cross_Device_IO_Spec extends Specification
             device.access(s).readArray(arrayType, 2, 1) == [expected[2]]
 
         where :
-            deviceType | type     | fill     ||  expected
-            'CPU'      | Integer  | [2, 1]   || [2, 1, 2, 1]
-            'CPU'      | Short    | [2,7,8]  || [2,7,8,2]
-            'CPU'      | Long     | [6,2,6]  || [6,2,6,6]
-            'CPU'      | Byte     | [6,2,7]  || [6,2,7,6]
-            'CPU'      | Double   | [3.4, 3] || [3.4d, 3.0d, 3.4d, 3.0d]
-            'CPU'      | Float    | [5.7,-1] || [5.7f, -1.0f, 5.7f, -1.0f]
-            'GPU'      | Float    | [5.7,-1] || [5.7f, -1.0f, 5.7f, -1.0f]
+            deviceType | type      | fill     ||  expected
+            'CPU'      | Integer   | [2, 1]   || [2, 1, 2, 1]
+            'CPU'      | Short     | [2,7,8]  || [2,7,8,2]
+            'CPU'      | Long      | [6,2,6]  || [6,2,6,6]
+            'CPU'      | Byte      | [6,2,7]  || [6,2,7,6]
+            'CPU'      | Double    | [3.4, 3] || [3.4d, 3.0d, 3.4d, 3.0d]
+            'CPU'      | Float     | [5.7,-1] || [5.7f, -1.0f, 5.7f, -1.0f]
+            'GPU'      | Float     | [5.7,-1] || [5.7f, -1.0f, 5.7f, -1.0f]
+            'CPU'      | Character | ['6','a']|| ['6','a','6','a']
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() && deviceType == 'GPU' })

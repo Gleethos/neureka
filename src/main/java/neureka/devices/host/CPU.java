@@ -180,6 +180,9 @@ public class CPU extends AbstractDevice<Object>
         } else if ( arrayType == long[].class ){
             long[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), long[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
+        } else if ( arrayType == Object[].class ){
+            Object[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), Object[].class);
+            return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         }
         throw new IllegalArgumentException("Array type '"+arrayType.getSimpleName()+"' not supported!");
     }

@@ -205,6 +205,8 @@ public final class DataConverter
         _set( Boolean.class, Long.class,     b -> b ? 1L : 0L );
         _set( Boolean.class, Byte.class,     b -> b ? (byte) 1 : (byte) 0 );
 
+        _set( String.class, Character.class, s -> (char) ( s.chars().sum() / s.length() ) );
+
         _set( Float[].class,     float[].class,   Utility::objFloatsToPrimFloats );
         _set( Integer[].class,   int[].class,     Utility::objIntsToPrimInts );
         _set( Long[].class,      long[].class,    Utility::objLongsToPrimLongs );
@@ -214,21 +216,20 @@ public final class DataConverter
         _set( Boolean[].class,   boolean[].class, Utility::objBooleansToPrimBooleans );
         _set( Character[].class, char[].class,    Utility::objCharsToPrimChars );
 
-        _set( Object[].class, int[].class, data -> {
-            return
-               Utility.intStream( 1_000, data.length )
-                   .map( i -> {
-                        if ( data[ i ] instanceof Number )
-                            return ( (Number) data[ i ] ).intValue();
-                        else if ( data[ i ] instanceof String )
-                            return (int) Double.parseDouble( (String) data[ i ] );
-                        else
-                            throw new IllegalArgumentException(
-                                "Cannot convert type '"+data[ i ].getClass().getSimpleName()+"' to int!"
-                            );
-                    })
-                    .toArray();
-        });
+        _set( Object[].class, int[].class, data ->
+                Utility.intStream( 1_000, data.length )
+                            .map( i -> {
+                                 if ( data[ i ] instanceof Number )
+                                     return ( (Number) data[ i ] ).intValue();
+                                 else if ( data[ i ] instanceof String )
+                                     return (int) Double.parseDouble( (String) data[ i ] );
+                                 else
+                                     throw new IllegalArgumentException(
+                                         "Cannot convert type '"+data[ i ].getClass().getSimpleName()+"' to int!"
+                                     );
+                             })
+                             .toArray()
+            );
     }
 
     /**
