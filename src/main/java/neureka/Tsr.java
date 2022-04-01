@@ -2861,10 +2861,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             _setDataType( DataType.of( F64.class ) );
             _setData( value );
         }
-        else if ( _getData() instanceof float[] )
-            for ( int i = 0; i < value.length; i++ ) ( (float[]) _getData())[ i ] = (float) value[ i ];
-        else if ( _getData() instanceof double[] )
-            System.arraycopy(value, 0, _getData(), 0, value.length);
+        getDevice().access( this ).writeAll( value );
     }
 
     /**
@@ -2875,10 +2872,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             _setDataType( DataType.of( F32.class ) );
             _setData( value );
         }
-        else if ( _getData() instanceof float[] )
-            System.arraycopy(value, 0, _getData(), 0, value.length);
-        else if ( _getData() instanceof double[] )
-            for ( int i = 0; i < value.length; i++ ) ( (double[]) _getData())[ i ] = value[ i ];
+        getDevice().access( this ).writeAll( value );
     }
 
     /**

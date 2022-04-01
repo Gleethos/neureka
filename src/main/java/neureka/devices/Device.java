@@ -190,6 +190,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     interface Access<V> {
         Source<V> write( V item );
         Source<V> write( Object array, int offset );
+        default void writeAll( Object array ) { this.write( array, 0 ).fully(); }
         V readAt( int index );
         <A> A readArray( Class<A> arrayType, int start, int size );
         Object readAll( boolean clone );

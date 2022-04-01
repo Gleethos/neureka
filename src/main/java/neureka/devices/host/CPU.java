@@ -230,33 +230,37 @@ public class CPU extends AbstractDevice<Object>
         if ( arrayType == float[].class ) {
             float[] source = DataConverter.instance().convert(array, float[].class);
             float[] target = (float[]) data;
-            System.arraycopy(source, offset, target, start, size);
+            System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == short[].class ){
             short[] source = DataConverter.instance().convert(array, short[].class);
             short[] target = (short[]) data;
-            System.arraycopy(source, offset, target, start, size);
+            System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == byte[].class ){
             byte[] source = DataConverter.instance().convert(array, byte[].class);
             byte[] target = (byte[]) data;
-            System.arraycopy(source, offset, target, start, size);
+            System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == boolean[].class ){
             boolean[] source = DataConverter.instance().convert(array, boolean[].class);
             boolean[] target = (boolean[]) data;
-            System.arraycopy(source, offset, target, start, size);
+            System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == double[].class ){
             double[] source = DataConverter.instance().convert(array, double[].class);
             double[] target = (double[]) data;
-            System.arraycopy(source, offset, target, start, size);
+            System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == int[].class ){
             int[] source = DataConverter.instance().convert(array, int[].class);
             int[] target = (int[]) data;
-            System.arraycopy(source, offset, target, start, size);
+            System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == long[].class ){
             long[] source = DataConverter.instance().convert(array, long[].class);
             long[] target = (long[]) data;
-            System.arraycopy(source, offset, target, start, size);
+            System.arraycopy(source, offset, target, start, Math.min(size, source.length));
+        } else if ( arrayType == Object[].class ){
+            Object[] source = DataConverter.instance().convert(array, Object[].class);
+            Object[] target = (Object[]) data;
+            System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         }
-        throw new IllegalArgumentException("Array type '"+arrayType.getSimpleName()+"' not supported!");
+        else throw new IllegalArgumentException("Array type '"+arrayType.getSimpleName()+"' not supported!");
     }
 
     @Override
