@@ -215,6 +215,10 @@ public class CPU extends AbstractDevice<Object>
             long source = DataConverter.get().convert(item, Long.class);
             long[] target = (long[]) data;
             for ( int i = start; i < (start+size); i++ ) target[i] = source;
+        } else if ( arrayType == char[].class ){
+            char source = DataConverter.get().convert(item, Character.class);
+            char[] target = (char[]) data;
+            for ( int i = start; i < (start+size); i++ ) target[i] = source;
         } else if ( arrayType == Object[].class ) {
             Object[] target = (Object[]) data;
             for ( int i = start; i < (start+size); i++ ) target[i] = item;
@@ -248,6 +252,10 @@ public class CPU extends AbstractDevice<Object>
         } else if ( arrayType == int[].class ){
             int[] source = DataConverter.get().convert(array, int[].class);
             int[] target = (int[]) data;
+            System.arraycopy(source, offset, target, start, Math.min(size, source.length));
+        } else if ( arrayType == char[].class ){
+            char[] source = DataConverter.get().convert(array, char[].class);
+            char[] target = (char[]) data;
             System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == long[].class ){
             long[] source = DataConverter.get().convert(array, long[].class);
