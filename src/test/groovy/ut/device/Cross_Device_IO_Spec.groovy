@@ -70,7 +70,7 @@ class Cross_Device_IO_Spec extends Specification
             'CPU'      | Byte     | [6,2,7]  | [8]   || [8,2,8,6]
             'CPU'      | Double   | [3.4, 3] | [3]   || [3d, 3.0d, 3d, 3.0d]
             'CPU'      | Float    | [5.7,-1] | [4]   || [4f, -1.0f, 4f, -1.0f]
-            //'GPU'      | Float    | [5.7,-1] | [8]   || [8f, -1.0f, 8f, -1.0f]
+            'GPU'      | Float    | [5.7,-1] | [8]   || [8f, -1.0f, 8f, -1.0f]
     }
 
 

@@ -613,15 +613,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     private Device<Number> _overwrite(
-            Tsr<?> tensor, int offset, Data data
+            Tsr<?> tensor, long offset, Data data
     ) {
         if ( data.getLength() == 0 ) return this;
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
         if (clt.value.event != null) clWaitForEvents(1, new cl_event[]{clt.value.event});
         clt.value.event = new cl_event();
+        long start = offset * data.getItemSize();
+        long size  = data.getItemSize() * data.getLength();
         clEnqueueWriteBuffer(
                 _queue, clt.value.data, CL_TRUE,
-                offset, (long) data.getItemSize() * data.getLength(),
+                start, size,
                 data.getPointer(), 0, null,
                 clt.value.event
         );
