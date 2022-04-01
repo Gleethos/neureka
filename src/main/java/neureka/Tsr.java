@@ -2868,7 +2868,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         LogUtil.nullArgCheck( value, "value", Object.class );
         boolean success = true;
         if ( value.getClass().isArray() ) {
-            if ( this.isOutsourced() ) this.get( Device.class ).write( this, value );
+            if ( this.isOutsourced() ) getDevice().access(this).writeAll(value);
             else {
                 if ( _getData() == null ) {
                     if      ( value instanceof float[]  ) _setDataType( DataType.of( F32.class ) );
