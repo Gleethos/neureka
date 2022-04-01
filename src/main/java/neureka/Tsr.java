@@ -2854,28 +2854,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     * @param value The primitive double array whose value ought to be used to populate this tensor.
-     */
-    private void _setValue64( double[] value ) {
-        if ( _getData() == null ) {
-            _setDataType( DataType.of( F64.class ) );
-            _setData( value );
-        }
-        getDevice().access( this ).writeAll( value );
-    }
-
-    /**
-     * @param value The primitive float array whose value ought to be used to populate this tensor.
-     */
-    private void _setValue32( float[] value ) {
-        if ( _getData() == null ) {
-            _setDataType( DataType.of( F32.class ) );
-            _setData( value );
-        }
-        getDevice().access( this ).writeAll( value );
-    }
-
-    /**
      *  This method will receive an object an try to interpret
      *  it or its contents to be set as value for this tensor.
      *  It will not necessarily replace the underlying data array object of this
@@ -2891,16 +2869,16 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         boolean success = true;
         if ( value.getClass().isArray() ) {
             if ( this.isOutsourced() ) this.get( Device.class ).write( this, value );
-            else if ( value instanceof float[] ) _setValue32( (float[]) value );
-            else if ( value instanceof  double[] ) _setValue64( (double[]) value );
             else {
-                if      ( value instanceof int[]    ) _setData( value );
-                else if ( value instanceof short[]  ) _setData( value );
-                else if ( value instanceof long[]   ) _setData( value );
-                else if ( value instanceof byte[]   ) _setData( value );
-                else if ( value instanceof Object[] ) _setData( value );
-                else success = false;
-                setIsVirtual( false );
+                if ( _getData() == null ) {
+                    if      ( value instanceof float[]  ) _setDataType( DataType.of( F32.class ) );
+                    else if ( value instanceof double[] ) _setDataType( DataType.of( F64.class ) );
+                    _setData( value );
+                    return this;
+                } else {
+                    getDevice().access(this).writeAll(value);
+                    setIsVirtual(false);
+                }
             }
         } else if ( Number.class.isAssignableFrom(value.getClass()) ) {
             this.setIsVirtual( true );
@@ -2915,7 +2893,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             );
         return this;
     }
-
 
     /**
      *  This returns an unprocessed version of the underlying data of this tensor.
