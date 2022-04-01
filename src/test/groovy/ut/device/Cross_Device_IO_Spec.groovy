@@ -22,6 +22,9 @@ class Cross_Device_IO_Spec extends Specification
             var s = t[1..2]
 
         expect :
+            device.access(t).dataSize == 4
+            device.access(s).dataSize == 4
+        and :
             device.access(t).readAll(false) == expected
             device.access(s).readAll(false) == expected
             device.access(t).readAll(true)  == expected
