@@ -99,7 +99,6 @@ import neureka.common.utility.ListReader;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.F32;
 import neureka.dtype.custom.F64;
@@ -125,7 +124,6 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.image.*;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
