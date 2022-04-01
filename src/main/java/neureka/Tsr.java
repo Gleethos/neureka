@@ -2915,9 +2915,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             Device<V> device = get( Device.class );
             if ( device != null ) {
                 if ( this.getNDConf().isSimple() )
-                    return device.dataFor( this );
+                    return device.access(this).readAll(false);
                 else
-                    return device.dataFor( this.clone().setIsVirtual( false ) );
+                    return device.access( this.clone().setIsVirtual( false ) ).readAll(false);
             }
         }
         if ( this.isVirtual() ) {

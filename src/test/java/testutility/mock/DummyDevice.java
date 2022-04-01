@@ -54,9 +54,6 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T extends Object> Object dataFor(Tsr<T> tensor ) { return null; }
-
-    @Override
     public <T extends Object> Object dataFor(Tsr<T> tensor, int index ) { return null; }
 
     @Override

@@ -89,11 +89,6 @@ public class CPU extends AbstractDevice<Object>
     public <T extends Object> Device<Object> write( Tsr<T> tensor, Object value ) { return this; }
 
     @Override
-    public <T extends Object> Object dataFor( Tsr<T> tensor ) {
-        return tensor.getData();
-    }
-
-    @Override
     public CPU restore( Tsr<Object> tensor ) { return this; }
 
     @Override

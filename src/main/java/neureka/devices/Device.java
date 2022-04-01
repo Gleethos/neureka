@@ -234,8 +234,6 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     <T extends V> Device<V> updateNDConf( Tsr<T> tensor );
 
-    <T extends V> Object dataFor( Tsr<T> tensor );
-
     <T extends V> V dataFor( Tsr<T> tensor, int index );
 
     Collection<Tsr<V>> getTensors();
