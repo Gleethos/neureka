@@ -111,13 +111,8 @@ public abstract class AbstractOperation implements Operation
         _defaultAlgorithm = new FallbackAlgorithm( "default", _arity, this );
     }
 
-    //==================================================================================================================
-
     @Override
-    public final Algorithm<?>[] getAllAlgorithms() {
-        return _algorithms.values().toArray(new Algorithm[0]);
-    }
-
+    public final Algorithm<?>[] getAllAlgorithms() { return _algorithms.values().toArray(new Algorithm[0]); }
 
     /**
      *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.
@@ -179,10 +174,9 @@ public abstract class AbstractOperation implements Operation
         return this;
     }
 
-    //==================================================================================================================
-
     @Override
-    public final <T extends Algorithm<T>> Algorithm<T> getAlgorithmFor( ExecutionCall<?> call ) {
+    public final <T extends Algorithm<T>> Algorithm<T> getAlgorithmFor( ExecutionCall<?> call )
+    {
         float bestScore = 0f;
         Algorithm<T> bestImpl = null;
         for( Algorithm<?> impl : _algorithms.values() ) {
@@ -211,51 +205,26 @@ public abstract class AbstractOperation implements Operation
         return bestImpl;
     }
 
-    //==================================================================================================================
-
     @Override
     public final <T extends Algorithm<T>> boolean supports( Class<T> implementation ) {
         return _algorithms.containsKey( implementation );
     }
 
-    @Override
-    public boolean isOperator() {
-        return _isOperator;
-    }
+    @Override public boolean isOperator() { return _isOperator; }
 
-    @Override
-    public String getIdentifier() {
-        return _function;
-    }
+    @Override public String getIdentifier() { return _function; }
 
-    @Override
-    public String getOperator() {
-        return _operator;
-    }
+    @Override public String getOperator() { return _operator; }
 
-    @Override
-    public int getArity() {
-        return _arity;
-    }
+    @Override public int getArity() { return _arity; }
 
-    @Override
-    public boolean isIndexer() {
-        return _isIndexer;
-    }
+    @Override public boolean isIndexer() { return _isIndexer; }
 
-    @Override
-    public boolean isDifferentiable() {
-        return _isDifferentiable;
-    }
+    @Override public boolean isDifferentiable() { return _isDifferentiable; }
 
-    @Override
-    public boolean isInline() {
-        return _isInline;
-    }
+    @Override public boolean isInline() { return _isInline; }
 
-    public final Algorithm<?> getDefaultAlgorithm() {
-        return _defaultAlgorithm;
-    }
+    public final Algorithm<?> getDefaultAlgorithm() { return _defaultAlgorithm; }
 
     @Override
     public final String toString() {
