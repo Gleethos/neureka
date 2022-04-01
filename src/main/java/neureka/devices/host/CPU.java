@@ -273,7 +273,8 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <T extends Object> CPU swap( Tsr<T> former, Tsr<T> replacement ) { return this; }
+    public <T extends Object> void swap(Tsr<T> former, Tsr<T> replacement ) {
+    }
 
     @Override
     public Collection<Tsr<Object>> getTensors() { return _tensors; }

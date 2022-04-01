@@ -164,11 +164,27 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     <T extends V> Device<V> free( Tsr<T> tensor );
 
+    /**
+     *  This method exposes the tensor access API for reading from or writing to
+     *  a tensor stored on this device.
+     *  This method may return null if this device does not support
+     *  accessing stored tensors.
+     *
+     * @param tensor The tensor whose data ought to be accessed.
+     * @param <T> The type parameter of the tensor for which the access API should be returned.
+     * @return The tensor access API for reading from or writing to a tensor stored on this device.
+     */
     <T extends V> Access<T> access( Tsr<T> tensor );
 
+    /**
+     *  Implementations of this represent the access to tensors stored on a device
+     *  in order to read from or write to said tensor.
+     *
+     * @param <V> The type parameter of the tensor accessed by an instance of this.
+     */
     interface Access<V> {
-        Writer<V> write(V item );
-        Writer<V> write(Object array, int offset );
+        Writer write(V item );
+        Writer write(Object array, int offset );
         /**
          *  Use this method to write data to the provided tensor, given that
          *  the tensor is already stored on this device!                         <br><br>
@@ -183,7 +199,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         int getDataSize();
 
         /**
-         *  Use this to perform some custom memory cleanup for when the provided {@link Tsr} gets garbage collected.   <br><br>
+         *  Use this to perform some custom memory cleanup for when the accessed {@link Tsr} gets garbage collected.   <br><br>
          *
          * @param action The {@link Runnable} action which ought to be performed when the tensor gets garbage collected.
          */
@@ -197,7 +213,12 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         void updateNDConf();
     }
 
-    interface Writer<V> {
+    /**
+     *  Instances of this complete a request for writing to an accessed tensor stored on a device.
+     *  One may write at a particular position in a tensor, a range of positions or write
+     *  to every possible value.
+     */
+    interface Writer {
         default void at(int index) { intoRange(index, index+1); }
         void intoRange(int start, int limit);
         void fully();
@@ -206,12 +227,11 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     /**
      *  This method is used internally mostly and should not be used in most cases.    <br><br>
      *
+     * @param <T> The type parameter for the value type of the tensors, which must be supported by this {@link Device}.
      * @param former The tensor whose associated data (on the device) ought to be assigned to the other tensor.
      * @param replacement The tensor which ought to receive the data of the former tensor internally.
-     * @param <T> The type parameter for the value type of the tensors, which must be supported by this {@link Device}.
-     * @return This very instance to allow for method chaining.
      */
-    <T extends V> Device<V> swap( Tsr<T> former, Tsr<T> replacement );
+    <T extends V> void swap( Tsr<T> former, Tsr<T> replacement );
 
     /**
      *  This method is used internally to give {@link Device} implementations the opportunity

@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public abstract class AbstractOperation implements Operation
 {
-    private static Logger _LOG = LoggerFactory.getLogger( AbstractOperation.class );
+    private static final Logger _LOG = LoggerFactory.getLogger( AbstractOperation.class );
 
     /**
      *  An operation may have two ways in which it can describe itself as String within a Function AST.

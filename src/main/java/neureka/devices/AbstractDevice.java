@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *  The is the abstract precursor class providing
+ *  This is the abstract precursor class providing
  *  some useful implementations for core concepts which are most likely
  *  applicable to most concrete implementations of the Device interface.
  *  These class provides the following features :
@@ -132,15 +132,15 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     {
         return new Access<T>() {
             @Override
-            public Writer<T> write(T item) {
-                return new Writer<T>() {
+            public Writer write(T item) {
+                return new Writer() {
                     @Override public void intoRange(int start, int limit) { _writeItem( tensor, item, start, limit-start ); }
                     @Override public void fully() { _writeItem( tensor, item, 0, tensor.size() ); }
                 };
             }
             @Override
-            public Writer<T> write(Object array, int offset) {
-                return new Writer<T>() {
+            public Writer write(Object array, int offset) {
+                return new Writer() {
                     @Override public void intoRange( int start, int limit ) { _writeArray( tensor, array, offset, start, limit-start ); }
                     @Override public void fully() { _writeArray( tensor, array, offset, 0, tensor.size() ); }
                 };
