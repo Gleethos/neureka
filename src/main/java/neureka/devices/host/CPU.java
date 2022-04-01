@@ -165,6 +165,11 @@ public class CPU extends AbstractDevice<Object>
             boolean[] data = new boolean[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
+        } else if ( arrayType == char[].class ){
+            char[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), char[].class);
+            char[] data = new char[size];
+            System.arraycopy(source, start, data, 0, size);
+            return (A) data;
         } else if ( arrayType == double[].class ){
             double[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), double[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
