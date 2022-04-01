@@ -37,18 +37,10 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public Device<Object> free(Tsr tensor) { return this; }
 
     @Override
-    public Device<Object> cleaning(Tsr tensor, Runnable action) { return null; }
-
-    @Override
     public <T extends Object> Device<Object> swap( Tsr<T> former, Tsr<T> replacement ) { return this; }
 
     @Override
     public Device<Object> approve(ExecutionCall<? extends Device<?>> call ) { return this; }
-
-    @Override
-    public <T> Device<Object> updateNDConf( Tsr<T> tensor ) {
-        return this;
-    }
 
     @Override
     public Collection<Tsr<Object>> getTensors() { return null; }

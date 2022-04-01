@@ -204,11 +204,6 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T extends Object> Device<Object> cleaning( Tsr<T> tensor, Runnable action ) {
-        return this;
-    }
-
-    @Override
     public <T> Access<T> access(Tsr<T> tensor) {
         throw new IllegalAccessError("FileDevice instances do not support access yet.");
     }
@@ -221,11 +216,6 @@ public class FileDevice extends AbstractBaseDevice<Object>
     @Override
     public Device<Object> approve(ExecutionCall<? extends Device<?>> call ) {
         throw new IllegalAccessError("FileDevice instances do not support executions.");
-    }
-
-    @Override
-    public <T> Device<Object> updateNDConf( Tsr<T> tensor ) {
-        return this;
     }
 
     @Override
@@ -256,16 +246,10 @@ public class FileDevice extends AbstractBaseDevice<Object>
         return this.getClass().getSimpleName()+"[directory=" + _directory + ",stored=" + _stored + ",loadable=" + _loadable + ",loaded=" + _loaded + "]";
     }
 
-    public String getDirectory() {
-        return _directory;
-    }
+    public String getDirectory() { return _directory; }
 
-    public List<String> getLoadable() {
-        return _loadable;
-    }
+    public List<String> getLoadable() { return new ArrayList<>(_loadable); }
 
-    public List<String> getLoaded() {
-        return _loaded;
-    }
+    public List<String> getLoaded() { return new ArrayList<>(_loaded); }
 
 }

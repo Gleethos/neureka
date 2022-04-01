@@ -639,7 +639,18 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public <T extends Number> Device<Number> updateNDConf(Tsr<T> tensor) {
+    public boolean update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
+        super.update(changeRequest);
+        if (changeRequest.type() == IsBeing.ADDED) {
+            Tsr<Number> newOwner = changeRequest.getNewOwner();
+            _updateInternal(newOwner, changeRequest::executeChange);
+        } else
+            changeRequest.executeChange();
+        return true;
+    }
+
+    @Override
+    protected <T extends Number> void _updateNDConf( Tsr<T> tensor ) {
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
         if (clt != null) {
             clt.config = _writeNDConfig(tensor.getNDConf());
@@ -654,27 +665,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     null
             );
         }
-        return this;
     }
 
     @Override
-    public boolean update(OwnerChangeRequest<Tsr<Number>> changeRequest) {
-        super.update(changeRequest);
-        if (changeRequest.type() == IsBeing.ADDED) {
-            Tsr<Number> newOwner = changeRequest.getNewOwner();
-            _updateInternal(newOwner, changeRequest::executeChange);
-        } else
-            changeRequest.executeChange();
-        return true;
-    }
+    protected <T extends Number> int _sizeOccupiedBy( Tsr<T> tensor ) { return tensor.get(cl_tsr.class).value.size; }
 
     @Override
-    protected int _sizeOccupiedBy(Tsr<?> tensor) {
-        return tensor.get(cl_tsr.class).value.size;
-    }
-
-    @Override
-    protected <T extends Number> Object _readAll(Tsr<T> tensor, boolean clone) {
+    protected <T extends Number> Object _readAll( Tsr<T> tensor, boolean clone ) {
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
         return _readArray( tensor, float[].class, 0, clt.value.size );
     }

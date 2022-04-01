@@ -95,8 +95,10 @@ public class CPU extends AbstractDevice<Object>
         return this;
     }
 
+    @Override protected <T> void _updateNDConf(Tsr<T> tensor) { /* Nothing to do here */ }
+
     @Override
-    protected int _sizeOccupiedBy(Tsr<?> tensor) {
+    protected <T extends Object> int _sizeOccupiedBy(Tsr<T> tensor) {
         Object data = tensor.getUnsafe().getData();
         if      ( data instanceof float[] )  return ( (float[])   data).length;
         else if ( data instanceof double[] ) return ( (double[])  data).length;
@@ -272,11 +274,6 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     public <T extends Object> CPU swap( Tsr<T> former, Tsr<T> replacement ) { return this; }
-
-    @Override
-    public <T extends Object> Device<Object> updateNDConf( Tsr<T> tensor ) {
-        return this;
-    }
 
     @Override
     public Collection<Tsr<Object>> getTensors() { return _tensors; }

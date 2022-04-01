@@ -102,12 +102,6 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
         return true;
     }
 
-    @Override
-    public <T extends V> Device<V> cleaning( Tsr<T> tensor, Runnable action ) {
-        _cleaning( tensor, action );
-        return this;
-    }
-
     protected void _cleaning( Object o, Runnable action ) { _CLEANER.register( o, action ); }
 
     /**
@@ -138,45 +132,31 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     {
         return new Access<T>() {
             @Override
-            public Source<T> write(T item) {
-                return new Source<T>() {
-                    @Override
-                    public void intoRange(int start, int limit) {
-                        _writeItem( tensor, item, start, limit-start );
-                    }
-                    @Override
-                    public void fully() {
-                        _writeItem( tensor, item, 0, tensor.size() );
-                    }
+            public Writer<T> write(T item) {
+                return new Writer<T>() {
+                    @Override public void intoRange(int start, int limit) { _writeItem( tensor, item, start, limit-start ); }
+                    @Override public void fully() { _writeItem( tensor, item, 0, tensor.size() ); }
                 };
             }
             @Override
-            public Source<T> write(Object array, int offset) {
-                return new Source<T>() {
-                    @Override
-                    public void intoRange( int start, int limit ) {
-                        _writeArray( tensor, array, offset, start, limit-start );
-                    }
-                    @Override
-                    public void fully() {
-                        _writeArray( tensor, array, offset, 0, tensor.size() );
-                    }
+            public Writer<T> write(Object array, int offset) {
+                return new Writer<T>() {
+                    @Override public void intoRange( int start, int limit ) { _writeArray( tensor, array, offset, start, limit-start ); }
+                    @Override public void fully() { _writeArray( tensor, array, offset, 0, tensor.size() ); }
                 };
             }
-            @Override
-            public T readAt( int index ) { return _readItem( tensor, index ); }
-            @Override
-            public <A> A readArray( Class<A> arrayType, int start, int size ) {
-                return _readArray( tensor, arrayType, start, size );
-            }
-            @Override
-            public Object readAll( boolean clone ) { return _readAll( tensor, clone ); }
-            @Override
-            public int getDataSize() { return _sizeOccupiedBy( tensor ); }
+            @Override public T readAt( int index ) { return _readItem( tensor, index ); }
+            @Override public <A> A readArray( Class<A> arrayType, int start, int size ) { return _readArray( tensor, arrayType, start, size ); }
+            @Override public Object readAll( boolean clone ) { return _readAll( tensor, clone ); }
+            @Override public int getDataSize() { return _sizeOccupiedBy( tensor ); }
+            @Override public void cleanup( Runnable action ) { _cleaning( tensor, action ); }
+            @Override public void updateNDConf() { _updateNDConf( tensor ); }
         };
     }
 
-    protected abstract int _sizeOccupiedBy( Tsr<?> tensor );
+    protected abstract <T extends V> void _updateNDConf( Tsr<T> tensor );
+
+    protected abstract <T extends V> int _sizeOccupiedBy( Tsr<T> tensor );
 
     protected abstract <T extends V> Object _readAll( Tsr<T> tensor, boolean clone );
 

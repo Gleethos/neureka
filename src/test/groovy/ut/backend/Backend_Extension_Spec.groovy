@@ -70,7 +70,6 @@ class Backend_Extension_Spec extends Specification
 
         and : 'The result is the same as the mock tensor returned by the custom call hook.'
             result == output
-
     }
 
     def 'Lambda properties of mock implementation interact with FunctionNode (AbstractFunction) as expected.'()
@@ -87,6 +86,7 @@ class Backend_Extension_Spec extends Specification
         and : 'A mock tensor which is the expected output, an input and a graph node.'
             Tsr output = Mock(Tsr)
             Tsr input = Mock(Tsr)
+            Device device = Mock(Device)
             GraphNode node = Mock(GraphNode)
             def ndc = Mock(NDConfiguration)
             var mutate = Mock(AbstractTensor.Unsafe)
@@ -114,14 +114,15 @@ class Backend_Extension_Spec extends Specification
             (1.._) * output.getUnsafe() >> mutate
             (1.._) * mutate.setIsIntermediate(false) >> output
             (1.._) * output.isIntermediate() >> true
+            (1.._) * device.access( _ ) >> Mock(Device.Access)
 
         and : 'The GraphNode instance which will be created as tensor component interacts as follows.'
             (1.._) * input.getGraphNode() >> node
             (0.._) * input.get(GraphNode) >> node
             (1.._) * node.getLock() >> Mock(GraphLock)
-            (1.._) * input.getDevice() >> Mock(Device) // Device is being queried for execution...
+            (1.._) * input.getDevice() >> device // Device is being queried for execution...
             _ * type.getOperator() >> 'test_identifier'
-            (1.._) * output.getDevice() >> Mock(Device)
+            (1.._) * output.getDevice() >> device
 
         and : 'The given ADAnalyzer instance is being called because auto-differentiation is enabled.'
             (1.._) * input.rqsGradient() >> true

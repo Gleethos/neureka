@@ -164,21 +164,11 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     <T extends V> Device<V> free( Tsr<T> tensor );
 
-    /**
-     *  Use this to perform some custom memory cleanup for when the provided {@link Tsr} gets garbage collected.   <br><br>
-     *
-     * @param tensor The tensor for which a {@link Runnable} lambda ought to be executed upon garbage collection.
-     * @param action The {@link Runnable} action which ought to be performed when the tensor gets garbage collected.
-     * @param <T> The type parameter for the value type of the tensor, which must be supported by this {@link Device}.
-     * @return This very instance to allow for method chaining.
-     */
-    <T extends V> Device<V> cleaning( Tsr<T> tensor, Runnable action );
-
     <T extends V> Access<T> access( Tsr<T> tensor );
 
     interface Access<V> {
-        Source<V> write( V item );
-        Source<V> write( Object array, int offset );
+        Writer<V> write(V item );
+        Writer<V> write(Object array, int offset );
         /**
          *  Use this method to write data to the provided tensor, given that
          *  the tensor is already stored on this device!                         <br><br>
@@ -191,9 +181,23 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         <A> A readArray( Class<A> arrayType, int start, int size );
         Object readAll( boolean clone );
         int getDataSize();
+
+        /**
+         *  Use this to perform some custom memory cleanup for when the provided {@link Tsr} gets garbage collected.   <br><br>
+         *
+         * @param action The {@link Runnable} action which ought to be performed when the tensor gets garbage collected.
+         */
+        void cleanup( Runnable action );
+
+        /**
+         *  This method automatically called within the {@link AbstractTensor.Unsafe#setNDConf(NDConfiguration)} method
+         *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
+         *  given {@link Device} implementation... <br><br>
+         */
+        void updateNDConf();
     }
 
-    interface Source<V> {
+    interface Writer<V> {
         default void at(int index) { intoRange(index, index+1); }
         void intoRange(int start, int limit);
         void fully();
@@ -218,17 +222,6 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @return This very instance to allow for method chaining.
      */
     Device<V> approve( ExecutionCall<? extends Device<?>> call );
-
-    /**
-     *  This method automatically called within the {@link AbstractTensor.Unsafe#setNDConf(NDConfiguration)} method
-     *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
-     *  given {@link Device} implementation... <br><br>
-     *
-     * @param tensor The tensor whose {@link NDConfiguration} should be resent to this {@link Device}.
-     * @param <T> The type parameter for the value type of the tensor, which must be supported by this {@link Device}.
-     * @return This very instance to allow for method chaining.
-     */
-    <T extends V> Device<V> updateNDConf( Tsr<T> tensor );
 
     Collection<Tsr<V>> getTensors();
 

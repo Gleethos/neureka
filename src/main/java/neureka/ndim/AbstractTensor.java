@@ -391,9 +391,9 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
             assert s1 == s2;
         }
         _NDConf = ndConfiguration;
-        if ( this.has( Device.class ) ) {
-            this.get(Device.class).updateNDConf((Tsr) this);
-        }
+        if ( this.has( Device.class ) )
+            this.get(Device.class).access((Tsr) this).updateNDConf();
+
         return (C) this;
     }
 

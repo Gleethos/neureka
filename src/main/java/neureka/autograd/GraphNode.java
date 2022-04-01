@@ -508,7 +508,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         else {
             assert !p.isUndefined();
             _payload = new WeakReference<>( p );
-            p.getDevice().cleaning( p, () -> {
+            p.getDevice().access( p ).cleanup( () -> {
                 if ( this.getPayload() == null ) {
                     boolean allChildrenUseForwardAD = true;
                     if ( _children != null ) {
