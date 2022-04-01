@@ -2857,8 +2857,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The primitive double array whose value ought to be used to populate this tensor.
      */
     private void _setValue64( double[] value ) {
-        if ( this.isOutsourced() ) this.get( Device.class ).write( this, value );
-        else if ( _getData() == null ) {
+        if ( _getData() == null ) {
             _setDataType( DataType.of( F64.class ) );
             _setData( value );
         }
@@ -2872,8 +2871,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The primitive float array whose value ought to be used to populate this tensor.
      */
     private void _setValue32( float[] value ) {
-        if ( this.isOutsourced() ) this.get( Device.class ).write( this, value );
-        else if ( _getData() == null ) {
+        if ( _getData() == null ) {
             _setDataType( DataType.of( F32.class ) );
             _setData( value );
         }
@@ -2898,7 +2896,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         LogUtil.nullArgCheck( value, "value", Object.class );
         boolean success = true;
         if ( value.getClass().isArray() ) {
-            if ( value instanceof float[] ) _setValue32( (float[]) value );
+            if ( this.isOutsourced() ) this.get( Device.class ).write( this, value );
+            else if ( value instanceof float[] ) _setValue32( (float[]) value );
             else if ( value instanceof  double[] ) _setValue64( (double[]) value );
             else {
                 if      ( value instanceof int[]    ) _setData( value );
