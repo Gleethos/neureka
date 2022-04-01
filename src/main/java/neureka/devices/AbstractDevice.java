@@ -169,15 +169,21 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
                 };
             }
             @Override
-            public T readAt( int index ) {
-                return _readItem( tensor, index );
-            }
+            public T readAt( int index ) { return _readItem( tensor, index ); }
             @Override
             public <A> A readArray( Class<A> arrayType, int start, int size ) {
                 return _readArray( tensor, arrayType, start, size );
             }
+            @Override
+            public Object readAll( boolean clone ) { return _readAll( tensor, clone ); }
+            @Override
+            public int getDataSize() { return _sizeOccupiedBy( tensor ); }
         };
     }
+
+    protected abstract int _sizeOccupiedBy( Tsr<?> tensor );
+
+    protected abstract <T extends V> Object _readAll( Tsr<T> tensor, boolean clone );
 
     protected abstract <T extends V> T _readItem( Tsr<T> tensor, int index );
 

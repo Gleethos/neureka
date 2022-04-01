@@ -105,6 +105,37 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
+    protected int _sizeOccupiedBy(Tsr<?> tensor) {
+        Object data = tensor.getUnsafe().getData();
+        if      ( data instanceof float[] )  return ( (float[])   data).length;
+        else if ( data instanceof double[] ) return ( (double[])  data).length;
+        else if ( data instanceof short[] )  return ( (short[])   data).length;
+        else if ( data instanceof int[] )    return ( (int[])     data).length;
+        else if ( data instanceof byte[] )   return ( (byte[])    data).length;
+        else if ( data instanceof long[] )   return ( (long[])    data).length;
+        else if ( data instanceof boolean[] )return ( (boolean[]) data).length;
+        else if ( data instanceof char[] )   return ( (char[])    data).length;
+        else return ( (Object[]) data).length;
+    }
+
+    @Override
+    protected <T extends Object> Object _readAll( Tsr<T> tensor, boolean clone ) {
+        Object data = tensor.getUnsafe().getData();
+        if ( clone ) {
+            if ( data instanceof double[]  ) return ( (double[])  data ).clone();
+            if ( data instanceof float[]   ) return ( (float[])   data ).clone();
+            if ( data instanceof byte[]    ) return ( (byte[])    data ).clone();
+            if ( data instanceof short[]   ) return ( (short[])   data ).clone();
+            if ( data instanceof int[]     ) return ( (int[])     data ).clone();
+            if ( data instanceof long[]    ) return ( (long[])    data ).clone();
+            if ( data instanceof char[]    ) return ( (char[])    data ).clone();
+            if ( data instanceof boolean[] ) return ( (boolean[]) data ).clone();
+            if ( data instanceof Object[]  ) return ( (Object[])  data ).clone();
+        }
+        return data;
+    }
+
+    @Override
     protected <T extends Object> T _readItem( Tsr<T> tensor, int index ) {
         Object data = tensor.getUnsafe().getData();
         if      ( data instanceof float[] )  return (T)(Float)  ( (float[])   data)[ index ];

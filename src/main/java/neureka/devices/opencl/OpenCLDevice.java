@@ -677,6 +677,16 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return true;
     }
 
+    @Override
+    protected int _sizeOccupiedBy(Tsr<?> tensor) {
+        return tensor.get(cl_tsr.class).value.size;
+    }
+
+    @Override
+    protected <T extends Number> Object _readAll(Tsr<T> tensor, boolean clone) {
+        return dataFor( tensor );
+    }
+
     private void _updateInternal(Tsr<Number> newOwner, Runnable migration) {
         Tsr<Number> root = null;
         if (newOwner.has(Relation.class)) root = ((Relation<Number>) newOwner.get(Relation.class)).findRootTensor();

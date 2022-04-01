@@ -192,6 +192,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         Source<V> write( Object array, int offset );
         V readAt( int index );
         <A> A readArray( Class<A> arrayType, int start, int size );
+        Object readAll( boolean clone );
+        int getDataSize();
     }
 
     interface Source<V> {
