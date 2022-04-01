@@ -525,7 +525,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         );
     }
 
-
     @Override
     public <T extends Number> Device<Number> free(Tsr<T> tensor) {
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
@@ -535,14 +534,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         ((Tsr<Number>) tensor).remove(cl_tsr.class);
         return this;
     }
-
-
-    @Override
-    public <T extends Number> Device<Number> write( Tsr<T> tensor, Object value ) {
-        overwrite( tensor, 0, Data.of(value));
-        return this;
-    }
-
 
     @Override
     protected <T extends Number> T _readItem( Tsr<T> tensor, int index ) {

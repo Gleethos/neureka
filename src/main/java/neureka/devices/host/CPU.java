@@ -86,9 +86,6 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <T extends Object> Device<Object> write( Tsr<T> tensor, Object value ) { return this; }
-
-    @Override
     public CPU restore( Tsr<Object> tensor ) { return this; }
 
     @Override
@@ -368,8 +365,7 @@ public class CPU extends AbstractDevice<Object>
 
             return target -> {
                 Thread thread = new Thread(
-                                    group,
-                                    target,
+                                    group, target,
                                     prefix + _COUNTER.incrementAndGet() // The name, including the thread number.
                                 );
                 thread.setDaemon(true);

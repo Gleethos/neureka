@@ -209,18 +209,13 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T extends Object> Device<Object> write( Tsr<T> tensor, Object value ) {
-        throw new IllegalAccessError("FileDevice instances do not support writing yet.");
-    }
-
-    @Override
     public <T> Access<T> access(Tsr<T> tensor) {
         throw new IllegalAccessError("FileDevice instances do not support access yet.");
     }
 
     @Override
     public <T extends Object> Device<Object> swap( Tsr<T> former, Tsr<T> replacement ) {
-        return null;
+        throw new IllegalAccessError("FileDevice instances do not support swapping yet.");
     }
 
     @Override
@@ -231,11 +226,6 @@ public class FileDevice extends AbstractBaseDevice<Object>
     @Override
     public <T> Device<Object> updateNDConf( Tsr<T> tensor ) {
         return this;
-    }
-
-    @Override
-    public <T extends Object> Object dataFor(Tsr<T> tensor, int index ) {
-        return tensor.getValueAt( index );
     }
 
     @Override

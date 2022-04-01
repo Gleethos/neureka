@@ -2819,10 +2819,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return The found object sitting at the specified index position.
      */
     @Override
-    public V getDataAt( int i )
-    {
-        return getDevice().dataFor( this, i );
-    }
+    public V getDataAt( int i ) { return getDevice().access( this ).readAt( i ); }
 
     /**
      *  A tensor ought to have some way to selectively modify its underlying value array.

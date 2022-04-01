@@ -117,13 +117,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             Arrays.equals(t.getValueAs(double[].class), DataConverter.get().convert(expected,double[].class))
 
         when : 'The same underlying data is being queried by calling the device...'
-            def result = (0..<t.size()).collect{device.dataFor(t, it)}
-
-        then : 'This new result also contains the same elements.'
-            result == expected
-
-        when : 'We use an alternative approach...'
-            result = (0..<t.size()).collect{device.access(t).readAt(it)}
+            var result = (0..<t.size()).collect{device.access(t).readAt(it)}
 
         then : 'This other result also contains the same elements.'
             result == expected

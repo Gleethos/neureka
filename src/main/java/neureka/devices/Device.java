@@ -174,22 +174,18 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     <T extends V> Device<V> cleaning( Tsr<T> tensor, Runnable action );
 
-    /**
-     *  Use this method to write data to the provided tensor, given that
-     *  the tensor is already stored on this device!                         <br><br>
-     *
-     * @param tensor The tensor whose underlying data array ought to be written to.
-     * @param value The data inn the form of a primitive array.
-     * @param <T> The type parameter for the value type of the tensor, which must be supported by this {@link Device}.
-     * @return This very instance to allow for method chaining.
-     */
-    <T extends V> Device<V> write( Tsr<T> tensor, Object value );
-
     <T extends V> Access<T> access( Tsr<T> tensor );
 
     interface Access<V> {
         Source<V> write( V item );
         Source<V> write( Object array, int offset );
+        /**
+         *  Use this method to write data to the provided tensor, given that
+         *  the tensor is already stored on this device!                         <br><br>
+         *
+         * @param array The data inn the form of a primitive array.
+         * @return This very instance to allow for method chaining.
+         */
         default void writeAll( Object array ) { this.write( array, 0 ).fully(); }
         V readAt( int index );
         <A> A readArray( Class<A> arrayType, int start, int size );
@@ -233,8 +229,6 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @return This very instance to allow for method chaining.
      */
     <T extends V> Device<V> updateNDConf( Tsr<T> tensor );
-
-    <T extends V> V dataFor( Tsr<T> tensor, int index );
 
     Collection<Tsr<V>> getTensors();
 
