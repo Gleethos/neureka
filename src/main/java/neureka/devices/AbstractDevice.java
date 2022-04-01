@@ -139,7 +139,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
                 };
             }
             @Override
-            public Writer write(Object array, int offset) {
+            public Writer writeFrom(Object array, int offset) {
                 return new Writer() {
                     @Override public void intoRange( int start, int limit ) { _writeArray( tensor, array, offset, start, limit-start ); }
                     @Override public void fully() { _writeArray( tensor, array, offset, 0, tensor.size() ); }

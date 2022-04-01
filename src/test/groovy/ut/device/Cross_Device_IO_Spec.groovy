@@ -56,8 +56,8 @@ class Cross_Device_IO_Spec extends Specification
             var s = t[1..2]
 
         when :
-            device.access(t).write(write, 0).intoRange(0,2)
-            device.access(s).write(write, 0).intoRange(2,4)
+            device.access(t).writeFrom(write, 0).intoRange(0,2)
+            device.access(s).writeFrom(write, 0).intoRange(2,4)
         then :
             device.access(t).readArray(arrayType, 0, 2) == [expected[0],expected[1]]
             device.access(s).readArray(arrayType, 2, 2) == [expected[2],expected[3]]

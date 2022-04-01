@@ -183,8 +183,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @param <V> The type parameter of the tensor accessed by an instance of this.
      */
     interface Access<V> {
-        Writer write(V item );
-        Writer write(Object array, int offset );
+        Writer write( V item );
+        Writer writeFrom( Object array, int offset );
         /**
          *  Use this method to write data to the provided tensor, given that
          *  the tensor is already stored on this device!                         <br><br>
@@ -192,7 +192,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          * @param array The data inn the form of a primitive array.
          * @return This very instance to allow for method chaining.
          */
-        default void writeAll( Object array ) { this.write( array, 0 ).fully(); }
+        default void writeFrom( Object array ) { this.writeFrom( array, 0 ).fully(); }
         V readAt( int index );
         <A> A readArray( Class<A> arrayType, int start, int size );
         Object readAll( boolean clone );

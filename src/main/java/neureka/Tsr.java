@@ -2862,7 +2862,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             value = DataConverter.get().convert( value, this.valueClass() );
             this.getUnsafe().setDataAt( 0, (V) value );
         } else if ( value.getClass().isArray() ) {
-            if ( this.isOutsourced() ) getDevice().access(this).writeAll(value);
+            if ( this.isOutsourced() ) getDevice().access(this).writeFrom(value);
             else {
                 if ( _getData() == null ) {
                     if      ( value instanceof float[]  ) _setDataType( DataType.of( F32.class ) );
@@ -2870,7 +2870,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                     _setData( value );
                     return this;
                 } else {
-                    getDevice().access(this).writeAll(value);
+                    getDevice().access(this).writeFrom(value);
                     setIsVirtual(false);
                 }
             }

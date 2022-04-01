@@ -547,12 +547,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     protected <T extends Number> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
-        overwrite( tensor, start, Data.of(item, 0, size) );
+        _overwrite( tensor, start, Data.of(item, 0, size) );
     }
 
     @Override
     protected <T extends Number> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size ) {
-        overwrite( tensor, start, Data.of(array, offset, size) );
+        _overwrite( tensor, start, Data.of(array, offset, size) );
     }
 
     private static class Data
@@ -612,7 +612,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
     }
 
-    private Device<Number> overwrite(
+    private Device<Number> _overwrite(
             Tsr<?> tensor, int offset, Data data
     ) {
         if ( data.getLength() == 0 ) return this;
