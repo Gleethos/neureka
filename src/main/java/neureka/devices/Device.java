@@ -225,15 +225,6 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     }
 
     /**
-     *  This method is used internally mostly and should not be used in most cases.    <br><br>
-     *
-     * @param <T> The type parameter for the value type of the tensors, which must be supported by this {@link Device}.
-     * @param former The tensor whose associated data (on the device) ought to be assigned to the other tensor.
-     * @param replacement The tensor which ought to receive the data of the former tensor internally.
-     */
-    <T extends V> void swap( Tsr<T> former, Tsr<T> replacement );
-
-    /**
      *  This method is used internally to give {@link Device} implementations the opportunity
      *  to perform some exception handling before the {@link ExecutionCall} will be dispatched.
      *  Use this for debugging when doing custom backend operations.

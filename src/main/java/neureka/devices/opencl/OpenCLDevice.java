@@ -629,7 +629,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public <T extends Number> void swap(Tsr<T> former, Tsr<T> replacement) {
+    protected final <T extends Number> void _swap(Tsr<T> former, Tsr<T> replacement) {
         cl_tsr<Number, T> clTsr = former.get(cl_tsr.class);
         former.remove(cl_tsr.class);
         replacement.set(clTsr);

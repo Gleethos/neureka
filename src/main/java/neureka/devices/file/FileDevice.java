@@ -209,11 +209,6 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T extends Object> void swap(Tsr<T> former, Tsr<T> replacement ) {
-        throw new IllegalAccessError("FileDevice instances do not support swapping yet.");
-    }
-
-    @Override
     public Device<Object> approve(ExecutionCall<? extends Device<?>> call ) {
         throw new IllegalAccessError("FileDevice instances do not support executions.");
     }

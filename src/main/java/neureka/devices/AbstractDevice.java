@@ -84,7 +84,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
         Tsr<V> oldOwner = changeRequest.getOldOwner();
         Tsr<V> newOwner = changeRequest.getNewOwner();
-        if ( changeRequest.type() == IsBeing.REPLACED ) swap( oldOwner, newOwner );
+        if ( changeRequest.type() == IsBeing.REPLACED ) _swap( oldOwner, newOwner );
         else if ( changeRequest.type() == IsBeing.ADDED ) {
             if ( newOwner.has( Relation.class ) ) {
                 Relation<V> relation = newOwner.get(Relation.class);
@@ -153,6 +153,17 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             @Override public void updateNDConf() { _updateNDConf( tensor ); }
         };
     }
+
+
+
+    /**
+     *  This method is used internally mostly and should not be used in most cases.    <br><br>
+     *
+     * @param <T> The type parameter for the value type of the tensors, which must be supported by this {@link Device}.
+     * @param former The tensor whose associated data (on the device) ought to be assigned to the other tensor.
+     * @param replacement The tensor which ought to receive the data of the former tensor internally.
+     */
+    protected abstract <T extends V> void _swap( Tsr<T> former, Tsr<T> replacement );
 
     protected abstract <T extends V> void _updateNDConf( Tsr<T> tensor );
 
