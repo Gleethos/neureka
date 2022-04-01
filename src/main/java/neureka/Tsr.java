@@ -2867,7 +2867,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     {
         LogUtil.nullArgCheck( value, "value", Object.class );
         boolean success = true;
-        if ( value.getClass().isArray() ) {
+        if ( Number.class.isAssignableFrom(value.getClass()) ) { // A virtual tensor!
+            this.setIsVirtual( true );
+            value = DataConverter.instance().convert( value, this.valueClass() );
+            this.getUnsafe().setDataAt( 0, (V) value );
+        } else if ( value.getClass().isArray() ) {
             if ( this.isOutsourced() ) getDevice().access(this).writeAll(value);
             else {
                 if ( _getData() == null ) {
@@ -2880,10 +2884,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                     setIsVirtual(false);
                 }
             }
-        } else if ( Number.class.isAssignableFrom(value.getClass()) ) {
-            this.setIsVirtual( true );
-            value = DataConverter.instance().convert( value, this.valueClass() );
-            this.getUnsafe().setDataAt( 0, (V) value );
         }
         else success = false;
 
