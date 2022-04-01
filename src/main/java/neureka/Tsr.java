@@ -2828,12 +2828,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     @Override
     public V getDataAt( int i )
     {
-        if ( this.isOutsourced() ) {
-            Device<V> device = this.get( Device.class );
-            if ( device instanceof OpenCLDevice ) {
-                return (V)( (OpenCLDevice) device ).dataFor( (Tsr<Number>) this, i );
-            }
-        }
         return getDevice().dataFor( this, i );
     }
 
@@ -2855,18 +2849,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     private void _setDataAt( int i, V o ) {
         if ( this.isVirtual() && i > 0 )
             throw new IllegalArgumentException("There is no data item at index "+i+" for this virtual tensor!");
-        if ( this.isOutsourced() ) {
-            getDevice().write( this, o );
-        }
-        else if ( _getData() instanceof Object[] ) ( (Object[]) _getData() )[ i ] = o;
-        else if ( _getData() instanceof float[]  ) ( (float[])  _getData() )[ i ] = ( (Number) o ).floatValue();
-        else if ( _getData() instanceof double[] ) ( (double[]) _getData() )[ i ] = ( (Number) o ).doubleValue();
-        else if ( _getData() instanceof int[]    ) ( (int[])    _getData() )[ i ] = ( (Number) o ).intValue();
-        else if ( _getData() instanceof long[]   ) ( (long[])   _getData() )[ i ] = ( (Number) o ).longValue();
-        else if ( _getData() instanceof short[]  ) ( (short[])  _getData() )[ i ] = ( (Number) o ).shortValue();
-        else if ( _getData() instanceof byte[]   ) ( (byte[])   _getData() )[ i ] = ( (Number) o ).byteValue();
-        else if ( _getData() instanceof boolean[]) ( (boolean[])_getData() )[ i ] = (Boolean)   o;
-        else if ( _getData() instanceof char[])    ( (char[])   _getData() )[ i ] = (Character) o;
+
+        getDevice().access( this ).write( o ).at( i );
     }
 
     /**
