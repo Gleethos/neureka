@@ -9,6 +9,7 @@ import neureka.backend.api.Operation
 import neureka.calculus.Function
 import neureka.common.utility.SettingsLoader
 import neureka.devices.CustomDeviceCleaner
+import neureka.devices.file.FileDevice
 import neureka.devices.host.CPU
 import neureka.devices.opencl.CLContext
 import neureka.dtype.DataType
@@ -188,7 +189,8 @@ class Neureka_Spec extends Specification
                     ExecutionCall.of(Tsr.of(3)).running(Neureka.get().backend().getOperation("+")).on(CPU.get()),
                     new CustomDeviceCleaner(),
                     (Tsr.of(2).setRqsGradient(true)*Tsr.of(-2)).graphNode,
-                    new GraphLock(Function.of('i0*3/2'))
+                    new GraphLock(Function.of('i0*3/2')),
+                    FileDevice.at('.')
             ]
     }
 

@@ -108,9 +108,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
         return null;
     }
 
-    public FileHead<?, ?> fileHeadOf( Tsr<?> tensor ) {
-        return _stored.get( tensor );
-    }
+    public FileHead<?, ?> fileHeadOf( Tsr<?> tensor ) { return _stored.get( tensor ); }
 
     @Override
     public void dispose() {
@@ -132,7 +130,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T extends Object> Device<Object> store( Tsr<T> tensor )
+    public <T> Device<Object> store( Tsr<T> tensor )
     {
         if ( this.has( tensor ) ) {
             FileHead<?, Object> head = _stored.get( tensor );
@@ -152,12 +150,12 @@ public class FileDevice extends AbstractBaseDevice<Object>
         return this;
     }
 
-    public <T extends Object> FileDevice store( Tsr<T> tensor, String filename )
+    public <T> FileDevice store(Tsr<T> tensor, String filename )
     {
         return store( tensor, filename, null );
     }
 
-    public <T extends Object> FileDevice store( Tsr<T> tensor, String filename, Map<String, Object> configurations )
+    public <T> FileDevice store(Tsr<T> tensor, String filename, Map<String, Object> configurations )
     {
         String fullFileName;
         String extension;
@@ -181,15 +179,15 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T extends Object> Device<Object> store( Tsr<T> tensor, Tsr<T> parent ) { throw new IllegalStateException(); }
+    public <T> Device<Object> store(Tsr<T> tensor, Tsr<T> parent ) { throw new IllegalStateException(); }
 
     @Override
-    public <T extends Object> boolean has( Tsr<T> tensor ) {
+    public <T> boolean has(Tsr<T> tensor ) {
         return _stored.containsKey( tensor );
     }
 
     @Override
-    public <T extends Object> Device<Object> free( Tsr<T> tensor )
+    public <T> Device<Object> free(Tsr<T> tensor )
     {
         if ( !this.has( tensor ) )
             throw new IllegalStateException( "The given tensor is not stored on this file device." );
@@ -205,12 +203,16 @@ public class FileDevice extends AbstractBaseDevice<Object>
 
     @Override
     public <T> Access<T> access(Tsr<T> tensor) {
-        throw new IllegalAccessError("FileDevice instances do not support access yet.");
+        throw new IllegalAccessError(
+                this.getClass().getSimpleName()+" instances do not support accessing the state of a stored tensor."
+            );
     }
 
     @Override
-    public Device<Object> approve(ExecutionCall<? extends Device<?>> call ) {
-        throw new IllegalAccessError("FileDevice instances do not support executions.");
+    public Device<Object> approve( ExecutionCall<? extends Device<?>> call ) {
+        throw new IllegalAccessError(
+                this.getClass().getSimpleName()+" instances do not support executions on stored tensors."
+            );
     }
 
     @Override
@@ -220,7 +222,9 @@ public class FileDevice extends AbstractBaseDevice<Object>
 
     @Override
     public Operation optimizedOperationOf( Function function, String name ) {
-        throw new IllegalStateException();
+        throw new IllegalStateException(
+                this.getClass().getSimpleName()+" instances do not support operations!"
+            );
     }
 
     @Override

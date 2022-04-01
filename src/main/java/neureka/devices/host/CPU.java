@@ -89,7 +89,7 @@ public class CPU extends AbstractDevice<Object>
     public CPU restore( Tsr<Object> tensor ) { return this; }
 
     @Override
-    public <T extends Object> CPU store( Tsr<T> tensor ) {
+    public <T> CPU store(Tsr<T> tensor ) {
         //super.store(tensor);
         _tensors.add( (Tsr<Object>) tensor);
         return this;
@@ -98,7 +98,7 @@ public class CPU extends AbstractDevice<Object>
     @Override protected <T> void _updateNDConf(Tsr<T> tensor) { /* Nothing to do here */ }
 
     @Override
-    protected <T extends Object> int _sizeOccupiedBy(Tsr<T> tensor) {
+    protected <T> int _sizeOccupiedBy(Tsr<T> tensor) {
         Object data = tensor.getUnsafe().getData();
         if      ( data instanceof float[] )  return ( (float[])   data).length;
         else if ( data instanceof double[] ) return ( (double[])  data).length;
@@ -112,7 +112,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected <T extends Object> Object _readAll( Tsr<T> tensor, boolean clone ) {
+    protected <T> Object _readAll(Tsr<T> tensor, boolean clone ) {
         Object data = tensor.getUnsafe().getData();
         if ( clone ) {
             if ( data instanceof double[]  ) return ( (double[])  data ).clone();
@@ -129,7 +129,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected <T extends Object> T _readItem( Tsr<T> tensor, int index ) {
+    protected <T> T _readItem( Tsr<T> tensor, int index ) {
         Object data = tensor.getUnsafe().getData();
         if      ( data instanceof float[] )  return (T)(Float)  ( (float[])   data)[ index ];
         else if ( data instanceof double[] ) return (T)(Double) ( (double[])  data)[ index ];
@@ -143,8 +143,9 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected <T extends Object, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size )
-    {
+    protected <T, A> A _readArray(
+            Tsr<T> tensor, Class<A> arrayType, int start, int size
+    ) {
         if ( arrayType == float[].class ) {
             float[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), float[].class);
             float[] data = new float[size];
@@ -184,7 +185,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected <T extends Object> void _writeItem(Tsr<T> tensor, T item, int start, int size) {
+    protected <T> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
         Object data = tensor.getUnsafe().getData();
         Class<?> arrayType = data.getClass();
         if ( arrayType == float[].class ) {
@@ -226,7 +227,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected <T extends Object> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int size) {
+    protected <T> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int size) {
         Object data = tensor.getUnsafe().getData();
         Class<?> arrayType = data.getClass();
         if ( arrayType == float[].class ) {
@@ -270,23 +271,23 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <T extends Object> CPU store( Tsr<T> tensor, Tsr<T> parent ) {
+    public <T> CPU store(Tsr<T> tensor, Tsr<T> parent ) {
         _tensors.add( (Tsr<Object>) tensor);
         _tensors.add( (Tsr<Object>) parent);
         return this;
     }
 
     @Override
-    public <T extends Object> boolean has( Tsr<T> tensor ) { return _tensors.contains( tensor ); }
+    public <T> boolean has(Tsr<T> tensor ) { return _tensors.contains( tensor ); }
 
     @Override
-    public <T extends Object> CPU free( Tsr<T> tensor ) {
+    public <T> CPU free(Tsr<T> tensor ) {
         _tensors.remove( tensor );
         return this;
     }
 
     @Override
-    protected <T extends Object> void _swap(Tsr<T> former, Tsr<T> replacement ) {}
+    protected <T> void _swap( Tsr<T> former, Tsr<T> replacement ) {}
 
     @Override
     public Collection<Tsr<Object>> getTensors() { return _tensors; }
@@ -408,9 +409,7 @@ public class CPU extends AbstractDevice<Object>
          * @param workloadSize The workload size which will be passed to the provided {@link RangeWorkload} as second argument.
          * @param workload The {@link RangeWorkload} which will be executed sequentially.
          */
-        public void sequential( int workloadSize, RangeWorkload workload ) {
-            workload.execute( 0, workloadSize );
-        }
+        public void sequential( int workloadSize, RangeWorkload workload ) { workload.execute( 0, workloadSize ); }
 
 
         /**
