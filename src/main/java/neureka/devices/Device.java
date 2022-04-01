@@ -270,7 +270,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      *         this very {@link Device}, execute the provided lambda, and then  migrate all the
      *         tensors back to their original devices!
      */
-    default In use( Tsr<V> first, Tsr<V>... rest ) {
+    default In borrow( Tsr<V> first, Tsr<V>... rest ) {
         List<Tsr<V>> tensors = new ArrayList<>();
         if ( first != null ) tensors.add( first );
         if ( rest.length > 0 )

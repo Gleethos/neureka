@@ -100,7 +100,7 @@ public final class TsrConstructor {
         boolean isDefinitelyScalarValue = ( dataType == DataType.of( data.getClass() ) );
 
         if ( data instanceof Number && !isDefinitelyScalarValue ) {
-            data = DataConverter.instance().convert( data, dataType.getJVMTypeClass() );
+            data = DataConverter.get().convert( data, dataType.getJVMTypeClass() );
             isDefinitelyScalarValue = true;
         }
 
@@ -124,7 +124,7 @@ public final class TsrConstructor {
     private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {
         if ( Arrays.stream( data ).anyMatch( e -> DataType.of(e.getClass()) != dataType ) ) {
             for ( int i = 0; i < ( data ).length; i++ ) {
-                ( data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
+                ( data )[i] = DataConverter.get().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
             }
         }
         return _optimizeObjectArray(dataType, data, size);
@@ -218,7 +218,7 @@ public final class TsrConstructor {
                 for ( int mi = 0; mi < m; mi++ ) {
                     for ( int ni = 0; ni < n; ni++ ) {
                         int i = n * mi + ni;
-                        value[ i ] = DataConverter.instance().convert( matrix.get( mi ).get( ni ), Double.class );
+                        value[ i ] = DataConverter.get().convert( matrix.get( mi ).get( ni ), Double.class );
                     }
                 }
                 _constructForDoubles( shape, value );

@@ -334,7 +334,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (List<?>) args[ 1 ] ).toArray() : args[ 1 ];
         if ( args[ 0 ] instanceof Object[] ) {
             if ( ( (Object[]) args[ 0 ] )[ 0 ] instanceof Integer || ((Object[])args[ 0 ])[ 0 ] instanceof Double) {
-                args[ 0 ] = DataConverter.instance().convert((Object[]) args[ 0 ], int[].class);
+                args[ 0 ] = DataConverter.get().convert((Object[]) args[ 0 ], int[].class);
             }
         }
         //CASES:
@@ -499,7 +499,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             resultType = result.getType();
             resultData = result.getData().toArray();
         } else {
-            DataConverter converter = DataConverter.instance();
+            DataConverter converter = DataConverter.get();
             resultType = targetType;
             resultData = result.getData().parallelStream().map( v -> converter.convert(v, targetType) ).toArray();
         }
@@ -855,9 +855,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public static <V> Tsr<V> of( String expression, List<? extends Object> inputs ) {
         if ( inputs.stream().allMatch( e -> e instanceof Tsr ) )
             return Function.of( expression, true ).call( inputs.stream().toArray( Tsr[]::new ) );
-        else {
+        else
             return Function.of( expression, true ).call(  inputs.stream().map(args -> _of(args)).toArray(Tsr[]::new) );
-        }
     }
 
     /**
@@ -1656,11 +1655,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  data changes the wrapping tensor instance. <br>
      *  <br>
      * @param tensor The tensor whose identity should be stolen.
-     * @return This very tensor instance in order to enable method chaining.
      */
-    protected Tsr<V> _become( Tsr<V> tensor )
+    protected void _become(Tsr<V> tensor )
     {
-        if ( tensor == null ) return this;
+        if ( tensor == null ) return;
         _setDataType( tensor.getDataType() );
         _setData( tensor._getData() );
         _setNDConf( tensor.getNDConf() );
@@ -1670,9 +1668,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         tensor._setDataType( null );
         tensor._setNDConf( null );
         tensor._flags = 0;
-        return this;
     }
-
 
 
     /*==================================================================================================================
@@ -1734,10 +1730,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public final Tsr<V> backward( Tsr<V> error ) {
         LogUtil.nullArgCheck(error, "error", Tsr.class, "Cannot back-propagate 'null'!");
-        if ( this.isOutsourced() ) {
-            error = error.clone();
-            error = error.to(this.getDevice());
-        }
+        if ( this.isOutsourced() )
+            error = error.clone().to(this.getDevice());
+
         Tsr<V> finalError = error;
         if ( !forComponent( GraphNode.class, node -> node.backward(finalError) ) && this.rqsGradient() ) {
             addToGradient( error );
@@ -2160,8 +2155,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     * @param other The tensor whose elements ought to be multiplyied and assigned to elements in this tensor.
-     * @return This instance where each value element was muliplied by the corresponding element in the provided tensor.
+     * @param other The tensor whose elements ought to be multiplied and assigned to elements in this tensor.
+     * @return This instance where each value element was multiplied by the corresponding element in the provided tensor.
      */
     public final Tsr<V> timesAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply-assign 'null' to a tensor!");
@@ -2169,8 +2164,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     * @param other The value which ought to be multiplyied and assigned to each element in this tensor.
-     * @return This instance where each value element was muliplied by the provided element.
+     * @param other The value which ought to be multiplied and assigned to each element in this tensor.
+     * @return This instance where each value element was multiplied by the provided element.
      */
     public final Tsr<V> timesAssign( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply-assign 'null' to a tensor!");
@@ -2190,8 +2185,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular elementwise division.
-     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  the result will be a regular element-wise division.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
@@ -2218,8 +2213,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular elementwise modulo operation.
-     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  the result will be a regular element-wise modulo operation.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
@@ -2248,8 +2243,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular elementwise exponentiation.
-     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  the result will be a regular element-wise exponentiation.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
@@ -2391,7 +2386,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     /**
      *  The {@link #matMul(Tsr)} method will produce the matrix product of
      *  two 2 dimensional arrays, where the left operand is this {@link Tsr}
-     *  instaance and the right operand is the tensor passed to the method.
+     *  instance and the right operand is the tensor passed to the method.
      *
      * @param other The right operand of the matrix multiplication.
      * @return The matrix product of this instance as the left and the passed {@link Tsr} instance as right operand.
@@ -2551,7 +2546,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         boolean allInt = true;
         for ( Object o : indices ) allInt = allInt && o instanceof Integer;
         if ( allInt && indices.length == rank() ) {
-            int[] newOffset = DataConverter.instance().convert(indices, int[].class);
+            int[] newOffset = DataConverter.get().convert(indices, int[].class);
             for ( int i = 0; i < this.rank(); i++ )
                 newOffset[ i ] = ( newOffset[ i ] < 0 ) ? getNDConf().shape( i ) + newOffset[ i ] : newOffset[ i ];
             for ( int i = 0; i < this.rank(); i++ )
@@ -2561,7 +2556,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         boolean hasScale = false;
         for ( Object o : indices ) hasScale = hasScale || o instanceof Map;
         return SmartSlicer.slice(
-                ( allInt ? new Object[]{ DataConverter.instance().convert(indices, int[].class) } : indices ),
+                ( allInt ? new Object[]{ DataConverter.get().convert(indices, int[].class) } : indices ),
                 this,
                 this::_sliceOf
         );
@@ -2666,7 +2661,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 This is simply the 'reshape array' which has been recorded inside the 'Relation' component
                 by the 'Reshape' operation! ( Hopefully! :) ... custom shape operations need to consider this as well! )
 
-                The following would occur when : "new Tsr<>(...).T().getAt(...);"
+                The following would occur when : "Tsr.of(...).T().getAt(...);"
                 Transposing a tensor performs an inline reshaping of an identical
                 slice of the original tensor! Then again slicing this tensor
                 via the 'getAt(...)' method leads us to a situation where
@@ -2807,7 +2802,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             valueIsDeviceVisitor = true;
         }
         if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become( value ); // TODO: Rethink this a little
-        else Function.of( "I[ 0 ] <- I[ 1 ]", false ).call(  slice, value  );
+        else Neureka.get().backend().getFunction().idy().call(  slice, value  );
         try {
             if ( valueIsDeviceVisitor ) value.get( Device.class ).restore( value );
         } catch ( Exception exception ) {
@@ -2867,7 +2862,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         boolean success = true;
         if ( Number.class.isAssignableFrom(value.getClass()) ) { // A virtual tensor!
             this.setIsVirtual( true );
-            value = DataConverter.instance().convert( value, this.valueClass() );
+            value = DataConverter.get().convert( value, this.valueClass() );
             this.getUnsafe().setDataAt( 0, (V) value );
         } else if ( value.getClass().isArray() ) {
             if ( this.isOutsourced() ) getDevice().access(this).writeAll(value);
@@ -2954,7 +2949,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
            So, therefore, we invite it back home for dinner!
          */
         return CPU.get() // This little API will temporarily migrate this to the JVM.
-                .use( (Tsr<Object>) this )
+                .borrow( (Tsr<Object>) this )
                 .in( () -> {
                     Object data = _getData();
                     DataConverter.ForTensor map = new DataConverter.ForTensor( this );
@@ -3035,7 +3030,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 _checkRankForImageConversion(type, Number.class, 0, 0, 3);
                 // We expect a tensor of shape (height x width x 3)!
                 BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
-                byte[] data = DataConverter.instance().convert( _getData(), byte[].class);
+                byte[] data = DataConverter.get().convert( _getData(), byte[].class);
                 writeImgData(new DataBufferByte(data, data.length), image);
                 return image;
             }
@@ -3044,14 +3039,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             {
                 _checkRankForImageConversion(type, Number.class, 0, 0, 4);
                 BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
-                byte[] data = DataConverter.instance().convert( _getData(), byte[].class);
+                byte[] data = DataConverter.get().convert( _getData(), byte[].class);
                 writeImgData(new DataBufferByte(data, data.length), image);
                 return image;
             }
             case BufferedImage.TYPE_INT_ARGB: {
                 _checkRankForImageConversion(type, Number.class, 0, 0, 1);
                 BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
-                int[] data = DataConverter.instance().convert( _getData(), int[].class);
+                int[] data = DataConverter.get().convert( _getData(), int[].class);
                 writeImgData(new DataBufferInt(data, data.length), image);
                 return image;
             }
@@ -3136,7 +3131,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         LogUtil.nullArgCheck( typeClass, "typeClass", Class.class );
         if ( typeClass == Tsr.class ) return (T) this;
         if ( Number.class.isAssignableFrom(this.valueClass()) && Number.class.isAssignableFrom(typeClass) ) {
-            DataConverter converter = DataConverter.instance();
+            DataConverter converter = DataConverter.get();
             return (T) converter.convert( mean().at(0).get(), typeClass );
         }
         if ( typeClass == String.class )
@@ -3183,18 +3178,16 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     public <A> A getValueAs( Class<A> arrayTypeClass ) {
-        return (A) DataConverter.instance().convert( getValue(), arrayTypeClass );
+        return DataConverter.get().convert( getValue(), arrayTypeClass );
     }
 
     public <A> A getDataAs( Class<A> arrayTypeClass ) {
-        return DataConverter.instance().convert( getData(), arrayTypeClass );
+        return DataConverter.get().convert( getData(), arrayTypeClass );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public String toString( String mode ) {
-        return _toString( mode );
-    }
+    public String toString( String mode ) { return _toString( mode ); }
 
     public String toString( TsrStringSettings config ) {
         if ( this.isDeleted() ) return "deleted";
@@ -3219,8 +3212,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return TsrAsString.representing( this ).withConfig( defaults ).toString();
     }
 
-
-    protected String _toString( String config )
+    private String _toString( String config )
     {
         if ( this.isDeleted() ) return "deleted";
         else if ( this.isEmpty() ) return "empty";
@@ -3241,7 +3233,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  The version number is tracking how often this tensor has been mutated.
      *  This is especially useful for checking the correcting of autp-grad!
      */
-    public int getVersion() { return _version; }
+    public final int getVersion() { return _version; }
 
     /**
      *  Use this factory method to instantiate a new tensor with the same data type, shape
@@ -3307,14 +3299,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 return Tsr.this;
             }
             @Override public Tsr<V> delete() { return Tsr.this._delete(); }
-
             @Override public Object getData() { return _getData(); }
-
             @Override
             public <A> A getDataAs( Class<A> arrayTypeClass ) {
-                return DataConverter.instance().convert( _getData(false), arrayTypeClass );
+                return DataConverter.get().convert( _getData(false), arrayTypeClass );
             }
-
             @Override
             public Tsr<V> setDataAt( int i, V o ) {
                 _guardMod("data object");
@@ -3324,8 +3313,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         };
     }
 
-
-    public enum ImageType {
+    public enum ImageType
+    {
         RGB_1INT(1),
         ARGB_1INT(2),
         ARGB_PRE_1INT(3),
@@ -3340,10 +3329,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
         public final int bufferType;
 
-        ImageType(int bufferType) {
-            this.bufferType = bufferType;
-        }
+        ImageType( int bufferType ) { this.bufferType = bufferType; }
     }
-
 
 }

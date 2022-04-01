@@ -113,7 +113,7 @@ public final class I64 extends AbstractNumericType<Long, long[], Long, long[]>
 
     @Override
     public long[] convertToTargetArray( Object from ) {
-        return DataConverter.instance().convert( from, long[].class );
+        return DataConverter.get().convert( from, long[].class );
     }
 
 }

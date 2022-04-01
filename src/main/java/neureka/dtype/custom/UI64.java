@@ -106,7 +106,7 @@ public final class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Lo
 
     @Override
     public BigInteger[] convertToTargetArray( Object from ) {
-        return DataConverter.instance().convert( from, BigInteger[].class );
+        return DataConverter.get().convert( from, BigInteger[].class );
     }
 
 

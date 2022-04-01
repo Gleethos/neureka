@@ -123,7 +123,7 @@ public final class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>
 
     @Override
     public short[] convertToTargetArray( Object from ) {
-        return DataConverter.instance().convert( from, short[].class );
+        return DataConverter.get().convert( from, short[].class );
     }
 
 }

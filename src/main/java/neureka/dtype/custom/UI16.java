@@ -109,7 +109,7 @@ public final class UI16 extends AbstractNumericType<Integer, int[], Short, short
 
     @Override
     public int[] convertToTargetArray( Object from ) {
-        return DataConverter.instance().convert( from, int[].class );
+        return DataConverter.get().convert( from, int[].class );
     }
 
 

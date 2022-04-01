@@ -8,7 +8,7 @@ class DataConverter_Spec extends Specification
     def 'The DataConverter can convert the given array data.'() {
 
         given :
-            def converter = DataConverter.instance()
+            def converter = DataConverter.get()
             def f32Array = new float[2]
             def f64Array = new double[2]
         expect :

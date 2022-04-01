@@ -357,7 +357,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
             return targetType.readForeignDataFrom( iterator(), this.size() );
         }
         else
-            return DataConverter.instance().convert( _getData(), newDT.getTypeClass() );
+            return DataConverter.get().convert( _getData(), newDT.getTypeClass() );
     }
 
     /**

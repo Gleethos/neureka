@@ -116,7 +116,7 @@ public final class I32 extends AbstractNumericType<Integer, int[], Integer, int[
 
     @Override
     public int[] convertToTargetArray( Object from ) {
-        return DataConverter.instance().convert( from, int[].class );
+        return DataConverter.get().convert( from, int[].class );
     }
 
     private int[] _readData( DataInput stream, int size ) throws IOException {

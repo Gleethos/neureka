@@ -119,7 +119,7 @@ public final class F32 extends AbstractNumericType<Float, float[], Float, float[
 
     @Override
     public float[] convertToTargetArray( Object from ) {
-        return DataConverter.instance().convert( from, float[].class );
+        return DataConverter.get().convert( from, float[].class );
     }
 
 

@@ -117,7 +117,7 @@ public final class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
 
     @Override
     public byte[] convertToTargetArray( Object from ) {
-        return DataConverter.instance().convert( from, byte[].class );
+        return DataConverter.get().convert( from, byte[].class );
     }
 
 

@@ -112,7 +112,7 @@ public final class I16 extends AbstractNumericType<Short, short[], Short, short[
 
     @Override
     public short[] convertToTargetArray( Object from ) {
-        return DataConverter.instance().convert( from, short[].class );
+        return DataConverter.get().convert( from, short[].class );
     }
 
     private short[] _readData( DataInput stream, int size ) throws IOException {

@@ -19,7 +19,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntSupplier;
-import java.util.stream.IntStream;
 
 /**
  *  The CPU class, one of many implementations of the {@link Device} interface,
@@ -153,33 +152,33 @@ public class CPU extends AbstractDevice<Object>
     protected <T extends Object, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size )
     {
         if ( arrayType == float[].class ) {
-            float[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), float[].class);
+            float[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), float[].class);
             float[] data = new float[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == short[].class ){
-            short[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), short[].class);
+            short[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), short[].class);
             short[] data = new short[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == byte[].class ){
-            byte[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), byte[].class);
+            byte[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), byte[].class);
             byte[] data = new byte[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == boolean[].class ){
-            boolean[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), boolean[].class);
+            boolean[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), boolean[].class);
             boolean[] data = new boolean[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == double[].class ){
-            double[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), double[].class);
+            double[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), double[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         } else if ( arrayType == int[].class ){
-            int[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), int[].class);
+            int[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), int[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         } else if ( arrayType == long[].class ){
-            long[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), long[].class);
+            long[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), long[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         }
         throw new IllegalArgumentException("Array type '"+arrayType.getSimpleName()+"' not supported!");
@@ -190,31 +189,31 @@ public class CPU extends AbstractDevice<Object>
         Object data = tensor.getUnsafe().getData();
         Class<?> arrayType = data.getClass();
         if ( arrayType == float[].class ) {
-            float source = DataConverter.instance().convert(item, Float.class);
+            float source = DataConverter.get().convert(item, Float.class);
             float[] target = (float[]) data;
             for ( int i = start; i < (start+size); i++ ) target[i] = source;
         } else if ( arrayType == short[].class ){
-            short source = DataConverter.instance().convert(item, Short.class);
+            short source = DataConverter.get().convert(item, Short.class);
             short[] target = (short[]) data;
             for ( int i = start; i < (start+size); i++ ) target[i] = source;
         } else if ( arrayType == byte[].class ){
-            byte source = DataConverter.instance().convert(item, Byte.class);
+            byte source = DataConverter.get().convert(item, Byte.class);
             byte[] target = (byte[]) data;
             for ( int i = start; i < (start+size); i++ ) target[i] = source;
         } else if ( arrayType == boolean[].class ){
-            boolean source = DataConverter.instance().convert(item, Boolean.class);
+            boolean source = DataConverter.get().convert(item, Boolean.class);
             boolean[] target = (boolean[]) data;
             for ( int i = start; i < (start+size); i++ ) target[i] = source;
         } else if ( arrayType == double[].class ){
-            double source = DataConverter.instance().convert(item, Double.class);
+            double source = DataConverter.get().convert(item, Double.class);
             double[] target = (double[]) data;
             for ( int i = start; i < (start+size); i++ ) target[i] = source;
         } else if ( arrayType == int[].class ){
-            int source = DataConverter.instance().convert(item, Integer.class);
+            int source = DataConverter.get().convert(item, Integer.class);
             int[] target = (int[]) data;
             for ( int i = start; i < (start+size); i++ ) target[i] = source;
         } else if ( arrayType == long[].class ){
-            long source = DataConverter.instance().convert(item, Long.class);
+            long source = DataConverter.get().convert(item, Long.class);
             long[] target = (long[]) data;
             for ( int i = start; i < (start+size); i++ ) target[i] = source;
         } else if ( arrayType == Object[].class ) {
@@ -228,35 +227,35 @@ public class CPU extends AbstractDevice<Object>
         Object data = tensor.getUnsafe().getData();
         Class<?> arrayType = data.getClass();
         if ( arrayType == float[].class ) {
-            float[] source = DataConverter.instance().convert(array, float[].class);
+            float[] source = DataConverter.get().convert(array, float[].class);
             float[] target = (float[]) data;
             System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == short[].class ){
-            short[] source = DataConverter.instance().convert(array, short[].class);
+            short[] source = DataConverter.get().convert(array, short[].class);
             short[] target = (short[]) data;
             System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == byte[].class ){
-            byte[] source = DataConverter.instance().convert(array, byte[].class);
+            byte[] source = DataConverter.get().convert(array, byte[].class);
             byte[] target = (byte[]) data;
             System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == boolean[].class ){
-            boolean[] source = DataConverter.instance().convert(array, boolean[].class);
+            boolean[] source = DataConverter.get().convert(array, boolean[].class);
             boolean[] target = (boolean[]) data;
             System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == double[].class ){
-            double[] source = DataConverter.instance().convert(array, double[].class);
+            double[] source = DataConverter.get().convert(array, double[].class);
             double[] target = (double[]) data;
             System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == int[].class ){
-            int[] source = DataConverter.instance().convert(array, int[].class);
+            int[] source = DataConverter.get().convert(array, int[].class);
             int[] target = (int[]) data;
             System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == long[].class ){
-            long[] source = DataConverter.instance().convert(array, long[].class);
+            long[] source = DataConverter.get().convert(array, long[].class);
             long[] target = (long[]) data;
             System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         } else if ( arrayType == Object[].class ){
-            Object[] source = DataConverter.instance().convert(array, Object[].class);
+            Object[] source = DataConverter.get().convert(array, Object[].class);
             Object[] target = (Object[]) data;
             System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         }

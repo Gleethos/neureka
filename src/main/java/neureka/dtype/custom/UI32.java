@@ -100,7 +100,7 @@ public final class UI32 extends AbstractNumericType<Long, long[], Integer, int[]
 
     @Override
     public long[] convertToTargetArray( Object from ) {
-        return DataConverter.instance().convert( from, long[].class );
+        return DataConverter.get().convert( from, long[].class );
     }
 
 

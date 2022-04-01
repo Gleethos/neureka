@@ -93,7 +93,7 @@ public final class DataConverter
      *
      * @return The singleton instance of this class.
      */
-    public static DataConverter instance() { return _instance; }
+    public static DataConverter get() { return _instance; }
 
     /**
      *  This constructor is private because the DataConverter class is a singleton.

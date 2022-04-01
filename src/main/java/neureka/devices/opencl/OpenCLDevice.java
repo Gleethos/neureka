@@ -584,7 +584,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 // TODO: if ( data instanceof Double )
             }
             // NOTE: Currently we only support floats!
-            data = DataConverter.instance().convert( data, float[].class );
+            data = DataConverter.get().convert( data, float[].class );
             // TODO: Enable this for more types:
             float[] array = (float[]) data;
             if ( start > 0 ) {

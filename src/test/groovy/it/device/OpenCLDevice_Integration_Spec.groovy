@@ -74,7 +74,7 @@ class OpenCLDevice_Integration_Spec extends Specification
             s.device === device
 
         and : 'When we check their location in the lambda we expect them both to be on the device!'
-            device.use(t, s)
+            device.borrow(t, s)
                    .in(() -> {
                        return device.has(t) && device.has(s)
                    })

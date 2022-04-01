@@ -124,7 +124,7 @@ public final class F64 extends AbstractNumericType<Double, double[], Double, dou
 
     @Override
     public double[] convertToTargetArray( Object from ) {
-        return DataConverter.instance().convert( from, double[].class );
+        return DataConverter.get().convert( from, double[].class );
     }
 
     private double[] _readFrom( DataInput stream, int size ) throws IOException {

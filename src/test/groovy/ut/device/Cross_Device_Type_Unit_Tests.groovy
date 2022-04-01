@@ -114,7 +114,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             Tsr t = Tsr.of(shape, data).to(device)
 
         then : 'The tensor values (as List) are as expected.'
-            Arrays.equals(t.getValueAs(double[].class), DataConverter.instance().convert(expected,double[].class))
+            Arrays.equals(t.getValueAs(double[].class), DataConverter.get().convert(expected,double[].class))
 
         when : 'The same underlying data is being queried by calling the device...'
             def result = (0..<t.size()).collect{device.dataFor(t, it)}
