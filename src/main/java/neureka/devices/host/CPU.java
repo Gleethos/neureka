@@ -126,14 +126,32 @@ public class CPU extends AbstractDevice<Object>
             float[] data = new float[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
+        } else if ( arrayType == short[].class ){
+            short[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), short[].class);
+            short[] data = new short[size];
+            System.arraycopy(source, start, data, 0, size);
+            return (A) data;
+        } else if ( arrayType == byte[].class ){
+            byte[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), byte[].class);
+            byte[] data = new byte[size];
+            System.arraycopy(source, start, data, 0, size);
+            return (A) data;
+        } else if ( arrayType == boolean[].class ){
+            boolean[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), boolean[].class);
+            boolean[] data = new boolean[size];
+            System.arraycopy(source, start, data, 0, size);
+            return (A) data;
         } else if ( arrayType == double[].class ){
             double[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), double[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         } else if ( arrayType == int[].class ){
             int[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), int[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
+        } else if ( arrayType == long[].class ){
+            long[] source = DataConverter.instance().convert(tensor.getUnsafe().getData(), long[].class);
+            return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         }
-        throw new IllegalArgumentException("Array type '"+arrayType+"' not supported!");
+        throw new IllegalArgumentException("Array type '"+arrayType.getSimpleName()+"' not supported!");
     }
 
     @Override

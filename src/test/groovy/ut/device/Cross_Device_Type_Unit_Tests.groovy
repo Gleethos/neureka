@@ -5,6 +5,7 @@ import neureka.Tsr
 import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
 import neureka.calculus.internal.CalcUtil
+import neureka.common.utility.DataConverter
 import neureka.devices.Device
 import neureka.devices.file.FileDevice
 import neureka.devices.host.CPU
@@ -113,7 +114,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             Tsr t = Tsr.of(shape, data).to(device)
 
         then : 'The tensor values (as List) are as expected.'
-            (t.getValueAs( double[].class ) as List<Float>) == expected
+            Arrays.equals(t.getValueAs(double[].class), DataConverter.instance().convert(expected,double[].class))
 
         when : 'The same underlying data is being queried by calling the device...'
             def result = (0..<t.size()).collect{device.dataFor(t, it)}
@@ -128,7 +129,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             result == expected
 
         when :
-            result = (0..<t.size()).collect{device.access(t).readArray(float[], it, 1)[0]}
+            result = (0..<t.size()).collect{device.access(t).readArray(data.getClass(), it, 1)[0]}
         then : 'This other result also contains the same elements.'
             result == expected
 
@@ -136,25 +137,21 @@ class Cross_Device_Type_Unit_Tests extends Specification
         where : 'The following data is being used for tensor instantiation :'
             device                | shape           | data                                               || expected
             Device.find("cpu")    | new int[]{3, 2} | new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}    || [-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]
-            Device.find("cpu")    | new int[]{3, 2} | new double[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}    || [-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]
 
             Device.find("cpu")    | new int[]{3, 2} | new int[]{-5, -2, 1, -12, 3, -2}                   || [-5, -2, 1, -12, 3, -2]
-            Device.find("cpu")    | new int[]{3, 2} | new int[]{-1, -1,-1,  80, 3, -2}                   || [-1, -1,-1,  80, 3, -2]
 
             Device.find("cpu")    | new int[]{3, 2} | new long[]{-5, -2, 1, -12, 3, -2}                  || [-5, -2, 1, -12, 3, -2]
-            Device.find("cpu")    | new int[]{3, 2} | new long[]{-1, -1,-1,  80, 3, -2}                  || [-1, -1,-1,  80, 3, -2]
 
             Device.find("cpu")    | new int[]{3, 2} | new byte[]{-5, -2, 1, -12, 3, -2}                  || [-5, -2, 1, -12, 3, -2]
-            Device.find("cpu")    | new int[]{3, 2} | new byte[]{-1, -1,-1,  80, 3, -2}                  || [-1, -1,-1,  80, 3, -2]
 
-            //Device.find("cpu")    | new int[]{3, 2} | new short[]{-5, -2, 1, -12, 3, -2}                 || [-5, -2, 1, -12, 3, -2]
-            //Device.find("cpu")    | new int[]{3, 2} | new short[]{-1, -1,-1,  80, 3, -2}                 || [-1, -1,-1,  80, 3, -2]
+            Device.find("cpu")    | new int[]{3, 2} | new short[]{-5, -2, 1, -12, 3, -2}                 || [-5, -2, 1, -12, 3, -2]
 
-            //Device.find("cpu")    | new int[]{3, 2} | new float[]{-5, -2, 1, -12, 3, -2}                 || [-5, -2, 1, -12, 3, -2]
-            //Device.find("cpu")    | new int[]{3, 2} | new float[]{-1, -1,-1,  80, 3, -2}                 || [-1, -1,-1,  80, 3, -2]
+            Device.find("cpu")    | new int[]{3, 2} | new float[]{-5, -2, 1, -12, 3, -2}                 || [-5, -2, 1, -12, 3, -2]
+
+            Device.find("cpu")    | new int[]{3, 2} | new boolean[]{true, false, false}                  || [true, false, false, true, false, false]
 
             Device.find("openCL") | new int[]{3, 2} | new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}    || [-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]
-            Device.find("openCL") | new int[]{3, 2} | new double[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}    || [-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]
+            Device.find("openCL") | new int[]{3, 2} | new float[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}     || [-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]
     }
 
     /**

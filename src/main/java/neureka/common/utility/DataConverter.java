@@ -143,10 +143,14 @@ public final class DataConverter
         _set( double[].class, BigInteger[].class, Utility::doubleToBigInteger );
         _set( double[].class, long[].class,       Utility::doubleToLong );
         _set( double[].class, float[].class,      Utility::doubleToFloat );
+        _set( double[].class, boolean[].class,    Utility::doubleToBool );
 
-        _set( List.class, int[].class,    thing -> thing.stream().mapToInt(    i -> (int)    i ).toArray() );
-        _set( List.class, double[].class, thing -> thing.stream().mapToDouble( i -> (double) i ).toArray() );
-        _set( List.class, long[].class,   thing -> thing.stream().mapToLong(   i -> (long)   i ).toArray() );
+        _set( boolean[].class, double[].class,    Utility::boolToDouble );
+        _set( boolean[].class, float[].class,     Utility::boolToFloat );
+
+        _set( List.class, int[].class,    thing -> thing.stream().mapToInt(    i -> convert(i, Integer.class) ).toArray() );
+        _set( List.class, double[].class, thing -> thing.stream().mapToDouble( i -> convert(i, Double.class) ).toArray() );
+        _set( List.class, long[].class,   thing -> thing.stream().mapToLong(   i -> convert(i, Long.class) ).toArray() );
 
         _set( BigInteger.class, Double.class, BigInteger::doubleValue );
         _set( BigInteger.class, Float.class, BigInteger::floatValue );
@@ -179,6 +183,12 @@ public final class DataConverter
         _set( Float.class, Byte.class,    Float::byteValue );
         _set( Float.class, Short.class,   Float::shortValue );
         _set( Float.class, Long.class,    Float::longValue );
+
+        _set( Boolean.class, Double.class,   b -> b ? 1d : 0d );
+        _set( Boolean.class, Float.class,    b -> b ? 1f : 0f );
+        _set( Boolean.class, Integer.class,  b -> b ? 1 : 0   );
+        _set( Boolean.class, Long.class,     b -> b ? 1L : 0L );
+        _set( Boolean.class, Byte.class,     b -> b ? (byte) 1 : (byte) 0 );
 
         _set( Float[].class,     float[].class,   Utility::objFloatsToPrimFloats );
         _set( Integer[].class,   int[].class,     Utility::objIntsToPrimInts );
@@ -249,9 +259,16 @@ public final class DataConverter
     public <T> T convert( Object from, Class<T> to ) {
         if ( from == null ) return null;
         if ( from.getClass() == to ) return (T) from;
-        if ( to == String.class && from != null ) return (T) from.toString();
+        if ( to == String.class ) return (T) from.toString();
 
         Map<Class, Conversion> fromSpecific = _converters.get( from.getClass() );
+        if ( fromSpecific == null ) {
+            for ( Class<?> fromClass : _converters.keySet() )
+                if ( fromClass.isAssignableFrom(from.getClass()) ) {
+                    fromSpecific =  _converters.get( fromClass );
+                    break;
+                }
+        }
         if ( fromSpecific == null ) {
             String fromName = from.getClass().getSimpleName();
             String toName = to.getSimpleName();
@@ -261,13 +278,7 @@ public final class DataConverter
             _LOG.error( message );
             throw new IllegalArgumentException( message );
         }
-        Map<Class, Conversion> tos = _converters.get(from.getClass());
-        if ( tos == null ) {
-            String message = "Conversion from type '"+from.getClass()+"' to '"+to+"' failed: No converters found for '"+from.getClass()+"'.";
-            _LOG.error(message);
-            throw new IllegalArgumentException(message);
-        }
-        Conversion<Object, Object> conversion = tos.get(to);
+        Conversion<Object, Object> conversion = fromSpecific.get(to);
         if ( conversion == null ) {
             String message = "No converter found from type '"+from.getClass()+"' to '"+to+"'.";
             _LOG.error(message);
@@ -606,6 +617,30 @@ public final class DataConverter
             if ( data == null ) return null;
             long[] newData = new long[ data.length ];
             for ( int i = 0; i < data.length; i++) newData[ i ] = (long) data[ i ];
+            return newData;
+        }
+
+        @Contract( pure = true )
+        public static boolean[] doubleToBool( double[] data ) {
+            if ( data == null ) return null;
+            boolean[] newData = new boolean[ data.length ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = Math.floor(data[ i ]) >= 1;
+            return newData;
+        }
+
+        @Contract( pure = true )
+        public static double[] boolToDouble( boolean[] data ) {
+            if ( data == null ) return null;
+            double[] newData = new double[ data.length ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = data[ i ] ? 1 : 0;
+            return newData;
+        }
+
+        @Contract( pure = true )
+        public static float[] boolToFloat( boolean[] data ) {
+            if ( data == null ) return null;
+            float[] newData = new float[ data.length ];
+            for ( int i = 0; i < data.length; i++) newData[ i ] = data[ i ] ? 1 : 0;
             return newData;
         }
 
