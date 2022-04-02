@@ -648,7 +648,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return new KernelCaller(kernel, _queue);
     }
 
-    public KernelCaller getKernel(String name) {
+    /**
+     * @param name The name of the kernel for which a {@link KernelCaller} should be returned.
+     * @return A {@link KernelCaller} for calling the requested kernel.
+     */
+    public KernelCaller getKernel( String name ) {
         cl_kernel kernel = _platform.getKernel( name );
         if ( kernel == null )
             throw new IllegalStateException("No kernel found with name '" + name + "'.");
@@ -656,9 +660,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected boolean _approveExecutionOf(Tsr<?>[] tensors, int d, Operation type) {
-        return true;
-    }
+    protected boolean _approveExecutionOf( Tsr<?>[] tensors, int d, Operation type ) { return true; }
+
 
     /*==================================================================================================================
     |
@@ -666,20 +669,14 @@ public class OpenCLDevice extends AbstractDevice<Number>
     |   ---------------------------
     */
 
-    public String name() {
-        return DeviceQuery.getString(_deviceId, CL_DEVICE_NAME);
-    }
+    public String name() { return Query.getString( _deviceId, CL_DEVICE_NAME ); }
 
-    public String vendor() {
-        return DeviceQuery.getString(_deviceId, CL_DEVICE_VENDOR);
-    }
+    public String vendor() { return Query.getString(_deviceId, CL_DEVICE_VENDOR); }
 
-    public String version() {
-        return DeviceQuery.getString(_deviceId, CL_DRIVER_VERSION);
-    }
+    public String version() { return Query.getString(_deviceId, CL_DRIVER_VERSION); }
 
     public Type type() {
-        long deviceType = DeviceQuery.getLong(_deviceId, CL_DEVICE_TYPE);
+        long deviceType = Query.getLong(_deviceId, CL_DEVICE_TYPE);
         if ((deviceType & CL_DEVICE_TYPE_CPU) != 0) return Type.CPU;
         if ((deviceType & CL_DEVICE_TYPE_GPU) != 0) return Type.GPU;
         if ((deviceType & CL_DEVICE_TYPE_ACCELERATOR) != 0) return Type.ACCELERATOR;
@@ -689,119 +686,63 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return Type.UNKNOWN;
     }
 
-    public int maxComputeUnits() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_MAX_COMPUTE_UNITS);
-    }
+    public int maxComputeUnits() { return Query.getInt(_deviceId, CL_DEVICE_MAX_COMPUTE_UNITS); }
 
-    public long maxWorkItemSimensions() {
-        return DeviceQuery.getLong(_deviceId, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS);
-    }
+    public long maxWorkItemSimensions() { return Query.getLong(_deviceId, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS); }
 
-    public long[] maxWorkItemSizes() {
-        return DeviceQuery.getSizes(_deviceId, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3);
-    }
+    public long[] maxWorkItemSizes() { return Query.getSizes(_deviceId, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3); }
 
-    public long maxWorkGroupSize() {
-        return DeviceQuery.getSize(_deviceId, CL_DEVICE_MAX_WORK_GROUP_SIZE);
-    }
+    public long maxWorkGroupSize() { return Query.getSize(_deviceId, CL_DEVICE_MAX_WORK_GROUP_SIZE); }
 
-    public long maxClockFrequenzy() {
-        return DeviceQuery.getLong(_deviceId, CL_DEVICE_MAX_CLOCK_FREQUENCY);
-    }
+    public long maxClockFrequenzy() { return Query.getLong(_deviceId, CL_DEVICE_MAX_CLOCK_FREQUENCY); }
 
-    public int maxAddressBits() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_ADDRESS_BITS);
-    }
+    public int maxAddressBits() { return Query.getInt(_deviceId, CL_DEVICE_ADDRESS_BITS); }
 
-    public long maxMemAllocSize() {
-        return DeviceQuery.getLong(_deviceId, CL_DEVICE_MAX_MEM_ALLOC_SIZE);
-    }
+    public long maxMemAllocSize() { return Query.getLong(_deviceId, CL_DEVICE_MAX_MEM_ALLOC_SIZE); }
 
-    public long globalMemSize() {
-        return DeviceQuery.getLong(_deviceId, CL_DEVICE_GLOBAL_MEM_SIZE);
-    }
+    public long globalMemSize() { return Query.getLong(_deviceId, CL_DEVICE_GLOBAL_MEM_SIZE); }
 
-    public int errorCorrectionSupport() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_ERROR_CORRECTION_SUPPORT);
-    }
+    public int errorCorrectionSupport() { return Query.getInt(_deviceId, CL_DEVICE_ERROR_CORRECTION_SUPPORT); }
 
-    public int localMemType() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_LOCAL_MEM_TYPE);
-    }
+    public int localMemType() { return Query.getInt(_deviceId, CL_DEVICE_LOCAL_MEM_TYPE); }
 
-    public long localMemSize() {
-        return DeviceQuery.getLong(_deviceId, CL_DEVICE_LOCAL_MEM_SIZE);
-    }
+    public long localMemSize() { return Query.getLong(_deviceId, CL_DEVICE_LOCAL_MEM_SIZE); }
 
-    public long maxConstantBufferSize() {
-        return DeviceQuery.getLong(_deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE);
-    }
+    public long maxConstantBufferSize() { return Query.getLong(_deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE); }
 
-    public long maxConstantBufferSizeKB() {
-        return (int) (DeviceQuery.getLong(_deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE) / 1024);
-    }
+    public long maxConstantBufferSizeKB() { return (int) (Query.getLong(_deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE) / 1024); }
 
-    public int imageSupport() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_IMAGE_SUPPORT);
-    }
+    public int imageSupport() { return Query.getInt(_deviceId, CL_DEVICE_IMAGE_SUPPORT); }
 
-    public int maxReadImageArgs() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_MAX_READ_IMAGE_ARGS);
-    }
+    public int maxReadImageArgs() { return Query.getInt(_deviceId, CL_DEVICE_MAX_READ_IMAGE_ARGS); }
 
-    public int maxWriteImageArgs() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_MAX_WRITE_IMAGE_ARGS);
-    }
+    public int maxWriteImageArgs() { return Query.getInt(_deviceId, CL_DEVICE_MAX_WRITE_IMAGE_ARGS); }
 
-    public long singleFPConfig() {
-        return DeviceQuery.getLong(_deviceId, CL_DEVICE_SINGLE_FP_CONFIG);
-    }
+    public long singleFPConfig() { return Query.getLong(_deviceId, CL_DEVICE_SINGLE_FP_CONFIG); }
 
-    public long image2DMaxWidth() {
-        return DeviceQuery.getSize(_deviceId, CL_DEVICE_IMAGE2D_MAX_WIDTH);
-    }
+    public long image2DMaxWidth() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE2D_MAX_WIDTH); }
 
-    public long image2DMaxHeight() {
-        return DeviceQuery.getSize(_deviceId, CL_DEVICE_IMAGE2D_MAX_HEIGHT);
-    }
+    public long image2DMaxHeight() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE2D_MAX_HEIGHT); }
 
-    public long image3DMaxWidth() {
-        return DeviceQuery.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_WIDTH);
-    }
+    public long image3DMaxWidth() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_WIDTH); }
 
-    public long image3DMaxHeight() {
-        return DeviceQuery.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_HEIGHT);
-    }
+    public long image3DMaxHeight() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_HEIGHT); }
 
-    public long image3DMaxDepth() {
-        return DeviceQuery.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_DEPTH);
-    }
+    public long image3DMaxDepth() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_DEPTH); }
 
-    public int prefVecWidthChar() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR);
-    }
+    public int prefVecWidthChar() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR); }
 
-    public int prefVecWidthShort() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT);
-    }
+    public int prefVecWidthShort() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT); }
 
-    public int prefVecWidthInt() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT);
-    }
+    public int prefVecWidthInt() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT); }
 
-    public int prefVecWidthLong() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG);
-    }
+    public int prefVecWidthLong() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG); }
 
-    public int prefVecWidthFloat() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT);
-    }
+    public int prefVecWidthFloat() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT); }
 
-    public int prefVecWidthDouble() {
-        return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);
-    }
+    public int prefVecWidthDouble() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE); }
 
-    public static class DeviceQuery {
+    public static class Query {
         /**
          * Returns the value of the device info parameter with the given name
          *
