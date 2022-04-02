@@ -79,7 +79,7 @@ import static org.jocl.CL.*;
  */
 public class OpenCLDevice extends AbstractDevice<Number>
 {
-    private static Logger _LOG = LoggerFactory.getLogger(OpenCLDevice.class);
+    private static final Logger _LOG = LoggerFactory.getLogger(OpenCLDevice.class);
 
     public static OpenCLDevice newInstanceOf(OpenCLPlatform platform, cl_device_id did) {
         if (!platform.has(did)) platform.put(did, new OpenCLDevice(platform, did));
@@ -89,6 +89,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public enum Type {
         CPU, GPU, ACCELERATOR, DEFAULT, CUSTOM, ALL, UNKNOWN
     }
+
+    private enum cl_dtype { F32, F64 }
 
     /*==================================================================================================================
     |
@@ -114,9 +116,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
          * Meaning this inner memory object "cl_mem" will
          * be freed via a call hook stored inside a Cleaner instance...
          */
-        public static class cl_value {
-            public int size = 0;
-            public cl_mem data;
+        public static class cl_value
+        {
+            public int      size = 0;
+            public cl_mem   data;
             public cl_event event;
         }
 
@@ -131,9 +134,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
             public cl_mem data;
         }
 
-        public int fp = 1;
+        public cl_dtype  dtype = cl_dtype.F32;
         public cl_config config;
-        public cl_value value;
+        public cl_value  value;
 
         @Override
         public boolean update(OwnerChangeRequest<Tsr<T>> changeRequest) {
@@ -217,13 +220,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return "OpenCLDevice[deviceId=" + _deviceId + ",platform=" + _platform + "]";
     }
 
-    public cl_device_id getDeviceId() {
-        return _deviceId;
-    }
+    public cl_device_id getDeviceId() { return _deviceId; }
 
-    public OpenCLPlatform getPlatform() {
-        return _platform;
-    }
+    public OpenCLPlatform getPlatform() { return _platform; }
 
     public boolean hasAdHocKernel( String name ) {
         return _kernelCache.has(name);
@@ -390,7 +389,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         //VALUE TRANSFER:
         if (parent == null) {
             newClt.value = new cl_tsr.cl_value();
-            _store(tensor, newClt, 1);
+            _store(tensor, newClt);
             if (tensor.rqsGradient() && tensor.has(Tsr.class)) this.store(tensor.getGradient());
             {
                 final cl_mem clValMem = newClt.value.data;
@@ -401,7 +400,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 });
             }
         } else { // Tensor is a subset tensor of parent:
-            newClt.fp = parent.fp;
+            newClt.dtype = parent.dtype;
             newClt.value = parent.value;
         }
 
@@ -483,45 +482,25 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private void _store(
             Tsr<Number> tensor,
-            cl_tsr<?, ?> newClTsr,
-            int fp
+            cl_tsr<?, ?> newClTsr
     ) {
-        boolean isVirtual = tensor.isVirtual();
-        Pointer p;
-        int size;
-        if ( fp == 1 ) {
-            float[] data = tensor.getUnsafe().getDataAs(float[].class);
-            assert !isVirtual || data.length == 1;
-            data = (data == null ? new float[tensor.size()] : data);
-            p = Pointer.to(data);
-            size = data.length;
-        } else {
-            double[] data = tensor.getUnsafe().getDataAs(double[].class);
-            assert !isVirtual || data.length == 1;
-            data = (data == null ? new double[tensor.size()] : data);
-            p = Pointer.to(data);
-            size = data.length;
-        }
-        newClTsr.value.size = size;
+        Data data = Data.of( tensor.getUnsafe().getData() );
+        newClTsr.value.size = (int) data.getLength();
+        newClTsr.dtype = data.getType();
         //VALUE TRANSFER:
         cl_mem mem = clCreateBuffer(
                 _platform.getContext(),
                 CL_MEM_READ_WRITE,
-                size * (long) Sizeof.cl_float * fp,
+                (long) data.getItemSize() * data.getLength(),
                 null,
                 null
         );
         newClTsr.value.data = mem;
         clEnqueueWriteBuffer(
-                _queue,
-                mem,
-                CL_TRUE,
-                0,
-                size * (long) Sizeof.cl_float * fp,
-                p,
-                0,
-                null,
-                null
+                _queue, mem,
+                CL_TRUE, 0,
+                (long) data.getItemSize() * data.getLength(),
+                data.getPointer(), 0, null, null
         );
     }
 
@@ -604,10 +583,20 @@ public class OpenCLDevice extends AbstractDevice<Number>
             throw new IllegalStateException();
         }
 
+        cl_dtype getType() {
+            if ( _data instanceof float[] ) return cl_dtype.F32;
+            if ( _data instanceof double[] ) return cl_dtype.F64;
+            throw new IllegalStateException();
+        }
+
         private static int lengthOf( Object o ) {
             if ( o instanceof Number ) return 1;
             if ( o instanceof float[] ) return ((float[])o).length;
             if ( o instanceof double[] ) return ((double[])o).length;
+            if ( o instanceof int[] ) return ((int[])o).length;
+            if ( o instanceof byte[] ) return ((byte[])o).length;
+            if ( o instanceof long[] ) return ((long[])o).length;
+            if ( o instanceof short[] ) return ((short[])o).length;
             throw new IllegalArgumentException();
         }
     }
