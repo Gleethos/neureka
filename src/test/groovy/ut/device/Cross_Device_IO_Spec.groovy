@@ -83,7 +83,9 @@ class Cross_Device_IO_Spec extends Specification
             Object data, int start, int size, Class<?> expectedType, List<?> expected
     ) {
         given :
-            Neureka.get().backend.get(CLContext).settings.autoConvertToFloat = false
+            if ( Neureka.get().backend.has(CLContext) )
+                Neureka.get().backend.get(CLContext).settings.autoConvertToFloat = false
+        and :
             var full = Data.of(data)
             var slice = Data.of(data, start, size)
             var expected2 = expected[start..(start+size-1)]
@@ -102,7 +104,8 @@ class Cross_Device_IO_Spec extends Specification
             slice.pointer != null
 
         cleanup :
-            Neureka.get().backend.get(CLContext).settings.autoConvertToFloat = true
+            if ( Neureka.get().backend.has(CLContext) )
+                Neureka.get().backend.get(CLContext).settings.autoConvertToFloat = true
 
         where :
             data                   | start | size || expectedType | expected

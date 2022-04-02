@@ -1,6 +1,7 @@
 package neureka.devices.opencl;
 
 import neureka.Neureka;
+import neureka.backend.api.BackendContext;
 import neureka.common.utility.DataConverter;
 import org.jocl.Pointer;
 import org.jocl.Sizeof;
@@ -55,10 +56,11 @@ public class Data {
             }
         }
 
-        boolean convertToFloat = Neureka.get().backend().get(CLContext.class).getSettings().isAutoConvertToFloat();
+        BackendContext backend = Neureka.get().backend();
+        boolean clContextFound = backend.has(CLContext.class);
+        boolean convertToFloat = clContextFound && backend.get(CLContext.class).getSettings().isAutoConvertToFloat();
         if ( convertToFloat ) // NOTE: Currently we only support floats!
             data = DataConverter.get().convert(data, float[].class);
-
 
         // TODO: Enable this for more types:
         if ( data instanceof float[] ) {
