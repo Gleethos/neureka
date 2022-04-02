@@ -642,8 +642,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     protected <T extends Number> void _updateNDConf( Tsr<T> tensor ) {
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
-        if (clt != null) {
+        if ( clt != null ) {
+            // This will create a new cl config.
             clt.config = _writeNDConfig(tensor.getNDConf());
+            // The old one will be garbage collected through the cleaner!
             cl_mem[] memos = new cl_mem[]{clt.config.data};
             clEnqueueMigrateMemObjects(
                     _queue,
