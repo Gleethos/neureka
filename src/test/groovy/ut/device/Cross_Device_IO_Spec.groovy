@@ -15,29 +15,30 @@ class Cross_Device_IO_Spec extends Specification
     def 'We can use the access device API to read from a tensor.'(
             String deviceType, Class<Object> type, Object[] fill, Object expected
     ) {
-        given :
+        given : 'We fetch the required device instance from its interface.'
             var device = Device.find(deviceType)
+        and : 'We fetch the array type of the tested data type!'
             var arrayType = DataType.of(type).dataArrayType()
-        and :
+        and : 'A tensor filled with 4 values which we are going to store on the previously fetched device.'
             var t = Tsr.of(type).withShape(4).andFill(fill).to(device)
-        and :
+        and : 'A slice from the above tensor.'
             var s = t[1..2]
 
-        expect :
+        expect : 'The device reports that both tensors have the same data array size.'
             device.access(t).dataSize == 4
             device.access(s).dataSize == 4
-        and :
+        and : 'Reading the underlying tensor data from the device will yield the expected result.'
             device.access(t).readAll(false) == expected
             device.access(s).readAll(false) == expected
             device.access(t).readAll(true)  == expected
             device.access(s).readAll(true)  == expected
-        and :
+        and : 'This is also true for when reading at a particular index.'
             device.access(t).readArray(arrayType, 1, 1) == [expected[1]]
             device.access(s).readArray(arrayType, 1, 1) == [expected[1]]
             device.access(t).readArray(arrayType, 2, 1) == [expected[2]]
             device.access(s).readArray(arrayType, 2, 1) == [expected[2]]
 
-        where :
+        where : 'We use the following data:'
             deviceType | type      | fill     ||  expected
             'CPU'      | Integer   | [2, 1]   || [2, 1, 2, 1]
             'CPU'      | Short     | [2,7,8]  || [2,7,8,2]
