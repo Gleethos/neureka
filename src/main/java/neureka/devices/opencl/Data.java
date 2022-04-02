@@ -30,15 +30,29 @@ public class Data {
         if ( data instanceof Number ) {
             if ( data instanceof Float ) {
                 float[] newData = new float[size];
-                Arrays.fill(newData, ((Number) (data)).floatValue());
+                Arrays.fill( newData, ((Float) (data)) );
                 data = newData;
-            }
-            else if ( data instanceof Double ) {
+            } else if ( data instanceof Double ) {
                 double[] newData = new double[size];
-                Arrays.fill(newData, ((Number) (data)).doubleValue());
+                Arrays.fill( newData, ((Double) (data)) );
+                data = newData;
+            } else if ( data instanceof Integer ) {
+                int[] newData = new int[size];
+                Arrays.fill( newData, ((Integer) (data)) );
+                data = newData;
+            } else if ( data instanceof Short ) {
+                short[] newData = new short[size];
+                Arrays.fill( newData, ((Short) (data)) );
+                data = newData;
+            } else if ( data instanceof Byte ) {
+                byte[] newData = new byte[size];
+                Arrays.fill( newData, ((Byte) (data)) );
+                data = newData;
+            } else if ( data instanceof Long ) {
+                long[] newData = new long[size];
+                Arrays.fill( newData, ((Long) (data)) );
                 data = newData;
             }
-            // TODO: ...
         }
 
         boolean convertToFloat = Neureka.get().backend().get(CLContext.class).getSettings().isAutoConvertToFloat();
@@ -54,6 +68,41 @@ public class Data {
                 System.arraycopy(array, start, newData, 0, newData.length);
                 data = newData;
             }
+        } else if ( data instanceof double[] ) {
+            double[] array = (double[]) data;
+            if (start > 0) {
+                double[] newData = new double[size];
+                System.arraycopy(array, start, newData, 0, newData.length);
+                data = newData;
+            }
+        } else if ( data instanceof int[] ) {
+            int[] array = (int[]) data;
+            if (start > 0) {
+                int[] newData = new int[size];
+                System.arraycopy(array, start, newData, 0, newData.length);
+                data = newData;
+            }
+        } else if ( data instanceof long[] ) {
+            long[] array = (long[]) data;
+            if (start > 0) {
+                long[] newData = new long[size];
+                System.arraycopy(array, start, newData, 0, newData.length);
+                data = newData;
+            }
+        } else if ( data instanceof short[] ) {
+            short[] array = (short[]) data;
+            if (start > 0) {
+                short[] newData = new short[size];
+                System.arraycopy(array, start, newData, 0, newData.length);
+                data = newData;
+            }
+        } else if ( data instanceof byte[] ) {
+            byte[] array = (byte[]) data;
+            if (start > 0) {
+                byte[] newData = new byte[size];
+                System.arraycopy(array, start, newData, 0, newData.length);
+                data = newData;
+            }
         }
         return data;
     }
@@ -61,18 +110,30 @@ public class Data {
     Pointer getPointer() {
         if ( _data instanceof float[] ) return Pointer.to((float[])_data);
         if ( _data instanceof double[] ) return Pointer.to((double[])_data);
+        if ( _data instanceof int[] ) return Pointer.to((int[])_data);
+        if ( _data instanceof short[] ) return Pointer.to((short[])_data);
+        if ( _data instanceof long[] ) return Pointer.to((long[])_data);
+        if ( _data instanceof byte[] ) return Pointer.to((byte[])_data);
         throw new IllegalStateException();
     }
 
     long getLength() {
         if ( _data instanceof float[] ) return ((float[])_data).length;
         if ( _data instanceof double[] ) return ((double[])_data).length;
+        if ( _data instanceof int[] ) return ((int[])_data).length;
+        if ( _data instanceof short[] ) return ((short[])_data).length;
+        if ( _data instanceof long[] ) return ((long[])_data).length;
+        if ( _data instanceof byte[] ) return ((byte[])_data).length;
         throw new IllegalStateException();
     }
 
     int getItemSize() {
         if ( _data instanceof float[] ) return Sizeof.cl_float;
         if ( _data instanceof double[] ) return Sizeof.cl_double;
+        if ( _data instanceof int[] ) return Sizeof.cl_int;
+        if ( _data instanceof short[] ) return Sizeof.cl_short;
+        if ( _data instanceof long[] ) return Sizeof.cl_long;
+        if ( _data instanceof byte[] ) return 1;
         throw new IllegalStateException();
     }
 
@@ -87,9 +148,9 @@ public class Data {
         if ( o instanceof float[] ) return ((float[])o).length;
         if ( o instanceof double[] ) return ((double[])o).length;
         if ( o instanceof int[] ) return ((int[])o).length;
-        if ( o instanceof byte[] ) return ((byte[])o).length;
         if ( o instanceof long[] ) return ((long[])o).length;
         if ( o instanceof short[] ) return ((short[])o).length;
+        if ( o instanceof byte[] ) return ((byte[])o).length;
         throw new IllegalArgumentException();
     }
 
