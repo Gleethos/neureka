@@ -8,8 +8,13 @@ import org.jocl.Sizeof;
 
 import java.util.Arrays;
 
-public class Data {
-
+/**
+ *  This defines a representation of some basic primitive numeric array based JVM data
+ *  which may be stored on an {@link OpenCLDevice}.
+ *  This is an internal class which is solely supposed to be used within an OpenCL device.
+ */
+class Data
+{
     private final Object _data;
 
     public static Data of( Object data ) {
