@@ -7,10 +7,23 @@ import neureka.devices.opencl.CLContext
 import neureka.devices.opencl.Data
 import neureka.dtype.DataType
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("Devices manage the states of the tensors they store!")
+@Narrative('''
+
+    Tensors should not manage their states
+    themselves, simply because the type and location
+    of the data is dependent on the device onto which they are stored.
+    This specification tests of various device implementations
+    enable reading to or writing from the tensors they store.
+
+''')
 class Cross_Device_IO_Spec extends Specification
 {
+
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() && deviceType == 'GPU' })
     def 'We can use the access device API to read from a tensor.'(
             String deviceType, Class<Object> type, Object[] fill, Object expected
@@ -50,6 +63,7 @@ class Cross_Device_IO_Spec extends Specification
             'CPU'      | Character | ['6','a']|| ['6','a','6','a']
     }
 
+
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() && deviceType == 'GPU' })
     def 'We can use the access device API to write to a tensor'(
             String deviceType, Class<Object> type, Object[] fill, Object write, Object expected
@@ -63,10 +77,10 @@ class Cross_Device_IO_Spec extends Specification
         and : 'A slice from the above tensor.'
             var s = t[1..2]
 
-        when :
+        when : 'We write some test data into different ranges within the 2 tensors.'
             device.access(t).writeFrom(write, 0).intoRange(0,2)
             device.access(s).writeFrom(write, 0).intoRange(2,4)
-        then :
+        then : 'Reading the previously written data should yield the expected result.'
             device.access(t).readArray(arrayType, 0, 2) == [expected[0],expected[1]]
             device.access(s).readArray(arrayType, 2, 2) == [expected[2],expected[3]]
 
@@ -81,27 +95,30 @@ class Cross_Device_IO_Spec extends Specification
             'GPU'      | Float    | [5.7,-1] | [8]   || [8f, -1.0f, 8f, -1.0f]
     }
 
+
     def 'The OpenCLDevice specific Data class represents JVM data for OpenCL.'(
             Object data, int start, int size, Class<?> expectedType, List<?> expected
     ) {
-        given :
+        given : 'We make sure that any data will not automatically be converted to floats!'
             if ( Neureka.get().backend.has(CLContext) )
                 Neureka.get().backend.get(CLContext).settings.autoConvertToFloat = false
-        and :
+        and : 'We create 2 different data objects, a full and a partial/sliced array.'
             var full = Data.of(data)
             var slice = Data.of(data, start, size)
+        and : 'An expected array based on the previous slice indices!'
             var expected2 = expected[start..(start+size-1)]
 
-        expect:
+        expect: 'Both data objects report the expected array types!'
             full.data.class == expectedType
             slice.data.class == expectedType
+        and : 'Also they report the expected data array size.'
             full.length == expected.size()
             slice.length == expected2.size()
         and :
             full.data !== slice.data
             full.data == expected
             (data instanceof Number && slice.data == [data] ) || slice.data == expected2
-        and :
+        and : 'They produce OpenCL specific pointer objects.'
             full.pointer != null
             slice.pointer != null
 
