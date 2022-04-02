@@ -48,6 +48,7 @@ SOFTWARE.
 
 package neureka.devices.opencl;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
@@ -318,15 +319,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public synchronized Collection<Tsr<Number>> getTensors() {
         Collection<Collection<Tsr<Number>>> collection = Collections.singleton(_tensors);
         Collection<Tsr<Number>> extracted = new ArrayList<>();
-        collection.forEach(c -> c.forEach(t -> {
-            if (t != null) extracted.add(t);
-        }));
+        collection.forEach( c -> c.forEach( t -> { if ( t != null ) extracted.add(t); } ) );
         return extracted;
     }
 
     @Override
     public Operation optimizedOperationOf(Function function, String name) {
-        return new CLFunctionCompiler(this, function, name).optimize();
+        return new CLFunctionCompiler( this, function, name ).optimize();
     }
 
     /**
@@ -334,9 +333,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
      */
     @Override
     public void dispose() {
-        _tensors.forEach(this::restore);
-        clFinish(_queue);
-        clReleaseCommandQueue(_queue);
+        _tensors.forEach( this::restore );
+        clFinish( _queue );
+        clReleaseCommandQueue( _queue );
     }
 
     /**
@@ -349,8 +348,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @return This device, which enables method chaining.
      */
     @Override
-    public Device<Number> restore(Tsr<Number> tensor) {
-        if (!this.has(tensor)) {
+    public Device<Number> restore( Tsr<Number> tensor ) {
+        if ( !this.has( tensor ) ) {
             String message = "The passed tensor cannot be restored from this OpenCL device " +
                     "because the tensor is not stored on the device.\n";
             _log.error(message);
@@ -360,37 +359,39 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 ? DataConverter.Utility.floatToDouble(_value( new float[1], tensor, 0 ))
                 : DataConverter.Utility.floatToDouble(_value( new float[tensor.size()], tensor, 0 ));
 
-        free(tensor);
-        tensor.forComponent(Tsr.class, this::restore);
+        this.free( tensor );
+        tensor.forComponent( Tsr.class, this::restore );
         tensor.setValue(value);
         return this;
     }
 
     @Override
-    public <T extends Number> Device<Number> store(Tsr<T> tensor, Tsr<T> parent) {
+    public <T extends Number> Device<Number> store( Tsr<T> tensor, Tsr<T> parent ) {
         _store(tensor, parent, () -> tensor.set((Component) this));
         return this;
     }
 
-    private <T extends Number> Device<Number> _store(Tsr<T> tensor, Tsr<T> parent, Runnable migration) {
+    private <T extends Number> Device<Number> _store( Tsr<T> tensor, Tsr<T> parent, Runnable migration ) {
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
         _add((Tsr<Number>) tensor, parent.get(cl_tsr.class), migration);
         _tensors.add((Tsr<Number>) tensor);
         return this;
     }
 
-    private <T extends Number> void _add(Tsr<Number> tensor, cl_tsr<Number, T> parent, Runnable migration) {
-        if (this.has(tensor)) {
+    private <T extends Number> void _add( Tsr<Number> tensor, cl_tsr<Number, T> parent, Runnable migration ) {
+        if ( this.has( tensor ) ) {
             _LOG.debug("Trying to add a tensor to a device which already reports hosting it.");
             return;
         }
         cl_tsr<Number, Number> newClt = new cl_tsr<>();
 
         //VALUE TRANSFER:
-        if (parent == null) {
+        if ( parent == null ) {
             newClt.value = new cl_tsr.cl_value();
             _store(tensor, newClt);
-            if (tensor.rqsGradient() && tensor.has(Tsr.class)) this.store(tensor.getGradient());
+            if ( tensor.rqsGradient() && tensor.has(Tsr.class) )
+                this.store(tensor.getGradient());
+
             {
                 final cl_mem clValMem = newClt.value.data;
                 cl_event clValEvent = newClt.value.event;
@@ -407,7 +408,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         newClt.config = _writeNDConfig(tensor.getNDConf());
 
         cl_mem[] memos;
-        if (parent == null)
+        if ( parent == null )
             memos = new cl_mem[]{newClt.value.data, newClt.config.data};
         else
             memos = new cl_mem[]{newClt.config.data};
@@ -422,16 +423,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null
         );
 
-        _tensors.add(tensor);
+        _tensors.add( tensor );
 
-        tensor.set(newClt);
+        tensor.set( newClt );
         migration.run(); // TODO: REMOVE
 
-        tensor.setIsOutsourced(true);
+        tensor.setIsOutsourced( true );
 
         // When tensors get stored on this device,
         // they are implicitly converted to a float tensor:
-        tensor.getUnsafe().toType(F32.class);
+        if ( Neureka.get().backend().get(CLContext.class).getSettings().isAutoConvertToFloat() )
+            tensor.getUnsafe().toType(F32.class);
     }
 
     private cl_tsr.cl_config _writeNDConfig(NDConfiguration ndc) {
@@ -475,7 +477,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @return The truth value of the fact that the provided tensor is on this device.
      */
     @Override
-    public <T extends Number> boolean has(Tsr<T> tensor) {
+    public <T extends Number> boolean has( Tsr<T> tensor ) {
         return _tensors.contains(tensor);
     }
 
@@ -505,7 +507,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public <T extends Number> Device<Number> free(Tsr<T> tensor) {
+    public <T extends Number> Device<Number> free( Tsr<T> tensor ) {
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
         if (clt == null) return this;
         _tensors.remove(tensor);
