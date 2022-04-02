@@ -54,12 +54,13 @@ class Cross_Device_IO_Spec extends Specification
     def 'We can use the access device API to write to a tensor'(
             String deviceType, Class<Object> type, Object[] fill, Object write, Object expected
     ) {
-        given :
+        given : 'We fetch the required device instance from its interface.'
             var device = Device.find(deviceType)
+        and : 'We fetch the array type of the tested data type!'
             var arrayType = DataType.of(type).dataArrayType()
-        and :
+        and : 'A tensor filled with 4 values which we are going to store on the previously fetched device.'
             var t = Tsr.of(type).withShape(4).andFill(fill).to(device)
-        and :
+        and : 'A slice from the above tensor.'
             var s = t[1..2]
 
         when :
