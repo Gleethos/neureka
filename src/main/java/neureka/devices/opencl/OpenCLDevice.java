@@ -90,7 +90,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         CPU, GPU, ACCELERATOR, DEFAULT, CUSTOM, ALL, UNKNOWN
     }
 
-    private enum cl_dtype { F32, F64 }
+    enum cl_dtype { F32, F64 }
 
     /*==================================================================================================================
     |
@@ -534,73 +534,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         _overwrite( tensor, start, Data.of(array, offset, size) );
     }
 
-    private static class Data
-    {
-        private final Object _data;
-
-        public static Data of( Object data ) {
-            return new Data( data, 0, lengthOf(data) );
-        }
-
-        public static Data of( Object data, int start, int size ) {
-            return new Data( data, start, size );
-        }
-
-        private Data( Object data, int start, int size ) {
-            if ( data instanceof Number ) {
-                float[] newData = new float[size];
-                Arrays.fill( newData, ((Number)(data)).floatValue() );
-                data = newData;
-                // TODO: if ( data instanceof Double )
-            }
-            // NOTE: Currently we only support floats!
-            data = DataConverter.get().convert( data, float[].class );
-            // TODO: Enable this for more types:
-            float[] array = (float[]) data;
-            if ( start > 0 ) {
-                float[] newData = new float[size];
-                System.arraycopy(array, start, newData, 0, newData.length);
-                _data = newData;
-            }
-            else _data = data;
-        }
-
-        Pointer getPointer() {
-            if ( _data instanceof float[] ) return Pointer.to((float[])_data);
-            if ( _data instanceof double[] ) return Pointer.to((double[])_data);
-            throw new IllegalStateException();
-        }
-
-        long getLength() {
-            if ( _data instanceof float[] ) return ((float[])_data).length;
-            if ( _data instanceof double[] ) return ((double[])_data).length;
-            throw new IllegalStateException();
-        }
-
-        int getItemSize() {
-            if ( _data instanceof float[] ) return Sizeof.cl_float;
-            if ( _data instanceof double[] ) return Sizeof.cl_double;
-            throw new IllegalStateException();
-        }
-
-        cl_dtype getType() {
-            if ( _data instanceof float[] ) return cl_dtype.F32;
-            if ( _data instanceof double[] ) return cl_dtype.F64;
-            throw new IllegalStateException();
-        }
-
-        private static int lengthOf( Object o ) {
-            if ( o instanceof Number ) return 1;
-            if ( o instanceof float[] ) return ((float[])o).length;
-            if ( o instanceof double[] ) return ((double[])o).length;
-            if ( o instanceof int[] ) return ((int[])o).length;
-            if ( o instanceof byte[] ) return ((byte[])o).length;
-            if ( o instanceof long[] ) return ((long[])o).length;
-            if ( o instanceof short[] ) return ((short[])o).length;
-            throw new IllegalArgumentException();
-        }
-    }
-
     private Device<Number> _overwrite(
             Tsr<?> tensor, long offset, Data data
     ) {
@@ -689,7 +622,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null,
                 null
         );
-        return (A) data._data;
+        return (A) data.getData();
     }
 
     /**

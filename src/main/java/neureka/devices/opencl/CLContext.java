@@ -39,6 +39,7 @@ public final class CLContext implements BackendExtension
     private static Logger _LOG = LoggerFactory.getLogger(CLContext.class);
 
     private final List<OpenCLPlatform> _platforms = new ArrayList<>();
+    private final CLSettings _settings = new CLSettings();
 
     /**
      *  Use this constructor if you want to create a new OpenCL world in which there
@@ -50,6 +51,11 @@ public final class CLContext implements BackendExtension
      * @return A list of context specific {@link OpenCLPlatform} instances possible containing {@link OpenCLDevice}s.
      */
     public List<OpenCLPlatform> getPlatforms() { return Collections.unmodifiableList( _platforms ); }
+
+    /**
+     * @return A container for OpenCL specific settings.
+     */
+    public CLSettings getSettings() { return _settings; }
 
     /**
      *  Updating the CLContext will cause the list of existing {@link OpenCLPlatform} instances to be
