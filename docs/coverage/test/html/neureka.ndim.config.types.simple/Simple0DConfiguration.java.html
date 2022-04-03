@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Simple0DConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config.types.simple</a> &gt; <span class="el_source">Simple0DConfiguration.java</span></div><h1>Simple0DConfiguration.java</h1><pre class="source lang-java linenums">package neureka.ndim.config.types.simple;
+
+import neureka.ndim.config.AbstractNDC;
+
+public final class Simple0DConfiguration extends AbstractNDC //:= IMMUTABLE
+{
+    public static Simple0DConfiguration construct() {
+<span class="fc" id="L8">        return _cached( new Simple0DConfiguration() );</span>
+    }
+
+    private Simple0DConfiguration() {}
+
+    @Override
+    public final int rank() {
+<span class="fc" id="L15">        return 1;</span>
+    }
+
+    @Override
+    public final int[] shape() {
+<span class="fc" id="L20">        return new int[]{1};</span>
+    }
+
+    @Override
+    public final int shape( int i ) {
+<span class="fc" id="L25">        return 1;</span>
+    }
+
+    @Override
+    public final int[] indicesMap() {
+<span class="fc" id="L30">        return new int[]{1};</span>
+    }
+
+    @Override
+    public final int indicesMap(int i ) {
+<span class="fc" id="L35">        return 1;</span>
+    }
+
+    @Override
+    public final int[] translation() {
+<span class="fc" id="L40">        return new int[]{1};</span>
+    }
+
+    @Override
+    public final int translation( int i ) {
+<span class="fc" id="L45">        return 1;</span>
+    }
+
+    @Override
+    public final int[] spread() {
+<span class="fc" id="L50">        return new int[]{1};</span>
+    }
+
+    @Override
+    public final int spread( int i ) {
+<span class="fc" id="L55">        return 1;</span>
+    }
+
+    @Override
+    public final int[] offset() {
+<span class="fc" id="L60">        return new int[]{0};</span>
+    }
+
+    @Override
+    public final int offset( int i ) {
+<span class="fc" id="L65">        return 0;</span>
+    }
+
+    @Override
+    public final int indexOfIndex(int index) {
+<span class="fc" id="L70">        return index;</span>
+    }
+
+    @Override
+    public final int[] indicesOfIndex(int index) {
+<span class="fc" id="L75">        return new int[]{index};</span>
+    }
+
+    @Override
+    public final int indexOfIndices(int[] indices) {
+<span class="fc" id="L80">        return indices[ 0 ];</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

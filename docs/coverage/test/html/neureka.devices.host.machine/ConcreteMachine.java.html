@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConcreteMachine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.host.machine</a> &gt; <span class="el_source">ConcreteMachine.java</span></div><h1>ConcreteMachine.java</h1><pre class="source lang-java linenums">/*&lt;#LICENSE#&gt;*/
+package neureka.devices.host.machine;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public final class ConcreteMachine extends CommonMachine {
+
+<span class="fc" id="L9">    private static final Logger _LOG = LoggerFactory.getLogger(ConcreteMachine.class);</span>
+<span class="fc" id="L10">    public static ConcreteMachine ENVIRONMENT = null;</span>
+
+    static {
+<span class="fc" id="L13">        String architecture = ConcreteMachine.getArchitecture();</span>
+<span class="fc" id="L14">        long memory = ConcreteMachine.getMemory();</span>
+<span class="fc" id="L15">        int threads = ConcreteMachine.getThreads();</span>
+
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        for (Hardware hw : Hardware.PREDEFINED) {</span>
+<span class="pc bpc" id="L18" title="1 of 6 branches missed.">            if (hw.architecture.equals(architecture) &amp;&amp; (hw.threads == threads) &amp;&amp; (hw.memory &gt;= memory)) {</span>
+<span class="fc" id="L19">                ENVIRONMENT = hw.virtualize();</span>
+            }
+<span class="fc" id="L21">        }</span>
+
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        if (ENVIRONMENT == null) {</span>
+<span class="nc" id="L24">            _LOG.info(</span>
+                    &quot;No matching hardware profile found for this system. &quot; +
+                    &quot;Instantiating a default hardware profile with the following main properties: &quot; +
+<span class="nc" id="L27">                    &quot;Architecture={} Threads={} Memory={}&quot;, architecture, threads, memory</span>
+            );
+<span class="nc" id="L29">            ENVIRONMENT = Hardware.makeSimple(architecture, memory, threads).virtualize();</span>
+        }
+<span class="fc" id="L31">    }</span>
+
+    private static final String AMD64 = &quot;amd64&quot;;
+    private static final String I386 = &quot;i386&quot;;
+    private static final String X86 = &quot;x86&quot;;
+    private static final String X86_64 = &quot;x86_64&quot;;
+
+    public static String getArchitecture() {
+
+        // http://fantom.org/sidewalk/topic/756
+
+<span class="fc" id="L42">        final String tmpProperty = System.getProperty(&quot;os.arch&quot;).toLowerCase();</span>
+
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        if (tmpProperty.equals(I386)) {</span>
+<span class="nc" id="L45">            return X86;</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        } else if (tmpProperty.equals(AMD64)) {</span>
+<span class="fc" id="L47">            return X86_64;</span>
+        } else {
+<span class="nc" id="L49">            return tmpProperty;</span>
+        }
+    }
+
+    public static long getMemory() {
+<span class="fc" id="L54">        return Runtime.getRuntime().maxMemory();</span>
+    }
+
+    public static int getThreads() {
+<span class="fc" id="L58">        return Runtime.getRuntime().availableProcessors();</span>
+    }
+
+    private final Hardware myHardware;
+    private final Runtime myRuntime;
+
+    ConcreteMachine(final Hardware hardware, final Runtime runtime) {
+
+<span class="fc" id="L66">        super(hardware, runtime);</span>
+
+<span class="fc" id="L68">        myHardware = hardware;</span>
+<span class="fc" id="L69">        myRuntime = runtime;</span>
+<span class="fc" id="L70">    }</span>
+
+    @Override
+    public boolean equals(final Object obj) {
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if ( this == obj ) return true;</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if ( !super.equals(obj) ) return false;</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if ( !(obj instanceof ConcreteMachine) ) return false;</span>
+<span class="nc" id="L77">        final ConcreteMachine other = (ConcreteMachine) obj;</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        if ( myHardware == null )</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            return other.myHardware == null;</span>
+        else
+<span class="nc" id="L81">            return myHardware.equals(other.myHardware);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L86">        final int prime = 31;</span>
+<span class="nc" id="L87">        int result = super.hashCode();</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        result = (prime * result) + ((myHardware == null) ? 0 : myHardware.hashCode());</span>
+<span class="nc" id="L89">        return result;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L94">        return super.toString() + ((char)32) + myHardware.toString();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

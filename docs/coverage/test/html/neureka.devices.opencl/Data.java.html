@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Data.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.opencl</a> &gt; <span class="el_source">Data.java</span></div><h1>Data.java</h1><pre class="source lang-java linenums">package neureka.devices.opencl;
+
+import neureka.Neureka;
+import neureka.backend.api.BackendContext;
+import neureka.common.utility.DataConverter;
+import org.jocl.Pointer;
+import org.jocl.Sizeof;
+
+import java.util.Arrays;
+
+/**
+ *  This defines a representation of some basic primitive numeric array based JVM data
+ *  which may be stored on an {@link OpenCLDevice}.
+ *  This is an internal class which is solely supposed to be used within an OpenCL device.
+ */
+class Data
+{
+    private final Object _data;
+
+    public static Data of( Object data ) {
+<span class="fc" id="L21">        return new Data( data, 0, lengthOf(data) );</span>
+    }
+
+    public static Data of( Object data, int start, int size ) {
+<span class="fc" id="L25">        return new Data( data, start, size );</span>
+    }
+
+<span class="fc" id="L28">    private Data( Object data, int start, int size ) {</span>
+<span class="fc" id="L29">        _data = _preprocess( data, start, size );</span>
+<span class="fc" id="L30">    }</span>
+
+<span class="fc" id="L32">    Object getData() { return _data; }</span>
+
+    private Object _preprocess( Object data, int start, int size )
+    {
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if ( data instanceof Number ) {</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            if ( data instanceof Float ) {</span>
+<span class="fc" id="L38">                float[] newData = new float[size];</span>
+<span class="fc" id="L39">                Arrays.fill( newData, ((Float) (data)) );</span>
+<span class="fc" id="L40">                data = newData;</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">            } else if ( data instanceof Double ) {</span>
+<span class="fc" id="L42">                double[] newData = new double[size];</span>
+<span class="fc" id="L43">                Arrays.fill( newData, ((Double) (data)) );</span>
+<span class="fc" id="L44">                data = newData;</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">            } else if ( data instanceof Integer ) {</span>
+<span class="fc" id="L46">                int[] newData = new int[size];</span>
+<span class="fc" id="L47">                Arrays.fill( newData, ((Integer) (data)) );</span>
+<span class="fc" id="L48">                data = newData;</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            } else if ( data instanceof Short ) {</span>
+<span class="fc" id="L50">                short[] newData = new short[size];</span>
+<span class="fc" id="L51">                Arrays.fill( newData, ((Short) (data)) );</span>
+<span class="fc" id="L52">                data = newData;</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">            } else if ( data instanceof Byte ) {</span>
+<span class="fc" id="L54">                byte[] newData = new byte[size];</span>
+<span class="fc" id="L55">                Arrays.fill( newData, ((Byte) (data)) );</span>
+<span class="fc" id="L56">                data = newData;</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">            } else if ( data instanceof Long ) {</span>
+<span class="fc" id="L58">                long[] newData = new long[size];</span>
+<span class="fc" id="L59">                Arrays.fill( newData, ((Long) (data)) );</span>
+<span class="fc" id="L60">                data = newData;</span>
+            }
+        }
+
+<span class="fc" id="L64">        BackendContext backend = Neureka.get().backend();</span>
+<span class="fc" id="L65">        boolean clContextFound = backend.has(CLContext.class);</span>
+<span class="pc bpc" id="L66" title="1 of 4 branches missed.">        boolean convertToFloat = clContextFound &amp;&amp; backend.get(CLContext.class).getSettings().isAutoConvertToFloat();</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        if ( convertToFloat ) // NOTE: Currently we only support floats!</span>
+<span class="fc" id="L68">            data = DataConverter.get().convert(data, float[].class);</span>
+
+        // TODO: Enable this for more types:
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if ( data instanceof float[] ) {</span>
+<span class="fc" id="L72">            float[] array = (float[]) data;</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            if ( start &gt; 0 ) {</span>
+<span class="fc" id="L74">                float[] newData = new float[size];</span>
+<span class="fc" id="L75">                System.arraycopy(array, start, newData, 0, newData.length);</span>
+<span class="fc" id="L76">                data = newData;</span>
+            }
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        } else if ( data instanceof double[] ) {</span>
+<span class="fc" id="L79">            double[] array = (double[]) data;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">            if ( start &gt; 0 ) {</span>
+<span class="fc" id="L81">                double[] newData = new double[size];</span>
+<span class="fc" id="L82">                System.arraycopy(array, start, newData, 0, newData.length);</span>
+<span class="fc" id="L83">                data = newData;</span>
+            }
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        } else if ( data instanceof int[] ) {</span>
+<span class="fc" id="L86">            int[] array = (int[]) data;</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            if ( start &gt; 0 ) {</span>
+<span class="fc" id="L88">                int[] newData = new int[size];</span>
+<span class="fc" id="L89">                System.arraycopy(array, start, newData, 0, newData.length);</span>
+<span class="fc" id="L90">                data = newData;</span>
+            }
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        } else if ( data instanceof long[] ) {</span>
+<span class="fc" id="L93">            long[] array = (long[]) data;</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">            if ( start &gt; 0 ) {</span>
+<span class="fc" id="L95">                long[] newData = new long[size];</span>
+<span class="fc" id="L96">                System.arraycopy(array, start, newData, 0, newData.length);</span>
+<span class="fc" id="L97">                data = newData;</span>
+            }
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        } else if ( data instanceof short[] ) {</span>
+<span class="fc" id="L100">            short[] array = (short[]) data;</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if ( start &gt; 0 ) {</span>
+<span class="fc" id="L102">                short[] newData = new short[size];</span>
+<span class="fc" id="L103">                System.arraycopy(array, start, newData, 0, newData.length);</span>
+<span class="fc" id="L104">                data = newData;</span>
+            }
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        } else if ( data instanceof byte[] ) {</span>
+<span class="fc" id="L107">            byte[] array = (byte[]) data;</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">            if ( start &gt; 0 ) {</span>
+<span class="fc" id="L109">                byte[] newData = new byte[size];</span>
+<span class="fc" id="L110">                System.arraycopy(array, start, newData, 0, newData.length);</span>
+<span class="fc" id="L111">                data = newData;</span>
+            }
+        }
+<span class="fc" id="L114">        return data;</span>
+    }
+
+    Pointer getPointer() {
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return Pointer.to( (float[])  _data );</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if ( _data instanceof double[] ) return Pointer.to( (double[]) _data );</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        if ( _data instanceof int[]    ) return Pointer.to( (int[])    _data );</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        if ( _data instanceof short[]  ) return Pointer.to( (short[])  _data );</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if ( _data instanceof long[]   ) return Pointer.to( (long[])   _data );</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        if ( _data instanceof byte[]   ) return Pointer.to( (byte[])   _data );</span>
+<span class="nc" id="L124">        throw new IllegalStateException();</span>
+    }
+
+    long getLength() {
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return ( (float[])  _data ).length;</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        if ( _data instanceof double[] ) return ( (double[]) _data ).length;</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        if ( _data instanceof int[]    ) return ( (int[])    _data ).length;</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if ( _data instanceof short[]  ) return ( (short[])  _data ).length;</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        if ( _data instanceof long[]   ) return ( (long[])   _data ).length;</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if ( _data instanceof byte[]   ) return ( (byte[])   _data ).length;</span>
+<span class="nc" id="L134">        throw new IllegalStateException();</span>
+    }
+
+    int getItemSize() {
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if ( _data instanceof float[]  ) return Sizeof.cl_float;</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if ( _data instanceof double[] ) return Sizeof.cl_double;</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if ( _data instanceof int[]    ) return Sizeof.cl_int;</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        if ( _data instanceof short[]  ) return Sizeof.cl_short;</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        if ( _data instanceof long[]   ) return Sizeof.cl_long;</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        if ( _data instanceof byte[]   ) return 1;</span>
+<span class="nc" id="L144">        throw new IllegalStateException();</span>
+    }
+
+    OpenCLDevice.cl_dtype getType() {
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        if ( _data instanceof float[]  ) return OpenCLDevice.cl_dtype.F32;</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        if ( _data instanceof double[] ) return OpenCLDevice.cl_dtype.F64;</span>
+<span class="nc" id="L150">        throw new IllegalStateException();</span>
+    }
+
+    private static int lengthOf( Object o ) {
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        if ( o instanceof Number   ) return 1;</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        if ( o instanceof float[]  ) return ( (float[])  o ).length;</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        if ( o instanceof double[] ) return ( (double[]) o ).length;</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">        if ( o instanceof int[]    ) return ( (int[])    o ).length;</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        if ( o instanceof long[]   ) return ( (long[])   o ).length;</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        if ( o instanceof short[]  ) return ( (short[])  o ).length;</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        if ( o instanceof byte[]   ) return ( (byte[])   o ).length;</span>
+<span class="nc" id="L161">        throw new IllegalArgumentException();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

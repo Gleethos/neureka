@@ -1,0 +1,990 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DataConverter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.common.utility</a> &gt; <span class="el_source">DataConverter.java</span></div><h1>DataConverter.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   _____        _         _____                          _
+  |  __ \      | |       / ____|                        | |
+  | |  | | __ _| |_ __ _| |     ___  _ ____   _____ _ __| |_ ___ _ __
+  | |  | |/ _` | __/ _` | |    / _ \| '_ \ \ / / _ \ '__| __/ _ \ '__|
+  | |__| | (_| | || (_| | |___| (_) | | | \ V /  __/ |  | ||  __/ |
+  |_____/ \__,_|\__\__,_|\_____\___/|_| |_|\_/ \___|_|   \__\___|_|
+
+    A helpful little singleton class used for data conversion.
+
+*/
+
+package neureka.common.utility;
+
+import neureka.Tsr;
+import neureka.dtype.DataType;
+import neureka.ndim.config.NDConfiguration;
+import org.jetbrains.annotations.Contract;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.IntStream;
+
+/**
+ *  This class is a singleton.
+ *  Its sole job is to simply take in any kind ob object and convert it into
+ *  another object of a provided Class type...
+ *  In essence the {@link DataConverter} is merely a utility class.
+ *  It also contains a nested static class named {@link Utility} which
+ *  provides useful methods to handle primitive data types and arrays
+ *  of said types.
+ */
+public final class DataConverter
+{
+<span class="fc" id="L62">    private final static Logger _LOG = LoggerFactory.getLogger(DataConverter.class);</span>
+
+    /**
+     *  This interface declares a simple lambda which represents type conversion implementations...
+     *  These conversion lambdas are then stored within a nested Map that can be extended easily.
+     *  The structure of this interface is not different to the java.util.function.Function&lt;T,R&gt;
+     *  interface, however for the sake of descriptiveness and completeness the interface is
+     *  still redefined and named accordingly!
+     *
+     * @param &lt;FromType&gt; The type that is being passed to the lambda.
+     * @param &lt;ToType&gt; The target type that is returned.
+     */
+    private interface Conversion&lt;FromType, ToType&gt; { ToType go(FromType thing); }
+
+    /**
+     *  This nested Map field manages Converter lambda instances!
+     *  Other than converter lambdas, there are also Class objects used as keys.
+     *  The keys of the outer Map represent &quot;from types&quot;, whereas inner keys
+     *  represent &quot;to types&quot;.
+     *  This allows for fast Converter access for a given type pair!
+     */
+<span class="fc" id="L83">    private static Map&lt;Class&lt;?&gt;, Map&lt;Class, Conversion&gt;&gt; _converters = new HashMap&lt;&gt;(128);</span>
+
+    /**
+     *  This class is a singleton.
+     *  Meaning it stores the following static &quot;_instance&quot; variable.
+     */
+<span class="fc" id="L89">    private static final DataConverter _instance = new DataConverter();</span>
+
+    /**
+     *  This method returns the singleton.
+     *
+     * @return The singleton instance of this class.
+     */
+<span class="fc" id="L96">    public static DataConverter get() { return _instance; }</span>
+
+    /**
+     *  This constructor is private because the DataConverter class is a singleton.
+     *  Within the constructor the Converter lambdas are being set for a given
+     *  &quot;from&quot;- and &quot;to&quot;- Class pair.
+     */
+    private DataConverter()
+<span class="fc" id="L104">    {</span>
+<span class="fc" id="L105">        _set( byte[].class, float[].class,      Utility::byteToFloat );</span>
+<span class="fc" id="L106">        _set( byte[].class, double[].class,     Utility::byteToDouble );</span>
+<span class="fc" id="L107">        _set( byte[].class, short[].class,      Utility::byteToShort );</span>
+<span class="fc" id="L108">        _set( byte[].class, int[].class,        Utility::byteToInt );</span>
+<span class="fc" id="L109">        _set( byte[].class, long[].class,       Utility::byteToLong );</span>
+<span class="fc" id="L110">        _set( byte[].class, BigInteger[].class, Utility::byteToBigInteger );</span>
+
+<span class="fc" id="L112">        _set( float[].class, double[].class,     Utility::floatToDouble );</span>
+<span class="fc" id="L113">        _set( float[].class, int[].class,        Utility::floatToInt );</span>
+<span class="fc" id="L114">        _set( float[].class, short[].class,      Utility::floatToShort );</span>
+<span class="fc" id="L115">        _set( float[].class, byte[].class,       Utility::floatToByte );</span>
+<span class="fc" id="L116">        _set( float[].class, long[].class,       Utility::floatToLong );</span>
+<span class="fc" id="L117">        _set( float[].class, BigInteger[].class, Utility::floatToBigInteger );</span>
+
+<span class="fc" id="L119">        _set( int[].class, float[].class,      Utility::intToFloat );</span>
+<span class="fc" id="L120">        _set( int[].class, double[].class,     Utility::intToDouble );</span>
+<span class="fc" id="L121">        _set( int[].class, long[].class,       Utility::intToLong );</span>
+<span class="fc" id="L122">        _set( int[].class, short[].class,      Utility::intToShort );</span>
+<span class="fc" id="L123">        _set( int[].class, BigInteger[].class, Utility::intToBigInteger );</span>
+<span class="fc" id="L124">        _set( int[].class, byte[].class,       Utility::intToByte );</span>
+
+<span class="fc" id="L126">        _set( long[].class, byte[].class,       Utility::longToByte );</span>
+<span class="fc" id="L127">        _set( long[].class, short[].class,      Utility::longToShort );</span>
+<span class="fc" id="L128">        _set( long[].class, int[].class,        Utility::longToInt );</span>
+<span class="fc" id="L129">        _set( long[].class, float[].class,      Utility::longToFloat );</span>
+<span class="fc" id="L130">        _set( long[].class, double[].class,     Utility::longToDouble );</span>
+<span class="fc" id="L131">        _set( long[].class, BigInteger[].class, Utility::longToBigInteger );</span>
+
+<span class="fc" id="L133">        _set( short[].class, long[].class,       Utility::shortToLong );</span>
+<span class="fc" id="L134">        _set( short[].class, double[].class,     Utility::shortToDouble );</span>
+<span class="fc" id="L135">        _set( short[].class, float[].class,      Utility::shortToFloat );</span>
+<span class="fc" id="L136">        _set( short[].class, int[].class,        Utility::shortToInt );</span>
+<span class="fc" id="L137">        _set( short[].class, byte[].class,       Utility::shortToByte );</span>
+<span class="fc" id="L138">        _set( short[].class, BigInteger[].class, Utility::shortToBigInteger );</span>
+
+<span class="fc" id="L140">        _set( double[].class, byte[].class,       Utility::doubleToByte );</span>
+<span class="fc" id="L141">        _set( double[].class, short[].class,      Utility::doubleToShort );</span>
+<span class="fc" id="L142">        _set( double[].class, int[].class,        Utility::doubleToInt );</span>
+<span class="fc" id="L143">        _set( double[].class, BigInteger[].class, Utility::doubleToBigInteger );</span>
+<span class="fc" id="L144">        _set( double[].class, long[].class,       Utility::doubleToLong );</span>
+<span class="fc" id="L145">        _set( double[].class, float[].class,      Utility::doubleToFloat );</span>
+<span class="fc" id="L146">        _set( double[].class, boolean[].class,    Utility::doubleToBool );</span>
+
+<span class="fc" id="L148">        _set( boolean[].class, double[].class,    Utility::boolToDouble );</span>
+<span class="fc" id="L149">        _set( boolean[].class, float[].class,     Utility::boolToFloat );</span>
+
+<span class="fc" id="L151">        _set( List.class, int[].class,    thing -&gt; thing.stream().mapToInt(    i -&gt; convert(i, Integer.class) ).toArray() );</span>
+<span class="fc" id="L152">        _set( List.class, double[].class, thing -&gt; thing.stream().mapToDouble( i -&gt; convert(i, Double.class) ).toArray() );</span>
+<span class="fc" id="L153">        _set( List.class, long[].class,   thing -&gt; thing.stream().mapToLong(   i -&gt; convert(i, Long.class) ).toArray() );</span>
+<span class="fc" id="L154">        _set( List.class, short[].class, thing -&gt; {</span>
+<span class="fc" id="L155">            short[] array = new short[thing.size()];</span>
+<span class="fc" id="L156">            IntStream.range(0,array.length).parallel().forEach( i -&gt; array[i] = convert(thing.get(i), Short.class) );</span>
+<span class="fc" id="L157">            return array;</span>
+        });
+<span class="fc" id="L159">        _set( List.class, byte[].class, thing -&gt; {</span>
+<span class="fc" id="L160">            byte[] array = new byte[thing.size()];</span>
+<span class="fc" id="L161">            IntStream.range(0,array.length).parallel().forEach( i -&gt; array[i] = convert(thing.get(i), Byte.class) );</span>
+<span class="fc" id="L162">            return array;</span>
+        });
+<span class="fc" id="L164">        _set( List.class, float[].class, thing -&gt; {</span>
+<span class="fc" id="L165">            float[] array = new float[thing.size()];</span>
+<span class="fc" id="L166">            IntStream.range(0,array.length).parallel().forEach( i -&gt; array[i] = convert(thing.get(i), Float.class) );</span>
+<span class="fc" id="L167">            return array;</span>
+        });
+
+<span class="fc" id="L170">        _set( BigInteger.class, Double.class, BigInteger::doubleValue );</span>
+<span class="fc" id="L171">        _set( BigInteger.class, Float.class, BigInteger::floatValue );</span>
+<span class="fc" id="L172">        _set( BigInteger.class, Long.class, BigInteger::longValue );</span>
+<span class="fc" id="L173">        _set( BigInteger.class, Integer.class, BigInteger::intValue );</span>
+<span class="fc" id="L174">        _set( BigInteger.class, Short.class, BigInteger::shortValue );</span>
+<span class="fc" id="L175">        _set( BigInteger.class, Byte.class, BigInteger::byteValue );</span>
+
+<span class="fc" id="L177">        _set( BigDecimal.class, Double.class, BigDecimal::doubleValue );</span>
+<span class="fc" id="L178">        _set( BigDecimal.class, Float.class, BigDecimal::floatValue );</span>
+<span class="fc" id="L179">        _set( BigDecimal.class, Long.class, BigDecimal::longValue );</span>
+<span class="fc" id="L180">        _set( BigDecimal.class, Integer.class, BigDecimal::intValue );</span>
+<span class="fc" id="L181">        _set( BigDecimal.class, Short.class, BigDecimal::shortValue );</span>
+<span class="fc" id="L182">        _set( BigDecimal.class, Byte.class, BigDecimal::byteValue );</span>
+
+<span class="fc" id="L184">        _set( Integer.class, Double.class, Integer::doubleValue );</span>
+<span class="fc" id="L185">        _set( Integer.class, Float.class,  Integer::floatValue );</span>
+<span class="fc" id="L186">        _set( Integer.class, Byte.class,   Integer::byteValue );</span>
+<span class="fc" id="L187">        _set( Integer.class, Short.class,  Integer::shortValue );</span>
+<span class="fc" id="L188">        _set( Integer.class, Long.class,   Integer::longValue );</span>
+
+<span class="fc" id="L190">        _set( Double.class, Float.class,   Double::floatValue );</span>
+<span class="fc" id="L191">        _set( Double.class, Integer.class, Double::intValue );</span>
+<span class="fc" id="L192">        _set( Double.class, Byte.class,    Double::byteValue );</span>
+<span class="fc" id="L193">        _set( Double.class, Short.class,   Double::shortValue );</span>
+<span class="fc" id="L194">        _set( Double.class, Long.class,    Double::longValue );</span>
+
+<span class="fc" id="L196">        _set( Float.class, Double.class,  Float::doubleValue );</span>
+<span class="fc" id="L197">        _set( Float.class, Integer.class, Float::intValue );</span>
+<span class="fc" id="L198">        _set( Float.class, Byte.class,    Float::byteValue );</span>
+<span class="fc" id="L199">        _set( Float.class, Short.class,   Float::shortValue );</span>
+<span class="fc" id="L200">        _set( Float.class, Long.class,    Float::longValue );</span>
+
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        _set( Boolean.class, Double.class,   b -&gt; b ? 1d : 0d );</span>
+<span class="pc bnc" id="L203" title="All 2 branches missed.">        _set( Boolean.class, Float.class,    b -&gt; b ? 1f : 0f );</span>
+<span class="pc bnc" id="L204" title="All 2 branches missed.">        _set( Boolean.class, Integer.class,  b -&gt; b ? 1 : 0   );</span>
+<span class="pc bnc" id="L205" title="All 2 branches missed.">        _set( Boolean.class, Long.class,     b -&gt; b ? 1L : 0L );</span>
+<span class="pc bnc" id="L206" title="All 2 branches missed.">        _set( Boolean.class, Byte.class,     b -&gt; b ? (byte) 1 : (byte) 0 );</span>
+
+<span class="fc" id="L208">        _set( String.class, Character.class, s -&gt; (char) ( s.chars().sum() / s.length() ) );</span>
+
+<span class="fc" id="L210">        _set( Float[].class,     float[].class,   Utility::objFloatsToPrimFloats );</span>
+<span class="fc" id="L211">        _set( Integer[].class,   int[].class,     Utility::objIntsToPrimInts );</span>
+<span class="fc" id="L212">        _set( Long[].class,      long[].class,    Utility::objLongsToPrimLongs );</span>
+<span class="fc" id="L213">        _set( Double[].class,    double[].class,  Utility::objDoublesToPrimDoubles );</span>
+<span class="fc" id="L214">        _set( Short[].class,     short[].class,   Utility::objShortsToPrimShorts );</span>
+<span class="fc" id="L215">        _set( Byte[].class,      byte[].class,    Utility::objBytesToPrimBytes );</span>
+<span class="fc" id="L216">        _set( Boolean[].class,   boolean[].class, Utility::objBooleansToPrimBooleans );</span>
+<span class="fc" id="L217">        _set( Character[].class, char[].class,    Utility::objCharsToPrimChars );</span>
+
+<span class="fc" id="L219">        _set( Object[].class, int[].class, data -&gt;</span>
+<span class="fc" id="L220">                Utility.intStream( 1_000, data.length )</span>
+<span class="fc" id="L221">                            .map( i -&gt; {</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">                                 if ( data[ i ] instanceof Number )</span>
+<span class="fc" id="L223">                                     return ( (Number) data[ i ] ).intValue();</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">                                 else if ( data[ i ] instanceof String )</span>
+<span class="nc" id="L225">                                     return (int) Double.parseDouble( (String) data[ i ] );</span>
+                                 else
+<span class="nc" id="L227">                                     throw new IllegalArgumentException(</span>
+<span class="nc" id="L228">                                         &quot;Cannot convert type '&quot;+data[ i ].getClass().getSimpleName()+&quot;' to int!&quot;</span>
+                                     );
+                             })
+<span class="fc" id="L231">                             .toArray()</span>
+            );
+<span class="fc" id="L233">    }</span>
+
+    /**
+     *  This method fills the previously defined nested Map field of this class
+     *  with Converter instances using the provided Class objects as keys.
+     *
+     * @param from The Class of the type that is being put into the given converter.
+     * @param to The Class of the type that is being returned by the given converter.
+     * @param conversion The Converter lambda instance, namely : the conversion for the provided types.
+     * @param &lt;F&gt; The &quot;from&quot; type argument.
+     * @param &lt;T&gt; The &quot;to&quot; type argument.
+     */
+    private &lt;F,T&gt; void _set(
+            Class&lt;F&gt; from, Class&lt;T&gt; to,
+            Conversion&lt;F,T&gt; conversion
+    ) {
+<span class="fc" id="L249">        Map&lt;Class, Conversion&gt; fromMap = _converters.get(from);</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">        if ( fromMap == null )</span>
+        {
+<span class="fc" id="L252">            fromMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L253">            fromMap.put(to, conversion);</span>
+<span class="fc" id="L254">            fromMap.put(DataType.of(to).getTypeClass(), conversion);</span>
+<span class="fc" id="L255">            _converters.put( from, fromMap );</span>
+        } else {
+<span class="fc" id="L257">            Conversion found = fromMap.get(to);</span>
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">            if ( found != null ) throw new IllegalStateException(</span>
+<span class="nc" id="L259">                    &quot;Conversion already present! From class '&quot;+from.getName()+&quot;'. To clas '&quot;+to.getName()+&quot;'.&quot;</span>
+                    );
+<span class="fc" id="L261">            else fromMap.put(to, conversion);</span>
+        }
+<span class="fc" id="L263">    }</span>
+
+    /**
+     *  This method embodies the purpose of this class.
+     *  It receives objects for type conversion and queries the request
+     *  through the nested &quot;_converters&quot; Map instance.
+     *
+     * @param from The object which ought to be converted.
+     * @param to The target type for the provided object.
+     * @param &lt;T&gt; The type parameter of the &quot;to&quot; Class.
+     * @return The target object created by a Converter lambda.
+     */
+    public &lt;T&gt; T convert( Object from, Class&lt;T&gt; to ) {
+<span class="fc bfc" id="L276" title="All 2 branches covered.">        if ( from == null ) return null;</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        if ( from.getClass() == to ) return (T) from;</span>
+<span class="fc bfc" id="L278" title="All 2 branches covered.">        if ( to == String.class ) return (T) from.toString();</span>
+
+<span class="fc" id="L280">        Map&lt;Class, Conversion&gt; fromSpecific = _converters.get( from.getClass() );</span>
+<span class="fc bfc" id="L281" title="All 2 branches covered.">        if ( fromSpecific == null ) {</span>
+<span class="pc bpc" id="L282" title="1 of 2 branches missed.">            for ( Class&lt;?&gt; fromClass : _converters.keySet() )</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">                if ( fromClass.isAssignableFrom(from.getClass()) ) {</span>
+<span class="fc" id="L284">                    fromSpecific =  _converters.get( fromClass );</span>
+<span class="fc" id="L285">                    break;</span>
+                }
+        }
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">        if ( fromSpecific == null ) {</span>
+<span class="nc" id="L289">            String fromName = from.getClass().getSimpleName();</span>
+<span class="nc" id="L290">            String toName = to.getSimpleName();</span>
+<span class="nc" id="L291">            String message =</span>
+                    &quot;Conversion from '&quot;+fromName+&quot;' to '&quot;+toName+&quot;' could not be performed.\n&quot; +
+                            &quot;No converter lambdas were found for type '&quot;+fromName+&quot;'!&quot;;
+<span class="nc" id="L294">            _LOG.error( message );</span>
+<span class="nc" id="L295">            throw new IllegalArgumentException( message );</span>
+        }
+<span class="fc" id="L297">        Conversion&lt;Object, Object&gt; conversion = fromSpecific.get(to);</span>
+<span class="pc bpc" id="L298" title="1 of 2 branches missed.">        if ( conversion == null ) {</span>
+<span class="nc" id="L299">            String message = &quot;No converter found from type '&quot;+from.getClass()+&quot;' to '&quot;+to+&quot;'.&quot;;</span>
+<span class="nc" id="L300">            _LOG.error(message);</span>
+<span class="nc" id="L301">            throw new IllegalArgumentException(message);</span>
+        }
+<span class="fc" id="L303">        return (T) conversion.go(from);</span>
+    }
+
+    /**
+     *  This is a stateful and parallelized converter for converting the internal data array of a tensor
+     *  to another data array based on a provided lambda.
+     *  The converter will consider tensors with more complex access pattern like
+     *  for example those of slices.
+     */
+    public static class ForTensor {
+
+        private final NDConfiguration.IndexToIndexFunction _access;
+        private final int _size;
+
+<span class="fc" id="L317">        public ForTensor( Tsr&lt;?&gt; t ) {</span>
+<span class="fc" id="L318">            _access = t.getNDConf().getIndexToIndexAccessPattern();</span>
+<span class="fc" id="L319">            _size = t.size();</span>
+<span class="fc" id="L320">        }</span>
+
+        public float[] toFloatArray( Function&lt;Integer, Number&gt; source ) {
+<span class="fc" id="L323">            float[] data = new float[ _size ];</span>
+<span class="fc" id="L324">            Utility.intStream( 1_500, _size )</span>
+<span class="fc" id="L325">                    .forEach( i -&gt; data[i] = source.apply(_access.map(i)).floatValue());</span>
+<span class="fc" id="L326">            return data;</span>
+        }
+
+        public byte[] toByteArray( Function&lt;Integer, Number&gt; source ) {
+<span class="fc" id="L330">            byte[] data = new byte[ _size ];</span>
+<span class="fc" id="L331">            Utility.intStream( 1_500, _size )</span>
+<span class="fc" id="L332">                    .forEach( i -&gt; data[i] = source.apply(_access.map(i)).byteValue() );</span>
+<span class="fc" id="L333">            return data;</span>
+        }
+
+        public long[] toLongArray( Function&lt;Integer, Number&gt; source ) {
+<span class="fc" id="L337">            long[] data = new long[ _size ];</span>
+<span class="fc" id="L338">            Utility.intStream( 1_500, _size )</span>
+<span class="fc" id="L339">                    .forEach( i -&gt; data[i] = source.apply(_access.map(i)).longValue());</span>
+<span class="fc" id="L340">            return data;</span>
+        }
+
+        public int[] toIntArray( Function&lt;Integer, Number&gt; source ) {
+<span class="fc" id="L344">            int[] data = new int[ _size ];</span>
+<span class="fc" id="L345">            Utility.intStream( 1_500, _size )</span>
+<span class="fc" id="L346">                    .forEach( i -&gt; data[i] = source.apply(_access.map(i)).intValue());</span>
+<span class="fc" id="L347">            return data;</span>
+        }
+
+        public double[] toDoubleArray( Function&lt;Integer, Number&gt; source ) {
+<span class="fc" id="L351">            double[] data = new double[ _size ];</span>
+<span class="fc" id="L352">            Utility.intStream( 1_500, _size )</span>
+<span class="fc" id="L353">                    .forEach( i -&gt; data[i] = source.apply(_access.map(i)).doubleValue() );</span>
+<span class="fc" id="L354">            return data;</span>
+        }
+
+        public short[] toShortArray( Function&lt;Integer, Number&gt; source ) {
+<span class="fc" id="L358">            short[] data = new short[ _size ];</span>
+<span class="fc" id="L359">            Utility.intStream( 1_500, _size )</span>
+<span class="fc" id="L360">                    .forEach( i -&gt; data[i] = source.apply(_access.map(i)).shortValue() );</span>
+<span class="fc" id="L361">            return data;</span>
+        }
+
+        public Object[] toObjectArray( Function&lt;Integer, Object&gt; source ) {
+<span class="fc" id="L365">            Object[] data = new Object[ _size ];</span>
+<span class="fc" id="L366">            Utility.intStream( 1_500, _size )</span>
+<span class="fc" id="L367">                    .forEach( i -&gt; data[i] = source.apply(_access.map(i)) );</span>
+<span class="fc" id="L368">            return data;</span>
+        }
+
+    }
+
+    /**
+     *  This is a static utility class containing the actual conversion logic
+     *  which is usually referenced by the Converter lambdas via method signatures...
+     *  Other than that it also provides the ability to create seeded arrays of data.
+     */
+<span class="nc" id="L378">    public static class Utility</span>
+    {
+        @Contract( pure = true )
+        public static float[] objFloatsToPrimFloats( Float[] objects ) {
+<span class="fc" id="L382">            float[] array = new float[objects.length];</span>
+<span class="fc bfc" id="L383" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) {</span>
+<span class="fc" id="L384">                array[i] = objects[i];</span>
+            }
+<span class="fc" id="L386">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static double[] objDoublesToPrimDoubles( Double[] objects ) {
+<span class="fc" id="L391">            double[] array = new double[objects.length];</span>
+<span class="fc bfc" id="L392" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) {</span>
+<span class="fc" id="L393">                array[i] = objects[i];</span>
+            }
+<span class="fc" id="L395">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static int[] objIntsToPrimInts( Integer[] objects ) {
+<span class="fc" id="L400">            int[] array = new int[objects.length];</span>
+<span class="fc bfc" id="L401" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) {</span>
+<span class="fc" id="L402">                array[i] = objects[i];</span>
+            }
+<span class="fc" id="L404">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static long[] objLongsToPrimLongs( Long[] objects ) {
+<span class="fc" id="L409">            long[] array = new long[objects.length];</span>
+<span class="fc bfc" id="L410" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) {</span>
+<span class="fc" id="L411">                array[i] = objects[i];</span>
+            }
+<span class="fc" id="L413">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static short[] objShortsToPrimShorts( Short[] objects ) {
+<span class="fc" id="L418">            short[] array = new short[objects.length];</span>
+<span class="fc bfc" id="L419" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) {</span>
+<span class="fc" id="L420">                array[i] = objects[i];</span>
+            }
+<span class="fc" id="L422">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static byte[] objBytesToPrimBytes( Byte[] objects ) {
+<span class="fc" id="L427">            byte[] array = new byte[objects.length];</span>
+<span class="fc bfc" id="L428" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) {</span>
+<span class="fc" id="L429">                array[i] = objects[i];</span>
+            }
+<span class="fc" id="L431">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static boolean[] objBooleansToPrimBooleans( Boolean[] objects ) {
+<span class="fc" id="L436">            boolean[] array = new boolean[objects.length];</span>
+<span class="fc bfc" id="L437" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) {</span>
+<span class="fc" id="L438">                array[i] = objects[i];</span>
+            }
+<span class="fc" id="L440">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static char[] objCharsToPrimChars( Character[] objects ) {
+<span class="fc" id="L445">            char[] array = new char[objects.length];</span>
+<span class="fc bfc" id="L446" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) {</span>
+<span class="fc" id="L447">                array[i] = objects[i];</span>
+            }
+<span class="fc" id="L449">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static double[] newSeededDoubleArray( String seed, int size ) {
+<span class="fc" id="L454">            return newSeededDoubleArray( _longStringHash( seed ), size );</span>
+        }
+
+        @Contract( pure = true )
+        public static double[] newSeededDoubleArray( long seed, int size ) {
+<span class="fc" id="L459">            return seededDoubleArray( new double[size], seed );</span>
+        }
+
+        @Contract( pure = true )
+        public static double[] seededDoubleArray( double[] array, String seed ) {
+<span class="fc" id="L464">            return seededDoubleArray(array, _longStringHash( seed ));</span>
+        }
+
+        @Contract( pure = true )
+        public static double[] seededDoubleArray( double[] array, long seed ) {
+<span class="fc" id="L469">            Random dice = new Random();</span>
+<span class="fc" id="L470">            dice.setSeed( seed );</span>
+<span class="fc bfc" id="L471" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) array[ i ] = dice.nextGaussian();</span>
+<span class="fc" id="L472">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static float[] newSeededFloatArray( String seed, int size ) {
+<span class="fc" id="L477">            return newSeededFloatArray( _longStringHash( seed ), size );</span>
+        }
+
+        @Contract( pure = true )
+        public static float[] newSeededFloatArray( long seed, int size ) {
+<span class="fc" id="L482">            return seededFloatArray( new float[size], seed );</span>
+        }
+
+        @Contract( pure = true )
+        public static float[] seededFloatArray( float[] array, String seed ) {
+<span class="fc" id="L487">            return seededFloatArray( array, _longStringHash( seed ) );</span>
+        }
+
+        @Contract( pure = true )
+        public static float[] seededFloatArray( float[] array, long seed ) {
+<span class="fc" id="L492">            Random dice = new Random();</span>
+<span class="fc" id="L493">            dice.setSeed( seed );</span>
+<span class="fc bfc" id="L494" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) array[ i ] = (float) dice.nextGaussian();</span>
+<span class="fc" id="L495">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static int[] seededIntArray( int[] array, String seed ) {
+<span class="fc" id="L500">            return seededIntArray(array, _longStringHash( seed ));</span>
+        }
+
+        @Contract( pure = true )
+        public static int[] seededIntArray( int[] array, long seed ) {
+<span class="fc" id="L505">            Random dice = new Random();</span>
+<span class="fc" id="L506">            dice.setSeed( seed );</span>
+<span class="fc bfc" id="L507" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) array[ i ] = dice.nextInt();</span>
+<span class="fc" id="L508">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static short[] seededShortArray( short[] array, String seed ) {
+<span class="fc" id="L513">            return seededShortArray(array, _longStringHash( seed ));</span>
+        }
+
+        @Contract( pure = true )
+        public static short[] seededShortArray( short[] array, long seed ) {
+<span class="fc" id="L518">            Random dice = new Random();</span>
+<span class="fc" id="L519">            dice.setSeed( seed );</span>
+<span class="fc bfc" id="L520" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) array[ i ] = (short) dice.nextInt();</span>
+<span class="fc" id="L521">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static byte[] seededByteArray( byte[] array, String seed ) {
+<span class="fc" id="L526">            return seededByteArray(array, _longStringHash( seed ));</span>
+        }
+
+        @Contract( pure = true )
+        public static byte[] seededByteArray( byte[] array, long seed ) {
+<span class="fc" id="L531">            Random dice = new Random();</span>
+<span class="fc" id="L532">            dice.setSeed( seed );</span>
+<span class="fc bfc" id="L533" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) array[ i ] = (byte) dice.nextInt();</span>
+<span class="fc" id="L534">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static long[] seededLongArray( long[] array, String seed ) {
+<span class="fc" id="L539">            return seededLongArray( array, _longStringHash( seed ) );</span>
+        }
+
+        @Contract( pure = true )
+        public static long[] seededLongArray( long[] array, long seed ) {
+<span class="fc" id="L544">            Random dice = new Random();</span>
+<span class="fc" id="L545">            dice.setSeed( seed );</span>
+<span class="fc bfc" id="L546" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) array[ i ] = dice.nextLong();</span>
+<span class="fc" id="L547">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static boolean[] seededBooleanArray( boolean[] array, String seed ) {
+<span class="fc" id="L552">            return seededBooleanArray(array, _longStringHash( seed ));</span>
+        }
+
+        @Contract( pure = true )
+        public static boolean[] seededBooleanArray( boolean[] array, long seed ) {
+<span class="fc" id="L557">            Random dice = new Random();</span>
+<span class="fc" id="L558">            dice.setSeed( seed );</span>
+<span class="fc bfc" id="L559" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) array[ i ] = dice.nextBoolean();</span>
+<span class="fc" id="L560">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        public static char[] seededCharacterArray( char[] array, String seed) {
+<span class="fc" id="L565">            return seededCharacterArray(array, _longStringHash( seed ));</span>
+        }
+
+        @Contract( pure = true )
+        public static char[] seededCharacterArray( char[] array, long seed ) {
+<span class="fc" id="L570">            Random dice = new Random();</span>
+<span class="fc" id="L571">            dice.setSeed( seed );</span>
+<span class="fc bfc" id="L572" title="All 2 branches covered.">            for ( int i = 0; i &lt; array.length; i++ ) array[ i ] = (char) dice.nextInt();</span>
+<span class="fc" id="L573">            return array;</span>
+        }
+
+        @Contract( pure = true )
+        private static long _longStringHash( String string )
+        {
+<span class="fc" id="L579">            long h = 1125899906842597L; // prime</span>
+<span class="fc" id="L580">            int len = string.length();</span>
+<span class="fc bfc" id="L581" title="All 2 branches covered.">            for ( int i = 0; i &lt; len; i++ ) h = 31 * h + string.charAt( i );</span>
+<span class="fc" id="L582">            return h;</span>
+        }
+
+        @Contract( pure = true )
+        public static short[] byteToShort( byte[] data ) {
+<span class="pc bpc" id="L587" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L588">            short[] newData = new short[ data.length ];</span>
+<span class="fc bfc" id="L589" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++) newData[ i ] = data[ i ];</span>
+<span class="fc" id="L590">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static BigInteger[] byteToBigInteger( byte[] data ) {
+<span class="pc bpc" id="L595" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L596">            BigInteger[] newData = new BigInteger[ data.length ];</span>
+<span class="fc bfc" id="L597" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );</span>
+<span class="fc" id="L598">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static float[] doubleToFloat( double[] data ) {
+<span class="pc bpc" id="L603" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L604">            float[] newData = new float[ data.length ];</span>
+<span class="pc bpc" id="L605" title="1 of 2 branches missed.">            if ( data.length &lt; 150_000 ) // Only very large arrays can be parallelized in this case!</span>
+<span class="fc bfc" id="L606" title="All 2 branches covered.">                for ( int i = 0; i &lt; data.length; i++) newData[ i ] = (float) data[ i ];</span>
+            else
+<span class="nc" id="L608">                IntStream.range(0, data.length)</span>
+<span class="nc" id="L609">                        .parallel()</span>
+<span class="nc" id="L610">                        .forEach( i -&gt; newData[ i ] = (float) data[ i ] );</span>
+
+<span class="fc" id="L612">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static byte[] doubleToByte( double[] data ) {
+<span class="pc bpc" id="L617" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L618">            byte[] newData = new byte[ data.length ];</span>
+<span class="fc bfc" id="L619" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++) newData[ i ] = (byte) data[ i ];</span>
+<span class="fc" id="L620">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static short[] doubleToShort( double[] data ) {
+<span class="pc bpc" id="L625" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L626">            short[] newData = new short[ data.length ];</span>
+<span class="fc bfc" id="L627" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++) newData[ i ] = (short) data[ i ];</span>
+<span class="fc" id="L628">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static long[] doubleToLong( double[] data ) {
+<span class="pc bpc" id="L633" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L634">            long[] newData = new long[ data.length ];</span>
+<span class="fc bfc" id="L635" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++) newData[ i ] = (long) data[ i ];</span>
+<span class="fc" id="L636">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static boolean[] doubleToBool( double[] data ) {
+<span class="nc bnc" id="L641" title="All 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="nc" id="L642">            boolean[] newData = new boolean[ data.length ];</span>
+<span class="nc bnc" id="L643" title="All 4 branches missed.">            for ( int i = 0; i &lt; data.length; i++) newData[ i ] = Math.floor(data[ i ]) &gt;= 1;</span>
+<span class="nc" id="L644">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static double[] boolToDouble( boolean[] data ) {
+<span class="pc bpc" id="L649" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L650">            double[] newData = new double[ data.length ];</span>
+<span class="fc bfc" id="L651" title="All 4 branches covered.">            for ( int i = 0; i &lt; data.length; i++) newData[ i ] = data[ i ] ? 1 : 0;</span>
+<span class="fc" id="L652">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static float[] boolToFloat( boolean[] data ) {
+<span class="nc bnc" id="L657" title="All 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="nc" id="L658">            float[] newData = new float[ data.length ];</span>
+<span class="nc bnc" id="L659" title="All 4 branches missed.">            for ( int i = 0; i &lt; data.length; i++) newData[ i ] = data[ i ] ? 1 : 0;</span>
+<span class="nc" id="L660">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static double[] floatToDouble(float[] data) {
+<span class="pc bpc" id="L665" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L666">            double[] newData = new double[ data.length ];</span>
+<span class="pc bpc" id="L667" title="1 of 2 branches missed.">            if ( data.length &lt; 150_000 ) // Only very large arrays can be parallelized in this case!</span>
+<span class="fc bfc" id="L668" title="All 2 branches covered.">                for ( int i = 0; i &lt; data.length; i++) newData[ i ] = data[ i ];</span>
+            else
+<span class="nc" id="L670">                IntStream.range(0, data.length)</span>
+<span class="nc" id="L671">                        .parallel()</span>
+<span class="nc" id="L672">                        .forEach( i -&gt; newData[ i ] = data[ i ] );</span>
+
+<span class="fc" id="L674">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static byte[] floatToByte( float[] data ) {
+<span class="pc bpc" id="L679" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L680">            byte[] newData = new byte[ data.length ];</span>
+<span class="fc bfc" id="L681" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++) newData[ i ] = (byte) data[ i ];</span>
+<span class="fc" id="L682">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static short[] floatToShort( float[] data ) {
+<span class="pc bpc" id="L687" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L688">            short[] newData = new short[ data.length ];</span>
+<span class="fc bfc" id="L689" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++) newData[ i ] = (short) data[ i ];</span>
+<span class="fc" id="L690">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static long[] floatToLong( float[] data ) {
+<span class="pc bpc" id="L695" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L696">            long[] newData = new long[ data.length ];</span>
+<span class="fc bfc" id="L697" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++) newData[ i ] = (long) data[ i ];</span>
+<span class="fc" id="L698">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static double[] shortToDouble( short[] data ) {
+<span class="pc bpc" id="L703" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L704">            double[] newData = new double[ data.length ];</span>
+<span class="fc bfc" id="L705" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = data[ i ];</span>
+<span class="fc" id="L706">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static double[] byteToDouble( byte[] data ) {
+<span class="pc bpc" id="L711" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L712">            double[] newData = new double[ data.length ];</span>
+<span class="fc bfc" id="L713" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = data[ i ];</span>
+<span class="fc" id="L714">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static float[] byteToFloat( byte[] data ) {
+<span class="pc bpc" id="L719" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L720">            float[] newData = new float[ data.length ];</span>
+<span class="fc bfc" id="L721" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = data[ i ];</span>
+<span class="fc" id="L722">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static float[] shortToFloat( short[] data ) {
+<span class="pc bpc" id="L727" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L728">            float[] newData = new float[ data.length ];</span>
+<span class="fc bfc" id="L729" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = data[ i ];</span>
+<span class="fc" id="L730">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static int[] byteToInt( byte[] data ) {
+<span class="pc bpc" id="L735" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L736">            int[] newData = new int[ data.length ];</span>
+<span class="fc bfc" id="L737" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = data[ i ];</span>
+<span class="fc" id="L738">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static int[] shortToInt( short[] data ) {
+<span class="pc bpc" id="L743" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L744">            int[] newData = new int[ data.length ];</span>
+<span class="fc bfc" id="L745" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = data[ i ];</span>
+<span class="fc" id="L746">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static byte[] shortToByte(short[] data) {
+<span class="pc bpc" id="L751" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L752">            byte[] newData = new byte[ data.length ];</span>
+<span class="fc bfc" id="L753" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = (byte) data[ i ];</span>
+<span class="fc" id="L754">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static long[] byteToLong(byte[] data) {
+<span class="pc bpc" id="L759" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L760">            long[] newData = new long[ data.length ];</span>
+<span class="fc bfc" id="L761" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = data[ i ];</span>
+<span class="fc" id="L762">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static long[] shortToLong(short[] data) {
+<span class="pc bpc" id="L767" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L768">            long[] newData = new long[ data.length ];</span>
+<span class="fc bfc" id="L769" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = data[ i ];</span>
+<span class="fc" id="L770">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static BigInteger[] shortToBigInteger(short[] data) {
+<span class="pc bpc" id="L775" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L776">            BigInteger[] newData = new BigInteger[ data.length ];</span>
+<span class="fc bfc" id="L777" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );</span>
+<span class="fc" id="L778">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static float[] intToFloat(int[] data) {
+<span class="pc bpc" id="L783" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L784">            float[] newData = new float[ data.length ];</span>
+<span class="fc bfc" id="L785" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = (float) data[ i ];</span>
+<span class="fc" id="L786">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static int[] floatToInt(float[] data) {
+<span class="pc bpc" id="L791" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L792">            int[] newData = new int[ data.length ];</span>
+<span class="fc bfc" id="L793" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = (int) data[ i ];</span>
+<span class="fc" id="L794">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static BigInteger[] floatToBigInteger( float[] data ) {
+<span class="pc bpc" id="L799" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L800">            BigInteger[] newData = new BigInteger[ data.length ];</span>
+<span class="fc bfc" id="L801" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++ ) newData[ i ] = BigInteger.valueOf( (int) data[i] );</span>
+<span class="fc" id="L802">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static int[] doubleToInt(double[] data) {
+<span class="pc bpc" id="L807" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L808">            int[] newData = new int[ data.length ];</span>
+<span class="fc bfc" id="L809" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = (int) data[ i ];</span>
+<span class="fc" id="L810">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static BigInteger[] doubleToBigInteger( double[] data ) {
+<span class="pc bpc" id="L815" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L816">            BigInteger[] newData = new BigInteger[ data.length ];</span>
+<span class="fc bfc" id="L817" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++ ) newData[ i ] = BigInteger.valueOf( (long) data[i] );</span>
+<span class="fc" id="L818">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static double[] intToDouble(int[] data) {
+<span class="pc bpc" id="L823" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L824">            double[] newData = new double[ data.length ];</span>
+<span class="fc bfc" id="L825" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = data[ i ];</span>
+<span class="fc" id="L826">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static long[] intToLong( int[] data ) {
+<span class="pc bpc" id="L831" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L832">            long[] newData = new long[ data.length ];</span>
+<span class="fc bfc" id="L833" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = data[ i ];</span>
+<span class="fc" id="L834">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static short[] intToShort( int[] data ) {
+<span class="pc bpc" id="L839" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L840">            short[] newData = new short[ data.length ];</span>
+<span class="fc bfc" id="L841" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = (short) data[ i ];</span>
+<span class="fc" id="L842">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static byte[] intToByte( int[] data ) {
+<span class="pc bpc" id="L847" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L848">            byte[] newData = new byte[ data.length ];</span>
+<span class="fc bfc" id="L849" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = (byte) data[ i ];</span>
+<span class="fc" id="L850">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static BigInteger[] intToBigInteger( int[] data ) {
+<span class="pc bpc" id="L855" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L856">            BigInteger[] newData = new BigInteger[ data.length ];</span>
+<span class="fc bfc" id="L857" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++ ) newData[ i ] = BigInteger.valueOf( data[i] );</span>
+<span class="fc" id="L858">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static byte[] longToByte(long[] data) {
+<span class="pc bpc" id="L863" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L864">            byte[] newData = new byte[ data.length ];</span>
+<span class="fc bfc" id="L865" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = (byte) data[ i ];</span>
+<span class="fc" id="L866">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static short[] longToShort(long[] data) {
+<span class="pc bpc" id="L871" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L872">            short[] newData = new short[ data.length ];</span>
+<span class="fc bfc" id="L873" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = (short) data[ i ];</span>
+<span class="fc" id="L874">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static int[] longToInt(long[] data) {
+<span class="pc bpc" id="L879" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L880">            int[] newData = new int[ data.length ];</span>
+<span class="fc bfc" id="L881" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = (int) data[ i ];</span>
+<span class="fc" id="L882">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static float[] longToFloat(long[] data) {
+<span class="pc bpc" id="L887" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L888">            float[] newData = new float[ data.length ];</span>
+<span class="fc bfc" id="L889" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = (float) data[ i ];</span>
+<span class="fc" id="L890">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static double[] longToDouble(long[] data) {
+<span class="pc bpc" id="L895" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L896">            double[] newData = new double[ data.length ];</span>
+<span class="fc bfc" id="L897" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = (double) data[ i ];</span>
+<span class="fc" id="L898">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static BigInteger[] longToBigInteger( long[] data ) {
+<span class="pc bpc" id="L903" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
+<span class="fc" id="L904">            BigInteger[] newData = new BigInteger[ data.length ];</span>
+<span class="fc bfc" id="L905" title="All 2 branches covered.">            for ( int i = 0; i &lt;data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );</span>
+<span class="fc" id="L906">            return newData;</span>
+        }
+
+        @Contract( pure = true )
+        public static double[] objectsToDoubles( Object[] objects, int targetSize ) {
+<span class="fc" id="L911">            double[] data = new double[ targetSize ];</span>
+<span class="fc bfc" id="L912" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++ ) {</span>
+<span class="fc bfc" id="L913" title="All 2 branches covered.">                if ( objects[ i % objects.length ] instanceof BigDecimal )</span>
+<span class="fc" id="L914">                    data[ i ] = ( (BigDecimal) objects[ i % objects.length ] ).doubleValue();</span>
+<span class="pc bpc" id="L915" title="1 of 2 branches missed.">                else if ( objects[ i % objects.length ] instanceof Integer )</span>
+<span class="fc" id="L916">                    data[ i ] = (Integer) objects[ i % objects.length ];</span>
+            }
+<span class="fc" id="L918">            return data;</span>
+        }
+
+        @Contract( pure = true )
+        public static float[] objectsToFloats( Object[] objects, int targetSize ) {
+<span class="fc" id="L923">            float[] data = new float[ targetSize ];</span>
+<span class="fc bfc" id="L924" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++ ) {</span>
+<span class="pc bpc" id="L925" title="1 of 2 branches missed.">                if ( objects[ i % objects.length ] instanceof Number )</span>
+<span class="fc" id="L926">                    data[ i ] = ( (Number) objects[ i % objects.length ] ).floatValue();</span>
+            }
+<span class="fc" id="L928">            return data;</span>
+        }
+
+        @Contract( pure = true )
+        public static short[] objectsToShorts( Object[] objects, int targetSize ) {
+<span class="fc" id="L933">            short[] data = new short[ targetSize ];</span>
+<span class="fc bfc" id="L934" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++ ) {</span>
+<span class="pc bpc" id="L935" title="1 of 2 branches missed.">                if ( objects[ i % objects.length ] instanceof Number )</span>
+<span class="fc" id="L936">                    data[ i ] = ( (Number) objects[ i % objects.length ] ).shortValue();</span>
+            }
+<span class="fc" id="L938">            return data;</span>
+        }
+
+        @Contract( pure = true )
+        public static byte[] objectsToBytes( Object[] objects, int targetSize ) {
+<span class="fc" id="L943">            byte[] data = new byte[ targetSize ];</span>
+<span class="fc bfc" id="L944" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++ ) {</span>
+<span class="pc bpc" id="L945" title="1 of 2 branches missed.">                if ( objects[ i % objects.length ] instanceof Number )</span>
+<span class="fc" id="L946">                    data[ i ] = ( (Number) objects[ i % objects.length ] ).byteValue();</span>
+            }
+<span class="fc" id="L948">            return data;</span>
+        }
+
+        @Contract( pure = true )
+        public static long[] objectsToLongs( Object[] objects, int targetSize ) {
+<span class="fc" id="L953">            long[] data = new long[ targetSize ];</span>
+<span class="fc bfc" id="L954" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++ ) {</span>
+<span class="pc bpc" id="L955" title="1 of 2 branches missed.">                if ( objects[ i % objects.length ] instanceof Number )</span>
+<span class="fc" id="L956">                    data[ i ] = ( (Number) objects[ i % objects.length ] ).longValue();</span>
+            }
+<span class="fc" id="L958">            return data;</span>
+        }
+
+        @Contract( pure = true )
+        public static int[] objectsToInts( Object[] objects, int targetSize ) {
+<span class="fc" id="L963">            int[] data = new int[ targetSize ];</span>
+<span class="fc bfc" id="L964" title="All 2 branches covered.">            for ( int i = 0; i &lt; data.length; i++ ) {</span>
+<span class="pc bpc" id="L965" title="1 of 2 branches missed.">                if ( objects[ i % objects.length ] instanceof Number )</span>
+<span class="fc" id="L966">                    data[ i ] = ( (Number) objects[ i % objects.length ] ).intValue();</span>
+            }
+<span class="fc" id="L968">            return data;</span>
+        }
+
+        /**
+         *  Use this to create a range based {@link IntStream}
+         *  which is only parallel if the provided threshold
+         *  smaller than the provided workload size.
+         *
+         * @param parallelThreshold If the {@code workload} is larger than the threshold then the returned stream will be parallel.
+         * @param workload The number of integers processed by the returned stream.
+         * @return A sequential or parallel {@link IntStream}.
+         */
+        public static IntStream intStream( int parallelThreshold, int workload ) {
+<span class="fc" id="L981">            IntStream stream = IntStream.range( 0, workload );</span>
+<span class="fc bfc" id="L982" title="All 2 branches covered.">            if ( workload &gt;= parallelThreshold ) return stream.parallel();</span>
+<span class="fc" id="L983">            else return stream;</span>
+        }
+
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

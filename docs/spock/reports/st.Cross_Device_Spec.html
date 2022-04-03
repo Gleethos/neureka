@@ -1,0 +1,1085 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+h3 {
+  font-weight: 200;
+}
+
+.back-link {
+  font-size: small;
+}
+
+table {
+  margin: 5px;
+}
+
+div.date-test-ran {
+  font-size: small;
+  font-style: italic;
+}
+
+table.features-table {
+  width: 800px;
+}
+
+table.summary-table {
+  width: 800px;
+  text-align: left;
+  font-weight: bold;
+  font-size: small;
+}
+
+table.summary-table th {
+  background: lightblue;
+  padding: 6px;
+}
+
+table.summary-table td {
+  background: #E0E0E0;
+  padding: 6px;
+}
+
+pre.title {
+  font-family: inherit;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+pre.narrative {
+  font-family: inherit;
+  font-size: 18px;
+  font-style: italic;
+  line-height: 23px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+.feature-description {
+  font-size: large;
+  background: lightblue;
+  padding: 12px;
+}
+
+.feature-toc-error {
+  color: #F89A4F;
+}
+
+.feature-toc-failure {
+  color: #FF8080;
+}
+
+.feature-toc-ignored {
+  color: lightgray;
+}
+
+.feature-toc-pass {
+  color: green;
+}
+
+.feature-description.error {
+  background: #F89A4F;
+}
+
+.feature-description.failure {
+  background: #FF8080;
+}
+
+.feature-description.ignored {
+  background: lightgray;
+}
+
+.feature-description.ignored .reason {
+  color: black;
+  font-style: italic;
+  font-size: small;
+}
+
+div.extra-info {
+  font-size: small;
+}
+
+div.spec-headers {
+  margin: 4px;
+  font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+  margin-top: 6px;
+  padding: 10px 5px 5px 5px;
+  background-color: lemonchiffon;
+  color: black;
+  font-weight: 500;
+  font-size: small;
+  max-width: 50%;
+}
+
+div.pending-feature {
+  background-color: dodgerblue;
+  color: white;
+  margin-top: 6px;
+  padding: 5px;
+  text-align: center;
+  font-size: small;
+  max-width: 120px;
+}
+
+div.problem-description {
+  padding: 10px;
+  background: pink;
+  border-radius: 10px;
+}
+
+div.problem-header {
+  font-weight: bold;
+  color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table th {
+  background: lightblue;
+  padding: 5px;
+}
+
+table.ex-table td {
+  background: #E0E0E0;
+  padding: 2px 5px 2px 5px;
+}
+
+table td {
+  min-width: 50px;
+}
+
+col.block-kind-col {
+  width: 70px;
+}
+
+span.spec-header {
+  font-weight: bold;
+}
+
+div.spec-text {
+  /*color: green;*/
+}
+
+div.spec-status {
+  font-style: italic;
+}
+
+.ignored {
+  color: gray;
+}
+
+td.ex-result {
+  text-align: center;
+  background: white !important;
+}
+
+.ex-pass {
+  color: darkgreen;
+}
+
+.ex-fail {
+  color: red;
+  font-weight: bold;
+}
+
+div.block-kind {
+  margin: 2px;
+  font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+  background-color: whitesmoke;
+  padding: 10px;
+}
+
+pre.block-source.error {
+  background-color: pink;
+  color: red;
+  font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+  margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+  color: gray;
+  margin-top: -14px;
+}
+
+pre.block-source.post-error {
+  color: gray;
+}
+
+div.footer {
+  text-align: center;
+  font-size: small;
+}
+</style>
+</head>
+<body>
+<h2>Report for st.Cross_Device_Spec</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Sun Apr 03 14:55:53 CEST 2022 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>19.820 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class='title'>Cross Device Stress Test Specification</pre>
+<pre class='narrative'>This specification is pretty much a system test which covers
+    the behavior of the library as a whole across multiple devices!
+    No matter which device is being used for a given stress test, the result should be the same...</pre>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#1884586863' class='feature-toc-pass'>Convolution can model matrix multiplications across devices.</a>
+</li>
+<li>
+<a href='#1637092520' class='feature-toc-pass'>Test cross device system test runs successfully.</a>
+</li>
+<li>
+<a href='#-1444067048' class='feature-toc-pass'>Test simple NN implementation with manual backprop</a>
+</li>
+<li>
+<a href='#1608866948' class='feature-toc-pass'>A gradient of ones can be set by calling the backward method on a tensor sitting on any device.</a>
+</li>
+<li>
+<a href='#1917533414' class='feature-toc-pass'>Mapping tensors works for every device (even if they are not used).</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1884586863'>
+<span>Convolution can model matrix multiplications across devices.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>A given device of any type and the settings configured for testing.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Two tensors, one requiring gradients and the other one does not.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Cleanup:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following settings are being used: </div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>deviceType</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1637092520'>
+<span>Test cross device system test runs successfully.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>A given device of any type and the settings configured for testing.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The integration test runs successful.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following settings are being used: </div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>deviceType</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1444067048'>
+<span>Test simple NN implementation with manual backprop</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>device</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>testutility.mock.DummyDevice@6241fb02</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1608866948'>
+<span>A gradient of ones can be set by calling the backward method on a tensor sitting on any device.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We use the legacy representation of tensors for this little test!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We create a small matrix of 4 fours which requires a gradient and is stored on the provided device!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We now call the backward method on the tensor directly without having done any operations...</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Then we take the gradient to see what happened.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>We expect this gradient to be all ones with the shape of our matrix!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>device</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>testutility.mock.DummyDevice@6f750ad2</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1917533414'>
+<span>Mapping tensors works for every device (even if they are not used).</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>
+                    We call the mapping method which is supposed to create a new tensor of the provided type.
+                    This procedure is only supported when the tensor is stored in RAM, so when
+                    the tensor is outsourced (stored on a device), then we expect that the mapping method
+                    temporarily migrates the tensor back and forth internally...
+               </div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>We expect the String representation of the tensor to be as expected!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We expect the result to have the expected target class!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Lastly, the original tensor used as mapping source should be stored on the original device!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>We use the following data to test this mapping for a wide range of types and values!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>tensor</th>
+<th class='ex-header'>device</th>
+<th class='ex-header'>target</th>
+<th class='ex-header'>lambda</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.5]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.String</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure8@22d84cc</td>
+<td class='ex-value'>(1):[~3.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.5]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.String</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure9@72979037</td>
+<td class='ex-value'>(1):[~3.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.5]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.String</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure10@210f43f</td>
+<td class='ex-value'>(1):[~3.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.5]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.String</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure11@1d6d12d9</td>
+<td class='ex-value'>(1):[~3.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.String</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure12@49f1d315</td>
+<td class='ex-value'>(1):[~3]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[2.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.String</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure13@766fe5a1</td>
+<td class='ex-value'>(1):[~2]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[6.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.String</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure14@47e2335</td>
+<td class='ex-value'>(1):[~6]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.0]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure15@b0bd4c0</td>
+<td class='ex-value'>(1):[9.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[-1.0]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure16@475f5590</td>
+<td class='ex-value'>(1):[-0.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[0.5]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure17@4fca24cf</td>
+<td class='ex-value'>(1):[5.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[0.69999]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure18@2b132554</td>
+<td class='ex-value'>(1):[3.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[0.89999]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure19@7127daf8</td>
+<td class='ex-value'>(1):[1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.8]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure20@231532dc</td>
+<td class='ex-value'>(1):[1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure21@68fc6aad</td>
+<td class='ex-value'>(1):[9.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[-1.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure22@1f4e6731</td>
+<td class='ex-value'>(1):[-0.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[0.5]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure23@17ce5ac5</td>
+<td class='ex-value'>(1):[5.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[0.7]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure24@1c5e7f85</td>
+<td class='ex-value'>(1):[3.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[0.9]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure25@125dc71f</td>
+<td class='ex-value'>(1):[1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.8]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure26@29337aea</td>
+<td class='ex-value'>(1):[1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.0]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure27@7dedb062</td>
+<td class='ex-value'>(1):[9.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[-1.0]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure28@5bc9a4fb</td>
+<td class='ex-value'>(1):[-0.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[0.5]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure29@4fdcc699</td>
+<td class='ex-value'>(1):[5.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[0.69999]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure30@1bd9de56</td>
+<td class='ex-value'>(1):[3.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[0.89999]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure31@2cf3be26</td>
+<td class='ex-value'>(1):[1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.8]</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x288c1456770],platform=OpenCLPlatform@4c9bcd4e[pid=cl_platform_id[0x288c1456720],context=cl_context[0x288c25275a0],kernels=[..46..]]]</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure32@3813615</td>
+<td class='ex-value'>(1):[1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure33@70cd24d1</td>
+<td class='ex-value'>(1):[9.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[-1.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure34@43bd7202</td>
+<td class='ex-value'>(1):[-0.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[0.5]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure35@668b5d7c</td>
+<td class='ex-value'>(1):[5.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[0.69999]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure36@39ca4e64</td>
+<td class='ex-value'>(1):[3.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[0.89999]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure37@7ac9bf9a</td>
+<td class='ex-value'>(1):[1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.8]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure38@7390dcf4</td>
+<td class='ex-value'>(1):[1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure39@48a8a02</td>
+<td class='ex-value'>(1):[9.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[-1.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure40@ccc7885</td>
+<td class='ex-value'>(1):[-0.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[5.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure41@6d4e440e</td>
+<td class='ex-value'>(1):[50.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[70.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure42@5616788c</td>
+<td class='ex-value'>(1):[350.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[90.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure43@24803c87</td>
+<td class='ex-value'>(1):[-76.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[37.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure44@71cdb574</td>
+<td class='ex-value'>(1):[18.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure45@6443c554</td>
+<td class='ex-value'>(1):[9.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[-1.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure46@5e4878b3</td>
+<td class='ex-value'>(1):[-0.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[5.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure47@3c33a395</td>
+<td class='ex-value'>(1):[50.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[70.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure48@1b919645</td>
+<td class='ex-value'>(1):[350.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[90.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure49@49681d45</td>
+<td class='ex-value'>(1):[-76.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[37.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure50@570a1599</td>
+<td class='ex-value'>(1):[18.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[3.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure51@718e581</td>
+<td class='ex-value'>(1):[9.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[-1.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure52@20ae4a77</td>
+<td class='ex-value'>(1):[-0.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[5.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure53@587697a2</td>
+<td class='ex-value'>(1):[50.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[70.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure54@3e3197f6</td>
+<td class='ex-value'>(1):[350.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[90.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure55@6640d8a0</td>
+<td class='ex-value'>(1):[-76.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(1):[37.0]</td>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>st.Cross_Device_Spec$__spock_feature_0_4prov3_closure56@4c554601</td>
+<td class='ex-value'>(1):[18.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>49/49 passed</div>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>

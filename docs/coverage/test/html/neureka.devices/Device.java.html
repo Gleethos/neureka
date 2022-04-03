@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Device.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices</a> &gt; <span class="el_source">Device.java</span></div><h1>Device.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   _____             _
+  |  __ \           (_)
+  | |  | | _____   ___  ___ ___
+  | |  | |/ _ \ \ / / |/ __/ _ \
+  | |__| |  __/\ V /| | (_|  __/
+  |_____/ \___| \_/ |_|\___\___|
+
+    An abstract of a backend implementations which handles tensors, their data
+    and executions on these tensors / their data.
+
+*/
+
+package neureka.devices;
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.backend.api.BackendContext;
+import neureka.backend.api.BackendExtension;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Operation;
+import neureka.calculus.Function;
+import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.ParseUtil;
+import neureka.common.composition.Component;
+import neureka.devices.host.CPU;
+import neureka.ndim.AbstractTensor;
+import neureka.ndim.config.NDConfiguration;
+
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+/**
+ * Implementations of this represent computational
+ * devices for storing tensors (instances of the Tsr&amp;lt;V&amp;gt; class), which may
+ * also expose a useful API for executing operations on tensors.
+ * Such instances are also components of tensors, which is why
+ * this interface extends the Component&amp;lt;Tsr&amp;lt;V&amp;gt;&amp;gt; interface.                        &lt;br&gt;&lt;br&gt;
+ *
+ * The device interface extends the &quot;{@link Storage}&quot; interface because devices
+ * are capable of storing tensors on them.
+ * A tensor stored on a device holds a reference to that device,
+ * as well as the device itself which may also know about the tensors it holds.
+ * A tensor stored on a device will have its &quot;isOutsourced&quot; property set to true!
+ *
+ * @param &lt;V&gt; The value type of super type of the values stored on a {@link Device} implementation...
+ */
+public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&lt;V&gt;, Iterable&lt;Tsr&lt;V&gt;&gt;
+{
+    /**
+     * This method returns {@link Device} instances matching
+     * the given search parameter.
+     * @param searchKeys The search parameter and name of the requested {@link Device} instance.
+     * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
+     */
+<span class="fc" id="L81">    static Device&lt;Object&gt; find( String... searchKeys ) { return find( Device.class, searchKeys ); }</span>
+
+    /**
+     *  This method returns {@link Device} instances matching
+     *  the given search parameters.
+     *
+     * @param deviceType The device type class which should be found.
+     * @param searchKeys The search parameter and name of the requested {@link Device} instance.
+     * @param &lt;T&gt; The value super types of the tensors stored on the requested device.
+     * @param &lt;D&gt; The device type parameter.
+     * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
+     */
+    static &lt;T, D extends Device&lt;T&gt;&gt; D find( Class&lt;D&gt; deviceType, String... searchKeys )
+    {
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if ( deviceType == CPU.class ) return (D) CPU.get();</span>
+        String key;
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        if ( searchKeys.length == 0 ) key = &quot;&quot;;</span>
+<span class="fc" id="L98">        else key = String.join(&quot; &quot;, searchKeys).toLowerCase();</span>
+
+<span class="fc" id="L100">        boolean justTakeFirstOne = key.equals(&quot;first&quot;);</span>
+
+<span class="fc" id="L102">        boolean probablyWantsGPU = Stream.of(</span>
+                                        &quot;gpu&quot;, &quot;nvidia&quot;, &quot;amd&quot;, &quot;intel&quot;, &quot;opencl&quot;, &quot;fpga&quot;, &quot;radeon&quot;, &quot;cuda&quot;, &quot;apu&quot;, &quot;graphics&quot;
+                                    )
+<span class="fc" id="L105">                                    .anyMatch(key::contains);</span>
+
+<span class="fc" id="L107">        double desireForCPU = Stream.of(&quot;jvm&quot;,&quot;native&quot;,&quot;host&quot;,&quot;cpu&quot;,&quot;threaded&quot;)</span>
+<span class="fc" id="L108">                                    .mapToDouble( word -&gt; ParseUtil.similarity( word, key ) )</span>
+<span class="fc" id="L109">                                    .max()</span>
+<span class="fc" id="L110">                                    .orElse(0);</span>
+
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if ( probablyWantsGPU ) desireForCPU /= 10; // CPU instance is most likely not meant!</span>
+
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        for ( BackendExtension extension : Neureka.get().backend().getExtensions() ) {</span>
+<span class="fc" id="L115">            BackendExtension.DeviceOption found = extension.find( key );</span>
+<span class="pc bpc" id="L116" title="2 of 4 branches missed.">            if ( found != null &amp;&amp; (deviceType.isAssignableFrom( found.device().getClass() )) ) {</span>
+<span class="fc bfc" id="L117" title="All 4 branches covered.">                if ( found.confidence() &gt; desireForCPU || justTakeFirstOne )</span>
+<span class="fc" id="L118">                    return (D) found.device();</span>
+            }
+<span class="fc" id="L120">        }</span>
+
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if ( probablyWantsGPU )</span>
+<span class="nc" id="L123">            return null; // User wants OpenCL but cannot have it :/</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        else if ( deviceType.isAssignableFrom( CPU.class ) )</span>
+<span class="fc" id="L125">            return (D) CPU.get();</span>
+        else
+<span class="nc" id="L127">            return null; // We don't know what the user wants, but we do not have it :/</span>
+    }
+
+    /**
+     *  This method signals the device to get ready for garbage collection.
+     *  A given device may have resources which ought to be freed when it is no longer used.
+     *  One may also choose to do resource freeing manually.
+     */
+    void dispose();
+
+    /**
+     *  Implementations of this method ought to store the value
+     *  of the given tensor and the &quot;parent&quot; tensor in whatever
+     *  formant suites the underlying implementation and or final type.
+     *  {@link Device} implementations are also tensor storages
+     *  which may also have to store tensors which are slices of bigger tensors.   &lt;br&gt;&lt;br&gt;
+     *
+     * @param tensor The tensor whose data ought to be stored.
+     * @return A reference this object to allow for method chaining. (factory pattern)
+     */
+    &lt;T extends V&gt; Device&lt;V&gt; store( Tsr&lt;T&gt; tensor, Tsr&lt;T&gt; parent );
+
+    /**
+     *  Use this to check if a tensor is stored on this {@link Device}!  &lt;br&gt;&lt;br&gt;
+     *
+     * @param tensor The tensor which may or may not be stored on this {@link Device}.
+     * @param &lt;T&gt; The type parameter for the value type of the tensor, which must be supported by this {@link Device}.
+     * @return The truth value determining if the provided tensor is stored on this {@link Device}.
+     */
+    &lt;T extends V&gt; boolean has( Tsr&lt;T&gt; tensor );
+
+    /**
+     *  Use this to remove the provided tensor from this {@link Device}!  &lt;br&gt;&lt;br&gt;
+     *
+     * @param tensor The tensor which ought to be removed from this {@link Device}.
+     * @param &lt;T&gt; The type parameter for the value type of the tensor, which must be supported by this {@link Device}.
+     * @return This very instance to allow for method chaining.
+     */
+    &lt;T extends V&gt; Device&lt;V&gt; free( Tsr&lt;T&gt; tensor );
+
+    /**
+     *  This method exposes the tensor access API for reading from or writing to
+     *  a tensor stored on this device.
+     *  This method may return null if this device does not support
+     *  accessing stored tensors.
+     *
+     * @param tensor The tensor whose data ought to be accessed.
+     * @param &lt;T&gt; The type parameter of the tensor for which the access API should be returned.
+     * @return The tensor access API for reading from or writing to a tensor stored on this device.
+     */
+    &lt;T extends V&gt; Access&lt;T&gt; access( Tsr&lt;T&gt; tensor );
+
+    /**
+     *  Implementations of this represent the access to tensors stored on a device
+     *  in order to read from or write to said tensor.
+     *
+     * @param &lt;V&gt; The type parameter of the tensor accessed by an instance of this.
+     */
+    interface Access&lt;V&gt; {
+        Writer write( V item );
+        Writer writeFrom( Object array, int offset );
+        /**
+         *  Use this method to write data to the provided tensor, given that
+         *  the tensor is already stored on this device!                         &lt;br&gt;&lt;br&gt;
+         *
+         * @param array The data inn the form of a primitive array.
+         */
+<span class="fc" id="L194">        default void writeFrom( Object array ) { this.writeFrom( array, 0 ).fully(); }</span>
+        V readAt( int index );
+        &lt;A&gt; A readArray( Class&lt;A&gt; arrayType, int start, int size );
+        Object readAll( boolean clone );
+        int getDataSize();
+
+        /**
+         *  Use this to perform some custom memory cleanup for when the accessed {@link Tsr} gets garbage collected.   &lt;br&gt;&lt;br&gt;
+         *
+         * @param action The {@link Runnable} action which ought to be performed when the tensor gets garbage collected.
+         */
+        void cleanup( Runnable action );
+
+        /**
+         *  This method automatically called within the {@link AbstractTensor.Unsafe#setNDConf(NDConfiguration)} method
+         *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
+         *  given {@link Device} implementation... &lt;br&gt;&lt;br&gt;
+         */
+        void updateNDConf();
+    }
+
+    /**
+     *  Instances of this complete a request for writing to an accessed tensor stored on a device.
+     *  One may write at a particular position in a tensor, a range of positions or write
+     *  to every possible value.
+     */
+    interface Writer {
+<span class="fc" id="L221">        default void at(int index) { intoRange(index, index+1); }</span>
+        void intoRange(int start, int limit);
+        void fully();
+    }
+
+    /**
+     *  This method is used internally to give {@link Device} implementations the opportunity
+     *  to perform some exception handling before the {@link ExecutionCall} will be dispatched.
+     *  Use this for debugging when doing custom backend operations.
+     *
+     * @param call The {@link ExecutionCall} which should be approved by this {@link Device} before execution.
+     * @return This very instance to allow for method chaining.
+     */
+    Device&lt;V&gt; approve( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call );
+
+    Collection&lt;Tsr&lt;V&gt;&gt; getTensors();
+
+    Operation optimizedOperationOf( Function function, String name );
+
+    default Function optimizedFunctionOf( Function function, String name ) {
+<span class="fc" id="L241">        Operation optimizedOperation = optimizedOperationOf( function, name );</span>
+<span class="fc" id="L242">        BackendContext currentContext = Neureka.get().backend();</span>
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">        if ( !currentContext.hasOperation( optimizedOperation ) )</span>
+<span class="fc" id="L244">            currentContext.addOperation( optimizedOperation );</span>
+
+<span class="fc" id="L246">        return new FunctionBuilder( currentContext )</span>
+<span class="fc" id="L247">                            .build(</span>
+                                    optimizedOperation,
+<span class="fc" id="L249">                                    function.numberOfArgs(),</span>
+<span class="fc" id="L250">                                    function.isDoingAD()</span>
+                            );
+    }
+
+    /**
+     *  This is a very simple fluent API for temporarily storing a number
+     *  of tensors on this {@link Device}, executing a provided lambda action,
+     *  and then migrating all the tensors back to their original devices.              &lt;br&gt;&lt;br&gt;
+     *
+     * @param first The first tensor among all passed tensors which ought to be
+     *              stored temporarily on this {@link Device}.
+     * @param rest Any number of other tensors passed to this method to be
+     *             stored temporarily on this {@link Device}.
+     *
+     * @return A simple lambda runner which will migrate the tensors passed to this method to
+     *         this very {@link Device}, execute the provided lambda, and then  migrate all the
+     *         tensors back to their original devices!
+     */
+    default In borrow( Tsr&lt;V&gt; first, Tsr&lt;V&gt;... rest ) {
+<span class="fc" id="L269">        List&lt;Tsr&lt;V&gt;&gt; tensors = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">        if ( first != null ) tensors.add( first );</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">        if ( rest.length &gt; 0 )</span>
+<span class="fc" id="L272">            tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );</span>
+<span class="fc" id="L273">        Device&lt;?&gt; thisDevice = this;</span>
+<span class="fc" id="L274">        return new In() {</span>
+            @Override
+            public &lt;R&gt; R in( Supplier&lt;R&gt; lambda ) {
+<span class="fc" id="L277">                List&lt;Device&lt;?&gt;&gt; devices = tensors.stream().map( Tsr::getDevice ).collect( Collectors.toList() );</span>
+<span class="fc bfc" id="L278" title="All 2 branches covered.">                for ( Tsr&lt;V&gt; t : tensors ) t.to( thisDevice );</span>
+<span class="fc" id="L279">                R result = lambda.get();</span>
+<span class="fc bfc" id="L280" title="All 2 branches covered.">                for ( int i = 0; i &lt; tensors.size(); i++ ) {</span>
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">                    if ( devices.get( i ) != null ) tensors.get( i ).to( devices.get( i ) );</span>
+                }
+<span class="fc" id="L283">                return result;</span>
+            }
+        };
+    }
+
+    /**
+     *  The second part of the method chain of the fluent API for executing
+     *  tensors on this {@link Device} temporarily.
+     */
+    interface In {
+        /**
+         *
+         * @param lambda The lambda during which the previously provided tensors should be stored on this {@link Device}.
+         * @param &lt;R&gt; The return type parameter of the lambda which is expected to be passed to
+         *            the context runner {@link In} returned by this method.
+         *
+         * @return
+         */
+        &lt;R&gt; R in( Supplier&lt;R&gt; lambda );
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

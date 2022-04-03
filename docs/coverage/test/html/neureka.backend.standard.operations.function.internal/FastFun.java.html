@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FastFun.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.operations.function.internal</a> &gt; <span class="el_source">FastFun.java</span></div><h1>FastFun.java</h1><pre class="source lang-java linenums">package neureka.backend.standard.operations.function.internal;
+
+<span class="nc" id="L3">public class FastFun {</span>
+
+    /**
+     *  This is extremely fast and has virtually the same accuracy as {@code 1 / Math.pow(x, 0.5)}.
+     */
+    public static double invSqrt(double x) {
+<span class="fc" id="L9">        double xhalf = 0.5d * x;</span>
+<span class="fc" id="L10">        long i = Double.doubleToLongBits(x);</span>
+<span class="fc" id="L11">        i = 0x5fe6ec85e7de30daL - (i &gt;&gt; 1);</span>
+<span class="fc" id="L12">        x = Double.longBitsToDouble(i);</span>
+<span class="fc" id="L13">        x *= (1.5d - xhalf * x * x);</span>
+<span class="fc" id="L14">        x *= (1.5d - xhalf * x * x); // more accuracy...</span>
+<span class="fc" id="L15">        x *= (1.5d - xhalf * x * x); // more accuracy...</span>
+<span class="fc" id="L16">        x *= (1.5d - xhalf * x * x); // more accuracy...</span>
+<span class="fc" id="L17">        return x;</span>
+    }
+
+    public static float invSqrt( float x ) {
+<span class="fc" id="L21">        float xhalf = 0.5f * x;</span>
+<span class="fc" id="L22">        int i = Float.floatToIntBits(x);</span>
+<span class="fc" id="L23">        i = 0x5f3759df - (i &gt;&gt; 1);</span>
+<span class="fc" id="L24">        x = Float.intBitsToFloat(i);</span>
+<span class="fc" id="L25">        x *= (1.5f - xhalf * x * x);</span>
+<span class="fc" id="L26">        x *= (1.5f - xhalf * x * x);</span>
+<span class="fc" id="L27">        return x;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

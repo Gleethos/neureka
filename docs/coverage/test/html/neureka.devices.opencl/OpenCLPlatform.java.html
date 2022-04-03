@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OpenCLPlatform.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.opencl</a> &gt; <span class="el_source">OpenCLPlatform.java</span></div><h1>OpenCLPlatform.java</h1><pre class="source lang-java linenums">package neureka.devices.opencl;
+
+import neureka.Neureka;
+import neureka.backend.api.Algorithm;
+import neureka.backend.api.ImplementationFor;
+import neureka.backend.api.Operation;
+import neureka.backend.standard.algorithms.*;
+import neureka.backend.standard.implementations.CLImplementation;
+import neureka.backend.standard.implementations.SimpleCLImplementation;
+import org.jocl.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+
+import static org.jocl.CL.*;
+
+public class OpenCLPlatform {
+
+<span class="fc" id="L20">    private final static Logger _LOG = LoggerFactory.getLogger( OpenCLPlatform.class );</span>
+
+    private final cl_platform_id _pid;
+    private final cl_context _context;
+
+    private final Map&lt;cl_device_id, OpenCLDevice&gt; _id_device;
+<span class="fc" id="L26">    private final Map&lt;String, cl_kernel&gt; _kernels = new HashMap&lt;&gt;();</span>
+
+
+    OpenCLPlatform(cl_platform_id pid)
+<span class="fc" id="L30">    {</span>
+<span class="fc" id="L31">        _id_device = new TreeMap&lt;&gt;(Comparator.comparingInt(NativePointerObject::hashCode));</span>
+<span class="fc" id="L32">        _pid = pid;</span>
+        // Obtain the number of devices for the current platform
+<span class="fc" id="L34">        int[] numDevices = new int[ 1 ];</span>
+<span class="fc" id="L35">        clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, 0, null, numDevices);</span>
+<span class="fc" id="L36">        cl_device_id[] devicesArray = new cl_device_id[numDevices[ 0 ]];</span>
+<span class="fc" id="L37">        clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, numDevices[ 0 ], devicesArray, null);</span>
+
+        // Enable exceptions and subsequently omit error checks in this sample
+<span class="fc" id="L40">        setExceptionsEnabled( true );</span>
+
+        // Initialize the context properties
+<span class="fc" id="L43">        cl_context_properties contextProperties = new cl_context_properties();</span>
+<span class="fc" id="L44">        contextProperties.addProperty(CL_CONTEXT_PLATFORM, pid);</span>
+
+        // Create a context for the selected device
+<span class="fc" id="L47">        _context = clCreateContext(</span>
+                contextProperties, devicesArray.length, devicesArray,
+                null, null, null
+        );
+
+<span class="fc" id="L52">        List&lt;cl_device_id&gt; successfullyLoaded = new ArrayList&lt;&gt;();</span>
+
+        // Collect all devices of this platform
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        for (cl_device_id did : devicesArray) {</span>
+            try {
+<span class="fc" id="L57">                OpenCLDevice clDevice = OpenCLDevice.newInstanceOf(this, did);</span>
+<span class="fc" id="L58">                _id_device.put(did, clDevice);</span>
+<span class="fc" id="L59">                successfullyLoaded.add(did);</span>
+<span class="nc" id="L60">            } catch ( Exception e ) {</span>
+<span class="nc" id="L61">                String message =</span>
+<span class="nc" id="L62">                        &quot;Failed to create '&quot;+OpenCLDevice.class.getSimpleName()+&quot;' instance for &quot; +</span>
+<span class="nc" id="L63">                        &quot;OpenCL device id '0x&quot; + Long.toHexString(did.getNativePointer()) + &quot;' under platform id '0x&quot;+Long.toHexString(pid.getNativePointer())+&quot;'!&quot;;</span>
+<span class="nc" id="L64">                _LOG.error(message, e);</span>
+<span class="fc" id="L65">            }</span>
+        }
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        if ( !successfullyLoaded.isEmpty() )</span>
+<span class="fc" id="L68">            _compile(successfullyLoaded.toArray(new cl_device_id[0]));</span>
+        else
+<span class="nc" id="L70">            _LOG.warn(</span>
+<span class="nc" id="L71">                &quot;'&quot;+this.getClass().getSimpleName()+&quot;' with id '&quot;+Long.toHexString(pid.getNativePointer())+&quot;' does not have a valid device attached to it!&quot;</span>
+            );
+<span class="fc" id="L73">    }</span>
+
+    public void recompile() {
+<span class="nc" id="L76">        List&lt;OpenCLDevice&gt; devices = getDevices();</span>
+<span class="nc" id="L77">        cl_device_id[] devicesArray = new cl_device_id[devices.size()];</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        for ( int i = 0; i &lt; devicesArray.length; i++) devicesArray[ i ] = devices.get( i ).getDeviceId();</span>
+<span class="nc" id="L79">        _compile(devicesArray);</span>
+<span class="nc" id="L80">    }</span>
+
+    /**
+     *   This is where all the kernels defined by all the {@link CLImplementation}
+     *   in the standard backend, will be compiled to OpenCL programs.
+     *   These kernels are usually based on pre-made template kernel source files...
+     *   They are supposed to be as general purpose as possible, meaning they use
+     *   a rather complicated indexing mechanism (see 'utility.cl').
+     *
+     * @param devicesArray The array of devices for which kernels should be compiled.
+     */
+    private void _compile( cl_device_id[] devicesArray )
+    {
+        //Reading all kernels!
+<span class="fc" id="L94">        List&lt;String&gt; templateSources = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L96">        String[] fileNames = {</span>
+                &quot;activation_template.cl&quot;,
+                &quot;broadcast_template.cl&quot;,
+                &quot;convolution_template.cl&quot;,
+                &quot;operator_template.cl&quot;,
+                &quot;scalarization_template.cl&quot;,
+                &quot;scalar_broadcast.cl&quot;,
+                &quot;utility.cl&quot;
+        };
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        for ( String name : fileNames )</span>
+<span class="fc" id="L106">            templateSources.add(Neureka.get().utility().readResource(&quot;kernels/&quot;+name));</span>
+
+<span class="fc" id="L108">        ArrayList&lt;String&gt; names = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L109">        ArrayList&lt;String&gt; sources = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        for ( int i = 0; i &lt; fileNames.length; i++ )</span>
+        {
+<span class="fc" id="L112">            String kernelSource = templateSources.get( i );</span>
+<span class="fc" id="L113">            boolean templateFound = false;</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">            if ( kernelSource.contains( &quot;__kernel&quot; ) )</span>
+            {
+<span class="fc" id="L116">                String[] parts = kernelSource.split(&quot;__kernel&quot;)[ 1 ].split(&quot;\\(&quot;)[ 0 ].split(&quot; &quot;);</span>
+
+<span class="fc" id="L118">                templateFound = parts[parts.length - 1].contains(&quot;template&quot;);</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">                if ( !templateFound ) names.add(parts[parts.length - 1]);</span>
+                else
+                {
+<span class="fc" id="L122">                    String preName = parts[ parts.length - 1 ].replace(&quot;template&quot;, &quot;&quot;);</span>
+                    // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0
+                    // Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
+                    // drn[di], src1[_i_of_idx_on_tln(prv_src1_cfg, rank)], src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]
+                    // default:  src1 o src2 -&gt; drain
+                    // inverse:  src1/fdrn &lt;- src2 &lt;- drain
+                    //===========================================================================
+<span class="fc" id="L129">                    Map&lt;String, String&gt; code = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L130">                    ImplementationFor&lt;OpenCLDevice&gt; impl = null;</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">                    for ( Operation type : Neureka.get().backend().getOperations() ) {</span>
+<span class="fc bfc" id="L132" title="All 4 branches covered.">                        if ( preName.contains(&quot;activation&quot;) &amp;&amp; type.supportsAlgorithm(Activation.class) )</span>
+<span class="fc" id="L133">                            impl = type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );</span>
+<span class="fc bfc" id="L134" title="All 4 branches covered.">                        else if ( preName.contains(&quot;operator&quot;) &amp;&amp; type.supportsAlgorithm(Operator.class) )</span>
+<span class="fc" id="L135">                            impl = type.getAlgorithm(Operator.class).getImplementationFor( OpenCLDevice.class );</span>
+<span class="fc bfc" id="L136" title="All 4 branches covered.">                        else if ( preName.contains(&quot;scalarization&quot;) &amp;&amp; type.supportsAlgorithm(Scalarization.class) )</span>
+<span class="fc" id="L137">                            impl = type.getAlgorithm(Scalarization.class).getImplementationFor( OpenCLDevice.class );</span>
+<span class="fc bfc" id="L138" title="All 4 branches covered.">                        else if ( preName.contains(&quot;broadcast&quot;) &amp;&amp; type.supportsAlgorithm(Broadcast.class) )</span>
+<span class="fc" id="L139">                            impl = type.getAlgorithm(Broadcast.class).getImplementationFor( OpenCLDevice.class );</span>
+<span class="fc bfc" id="L140" title="All 4 branches covered.">                        else if ( preName.contains(&quot;convolution&quot;) &amp;&amp; type.supportsAlgorithm(Convolution.class) )</span>
+<span class="fc" id="L141">                            impl = type.getAlgorithm(Convolution.class).getImplementationFor( OpenCLDevice.class );</span>
+<span class="fc" id="L142">                        else if (</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">                                type.supportsAlgorithm(FunAlgorithm.class)</span>
+                                &amp;&amp;
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">                                preName.contains(type.getAlgorithm(FunAlgorithm.class).getName())</span>
+                        ) { // TODO: cover!
+<span class="nc" id="L147">                            impl = type.getAlgorithm(FunAlgorithm.class).getImplementationFor( OpenCLDevice.class );</span>
+                        }
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                        if ( impl instanceof CLImplementation ) {</span>
+<span class="fc" id="L150">                            KernelCode kernelCode = ((CLImplementation) impl).getKernelCode();</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">                            if ( kernelCode.getCode() != null )</span>
+<span class="fc" id="L152">                                code.put( kernelCode.getName(), kernelCode.getCode() );</span>
+                        }
+<span class="fc" id="L154">                    }</span>
+<span class="fc" id="L155">                    code.forEach( ( n, s ) -&gt; {</span>
+<span class="fc" id="L156">                                names.add( n );</span>
+<span class="fc" id="L157">                                sources.add( s );</span>
+<span class="fc" id="L158">                            }</span>
+                    );
+                }
+            }
+<span class="fc bfc" id="L162" title="All 2 branches covered.">            if ( !templateFound ) sources.add( kernelSource );</span>
+        }
+
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        for ( Operation type : Neureka.get().backend().getOperations() ) {</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">            for (Algorithm&lt;?&gt; algorithm : type.getAllAlgorithms()) {</span>
+<span class="fc" id="L167">                ImplementationFor&lt;OpenCLDevice&gt; impl = algorithm.getImplementationFor(OpenCLDevice.class);</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">                if ( impl instanceof CLImplementation ) {</span>
+<span class="fc" id="L169">                    CLImplementation cli = ((CLImplementation) impl);</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">                    if ( cli instanceof SimpleCLImplementation) {</span>
+<span class="fc" id="L171">                        names.add(((SimpleCLImplementation) cli).getKernelCode(  ).getName());</span>
+<span class="fc" id="L172">                        sources.add(((SimpleCLImplementation) cli).getKernelCode().getCode());</span>
+                    }
+                }
+            }
+<span class="fc" id="L176">        }</span>
+
+        // Create the program
+<span class="fc" id="L179">        cl_program cpProgram = clCreateProgramWithSource(</span>
+                _context,
+<span class="fc" id="L181">                sources.size(),</span>
+<span class="fc" id="L182">                sources.toArray( new String[ 0 ] ),</span>
+                null,
+                null
+        );
+
+        // Build the program
+<span class="fc" id="L188">        int err = clBuildProgram(</span>
+                cpProgram,
+                devicesArray.length,
+                devicesArray,
+                &quot;-cl-mad-enable&quot;,
+                null,
+                null
+        );
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">        if ( err != CL_SUCCESS )</span>
+<span class="nc" id="L197">            _LOG.error(&quot;Failed to compile the OpenCL code of the current context. Error code: '&quot;+err+&quot;'.&quot;);</span>
+
+        //TODO: check compilation errors!
+
+        // Create the kernels
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        for ( String name : names )</span>
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">            if ( name != null ) _kernels.put( name, clCreateKernel( cpProgram, name, null ) );</span>
+<span class="fc" id="L204">    }</span>
+
+    public List&lt;OpenCLDevice&gt; getDevices() {
+<span class="fc" id="L207">        List&lt;OpenCLDevice&gt; devices = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L208">        _id_device.forEach( ( k, v ) -&gt; devices.add( v ) );</span>
+<span class="fc" id="L209">        return devices;</span>
+    }
+
+    /**
+     * @param did The {@link cl_device_id} representing an OpenCL supporting device.
+     * @return The truth value determining if this platform hosts the device represented by the provided id.
+     */
+<span class="fc" id="L216">    public boolean has( cl_device_id did ) { return _id_device.containsKey( did ); }</span>
+
+    public OpenCLDevice get( cl_device_id did ) {
+<span class="fc" id="L219">        return _id_device.get( did );</span>
+    }
+
+    public void put( cl_device_id did, OpenCLDevice device ) {
+<span class="fc" id="L223">       _id_device.put( did, device );</span>
+<span class="fc" id="L224">    }</span>
+
+    public cl_kernel getKernel( String kernelName ) {
+<span class="fc" id="L227">        return _kernels.get( kernelName );</span>
+    }
+
+    public boolean hasKernel( String kernelName ) {
+<span class="fc" id="L231">        return _kernels.containsKey( kernelName );</span>
+    }
+
+    public cl_platform_id getPid() {
+<span class="nc" id="L235">        return _pid;</span>
+    }
+
+    public cl_context getContext() {
+<span class="fc" id="L239">        return _context;</span>
+    }
+
+    public void dispose() {
+<span class="fc" id="L243">        clReleaseContext( _context );</span>
+<span class="fc" id="L244">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L248">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
+                    &quot;pid=&quot; + _pid + &quot;,&quot; +
+                    &quot;context=&quot;+_context + &quot;,&quot; +
+<span class="fc" id="L251">                    &quot;kernels=[..&quot;+_kernels.size()+&quot;..]&quot; +</span>
+                &quot;]&quot;;
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

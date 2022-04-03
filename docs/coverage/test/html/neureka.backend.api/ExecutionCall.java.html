@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExecutionCall.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api</a> &gt; <span class="el_source">ExecutionCall.java</span></div><h1>ExecutionCall.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   ______                     _   _              _____      _ _
+  |  ____|                   | | (_)            / ____|    | | |
+  | |__  __  _____  ___ _   _| |_ _  ___  _ __ | |     __ _| | |
+  |  __| \ \/ / _ \/ __| | | | __| |/ _ \| '_ \| |    / _` | | |
+  | |____ &gt;  &lt;  __/ (__| |_| | |_| | (_) | | | | |___| (_| | | |
+  |______/_/\_\___|\___|\__,_|\__|_|\___/|_| |_|\_____\__,_|_|_|
+
+    A simple class which wraps essential arguments and context data
+    used for operation execution on Device instances.
+
+*/
+
+package neureka.backend.api;
+
+import neureka.Tsr;
+import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
+import neureka.devices.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+/**
+ *  This class is a simple container holding references to a targeted
+ *  {@link Device}, {@link Operation} and maybe some case specific
+ *  meta {@link neureka.calculus.args.Args} needed to execute
+ *  an array of input tensors which are also wrapped by this. &lt;br&gt;
+ *  &lt;br&gt;
+ *  This class is technically immutable, however the contents
+ *  of the input array may be modified in order to calculate a suitable output.
+ *  The meta arguments wrapped by this are responsible for storing operation specific variables
+ *  like for example an input index for calculating a partial derivative.
+ *  Certain operations might require other unique types of arguments... &lt;br&gt;
+ *
+ * @param &lt;D&gt; The Device implementation targeted by an instance of this ExecutionCall!
+*/
+public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt;
+{
+<span class="fc" id="L68">    private final static Logger _LOG = LoggerFactory.getLogger(ExecutionCall.class);</span>
+
+    /**
+     *  Use this factory method to build {@link ExecutionCall} instances in a readable fashion.
+     *
+     * @param tensors The input tensors for the {@link ExecutionCall}.
+     * @param &lt;D&gt; The device type parameter of the device which is targeted.
+     * @return A builder for an {@link ExecutionCall}.
+     */
+    public static &lt;D extends Device&lt;?&gt;&gt; Builder&lt;D&gt; of( Tsr&lt;?&gt;... tensors ) {
+<span class="fc" id="L78">        return new Builder&lt;D&gt;(tensors);</span>
+    }
+
+
+    /**
+     *  This is the operation type which will be applied to this execution call.
+     *  It contains multiple implementations, one of which might be applicable to this call...
+     */
+    private final Operation _operation;
+
+    /**
+     *  This Algorithm variable is the chosen algorithm for a given execution call instance.
+     *  The variable is initially null and will be chosen dynamically based on an access request
+     *  to the corresponding getter method for this variable.
+     *  So it is in essence a lazy load variable.
+     *  Choosing an algorithm occurs through the {@link ExecutionCall#_operation} variable,
+     *  which is of type {@link Operation} and contains multiple algorithms for different execution call scenarios...
+     */
+    private Algorithm&lt;?&gt; _algorithm;
+
+
+    private ExecutionCall(
+            D device,
+            Operation operation,
+            Tsr&lt;?&gt;[] tensors,
+            Algorithm&lt;?&gt; algorithm,
+            List&lt;Arg&gt; arguments
+    ) {
+<span class="fc" id="L106">        super( tensors, device, arguments );</span>
+<span class="fc" id="L107">        _operation = operation;</span>
+<span class="fc" id="L108">        _algorithm = algorithm;</span>
+<span class="fc" id="L109">        int thisArity = _tensors.length;</span>
+<span class="fc bfc" id="L110" title="All 4 branches covered.">        if ( _operation != null &amp;&amp; thisArity &lt; Math.abs(_operation.getArity()) ) {</span>
+<span class="fc" id="L111">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L112">                    &quot;Trying to instantiate an '&quot; + this.getClass().getSimpleName() + &quot;' with an arity &quot; +</span>
+                    &quot;of &quot; + thisArity + &quot;, which is not suitable for the targeted operation '&quot; +
+<span class="fc" id="L114">                    _operation.getClass().getSimpleName() + &quot;' with &quot; +</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">                    ( _operation.getArity() &lt; 0 ? &quot;a minimum &quot; : &quot;the expected &quot; ) +</span>
+<span class="fc" id="L116">                    &quot;arity of &quot;+Math.abs(_operation.getArity()) + &quot;.&quot;</span>
+            );
+        }
+<span class="fc" id="L119">    }</span>
+
+    /**
+     *  This returns the operation which will ultimately process this execution call.
+     *  It contains multiple algorithms and device specific implementations,
+     *  one of which might be applicable to this call... &lt;br&gt;&lt;br&gt;
+     *
+     * @return The {@link Operation} targeted by this call for execution.
+     */
+<span class="fc" id="L128">    public Operation getOperation() { return _operation; }</span>
+
+    /**
+     *  Use this to produce a clone with a new array of input tensors.
+     *
+     * @param inputs The new array of input tensors for the new {@link ExecutionCall} returned by this.
+     * @return A new {@link ExecutionCall} instance with the provided array of input tensors.
+     */
+    public ExecutionCall&lt;D&gt; withInputs( Tsr&lt;?&gt;... inputs ) {
+<span class="fc" id="L137">        return new ExecutionCall&lt;&gt;(</span>
+<span class="fc" id="L138">                   _device, _operation, inputs, _algorithm, _arguments.getAll(Arg.class)</span>
+               );
+    }
+
+    /**
+     *  Use this to produce a clone with a new set of meta arguments.
+     *
+     * @param args The new set of meta args for the new {@link ExecutionCall} returned by this.
+     * @return A new {@link ExecutionCall} instance with the provided set of meta arguments.
+     */
+    public ExecutionCall&lt;D&gt; withArgs( Arg&lt;?&gt;... args ) {
+<span class="fc" id="L149">        List&lt;Arg&gt; old = _arguments.getAll(Arg.class);</span>
+<span class="fc" id="L150">        old.addAll(Arrays.stream(args).collect(Collectors.toList()));</span>
+<span class="fc" id="L151">        return new ExecutionCall&lt;&gt;( _device, _operation, _tensors, _algorithm, old );</span>
+    }
+
+    /**
+     *  An {@link ExecutionCall} will either already have a targeted {@link Algorithm} defined
+     *  at instantiation or otherwise it will query the associated {@link Operation}
+     *  for an {@link Algorithm} best suitable for the state of this {@link ExecutionCall}.
+     *  Generally speaking, this method should only very rarely return null, however, if it
+     *  does, then this most definitely means that there is nor backend support
+     *  for this call for execution...
+     *
+     * @return The {@link Algorithm} suitable for this {@link ExecutionCall}.
+     */
+    public Algorithm&lt;?&gt; getAlgorithm() {
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        if ( _algorithm != null )</span>
+<span class="fc" id="L166">            return _algorithm;</span>
+        else
+<span class="fc" id="L168">            _algorithm = _operation.getAlgorithmFor( this );</span>
+
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        if ( _algorithm == null )</span>
+<span class="nc" id="L171">            _LOG.error(</span>
+<span class="nc" id="L172">                &quot;No suitable '&quot;+Algorithm.class.getSimpleName()+&quot;' implementation found for this '&quot;+this+&quot;'!&quot;</span>
+            );
+
+<span class="fc" id="L175">        return _algorithm;</span>
+    }
+
+    /**
+     *  This method queries the underlying {@link Operation} of this {@link ExecutionCall} to see
+     *  if forward mode auto differentiation can be performed.
+     *
+     * @return The truth value determining if forward mode auto differentiation can be performed for this.
+     */
+    public boolean allowsForward() {
+<span class="fc" id="L185">        Algorithm&lt;?&gt; algorithm = getAlgorithm();</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if ( algorithm != null )</span>
+<span class="fc" id="L187">            return algorithm.canPerformForwardADFor( this );</span>
+<span class="nc" id="L188">        return false;</span>
+    }
+
+    /**
+     *  This method queries the underlying {@link Operation} of this {@link ExecutionCall} to see
+     *  if backward mode auto differentiation can be performed.
+     *
+     * @return The truth value determining if backward mode auto differentiation can be performed for this.
+     */
+    public boolean allowsBackward() {
+<span class="fc" id="L198">        Algorithm&lt;?&gt; algorithm = getAlgorithm();</span>
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">        if ( algorithm != null )</span>
+<span class="fc" id="L200">            return algorithm.canPerformBackwardADFor( this );</span>
+<span class="nc" id="L201">        return false;</span>
+    }
+
+    public ADAgent getADAgentFrom( Function function, boolean forward ) {
+<span class="fc" id="L205">        return getAlgorithm().supplyADAgentFor( function, this, forward );</span>
+    }
+
+    /**
+     *  Warning! This is the only way to mutate the inner state of an {@link ExecutionCall}.
+     *  Only use this to set a suitable output tensor to be returned as result.
+     *
+     * @param i The index targeting the position where the provided tensor should be placed.
+     * @param t The {@link Tsr} which ought to be placed at position {@code i}.
+     */
+<span class="fc" id="L215">    public void setInput( int i, Tsr&lt;?&gt; t ) { _tensors[ i ] = t; }</span>
+
+
+    @Override
+    public String toString()
+    {
+<span class="fc" id="L221">        String algorithmString = &quot;?&quot;;</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">        if ( _algorithm != null )</span>
+<span class="nc" id="L223">            algorithmString = _algorithm.toString();</span>
+
+<span class="fc" id="L225">        return this.getClass().getSimpleName()+&quot;[&quot; +</span>
+                    &quot;inputs=&quot;         + &quot;[..&quot; + _tensors.length + &quot;..],&quot; +
+                    &quot;device=&quot;          + _device + &quot;,&quot; +
+                    &quot;operation=&quot;       + _operation + &quot;,&quot; +
+                    &quot;algorithm=&quot;       + algorithmString + &quot;,&quot; +
+<span class="fc" id="L230">                    &quot;arguments=[&quot;         + _arguments.getAll(Arg.class).stream().map( a -&gt; a.toString() ).collect(Collectors.joining(&quot;,&quot;)) + &quot;]&quot; +</span>
+                &quot;]&quot;;
+    }
+
+    /**
+     * @param &lt;D&gt; The type parameter for the device targeted by the {@link ExecutionCall} built by this builder.
+     */
+    public static class Builder&lt;D extends Device&lt;?&gt;&gt;
+    {
+        private final Tsr&lt;?&gt;[] _tensors;
+<span class="fc" id="L240">        private final List&lt;Arg&gt; _arguments = Stream.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1)).collect(Collectors.toList());</span>
+        private Operation _operation;
+        private Algorithm&lt;?&gt; _algorithm;
+
+<span class="fc" id="L244">        private Builder(Tsr&lt;?&gt;[] tensors) { _tensors = tensors; }</span>
+
+        public &lt;D extends Device&lt;?&gt;&gt; ExecutionCall&lt;D&gt; on( D device ) {
+<span class="fc" id="L247">            return new ExecutionCall&lt;&gt;( device, _operation, _tensors, _algorithm, _arguments );</span>
+        }
+
+        public Builder&lt;D&gt; running( Operation operation ) {
+<span class="fc" id="L251">            _operation = operation;</span>
+<span class="fc" id="L252">            return this;</span>
+        }
+
+        public Builder&lt;D&gt; algorithm( Algorithm&lt;?&gt; algorithm ) {
+<span class="fc" id="L256">            _algorithm = algorithm;</span>
+<span class="fc" id="L257">            return this;</span>
+        }
+
+        public Builder&lt;D&gt; andArgs( List&lt;Arg&gt; context ) {
+<span class="fc" id="L261">            _arguments.addAll(context);</span>
+<span class="fc" id="L262">            return this;</span>
+        }
+
+        public Builder&lt;D&gt; andArgs( Arg&lt;?&gt;... context ) {
+<span class="fc" id="L266">            return andArgs(Arrays.stream(context).collect(Collectors.toList()));</span>
+        }
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

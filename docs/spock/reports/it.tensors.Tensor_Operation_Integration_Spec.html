@@ -1,0 +1,2592 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+h3 {
+  font-weight: 200;
+}
+
+.back-link {
+  font-size: small;
+}
+
+table {
+  margin: 5px;
+}
+
+div.date-test-ran {
+  font-size: small;
+  font-style: italic;
+}
+
+table.features-table {
+  width: 800px;
+}
+
+table.summary-table {
+  width: 800px;
+  text-align: left;
+  font-weight: bold;
+  font-size: small;
+}
+
+table.summary-table th {
+  background: lightblue;
+  padding: 6px;
+}
+
+table.summary-table td {
+  background: #E0E0E0;
+  padding: 6px;
+}
+
+pre.title {
+  font-family: inherit;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+pre.narrative {
+  font-family: inherit;
+  font-size: 18px;
+  font-style: italic;
+  line-height: 23px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+.feature-description {
+  font-size: large;
+  background: lightblue;
+  padding: 12px;
+}
+
+.feature-toc-error {
+  color: #F89A4F;
+}
+
+.feature-toc-failure {
+  color: #FF8080;
+}
+
+.feature-toc-ignored {
+  color: lightgray;
+}
+
+.feature-toc-pass {
+  color: green;
+}
+
+.feature-description.error {
+  background: #F89A4F;
+}
+
+.feature-description.failure {
+  background: #FF8080;
+}
+
+.feature-description.ignored {
+  background: lightgray;
+}
+
+.feature-description.ignored .reason {
+  color: black;
+  font-style: italic;
+  font-size: small;
+}
+
+div.extra-info {
+  font-size: small;
+}
+
+div.spec-headers {
+  margin: 4px;
+  font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+  margin-top: 6px;
+  padding: 10px 5px 5px 5px;
+  background-color: lemonchiffon;
+  color: black;
+  font-weight: 500;
+  font-size: small;
+  max-width: 50%;
+}
+
+div.pending-feature {
+  background-color: dodgerblue;
+  color: white;
+  margin-top: 6px;
+  padding: 5px;
+  text-align: center;
+  font-size: small;
+  max-width: 120px;
+}
+
+div.problem-description {
+  padding: 10px;
+  background: pink;
+  border-radius: 10px;
+}
+
+div.problem-header {
+  font-weight: bold;
+  color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table th {
+  background: lightblue;
+  padding: 5px;
+}
+
+table.ex-table td {
+  background: #E0E0E0;
+  padding: 2px 5px 2px 5px;
+}
+
+table td {
+  min-width: 50px;
+}
+
+col.block-kind-col {
+  width: 70px;
+}
+
+span.spec-header {
+  font-weight: bold;
+}
+
+div.spec-text {
+  /*color: green;*/
+}
+
+div.spec-status {
+  font-style: italic;
+}
+
+.ignored {
+  color: gray;
+}
+
+td.ex-result {
+  text-align: center;
+  background: white !important;
+}
+
+.ex-pass {
+  color: darkgreen;
+}
+
+.ex-fail {
+  color: red;
+  font-weight: bold;
+}
+
+div.block-kind {
+  margin: 2px;
+  font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+  background-color: whitesmoke;
+  padding: 10px;
+}
+
+pre.block-source.error {
+  background-color: pink;
+  color: red;
+  font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+  margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+  color: gray;
+  margin-top: -14px;
+}
+
+pre.block-source.post-error {
+  color: gray;
+}
+
+div.footer {
+  text-align: center;
+  font-size: small;
+}
+</style>
+</head>
+<body>
+<h2>Report for it.tensors.Tensor_Operation_Integration_Spec</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Sun Apr 03 14:55:55 CEST 2022 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>14</td>
+<td>14</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>20.604 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class='title'>Running Tensors through operations</pre>
+<pre class='narrative'>This specification covers the interaction 
+    between tensors and operations, more specifically it
+    runs tensors through operations and validates that the results are valid.</pre>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#168556918' class='feature-toc-pass'>Test "x-mul" (convolution) operator produces expected results. (Not on device)</a>
+</li>
+<li>
+<a href='#-2074180502' class='feature-toc-pass'>The "dot" operation reshapes and produces valid "x" operation result.</a>
+</li>
+<li>
+<a href='#-1114774697' class='feature-toc-pass'>The "matMul" operation produces the expected result.</a>
+</li>
+<li>
+<a href='#-1791627835' class='feature-toc-pass'>The "random" function/operation populates tensors randomly.</a>
+</li>
+<li>
+<a href='#311460304' class='feature-toc-pass'>The values of a randomly populated tensor seems to adhere to a gaussian distribution.</a>
+</li>
+<li>
+<a href='#-1742155683' class='feature-toc-pass'>New method "asFunction" of String added at runtime is callable by groovy and also works.</a>
+</li>
+<li>
+<a href='#-1167705094' class='feature-toc-pass'>New operator methods added to "SDK-types" at runtime are callable by groovy and also work.</a>
+</li>
+<li>
+<a href='#-513933212' class='feature-toc-pass'>Overloaded operation methods on tensors produce expected results when called.</a>
+</li>
+<li>
+<a href='#141960180' class='feature-toc-pass'>Manual convolution produces expected result.</a>
+</li>
+<li>
+<a href='#-726362696' class='feature-toc-pass'>Very simple manual convolution produces expected result.</a>
+</li>
+<li>
+<a href='#-338894098' class='feature-toc-pass'>Simple slice addition produces expected result.</a>
+</li>
+<li>
+<a href='#-2093975990' class='feature-toc-pass'>Auto reshaping and broadcasting works and the result can be back propagated.</a>
+</li>
+<li>
+<a href='#-1712186838' class='feature-toc-pass'>Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance</a>
+</li>
+<li>
+<a href='#-1970396224' class='feature-toc-pass'>Activation functions work across types on slices and non sliced tensors.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='168556918'>
+<span>Test "x-mul" (convolution) operator produces expected results. (Not on device)</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+<div class='extra-info'>
+<ul>
+<li>
+<div>
+            The 'x' operator performs convolution on the provided operands.
+        </div>
+</li>
+<li>
+<div>
+            The 'x' operator performs convolution on the provided operands.
+        </div>
+</li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Gradient auto apply for tensors in ue is set to false.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Tensor legacy view is set to true.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Two new 3D tensor instances with the shapes: [2x3x1] &amp; [1x3x2].</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var x = Tsr.of(new int[]{2, 3, 1},
+    new double[]{
+            3,  2, -1,
+            -2,  2,  4
+    }
+)
+.unsafe.toType(type)
+var y = Tsr.of(new int[]{1, 3, 2},
+    new double[]{
+            4, -1,
+            3,  2,
+            3, -1
+    }
+)
+.unsafe.toType(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The x-mul result is being instantiated by passing a simple equation to the tensor constructor.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var z = Tsr.of("I0xi1", x, y)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The result contains the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>z.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>z = Tsr.of(new Object[]{x, "x", y})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The result contains the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>z.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>[2x1x2]:(15.0, 2.0, 10.0, 2.0)</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>[2x1x2]:(15.0, 2.0, 10.0, 2.0)</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-2074180502'>
+<span>The "dot" operation reshapes and produces valid "x" operation result.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Two multi-dimensional tensors.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var a = Tsr.of([1, 4, 4, 1   ], 4f..12f).unsafe.toType(type)
+var b = Tsr.of([1, 3, 5, 2, 1], -5d..3d).unsafe.toType(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The "dot" method is being called on "a" receiving "b"...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var c = a.convDot(b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The result tensor contains the expected shape.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c.toString().contains("(4x2x5x2)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>c.valueClass == type</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1114774697'>
+<span>The "matMul" operation produces the expected result.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Two 2-dimensional tensors.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var a = Tsr.of(Double.class).withShape(M, K).andFill(A).unsafe.toType(type)
+var b = Tsr.of(Double.class).withShape(K, N).andFill(B).unsafe.toType(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The "matMul" method is being called on "a" receiving "b"...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var c = a.matMul(b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The result tensor contains the expected shape and values.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c.toString() == "(${M}x${N}):$expectedC"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>c.valueClass == type</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>We use the following data and matrix dimensions!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>A</th>
+<th class='ex-header'>B</th>
+<th class='ex-header'>M</th>
+<th class='ex-header'>K</th>
+<th class='ex-header'>N</th>
+<th class='ex-header'>expectedC</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>[4.0, 3.0, 2.0, 1.0]</td>
+<td class='ex-value'>[-0.5, 1.5, 1.0, -2.0]</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[1.0, 0.0, 0.0, 1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>[0.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[2.0, 3.0, -1.0, -1.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>[4.0, 3.0, 2.0, 1.0]</td>
+<td class='ex-value'>[-0.5, 1.5, 1.0, -2.0]</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[1.0, 0.0, 0.0, 1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>[0.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[2.0, 3.0, -1.0, -1.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>6/6 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1791627835'>
+<span>The "random" function/operation populates tensors randomly.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>var t = Tsr.of(type).withShape(2,4).all(-42)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>var f = Function.of('random(I[0])')</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>t.valueClass == type</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>var r = f(t)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>r === t</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>( r.unsafe.data as float[] ) == [1.0588075, 1.4017555, 1.2537496, -1.3897222, 1.0374786, 0.743316, 1.1692946, 1.3977289] as float[]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>r = f.callWith(Arg.Seed.of(42)).call(t)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>r === t</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>( r.unsafe.data as float[] ) == [2.2639139286289724, -0.2763464310754003, 0.3719153742868813, -0.9768504740489802, 0.5154099159307729, 1.1608137295804097, 2.1905023977046336, -0.5449569795660217] as float[]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='311460304'>
+<span>The values of a randomly populated tensor seems to adhere to a gaussian distribution.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>var t = Tsr.of(type).withShape(20, 40, 20).all(0)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>var f = Function.of('random(I[0])')</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>f.callWith(Arg.Seed.of(-73L)).call(t)
+var stats = new Statistics( t.unsafe.data as double[] )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>-0.05d &lt; stats.mean &amp;&amp; stats.mean &lt; 0.05d</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>0.875d &lt; stats.variance &amp;&amp; stats.variance &lt; 1.125d</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1742155683'>
+<span>New method "asFunction" of String added at runtime is callable by groovy and also works.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We create two tensors and convert them to a desired type.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var a = Tsr.of([1,2], [3d, 2d]).unsafe.toType(type)
+var b = Tsr.of([2,1], [-1f, 4f]).unsafe.toType(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We prepare bindings for the Groovy shell.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Binding binding = new Binding()
+binding.setVariable('a', a)
+binding.setVariable('b', b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The tensors have the type...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>a.valueClass == type
+b.valueClass == type</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The groovy code is being evaluated.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var c = new GroovyShell(binding).evaluate((code)) as Tsr</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The resulting tensor (toString) will contain the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>c.valueClass == type</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>code</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>"I[0]xI[1]".asFunction()([a, b])</td>
+<td class='ex-value'>(2x2):[-3.0, -2.0, 12.0, 8.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>"I[0]xI[1]"[a, b]</td>
+<td class='ex-value'>(2x2):[-3.0, -2.0, 12.0, 8.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>"i0 x i1"%[a, b]</td>
+<td class='ex-value'>(2x2):[-3.0, -2.0, 12.0, 8.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>"i0"%a</td>
+<td class='ex-value'>(1x2):[3.0, 2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>"I[0]xI[1]".asFunction()([a, b])</td>
+<td class='ex-value'>(2x2):[-3.0, -2.0, 12.0, 8.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>"I[0]xI[1]"[a, b]</td>
+<td class='ex-value'>(2x2):[-3.0, -2.0, 12.0, 8.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>"i0 x i1"%[a, b]</td>
+<td class='ex-value'>(2x2):[-3.0, -2.0, 12.0, 8.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>"i0"%a</td>
+<td class='ex-value'>(1x2):[3.0, 2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>8/8 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1167705094'>
+<span>New operator methods added to "SDK-types" at runtime are callable by groovy and also work.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().tensors({it.hasSlimNumbers=true})
+Tsr a = Tsr.of(5d).unsafe.toType(type)
+Tsr b = Tsr.of(3f).unsafe.toType(type)
+Binding binding = new Binding()
+binding.setVariable('a', a)
+binding.setVariable('b', b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>...calling methods on types like Double and Integer that receive Tsr instances...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr c = new GroovyShell(binding).evaluate((code)) as Tsr</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The resulting tensor (toString) will contain the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c.toString().endsWith("[$expected]")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>code</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>(2+a)</td>
+<td class='ex-value'>7</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>(2*b)</td>
+<td class='ex-value'>6</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>(6/b)</td>
+<td class='ex-value'>2</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>(2^b)</td>
+<td class='ex-value'>8</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>(2**b)</td>
+<td class='ex-value'>8</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>(4-a)</td>
+<td class='ex-value'>-1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>(2.0+a)</td>
+<td class='ex-value'>7</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>(2.0*b)</td>
+<td class='ex-value'>6</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>(6.0/b)</td>
+<td class='ex-value'>2</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>(2.0^b)</td>
+<td class='ex-value'>8</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>(2.0**b)</td>
+<td class='ex-value'>8</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>(4.0-a)</td>
+<td class='ex-value'>-1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>(2+a)</td>
+<td class='ex-value'>7</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>(2*b)</td>
+<td class='ex-value'>6</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>(6/b)</td>
+<td class='ex-value'>2</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>(2^b)</td>
+<td class='ex-value'>8</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>(2**b)</td>
+<td class='ex-value'>8</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>(4-a)</td>
+<td class='ex-value'>-1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>(2.0+a)</td>
+<td class='ex-value'>7</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>(2.0*b)</td>
+<td class='ex-value'>6</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>(6.0/b)</td>
+<td class='ex-value'>2</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>(2.0^b)</td>
+<td class='ex-value'>8</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>(2.0**b)</td>
+<td class='ex-value'>8</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>(4.0-a)</td>
+<td class='ex-value'>-1</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>24/24 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-513933212'>
+<span>Overloaded operation methods on tensors produce expected results when called.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+Tsr a = Tsr.of(2d).setRqsGradient(true)
+Tsr b = Tsr.of(-4d)
+Tsr c = Tsr.of(3d).setRqsGradient(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>( a / a                     ).toString().contains("[1]:(1.0)")
+( c % a                     ).toString().contains("[1]:(1.0)")
+( ( ( b / b ) ^ c % a ) * 3 ).toString().contains("[1]:(3.0)")
+( a *= b                    ).toString().contains("(-8.0)")
+( a += -c                   ).toString().contains("(-11.0)")
+( a -= c                    ).toString().contains("(-14.0)")
+( a /= Tsr.of(2d)     ).toString().contains("(-7.0)")
+( a %= c                    ).toString().contains("(-1.0)")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='141960180'>
+<span>Manual convolution produces expected result.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
+Tsr a = Tsr.of([100, 100], 3d..19d)
+Tsr x = a[1..-2,0..-1]
+Tsr y = a[0..-3,0..-1]
+Tsr z = a[2..-1,0..-1]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr rowconvol = x + y + z
+Tsr k = rowconvol[0..-1,1..-2]
+Tsr v = rowconvol[0..-1,0..-3]
+Tsr j = rowconvol[0..-1,2..-1]
+Tsr u = a[1..-2,1..-2]
+Tsr colconvol = k + v + j - 9 * u
+String xAsStr = x.toString()
+String yAsStr = y.toString()
+String zAsStr = z.toString()
+String rcAsStr = rowconvol.toString()
+String kAsStr = k.toString()
+String vAsStr = v.toString()
+String jAsStr = j.toString()
+String uAsStr = u.toString()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert xAsStr.contains("(98x100)")
+assert xAsStr.contains("):[18.0, 19.0, 3.0, 4.0, 5.0")
+assert yAsStr.contains("(98x100)")
+assert yAsStr.contains("):[3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0")
+assert zAsStr.contains("(98x100)")
+zAsStr.contains("):[16.0, 17.0, 18.0, 19.0, 3.0")
+assert rcAsStr.contains("(98x100)")
+assert rcAsStr.contains("):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0")
+assert kAsStr.contains("(98x98)")
+kAsStr.contains("):[40.0, 26.0, 29.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0")
+assert vAsStr.contains("(98x98)")
+assert vAsStr.contains("):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0, 21.0")
+assert jAsStr.contains("(98x98)")
+jAsStr.contains("):[26.0, 29.0, 15.0, 18.0, 21.0, 24.0")
+assert uAsStr.contains("(98x98)")
+assert uAsStr.contains("):[19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, ")
+String ccAsStr = colconvol.toString()
+assert ccAsStr.contains("(98x98)")
+ccAsStr.contains("(98x98):[-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, " +
+"-34.0, -68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, -34.0, " +
+"-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, ... + 9554 more]")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-726362696'>
+<span>Very simple manual convolution produces expected result.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
+Tsr a = Tsr.of([4, 4], 0d..16d).to( device )
+Tsr x = a[1..-2,0..-1]
+Tsr y = a[0..-3,0..-1]
+Tsr z = a[2..-1,0..-1]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr rowconvol = x + y + z
+Tsr k = rowconvol[0..-1,1..-2]
+Tsr v = rowconvol[0..-1,0..-3]
+Tsr j = rowconvol[0..-1,2..-1]
+Tsr u = a[1..-2,1..-2]
+Tsr colconvol = k + v + j - 9 * u
+String xAsStr = x.toString()
+String yAsStr = y.toString()
+String zAsStr = z.toString()
+String rcAsStr = rowconvol.toString()
+String kAsStr = k.toString()
+String vAsStr = v.toString()
+String jAsStr = j.toString()
+String uAsStr = u.toString()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert xAsStr.contains("(2x4):[4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0]")
+assert yAsStr.contains("(2x4):[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]")
+assert zAsStr.contains("(2x4):[8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0]")
+assert rcAsStr.contains("(2x4):[12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0]")
+assert kAsStr.contains("(2x2):[15.0, 18.0, 27.0, 30.0]")
+assert vAsStr.contains("(2x2):[12.0, 15.0, 24.0, 27.0]")
+assert jAsStr.contains("(2x2):[18.0, 21.0, 30.0, 33.0]")
+assert uAsStr.contains("(2x2):[5.0, 6.0, 9.0, 10.0]")
+String ccAsStr = colconvol.toString()
+assert ccAsStr.contains("(2x2):[0.0, 0.0, 0.0, 0.0]")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used for tensor instantiation :</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>device</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2937de96480],platform=OpenCLPlatform@66e8adb1[pid=cl_platform_id[0x2937de962a0],context=cl_context[0x2937dea4ca0],kernels=[..46..]]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-338894098'>
+<span>Simple slice addition produces expected result.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
+Tsr a = Tsr.of([11, 11], 3d..19d).to( device )
+Tsr x = a[1..-2,0..-1]
+Tsr y = a[0..-3,0..-1]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr rowconvol = x + y
+String rcAsStr = rowconvol.toString({it.setRowLimit(50)})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert rcAsStr.contains("(9x11):[17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
+"26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
+"26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, ... + 49 more]")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used for tensor instantiation :</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>device</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2937de96480],platform=OpenCLPlatform@66e8adb1[pid=cl_platform_id[0x2937de962a0],context=cl_context[0x2937dea4ca0],kernels=[..46..]]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-2093975990'>
+<span>Auto reshaping and broadcasting works and the result can be back propagated.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>device</th>
+<th class='ex-header'>type</th>
+<th class='ex-header'>whichGrad</th>
+<th class='ex-header'>bShape</th>
+<th class='ex-header'>operation</th>
+<th class='ex-header'>cValue</th>
+<th class='ex-header'>wGradient</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure11@481b7626</td>
+<td class='ex-value'>9, 10, 11, 12</td>
+<td class='ex-value'>5, -2, 7, 3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure12@845373f</td>
+<td class='ex-value'>9, 10, 11, 12</td>
+<td class='ex-value'>5, -2, 7, 3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure13@1d591776</td>
+<td class='ex-value'>9, 10, 11, 12</td>
+<td class='ex-value'>5, -2, 7, 3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure14@7cc9fd21</td>
+<td class='ex-value'>9, 10, 11, 12</td>
+<td class='ex-value'>5, -2, 7, 3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure15@20e12ceb</td>
+<td class='ex-value'>8, 16, 24, 32</td>
+<td class='ex-value'>40, -16, 56, 24</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure16@346bc286</td>
+<td class='ex-value'>8, 16, 24, 32</td>
+<td class='ex-value'>40, -16, 56, 24</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure17@3fbc8d27</td>
+<td class='ex-value'>8, 16, 24, 32</td>
+<td class='ex-value'>40, -16, 56, 24</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure18@4d82e4f</td>
+<td class='ex-value'>8, 16, 24, 32</td>
+<td class='ex-value'>40, -16, 56, 24</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2, 1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure19@45ba95b0</td>
+<td class='ex-value'>9, 10, 12, 13</td>
+<td class='ex-value'>3, 10</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2, 1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure20@39f4c90</td>
+<td class='ex-value'>9, 10, 12, 13</td>
+<td class='ex-value'>3, 10</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure21@53cafc44</td>
+<td class='ex-value'>9, 10, 11, 12</td>
+<td class='ex-value'>13</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure22@22c979f8</td>
+<td class='ex-value'>9, 10, 11, 12</td>
+<td class='ex-value'>13</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure23@311128ca</td>
+<td class='ex-value'>9, 10, 11, 12</td>
+<td class='ex-value'>13</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure24@5b90b8c8</td>
+<td class='ex-value'>9, 10, 11, 12</td>
+<td class='ex-value'>13</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure25@221665df</td>
+<td class='ex-value'>9, 11, 11, 13</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure26@274c120d</td>
+<td class='ex-value'>9, 11, 11, 13</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure27@5a92721</td>
+<td class='ex-value'>9, 11, 11, 13</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure28@17475ecf</td>
+<td class='ex-value'>9, 11, 11, 13</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure29@160eef27</td>
+<td class='ex-value'>9, 11, 11, 13</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure30@35a5f58</td>
+<td class='ex-value'>9, 11, 11, 13</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure31@563b9692</td>
+<td class='ex-value'>9, 11, 11, 13</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure32@211da98f</td>
+<td class='ex-value'>9, 11, 11, 13</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure33@73f77ce7</td>
+<td class='ex-value'>-7, -7, -5, -5</td>
+<td class='ex-value'>-12, -1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure34@33273904</td>
+<td class='ex-value'>-7, -7, -5, -5</td>
+<td class='ex-value'>-12, -1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure35@5bdf8e5a</td>
+<td class='ex-value'>-7, -7, -5, -5</td>
+<td class='ex-value'>-12, -1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure36@2edc07ec</td>
+<td class='ex-value'>-7, -7, -5, -5</td>
+<td class='ex-value'>-12, -1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure37@1c75d471</td>
+<td class='ex-value'>-7, -7, -5, -5</td>
+<td class='ex-value'>-12, -1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure38@598a8f02</td>
+<td class='ex-value'>-7, -7, -5, -5</td>
+<td class='ex-value'>-12, -1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure39@61c102b0</td>
+<td class='ex-value'>-7, -7, -5, -5</td>
+<td class='ex-value'>-12, -1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure40@27ce7d0f</td>
+<td class='ex-value'>-7, -7, -5, -5</td>
+<td class='ex-value'>-12, -1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure41@3ffc7bed</td>
+<td class='ex-value'>7, 7, 5, 5</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure42@1cc7c2e</td>
+<td class='ex-value'>7, 7, 5, 5</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure43@382bcfb7</td>
+<td class='ex-value'>7, 7, 5, 5</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure44@85ff12d</td>
+<td class='ex-value'>7, 7, 5, 5</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure45@168ec2e8</td>
+<td class='ex-value'>7, 7, 5, 5</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure46@22fcf0c6</td>
+<td class='ex-value'>7, 7, 5, 5</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure47@1c66e542</td>
+<td class='ex-value'>7, 7, 5, 5</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GPU</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_11prov4_closure48@3eaf0a5</td>
+<td class='ex-value'>7, 7, 5, 5</td>
+<td class='ex-value'>12, 1</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>38/38 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1712186838'>
+<span>Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Neurekas view is set to legacy and three tensors of which one requires gradients.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+Tsr x = Tsr.of(3).setRqsGradient(true)
+Tsr b = Tsr.of(-4)
+Tsr w = Tsr.of(2)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr y = ( (x+b)*w )**2</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>y.toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>y = ((x+b)*w)^2</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>y.toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>y.backward(Tsr.of(1))</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr t2 = Tsr.of( "Ig[0]", [x] )
+Tsr t1 = Tsr.of( "Ig[0]", [y] )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>thrown(IllegalArgumentException)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>t2.toString() == "[1]:(-8.0)"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>t2 == x.gradient</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr[] trs = new Tsr[]{x}</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>def fun = new FunctionBuilder( Neureka.get().backend() ).build("Ig[0]", false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>fun(trs).toString() == "[1]:(-8.0)"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>trs[0] = y</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>fun = new FunctionBuilder( Neureka.get().backend() ).build("Ig[0]", false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>fun(trs)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>thrown(IllegalArgumentException)</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1970396224'>
+<span>Activation functions work across types on slices and non sliced tensors.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We create a function based on the provided expression.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var func = Function.of(funExpression)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We create 2 tensors storing the same values, one sliced and the other a normal tensor.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var t1 = Tsr.of(type).withShape(2, 3).andSeed("Tempeh")
+var t2 = Tsr.of(type).withShape(4, 5).all(0)[1..2, 1..3]
+t2[0..1, 0..2] = t1</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The types of both tensors should match what was provided during instantiation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t1.dataType == DataType.of(type)
+t1.valueClass == type
+t2.dataType == DataType.of(type)
+t2.valueClass == type</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We apply the function to both tensors...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var result1 = func(t1)
+var result2 = func(t2)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>result1.valueClass == type
+result2.valueClass == type</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The data of the first (non slice) tensor should be as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>result1.unsafe.data == expected instanceof Map ? expected['r1'] : expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>As well the value of the slice tensor (Its data would be a sparse array).</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>result2.value == expected instanceof Map ? expected['r2'] : expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>funExpression</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>tanh(i0)</td>
+<td class='ex-value'>[-0.2608431635405718, -0.6400224689534015, -0.15255723053856546, 0.1566537867655921, 0.5489211983894932, -0.17031712209680225]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>tanh(i0)</td>
+<td class='ex-value'>[-0.26084316, -0.64002246, -0.15255724, 0.15665378, 0.54892117, -0.17031713]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>tanh(i0)</td>
+<td class='ex-value'>[-1, -1, 1, -1, 1, -1]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>relu(i0)</td>
+<td class='ex-value'>[-0.0027019706408068795, -0.008329762613111082, -0.001543641184315801, 0.15861207834235577, 0.6567031992927272, -0.001728424711189524]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>relu(i0)</td>
+<td class='ex-value'>[-0.0027019705, -0.008329763, -0.0015436412, 0.15861207, 0.6567032, -0.0017284247]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>relu(i0)</td>
+<td class='ex-value'>[-7156386, -18495716, 248181051, -13634228, 919305478, -15169971]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>relu(i0*i0)</td>
+<td class='ex-value'>[0.07300645343782339, 0.6938494519078316, 0.023828281059158886, 0.025157791396081604, 0.43125909196130346, 0.029874519822505895]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>relu(i0*i0)</td>
+<td class='ex-value'>[0.07300645, 0.6938495, 0.023828283, 0.025157789, 0.43125907, 0.02987452]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>relu(i0*i0)</td>
+<td class='ex-value'>[988699588, -17870520, 141304729, 1260971300, 210951204, 1018550276]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>relu(i0-i0)</td>
+<td class='ex-value'>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>relu(i0-i0)</td>
+<td class='ex-value'>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>relu(i0-i0)</td>
+<td class='ex-value'>[0, 0, 0, 0, 0, 0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>relu(i0)-i0</td>
+<td class='ex-value'>[0.26749509343988104, 0.8246464986979971, 0.1528204772472643, 0.0, 0.0, 0.17111404640776287]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>relu(i0)-i0</td>
+<td class='ex-value'>[0.2674951, 0.82464653, 0.15282048, 0.0, 0.0, 0.17111404]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>relu(i0)-i0</td>
+<td class='ex-value'>[708482220, 1831075919, 0, 1349788550, 0, 1501827147]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>relu(-i0)+i0</td>
+<td class='ex-value'>[0.0, 0.0, 0.0, 0.15702595755893223, 0.6501361672998, 0.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>relu(-i0)+i0</td>
+<td class='ex-value'>[0.0, 0.0, 0.0, 0.15702595, 0.6501361, 0.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>relu(-i0)+i0</td>
+<td class='ex-value'>[0, 0, 245699240, 0, 910112423, 0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>relu(-i0)/i0</td>
+<td class='ex-value'>[-1.0, -1.0, -1.0, -0.01, -0.01, -1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>relu(-i0)/i0</td>
+<td class='ex-value'>[-1.0, -1.0, -1.0, -0.01, -0.01, -1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>relu(-i0)/i0</td>
+<td class='ex-value'>[-1, -1, 0, -1, 0, -1]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>relu(-i0-5)+i0*3</td>
+<td class='ex-value'>[-0.857889221601257, -2.540599021320214, -0.5115487141104245, 0.42425011424364373, 1.9135425658852545, -0.5667989886456676]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>relu(-i0-5)+i0*3</td>
+<td class='ex-value'>[-0.85788924, -2.540599, -0.51154876, 0.4242501, 1.9135424, -0.566799]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>relu(-i0-5)+i0*3</td>
+<td class='ex-value'>[-1431277217, 595824021, 742061342, 1568121735, -1546243917, 1260973055]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>abs(i0*10)%3</td>
+<td class='ex-value'>[2.7019706408068793, 2.3297626131110825, 1.5436411843158009, 1.5861207834235578, 0.5670319929272729, 1.7284247111895241]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>abs(i0*10)%3</td>
+<td class='ex-value'>[2.7019706, 2.3297625, 1.5436412, 1.5861207, 0.56703186, 1.7284248]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>abs(i0*10)%3</td>
+<td class='ex-value'>[2, 0, 1, 1, 2, 1]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>gaus(i0)*100%i0</td>
+<td class='ex-value'>[0.011693048642643422, 0.8192993419907051, 0.08721424132459399, 0.1277867634692304, 0.6121424058303924, 0.09210498892686086]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>gaus(i0)*100%i0</td>
+<td class='ex-value'>[0.011690378, 0.81929654, 0.087213635, 0.12778962, 0.6121441, 0.09210494]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>gaus(i0)*100%i0</td>
+<td class='ex-value'>[0, 0, 0, 0, 0, 0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>random(i0)</td>
+<td class='ex-value'>[r2:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.242396559265774, 0.23980663860290638, 0.4667980401594514, 0.0, 0.0, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], r1:[2.242396559265774, 0.23980663860290638, 0.4667980401594514, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>random(i0)</td>
+<td class='ex-value'>[r2:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.2423966, 0.23980664, 0.46679804, 0.0, 0.0, -1.0840396, 0.43090823, 1.0381081, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], r1:[2.2423966, 0.23980664, 0.46679804, -1.0840396, 0.43090823, 1.0381081]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>32/32 passed</div>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>

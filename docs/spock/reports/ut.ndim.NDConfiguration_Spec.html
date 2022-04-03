@@ -1,0 +1,580 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+h3 {
+  font-weight: 200;
+}
+
+.back-link {
+  font-size: small;
+}
+
+table {
+  margin: 5px;
+}
+
+div.date-test-ran {
+  font-size: small;
+  font-style: italic;
+}
+
+table.features-table {
+  width: 800px;
+}
+
+table.summary-table {
+  width: 800px;
+  text-align: left;
+  font-weight: bold;
+  font-size: small;
+}
+
+table.summary-table th {
+  background: lightblue;
+  padding: 6px;
+}
+
+table.summary-table td {
+  background: #E0E0E0;
+  padding: 6px;
+}
+
+pre.title {
+  font-family: inherit;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+pre.narrative {
+  font-family: inherit;
+  font-size: 18px;
+  font-style: italic;
+  line-height: 23px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+.feature-description {
+  font-size: large;
+  background: lightblue;
+  padding: 12px;
+}
+
+.feature-toc-error {
+  color: #F89A4F;
+}
+
+.feature-toc-failure {
+  color: #FF8080;
+}
+
+.feature-toc-ignored {
+  color: lightgray;
+}
+
+.feature-toc-pass {
+  color: green;
+}
+
+.feature-description.error {
+  background: #F89A4F;
+}
+
+.feature-description.failure {
+  background: #FF8080;
+}
+
+.feature-description.ignored {
+  background: lightgray;
+}
+
+.feature-description.ignored .reason {
+  color: black;
+  font-style: italic;
+  font-size: small;
+}
+
+div.extra-info {
+  font-size: small;
+}
+
+div.spec-headers {
+  margin: 4px;
+  font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+  margin-top: 6px;
+  padding: 10px 5px 5px 5px;
+  background-color: lemonchiffon;
+  color: black;
+  font-weight: 500;
+  font-size: small;
+  max-width: 50%;
+}
+
+div.pending-feature {
+  background-color: dodgerblue;
+  color: white;
+  margin-top: 6px;
+  padding: 5px;
+  text-align: center;
+  font-size: small;
+  max-width: 120px;
+}
+
+div.problem-description {
+  padding: 10px;
+  background: pink;
+  border-radius: 10px;
+}
+
+div.problem-header {
+  font-weight: bold;
+  color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table th {
+  background: lightblue;
+  padding: 5px;
+}
+
+table.ex-table td {
+  background: #E0E0E0;
+  padding: 2px 5px 2px 5px;
+}
+
+table td {
+  min-width: 50px;
+}
+
+col.block-kind-col {
+  width: 70px;
+}
+
+span.spec-header {
+  font-weight: bold;
+}
+
+div.spec-text {
+  /*color: green;*/
+}
+
+div.spec-status {
+  font-style: italic;
+}
+
+.ignored {
+  color: gray;
+}
+
+td.ex-result {
+  text-align: center;
+  background: white !important;
+}
+
+.ex-pass {
+  color: darkgreen;
+}
+
+.ex-fail {
+  color: red;
+  font-weight: bold;
+}
+
+div.block-kind {
+  margin: 2px;
+  font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+  background-color: whitesmoke;
+  padding: 10px;
+}
+
+pre.block-source.error {
+  background-color: pink;
+  color: red;
+  font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+  margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+  color: gray;
+  margin-top: -14px;
+}
+
+pre.block-source.post-error {
+  color: gray;
+}
+
+div.footer {
+  text-align: center;
+  font-size: small;
+}
+</style>
+</head>
+<body>
+<h2>Report for ut.ndim.NDConfiguration_Spec</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Sun Apr 03 14:55:39 CEST 2022 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>0.240 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#930145789' class='feature-toc-pass'>Various NDConfigurations behaviour exactly as their general purpose implementation.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='930145789'>
+<span>Various NDConfigurations behaviour exactly as their general purpose implementation.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>var ndc1 = SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset)
+var ndc2 = AbstractNDC.construct(shape, translation, indicesMap, spread, offset)
+var i1 = NDIterator.of(ndc1, NDIterator.NonVirtual.FALSE)
+var i2 = NDIterator.of(ndc2, NDIterator.NonVirtual.FALSE)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>ndc2.getClass()    == expected
+ndc1.rank()        == ndc2.rank()
+ndc1.size()        == ndc2.size()
+ndc1.shape()       == ndc2.shape()
+ndc1.translation() == ndc2.translation()
+ndc1.indicesMap()  == ndc2.indicesMap()
+ndc1.spread()      == ndc2.spread()
+ndc1.offset()      == ndc2.offset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>(0..ndc1.size()-1).collect({
+    ndc1.indicesOfIndex(it) == ndc2.indicesOfIndex(it)
+})
+.every()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>(0..ndc1.size()-1).collect({
+    ndc1.indexOfIndices(ndc1.indicesOfIndex(it)) == ndc2.indexOfIndices(ndc2.indicesOfIndex(it))
+})
+.every()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>(0..ndc1.size()-1).collect({
+    ndc1.indexOfIndex(it) == ndc2.indexOfIndex(it)
+})
+.every()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>(0..ndc1.size()-1).collect({
+    boolean matches = i1.get() == i2.get()
+    if ( it &lt; ndc1.size()-1 ) { i1.increment(); i2.increment() }
+    return matches
+})
+.every()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>(0..ndc1.size()-1).collect({
+    boolean matches = i1.get() == i2.get()
+    i1.decrement(); i2.decrement()
+    return matches
+})
+.every()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>shape</th>
+<th class='ex-header'>translation</th>
+<th class='ex-header'>indicesMap</th>
+<th class='ex-header'>spread</th>
+<th class='ex-header'>offset</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3, 8, 4]</td>
+<td class='ex-value'>[96, 32, 4, 1]</td>
+<td class='ex-value'>[96, 32, 4, 1]</td>
+<td class='ex-value'>[1, 1, 1, 1]</td>
+<td class='ex-value'>[0, 0, 0, 0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.simple.SimpleNDConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3, 8, 4]</td>
+<td class='ex-value'>[96, 200, 8, 1]</td>
+<td class='ex-value'>[96, 32, 4, 1]</td>
+<td class='ex-value'>[1, 1, 1, 1]</td>
+<td class='ex-value'>[0, 0, 0, 0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.reshaped.ReshapedNDConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3, 8, 4]</td>
+<td class='ex-value'>[96, 32, 4, 1]</td>
+<td class='ex-value'>[96, 92, 4, 1]</td>
+<td class='ex-value'>[1, 4, 1, 1]</td>
+<td class='ex-value'>[0, 0, 0, 0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.sliced.SlicedNDConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3, 8]</td>
+<td class='ex-value'>[24, 8, 1]</td>
+<td class='ex-value'>[24, 8, 1]</td>
+<td class='ex-value'>[1, 1, 1]</td>
+<td class='ex-value'>[0, 0, 0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.simple.Simple3DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3, 8]</td>
+<td class='ex-value'>[8, 24, 7]</td>
+<td class='ex-value'>[1, 2, 3]</td>
+<td class='ex-value'>[1, 1, 1]</td>
+<td class='ex-value'>[0, 0, 0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.reshaped.Reshaped3DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3, 8]</td>
+<td class='ex-value'>[8, 24, 7]</td>
+<td class='ex-value'>[1, 2, 3]</td>
+<td class='ex-value'>[1, 7, 1]</td>
+<td class='ex-value'>[0, 0, 0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.sliced.Sliced3DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3]</td>
+<td class='ex-value'>[3, 1]</td>
+<td class='ex-value'>[3, 1]</td>
+<td class='ex-value'>[1, 1]</td>
+<td class='ex-value'>[0, 0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.simple.Simple2DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3]</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>[1, 1]</td>
+<td class='ex-value'>[0, 0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.reshaped.Reshaped2DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3]</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>[3, 1]</td>
+<td class='ex-value'>[1, 1]</td>
+<td class='ex-value'>[0, 0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.reshaped.Reshaped2DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3]</td>
+<td class='ex-value'>[81, 42]</td>
+<td class='ex-value'>[3, 99]</td>
+<td class='ex-value'>[1, 1]</td>
+<td class='ex-value'>[0, 0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.reshaped.Reshaped2DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3]</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>[2, 1]</td>
+<td class='ex-value'>[7, 2]</td>
+<td class='ex-value'>[1, 8]</td>
+<td class='ex-value'>class neureka.ndim.config.types.sliced.Sliced2DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3]</td>
+<td class='ex-value'>[3, 1]</td>
+<td class='ex-value'>[3, 1]</td>
+<td class='ex-value'>[1, 1]</td>
+<td class='ex-value'>[6, 0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.sliced.Sliced2DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2, 3]</td>
+<td class='ex-value'>[3, 1]</td>
+<td class='ex-value'>[3, 1]</td>
+<td class='ex-value'>[1, 2]</td>
+<td class='ex-value'>[0, 0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.sliced.Sliced2DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[3]</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>[0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.simple.Simple1DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[42]</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>[0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.simple.Simple1DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[3]</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>[0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.reshaped.Reshaped1DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[30]</td>
+<td class='ex-value'>[8]</td>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>[0]</td>
+<td class='ex-value'>class neureka.ndim.config.types.reshaped.Reshaped1DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[2]</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>[1]</td>
+<td class='ex-value'>[5]</td>
+<td class='ex-value'>class neureka.ndim.config.types.sliced.Sliced1DConfiguration</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>18/18 passed</div>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>

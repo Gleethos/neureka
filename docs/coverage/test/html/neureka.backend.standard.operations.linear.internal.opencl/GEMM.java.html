@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GEMM.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.operations.linear.internal.opencl</a> &gt; <span class="el_source">GEMM.java</span></div><h1>GEMM.java</h1><pre class="source lang-java linenums">package neureka.backend.standard.operations.linear.internal.opencl;
+
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
+import neureka.devices.opencl.KernelCaller;
+import neureka.devices.opencl.OpenCLDevice;
+
+import java.util.function.Supplier;
+
+<span class="pc bpc" id="L11" title="1 of 2 branches missed.">public class GEMM implements ImplementationFor&lt;OpenCLDevice&gt; {</span>
+
+    @Override
+    public void run( ExecutionCall&lt;OpenCLDevice&gt; call) {
+
+<span class="fc" id="L16">            Tsr&lt;Float&gt; c = call.input(Float.class, 0);</span>
+<span class="fc" id="L17">            Tsr&lt;Float&gt; a = call.input(Float.class, 1);</span>
+<span class="fc" id="L18">            Tsr&lt;Float&gt; b = call.input(Float.class, 2);</span>
+
+<span class="fc" id="L20">            int M = a.shape(0);</span>
+<span class="fc" id="L21">            int K = a.shape(1);</span>
+<span class="fc" id="L22">            int N = b.shape(1);</span>
+
+<span class="fc" id="L24">            int K1 = b.shape(0);</span>
+
+<span class="pc bpc" id="L26" title="2 of 4 branches missed.">            assert K == K1;</span>
+
+<span class="fc" id="L28">            String kernelName = &quot;fast_CM_MM_&quot;+M+&quot;x&quot;+K+&quot;x&quot;+N+&quot;&quot;;</span>
+
+            // Determining optimal tile widths
+<span class="fc" id="L31">            int MW = 1;</span>
+<span class="fc" id="L32">            int KW = 1;</span>
+
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">            for ( int s : new int[]{16,8,4,2,1} )</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">            if ( M % s == 0 ) { MW = s; break; }</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">            for ( int s : new int[]{8,4,2,1} )</span>
+<span class="fc bfc" id="L37" title="All 4 branches covered.">            if ( N % s == 0 &amp;&amp; K % s == 0 ) { KW = s; break; }</span>
+
+<span class="fc" id="L39">            int NW = KW;</span>
+
+<span class="fc" id="L41">        int finalMW = MW;</span>
+<span class="fc" id="L42">        int finalKW = KW;</span>
+
+<span class="fc" id="L44">        Supplier&lt;String&gt; code = () -&gt;</span>
+<span class="fc" id="L45">                    &quot;   #define K &quot;+K+&quot;                                                                                 \n&quot; +</span>
+                    &quot;   #define N &quot;+N+&quot;                                                                                 \n&quot; +
+                    &quot;   #define MW &quot;+ finalMW +&quot;     // M tile Width                                                    \n&quot; +
+                    &quot;   #define NW &quot;+NW+&quot;     // N tile Width  -- NW &amp; KW should be the same !                          \n&quot; +
+                    &quot;   #define KW &quot;+ finalKW +&quot;     // K tile Width                                                    \n&quot; +
+<span class="fc" id="L50">                    &quot;   #define MT &quot;+(int)Math.floor(M/ finalMW)+&quot;   // MT is max for 'mt' (M tile count)               \n&quot; +</span>
+<span class="fc" id="L51">                    &quot;   #define KT &quot;+(int)Math.floor(K/ finalKW)+&quot;   // KT is max for 'kt' (K tile count)               \n&quot; +</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">                    &quot;   #define floatMW &quot;+(finalMW != 1 ? &quot;float&quot;+ finalMW : &quot;float&quot;)+&quot;                                 \n&quot; +</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">                    &quot;   #define floatKW &quot;+(finalKW != 1 ? &quot;float&quot;+ finalKW : &quot;float&quot;)+&quot;                                 \n&quot; +</span>
+                    &quot;   __kernel void &quot;+kernelName+&quot;(                                                                   \n&quot; +
+                    &quot;               const __global floatMW* restrict A,                                                 \n&quot; +
+                    &quot;               const __global floatKW* restrict B,                                                 \n&quot; +
+                    &quot;                     __global floatMW* C                                                           \n&quot; +
+                    &quot;   ) {{                                                                                            \n&quot; +
+                    &quot;       size_t mt    = get_global_id(0);    //global M-tile id                                      \n&quot; +
+                    &quot;       size_t nc    = get_global_id(1);    //global N-tile id                                      \n&quot; +
+                    &quot;       size_t batch = get_global_id(2);                                                            \n&quot; +
+                    &quot;                                                                                                   \n&quot; +
+                    &quot;       float AT[KW][MW]; // sub tiles                                                              \n&quot; +
+                    &quot;       float BT[NW][KW];                                                                           \n&quot; +
+                    &quot;       float CT[NW][MW];                                                                           \n&quot; +
+                    &quot;       #pragma unroll                                                                              \n&quot; +
+                    &quot;       for ( uint i=0; i&lt;NW*MW; ++i ) // zero CT tile                                              \n&quot; +
+                    &quot;           ((float*) CT)[i] = 0.0;                                                                 \n&quot; +
+                    &quot;       for ( uint kt=0; kt&lt;KT; ++kt )  // iterate over K-dim tiles                                 \n&quot; +
+                    &quot;       {{                                                                                          \n&quot; +
+                    &quot;           #pragma unroll                                                                          \n&quot; +
+                    &quot;           for ( uint k=0; k&lt;KW; ++k )  // every k-element inside K-dim tile                       \n&quot; +
+                    &quot;               *( (floatMW*) AT[k] ) = A[batch*K*MT + (kt*KW + k)*MT + mt]; // store M-Width floats\n&quot; +
+                    &quot;           #pragma unroll                                                                          \n&quot; +
+                    &quot;           for ( uint n=0; n&lt;NW; ++n )  // every n-element inside N-dim tile                       \n&quot; +
+                    &quot;               *( (floatKW*) BT[n] ) = B[batch*N*KT + (nc*NW + n)*KT + kt]; // store K-Width floats\n&quot; +
+                    &quot;           #pragma unroll                                                                          \n&quot; +
+                    &quot;           for ( uint k=0; k&lt;KW; ++k )                                                             \n&quot; +
+                    &quot;           #pragma unroll                                                                          \n&quot; +
+                    &quot;           for ( uint n=0; n&lt;NW; ++n )  // sub tiles multiplication                                \n&quot; +
+                    &quot;           #pragma unroll                                                                          \n&quot; +
+                    &quot;           for ( uint m=0; m&lt;MW; ++m )                                                             \n&quot; +
+                    &quot;               CT[n][m] += AT[k][m] * BT[n][k];                                                    \n&quot; +
+                    &quot;       }}                                                                                          \n&quot; +
+                    &quot;       #pragma unroll                                                                              \n&quot; +
+                    &quot;       for ( uint n = 0; n &lt; NW; ++n )                                                             \n&quot; +
+                    &quot;           C[ batch * N * MT + ( nc * NW + n ) * MT + mt ] += *( (floatMW*) CT[n] );               \n&quot; +
+                    &quot;   }}                                                                                                &quot;;
+
+            //return new KernelCode(kernelName, code);
+
+        KernelCaller caller =
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">             call.getDevice().hasAdHocKernel(kernelName)</span>
+<span class="nc" id="L94">                 ? call.getDevice().getAdHocKernel(kernelName)</span>
+<span class="fc" id="L95">                 : call.getDevice().compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);</span>
+
+<span class="fc" id="L97">        long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)</span>
+<span class="fc" id="L98">        long[] global = new long[]{(long) Math.floor(M/MW), (long) Math.floor(N/NW), 1 };</span>
+
+<span class="fc" id="L100">        caller.pass( a ).pass( b ).pass( c ).call( global, local );</span>
+<span class="fc" id="L101">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

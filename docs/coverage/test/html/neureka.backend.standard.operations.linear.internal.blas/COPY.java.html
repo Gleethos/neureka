@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>COPY.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.operations.linear.internal.blas</a> &gt; <span class="el_source">COPY.java</span></div><h1>COPY.java</h1><pre class="source lang-java linenums">/*&lt;#LICENSE#&gt;*/
+package neureka.backend.standard.operations.linear.internal.blas;
+
+import java.lang.reflect.Array;
+
+/**
+ * The ?copy routines perform a vector-vector operation defined as y = x, where x and y are vectors.
+ */
+<span class="nc" id="L9">public final class COPY {</span>
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public static &lt;T&gt; T[] copyOf(final T[] original) {
+<span class="fc" id="L13">        final int tmpLength = original.length;</span>
+<span class="fc" id="L14">        final T[] retVal = (T[]) Array.newInstance(original.getClass().getComponentType(), tmpLength);</span>
+<span class="fc" id="L15">        System.arraycopy(original, 0, retVal, 0, tmpLength);</span>
+<span class="fc" id="L16">        return retVal;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

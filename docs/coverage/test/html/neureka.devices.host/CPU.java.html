@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.host</a> &gt; <span class="el_source">CPU.java</span></div><h1>CPU.java</h1><pre class="source lang-java linenums">package neureka.devices.host;
+
+import neureka.Tsr;
+import neureka.backend.api.Operation;
+import neureka.calculus.Function;
+import neureka.common.utility.DataConverter;
+import neureka.devices.AbstractDevice;
+import neureka.devices.Device;
+import neureka.devices.host.concurrent.Parallelism;
+import neureka.devices.host.concurrent.WorkScheduler;
+import neureka.devices.host.machine.ConcreteMachine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.IntSupplier;
+
+/**
+ *  The CPU class, one of many implementations of the {@link Device} interface,
+ *  is simply supposed to be an API for dispatching threaded workloads onto the CPU.
+ *  Contrary to other types of devices, the CPU will host tensor data by default, simply
+ *  because the tensors will be stored in RAM (JVM heap) by default if no device was specified.
+ *  This means that they are implicitly &quot;stored&quot; on the {@link CPU} device.
+ *  The class is also a singleton instead of being part of a {@link neureka.backend.api.BackendExtension}.
+ */
+public class CPU extends AbstractDevice&lt;Object&gt;
+{
+<span class="fc" id="L33">    private static final Logger _LOG = LoggerFactory.getLogger( CPU.class );</span>
+    private static final CPU _INSTANCE;
+
+    private static final WorkScheduler.Divider _DIVIDER;
+    private static final IntSupplier _PARALLELISM;
+
+<span class="fc" id="L39">    public static int PARALLELIZATION_THRESHOLD = 32;</span>
+
+    static {
+<span class="fc" id="L42">        _INSTANCE = new CPU();</span>
+<span class="fc" id="L43">        _DIVIDER = new WorkScheduler.Divider(CPU.get().getExecutor().getPool());</span>
+<span class="fc" id="L44">        _PARALLELISM = Parallelism.THREADS;</span>
+<span class="fc" id="L45">    }</span>
+
+<span class="fc" id="L47">    private final JVMExecutor _executor = new JVMExecutor();</span>
+<span class="fc" id="L48">    private final Set&lt;Tsr&lt;Object&gt;&gt; _tensors = Collections.newSetFromMap(new WeakHashMap&lt;&gt;());</span>
+
+<span class="fc" id="L50">    private CPU() { super(); }</span>
+
+    /**
+     *  Use this method to access the singleton instance of this {@link CPU} class,
+     *  which is a {@link Device} type and default location for freshly instantiated {@link Tsr} instances.
+     *  {@link Tsr} instances located on the {@link CPU} device will reside in regular RAM
+     *  causing operations to run on the JVM and thereby the CPU.
+     *
+     * @return The singleton instance of this {@link CPU} class.
+     */
+<span class="fc" id="L60">    public static CPU get() { return _INSTANCE; }</span>
+
+    /**
+     *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
+     *  however it differs in that the {@link JVMExecutor} is processing {@link RangeWorkload} lambdas
+     *  instead of simply exposing a single index or concrete elements for a given workload size.
+     *
+     * @return A parallel range based execution API running on the JVM.
+     */
+<span class="fc" id="L69">    public JVMExecutor getExecutor() { return _executor; }</span>
+
+    @Override
+<span class="fc" id="L72">    protected boolean _approveExecutionOf( Tsr&lt;?&gt;[] tensors, int d, Operation operation ) { return true; }</span>
+
+    /**
+     *  This method will shut down the internal thread-pool used by this
+     *  class to execute JVM/CPU based operations in parallel.
+     */
+    @Override
+    public void dispose() {
+<span class="nc" id="L80">        _executor.getPool().shutdown();</span>
+<span class="nc" id="L81">        _tensors.clear();</span>
+<span class="nc" id="L82">        _LOG.warn(</span>
+<span class="nc" id="L83">                &quot;Main thread pool in '&quot;+this.getClass()+&quot;' shutting down! &quot; +</span>
+                &quot;Newly incoming operations will not be executed in parallel.&quot;
+        );
+<span class="nc" id="L86">    }</span>
+
+    @Override
+<span class="fc" id="L89">    public CPU restore( Tsr&lt;Object&gt; tensor ) { return this; }</span>
+
+    @Override
+    public &lt;T&gt; CPU store(Tsr&lt;T&gt; tensor ) {
+        //super.store(tensor);
+<span class="fc" id="L94">        _tensors.add( (Tsr&lt;Object&gt;) tensor);</span>
+<span class="fc" id="L95">        return this;</span>
+    }
+
+<span class="nc" id="L98">    @Override protected &lt;T&gt; void _updateNDConf(Tsr&lt;T&gt; tensor) { /* Nothing to do here */ }</span>
+
+    @Override
+    protected &lt;T&gt; int _sizeOccupiedBy(Tsr&lt;T&gt; tensor) {
+<span class="fc" id="L102">        Object data = tensor.getUnsafe().getData();</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if      ( data instanceof float[] )  return ( (float[])   data).length;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        else if ( data instanceof double[] ) return ( (double[])  data).length;</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        else if ( data instanceof short[] )  return ( (short[])   data).length;</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        else if ( data instanceof int[] )    return ( (int[])     data).length;</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        else if ( data instanceof byte[] )   return ( (byte[])    data).length;</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        else if ( data instanceof long[] )   return ( (long[])    data).length;</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        else if ( data instanceof boolean[] )return ( (boolean[]) data).length;</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        else if ( data instanceof char[] )   return ( (char[])    data).length;</span>
+<span class="fc" id="L111">        else return ( (Object[]) data).length;</span>
+    }
+
+    @Override
+    protected &lt;T&gt; Object _readAll(Tsr&lt;T&gt; tensor, boolean clone ) {
+<span class="fc" id="L116">        Object data = tensor.getUnsafe().getData();</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        if ( clone ) {</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            if ( data instanceof double[]  ) return ( (double[])  data ).clone();</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">            if ( data instanceof float[]   ) return ( (float[])   data ).clone();</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            if ( data instanceof byte[]    ) return ( (byte[])    data ).clone();</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            if ( data instanceof short[]   ) return ( (short[])   data ).clone();</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            if ( data instanceof int[]     ) return ( (int[])     data ).clone();</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">            if ( data instanceof long[]    ) return ( (long[])    data ).clone();</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            if ( data instanceof char[]    ) return ( (char[])    data ).clone();</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">            if ( data instanceof boolean[] ) return ( (boolean[]) data ).clone();</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">            if ( data instanceof Object[]  ) return ( (Object[])  data ).clone();</span>
+        }
+<span class="fc" id="L128">        return data;</span>
+    }
+
+    @Override
+    protected &lt;T&gt; T _readItem( Tsr&lt;T&gt; tensor, int index ) {
+<span class="fc" id="L133">        Object data = tensor.getUnsafe().getData();</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        if      ( data instanceof float[] )  return (T)(Float)  ( (float[])   data)[ index ];</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        else if ( data instanceof double[] ) return (T)(Double) ( (double[])  data)[ index ];</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        else if ( data instanceof short[] )  return (T)(Short)  ( (short[])   data)[ index ];</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        else if ( data instanceof int[] )    return (T)(Integer)( (int[])     data)[ index ];</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        else if ( data instanceof byte[] )   return (T)(Byte)   ( (byte[])    data)[ index ];</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        else if ( data instanceof long[] )   return (T)(Long)   ( (long[])    data)[ index ];</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        else if ( data instanceof boolean[] )return (T)(Boolean)( (boolean[]) data)[ index ];</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        else if ( data instanceof char[] )   return (T)(Character)( (char[])  data)[ index ];</span>
+<span class="fc" id="L142">        else return (T)( (Object[]) data)[ index ];</span>
+    }
+
+    @Override
+    protected &lt;T, A&gt; A _readArray(
+            Tsr&lt;T&gt; tensor, Class&lt;A&gt; arrayType, int start, int size
+    ) {
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
+<span class="fc" id="L150">            float[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), float[].class);</span>
+<span class="fc" id="L151">            float[] data = new float[size];</span>
+<span class="fc" id="L152">            System.arraycopy(source, start, data, 0, size);</span>
+<span class="fc" id="L153">            return (A) data;</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        } else if ( arrayType == short[].class ){</span>
+<span class="fc" id="L155">            short[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), short[].class);</span>
+<span class="fc" id="L156">            short[] data = new short[size];</span>
+<span class="fc" id="L157">            System.arraycopy(source, start, data, 0, size);</span>
+<span class="fc" id="L158">            return (A) data;</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        } else if ( arrayType == byte[].class ){</span>
+<span class="fc" id="L160">            byte[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), byte[].class);</span>
+<span class="fc" id="L161">            byte[] data = new byte[size];</span>
+<span class="fc" id="L162">            System.arraycopy(source, start, data, 0, size);</span>
+<span class="fc" id="L163">            return (A) data;</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        } else if ( arrayType == boolean[].class ){</span>
+<span class="fc" id="L165">            boolean[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), boolean[].class);</span>
+<span class="fc" id="L166">            boolean[] data = new boolean[size];</span>
+<span class="fc" id="L167">            System.arraycopy(source, start, data, 0, size);</span>
+<span class="fc" id="L168">            return (A) data;</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        } else if ( arrayType == char[].class ){</span>
+<span class="nc" id="L170">            char[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), char[].class);</span>
+<span class="nc" id="L171">            char[] data = new char[size];</span>
+<span class="nc" id="L172">            System.arraycopy(source, start, data, 0, size);</span>
+<span class="nc" id="L173">            return (A) data;</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        } else if ( arrayType == double[].class ){</span>
+<span class="fc" id="L175">            double[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), double[].class);</span>
+<span class="fc" id="L176">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        } else if ( arrayType == int[].class ){</span>
+<span class="fc" id="L178">            int[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), int[].class);</span>
+<span class="fc" id="L179">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        } else if ( arrayType == long[].class ){</span>
+<span class="fc" id="L181">            long[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), long[].class);</span>
+<span class="fc" id="L182">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        } else if ( arrayType == Object[].class ){</span>
+<span class="fc" id="L184">            Object[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), Object[].class);</span>
+<span class="fc" id="L185">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
+        }
+<span class="nc" id="L187">        throw new IllegalArgumentException(&quot;Array type '&quot;+arrayType.getSimpleName()+&quot;' not supported!&quot;);</span>
+    }
+
+    @Override
+    protected &lt;T&gt; void _writeItem( Tsr&lt;T&gt; tensor, T item, int start, int size ) {
+<span class="fc" id="L192">        Object data = tensor.getUnsafe().getData();</span>
+<span class="fc" id="L193">        Class&lt;?&gt; arrayType = data.getClass();</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
+<span class="fc" id="L195">            float source = DataConverter.get().convert(item, Float.class);</span>
+<span class="fc" id="L196">            float[] target = (float[]) data;</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        } else if ( arrayType == short[].class ){</span>
+<span class="fc" id="L199">            short source = DataConverter.get().convert(item, Short.class);</span>
+<span class="fc" id="L200">            short[] target = (short[]) data;</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        } else if ( arrayType == byte[].class ){</span>
+<span class="fc" id="L203">            byte source = DataConverter.get().convert(item, Byte.class);</span>
+<span class="fc" id="L204">            byte[] target = (byte[]) data;</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        } else if ( arrayType == boolean[].class ){</span>
+<span class="nc" id="L207">            boolean source = DataConverter.get().convert(item, Boolean.class);</span>
+<span class="nc" id="L208">            boolean[] target = (boolean[]) data;</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="pc bfc" id="L210" title="All 2 branches covered.">        } else if ( arrayType == double[].class ){</span>
+<span class="fc" id="L211">            double source = DataConverter.get().convert(item, Double.class);</span>
+<span class="fc" id="L212">            double[] target = (double[]) data;</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">        } else if ( arrayType == int[].class ){</span>
+<span class="fc" id="L215">            int source = DataConverter.get().convert(item, Integer.class);</span>
+<span class="fc" id="L216">            int[] target = (int[]) data;</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        } else if ( arrayType == long[].class ){</span>
+<span class="fc" id="L219">            long source = DataConverter.get().convert(item, Long.class);</span>
+<span class="fc" id="L220">            long[] target = (long[]) data;</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">        } else if ( arrayType == char[].class ){</span>
+<span class="nc" id="L223">            char source = DataConverter.get().convert(item, Character.class);</span>
+<span class="nc" id="L224">            char[] target = (char[]) data;</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">        } else if ( arrayType == Object[].class ) {</span>
+<span class="fc" id="L227">            Object[] target = (Object[]) data;</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = item;</span>
+        }
+<span class="fc" id="L230">    }</span>
+
+    @Override
+    protected &lt;T&gt; void _writeArray(Tsr&lt;T&gt; tensor, Object array, int offset, int start, int size) {
+<span class="fc" id="L234">        Object data = tensor.getUnsafe().getData();</span>
+<span class="fc" id="L235">        Class&lt;?&gt; arrayType = data.getClass();</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
+<span class="fc" id="L237">            float[] source = DataConverter.get().convert(array, float[].class);</span>
+<span class="fc" id="L238">            float[] target = (float[]) data;</span>
+<span class="fc" id="L239">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">        } else if ( arrayType == short[].class ){</span>
+<span class="fc" id="L241">            short[] source = DataConverter.get().convert(array, short[].class);</span>
+<span class="fc" id="L242">            short[] target = (short[]) data;</span>
+<span class="fc" id="L243">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        } else if ( arrayType == byte[].class ){</span>
+<span class="fc" id="L245">            byte[] source = DataConverter.get().convert(array, byte[].class);</span>
+<span class="fc" id="L246">            byte[] target = (byte[]) data;</span>
+<span class="fc" id="L247">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="pc bpc" id="L248" title="1 of 2 branches missed.">        } else if ( arrayType == boolean[].class ){</span>
+<span class="nc" id="L249">            boolean[] source = DataConverter.get().convert(array, boolean[].class);</span>
+<span class="nc" id="L250">            boolean[] target = (boolean[]) data;</span>
+<span class="nc" id="L251">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="pc bfc" id="L252" title="All 2 branches covered.">        } else if ( arrayType == double[].class ){</span>
+<span class="fc" id="L253">            double[] source = DataConverter.get().convert(array, double[].class);</span>
+<span class="fc" id="L254">            double[] target = (double[]) data;</span>
+<span class="fc" id="L255">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        } else if ( arrayType == int[].class ){</span>
+<span class="fc" id="L257">            int[] source = DataConverter.get().convert(array, int[].class);</span>
+<span class="fc" id="L258">            int[] target = (int[]) data;</span>
+<span class="fc" id="L259">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="pc bpc" id="L260" title="1 of 2 branches missed.">        } else if ( arrayType == char[].class ){</span>
+<span class="nc" id="L261">            char[] source = DataConverter.get().convert(array, char[].class);</span>
+<span class="nc" id="L262">            char[] target = (char[]) data;</span>
+<span class="nc" id="L263">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="pc bpc" id="L264" title="1 of 2 branches missed.">        } else if ( arrayType == long[].class ){</span>
+<span class="fc" id="L265">            long[] source = DataConverter.get().convert(array, long[].class);</span>
+<span class="fc" id="L266">            long[] target = (long[]) data;</span>
+<span class="fc" id="L267">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="pc bnc" id="L268" title="All 2 branches missed.">        } else if ( arrayType == Object[].class ){</span>
+<span class="nc" id="L269">            Object[] source = DataConverter.get().convert(array, Object[].class);</span>
+<span class="nc" id="L270">            Object[] target = (Object[]) data;</span>
+<span class="nc" id="L271">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="nc" id="L272">        }</span>
+<span class="nc" id="L273">        else throw new IllegalArgumentException(&quot;Array type '&quot;+arrayType.getSimpleName()+&quot;' not supported!&quot;);</span>
+<span class="fc" id="L274">    }</span>
+
+    @Override
+    public &lt;T&gt; CPU store(Tsr&lt;T&gt; tensor, Tsr&lt;T&gt; parent ) {
+<span class="nc" id="L278">        _tensors.add( (Tsr&lt;Object&gt;) tensor);</span>
+<span class="nc" id="L279">        _tensors.add( (Tsr&lt;Object&gt;) parent);</span>
+<span class="nc" id="L280">        return this;</span>
+    }
+
+    @Override
+<span class="fc" id="L284">    public &lt;T&gt; boolean has(Tsr&lt;T&gt; tensor ) { return _tensors.contains( tensor ); }</span>
+
+    @Override
+    public &lt;T&gt; CPU free(Tsr&lt;T&gt; tensor ) {
+<span class="fc" id="L288">        _tensors.remove( tensor );</span>
+<span class="fc" id="L289">        return this;</span>
+    }
+
+    @Override
+<span class="nc" id="L293">    protected &lt;T&gt; void _swap( Tsr&lt;T&gt; former, Tsr&lt;T&gt; replacement ) {}</span>
+
+    @Override
+<span class="fc" id="L296">    public Collection&lt;Tsr&lt;Object&gt;&gt; getTensors() { return _tensors; }</span>
+
+    @Override
+<span class="nc" id="L299">    public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }</span>
+
+    /**
+     *  This method is part of the component system built into the {@link Tsr} class.
+     *  Do not use this as part of anything but said component system.
+     *
+     * @param changeRequest An API which describes the type of update and a method for executing said update.
+     * @return The truth value determining if this {@link Device} ought to be added to a tensor (Here always false!).
+     */
+    @Override
+    public boolean update( OwnerChangeRequest&lt;Tsr&lt;Object&gt;&gt; changeRequest ) {
+<span class="fc" id="L310">        super.update( changeRequest );</span>
+<span class="fc" id="L311">        return false; // This type of device can not be a component simply because it is the default device</span>
+    }
+
+    /**
+     * Returns the number of CPU cores available to the Java virtual machine.
+     * This value may change during a particular invocation of the virtual machine.
+     * Applications that are sensitive to the number of available processors should
+     * therefore occasionally poll this property and adjust their resource usage appropriately.
+     *
+     * @return The maximum number of CPU cores available to the JVM.
+     *         This number is never smaller than one!
+     */
+<span class="fc" id="L323">    public int getCoreCount() { return Runtime.getRuntime().availableProcessors(); }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L327">        return this.getClass().getSimpleName()+&quot;[coreCount=&quot;+getCoreCount()+&quot;]&quot;;</span>
+    }
+
+    /**
+     *  A simple functional interface for executing a range whose implementations will
+     *  either be executed sequentially or they are being dispatched to
+     *  a thread-pool, given that the provided workload is large enough.
+     */
+    @FunctionalInterface
+    public interface RangeWorkload {
+        void execute( int start, int end );
+    }
+
+    /**
+     *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
+     *  however it differs in that the {@link JVMExecutor} is processing {@link RangeWorkload} lambdas
+     *  instead of simply exposing a single index or concrete elements for a given workload size.
+     *  This means that a {@link RangeWorkload} lambda will be called with the work range of a single worker thread
+     *  processing its current workload.
+     *  This range is dependent on the number of available threads as well as the size of the workload.
+     *  If the workload is very small, then the current main thread will process the entire workload range
+     *  whereas the underlying {@link ThreadPoolExecutor} will not be used to avoid unnecessary overhead.
+     */
+<span class="fc" id="L350">    public static class JVMExecutor</span>
+    {
+<span class="fc" id="L352">        private static final AtomicInteger _COUNTER = new AtomicInteger();</span>
+<span class="fc" id="L353">        private static final ThreadGroup   _GROUP   = new ThreadGroup(&quot;neureka-daemon-group&quot;);</span>
+
+        /*
+            The following 2 constants determine if any given workload size will be parallelize or not...
+            We might want to adjust this some more for better performance...
+         */
+        private static final int _MIN_THREADED_WORKLOAD_SIZE = 32;
+        private static final int _MIN_WORKLOAD_PER_THREAD    = 8;
+
+<span class="fc" id="L362">        private final ThreadPoolExecutor _pool =</span>
+                                            new ThreadPoolExecutor(
+                                                    ConcreteMachine.ENVIRONMENT.units,
+                                                    Integer.MAX_VALUE,
+                                                    5L,
+                                                    TimeUnit.SECONDS,
+                                                    new SynchronousQueue&lt;Runnable&gt;(), // This is basically always of size 1
+<span class="fc" id="L369">                                                    _newThreadFactory(&quot;neureka-daemon-&quot;)</span>
+                                            );
+
+        private static ThreadFactory _newThreadFactory( final String name ) {
+<span class="fc" id="L373">            return _newThreadFactory( _GROUP, name );</span>
+        }
+
+        private static ThreadFactory _newThreadFactory( final ThreadGroup group, final String name ) {
+
+<span class="pc bpc" id="L378" title="1 of 2 branches missed.">            String prefix = name.endsWith(&quot;-&quot;) ? name : name + &quot;-&quot;;</span>
+
+<span class="fc" id="L380">            return target -&gt; {</span>
+<span class="fc" id="L381">                Thread thread = new Thread(</span>
+                                    group, target,
+<span class="fc" id="L383">                                    prefix + _COUNTER.incrementAndGet() // The name, including the thread number.</span>
+                                );
+<span class="fc" id="L385">                thread.setDaemon(true);</span>
+<span class="fc" id="L386">                return thread;</span>
+            };
+        }
+
+<span class="fc" id="L390">        public ThreadPoolExecutor getPool() { return _pool; }</span>
+
+        /**
+         *  This method slices the provided workload size into multiple ranges which can be executed in parallel.
+         *
+         * @param workloadSize The total workload size which ought to be split into multiple ranges.
+         * @param workload The range lambda which ought to be executed across multiple threads.
+         */
+        public void threaded( int workloadSize, RangeWorkload workload )
+        {
+<span class="fc" id="L400">            int cores = get().getCoreCount();</span>
+<span class="pc bpc" id="L401" title="1 of 2 branches missed.">            cores = ( cores == 0 ? 1 : cores );</span>
+<span class="fc bfc" id="L402" title="All 4 branches covered.">            if ( workloadSize &gt;= _MIN_THREADED_WORKLOAD_SIZE &amp;&amp; ( ( workloadSize / cores ) &gt;= _MIN_WORKLOAD_PER_THREAD) ) {</span>
+<span class="fc" id="L403">                threaded(0, workloadSize, workload );</span>
+            }
+<span class="fc" id="L405">            else sequential( workloadSize, workload );</span>
+<span class="fc" id="L406">        }</span>
+
+        /**
+         *  This method will simply execute the provided {@link RangeWorkload} lambda sequentially
+         *  with 0 as the start index and {@code workloadSize} as the exclusive range.       &lt;br&gt;&lt;br&gt;
+         *
+         * @param workloadSize The workload size which will be passed to the provided {@link RangeWorkload} as second argument.
+         * @param workload The {@link RangeWorkload} which will be executed sequentially.
+         */
+<span class="fc" id="L415">        public void sequential( int workloadSize, RangeWorkload workload ) { workload.execute( 0, workloadSize ); }</span>
+
+
+        /**
+         *  Takes the provided range and divides it into multi-threaded workloads.
+         *
+         * @param first The start index of the threaded workload range.
+         * @param limit The limit for the workload range, which is exclusive.
+         * @param rangeWorkload A workload lambda which will be called by different threads with different sub-ranges.
+         */
+        public void threaded(
+                final int first,
+                final int limit,
+                final RangeWorkload rangeWorkload
+        ) {
+<span class="fc" id="L430">            _DIVIDER.parallelism( _PARALLELISM )</span>
+<span class="fc" id="L431">                    .threshold( PARALLELIZATION_THRESHOLD )</span>
+<span class="fc" id="L432">                    .divide( first, limit, rangeWorkload);</span>
+<span class="fc" id="L433">        }</span>
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

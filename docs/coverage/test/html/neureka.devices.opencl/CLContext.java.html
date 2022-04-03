@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLContext.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.opencl</a> &gt; <span class="el_source">CLContext.java</span></div><h1>CLContext.java</h1><pre class="source lang-java linenums">package neureka.devices.opencl;
+
+import neureka.backend.api.BackendContext;
+import neureka.backend.api.BackendExtension;
+import neureka.backend.api.Extensions;
+import neureka.calculus.assembly.ParseUtil;
+import neureka.common.composition.Component;
+import neureka.devices.Device;
+import neureka.devices.opencl.utility.Messages;
+import org.jocl.cl_platform_id;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.jocl.CL.clGetPlatformIDs;
+
+/**
+ *  This is an OpenCL context component for any given {@link BackendContext} which
+ *  extends a given backend context instance for additional functionality, which in
+ *  this case is the OpenCL backend storing platform and device information.
+ *  {@link BackendContext}s are thread local states
+ *  used for managing {@link neureka.backend.api.Operation}, {@link neureka.calculus.Function}
+ *  as well as {@link Component} implementation instances like this one.
+ *  A given state might not be compatible with the concepts introduced in other contexts
+ *  which is why it makes sense to have separate &quot;worlds&quot; with potential different operations...
+ *  The component system of the {@link BackendContext} exist so that a given context
+ *  can be extended for more functionality
+ *  and also to attach relevant states like for example in this case the {@link CLContext}
+ *  instance will directly or indirectly reference kernels, memory objects and other concepts
+ *  exposed by OpenCL...
+ */
+public final class CLContext implements BackendExtension
+{
+<span class="fc" id="L39">    private static Logger _LOG = LoggerFactory.getLogger(CLContext.class);</span>
+
+<span class="fc" id="L41">    private final List&lt;OpenCLPlatform&gt; _platforms = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L42">    private final CLSettings _settings = new CLSettings();</span>
+
+    /**
+     *  Use this constructor if you want to create a new OpenCL world in which there
+     *  are unique {@link OpenCLPlatform} and {@link OpenCLDevice} instances.
+     */
+<span class="fc" id="L48">    public CLContext() {}</span>
+
+    /**
+     * @return A list of context specific {@link OpenCLPlatform} instances possible containing {@link OpenCLDevice}s.
+     */
+<span class="fc" id="L53">    public List&lt;OpenCLPlatform&gt; getPlatforms() { return Collections.unmodifiableList( _platforms ); }</span>
+
+    /**
+     * @return A container for OpenCL specific settings.
+     */
+<span class="fc" id="L58">    public CLSettings getSettings() { return _settings; }</span>
+
+    /**
+     *  Updating the CLContext will cause the list of existing {@link OpenCLPlatform} instances to be
+     *  cleared and refilled with completely new {@link OpenCLPlatform} instances.
+     *  This will in effect also cause the recreation of any {@link OpenCLDevice} instances
+     *  as part of these {@link OpenCLPlatform}s.
+     *  This will subsequently cause the recompilation of many OpenCL kernels.
+     */
+    @Override
+    public boolean update( OwnerChangeRequest&lt;Extensions&gt; changeRequest ) {
+<span class="fc" id="L69">        _platforms.clear();</span>
+<span class="fc" id="L70">        _platforms.addAll( _findLoadAndCompileForAllPlatforms() );</span>
+<span class="fc" id="L71">        changeRequest.executeChange();</span>
+<span class="fc" id="L72">        return true;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L77">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
+                    &quot;platforms=[&quot;+
+<span class="fc" id="L79">                        _platforms.stream().map(Object::toString).collect(Collectors.joining(&quot;,&quot;))+</span>
+                    &quot;]&quot; +
+                &quot;]&quot;;
+    }
+
+    /**
+     * @return A new list of freshly created {@link OpenCLPlatform} instances containing freshly instantiated {@link OpenCLDevice}s and kernels.
+     */
+    private static List&lt;OpenCLPlatform&gt; _findLoadAndCompileForAllPlatforms()
+    {
+        // Obtain the number of platforms
+<span class="fc" id="L90">        int[] numPlatforms = new int[ 1 ];</span>
+<span class="fc" id="L91">        clGetPlatformIDs( 0, null, numPlatforms );</span>
+
+        // Obtain the platform IDs
+<span class="fc" id="L94">        cl_platform_id[] platforms = new cl_platform_id[ numPlatforms[ 0 ] ];</span>
+<span class="fc" id="L95">        clGetPlatformIDs( platforms.length, platforms, null );</span>
+
+<span class="fc" id="L97">        List&lt;OpenCLPlatform&gt; loadedPlatforms = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        for ( cl_platform_id id : platforms ) {</span>
+            OpenCLPlatform newPlatform;
+            try {
+<span class="fc" id="L101">                newPlatform = new OpenCLPlatform( id );</span>
+<span class="fc" id="L102">                loadedPlatforms.add( newPlatform );</span>
+<span class="nc" id="L103">            } catch ( Exception e ) {</span>
+<span class="nc" id="L104">                String message =</span>
+<span class="nc" id="L105">                        &quot;Failed to instantiate '&quot;+OpenCLPlatform.class.getSimpleName()+&quot;' &quot; +</span>
+<span class="nc" id="L106">                        &quot;with id '0x&quot;+Long.toHexString(id.getNativePointer())+&quot;'!&quot;;</span>
+<span class="nc" id="L107">                _LOG.error( message, e );</span>
+<span class="fc" id="L108">            }</span>
+        }
+<span class="pc bpc" id="L110" title="2 of 4 branches missed.">        if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -&gt; p.getDevices().isEmpty() ) ) {</span>
+<span class="nc" id="L111">            _LOG.warn( Messages.clContextCouldNotFindAnyDevices() );</span>
+        }
+<span class="fc" id="L113">        return loadedPlatforms;</span>
+    }
+
+    @Override
+    public DeviceOption find( String searchKey ) {
+<span class="fc" id="L118">        Device&lt;Number&gt; result = null;</span>
+<span class="fc" id="L119">        double score = 0;</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        for ( OpenCLPlatform p : _platforms ) {</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
+<span class="fc" id="L122">                double similarity = Stream.of(&quot;opencl&quot;,d.type().name(),d.name(),d.vendor())</span>
+<span class="fc" id="L123">                                            .mapToDouble( word -&gt; ParseUtil.similarity( word, searchKey ) )</span>
+<span class="fc" id="L124">                                            .max()</span>
+<span class="fc" id="L125">                                            .orElse(0);</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">                if ( similarity &gt; score ) {</span>
+<span class="fc" id="L127">                    result = d;</span>
+<span class="fc" id="L128">                    score = similarity;</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">                    if ( score == 1 )</span>
+<span class="fc" id="L130">                        return new DeviceOption( result, score );</span>
+                }
+<span class="fc" id="L132">            }</span>
+<span class="fc" id="L133">        }</span>
+<span class="fc" id="L134">        return new DeviceOption( result, score );</span>
+    }
+
+    /**
+     *  This method will free all the resources occupied by this context,
+     *  meaning that all platforms and their devices will be disposed.
+     *  Their kernels will be removed and their tensors restored.
+     */
+    @Override
+    public void dispose() {
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        for ( OpenCLPlatform platform : _platforms ) {</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">            for ( OpenCLDevice device : platform.getDevices() ) {</span>
+<span class="fc" id="L146">                device.dispose();</span>
+<span class="fc" id="L147">            }</span>
+<span class="fc" id="L148">            platform.dispose();</span>
+<span class="fc" id="L149">        }</span>
+<span class="fc" id="L150">        _platforms.clear();</span>
+<span class="fc" id="L151">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JITProp.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">JITProp.java</span></div><h1>JITProp.java</h1><pre class="source lang-java linenums">package neureka.autograd;
+
+import neureka.common.composition.Component;
+import neureka.Tsr;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/**
+ *  This class keeps track of graph nodes which require
+ *  back-propagation in order
+ *  to be able to continue the process at a later point in time
+ *  (based on some configurable conditions).
+ *
+ * @param &lt;V&gt; The type parameter of the involved tensors.
+ */
+public final class JITProp&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
+{
+    private Set&lt;GraphNode&lt;V&gt;&gt; _finished;
+
+    private  Set&lt;GraphNode&lt;V&gt;&gt; _pending;
+
+<span class="fc" id="L24">    public JITProp( Set&lt;GraphNode&lt;V&gt;&gt; pending ) {</span>
+<span class="fc" id="L25">        _pending = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L26">        _pending.addAll( pending ); // Every JITProp component has their own Set.</span>
+        //... otherwise this would lead to finished JIT-Propagations where in fact traversals are still pending...
+<span class="fc" id="L28">    }</span>
+
+    /**
+     * @param pending A set of GraphNode&amp;lt;V&amp;gt; instance which are saved for future backprop continuation.
+     */
+    public void addPending( Set&lt;GraphNode&lt;V&gt;&gt; pending ) {
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if ( pending.isEmpty() )</span>
+<span class="nc" id="L35">            throw new IllegalStateException(&quot;Trying to add empty pending errors set to JITProp.&quot;);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        if ( !isDone() )</span>
+<span class="nc" id="L37">            throw new IllegalStateException(&quot;Trying to add pending errors to JITProp which is done.&quot;);</span>
+<span class="nc" id="L38">        _pending.addAll( pending );</span>
+<span class="nc" id="L39">    }</span>
+
+    /**
+     *
+     * @param finishedJITProps The reference to a GraphNote which has finished (JITed) backpropation.
+     */
+    public void noteFinished( GraphNode&lt;V&gt; finishedJITProps ) {
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if ( _finished == null ) _finished = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L47">        _finished.add( finishedJITProps );</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if ( _pending != null ) {</span>
+<span class="fc" id="L49">            Set&lt;GraphNode&lt;V&gt;&gt; intersection = _finished.stream().filter(_pending::contains).collect(Collectors.toSet());</span>
+<span class="fc" id="L50">            _finished.removeAll( intersection );</span>
+<span class="fc" id="L51">            _pending.removeAll( intersection );</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">            if ( _finished.isEmpty() ) _finished = null;</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">            if ( _pending.isEmpty() ) _pending = null;</span>
+        }
+<span class="fc" id="L55">    }</span>
+
+<span class="nc bnc" id="L57" title="All 2 branches missed.">    public int finishedCount() { return _finished == null ? 0 : _finished.size(); }</span>
+
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">    public int pendingCount() { return _pending == null ? 0 : _pending.size(); }</span>
+
+
+    /**
+     *  This method triggers the continuation of the back-propagation which
+     *  has been put on hold by saving the pending graph nodes inside this class. &lt;br&gt;
+     *  The execution request happens when gradients are immediately required by a tensor,
+     *  which is the case when the tensor is about to apply its gradients. &lt;br&gt;
+     *  However because the gradient has not yet been fully calculated this method
+     *  will be called first (assuming the tensor has a JITProp component stored).
+     */
+    public void execute() {
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if ( _pending == null ) return;</span>
+<span class="fc" id="L72">        _pending.forEach( n -&gt; {</span>
+<span class="pc bpc" id="L73" title="3 of 4 branches missed.">            if ( _finished == null || !_finished.contains( n ) ) {</span>
+<span class="fc" id="L74">                PendingError&lt;V&gt; pe = n.getAndRemovePendingError();</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                if ( !pe.isFullyAccumulated() )</span>
+<span class="nc" id="L76">                    throw new IllegalStateException(&quot;Pending error has not received expected accumulation.&quot;);</span>
+<span class="fc" id="L77">                n.backwardJIT( pe.getAccumulatedError() ); // Continue back-prop recursively!</span>
+            }
+<span class="fc" id="L79">        });</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if ( pendingCount() &gt; 0 )</span>
+<span class="nc" id="L81">            throw new IllegalStateException(&quot;Pending error has not received expected accumulation.&quot;);</span>
+<span class="fc" id="L82">        _pending = null;</span>
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * @return The truth value determining if the back-propagation has been completed.
+     */
+<span class="pc bpc" id="L88" title="1 of 4 branches missed.">    public boolean isDone() { return ( _finished == null &amp;&amp; _pending == null ); }</span>
+
+
+
+
+    @Override
+    public String toString() {
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        int finished = ( _finished == null ? 0 : _finished.size() );</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        int pending  = ( _pending  == null ? 0 : _pending.size()  );</span>
+<span class="fc" id="L97">        return this.getClass().getSimpleName()+&quot;@&quot;+hashCode()+&quot;[finished=&quot;+finished+&quot;,pending=&quot;+pending+&quot;,isDone=&quot;+isDone()+&quot;]&quot;;</span>
+    }
+
+
+    @Override
+    public boolean update( OwnerChangeRequest&lt;Tsr&lt;V&gt;&gt; changeRequest ) {
+<span class="fc" id="L103">        changeRequest.executeChange();</span>
+<span class="fc" id="L104">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JPEGHead.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.file.heads</a> &gt; <span class="el_source">JPEGHead.java</span></div><h1>JPEGHead.java</h1><pre class="source lang-java linenums">package neureka.devices.file.heads;
+
+import neureka.Tsr;
+import neureka.devices.Storage;
+import neureka.devices.host.CPU;
+import neureka.dtype.DataType;
+import neureka.dtype.custom.I16;
+import neureka.dtype.custom.UI8;
+import org.slf4j.LoggerFactory;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
+import java.io.File;
+import java.io.IOException;
+
+/**
+ *  This class is one of many extensions of the {@link AbstractFileHead} which
+ *  is therefore ultimately an implementation of the {@link neureka.devices.file.FileHead} interface.
+ *  Like other {@link neureka.devices.file.FileHead} implementations of this class represents a file
+ *  of a given type, in this case it represents a JPEG file.
+ */
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">public final class JPEGHead extends AbstractFileHead&lt;JPEGHead, Number&gt;</span>
+{
+    static {
+<span class="fc" id="L27">        _LOG = LoggerFactory.getLogger( JPEGHead.class );</span>
+<span class="fc" id="L28">    }</span>
+
+    int _width;
+    int _height;
+
+    public JPEGHead( String fileName )
+    {
+<span class="fc" id="L35">        super( fileName );</span>
+        try {
+<span class="fc" id="L37">            _loadHead();</span>
+<span class="nc" id="L38">        } catch( Exception e ) {</span>
+<span class="nc" id="L39">            _LOG.error(&quot;Failed reading JPG file!&quot;);</span>
+<span class="fc" id="L40">        }</span>
+<span class="fc" id="L41">    }</span>
+
+    public JPEGHead( Tsr&lt;Number&gt; t, String filename ) {
+<span class="fc" id="L44">        super( filename );</span>
+<span class="pc bpc" id="L45" title="2 of 4 branches missed.">        assert t.rank() == 3;</span>
+<span class="pc bpc" id="L46" title="2 of 4 branches missed.">        assert t.shape( 2 ) == 3;</span>
+<span class="fc" id="L47">        _height = t.shape(0);</span>
+<span class="fc" id="L48">        _width = t.shape(1);</span>
+<span class="fc" id="L49">        t.setIsVirtual( false );</span>
+<span class="fc" id="L50">        store( t );</span>
+<span class="fc" id="L51">    }</span>
+
+
+    private void _loadHead()
+    {
+<span class="fc" id="L56">        File found = _loadFile();</span>
+
+<span class="fc" id="L58">        BufferedImage image = null;</span>
+        Raster data;
+
+        try {
+<span class="fc" id="L62">            image = ImageIO.read(found);</span>
+<span class="fc" id="L63">            data = image.getData();</span>
+<span class="fc" id="L64">            _height = data.getHeight();</span>
+<span class="fc" id="L65">            _width = data.getWidth();</span>
+<span class="nc" id="L66">        } catch ( Exception exception ) {</span>
+<span class="nc" id="L67">            String message = &quot;JPEG '&quot;+_fileName+&quot;' could not be read from file!&quot;;</span>
+<span class="nc" id="L68">            _LOG.error( message, exception );</span>
+<span class="nc" id="L69">            exception.printStackTrace();</span>
+<span class="fc" id="L70">        }</span>
+
+        try
+        {
+<span class="pc bpc" id="L74" title="2 of 4 branches missed.">            if ( _height &lt; 1 || _width &lt; 1 ) {</span>
+<span class="nc" id="L75">                String message = &quot;The height and width of the jpeg at '&quot;+_fileName+&quot;' is &quot;+_height+&quot; &amp; &quot;+_width+&quot;.&quot; +</span>
+                                 &quot;However both dimensions must at least be of size 1!&quot;;
+<span class="nc" id="L77">                Exception e = new IOException( message );</span>
+<span class="nc" id="L78">                _LOG.error( message, e );</span>
+<span class="nc" id="L79">                throw e;</span>
+            }
+        }
+<span class="nc" id="L82">        catch ( Exception e )</span>
+        {
+<span class="nc" id="L84">            _LOG.error( &quot;Failed loading jpg file!&quot;, e );</span>
+<span class="fc" id="L85">        }</span>
+<span class="fc" id="L86">    }</span>
+
+    @Override
+    public Tsr&lt;Number&gt; load() throws IOException {
+<span class="fc" id="L90">        Object value = _loadData();</span>
+<span class="fc" id="L91">        Tsr t = Tsr.of( I16.class, new int[]{_height, _width, 3}, value );</span>
+<span class="fc" id="L92">        return (Tsr&lt;Number&gt;) t;</span>
+    }
+
+    @Override
+    protected Object _loadData() throws IOException
+    {
+<span class="fc" id="L98">        File found = _loadFile();</span>
+<span class="fc" id="L99">        BufferedImage image = null;</span>
+        try
+        {
+<span class="fc" id="L102">            image = ImageIO.read( found );</span>
+<span class="fc" id="L103">            byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();</span>
+<span class="fc" id="L104">            short[] newData = new short[ data.length ];</span>
+
+<span class="fc" id="L106">            UI8 ui8 = new UI8();</span>
+<span class="fc" id="L107">            CPU.get().getExecutor().threaded(</span>
+                    data.length,
+                    ( start, end ) -&gt; {
+<span class="fc bfc" id="L110" title="All 2 branches covered.">                        for ( int i=start; i&lt;end; i++ ) newData[i] = ui8.toTarget( data[i] );</span>
+<span class="fc" id="L111">                    }</span>
+            );
+<span class="fc" id="L113">            return newData;</span>
+        }
+<span class="nc" id="L115">        catch ( IOException e )</span>
+        {
+<span class="nc" id="L117">            _LOG.error( &quot;Failed loading jpg file!&quot;, e );</span>
+<span class="nc" id="L118">            throw e;</span>
+        }
+    }
+
+    @Override
+    public int getValueSize() {
+<span class="fc" id="L124">        return _width * _height * 3;</span>
+    }
+
+    @Override
+    public int getDataSize() {
+<span class="nc" id="L129">        return _width * _height * 3;</span>
+    }
+
+    @Override
+    public int getTotalSize() {
+<span class="fc" id="L134">        return _width * _height * 3;</span>
+    }
+
+    @Override
+    public DataType&lt;?&gt; getDataType() {
+<span class="fc" id="L139">        return DataType.of( UI8.class );</span>
+    }
+
+    @Override
+    public int[] getShape() {
+<span class="fc" id="L144">        return new int[]{ _height, _width, 3 };</span>
+    }
+
+    @Override
+    public String extension() {
+<span class="fc" id="L149">        return &quot;jpg&quot;;</span>
+    }
+
+    @Override
+    public &lt;T extends Number&gt; Storage&lt;Number&gt; store( Tsr&lt;T&gt; tensor )
+    {
+<span class="pc bpc" id="L155" title="2 of 4 branches missed.">        assert tensor.shape(1) == _width;</span>
+<span class="pc bpc" id="L156" title="2 of 4 branches missed.">        assert tensor.shape(0) == _height;</span>
+
+<span class="fc" id="L158">        BufferedImage buffi = tensor.asImage(Tsr.ImageType.BGR_3BYTE);</span>
+
+        try {
+<span class="fc" id="L161">            ImageIO.write( buffi, &quot;jpg&quot;, new File( _fileName ) );</span>
+<span class="nc" id="L162">        } catch ( Exception e ) {</span>
+<span class="nc" id="L163">            _LOG.error(&quot;Failed writing tensor to jpg!&quot;, e);</span>
+<span class="nc" id="L164">            return this;</span>
+<span class="fc" id="L165">        }</span>
+<span class="fc" id="L166">        tensor.setIsOutsourced( true );</span>
+<span class="fc" id="L167">        tensor.getUnsafe().setDataType( DataType.of( I16.class ) );</span>
+<span class="fc" id="L168">        return this;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

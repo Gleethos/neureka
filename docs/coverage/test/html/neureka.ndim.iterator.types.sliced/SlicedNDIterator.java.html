@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SlicedNDIterator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.iterator.types.sliced</a> &gt; <span class="el_source">SlicedNDIterator.java</span></div><h1>SlicedNDIterator.java</h1><pre class="source lang-java linenums">package neureka.ndim.iterator.types.sliced;
+
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.iterator.NDIterator;
+
+public final class SlicedNDIterator implements NDIterator
+{
+    private final int[] _indices;
+    private final int[] _shape;
+    private final NDConfiguration _conf;
+
+<span class="fc" id="L12">    public SlicedNDIterator(NDConfiguration ndc ) {</span>
+<span class="fc" id="L13">        _shape = ndc.shape();</span>
+<span class="fc" id="L14">        _indices = new int[ _shape.length ];</span>
+<span class="fc" id="L15">        _conf = ndc;</span>
+<span class="fc" id="L16">    }</span>
+
+    @Override
+    public final int shape( int i ) {
+<span class="fc" id="L20">        return _shape[i];</span>
+    }
+
+    @Override
+    public final int[] shape() {
+<span class="nc" id="L25">        return _shape;</span>
+    }
+
+    @Override
+    public final void increment() {
+<span class="fc" id="L30">        NDConfiguration.Utility.increment( _indices, _shape );</span>
+<span class="fc" id="L31">    }</span>
+
+    @Override
+    public final void decrement() {
+<span class="fc" id="L35">        NDConfiguration.Utility.decrement( _indices, _shape );</span>
+<span class="fc" id="L36">    }</span>
+
+    @Override
+    public final int i() {
+<span class="fc" id="L40">        return _conf.indexOfIndices(_indices);</span>
+    }
+
+    @Override
+    public final int get( int axis ) {
+<span class="fc" id="L45">        return _indices[ axis ];</span>
+    }
+
+    @Override
+    public final int[] get() {
+<span class="fc" id="L50">        return _indices;</span>
+    }
+
+    @Override
+    public final void set( int axis, int position ) {
+<span class="fc" id="L55">        _indices[ axis ] = position;</span>
+<span class="fc" id="L56">    }</span>
+
+    @Override
+    public final void set( int[] indices ) {
+<span class="fc" id="L60">        System.arraycopy( indices, 0, _indices, 0, indices.length );</span>
+<span class="fc" id="L61">    }</span>
+
+    @Override
+    public final int rank() {
+<span class="fc" id="L65">        return _shape.length;</span>
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

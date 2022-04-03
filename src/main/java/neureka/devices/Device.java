@@ -190,7 +190,6 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          *  the tensor is already stored on this device!                         <br><br>
          *
          * @param array The data inn the form of a primitive array.
-         * @return This very instance to allow for method chaining.
          */
         default void writeFrom( Object array ) { this.writeFrom( array, 0 ).fully(); }
         V readAt( int index );

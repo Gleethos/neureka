@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Hardware.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.host.machine</a> &gt; <span class="el_source">Hardware.java</span></div><h1>Hardware.java</h1><pre class="source lang-java linenums">/*&lt;#LICENSE#&gt;*/
+package neureka.devices.host.machine;
+
+import neureka.backend.standard.operations.linear.internal.blas.COPY;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TreeSet;
+
+/**
+ * &lt;ul&gt;
+ * &lt;li&gt;The first element in the array should correspond to total system resources; the total amount of RAM and
+ * the total number of threads (Typically the same as what is returned by
+ * {@linkplain Runtime#availableProcessors()}).&lt;/li&gt;
+ * &lt;li&gt;The last element in the array should describe the L1 cache. Typically Intel processors have 32k L1
+ * cache and AMD 64k. 1 or maybe 2 threads use/share this cache.&lt;/li&gt;
+ * &lt;li&gt;Caches, all levels except L1, are described between the first and last elements in descending order (L3
+ * cache comes before L2 cache). Specify the size of the cache and the number of threads using/sharing the
+ * cache. (Do not worry about how many cache units there are - describe one unit.)&lt;/li&gt;
+ * &lt;li&gt;The array must have at least 2 elements. You must describe the total system resources and the L1 cache.
+ * It is strongly recommended to also describe the L2 cache. The L3 cache, if it exists, is less important to
+ * describe. The derived attributes &lt;code&gt;processors&lt;/code&gt;, &lt;code&gt;cores&lt;/code&gt; and &lt;code&gt;units&lt;/code&gt; may be
+ * incorrectly calculated if you fail to specify the caches. Known issue: If you have more than one processor,
+ * nut no L3 cache; the &lt;code&gt;processors&lt;/code&gt; attribute will be incorrectly set 1. A workaround that
+ * currently works is to define an L3 cache anyway and set the memory/size of that cache to 0bytes. This
+ * workoround may stop working in the future.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;new MemoryThreads[] { SYSTEM, L3, L2, L1 }&lt;/code&gt; or
+ * &lt;code&gt;new MemoryThreads[] { SYSTEM, L2, L1 }&lt;/code&gt; or &lt;code&gt;new MemoryThreads[] { SYSTEM, L1 }&lt;/code&gt;&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ */
+public final class Hardware extends CommonMachine implements Comparable&lt;Hardware&gt; {
+
+    /**
+     * Practically all architectures/OS:s have a page size of 4k (one notable exception is Solaris/SPARC that
+     * have 8k)
+     */
+    public static final long OS_MEMORY_PAGE_SIZE = 4L * K;
+    /**
+     * Should contain all available hardware in ascending &quot;power&quot; order.
+     */
+<span class="fc" id="L42">    public static final Set&lt;Hardware&gt; PREDEFINED = new TreeSet&lt;&gt;();</span>
+
+    /**
+     * &lt;ul&gt;
+     * &lt;li&gt;CLAM / PowerBook6,5
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processor&lt;/li&gt;
+     * &lt;li&gt;1 core per processor&lt;/li&gt;
+     * &lt;li&gt;1 thread per core&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;1.25GB system RAM&lt;/li&gt;
+     * &lt;li&gt;512kB L2 cache per processor&lt;/li&gt;
+     * &lt;li&gt;64kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="fc" id="L59">    static final Hardware PPC__01 = new Hardware(&quot;ppc&quot;,</span>
+            new BasicMachine[] { new BasicMachine(5L * 256L * K * K, 1), new BasicMachine(512L * K, 1), new BasicMachine(64L * K, 1) });
+
+    /**
+     * &lt;ul&gt;
+     * &lt;li&gt;INTEL1
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processor&lt;/li&gt;
+     * &lt;li&gt;1 core per processor&lt;/li&gt;
+     * &lt;li&gt;1 thread per core&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;1GB system RAM&lt;/li&gt;
+     * &lt;li&gt;1MB L2 cache per processor&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="fc" id="L77">    static final Hardware X86__01 = new Hardware(&quot;x86&quot;,</span>
+            new BasicMachine[] { new BasicMachine(1L * K * K * K, 1), new BasicMachine(1L * K * K, 1), new BasicMachine(32L * K, 1) });
+
+    /**
+     * &lt;ul&gt;
+     * &lt;li&gt;B5950053
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processor&lt;/li&gt;
+     * &lt;li&gt;2 cores per processor&lt;/li&gt;
+     * &lt;li&gt;1 thread per core&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;3.5GB system RAM&lt;/li&gt;
+     * &lt;li&gt;6MB L2 cache per processor (2 cores)&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="fc" id="L95">    static final Hardware X86__02 = new Hardware(&quot;x86&quot;,</span>
+            new BasicMachine[] { new BasicMachine(7L * 512L * K * K, 2), new BasicMachine(6L * K * K, 2), new BasicMachine(32L * K, 1) });
+
+    /**
+     * &lt;ul&gt;
+     * &lt;li&gt;MANTA / iMac7,1
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processor&lt;/li&gt;
+     * &lt;li&gt;2 cores per processor&lt;/li&gt;
+     * &lt;li&gt;1 thread per core&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;3GB system RAM&lt;/li&gt;
+     * &lt;li&gt;4MB L2 cache per processor (2 cores)&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="fc" id="L113">    static final Hardware X86_64__02 = new Hardware(&quot;x86_64&quot;,</span>
+            new BasicMachine[] { new BasicMachine(3L * K * K * K, 2), new BasicMachine(4L * K * K, 2), new BasicMachine(32L * K, 1) });
+
+    /**
+     * Combination of {@link #X86_64__04_1_L2}, {@link #X86_64__04_1_L3} and {@link #X86_64__04_2}
+     */
+<span class="fc" id="L119">    static final Hardware X86_64__04 = new Hardware(&quot;x86_64&quot;, new BasicMachine[] { new BasicMachine(32L * K * K * K, 4), new BasicMachine(3L * K * K, 4),</span>
+            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+
+    /**
+     * &lt;ul&gt;
+     * &lt;li&gt;PA's Q9400
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processors&lt;/li&gt;
+     * &lt;li&gt;4 cores per processor&lt;/li&gt;
+     * &lt;li&gt;1 thread per core (4 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;3GB system RAM&lt;/li&gt;
+     * &lt;li&gt;3MB L2 cache per 2 cores&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;li&gt;PA's Q6600
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processors&lt;/li&gt;
+     * &lt;li&gt;4 cores per processor&lt;/li&gt;
+     * &lt;li&gt;1 thread per core (4 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;8GB system RAM&lt;/li&gt;
+     * &lt;li&gt;4MB L2 cache per 2 cores&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="fc" id="L148">    static final Hardware X86_64__04_1_L2 = new Hardware(&quot;x86_64&quot;,</span>
+            new BasicMachine[] { new BasicMachine(8L * K * K * K, 4), new BasicMachine(3L * K * K, 2), new BasicMachine(32L * K, 1) });
+
+    /**
+     * &lt;ul&gt;
+     * &lt;li&gt;Intel i5-4670K with 16GB of RAM
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processors&lt;/li&gt;
+     * &lt;li&gt;4 cores per processor&lt;/li&gt;
+     * &lt;li&gt;1 thread per core (4 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;16GB system RAM&lt;/li&gt;
+     * &lt;li&gt;6MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;li&gt;Intel Core i5-3570K with 32GB of RAM (from Java Matrix Benchmark)
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processors&lt;/li&gt;
+     * &lt;li&gt;4 cores per processor&lt;/li&gt;
+     * &lt;li&gt;1 thread per core (4 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;32GB system RAM&lt;/li&gt;
+     * &lt;li&gt;6MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="fc" id="L179">    static final Hardware X86_64__04_1_L3 = new Hardware(&quot;x86_64&quot;, new BasicMachine[] { new BasicMachine(32L * K * K * K, 4), new BasicMachine(6L * K * K, 4),</span>
+            new BasicMachine(256L * K, 1), new BasicMachine(32L * K, 1) });
+
+    /**
+     * &lt;ul&gt;
+     * &lt;li&gt;BUBBLE / MacBookAir4,2
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processors&lt;/li&gt;
+     * &lt;li&gt;2 cores per processor&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (4 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;4GB system RAM&lt;/li&gt;
+     * &lt;li&gt;3MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;li&gt;PA's Intel Core i7-620M laptop
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processors&lt;/li&gt;
+     * &lt;li&gt;2 cores per processor&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (4 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;8GB system RAM&lt;/li&gt;
+     * &lt;li&gt;4MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;li&gt;MacBookPro14,2 (oyster)
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processors&lt;/li&gt;
+     * &lt;li&gt;2 cores per processor&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (4 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;8GB system RAM&lt;/li&gt;
+     * &lt;li&gt;4MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="fc" id="L222">    static final Hardware X86_64__04_2 = new Hardware(&quot;x86_64&quot;, new BasicMachine[] { new BasicMachine(8L * K * K * K, 4), new BasicMachine(3L * K * K, 4),</span>
+            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+
+    /**
+     * &lt;ul&gt;
+     * &lt;li&gt;HA's Intel Core i7-920 server
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processor&lt;/li&gt;
+     * &lt;li&gt;4 cores per processor&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (8 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;8GB system RAM&lt;/li&gt;
+     * &lt;li&gt;8MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;li&gt;Core i7-2600 3.4 GHz - 4 cores - 8 threads from Java Matrix Benchmark
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processor&lt;/li&gt;
+     * &lt;li&gt;4 cores per processor&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (8 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;11GB system RAM&lt;/li&gt;
+     * &lt;li&gt;8MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;li&gt;Core i7-3770 3.4 GHz - 4 cores - 8 threads (whale @ MSC/MSB)
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processor&lt;/li&gt;
+     * &lt;li&gt;4 cores per processor&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (8 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;8GB system RAM&lt;/li&gt;
+     * &lt;li&gt;8MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;li&gt;Core i7-2600 3.4 GHz - 4 cores - 8 threads (Vostro-460 @ Scila)
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processor&lt;/li&gt;
+     * &lt;li&gt;4 cores per processor&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (8 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;32GB system RAM&lt;/li&gt;
+     * &lt;li&gt;8MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;li&gt;Google Cloud Platform Compute Engine n1-standard-8 (8 vCPUs, 30 GB memory, Skylake)
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processor&lt;/li&gt;
+     * &lt;li&gt;4 cores per processor&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (8 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;30GB system RAM&lt;/li&gt;
+     * &lt;li&gt;8.25MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;1MB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="fc" id="L289">    static final Hardware X86_64__08 = new Hardware(&quot;x86_64&quot;, new BasicMachine[] { new BasicMachine(32L * K * K * K, 8), new BasicMachine(8L * K * K, 8),</span>
+            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+
+    /**
+     * &lt;pre&gt;
+     * &quot;Gulftown&quot; (32 nm) Model: SLBUZ (B1)
+     * Intel Core i7-980 3.33GHz
+     * 8/25/2010
+     * ref: http://ark.intel.com/products/47932
+     *      https://en.wikipedia.org/wiki/List_of_Intel_Core_i7_microprocessors
+     *      Device Manager
+     * &lt;/pre&gt;
+     * &lt;ul&gt;
+     * &lt;li&gt;Intel Core i7-980
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processor&lt;/li&gt;
+     * &lt;li&gt;6 cores per processor&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (12 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;12GB system RAM&lt;/li&gt;
+     * &lt;li&gt;12MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core (x6)&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core (x6)&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="fc" id="L316">    static final Hardware X86_64__12 = new Hardware(&quot;x86_64&quot;, new BasicMachine[] { new BasicMachine(12L * K * K * K, 12), new BasicMachine(12L * K * K, 12),</span>
+            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+
+    /**
+     * &lt;ul&gt;
+     * &lt;li&gt;SAILFISH / MacPro4,1
+     * &lt;ul&gt;
+     * &lt;li&gt;2 processors&lt;/li&gt;
+     * &lt;li&gt;4 cores per processor (8 cores in total)&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (16 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;12GB system RAM&lt;/li&gt;
+     * &lt;li&gt;8MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;li&gt;OCTOPUS / MacBookPro16,1
+     * &lt;ul&gt;
+     * &lt;li&gt;1 processors&lt;/li&gt;
+     * &lt;li&gt;8 cores per processor (8 cores in total)&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (16 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;64GB system RAM&lt;/li&gt;
+     * &lt;li&gt;16MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="fc" id="L347">    static final Hardware X86_64__16 = new Hardware(&quot;x86_64&quot;, new BasicMachine[] { new BasicMachine(64L * K * K * K, 16), new BasicMachine(8L * K * K, 16),</span>
+            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+
+    /**
+     * &lt;ul&gt;
+     * &lt;li&gt;CBL (prod &amp; test) 2 x Intel(R) Xeon(R) CPU E5-2697A v4 @ 2.60GHz
+     * &lt;ul&gt;
+     * &lt;li&gt;2 processors&lt;/li&gt;
+     * &lt;li&gt;16 cores per processor (32 cores in total)&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (64 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;512GB system RAM&lt;/li&gt;
+     * &lt;li&gt;40MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;li&gt;CBF (simu) 4 x Intel(R) Xeon(R) CPU E7-4809 v3 @ 2.00GHz
+     * &lt;ul&gt;
+     * &lt;li&gt;4 processors&lt;/li&gt;
+     * &lt;li&gt;8 cores per processor (32 cores in total)&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (64 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;512GB system RAM&lt;/li&gt;
+     * &lt;li&gt;20MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="fc" id="L378">    static final Hardware X86_64__64 = new Hardware(&quot;x86_64&quot;, new BasicMachine[] { new BasicMachine(512L * K * K * K, 64), new BasicMachine(20L * K * K, 32),</span>
+            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+
+    /**
+     * &lt;ul&gt;
+     * &lt;li&gt;CBF (prod) 4 x Intel(R) Xeon(R) CPU E7-4830 v3 @ 2.10GHz
+     * &lt;ul&gt;
+     * &lt;li&gt;4 processors&lt;/li&gt;
+     * &lt;li&gt;12 cores per processor (48 cores in total)&lt;/li&gt;
+     * &lt;li&gt;2 threads per core (96 threads in total)&lt;/li&gt;
+     * &lt;li&gt;===&lt;/li&gt;
+     * &lt;li&gt;512GB system RAM&lt;/li&gt;
+     * &lt;li&gt;30MB L3 cache per processor&lt;/li&gt;
+     * &lt;li&gt;256kB L2 cache per core&lt;/li&gt;
+     * &lt;li&gt;32kB L1 cache per core&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="fc" id="L397">    static final Hardware X86_64__96 = new Hardware(&quot;x86_64&quot;, new BasicMachine[] { new BasicMachine(512L * K * K * K, 96), new BasicMachine(30L * K * K, 24),</span>
+            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+
+    static {
+<span class="fc" id="L401">        PREDEFINED.add(PPC__01);</span>
+<span class="fc" id="L402">        PREDEFINED.add(X86__01);</span>
+<span class="fc" id="L403">        PREDEFINED.add(X86__02);</span>
+<span class="fc" id="L404">        PREDEFINED.add(X86_64__02);</span>
+<span class="fc" id="L405">        PREDEFINED.add(X86_64__04);</span>
+<span class="fc" id="L406">        PREDEFINED.add(X86_64__04_2);</span>
+<span class="fc" id="L407">        PREDEFINED.add(X86_64__04_1_L2);</span>
+<span class="fc" id="L408">        PREDEFINED.add(X86_64__04_1_L3);</span>
+<span class="fc" id="L409">        PREDEFINED.add(X86_64__08);</span>
+<span class="fc" id="L410">        PREDEFINED.add(X86_64__12);</span>
+<span class="fc" id="L411">        PREDEFINED.add(X86_64__16);</span>
+<span class="fc" id="L412">        PREDEFINED.add(X86_64__64);</span>
+<span class="fc" id="L413">        PREDEFINED.add(X86_64__96);</span>
+<span class="fc" id="L414">    }</span>
+
+    public static Hardware makeSimple() {
+<span class="nc" id="L417">        return Hardware.makeSimple(ConcreteMachine.getArchitecture(), ConcreteMachine.getMemory(), ConcreteMachine.getThreads());</span>
+    }
+
+    public static Hardware makeSimple(final String systemArchitecture, final long systemMemory, final int systemThreads) {
+
+<span class="nc bnc" id="L422" title="All 2 branches missed.">        if (systemThreads &gt; 8) {</span>
+            // Assume hyperthreading, L3 cache and more than 1 CPU
+
+<span class="nc" id="L425">            final BasicMachine tmpL1Machine = new BasicMachine(32L * K, 2); //Hyperthreading</span>
+<span class="nc" id="L426">            final BasicMachine tmpL2Machine = new BasicMachine(256L * K, tmpL1Machine.threads);</span>
+<span class="nc" id="L427">            final BasicMachine tmpL3Machine = new BasicMachine(4L * K * K, systemThreads / ((systemThreads + 7) / 8)); //More than 1 CPU</span>
+<span class="nc" id="L428">            final BasicMachine tmpSystemMachine = new BasicMachine(systemMemory, systemThreads);</span>
+<span class="nc" id="L429">            return new Hardware(systemArchitecture, new BasicMachine[] { tmpSystemMachine, tmpL3Machine, tmpL2Machine, tmpL1Machine });</span>
+
+<span class="nc bnc" id="L431" title="All 2 branches missed.">        } else if (systemThreads &gt;= 4) {</span>
+            // Assume hyperthreading, L3 cache but only 1 CPU
+
+<span class="nc" id="L434">            final BasicMachine tmpL1Machine = new BasicMachine(32L * K, 2); //Hyperthreading</span>
+<span class="nc" id="L435">            final BasicMachine tmpL2Machine = new BasicMachine(256L * K, tmpL1Machine.threads);</span>
+<span class="nc" id="L436">            final BasicMachine tmpL3Machine = new BasicMachine(3L * K * K, systemThreads);</span>
+<span class="nc" id="L437">            final BasicMachine tmpSystemMachine = new BasicMachine(systemMemory, systemThreads);</span>
+<span class="nc" id="L438">            return new Hardware(systemArchitecture, new BasicMachine[] { tmpSystemMachine, tmpL3Machine, tmpL2Machine, tmpL1Machine });</span>
+
+        } else {
+            // No hyperthreading, no L3 cache and 1 CPU
+
+<span class="nc" id="L443">            final BasicMachine tmpL1Machine = new BasicMachine(32L * K, 1); //No hyperthreading</span>
+<span class="nc" id="L444">            final BasicMachine tmpL2Machine = new BasicMachine(2L * K * K, tmpL1Machine.threads);</span>
+<span class="nc" id="L445">            final BasicMachine tmpSystemMachine = new BasicMachine(systemMemory, systemThreads);</span>
+<span class="nc" id="L446">            return new Hardware(systemArchitecture, new BasicMachine[] { tmpSystemMachine, tmpL2Machine, tmpL1Machine });</span>
+        }
+    }
+
+    private final BasicMachine[] myLevels;
+
+    /**
+     * &lt;code&gt;new BasicMachine[] { SYSTEM, L3, L2, L1 }&lt;/code&gt; or
+     * &lt;code&gt;new BasicMachine[] { SYSTEM, L2, L1 }&lt;/code&gt; or in worst case
+     * &lt;code&gt;new BasicMachine[] { SYSTEM, L1 }&lt;/code&gt;
+     *
+     * @param architecture The architecture code.
+     * @param levels The cache levels.
+     */
+    public Hardware(
+            final String architecture,
+            final BasicMachine[] levels
+    ) {
+
+<span class="fc" id="L465">        super(architecture, levels);</span>
+
+<span class="pc bpc" id="L467" title="1 of 2 branches missed.">        if (levels.length &lt; 2) {</span>
+<span class="nc" id="L468">            throw new IllegalArgumentException();</span>
+        }
+
+<span class="fc" id="L471">        myLevels = COPY.copyOf(levels);</span>
+<span class="fc" id="L472">    }</span>
+
+    public int compareTo(final Hardware other) {
+<span class="fc bfc" id="L475" title="All 2 branches covered.">        if (cores != other.cores) {</span>
+<span class="fc" id="L476">            return cores - other.cores;</span>
+<span class="fc bfc" id="L477" title="All 2 branches covered.">        } else if (threads != other.threads) {</span>
+<span class="fc" id="L478">            return threads - other.threads;</span>
+<span class="fc bfc" id="L479" title="All 2 branches covered.">        } else if (cache != other.cache) {</span>
+<span class="fc" id="L480">            return (int) (cache - other.cache);</span>
+<span class="pc bpc" id="L481" title="1 of 2 branches missed.">        } else if (units != other.units) {</span>
+<span class="nc" id="L482">            return units - other.units;</span>
+<span class="fc bfc" id="L483" title="All 2 branches covered.">        } else if (memory != other.memory) {</span>
+<span class="fc" id="L484">            return (int) (memory - other.memory);</span>
+        } else {
+<span class="fc" id="L486">            return 0;</span>
+        }
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+<span class="nc bnc" id="L492" title="All 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L493">            return true;</span>
+        }
+<span class="nc bnc" id="L495" title="All 2 branches missed.">        if (!super.equals(obj)) {</span>
+<span class="nc" id="L496">            return false;</span>
+        }
+<span class="nc bnc" id="L498" title="All 2 branches missed.">        if (!(obj instanceof Hardware)) {</span>
+<span class="nc" id="L499">            return false;</span>
+        }
+<span class="nc" id="L501">        final Hardware other = (Hardware) obj;</span>
+<span class="nc bnc" id="L502" title="All 2 branches missed.">        if (!Arrays.equals(myLevels, other.myLevels)) {</span>
+<span class="nc" id="L503">            return false;</span>
+        }
+<span class="nc" id="L505">        return true;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L510">        final int prime = 31;</span>
+<span class="nc" id="L511">        int result = super.hashCode();</span>
+<span class="nc" id="L512">        result = (prime * result) + Arrays.hashCode(myLevels);</span>
+<span class="nc" id="L513">        return result;</span>
+    }
+
+    public boolean isL2Specified() {
+<span class="nc bnc" id="L517" title="All 2 branches missed.">        return myLevels.length &gt; 2;</span>
+    }
+
+    public boolean isL3Specified() {
+<span class="nc bnc" id="L521" title="All 2 branches missed.">        return myLevels.length &gt; 3;</span>
+    }
+
+    @Override
+    public String toString() {
+
+<span class="nc" id="L527">        final StringBuilder retVal = new StringBuilder(&quot;HW=&quot;);</span>
+
+<span class="nc" id="L529">        retVal.append(myLevels[0].toString());</span>
+<span class="nc bnc" id="L530" title="All 2 branches missed.">        if (this.isL3Specified()) {</span>
+<span class="nc" id="L531">            retVal.append(',').append(units).append(&quot;xL3:&quot;).append(myLevels[myLevels.length - 3]);</span>
+<span class="nc bnc" id="L532" title="All 2 branches missed.">        } else if (this.isL2Specified()) {</span>
+<span class="nc" id="L533">            retVal.append(',').append(units).append(&quot;xL2:&quot;).append(myLevels[myLevels.length - 2]);</span>
+        }
+<span class="nc" id="L535">        retVal.append(',').append(cores).append(&quot;cores:&quot;).append(myLevels[myLevels.length - 1]);</span>
+
+<span class="nc" id="L537">        return retVal.toString();</span>
+    }
+
+    public ConcreteMachine virtualize() {
+<span class="fc" id="L541">        return new ConcreteMachine(this, Runtime.getRuntime());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

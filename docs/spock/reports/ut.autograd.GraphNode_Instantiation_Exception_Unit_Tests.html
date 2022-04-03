@@ -1,0 +1,778 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+h3 {
+  font-weight: 200;
+}
+
+.back-link {
+  font-size: small;
+}
+
+table {
+  margin: 5px;
+}
+
+div.date-test-ran {
+  font-size: small;
+  font-style: italic;
+}
+
+table.features-table {
+  width: 800px;
+}
+
+table.summary-table {
+  width: 800px;
+  text-align: left;
+  font-weight: bold;
+  font-size: small;
+}
+
+table.summary-table th {
+  background: lightblue;
+  padding: 6px;
+}
+
+table.summary-table td {
+  background: #E0E0E0;
+  padding: 6px;
+}
+
+pre.title {
+  font-family: inherit;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+pre.narrative {
+  font-family: inherit;
+  font-size: 18px;
+  font-style: italic;
+  line-height: 23px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+.feature-description {
+  font-size: large;
+  background: lightblue;
+  padding: 12px;
+}
+
+.feature-toc-error {
+  color: #F89A4F;
+}
+
+.feature-toc-failure {
+  color: #FF8080;
+}
+
+.feature-toc-ignored {
+  color: lightgray;
+}
+
+.feature-toc-pass {
+  color: green;
+}
+
+.feature-description.error {
+  background: #F89A4F;
+}
+
+.feature-description.failure {
+  background: #FF8080;
+}
+
+.feature-description.ignored {
+  background: lightgray;
+}
+
+.feature-description.ignored .reason {
+  color: black;
+  font-style: italic;
+  font-size: small;
+}
+
+div.extra-info {
+  font-size: small;
+}
+
+div.spec-headers {
+  margin: 4px;
+  font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+  margin-top: 6px;
+  padding: 10px 5px 5px 5px;
+  background-color: lemonchiffon;
+  color: black;
+  font-weight: 500;
+  font-size: small;
+  max-width: 50%;
+}
+
+div.pending-feature {
+  background-color: dodgerblue;
+  color: white;
+  margin-top: 6px;
+  padding: 5px;
+  text-align: center;
+  font-size: small;
+  max-width: 120px;
+}
+
+div.problem-description {
+  padding: 10px;
+  background: pink;
+  border-radius: 10px;
+}
+
+div.problem-header {
+  font-weight: bold;
+  color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table th {
+  background: lightblue;
+  padding: 5px;
+}
+
+table.ex-table td {
+  background: #E0E0E0;
+  padding: 2px 5px 2px 5px;
+}
+
+table td {
+  min-width: 50px;
+}
+
+col.block-kind-col {
+  width: 70px;
+}
+
+span.spec-header {
+  font-weight: bold;
+}
+
+div.spec-text {
+  /*color: green;*/
+}
+
+div.spec-status {
+  font-style: italic;
+}
+
+.ignored {
+  color: gray;
+}
+
+td.ex-result {
+  text-align: center;
+  background: white !important;
+}
+
+.ex-pass {
+  color: darkgreen;
+}
+
+.ex-fail {
+  color: red;
+  font-weight: bold;
+}
+
+div.block-kind {
+  margin: 2px;
+  font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+  background-color: whitesmoke;
+  padding: 10px;
+}
+
+pre.block-source.error {
+  background-color: pink;
+  color: red;
+  font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+  margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+  color: gray;
+  margin-top: -14px;
+}
+
+pre.block-source.post-error {
+  color: gray;
+}
+
+div.footer {
+  text-align: center;
+  font-size: small;
+}
+</style>
+</head>
+<body>
+<h2>Report for ut.autograd.GraphNode_Instantiation_Exception_Unit_Tests</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Sun Apr 03 14:55:58 CEST 2022 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td>
+<td>6</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>1.137 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class='spec-headers'>
+<div class='spec-header'>
+            <h2> GraphNode Instantiation Tests </h2>
+            <p>
+                Specified below are strict tests covering the behavior
+                of the GraphNode class during instantiation where
+                inputs are setup to cause expected exceptions.
+            </p>
+        </div>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#-1490789273' class='feature-toc-pass'>GraphNode throws exception when trying to instantiate with the wrong context.</a>
+</li>
+<li>
+<a href='#1843082245' class='feature-toc-pass'>GraphNode throws exception when trying to instantiate with Function argument being null.</a>
+</li>
+<li>
+<a href='#323273333' class='feature-toc-pass'>GraphNode throws exception when payload is null.</a>
+</li>
+<li>
+<a href='#-1737158464' class='feature-toc-pass'>GraphNode instantiation throws exception because tensors of ExecutionCall do not return GraphNode instances.</a>
+</li>
+<li>
+<a href='#-1772875211' class='feature-toc-pass'>GraphNode instantiation throws exception because GraphNode instances of input tensors do not share the same GraphLock.</a>
+</li>
+<li>
+<a href='#-935311534' class='feature-toc-pass'>GraphNode throws an exception when trying to execute an inline operation on inputs with active autograd.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1490789273'>
+<span>GraphNode throws exception when trying to instantiate with the wrong context.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Arguments used to call the GraphNode constructor where the context variable contains the wrong type.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Function function = Mock(Function)
+Supplier&lt;Tsr&gt; supplier = () -&gt; Mock(Tsr)
+Object context = new Integer(3)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We try to instantiate a GraphNode...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>new GraphNode(function, context, supplier)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The constructor throws the expected error message.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def exception = thrown(IllegalArgumentException)
+exception.message == "The passed context object for the GraphNode constructor is of type 'java.lang.Integer'.\n" +
+"A given context must either be a GraphLock instance or an ExecutionCall."</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The function has not been called.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>0 * function.isDoingAD()</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1843082245'>
+<span>GraphNode throws exception when trying to instantiate with Function argument being null.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Arguments used to call the GraphNode constructor where the Function variable is null.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Function function = null
+Supplier&lt;Tsr&gt; supplier = () -&gt; Mock(Tsr)
+Object context = Mock(GraphLock)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We try to instantiate a GraphNode...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>new GraphNode(function, context, supplier)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The constructor throws the expected error message.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def exception = thrown(IllegalArgumentException)
+exception.message == "Passed constructor argument of type Function must not be null!"</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='323273333'>
+<span>GraphNode throws exception when payload is null.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Arguments used to call the GraphNode constructor where the payload supplier return null.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Function function = Mock(Function)
+Supplier&lt;Tsr&gt; supplier = () -&gt; null
+Object context = Mock(GraphLock)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We try to instantiate a GraphNode...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>new GraphNode(function, context, supplier)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The constructor throws the expected error message.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def exception = thrown(NullPointerException)
+exception.message == "The supplied payload Tsr must no be null!"</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1737158464'>
+<span>GraphNode instantiation throws exception because tensors of ExecutionCall do not return GraphNode instances.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Mocked arguments used to call the GraphNode constructor.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr payload = Mock( Tsr )
+Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
+Supplier&lt;Tsr&gt; supplier = () -&gt; payload
+Function function = Mock( Function )
+Operation type = Mock(Operation)
+Object context = Mock( ExecutionCall )
+Device device = Mock( Device )
+def inputsNodeMock = Mock( GraphNode )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We try to instantiate a GraphNode...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>new GraphNode( function, context, supplier )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The expected exception message is being thrown.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def exception = thrown(IllegalStateException)
+exception.message ==
+"Input tensor at index '1' did not return a GraphNode instance." +
+"Input tensors of a new GraphNode must be part of the computation graph!"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The mock objects are being called as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * context.inputs() &gt;&gt; inputs
+2 * inputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
+0 * function.isDoingAD() &gt;&gt; true
+0 * payload.getDevice() &gt;&gt; device
+0 * payload.to( _ )
+0 * device.cleaning( payload, _ )
+(1..2) * function.getOperation() &gt;&gt; type
+(0.._) * type.isDifferentiable() &gt;&gt; true
+(1.._) * type.isInline() &gt;&gt; true
+1 * inputs[0].getGraphNode() &gt;&gt; inputsNodeMock
+1 * inputs[1].getGraphNode() &gt;&gt; null
+0 * inputs[2].getGraphNode() &gt;&gt; null
+0 * context.allowsForward() &gt;&gt; true</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1772875211'>
+<span>GraphNode instantiation throws exception because GraphNode instances of input tensors do not share the same GraphLock.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Mocked arguments used to call the GraphNode constructor.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr payload = Mock( Tsr )
+Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
+Supplier&lt;Tsr&gt; supplier = () -&gt; payload
+Function function = Mock( Function )
+Operation type = Mock(Operation)
+Object context = Mock( ExecutionCall )
+Device device = Mock( Device )
+def inputsNodeMock = Mock( GraphNode )
+def otherInputsNodeMock = Mock( GraphNode )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We try to instantiate a GraphNode...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>new GraphNode( function, context, supplier )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The expected exception message is being thrown.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def exception = thrown(IllegalStateException)
+exception.message ==
+"GraphNode instances found in input tensors do not share the same GraphLock instance.\n" +
+"The given input tensors of a new node must be part of the same locked computation graph!"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The mock objects are being called as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * context.inputs() &gt;&gt; inputs
+3 * inputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
+1 * otherInputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
+0 * function.isDoingAD() &gt;&gt; true
+0 * payload.getDevice() &gt;&gt; device
+0 * payload.to( _ )
+0 * device.cleaning( payload, _ )
+(1.._) * function.getOperation() &gt;&gt; type
+(0.._) * type.isDifferentiable() &gt;&gt; true
+(1.._) * type.isInline() &gt;&gt; true
+1 * inputs[0].getGraphNode() &gt;&gt; inputsNodeMock
+1 * inputs[1].getGraphNode() &gt;&gt; inputsNodeMock
+1 * inputs[2].getGraphNode() &gt;&gt; otherInputsNodeMock
+0 * context.allowsForward() &gt;&gt; true</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-935311534'>
+<span>GraphNode throws an exception when trying to execute an inline operation on inputs with active autograd.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Mocked arguments used to call the GraphNode constructor.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr payload = Mock( Tsr )
+Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
+Supplier&lt;Tsr&gt; supplier = () -&gt; payload
+AbstractOperation type = Mock( AbstractOperation )
+Function function = Mock( Function )
+Object context = Mock( ExecutionCall )
+Device device = Mock( Device )
+def inputsNodeMock = Mock( GraphNode )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We try to instantiate a GraphNode...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>new GraphNode( function, context, supplier )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The expected exception message is being thrown.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def exception = thrown(IllegalStateException)
+exception.message ==
+"Trying to apply inline operation 'SOME_TEST_FUNCTION_STRING'\n"+
+"on active autograd computation graph in non detached function.\n"+
+"Please use detached functions instead! ( 'Function.create(\"SOME_TEST_FUNCTION_STRING(...)\", false)' )\n"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The mock objects have been called as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * context.inputs() &gt;&gt; inputs
+2 * inputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
+0 * function.isDoingAD() &gt;&gt; true
+1 * type.isInline() &gt;&gt; true
+0 * payload.getDevice() &gt;&gt; device
+0 * payload.to( _ )
+0 * device.cleaning( payload, _ )
+1 * inputs[0].getGraphNode() &gt;&gt; inputsNodeMock
+0 * inputs[1].getGraphNode() &gt;&gt; inputsNodeMock
+0 * inputs[2].getGraphNode() &gt;&gt; inputsNodeMock
+0 * inputsNodeMock.getMode() &gt;&gt; -2
+1 * inputsNodeMock.usesAD() &gt;&gt; true
+0 * inputs[0].rqsGradient() &gt;&gt; true
+0 * inputs[1].rqsGradient() &gt;&gt; false
+0 * inputs[2].rqsGradient() &gt;&gt; true
+0 * context.allowsForward() &gt;&gt; true
+0 * context.allowsBackward() &gt;&gt; true
+(2..3) * function.getOperation() &gt;&gt; type
+(1..3) * type.getIdentifier() &gt;&gt; "SOME_TEST_FUNCTION_STRING"
+0 * type.getOperator() &gt;&gt; "*"
+0 * inputsNodeMock.getPayload() &gt;&gt; payload
+0 * payload.hashCode() &gt;&gt; 3</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleReshapeView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config.types.views</a> &gt; <span class="el_source">SimpleReshapeView.java</span></div><h1>SimpleReshapeView.java</h1><pre class="source lang-java linenums">package neureka.ndim.config.types.views;
+
+import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.config.NDConfiguration;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SimpleReshapeView extends AbstractNDC
+{
+    private final NDConfiguration _toBeViewed;
+    private final int[] _form;
+    private final int[] _formTranslator;
+    private final int[] _shape;
+    private final int[] _translation;
+    private final int[] _indicesMap;
+    private final int[] _spread;
+    private final int[] _offset;
+
+    public SimpleReshapeView( int[] form, NDConfiguration toBeViewed )
+<span class="fc" id="L23">    {</span>
+<span class="fc" id="L24">        _toBeViewed = toBeViewed;</span>
+<span class="fc" id="L25">        _form = form;</span>
+
+<span class="fc" id="L27">        List&lt;Integer&gt; _translator = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        for ( int i=0; i &lt; form.length; i++ )</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">                if ( form[ i ] &lt; -1 ) throw new IllegalArgumentException(</span>
+                    &quot;SimpleReshapeView may not view a NDConfiguration beyond reshaping and or padding!&quot;
+                );
+<span class="fc bfc" id="L33" title="All 2 branches covered.">            else if ( form[ i ] &gt;= 0 )  _translator.add( form[ i ] );</span>
+
+<span class="fc" id="L35">        _formTranslator = _translator.stream().mapToInt( e -&gt; e ).toArray();</span>
+
+
+<span class="fc" id="L38">        NDConfiguration ndc = _simpleReshape( form, toBeViewed );</span>
+<span class="fc" id="L39">        _shape = ndc.shape();</span>
+<span class="fc" id="L40">        _translation = ndc.translation();</span>
+<span class="fc" id="L41">        _indicesMap = ndc.indicesMap();</span>
+<span class="fc" id="L42">        _spread = ndc.spread();</span>
+<span class="fc" id="L43">        _offset = ndc.offset();</span>
+<span class="fc" id="L44">    }</span>
+
+    @Override
+    public final int rank() {
+<span class="fc" id="L48">        return _shape.length;</span>
+    }
+
+    @Override
+    public final int[] shape() {
+<span class="fc" id="L53">        return _shape;</span>
+    }
+
+    @Override
+    public final int shape( int i ) {
+<span class="nc" id="L58">        return _shape[ i ];</span>
+    }
+
+    @Override
+    public final int[] indicesMap() {
+<span class="nc" id="L63">        return _indicesMap;</span>
+    }
+
+    @Override
+    public final int indicesMap(int i ) {
+<span class="nc" id="L68">        return _indicesMap[ i ];</span>
+    }
+
+    @Override
+    public final int[] translation() {
+<span class="fc" id="L73">        return _translation;</span>
+    }
+
+    @Override
+    public final int translation( int i ) {
+<span class="nc" id="L78">        return _translation[ i ];</span>
+    }
+
+    @Override
+    public final int[] spread() {
+<span class="nc" id="L83">        return _spread;</span>
+    }
+
+    @Override
+    public final int spread( int i ) {
+<span class="fc" id="L88">        return _spread[ i ];</span>
+    }
+
+    @Override
+    public final int[] offset() {
+<span class="nc" id="L93">        return _offset;</span>
+    }
+
+    @Override
+    public final int offset( int i ) {
+<span class="fc" id="L98">        return _offset[ i ];</span>
+    }
+
+    @Override
+    public final int indexOfIndex(int index) {
+<span class="fc" id="L103">        return indexOfIndices( indicesOfIndex(index) );</span>
+    }
+
+    @Override
+    public final int[] indicesOfIndex( int index ) {
+<span class="fc" id="L108">        int[] indices = new int[ _shape.length ];</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
+<span class="fc" id="L110">            indices[ ii ] += index / _indicesMap[ ii ];</span>
+<span class="fc" id="L111">            index %= _indicesMap[ ii ];</span>
+        }
+<span class="fc" id="L113">        return indices;</span>
+    }
+
+    @Override
+    public final int indexOfIndices( int[] indices ) {
+<span class="fc" id="L118">        int[] innerIdx = _rearrange( indices, _form, _formTranslator );</span>
+<span class="fc" id="L119">        return _toBeViewed.indexOfIndices( innerIdx );</span>
+    }
+
+    @Contract(pure = true)
+    private static int[] _rearrange( @NotNull int[] array, @NotNull int[] ptr, @NotNull int[] indices ) {
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        for ( int i = 0; i &lt; ptr.length; i++ ) {</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">            if ( ptr[ i ] &gt;= 0 ) indices[ ptr[ i ] ] = array[ i ];</span>
+        }
+<span class="fc" id="L127">        return indices;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

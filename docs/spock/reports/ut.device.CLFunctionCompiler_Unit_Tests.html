@@ -1,0 +1,943 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+h3 {
+  font-weight: 200;
+}
+
+.back-link {
+  font-size: small;
+}
+
+table {
+  margin: 5px;
+}
+
+div.date-test-ran {
+  font-size: small;
+  font-style: italic;
+}
+
+table.features-table {
+  width: 800px;
+}
+
+table.summary-table {
+  width: 800px;
+  text-align: left;
+  font-weight: bold;
+  font-size: small;
+}
+
+table.summary-table th {
+  background: lightblue;
+  padding: 6px;
+}
+
+table.summary-table td {
+  background: #E0E0E0;
+  padding: 6px;
+}
+
+pre.title {
+  font-family: inherit;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+pre.narrative {
+  font-family: inherit;
+  font-size: 18px;
+  font-style: italic;
+  line-height: 23px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+.feature-description {
+  font-size: large;
+  background: lightblue;
+  padding: 12px;
+}
+
+.feature-toc-error {
+  color: #F89A4F;
+}
+
+.feature-toc-failure {
+  color: #FF8080;
+}
+
+.feature-toc-ignored {
+  color: lightgray;
+}
+
+.feature-toc-pass {
+  color: green;
+}
+
+.feature-description.error {
+  background: #F89A4F;
+}
+
+.feature-description.failure {
+  background: #FF8080;
+}
+
+.feature-description.ignored {
+  background: lightgray;
+}
+
+.feature-description.ignored .reason {
+  color: black;
+  font-style: italic;
+  font-size: small;
+}
+
+div.extra-info {
+  font-size: small;
+}
+
+div.spec-headers {
+  margin: 4px;
+  font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+  margin-top: 6px;
+  padding: 10px 5px 5px 5px;
+  background-color: lemonchiffon;
+  color: black;
+  font-weight: 500;
+  font-size: small;
+  max-width: 50%;
+}
+
+div.pending-feature {
+  background-color: dodgerblue;
+  color: white;
+  margin-top: 6px;
+  padding: 5px;
+  text-align: center;
+  font-size: small;
+  max-width: 120px;
+}
+
+div.problem-description {
+  padding: 10px;
+  background: pink;
+  border-radius: 10px;
+}
+
+div.problem-header {
+  font-weight: bold;
+  color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table th {
+  background: lightblue;
+  padding: 5px;
+}
+
+table.ex-table td {
+  background: #E0E0E0;
+  padding: 2px 5px 2px 5px;
+}
+
+table td {
+  min-width: 50px;
+}
+
+col.block-kind-col {
+  width: 70px;
+}
+
+span.spec-header {
+  font-weight: bold;
+}
+
+div.spec-text {
+  /*color: green;*/
+}
+
+div.spec-status {
+  font-style: italic;
+}
+
+.ignored {
+  color: gray;
+}
+
+td.ex-result {
+  text-align: center;
+  background: white !important;
+}
+
+.ex-pass {
+  color: darkgreen;
+}
+
+.ex-fail {
+  color: red;
+  font-weight: bold;
+}
+
+div.block-kind {
+  margin: 2px;
+  font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+  background-color: whitesmoke;
+  padding: 10px;
+}
+
+pre.block-source.error {
+  background-color: pink;
+  color: red;
+  font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+  margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+  color: gray;
+  margin-top: -14px;
+}
+
+pre.block-source.post-error {
+  color: gray;
+}
+
+div.footer {
+  text-align: center;
+  font-size: small;
+}
+</style>
+</head>
+<body>
+<h2>Report for ut.device.CLFunctionCompiler_Unit_Tests</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Sun Apr 03 14:55:49 CEST 2022 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>0.344 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#-139587392' class='feature-toc-pass'>The CLFunctionCompiler produces an operation which properly integrates to the backend.</a>
+</li>
+<li>
+<a href='#1380379887' class='feature-toc-pass'>The CLFunctionCompiler produces the expected "ad hoc" kernel.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-139587392'>
+<span>The CLFunctionCompiler produces an operation which properly integrates to the backend.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>A mocked OpenCLDevice which allows us to test the compiler without OpenCL dependency.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def mockDevice = Mock(OpenCLDevice)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Three simple scalar tensors (of doubles) which we will keep in RAM (not outsource to a device).</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr&lt;Number&gt; t1 = Tsr.of( 1 )
+Tsr&lt;Number&gt; t2 = Tsr.of(-2 )
+Tsr&lt;Number&gt; t3 = Tsr.of( 5 )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A simple test function which will serve as the basis for the optimization.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def funToBeOptimized = Function.of("i2 - (i0 / i1)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Finally we instantiate the compiler which uses the mocked device and the test function for optimization.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def compiler = new CLFunctionCompiler(
+    mockDevice,
+    funToBeOptimized,
+    "test_fun"
+)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We instruct the compiler to compile an optimized kernel in the form of an Operation instance</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Operation resultOperation = compiler.optimize()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>This resulting operation will not be null!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>resultOperation != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We create a new cloned context from the current one with the added test operation...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def context = Neureka.get().backend().clone().addOperation(resultOperation)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>... a context runner ...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def run = context.runner()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We create a function based on our optimized operation...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Function fun = run {
+    new FunctionBuilder( Neureka.get().backend() )
+                .build(resultOperation, 3, true)
+}</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>This function should of course not be null!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>fun != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The function should look as follows when represented as a String:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>fun.toString() == "test_fun(I[0], I[1], I[2])"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The context now stores the newly created operation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>context.getOperation("test_fun") == resultOperation</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Querying the new operation for an algorithm...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def foundAlgorithm = resultOperation
+.getAlgorithmFor(
+        ExecutionCall.of(t1, t2, t3)
+                        .running(resultOperation)
+                        .on(mockDevice)
+)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>We expect this algorithm to exist!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>foundAlgorithm != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>This algorithm is expected to host an implementation for our mocked device.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>foundAlgorithm.getImplementationFor(mockDevice.getClass()) != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Calling this function using the previously created scalars...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>fun( t1, t2, t3 )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>
+                This will lead to an exception because these tensors are not members of the mocked OpenCLDevice instance.
+                All of them are still residing in RAM without being member of any device...
+                Therefore in order for this to work we need to fake the membership of these tensors!
+        </div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def exception = thrown(IllegalStateException)
+exception.message == "No suitable implementation found for algorithm 'generic_algorithm_for_test_fun' and device type 'CPU'."</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We set the mocked device as components of our three scalar tensors...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t1.to(mockDevice)
+t2.to(mockDevice)
+t3.to(mockDevice)
+t1.setIsOutsourced(true)
+t2.setIsOutsourced(true)
+t3.setIsOutsourced(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>
+                This will require the mocked OpenCLDevice to notify the tensors that they are not already members.
+                This will cause the tensor to add themselves to the device after which
+                the tensors will ask the device again if they are now their members!
+        </div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(0.._) * mockDevice.has(t1) &gt;&gt;&gt; [false, true]
+(0.._) * mockDevice.has(t2) &gt;&gt;&gt; [false, true]
+(0.._) * mockDevice.has(t3) &gt;&gt;&gt; [false, true]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The update method is being called on the device because it becomes the component of 3 tensors!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(1.._) * mockDevice.update(_) &gt;&gt; true</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Finally the tensors are outsourced members of our mocked OpenCLDevice (Even though they are technically still in RAM).</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t1.isOutsourced()
+t2.isOutsourced()
+t3.isOutsourced()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We set a dummy implementation so that the real implementation does not get called</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>foundAlgorithm.setImplementationFor(mockDevice.getClass(), (call)-&gt;{})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We call the function again...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>fun( t1, t2, t3 )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>
+                We will register that the Operation created by the CLFunctionCompiler managed to 
+                integrate well with the Function backend (calculus package) and eventually
+                dispatch an execution call to our mocked OpenCLDevice.
+        </div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * mockDevice.approve({ ExecutionCall&lt;OpenCLDevice&gt; call -&gt;
+    call.device == mockDevice &amp;&amp;
+    call.operation == resultOperation
+})</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1380379887'>
+<span>The CLFunctionCompiler produces the expected "ad hoc" kernel.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>A mocked OpenCLDevice which allows us to test the compiler without OpenCL dependency.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def mockDevice = Mock(OpenCLDevice)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A mocked KernelCaller which allows us to check if the OpenCL backend is being called properly.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def mockCaller = Mock(KernelCaller)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A test function which will be the optimization target for this test.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def funToBeOptimized = Function.of("i2 + (i0 / i1)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Finally we create the function compiler!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def compiler = new CLFunctionCompiler(
+        mockDevice,
+        funToBeOptimized,
+        "test_fun"
+)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We instruct the compiler to produce an optimized operation based on the provided test function...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Operation resultOperation = compiler.optimize()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We query this new operation for a any algorithm... (There should really only be a single one)</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Algorithm algorithm = resultOperation.getAlgorithm(Algorithm.class)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The returned algorithm should of course not be null...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>algorithm != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>...as well as an OpenCLDevice specific implementation within the algorithm.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>algorithm.getImplementationFor(OpenCLDevice.class) != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We call the OpenCLDevice specific implementation by passing a well populated ExecutionCall.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>algorithm
+.getImplementationFor(OpenCLDevice.class)
+.run(
+        ExecutionCall.of(Tsr.of(0), Tsr.of(1), Tsr.of(2), Tsr.of(3))
+                        .running(resultOperation)
+                        .algorithm(algorithm)
+                        .on(mockDevice) as ExecutionCall&lt;OpenCLDevice&gt;
+)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>We expect that the implementation first checks with an optimized kernel already exists...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * mockDevice.hasAdHocKernel("test_fun_F64\$1_F64\$1_F64\$1_F64\$1") &gt;&gt; false</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The implementation will then also build and pass an "adHoc" kernel to the mocked device.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * mockDevice.compileAdHocKernel(
+                    "test_fun_F64\$1_F64\$1_F64\$1_F64\$1",
+                    """
+    int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]
+    {
+        int* offset      = ( cfg + rank * 5 );
+        int* strides     = ( cfg + rank * 4 );
+        int* indices     = ( cfg + rank * 3 );
+        int* translation = ( cfg + rank     );
+        int i = 0;
+        for ( int ii = 0; ii &lt; rank; ii++ ) {
+            i += ( indices[ ii ] * strides[ ii ] + offset[ ii ] ) * translation[ ii ];
+        }
+        return i;
+    }
+
+    int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]
+    {
+        int* indices    = ( cfg + rank * 3 );
+        int* indicesMap = ( cfg + rank * 2 );
+        for( int ii = 0; ii &lt; rank; ii++ ) {
+            indices[ ii ] = ( i / indicesMap[ ii ] ); // is derived from the shape of a tensor. Translates scalar index to dim-Index
+            i %= indicesMap[ ii ];
+        }
+        return _i_of_idx_on_tln( cfg, rank );
+    }
+
+    __kernel void test_fun_F64\$1_F64\$1_F64\$1_F64\$1(
+        __global double* arg0, __global double* arg1, __global double* arg2, __global double* arg3
+    ) {                                                                                     
+        int cfg0[] = {1,1,1,0,1};
+        int cfg1[] = {1,1,1,0,1};
+        int cfg2[] = {1,1,1,0,1};
+        int cfg3[] = {1,1,1,0,1};                                                                                          
+        unsigned int i = get_global_id( 0 );                                              
+        double v1 = arg1[_i_of_i(i, cfg1, 1)];
+        double v2 = arg2[_i_of_i(i, cfg2, 1)];
+        double v3 = arg3[_i_of_i(i, cfg3, 1)];                                                                                          
+        arg0[_i_of_i(i, cfg0, 1)] = (v1 + (v2 / v3));                         
+    }                                                                                     
+
+""")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>After the kernel has been compiled we expect the implementation to be called through a caller.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * mockDevice.getAdHocKernel("test_fun_F64\$1_F64\$1_F64\$1_F64\$1") &gt;&gt; mockCaller</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We expect that the caller receives 4 inputs, 1 output tensor and the 3 function arguments.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>4 * mockCaller.pass(_)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Finally the caller will receive a dispatch call with a work size of 1 (because the tensors are scalars). </div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * mockCaller.call(1)</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>
