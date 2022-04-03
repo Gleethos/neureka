@@ -337,14 +337,12 @@ sourceSets.main.output.dir genOutputDir, builtBy: generateVersionTxt
 signing {
     //Key-ID: 372447547E38B0A909776E4DD830DAE574A07986
     sign configurations.archives
-    //sign publishing.publications.mavenJava
+    sign publishing.publications
 }
 
 nexusPublishing {
     packageGroup = GROUP_ID
-    repositories {
-        sonatype()
-    }
+    repositories { sonatype() }
     transitionCheckOptions {
         // closing checks take some time so increase the retries
         // total time is maxRetries(180) * delayBetween(10s) = 30m
