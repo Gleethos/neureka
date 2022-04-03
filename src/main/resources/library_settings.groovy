@@ -47,6 +47,6 @@ Neureka.configure {
 
     }
 
-    return "0.15.0"
+    return "0.16.0"
 
 }

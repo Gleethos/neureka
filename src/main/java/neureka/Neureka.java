@@ -74,7 +74,7 @@ public final class Neureka
     /**
      *  The current semantic version of this library build.
      */
-    private static String _VERSION = "0.15.0";
+    private static String _VERSION = "0.16.0";
 
     /**
      *  The truth value determining if OpenCL is available or not.
