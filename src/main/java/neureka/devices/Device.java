@@ -177,6 +177,87 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     <T extends V> Access<T> access( Tsr<T> tensor );
 
     /**
+     *  This method is used internally to give {@link Device} implementations the opportunity
+     *  to perform some exception handling before the {@link ExecutionCall} will be dispatched.
+     *  Use this for debugging when doing custom backend operations.
+     *
+     * @param call The {@link ExecutionCall} which should be approved by this {@link Device} before execution.
+     * @return This very instance to allow for method chaining.
+     */
+    Device<V> approve( ExecutionCall<? extends Device<?>> call );
+
+    /**
+     * @return A {@link Collection} of all tensors stored by this device.
+     */
+    Collection<Tsr<V>> getTensors();
+
+    Operation optimizedOperationOf( Function function, String name );
+
+    default Function optimizedFunctionOf( Function function, String name ) {
+        Operation optimizedOperation = optimizedOperationOf( function, name );
+        BackendContext currentContext = Neureka.get().backend();
+        if ( !currentContext.hasOperation( optimizedOperation ) )
+            currentContext.addOperation( optimizedOperation );
+
+        return new FunctionBuilder( currentContext )
+                            .build(
+                                    optimizedOperation,
+                                    function.numberOfArgs(),
+                                    function.isDoingAD()
+                            );
+    }
+
+    /**
+     *  This is a very simple fluent API for temporarily storing a number
+     *  of tensors on this {@link Device}, executing a provided lambda action,
+     *  and then migrating all the tensors back to their original devices.              <br><br>
+     *
+     * @param first The first tensor among all passed tensors which ought to be
+     *              stored temporarily on this {@link Device}.
+     * @param rest Any number of other tensors passed to this method to be
+     *             stored temporarily on this {@link Device}.
+     *
+     * @return A simple lambda runner which will migrate the tensors passed to this method to
+     *         this very {@link Device}, execute the provided lambda, and then  migrate all the
+     *         tensors back to their original devices!
+     */
+    default In borrow( Tsr<V> first, Tsr<V>... rest ) {
+        List<Tsr<V>> tensors = new ArrayList<>();
+        if ( first != null ) tensors.add( first );
+        if ( rest.length > 0 )
+            tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );
+        Device<?> thisDevice = this;
+        return new In() {
+            @Override
+            public <R> R in( Supplier<R> lambda ) {
+                List<Device<?>> devices = tensors.stream().map( Tsr::getDevice ).collect( Collectors.toList() );
+                for ( Tsr<V> t : tensors ) t.to( thisDevice );
+                R result = lambda.get();
+                for ( int i = 0; i < tensors.size(); i++ ) {
+                    if ( devices.get( i ) != null ) tensors.get( i ).to( devices.get( i ) );
+                }
+                return result;
+            }
+        };
+    }
+
+    /**
+     *  The second part of the method chain of the fluent API for executing
+     *  tensors on this {@link Device} temporarily.
+     */
+    interface In
+    {
+        /**
+         * @param lambda The lambda during which the previously provided tensors should be stored on this {@link Device}.
+         * @param <R> The return type parameter of the lambda which is expected to be passed to
+         *            the context runner {@link In} returned by this method.
+         *
+         * @return The return value, which may be anything.
+         */
+        <R> R in( Supplier<R> lambda );
+    }
+
+    /**
      *  Implementations of this represent the access to tensors stored on a device
      *  in order to read from or write to said tensor.
      *  Warning: This API exposes the true underlying data of a tensor
@@ -184,7 +265,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      *
      * @param <V> The type parameter of the tensor accessed by an instance of this.
      */
-    interface Access<V> {
+    interface Access<V>
+    {
         /**
          *  Use this to write a single scalar item into the accessed tensor at
          *  one or more positions within the tensor.
@@ -256,91 +338,23 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      *  One may write at a particular position in a tensor, a range of positions or write
      *  to every possible value.
      */
-    interface Writer {
+    interface Writer
+    {
+        /**
+         * @param index The position at which data should be written to.
+         */
         default void at(int index) { intoRange(index, index+1); }
+        /**
+         * @param start The first position of the writing cursor in the accessed tensor.
+         * @param limit The exclusive limit of the range which should be written to.
+         */
         void intoRange(int start, int limit);
+        /**
+         *  A convenience method for specifying that the entire data array of
+         *  the accessed tensor should be written to.
+         */
         void fully();
     }
 
-    /**
-     *  This method is used internally to give {@link Device} implementations the opportunity
-     *  to perform some exception handling before the {@link ExecutionCall} will be dispatched.
-     *  Use this for debugging when doing custom backend operations.
-     *
-     * @param call The {@link ExecutionCall} which should be approved by this {@link Device} before execution.
-     * @return This very instance to allow for method chaining.
-     */
-    Device<V> approve( ExecutionCall<? extends Device<?>> call );
-
-    /**
-     * @return A {@link Collection} of all tensors stored by this device.
-     */
-    Collection<Tsr<V>> getTensors();
-
-    Operation optimizedOperationOf( Function function, String name );
-
-    default Function optimizedFunctionOf( Function function, String name ) {
-        Operation optimizedOperation = optimizedOperationOf( function, name );
-        BackendContext currentContext = Neureka.get().backend();
-        if ( !currentContext.hasOperation( optimizedOperation ) )
-            currentContext.addOperation( optimizedOperation );
-
-        return new FunctionBuilder( currentContext )
-                            .build(
-                                    optimizedOperation,
-                                    function.numberOfArgs(),
-                                    function.isDoingAD()
-                            );
-    }
-
-    /**
-     *  This is a very simple fluent API for temporarily storing a number
-     *  of tensors on this {@link Device}, executing a provided lambda action,
-     *  and then migrating all the tensors back to their original devices.              <br><br>
-     *
-     * @param first The first tensor among all passed tensors which ought to be
-     *              stored temporarily on this {@link Device}.
-     * @param rest Any number of other tensors passed to this method to be
-     *             stored temporarily on this {@link Device}.
-     *
-     * @return A simple lambda runner which will migrate the tensors passed to this method to
-     *         this very {@link Device}, execute the provided lambda, and then  migrate all the
-     *         tensors back to their original devices!
-     */
-    default In borrow( Tsr<V> first, Tsr<V>... rest ) {
-        List<Tsr<V>> tensors = new ArrayList<>();
-        if ( first != null ) tensors.add( first );
-        if ( rest.length > 0 )
-            tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );
-        Device<?> thisDevice = this;
-        return new In() {
-            @Override
-            public <R> R in( Supplier<R> lambda ) {
-                List<Device<?>> devices = tensors.stream().map( Tsr::getDevice ).collect( Collectors.toList() );
-                for ( Tsr<V> t : tensors ) t.to( thisDevice );
-                R result = lambda.get();
-                for ( int i = 0; i < tensors.size(); i++ ) {
-                    if ( devices.get( i ) != null ) tensors.get( i ).to( devices.get( i ) );
-                }
-                return result;
-            }
-        };
-    }
-
-    /**
-     *  The second part of the method chain of the fluent API for executing
-     *  tensors on this {@link Device} temporarily.
-     */
-    interface In {
-        /**
-         *
-         * @param lambda The lambda during which the previously provided tensors should be stored on this {@link Device}.
-         * @param <R> The return type parameter of the lambda which is expected to be passed to
-         *            the context runner {@link In} returned by this method.
-         *
-         * @return
-         */
-        <R> R in( Supplier<R> lambda );
-    }
 
 }
