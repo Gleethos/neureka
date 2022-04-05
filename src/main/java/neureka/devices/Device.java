@@ -58,12 +58,12 @@ import java.util.stream.Stream;
 /**
  * Implementations of this represent computational
  * devices for storing tensors (instances of the Tsr&lt;V&gt; class), which may
- * also expose a useful API for executing operations on tensors.
+ * also expose a useful API for executing operations on tensors (used in backend operations).
  * Such instances are also components of tensors, which is why
  * this interface extends the Component&lt;Tsr&lt;V&gt;&gt; interface.                        <br><br>
  *
- * The device interface extends the "{@link Storage}" interface because devices
- * are capable of storing tensors on them.
+ * Because devices store tensors, this interface extends the "{@link Storage}" interface
+ * which defines the API for storing them.
  * A tensor stored on a device holds a reference to that device,
  * as well as the device itself which may also know about the tensors it holds.
  * A tensor stored on a device will have its "isOutsourced" property set to true!
