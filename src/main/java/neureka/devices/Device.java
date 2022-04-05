@@ -191,8 +191,28 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     Collection<Tsr<V>> getTensors();
 
+    /**
+     *  This method tries to allow this device to produce an optimized {@link Operation}
+     *  based on the provided function.
+     *  This is especially useful in an OpenCL context which can compile the function
+     *  into native GPU kernels at runtime.
+     *
+     * @param function The function which should be turned into an optimized operation.
+     * @param name The name of the returned operation.
+     * @return An optimized operation based on the provided function, or null if optimization is not possible.
+     */
     Operation optimizedOperationOf( Function function, String name );
 
+    /**
+     *  This method tries to allow this device to produce an optimized {@link Function}
+     *  based on the provided function.
+     *  This is especially useful in an OpenCL context which can compile the function
+     *  into native GPU kernels at runtime.
+     *
+     * @param function The function which should be used to design a new optimized function.
+     * @param name The name of the optimized operation underlying the returned function.
+     * @return An instance of the optimized function.
+     */
     default Function optimizedFunctionOf( Function function, String name ) {
         Operation optimizedOperation = optimizedOperationOf( function, name );
         BackendContext currentContext = Neureka.get().backend();
