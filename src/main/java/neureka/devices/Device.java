@@ -167,7 +167,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     /**
      *  This method exposes the tensor access API for reading from or writing to
      *  a tensor stored on this device.
-     *  This method may return null if this device does not support
+     *  It may return null if this device does not support
      *  accessing stored tensors.
      *
      * @param tensor The tensor whose data ought to be accessed.
@@ -179,11 +179,27 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     /**
      *  Implementations of this represent the access to tensors stored on a device
      *  in order to read from or write to said tensor.
+     *  Warning: This API exposes the true underlying data of a tensor
+     *  which does not take into account slice, reshape or stride information...
      *
      * @param <V> The type parameter of the tensor accessed by an instance of this.
      */
     interface Access<V> {
+        /**
+         *  Use this to write a single scalar item into the accessed tensor at
+         *  one or more positions within the tensor.
+         *
+         * @param item The item which should be written to the tensor.
+         * @return A {@link Writer} implementation which expects the type of writing to be specified.
+         */
         Writer write( V item );
+        /**
+         *  Use this to write data from an array into the accessed tensor.
+         *
+         * @param array The data array whose data should be britten from.
+         * @param offset The start index offset within the provided data array.
+         * @return A {@link Writer} implementation which expects the type of writing to be specified.
+         */
         Writer writeFrom( Object array, int offset );
         /**
          *  Use this method to write data to the provided tensor, given that
@@ -192,18 +208,41 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          * @param array The data inn the form of a primitive array.
          */
         default void writeFrom( Object array ) { this.writeFrom( array, 0 ).fully(); }
+        /**
+         *  Find a particular tensor item by providing its location.
+         *
+         * @param index The index at which a tensor item should be read and returned.
+         * @return The tensor item found at the provided location.
+         */
         V readAt( int index );
+        /**
+         *  Use this to read an array of items from the accessed tensor
+         *  by specifying a start position of the chunk of data that should be read.
+         *
+         * @param arrayType The type of (primitive) array which should be read.
+         * @param start The start position of the read cursor.
+         * @param size The number of items which should be read from the tensor.
+         * @param <A> The array type parameter specified by the provided class.
+         * @return An instance of the provided array type class.
+         */
         <A> A readArray( Class<A> arrayType, int start, int size );
+        /**
+         *  Use this to read the full data array of the accessed tensor.
+         *
+         * @param clone The truth value determining if the tensor should be copied or not.
+         * @return The full data array of the tensor accessed by this API.
+         */
         Object readAll( boolean clone );
+        /**
+         * @return The size of the underlying data array of the accessed tensor.
+         */
         int getDataSize();
-
         /**
          *  Use this to perform some custom memory cleanup for when the accessed {@link Tsr} gets garbage collected.   <br><br>
          *
          * @param action The {@link Runnable} action which ought to be performed when the tensor gets garbage collected.
          */
         void cleanup( Runnable action );
-
         /**
          *  This method automatically called within the {@link AbstractTensor.Unsafe#setNDConf(NDConfiguration)} method
          *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
@@ -233,6 +272,9 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     Device<V> approve( ExecutionCall<? extends Device<?>> call );
 
+    /**
+     * @return A {@link Collection} of all tensors stored by this device.
+     */
     Collection<Tsr<V>> getTensors();
 
     Operation optimizedOperationOf( Function function, String name );
