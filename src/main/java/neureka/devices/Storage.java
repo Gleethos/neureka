@@ -71,11 +71,20 @@ public interface Storage<V>
      */
     Storage<V> restore( Tsr<V> tensor );
 
-
+    /**
+     * @return The number of tensors stored on this.
+     */
     int size();
 
+    /**
+     * @return The truth value determining if there are no tensors stored on this or false if there are tensors stored.
+     */
     boolean isEmpty();
 
+    /**
+     * @param o The tensor which may or may not be stored on this.
+     * @return The truth value determining if the provided tensor is stored on this.
+     */
     boolean contains( Tsr<V> o );
 
 

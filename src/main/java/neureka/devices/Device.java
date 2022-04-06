@@ -58,12 +58,12 @@ import java.util.stream.Stream;
 /**
  * Implementations of this represent computational
  * devices for storing tensors (instances of the Tsr&lt;V&gt; class), which may
- * also expose a useful API for executing operations on tensors.
+ * also expose a useful API for executing operations on tensors (used in backend operations).
  * Such instances are also components of tensors, which is why
  * this interface extends the Component&lt;Tsr&lt;V&gt;&gt; interface.                        <br><br>
  *
- * The device interface extends the "{@link Storage}" interface because devices
- * are capable of storing tensors on them.
+ * Because devices store tensors, this interface extends the "{@link Storage}" interface
+ * which defines the API for storing them.
  * A tensor stored on a device holds a reference to that device,
  * as well as the device itself which may also know about the tensors it holds.
  * A tensor stored on a device will have its "isOutsourced" property set to true!
@@ -167,7 +167,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     /**
      *  This method exposes the tensor access API for reading from or writing to
      *  a tensor stored on this device.
-     *  This method may return null if this device does not support
+     *  It may return null if this device does not support
      *  accessing stored tensors.
      *
      * @param tensor The tensor whose data ought to be accessed.
@@ -175,53 +175,6 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @return The tensor access API for reading from or writing to a tensor stored on this device.
      */
     <T extends V> Access<T> access( Tsr<T> tensor );
-
-    /**
-     *  Implementations of this represent the access to tensors stored on a device
-     *  in order to read from or write to said tensor.
-     *
-     * @param <V> The type parameter of the tensor accessed by an instance of this.
-     */
-    interface Access<V> {
-        Writer write( V item );
-        Writer writeFrom( Object array, int offset );
-        /**
-         *  Use this method to write data to the provided tensor, given that
-         *  the tensor is already stored on this device!                         <br><br>
-         *
-         * @param array The data inn the form of a primitive array.
-         */
-        default void writeFrom( Object array ) { this.writeFrom( array, 0 ).fully(); }
-        V readAt( int index );
-        <A> A readArray( Class<A> arrayType, int start, int size );
-        Object readAll( boolean clone );
-        int getDataSize();
-
-        /**
-         *  Use this to perform some custom memory cleanup for when the accessed {@link Tsr} gets garbage collected.   <br><br>
-         *
-         * @param action The {@link Runnable} action which ought to be performed when the tensor gets garbage collected.
-         */
-        void cleanup( Runnable action );
-
-        /**
-         *  This method automatically called within the {@link AbstractTensor.Unsafe#setNDConf(NDConfiguration)} method
-         *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
-         *  given {@link Device} implementation... <br><br>
-         */
-        void updateNDConf();
-    }
-
-    /**
-     *  Instances of this complete a request for writing to an accessed tensor stored on a device.
-     *  One may write at a particular position in a tensor, a range of positions or write
-     *  to every possible value.
-     */
-    interface Writer {
-        default void at(int index) { intoRange(index, index+1); }
-        void intoRange(int start, int limit);
-        void fully();
-    }
 
     /**
      *  This method is used internally to give {@link Device} implementations the opportunity
@@ -233,10 +186,33 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     Device<V> approve( ExecutionCall<? extends Device<?>> call );
 
+    /**
+     * @return A {@link Collection} of all tensors stored by this device.
+     */
     Collection<Tsr<V>> getTensors();
 
+    /**
+     *  This method tries to allow this device to produce an optimized {@link Operation}
+     *  based on the provided function.
+     *  This is especially useful in an OpenCL context which can compile the function
+     *  into native GPU kernels at runtime.
+     *
+     * @param function The function which should be turned into an optimized operation.
+     * @param name The name of the returned operation.
+     * @return An optimized operation based on the provided function, or null if optimization is not possible.
+     */
     Operation optimizedOperationOf( Function function, String name );
 
+    /**
+     *  This method tries to allow this device to produce an optimized {@link Function}
+     *  based on the provided function.
+     *  This is especially useful in an OpenCL context which can compile the function
+     *  into native GPU kernels at runtime.
+     *
+     * @param function The function which should be used to design a new optimized function.
+     * @param name The name of the optimized operation underlying the returned function.
+     * @return An instance of the optimized function.
+     */
     default Function optimizedFunctionOf( Function function, String name ) {
         Operation optimizedOperation = optimizedOperationOf( function, name );
         BackendContext currentContext = Neureka.get().backend();
@@ -289,16 +265,116 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      *  The second part of the method chain of the fluent API for executing
      *  tensors on this {@link Device} temporarily.
      */
-    interface In {
+    interface In
+    {
         /**
-         *
          * @param lambda The lambda during which the previously provided tensors should be stored on this {@link Device}.
          * @param <R> The return type parameter of the lambda which is expected to be passed to
          *            the context runner {@link In} returned by this method.
          *
-         * @return
+         * @return The return value, which may be anything.
          */
         <R> R in( Supplier<R> lambda );
     }
+
+    /**
+     *  Implementations of this represent the access to tensors stored on a device
+     *  in order to read from or write to said tensor.
+     *  Warning: This API exposes the true underlying data of a tensor
+     *  which does not take into account slice, reshape or stride information...
+     *
+     * @param <V> The type parameter of the tensor accessed by an instance of this.
+     */
+    interface Access<V>
+    {
+        /**
+         *  Use this to write a single scalar item into the accessed tensor at
+         *  one or more positions within the tensor.
+         *
+         * @param item The item which should be written to the tensor.
+         * @return A {@link Writer} implementation which expects the type of writing to be specified.
+         */
+        Writer write( V item );
+        /**
+         *  Use this to write data from an array into the accessed tensor.
+         *
+         * @param array The data array whose data should be britten from.
+         * @param offset The start index offset within the provided data array.
+         * @return A {@link Writer} implementation which expects the type of writing to be specified.
+         */
+        Writer writeFrom( Object array, int offset );
+        /**
+         *  Use this method to write data to the provided tensor, given that
+         *  the tensor is already stored on this device!                         <br><br>
+         *
+         * @param array The data inn the form of a primitive array.
+         */
+        default void writeFrom( Object array ) { this.writeFrom( array, 0 ).fully(); }
+        /**
+         *  Find a particular tensor item by providing its location.
+         *
+         * @param index The index at which a tensor item should be read and returned.
+         * @return The tensor item found at the provided location.
+         */
+        V readAt( int index );
+        /**
+         *  Use this to read an array of items from the accessed tensor
+         *  by specifying a start position of the chunk of data that should be read.
+         *
+         * @param arrayType The type of (primitive) array which should be read.
+         * @param start The start position of the read cursor.
+         * @param size The number of items which should be read from the tensor.
+         * @param <A> The array type parameter specified by the provided class.
+         * @return An instance of the provided array type class.
+         */
+        <A> A readArray( Class<A> arrayType, int start, int size );
+        /**
+         *  Use this to read the full data array of the accessed tensor.
+         *
+         * @param clone The truth value determining if the tensor should be copied or not.
+         * @return The full data array of the tensor accessed by this API.
+         */
+        Object readAll( boolean clone );
+        /**
+         * @return The size of the underlying data array of the accessed tensor.
+         */
+        int getDataSize();
+        /**
+         *  Use this to perform some custom memory cleanup for when the accessed {@link Tsr} gets garbage collected.   <br><br>
+         *
+         * @param action The {@link Runnable} action which ought to be performed when the tensor gets garbage collected.
+         */
+        void cleanup( Runnable action );
+        /**
+         *  This method automatically called within the {@link AbstractTensor.Unsafe#setNDConf(NDConfiguration)} method
+         *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
+         *  given {@link Device} implementation... <br><br>
+         */
+        void updateNDConf();
+    }
+
+    /**
+     *  Instances of this complete a request for writing to an accessed tensor stored on a device.
+     *  One may write at a particular position in a tensor, a range of positions or write
+     *  to every possible value.
+     */
+    interface Writer
+    {
+        /**
+         * @param index The position at which data should be written to.
+         */
+        default void at(int index) { intoRange(index, index+1); }
+        /**
+         * @param start The first position of the writing cursor in the accessed tensor.
+         * @param limit The exclusive limit of the range which should be written to.
+         */
+        void intoRange(int start, int limit);
+        /**
+         *  A convenience method for specifying that the entire data array of
+         *  the accessed tensor should be written to.
+         */
+        void fully();
+    }
+
 
 }
