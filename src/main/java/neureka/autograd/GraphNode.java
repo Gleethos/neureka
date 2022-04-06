@@ -180,7 +180,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * Note: values can be null if the recorded function is of type 'reshape'!
      * Why? => because reshape operation does not need variables for _backward pass!
      */
-    private TreeMap<GraphNode<V>, List<ADAgent>> _targetsToAgents;
+    private final TreeMap<GraphNode<V>, List<ADAgent>> _targetsToAgents;
 
     /**
      * "Lock object" for graph identity. (result caching)
@@ -266,7 +266,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
         _allows_forward = a.isAllowsForward();
         _parents = a.parents();
         _nodeID = a.nodeID();
-        _construct2( out, function, ( context instanceof ExecutionCall ? (ExecutionCall) context : null ) );
+        _construct2( a, out, function, ( context instanceof ExecutionCall ? (ExecutionCall) context : null ) );
+        _targetsToAgents = a.getTargets();
     }
 
     /**
@@ -323,7 +324,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         return a;
     }
 
-    private void _construct2( Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call )
+    private void _construct2( GraphNodeAssemblyState<V> a, Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call )
     {
         Tsr<V>[] inputs = ( call == null ) ? null : (Tsr<V>[]) call.inputs();
         /* Returning if the above cannot form an AutoDiff computation graph! : */
@@ -342,14 +343,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
                             !srcNode.isLeave() && !srcNode._allows_forward
                         ) {
-                            _put(
+                            ADAgent agent = call.withArgs(Arg.DerivIdx.of(i), Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))).getADAgentFrom( function, true );
+                            a.put(
                                 srcNode,
-                                call.withArgs(
-                                        Arg.DerivIdx.of(i),
-                                        Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
-                                    )
-                                    .getADAgentFrom( function, true )
+                                agent
                             );
+                            _informPartialDerivative(agent);
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
                             int finalI = i;
@@ -360,18 +359,20 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                     // The agent multiplies the local derivative with its stored partial derivative...
                                     Tsr<?> targetDerivative = localAgent.forward( this, localDerivative );
                                     // ...this is now the new partial derivative with respect to the target node!
-                                    _put(
+                                    ADAgent agent = call.withArgs(
+                                                            Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
+                                                            Arg.DerivIdx.of(finalI),
+                                                            Arg.Derivative.of(targetDerivative)
+                                                    )
+                                                    .getADAgentFrom(
+                                                            function,
+                                                            true
+                                                    );
+                                    a.put(
                                         targetNode,
-                                        call.withArgs(
-                                            Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
-                                            Arg.DerivIdx.of(finalI),
-                                            Arg.Derivative.of(targetDerivative)
-                                        )
-                                        .getADAgentFrom(
-                                            function,
-                                            true
-                                        )
+                                        agent
                                     );
+                                    _informPartialDerivative(agent);
                                     // TODO: flag within src Tsr<ValType>s that grant that the tensor
                                     // has been created by function constructor!
                                 }
@@ -385,11 +386,13 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 for ( int i = 0; i < inputs.length; i++ ) {
                     GraphNode<V> srcNode = inputs[ i ].getGraphNode();
                     if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {
-                        _put(
-                            srcNode,
-                            call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)))
-                                .getADAgentFrom( function, false )
+                        ADAgent agent =
+                                call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)))
+                                        .getADAgentFrom( function, false );
+                        a.put(
+                            srcNode, agent
                         );
+                        _informPartialDerivative(agent);
                     }
                 }
             }
@@ -517,7 +520,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                             if ( childNode != null && childNode.usesReverseAD() ) allChildrenUseForwardAD = false;
                         }
                     }
-                    if ( allChildrenUseForwardAD ) _targetsToAgents = null;
+                    if ( allChildrenUseForwardAD && _targetsToAgents != null ) _targetsToAgents.clear();
                 }
             });
         }
@@ -691,7 +694,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private void _deleteDerivativesRecursively() {
         if ( !Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads() ) { // <=- This flag is almost always false. (Used for testing)
-            if ( !this.isReliesOnJustInTimeProp() ) _targetsToAgents = null;
+            if ( !this.isReliesOnJustInTimeProp() && _targetsToAgents != null ) _targetsToAgents.clear();
             if ( !this.isGraphLeave() ) forEachTarget( GraphNode::_deleteDerivativesRecursively );
         }
     }
@@ -714,19 +717,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         return count;
     }
 
-
-    /**
-     * @param target nodes are graph nodes which contain either tensors requiring errors for accumulation and/or more targets.
-     * @param agent ADAgent's are used during back-propagation in order to distribute an error throughout the graph.
-     */
-    private void _put( GraphNode<V> target, ADAgent agent ) {
-        if ( _targetsToAgents == null ) _targetsToAgents = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
-
-        if ( _targetsToAgents.containsKey( target ) )
-            _targetsToAgents.get( target ).add( agent );
-        else
-            _targetsToAgents.put( target, new ArrayList<>( Arrays.asList( agent ) ) );
-
+    private void _informPartialDerivative( ADAgent agent ) {
         Tsr<?> d = agent.derivative();
         if ( d != null && d.has( GraphNode.class ) ) d.get( GraphNode.class )._isUsedAsDerivative = true;
     }

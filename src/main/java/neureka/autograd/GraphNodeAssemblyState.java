@@ -5,6 +5,11 @@ import neureka.backend.api.ExecutionCall;
 import neureka.calculus.Function;
 import neureka.devices.Device;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeMap;
+
 /**
  *  This class exists in order to allow for {@link GraphNode}s to be instantiated
  *  with final field variables by collecting them when defined
@@ -28,6 +33,23 @@ final class GraphNodeAssemblyState<V> {
 
     private long _nodeID = -1;
 
+    private TreeMap<GraphNode<V>, List<ADAgent>> _targetsToAgents;
+
+    /**
+     * @param target nodes are graph nodes which contain either tensors requiring errors for accumulation and/or more targets.
+     * @param agent ADAgent's are used during back-propagation in order to distribute an error throughout the graph.
+     */
+    public void put( GraphNode<V> target, ADAgent agent ) {
+        if ( _targetsToAgents == null ) _targetsToAgents = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
+
+        if ( _targetsToAgents.containsKey( target ) )
+            _targetsToAgents.get( target ).add( agent );
+        else
+            _targetsToAgents.put( target, new ArrayList<>( Arrays.asList( agent ) ) );
+
+    }
+
+    public TreeMap<GraphNode<V>, List<ADAgent>> getTargets() { return _targetsToAgents; }
 
     public int mode() { return _mode; }
 
