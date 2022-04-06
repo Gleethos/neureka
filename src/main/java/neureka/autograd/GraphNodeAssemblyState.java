@@ -51,6 +51,14 @@ final class GraphNodeAssemblyState<V> {
 
     public TreeMap<GraphNode<V>, List<ADAgent>> getTargets() { return _targetsToAgents; }
 
+    /**
+     * This is the number of AD-actions stored inside this node.
+     * It can be interpreted as the 'number of AD paths'.
+     *
+     * @return int
+     */
+    public int size() { return _targetsToAgents != null ? _targetsToAgents.size() : 0; }
+
     public int mode() { return _mode; }
 
     /**
@@ -73,7 +81,7 @@ final class GraphNodeAssemblyState<V> {
      *
      * @param call The call containing inputs for the function which created the payload tensor of this GraphNode.
      */
-    public void _modeOf( ExecutionCall<? extends Device<?>> call )
+    public void modeOf(ExecutionCall<? extends Device<?>> call )
     {
         Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
         int resultMode = 0;

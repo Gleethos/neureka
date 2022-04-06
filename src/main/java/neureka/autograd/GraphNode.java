@@ -47,8 +47,6 @@ import neureka.calculus.args.Arg;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.WeakTensorReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -73,8 +71,6 @@ import java.util.stream.Collectors;
  */
 public class GraphNode<V> implements Component<Tsr<V>>
 {
-    private static Logger _LOG = LoggerFactory.getLogger(GraphNode.class);
-
     /**
      * mode state meaning:
      * -----------+----------------------------------+-
@@ -117,37 +113,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private final boolean _allows_backward;
 
-    /**
-     * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
-     * This feature accumulates errors and continues propagation
-     * as soon as they are needed. (At the end of 'backward()' or when the tensor is used again).
-     * If the flag  {@link Neureka.Settings.AutoGrad#isRetainingPendingErrorForJITProp()}  is set to true
-     * then error values will accumulate whenever it makes sense.
-     * This technique however uses more memory but will
-     * improve performance for some networks substantially.
-     * <p>
-     * All nodes between a Pending-Error and those requiring gradients will
-     * be marked with '_relies_on_JIPProp=true'!
-     */
-    private boolean _reliesOnJustInTimeProp = false;
-
-    /**
-     * Used by the Just-In-Time back-prop component.
-     */
-    private PendingError<V> _pendingError = null;
-
-    /**
-     * The chain-rule states that the derivative of f(x) = h(g(x)) with respect to x is: g'(x) * h'(g(x))
-     * An example would be:
-     * f(x) = ((x*y)*z)
-     * f'(x) = (1*y) * (1*z) = z*y
-     * The values z,y or z*y must not be deleted as they are needed for back-propagation!
-     */
-    private boolean _isUsedAsDerivative = false;
-
-    /**
-     * Recorded Function which produced this {@link GraphNode}.
-     */
     private final Function _function;
 
     /**
@@ -157,20 +122,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private final GraphNode<V>[] _parents;
 
-    /**
-     * This is the tensor owning this GraphNode component.
-     * It is referenced weakly because it might not be needed anymore (Not referenced inside AD-Agent for example)
-     * and can therefore be garbage collected.
-     */
-    private WeakReference<Tsr<V>> _payload;
-
-    /**
-     *  This variable holds a copy of the version of the payload tensor
-     *  recorded when this GraphNode instance is instantiated.
-     *  It must be treated as final and should never be modified.
-     *  However it can be read freely in order to
-     *  check that the version of the payload hasn't changed.
-     */
     private final int _payloadReferenceVersion;
 
     /**
@@ -182,22 +133,19 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private final TreeMap<GraphNode<V>, List<ADAgent>> _targetsToAgents;
 
-    /**
-     * "Lock object" for graph identity. (result caching)
-     * Unique object which locks the payload to the current computation graph.
-     */
+    private final long _nodeID;
+
+    private boolean _isUsedAsDerivative = false;
+
+    private boolean _reliesOnJustInTimeProp = false;
+
+    private PendingError<V> _pendingError = null;
+
+    private WeakReference<Tsr<V>> _payload;
+
     private GraphLock _lock;
 
-    /**
-     *  The children are {@link GraphNode} instances which represent computations
-     *  involving the payload of this very {@link GraphNode} instance.
-     */
     private List<WeakReference<GraphNode<V>>> _children;
-
-    /**
-     * long Node-ID (Used for caching to avoid redundant computation within one computation graph)
-     */
-    private final long _nodeID;
 
 
     /**
@@ -206,7 +154,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param payloadSupplier Provides the payload of this node.
      */
     public GraphNode( Function function, Object context, Supplier<Tsr<V>> payloadSupplier ) {
-        if (function == null)
+        if ( function == null )
             throw new IllegalArgumentException(
                     "Passed constructor argument of type Function must not be null!"
             );
@@ -214,7 +162,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         GraphNodeAssemblyState<V> a;
         if (context instanceof GraphLock) { // Note function always null in this case:
             out = payloadSupplier.get();
-            a = _construct( this, out, function, null, (GraphLock) context );
+            a = _assemble( this, out, function, null, (GraphLock) context );
         } else if ( context instanceof ExecutionCall ) {
             ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
             Tsr<?>[] inputs = call.inputs();
@@ -251,7 +199,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 }
             }
             out = payloadSupplier.get();
-            a = _construct( this, out, function, call, inputs[ 0 ].getGraphNode().getLock() );
+            a = _assemble( this, out, function, call, inputs[ 0 ].getGraphNode().getLock() );
         }
         else
             throw new IllegalArgumentException(
@@ -266,19 +214,20 @@ public class GraphNode<V> implements Component<Tsr<V>>
         _allows_forward = a.isAllowsForward();
         _parents = a.parents();
         _nodeID = a.nodeID();
-        _construct2( a, out, function, ( context instanceof ExecutionCall ? (ExecutionCall) context : null ) );
+        if ( context instanceof ExecutionCall<?> && function.isFlat() ) // Leave nodes don't need agents!
+            _registerAgents( a, out, function, (ExecutionCall<?>) context );
         _targetsToAgents = a.getTargets();
     }
 
     /**
-     * This method handles the construction of a GraphNode instance in more detail.
+     *  This method handles the construction of a GraphNode instance in more detail.
      *
      * @param output The container for the result of the execution, in a sense, its the output of this node / its payload!
      * @param function The function which produced this {@link GraphNode} instance.
      * @param call The {@link ExecutionCall} instance containing context information for the current execution.
      * @param lock An object whose identity will be used to reserve the {@link Tsr} instances of the current {@link ExecutionCall}.
      */
-    private static <V> GraphNodeAssemblyState<V> _construct(
+    private static <V> GraphNodeAssemblyState<V> _assemble(
             GraphNode<V> node,
             Tsr<V> output,
             Function function,
@@ -298,7 +247,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             a.setFunction( null );
             a.setParents( null );
         } else {
-            a._modeOf( call );
+            a.modeOf( call );
             a.setFunction( function );
             a.setParents( new GraphNode[ inputs.length ] );
             for ( int i = 0; i < inputs.length; i++ ) {
@@ -324,11 +273,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
         return a;
     }
 
-    private void _construct2( GraphNodeAssemblyState<V> a, Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call )
-    {
-        Tsr<V>[] inputs = ( call == null ) ? null : (Tsr<V>[]) call.inputs();
+    private void _registerAgents(
+            GraphNodeAssemblyState<V> a, Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call
+    ) {
+        Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
         /* Returning if the above cannot form an AutoDiff computation graph! : */
-        if ( inputs == null || !function.isFlat() ) return; // Leave nodes have!
         for ( Tsr<V> t : inputs ) if ( t.equals(output) ) return; // Output must be a unique tensor for AD!
 
         if ( this.usesAD() && function.isFlat() ) {
@@ -493,6 +442,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     /**
      *  The value of a graph node is the tensor to which it belongs (is a component of).  <br><br>
+     *  Meaning it is the tensor owning this {@link GraphNode} component.
+     *  It is referenced weakly because it might not be needed any more (Not referenced inside AD-Agent for example)
+     *  and can therefore be garbage collected.
      *
      *  Warning: This method might return null because
      *           the payload is weakly referenced!
@@ -850,19 +802,47 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public boolean isReliesOnJustInTimeProp() { return _reliesOnJustInTimeProp; }
 
+    /**
+     * Used by the Just-In-Time back-prop component.
+     */
     public PendingError<V> getPendingError() { return _pendingError; }
 
+    /**
+     * The chain-rule states that the derivative of f(x) = h(g(x)) with respect to x is: g'(x) * h'(g(x))
+     * An example would be:
+     * f(x) = ((x*y)*z)
+     * f'(x) = (1*y) * (1*z) = z*y
+     * The values z,y or z*y must not be deleted as they are needed for back-propagation!
+     */
     public boolean isUsedAsDerivative() { return _isUsedAsDerivative; }
 
+    /**
+     * Recorded Function which produced this {@link GraphNode}.
+     */
     public Function getFunction() { return _function; }
 
     public GraphNode<V>[] getParents() { return _parents; }
 
+    /**
+     *  This variable holds a copy of the version of the payload tensor
+     *  recorded when this GraphNode instance is instantiated.
+     *  It must be treated as final and should never be modified.
+     *  However, it can be read freely in order to
+     *  check that the version of the payload hasn't changed.
+     */
     public int getPayloadReferenceVersion() { return _payloadReferenceVersion; }
 
+    /**
+     * "Lock object" for graph identity. (result caching)
+     * Unique object which locks the payload to the current computation graph.
+     */
     public GraphLock getLock() { return _lock; }
 
-    public List<WeakReference<GraphNode<V>>> getChildren() { return _children; }
+    /**
+     *  The children are {@link GraphNode} instances which represent computations
+     *  involving the payload of this very {@link GraphNode} instance.
+     */
+    public List<WeakReference<GraphNode<V>>> getChildren() { return new ArrayList<>(_children); }
 
     /**
      * @return The long Node-ID (Used for caching to avoid redundant computation within one computation graph)
