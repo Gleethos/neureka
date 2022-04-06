@@ -160,7 +160,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             );
         Tsr<V> out;
         GraphNodeAssemblyState<V> a;
-        if (context instanceof GraphLock) { // Note function always null in this case:
+        if ( context instanceof GraphLock ) { // Note function always null in this case:
             out = payloadSupplier.get();
             a = _assemble( this, out, function, null, (GraphLock) context );
         } else if ( context instanceof ExecutionCall ) {
@@ -179,24 +179,24 @@ public class GraphNode<V> implements Component<Tsr<V>>
             GraphLock foundLock = null;
             for ( int i = 0; i < inputs.length; i++ ) {
                 GraphNode<V> child = (GraphNode<V>) inputs[ i ].getGraphNode();
-                if ( child == null ) throw new IllegalStateException(
+                if ( child == null )
+                    throw new IllegalStateException(
                         "Input tensor at index '" + i + "' did not return a GraphNode instance." +
-                                "Input tensors of a new GraphNode must be part of the computation graph!"
-                );
+                        "Input tensors of a new GraphNode must be part of the computation graph!"
+                     );
                 if ( foundLock == null ) foundLock = child.getLock();
-                if ( foundLock != child.getLock() ) {
+                if ( foundLock != child.getLock() )
                     throw new IllegalStateException(
                             "GraphNode instances found in input tensors do not share the same GraphLock instance.\n" +
                                     "The given input tensors of a new node must be part of the same locked computation graph!"
                     );
-                }
-                if ( function.getOperation().isInline() && child.usesAD() ) {
+
+                if ( function.getOperation().isInline() && child.usesAD() )
                     throw new IllegalStateException(
                             "Trying to apply inline operation '" + function.getOperation().getIdentifier() + "'\n" +
                             "on active autograd computation graph in non detached function.\n" +
                             "Please use detached functions instead! ( 'Function.create(\"" + function.getOperation().getIdentifier() + "(...)\", false)' )\n"
                     );
-                }
             }
             out = payloadSupplier.get();
             a = _assemble( this, out, function, call, inputs[ 0 ].getGraphNode().getLock() );
