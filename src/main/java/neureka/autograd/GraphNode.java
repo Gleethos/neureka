@@ -155,14 +155,23 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public GraphNode( Function function, Object context, Supplier<Tsr<V>> payloadSupplier ) {
         if ( function == null )
-            throw new IllegalArgumentException(
-                    "Passed constructor argument of type Function must not be null!"
-            );
+            throw new IllegalArgumentException("Passed constructor argument of type Function must not be null!");
+
         Tsr<V> out;
         GraphNodeAssemblyState<V> a;
         if ( context instanceof GraphLock ) { // Note function always null in this case:
             out = payloadSupplier.get();
-            a = _assemble( this, out, function, null, (GraphLock) context );
+            a = new GraphNodeAssemblyState<>();
+            if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
+            a.setPayloadReferenceVersion( out.getVersion() );
+            if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
+                a.setLock((GraphLock) context);
+                _setPayload(out);
+                out.set(this);//
+                a.setMode(out.rqsGradient() ? 1 : 0);
+                a.setFunction(null);
+                a.setParents(null);
+            }
             _calculateNodeID( a );
         } else if ( context instanceof ExecutionCall ) {
             ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
@@ -237,31 +246,25 @@ public class GraphNode<V> implements Component<Tsr<V>>
             GraphLock lock
     ) {
         GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
-        Tsr<V>[] inputs = ( call == null ) ? null : (Tsr<V>[]) call.inputs();
+        Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
         if ( output == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
         a.setPayloadReferenceVersion( output.getVersion() );
         if ( !function.isDoingAD() ) return a; // Only functions with AutoDiff enabled create computation graph!
         a.setLock( lock );
         node._setPayload( output );
         output.set( node );
-        if ( inputs == null ) {
-            a.setMode( output.rqsGradient() ? 1 : 0 );
-            a.setFunction( null );
-            a.setParents( null );
-        } else {
-            a.modeOf( call );
-            a.setFunction( function );
-            a.setParents( new GraphNode[ inputs.length ] );
-            for ( int i = 0; i < inputs.length; i++ ) {
-                a.parents()[ i ] = inputs[ i ].getGraphNode();
-                if ( a.parents()[ i ] == null ) {
-                    throw new IllegalStateException(
-                            "Input tensors of a new graph-node must contain leave graph-nodes!"
-                    );
-                }
-                else
-                    a.parents()[ i ]._attachChild(node);
+        a.modeOf( call );
+        a.setFunction( function );
+        a.setParents( new GraphNode[ inputs.length ] );
+        for ( int i = 0; i < inputs.length; i++ ) {
+            a.parents()[ i ] = inputs[ i ].getGraphNode();
+            if ( a.parents()[ i ] == null ) {
+                throw new IllegalStateException(
+                        "Input tensors of a new graph-node must contain leave graph-nodes!"
+                );
             }
+            else
+                a.parents()[ i ]._attachChild(node);
         }
         return a;
     }
