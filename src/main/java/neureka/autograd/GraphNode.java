@@ -185,20 +185,22 @@ public class GraphNode<V> implements Component<Tsr<V>>
         a.setPayloadReferenceVersion( out.getVersion() );
         if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
             _setPayload(out);
-            if (context instanceof GraphLock) { // Note function always null in this case:
-                a.setLock((GraphLock) context);
-                out.set(this);//
-                a.setMode(out.rqsGradient() ? 1 : 0);
+            if (context instanceof GraphLock) { // Note function is always null in this case:
+                a.setLock( (GraphLock) context );
+                a.setMode( out.rqsGradient() ? 1 : 0 );
                 a.setFunction(null);
                 a.setParents(null);
             } else { // -> context instanceof ExecutionCall
                 ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
                 Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
-                a.setLock(inputs[0].getGraphNode().getLock());
-                out.set(this);
-                a.modeOf(call);
-                a.setFunction(function);
-                a.setParents(new GraphNode[inputs.length]);
+                a.setLock( inputs[0].getGraphNode().getLock() );
+                a.modeOf( call );
+                a.setFunction( function );
+                a.setParents( new GraphNode[inputs.length] );
+            }
+            out.set(this);
+            if ( context instanceof ExecutionCall<?> ) {
+                Tsr<V>[] inputs = (Tsr<V>[]) ((ExecutionCall<Device<?>>) context).inputs();
                 for ( int i = 0; i < inputs.length; i++ ) {
                     a.parents()[i] = inputs[i].getGraphNode();
                     if ( a.parents()[i] == null )
@@ -229,21 +231,20 @@ public class GraphNode<V> implements Component<Tsr<V>>
             if ( child == null )
                 throw new IllegalStateException(
                         "Input tensor at index '" + i + "' did not return a GraphNode instance." +
-                                "Input tensors of a new GraphNode must be part of the computation graph!"
-                );
+                       "Input tensors of a new GraphNode must be part of the computation graph!"
+                    );
             if ( foundLock == null ) foundLock = child.getLock();
             if ( foundLock != child.getLock() )
                 throw new IllegalStateException(
                         "GraphNode instances found in input tensors do not share the same GraphLock instance.\n" +
-                                "The given input tensors of a new node must be part of the same locked computation graph!"
+                        "The given input tensors of a new node must be part of the same locked computation graph!"
                 );
-
             if ( function.getOperation().isInline() && child.usesAD() )
                 throw new IllegalStateException(
                         "Trying to apply inline operation '" + function.getOperation().getIdentifier() + "'\n" +
-                                "on active autograd computation graph in non detached function.\n" +
-                                "Please use detached functions instead! ( 'Function.create(\"" + function.getOperation().getIdentifier() + "(...)\", false)' )\n"
-                );
+                        "on active autograd computation graph in non detached function.\n" +
+                        "Please use detached functions instead! ( 'Function.create(\"" + function.getOperation().getIdentifier() + "(...)\", false)' )\n"
+                    );
         }
     }
 
