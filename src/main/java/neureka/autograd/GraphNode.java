@@ -157,23 +157,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( function == null )
             throw new IllegalArgumentException("Passed constructor argument of type Function must not be null!");
 
-        Tsr<V> out;
-        GraphNodeAssemblyState<V> a;
-        if ( context instanceof GraphLock ) { // Note function always null in this case:
-            out = payloadSupplier.get();
-            a = new GraphNodeAssemblyState<>();
-            if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
-            a.setPayloadReferenceVersion( out.getVersion() );
-            if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
-                a.setLock((GraphLock) context);
-                _setPayload(out);
-                out.set(this);//
-                a.setMode(out.rqsGradient() ? 1 : 0);
-                a.setFunction(null);
-                a.setParents(null);
-            }
-            _calculateNodeID( a );
-        } else if ( context instanceof ExecutionCall ) {
+        if ( context instanceof ExecutionCall ) {
             ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
             Tsr<?>[] inputs = call.inputs();
             /* Applying JITProp and gradients */
@@ -191,9 +175,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 GraphNode<V> child = (GraphNode<V>) inputs[ i ].getGraphNode();
                 if ( child == null )
                     throw new IllegalStateException(
-                        "Input tensor at index '" + i + "' did not return a GraphNode instance." +
-                        "Input tensors of a new GraphNode must be part of the computation graph!"
-                     );
+                            "Input tensor at index '" + i + "' did not return a GraphNode instance." +
+                                    "Input tensors of a new GraphNode must be part of the computation graph!"
+                    );
                 if ( foundLock == null ) foundLock = child.getLock();
                 if ( foundLock != child.getLock() )
                     throw new IllegalStateException(
@@ -204,19 +188,40 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 if ( function.getOperation().isInline() && child.usesAD() )
                     throw new IllegalStateException(
                             "Trying to apply inline operation '" + function.getOperation().getIdentifier() + "'\n" +
-                            "on active autograd computation graph in non detached function.\n" +
-                            "Please use detached functions instead! ( 'Function.create(\"" + function.getOperation().getIdentifier() + "(...)\", false)' )\n"
+                                    "on active autograd computation graph in non detached function.\n" +
+                                    "Please use detached functions instead! ( 'Function.create(\"" + function.getOperation().getIdentifier() + "(...)\", false)' )\n"
                     );
             }
+        }
+
+        Tsr<V> out;
+        GraphNodeAssemblyState<V> a;
+        if ( context instanceof GraphLock ) { // Note function always null in this case:
+            out = payloadSupplier.get();
+            a = new GraphNodeAssemblyState<>();
+            if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
+            a.setPayloadReferenceVersion( out.getVersion() );
+            if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
+                a.setLock((GraphLock) context);
+                _setPayload(out);
+                out.set(this);//
+                a.setMode(out.rqsGradient() ? 1 : 0);
+                a.setFunction(null);
+                a.setParents(null);
+            }
+        } else if ( context instanceof ExecutionCall ) {
+            ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
+            Tsr<?>[] inputs = call.inputs();
             out = payloadSupplier.get();
             a = _assemble( this, out, function, call, inputs[ 0 ].getGraphNode().getLock() );
-            _calculateNodeID( a );
         }
         else
             throw new IllegalArgumentException(
                     "The passed context object for the GraphNode constructor is of type '" + context.getClass().getName() + "'.\n" +
                             "A given context must either be a GraphLock instance or an ExecutionCall."
             );
+
+        _calculateNodeID( a );
         _payloadReferenceVersion = a.payloadReferenceVersion();
         _lock = a.lock();
         _mode = a.mode();
