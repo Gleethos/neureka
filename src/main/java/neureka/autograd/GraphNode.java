@@ -176,28 +176,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     }
                 }
             }
-            GraphLock foundLock = null;
-            for ( int i = 0; i < inputs.length; i++ ) {
-                GraphNode<V> child = (GraphNode<V>) inputs[ i ].getGraphNode();
-                if ( child == null )
-                    throw new IllegalStateException(
-                            "Input tensor at index '" + i + "' did not return a GraphNode instance." +
-                                    "Input tensors of a new GraphNode must be part of the computation graph!"
-                    );
-                if ( foundLock == null ) foundLock = child.getLock();
-                if ( foundLock != child.getLock() )
-                    throw new IllegalStateException(
-                            "GraphNode instances found in input tensors do not share the same GraphLock instance.\n" +
-                                    "The given input tensors of a new node must be part of the same locked computation graph!"
-                    );
-
-                if ( function.getOperation().isInline() && child.usesAD() )
-                    throw new IllegalStateException(
-                            "Trying to apply inline operation '" + function.getOperation().getIdentifier() + "'\n" +
-                                    "on active autograd computation graph in non detached function.\n" +
-                                    "Please use detached functions instead! ( 'Function.create(\"" + function.getOperation().getIdentifier() + "(...)\", false)' )\n"
-                    );
-            }
+            _checkInputValidity( inputs, function );
         }
 
         Tsr<V> out = payloadSupplier.get();
@@ -242,6 +221,31 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( context instanceof ExecutionCall<?> && function.isFlat() ) // Leave nodes don't need agents!
             _registerAgents( a, out, function, (ExecutionCall<?>) context );
         _targetsToAgents = a.getTargets();
+    }
+
+    private void _checkInputValidity( Tsr<?>[] inputs, Function function ) {
+        GraphLock foundLock = null;
+        for ( int i = 0; i < inputs.length; i++ ) {
+            GraphNode<V> child = (GraphNode<V>) inputs[ i ].getGraphNode();
+            if ( child == null )
+                throw new IllegalStateException(
+                        "Input tensor at index '" + i + "' did not return a GraphNode instance." +
+                                "Input tensors of a new GraphNode must be part of the computation graph!"
+                );
+            if ( foundLock == null ) foundLock = child.getLock();
+            if ( foundLock != child.getLock() )
+                throw new IllegalStateException(
+                        "GraphNode instances found in input tensors do not share the same GraphLock instance.\n" +
+                                "The given input tensors of a new node must be part of the same locked computation graph!"
+                );
+
+            if ( function.getOperation().isInline() && child.usesAD() )
+                throw new IllegalStateException(
+                        "Trying to apply inline operation '" + function.getOperation().getIdentifier() + "'\n" +
+                                "on active autograd computation graph in non detached function.\n" +
+                                "Please use detached functions instead! ( 'Function.create(\"" + function.getOperation().getIdentifier() + "(...)\", false)' )\n"
+                );
+        }
     }
 
     private void _calculateNodeID(GraphNodeAssemblyState<?> a) {
