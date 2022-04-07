@@ -195,10 +195,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
         }
 
         Tsr<V> out = payloadSupplier.get();
+        if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
         GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
+        a.setPayloadReferenceVersion( out.getVersion() );
         if ( context instanceof GraphLock ) { // Note function always null in this case:
-            if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
-            a.setPayloadReferenceVersion( out.getVersion() );
             if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
                 a.setLock((GraphLock) context);
                 _setPayload(out);
@@ -210,8 +210,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
         } else if ( context instanceof ExecutionCall ) {
             ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
             Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
-            if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
-            a.setPayloadReferenceVersion( out.getVersion() );
             if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
                 a.setLock(inputs[0].getGraphNode().getLock());
                 _setPayload(out);
@@ -246,45 +244,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( context instanceof ExecutionCall<?> && function.isFlat() ) // Leave nodes don't need agents!
             _registerAgents( a, out, function, (ExecutionCall<?>) context );
         _targetsToAgents = a.getTargets();
-    }
-
-    /**
-     *  This method handles the construction of a GraphNode instance in more detail.
-     *
-     * @param output The container for the result of the execution, in a sense, its the output of this node / its payload!
-     * @param function The function which produced this {@link GraphNode} instance.
-     * @param call The {@link ExecutionCall} instance containing context information for the current execution.
-     * @param lock An object whose identity will be used to reserve the {@link Tsr} instances of the current {@link ExecutionCall}.
-     */
-    private static <V> GraphNodeAssemblyState<V> _assemble(
-            GraphNode<V> node,
-            Tsr<V> output,
-            Function function,
-            ExecutionCall<? extends Device<?>> call,
-            GraphLock lock
-    ) {
-        GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
-        Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
-        if ( output == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
-        a.setPayloadReferenceVersion( output.getVersion() );
-        if ( !function.isDoingAD() ) return a; // Only functions with AutoDiff enabled create computation graph!
-        a.setLock( lock );
-        node._setPayload( output );
-        output.set( node );
-        a.modeOf( call );
-        a.setFunction( function );
-        a.setParents( new GraphNode[ inputs.length ] );
-        for ( int i = 0; i < inputs.length; i++ ) {
-            a.parents()[ i ] = inputs[ i ].getGraphNode();
-            if ( a.parents()[ i ] == null ) {
-                throw new IllegalStateException(
-                        "Input tensors of a new graph-node must contain leave graph-nodes!"
-                );
-            }
-            else
-                a.parents()[ i ]._attachChild(node);
-        }
-        return a;
     }
 
     private void _calculateNodeID(GraphNodeAssemblyState<?> a) {
