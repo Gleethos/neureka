@@ -1,5 +1,8 @@
 package neureka.devices.opencl;
 
+/**
+ *  OpenCL related settings for the {@link CLContext} backend extension.
+ */
 public class CLSettings {
 
     private boolean _autoConvertToFloat = true;
