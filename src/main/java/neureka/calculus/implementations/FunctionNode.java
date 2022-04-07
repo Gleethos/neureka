@@ -108,11 +108,11 @@ public class FunctionNode implements Function
                             only flat functions can be executed directly                         */
 
                         if ( d < 0 && _isDoingAD ) {
-                            Tsr[] ref = {null};
+                            Tsr[] ref = {null}; // We need to keep a reference so that the garbage collector does not collect the result!
                             new GraphNode<>(
                                     this,
                                     call,
-                                    () -> { // This is a bit of a hack... TODO: fix
+                                    () -> { // This "ref" is a bit of a hack... TODO: fix
                                         ref[0] = _execute(call);
                                         return ref[0];
                                     }
