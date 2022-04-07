@@ -195,9 +195,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
         }
 
         Tsr<V> out = payloadSupplier.get();
-        GraphNodeAssemblyState<V> a;
+        GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
         if ( context instanceof GraphLock ) { // Note function always null in this case:
-            a = new GraphNodeAssemblyState<>();
             if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
             a.setPayloadReferenceVersion( out.getVersion() );
             if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
@@ -210,8 +209,24 @@ public class GraphNode<V> implements Component<Tsr<V>>
             }
         } else if ( context instanceof ExecutionCall ) {
             ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
-            Tsr<?>[] inputs = call.inputs();
-            a = _assemble( this, out, function, call, inputs[ 0 ].getGraphNode().getLock() );
+            Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
+            if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
+            a.setPayloadReferenceVersion( out.getVersion() );
+            if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
+                a.setLock(inputs[0].getGraphNode().getLock());
+                _setPayload(out);
+                out.set(this);
+                a.modeOf(call);
+                a.setFunction(function);
+                a.setParents(new GraphNode[inputs.length]);
+                for ( int i = 0; i < inputs.length; i++ ) {
+                    a.parents()[i] = inputs[i].getGraphNode();
+                    if ( a.parents()[i] == null )
+                        throw new IllegalStateException("Input tensors of a new graph-node must contain leave graph-nodes!");
+
+                    else a.parents()[i]._attachChild(this);
+                }
+            }
         }
         else
             throw new IllegalArgumentException(
