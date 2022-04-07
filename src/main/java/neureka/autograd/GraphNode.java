@@ -198,19 +198,17 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
         GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
         a.setPayloadReferenceVersion( out.getVersion() );
-        if ( context instanceof GraphLock ) { // Note function always null in this case:
-            if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
+        if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
+            if (context instanceof GraphLock) { // Note function always null in this case:
                 a.setLock((GraphLock) context);
                 _setPayload(out);
                 out.set(this);//
                 a.setMode(out.rqsGradient() ? 1 : 0);
                 a.setFunction(null);
                 a.setParents(null);
-            }
-        } else if ( context instanceof ExecutionCall ) {
-            ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
-            Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
-            if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
+            } else if (context instanceof ExecutionCall) {
+                ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
+                Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
                 a.setLock(inputs[0].getGraphNode().getLock());
                 _setPayload(out);
                 out.set(this);
@@ -221,17 +219,15 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     a.parents()[i] = inputs[i].getGraphNode();
                     if ( a.parents()[i] == null )
                         throw new IllegalStateException("Input tensors of a new graph-node must contain leave graph-nodes!");
-
-                    else a.parents()[i]._attachChild(this);
+                    else
+                        a.parents()[i]._attachChild(this);
                 }
-            }
+            } else
+                throw new IllegalArgumentException(
+                        "The passed context object for the GraphNode constructor is of type '" + context.getClass().getName() + "'.\n" +
+                                "A given context must either be a GraphLock instance or an ExecutionCall."
+                );
         }
-        else
-            throw new IllegalArgumentException(
-                    "The passed context object for the GraphNode constructor is of type '" + context.getClass().getName() + "'.\n" +
-                            "A given context must either be a GraphLock instance or an ExecutionCall."
-            );
-
         _calculateNodeID( a );
         _payloadReferenceVersion = a.payloadReferenceVersion();
         _lock = a.lock();
