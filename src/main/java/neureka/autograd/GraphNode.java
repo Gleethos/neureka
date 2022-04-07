@@ -185,7 +185,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         a.setPayloadReferenceVersion( out.getVersion() );
         if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
             _setPayload(out);
-            if (context instanceof GraphLock) { // Note function is always null in this case:
+            if ( context instanceof GraphLock ) { // Note function is always null in this case:
                 a.setLock( (GraphLock) context );
                 a.setMode( out.rqsGradient() ? 1 : 0 );
                 a.setFunction(null);
@@ -271,7 +271,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
     ) {
         Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
         /* Returning if the above cannot form an AutoDiff computation graph! : */
-        for ( Tsr<V> t : inputs ) if ( t.equals(output) ) return; // Output must be a unique tensor for AD!
+        for ( Tsr<V> t : inputs )
+            if ( t.equals(output) ) return; // Output must be a unique tensor for AD!
 
         if ( this.usesAD() && function.isFlat() ) {
             /* Preparing for back propagation: */
@@ -286,10 +287,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                             !srcNode.isLeave() && !srcNode._allows_forward
                         ) {
                             ADAgent agent = call.withArgs(Arg.DerivIdx.of(i), Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))).getADAgentFrom( function, true );
-                            a.put(
-                                srcNode,
-                                agent
-                            );
+                            a.put( srcNode, agent );
                             _informPartialDerivative(agent);
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
