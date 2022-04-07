@@ -157,6 +157,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( function == null )
             throw new IllegalArgumentException("Passed constructor argument of type Function must not be null!");
 
+        if ( !(context instanceof ExecutionCall) && !(context instanceof GraphLock) )
+            throw new IllegalArgumentException(
+                    "The passed context object for the GraphNode constructor is of type '" + context.getClass().getName() + "'.\n" +
+                            "A given context must either be a GraphLock instance or an ExecutionCall."
+            );
+
         if ( context instanceof ExecutionCall ) {
             ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
             Tsr<?>[] inputs = call.inputs();
@@ -222,11 +228,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     else
                         a.parents()[i]._attachChild(this);
                 }
-            } else
-                throw new IllegalArgumentException(
-                        "The passed context object for the GraphNode constructor is of type '" + context.getClass().getName() + "'.\n" +
-                                "A given context must either be a GraphLock instance or an ExecutionCall."
-                );
+            }
         }
         _calculateNodeID( a );
         _payloadReferenceVersion = a.payloadReferenceVersion();

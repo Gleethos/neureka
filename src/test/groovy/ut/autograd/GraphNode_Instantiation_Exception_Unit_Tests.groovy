@@ -55,7 +55,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             Object context = new Integer(3)
 
         when : 'We try to instantiate a GraphNode...'
-            new GraphNode(function, context, supplier)
+            new GraphNode<Object>(function, context, supplier)
 
         then : 'The constructor throws the expected error message.'
             def exception = thrown(IllegalArgumentException)
@@ -63,7 +63,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
                     "A given context must either be a GraphLock instance or an ExecutionCall."
 
         and : 'The node will check if autograd is enabled upon construction...'
-            1 * function.isDoingAD()
+            0 * function.isDoingAD()
     }
 
     def 'GraphNode throws exception when trying to instantiate with Function argument being null.'()
