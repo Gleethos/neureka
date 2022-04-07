@@ -306,14 +306,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                                             Arg.DerivIdx.of(finalI),
                                                             Arg.Derivative.of(targetDerivative)
                                                     )
-                                                    .getADAgentFrom(
-                                                            function,
-                                                            true
-                                                    );
-                                    a.put(
-                                        targetNode,
-                                        agent
-                                    );
+                                                    .getADAgentFrom( function, true );
+                                    a.put( targetNode, agent );
                                     _informPartialDerivative(agent);
                                     // TODO: flag within src Tsr<ValType>s that grant that the tensor
                                     // has been created by function constructor!
@@ -331,9 +325,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         ADAgent agent =
                                 call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)))
                                         .getADAgentFrom( function, false );
-                        a.put(
-                            srcNode, agent
-                        );
+                        a.put( srcNode, agent );
                         _informPartialDerivative(agent);
                     }
                 }
@@ -362,7 +354,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         "One type of constructor in the 'Tsr' class enables passing a String expression for execution, " +
                         "whose resulting tensor needs to be merged into the newly created one..."
                 );
-            } else exception.printStackTrace();
+            }
+            else exception.printStackTrace();
         }
         if ( payload.rqsGradient() ) payload.addToGradient( e );
         if ( also != null ) also.accept( payload );
