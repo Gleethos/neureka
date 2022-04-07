@@ -503,9 +503,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public void backward( Tsr<V> error ) {
         Set<GraphNode<V>> pendingNodes = new HashSet<>();
         _backward( error, pendingNodes, false ); // Entry-point to private recursive back-propagation!
-        if ( Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp() ) {
+        if ( Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp() )
             pendingNodes.forEach( n -> n._carryPendingBackPropToGradients( pendingNodes ) );
-        } else {
+        else {
             pendingNodes.forEach( n -> {
                 if ( !n._pendingError.isFullyAccumulated() ) {
                     throw new IllegalStateException(
@@ -548,7 +548,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     if ( _pendingError == null ) {
                         _pendingError = new PendingError<>( error, numOfADPaths - 1 );
                         pendingNodes.add( this );
-                    } else _pendingError.accumulate( error );
+                    }
+                    else
+                        _pendingError.accumulate( error );
+
                     return;
                     /* Back-prop will be continued later! This node is being remembered in 'PendingError'
                        NOTE: Multiple AutoDiff paths leading to one node in history will be accumulated first! (performance)
@@ -726,7 +729,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public void forEachTarget( Consumer<GraphNode<V>> action ) {
         if ( _targetsToAgents == null ) return;
-        _targetsToAgents.forEach( (t, o ) -> action.accept( t ) );
+        _targetsToAgents.forEach( ( t, o ) -> action.accept( t ) );
     }
 
     /**
@@ -736,10 +739,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( _targetsToAgents == null ) return;
         _targetsToAgents
                 .forEach(
-                    ( targetNode, agents ) ->
-                        agents.forEach(
-                            a -> action.accept( targetNode, a )
-                        )
+                    ( targetNode, agents ) -> agents.forEach( a -> action.accept( targetNode, a ) )
                 );
     }
 
