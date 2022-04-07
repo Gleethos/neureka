@@ -184,18 +184,17 @@ public class GraphNode<V> implements Component<Tsr<V>>
         GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
         a.setPayloadReferenceVersion( out.getVersion() );
         if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
+            _setPayload(out);
             if (context instanceof GraphLock) { // Note function always null in this case:
                 a.setLock((GraphLock) context);
-                _setPayload(out);
                 out.set(this);//
                 a.setMode(out.rqsGradient() ? 1 : 0);
                 a.setFunction(null);
                 a.setParents(null);
-            } else if (context instanceof ExecutionCall) {
+            } else { // -> context instanceof ExecutionCall
                 ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
                 Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
                 a.setLock(inputs[0].getGraphNode().getLock());
-                _setPayload(out);
                 out.set(this);
                 a.modeOf(call);
                 a.setFunction(function);
@@ -260,6 +259,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
         }
     }
 
+    /**
+     *  This method extracts {@link ADAgent}s from the provided {@link Function}
+     *  (and its underlying {@link neureka.backend.api.Operation}) to be stored associated with a
+     *  particular target {@link GraphNode} node used as reference for back-prop traversal
+     *  when doing back-prop/autograd later on...
+     */
     private void _registerAgents(
             GraphNodeAssemblyState<V> a, Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call
     ) {
