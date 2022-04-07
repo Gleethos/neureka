@@ -163,6 +163,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( context instanceof GraphLock ) { // Note function always null in this case:
             out = payloadSupplier.get();
             a = _assemble( this, out, function, null, (GraphLock) context );
+            _calculateNodeID( a );
         } else if ( context instanceof ExecutionCall ) {
             ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
             Tsr<?>[] inputs = call.inputs();
@@ -200,6 +201,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             }
             out = payloadSupplier.get();
             a = _assemble( this, out, function, call, inputs[ 0 ].getGraphNode().getLock() );
+            _calculateNodeID( a );
         }
         else
             throw new IllegalArgumentException(
@@ -261,16 +263,19 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     a.parents()[ i ]._attachChild(node);
             }
         }
+        return a;
+    }
+
+    private void _calculateNodeID(GraphNodeAssemblyState<?> a) {
         if ( a.nodeID() == -1 ) {
             long nid = 1;
             if ( a.parents() != null ) {
-                for ( GraphNode<V> n : a.parents() )
+                for ( GraphNode<?> n : a.parents() )
                     nid *= n.getPayload().hashCode(); //payload might be 0! Why? -> garbage collected!
             }
             if ( a.function() != null ) nid += a.function().hashCode();
             a.setNodeID( nid );
         }
-        return a;
     }
 
     private void _registerAgents(
