@@ -194,10 +194,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
             }
         }
 
-        Tsr<V> out;
+        Tsr<V> out = payloadSupplier.get();
         GraphNodeAssemblyState<V> a;
         if ( context instanceof GraphLock ) { // Note function always null in this case:
-            out = payloadSupplier.get();
             a = new GraphNodeAssemblyState<>();
             if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
             a.setPayloadReferenceVersion( out.getVersion() );
@@ -212,7 +211,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
         } else if ( context instanceof ExecutionCall ) {
             ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
             Tsr<?>[] inputs = call.inputs();
-            out = payloadSupplier.get();
             a = _assemble( this, out, function, call, inputs[ 0 ].getGraphNode().getLock() );
         }
         else
