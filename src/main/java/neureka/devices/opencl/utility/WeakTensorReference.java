@@ -31,7 +31,7 @@ public final class WeakTensorReference<T> extends WeakReference<T>
     @Override
     public boolean equals( Object o ) {
         if ( !(o instanceof WeakTensorReference) ) return false;
-        if ( o.hashCode() == _hash ) return true;
+        if ( o.hashCode() != _hash ) return false;
         else {
             T value = get();
             return value != null && o == value;
