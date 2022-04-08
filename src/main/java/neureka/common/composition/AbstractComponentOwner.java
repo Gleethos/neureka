@@ -58,7 +58,7 @@ import java.util.function.Consumer;
  *  This means that the {@link AbstractComponentOwner} can only reference a single
  *  instance of a concrete {@link Component} implementation class.                                   <br>
  *                                                                                                   <br>
- *  This class is used as the root precursor class of the concrete {@link Tsr} class
+ *  This class is also used as the root precursor class of the concrete {@link Tsr} class
  *  from which tensor instances can be created, but also the precursor class of
  *  the {@link BackendContext} which is managed by thread local
  *  {@link neureka.Neureka} library context instances.

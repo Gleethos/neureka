@@ -4,6 +4,15 @@ import neureka.common.composition.Component;
 import neureka.Tsr;
 import neureka.devices.Device;
 
+/**
+ *  Extend this class to define additional meta arguments for {@link neureka.calculus.Functions}.
+ *  More complex types of operations need additional parameters/arguments.
+ *  The {@link neureka.backend.standard.operations.other.Randomization}
+ *  operation for example receives the {@link Seed} argument as a basis
+ *  for deterministic pseudo random number generation...
+ *
+ * @param <T> The type parameter defining the type of argument.
+ */
 public abstract class Arg<T> implements Component<Args> {
 
     private final T _value;
@@ -13,9 +22,7 @@ public abstract class Arg<T> implements Component<Args> {
     public T get() { return _value; }
 
     @Override
-    public boolean update(OwnerChangeRequest<Args> changeRequest) {
-        return true;
-    }
+    public boolean update(OwnerChangeRequest<Args> changeRequest) { return true; }
 
 
     public static class Derivative<V> extends Arg<Tsr<V>> {
@@ -70,8 +77,6 @@ public abstract class Arg<T> implements Component<Args> {
     }
 
     @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + "[" + _value + "]";
-    }
+    public String toString() { return this.getClass().getSimpleName() + "[" + _value + "]"; }
 
 }

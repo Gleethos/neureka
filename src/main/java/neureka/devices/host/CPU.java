@@ -22,8 +22,9 @@ import java.util.function.IntSupplier;
 
 /**
  *  The CPU class, one of many implementations of the {@link Device} interface,
- *  is simply supposed to be an API for dispatching threaded workloads onto the CPU.
- *  Contrary to other types of devices, the CPU will host tensor data by default, simply
+ *  is simply supposed to be an API for dispatching threaded workloads onto the CPU
+ *  as well as reading from or writing to tensors it stores.
+ *  Contrary to other types of devices, the CPU will represent a tensors' data by default, simply
  *  because the tensors will be stored in RAM (JVM heap) by default if no device was specified.
  *  This means that they are implicitly "stored" on the {@link CPU} device.
  *  The class is also a singleton instead of being part of a {@link neureka.backend.api.BackendExtension}.
