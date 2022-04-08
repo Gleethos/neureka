@@ -91,7 +91,7 @@ public final class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Lo
 
     @Override
     public Long convertToHolder( Object from ) {
-        return null;
+        return DataConverter.get().convert( from, Long.class );
     }
 
     @Override

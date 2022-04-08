@@ -85,20 +85,7 @@ public final class I64 extends AbstractNumericType<Long, long[], Long, long[]>
 
     @Override
     public Long convertToHolder( Object from ) {
-        if ( Byte.class.equals( from.getClass() ) )
-            return ( (Byte) from ).longValue();
-        else if ( Integer.class.equals( from.getClass() ) )
-            return ( (Integer) from ).longValue();
-        else if ( Double.class.equals( from.getClass() ) )
-            return ( (Double) from ).longValue();
-        else if ( Short.class.equals( from.getClass() ) )
-            return ( (Short) from ).longValue();
-        else if ( Long.class.equals( from.getClass() ) )
-            return ( (Long) from );
-        else if ( Float.class.equals( from.getClass() ) )
-            return ( (Float) from ).longValue();
-        else
-            return null;
+        return DataConverter.get().convert( from, Long.class );
     }
 
     @Override

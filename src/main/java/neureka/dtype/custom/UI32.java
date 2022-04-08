@@ -85,7 +85,7 @@ public final class UI32 extends AbstractNumericType<Long, long[], Integer, int[]
 
     @Override
     public Integer convertToHolder( Object from ) {
-        return null;
+        return DataConverter.get().convert( from, Integer.class );
     }
 
     @Override

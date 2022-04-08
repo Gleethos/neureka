@@ -187,6 +187,8 @@ public final class DataConverter
         _set( Integer.class, Short.class,  Integer::shortValue );
         _set( Integer.class, Long.class,   Integer::longValue );
 
+        _set( Long.class, Integer.class,   Long::intValue );
+
         _set( Double.class, Float.class,   Double::floatValue );
         _set( Double.class, Integer.class, Double::intValue );
         _set( Double.class, Byte.class,    Double::byteValue );

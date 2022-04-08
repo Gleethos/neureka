@@ -94,7 +94,7 @@ public final class UI16 extends AbstractNumericType<Integer, int[], Short, short
 
     @Override
     public Short convertToHolder( Object from ) {
-        return null;
+        return DataConverter.get().convert( from, Short.class );
     }
 
     @Override

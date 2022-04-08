@@ -135,6 +135,7 @@ class NumericType_Spec extends Specification
             resultTarget == target
             backToRaw == rawOriginal
             num.toTarget( original ) == target
+            num.convertToHolder(target) == original
 
         and : 'The numeric type instance can perform array conversion.'
            num.convertToTargetArray( rawOriginal as double[] ) == rawOriginal // Groovy automatically tests values

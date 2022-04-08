@@ -95,7 +95,7 @@ public final class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>
 
     @Override
     public Byte convertToHolder( Object from ) {
-        return null;
+        return DataConverter.get().convert( from, Byte.class );
     }
 
     @Override
