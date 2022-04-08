@@ -1,4 +1,4 @@
-package neureka.devices.opencl.utility;
+package testutility.opencl;
 
 import java.util.ArrayList;
 import java.util.Arrays;

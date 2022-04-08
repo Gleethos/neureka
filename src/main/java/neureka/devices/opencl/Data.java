@@ -11,7 +11,10 @@ import java.util.Arrays;
 /**
  *  This defines a representation of some basic primitive numeric array based JVM data
  *  which may be stored on an {@link OpenCLDevice}.
- *  This is an internal class which is solely supposed to be used within an OpenCL device.
+ *  <br> <br>
+ *  <b>Warning: This is an internal class, meaning it should not be used
+ *  anywhere but within this library. <br>
+ *  This class or its public methods might change or get removed in future versions!</b>
  */
 class Data
 {

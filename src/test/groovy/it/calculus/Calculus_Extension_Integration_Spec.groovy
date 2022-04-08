@@ -15,7 +15,7 @@ import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device
 import neureka.devices.host.CPU
-import neureka.devices.opencl.utility.DispatchUtility
+import testutility.opencl.DispatchUtility
 import spock.lang.Specification
 
 class Calculus_Extension_Integration_Spec extends Specification

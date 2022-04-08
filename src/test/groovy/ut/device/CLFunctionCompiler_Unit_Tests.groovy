@@ -10,22 +10,35 @@ import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.CLFunctionCompiler
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
-class CLFunctionCompiler_Unit_Tests extends Specification {
+@Title("Turning functions into kernels.")
+@Narrative('''
+
+    Neureka parses mathematical expressions into an AST representation
+    hidden behind the Function interface...
+    This feature does not exist without reason, we can use
+    this abstract syntax tree to compile to OpenCL kernels
+    for optimal execution speed!
+
+''')
+class CLFunctionCompiler_Unit_Tests extends Specification
+{
 
     def 'The CLFunctionCompiler produces an operation which properly integrates to the backend.'() {
 
         given : 'A mocked OpenCLDevice which allows us to test the compiler without OpenCL dependency.'
-            def mockDevice = Mock(OpenCLDevice)
+            var mockDevice = Mock(OpenCLDevice)
         and : 'Three simple scalar tensors (of doubles) which we will keep in RAM (not outsource to a device).'
             Tsr<Number> t1 = Tsr.of( 1 )
             Tsr<Number> t2 = Tsr.of(-2 )
             Tsr<Number> t3 = Tsr.of( 5 )
         and : 'A simple test function which will serve as the basis for the optimization.'
-            def funToBeOptimized = Function.of("i2 - (i0 / i1)")
+            var funToBeOptimized = Function.of("i2 - (i0 / i1)")
         and : 'Finally we instantiate the compiler which uses the mocked device and the test function for optimization.'
-            def compiler = new CLFunctionCompiler(
+            var compiler = new CLFunctionCompiler(
                                             mockDevice,
                                             funToBeOptimized,
                                             "test_fun"
@@ -38,9 +51,9 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
             resultOperation != null
 
         when : 'We create a new cloned context from the current one with the added test operation...'
-            def context = Neureka.get().backend().clone().addOperation(resultOperation)
+            var context = Neureka.get().backend().clone().addOperation(resultOperation)
         and : '... a context runner ...'
-            def run = context.runner()
+            var run = context.runner()
         and : 'We create a function based on our optimized operation...'
             Function fun = run {
                             new FunctionBuilder( Neureka.get().backend() )
@@ -54,7 +67,7 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
         and : 'The context now stores the newly created operation.'
             context.getOperation("test_fun") == resultOperation
         when : 'Querying the new operation for an algorithm...'
-            def foundAlgorithm = resultOperation
+            var foundAlgorithm = resultOperation
                                     .getAlgorithmFor(
                                             ExecutionCall.of(t1, t2, t3)
                                                             .running(resultOperation)
@@ -73,7 +86,7 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
                 All of them are still residing in RAM without being member of any device...
                 Therefore in order for this to work we need to fake the membership of these tensors!
         """
-            def exception = thrown(IllegalStateException)
+            var exception = thrown(IllegalStateException)
             exception.message == "No suitable implementation found for algorithm 'generic_algorithm_for_test_fun' and device type 'CPU'."
 
         when : 'We set the mocked device as components of our three scalar tensors...'
@@ -121,13 +134,13 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
     def 'The CLFunctionCompiler produces the expected "ad hoc" kernel.'() {
 
         given : 'A mocked OpenCLDevice which allows us to test the compiler without OpenCL dependency.'
-            def mockDevice = Mock(OpenCLDevice)
+            var mockDevice = Mock(OpenCLDevice)
         and : 'A mocked KernelCaller which allows us to check if the OpenCL backend is being called properly.'
-            def mockCaller = Mock(KernelCaller)
+            var mockCaller = Mock(KernelCaller)
         and : 'A test function which will be the optimization target for this test.'
-            def funToBeOptimized = Function.of("i2 + (i0 / i1)")
+            var funToBeOptimized = Function.of("i2 + (i0 / i1)")
         and : 'Finally we create the function compiler!'
-            def compiler = new CLFunctionCompiler(
+            var compiler = new CLFunctionCompiler(
                                     mockDevice,
                                     funToBeOptimized,
                                     "test_fun"

@@ -46,7 +46,6 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
-import neureka.devices.opencl.utility.WeakTensorReference;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -420,7 +419,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private synchronized void _attachChild( GraphNode<V> newChild ) {
         if ( _children == null ) _children = new ArrayList<>();
-        WeakReference<GraphNode<V>> ref = new WeakTensorReference<>( newChild, null );
+        WeakReference<GraphNode<V>> ref = new WeakReference<>( newChild, null );
         _children.add( ref );
     }
 

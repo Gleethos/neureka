@@ -3,6 +3,15 @@ package neureka.devices.opencl;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ *  A fixed sized cache for ad-hoc (just in time compiled) {@link OpenCLDevice} kernels.
+ *  This cache will mostly only be utilized when integrating with custom kernels
+ *  or when {@link neureka.backend.api.Operation}s are being optimized for
+ *  the {@link OpenCLDevice}. <br> <br>
+ *  <b>Warning: This is an internal class, meaning it should not be used
+ *  anywhere but within this library. <br>
+ *  This class or its public methods might change or get removed in future versions!</b>
+ */
 public final class KernelCache {
 
     private final static int CAPACITY = 256;

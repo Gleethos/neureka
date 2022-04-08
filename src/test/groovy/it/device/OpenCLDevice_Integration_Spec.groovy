@@ -5,7 +5,7 @@ import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.devices.opencl.CLContext
-import neureka.devices.opencl.utility.DispatchUtility
+import testutility.opencl.DispatchUtility
 import neureka.dtype.DataType
 import neureka.ndim.config.NDConfiguration
 import neureka.view.TsrStringSettings

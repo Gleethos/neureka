@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ *  Turns a {@link Function} into OpenCL kernel code to make
+ *  optimized just in time compilation possible.
+ */
 public final class CLFunctionCompiler {
 
     private final OpenCLDevice _device;
