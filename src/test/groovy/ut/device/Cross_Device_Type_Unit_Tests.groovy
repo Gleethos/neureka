@@ -241,8 +241,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
 
     }
 
-
-    @Ignore
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && (data.device instanceof OpenCLDevice) })
     def 'Devices store slices which can also be restored.'(
             Device device
     ) {
@@ -259,17 +258,17 @@ class Cross_Device_Type_Unit_Tests extends Specification
             !device.has( b )
 
         when : 'The the first tensor is being passed to the device...'
-            device.store( b )
+            device.store( a )
 
         then : '...tensor "a" is now on the device.'
             !device.isEmpty()
-            device.size() == initialNumber + 2
-            device.has( b )
-        and : ''
+            device.size() == initialNumber + 1
             device.has( a )
+        and :
+            !device.has( b )
 
-        when : 'They are being removed again...'
-            device.free( b )
+        when :
+            device.free( a )
 
         then : '...the device is empty again.'
             device.isEmpty() == ( initialNumber == 0 )
@@ -279,9 +278,8 @@ class Cross_Device_Type_Unit_Tests extends Specification
 
         where : 'The following Device instances are being tested :'
         device << [
-                //CPU.get(),
-                Device.find( "openCL" ),
-                //FileDevice.at( "build/test-can" )
+                CPU.get(),
+                Device.find( "openCL" )
         ]
 
     }
