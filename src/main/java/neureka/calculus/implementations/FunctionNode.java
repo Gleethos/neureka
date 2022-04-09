@@ -22,15 +22,12 @@ import java.util.function.Supplier;
 
 public class FunctionNode implements Function
 {
-    private static Logger _LOG = LoggerFactory.getLogger(FunctionNode.class);
-
     private final Operation _operation;
     private final boolean _isFlat;
     private final boolean _isDoingAD;
 
     private final Function[] _src;
 
-    //------------------------------------------------------------------------------------------------------------------
 
     /**
      * @param type The operation which ought to be represented.
@@ -60,9 +57,6 @@ public class FunctionNode implements Function
         _isDoingAD = doAD;
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-
-
     @Override
     public String toString()
     {
@@ -75,7 +69,8 @@ public class FunctionNode implements Function
 
     @Override
     public boolean dependsOn( int index ) {
-        for ( Function f : _src ) if ( f.dependsOn( index ) ) return true;
+        for ( Function f : _src )
+            if ( f.dependsOn( index ) ) return true;
         return false;
     }
 
@@ -84,9 +79,6 @@ public class FunctionNode implements Function
 
     @Override
     public List<Function> getSubFunctions() { return Arrays.asList(_src); }
-
-    //------------------------------------------------------------------------------------------------------------------
-
 
     @Override
     public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
@@ -125,7 +117,6 @@ public class FunctionNode implements Function
         );
     }
 
-
     private Tsr<?> _execute( ExecutionCall<? extends Device<?>> call )
     {
         Tsr<?> alternative = call.getAlgorithm().dispatch( this, call );
@@ -150,6 +141,10 @@ public class FunctionNode implements Function
         return ( doAccel && device != null ? device : inputs[ 0 ].getDevice() );
     }
 
+    /**
+     * @param tensors An array of tensors for which the most common {@link Device} should be determined.
+     * @return The most common {@link Device} among the provided tensors.
+     */
     private static boolean _shareGuestDevice( Tsr<?>[] tensors )
     {
         boolean onSameGuestDevice = true;
@@ -166,8 +161,6 @@ public class FunctionNode implements Function
         if ( device != null && tensors.length == 2 && tensors[ 1 ].size() == 1 ) onSameGuestDevice = true;
         return onSameGuestDevice;
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public double call( final double[] inputs, int j ) {
