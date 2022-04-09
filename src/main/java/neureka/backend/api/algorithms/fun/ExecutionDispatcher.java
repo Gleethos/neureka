@@ -2,8 +2,8 @@ package neureka.backend.api.algorithms.fun;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.calculus.Function;
 import neureka.calculus.internal.RecursiveExecutor;
-import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 
 /**
@@ -25,6 +25,6 @@ import neureka.devices.Device;
  */
 public interface ExecutionDispatcher {
 
-    Tsr<?> dispatch( FunctionNode caller, ExecutionCall<? extends Device<?>> call );
+    Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call );
 
 }

@@ -696,7 +696,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public void forEachDerivative( BiConsumer<GraphNode<V>, ADAgent> action ) {
         if ( _targetsToAgents == null ) return;
-        _targetsToAgents.forEach(
+        new TreeMap<>(_targetsToAgents).forEach(
             ( t, agents ) -> agents.forEach( a -> action.accept( t, a ) )
         );
     }
@@ -708,7 +708,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public void forEachBackward( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
         if ( _targetsToAgents == null ) return;
         error.getUnsafe().setIsIntermediate( false );
-        _targetsToAgents.forEach( ( t, agents ) -> {
+        new TreeMap<>(_targetsToAgents).forEach( ( t, agents ) -> {
             for ( ADAgent a : agents )
                 action.accept( t, a.backward( t, error ) );
         });
@@ -719,7 +719,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public void forEachTarget( Consumer<GraphNode<V>> action ) {
         if ( _targetsToAgents == null ) return;
-        _targetsToAgents.forEach( ( t, o ) -> action.accept( t ) );
+        new TreeMap<>(_targetsToAgents).forEach( ( t, o ) -> action.accept( t ) );
     }
 
     /**
@@ -727,7 +727,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public void forEachTargetAgentPair( BiConsumer<GraphNode<V>, ADAgent> action ) {
         if ( _targetsToAgents == null ) return;
-        _targetsToAgents
+        new TreeMap<>(_targetsToAgents)
                 .forEach(
                     ( targetNode, agents ) -> agents.forEach( a -> action.accept( targetNode, a ) )
                 );

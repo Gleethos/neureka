@@ -4,7 +4,6 @@ package neureka.backend.api.algorithms;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
-import neureka.backend.api.Call;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.*;
@@ -17,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.function.Supplier;
 
 /**
  *  This is the base class for implementations of the {@link Algorithm} interface.
@@ -132,7 +130,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @return The result of the execution.
      */
     @Override
-    public final Tsr<?> dispatch( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+    public final Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         if ( call == null ) return _handleInsteadOfDevice.dispatch( caller, call );
         MemValidator checker = MemValidator.forInputs( call.inputs(), ()->_handleInsteadOfDevice.dispatch( caller, call ) );
@@ -226,16 +224,16 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @return The checked thing.
      */
     private <T> T _checked( T newState, T current, Class<T> type ) {
-        if ( _isFullyBuilt ) {
+        if ( _isFullyBuilt )
             _LOG.warn(
                 "Implementation '" + type.getSimpleName() + "' in algorithm '"+this+"' was modified! " +
                 "Please consider only modifying the standard backend state of Neureka for experimental reasons."
             );
-        } else if ( current != null && newState == null ) {
+        else if ( current != null && newState == null )
             throw new IllegalArgumentException(
                 "Trying set an already specified implementation of lambda '"+current.getClass().getSimpleName()+"' to null!"
             );
-        }
+
         return newState;
     }
 
@@ -314,7 +312,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  a fairly suitable {@link Device} assigned to a given {@link neureka.backend.api.Algorithm},
      *  one can simply ignore it and find a custom one which fits the contents of the given
      *  {@link ExecutionCall} instance better.
-     *  The lambda passed to this will be called by the {@link #dispatch(FunctionNode, ExecutionCall)} method
+     *  The lambda passed to this will be called by the {@link #dispatch(Function, ExecutionCall)} method
      *  by any given {@link Operation} instances this algorithm belongs to.
      *
      * @param handleInsteadOfDevice The {@link ExecutionDispatcher} which is the main entrypoint for execution.

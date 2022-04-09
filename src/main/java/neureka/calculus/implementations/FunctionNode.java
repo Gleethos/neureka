@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  *  The most common type of {@link Function} which references other {@link Function}s to
  *  form an abstract syntax tree.
  */
-public class FunctionNode implements Function
+public final class FunctionNode implements Function
 {
     private final Operation _operation;
     private final boolean _isFlat;

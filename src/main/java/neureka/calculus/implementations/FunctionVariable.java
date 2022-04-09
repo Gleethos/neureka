@@ -15,7 +15,7 @@ import java.util.List;
  *  Instances of this implementation of the {@link Function} interface
  *  are leave nodes within the abstract syntax tree of a function, representing indexed inputs to a function.
  *  When parsing an expression into a function then these inputs are recognized by the character 'i' or 'I',
- *  followed by the character 'j' or 'J' (optinally wrapped by '[' and ']'), which is a placeholder for the index
+ *  followed by the character 'j' or 'J' (optionally wrapped by '[' and ']'), which is a placeholder for the index
  *  of the argument within the list/array of arguments passed to a concrete {@link Function} instance. <br>
  *  So for example, when creating a function by calling the following factory method...     <br>
  *                                                                                          <br>
@@ -24,35 +24,26 @@ import java.util.List;
  *  ...then the substrings "I[j]" will be parsed into instances of this class!              <br>
  *  The substring "I[0]" on the other hand will not be parsed into an instance of this class!
  */
-public class FunctionVariable implements Function, GradientProvider {
-
+public final class FunctionVariable implements Function, GradientProvider
+{
     private final boolean _providesGradient;
 
-    public FunctionVariable( String equation ) {
-        _providesGradient = equation.contains("g");
-    }
 
-    public boolean providesGradient() { return _providesGradient; }
+    public FunctionVariable( String equation ) { _providesGradient = equation.contains("g"); }
 
-    @Override
-    public boolean isFlat() { return true; }
+    @Override public boolean providesGradient() { return _providesGradient; }
 
-    @Override
-    public boolean isDoingAD() { return false; }
+    @Override public boolean isFlat() { return true; }
 
-    @Override
-    public AbstractOperation getOperation() { return null; }
+    @Override public boolean isDoingAD() { return false; }
 
-    @Override
-    public boolean dependsOn( int index ) { return true; }
+    @Override public AbstractOperation getOperation() { return null; }
 
-    @Override
-    public Function getDerivative( int index ) { return Function.of( "1" ); }
+    @Override public boolean dependsOn( int index ) { return true; }
 
-    @Override
-    public List<Function> getSubFunctions() { return new ArrayList<>(); }
+    @Override public Function getDerivative( int index ) { return Function.of( "1" ); }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @Override public List<Function> getSubFunctions() { return new ArrayList<>(); }
 
     @Override
     public double call( final double[] inputs, int j ) {
@@ -72,22 +63,21 @@ public class FunctionVariable implements Function, GradientProvider {
         if ( j != index ) return 0;
         return derive( inputs, index );
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
         int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );
         int j = ( arguments.has(Arg.VarIdx.class)   ? arguments.valOf(Arg.VarIdx.class)   : -1 );
         if ( d >= 0 ) {
-            if ( j < 0 ) {
+            if ( j < 0 )
                 return Tsr.of( tensors[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true );
-            }
-            return ( j != d ) ? Tsr.of( tensors[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true ) : executeDerive( tensors, d );
+
+            return j != d ? Tsr.of( tensors[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true ) : executeDerive( tensors, d );
         }
         if ( j < 0 ) {
             StringBuilder exp = new StringBuilder("I[ 0 ]");
 
-            for( int i = 1; i < tensors.length; i++ )
+            for ( int i = 1; i < tensors.length; i++ )
                 exp.append("+I[").append(i).append("]");
 
             return new FunctionBuilder( Neureka.get().backend() )
@@ -97,12 +87,8 @@ public class FunctionVariable implements Function, GradientProvider {
         return tensors[j];
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     @Override
-    public String toString() {
-        return "I" + ( (this.providesGradient()) ? "g" : "" ) + "[j]";
-    }
+    public String toString() { return "I" + ( (this.providesGradient()) ? "g" : "" ) + "[j]"; }
 
 
 }

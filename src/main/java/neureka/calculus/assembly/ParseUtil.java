@@ -12,8 +12,10 @@ import java.util.List;
 /**
  * Utility for parsing function expressions.
  **/
-public class ParseUtil
+public final class ParseUtil
 {
+    private ParseUtil() {}
+
     @Contract( pure = true ) 
     public static int numberOfOperationsWithin( final List<String> operations ) {
         int counter = 0;

@@ -15,17 +15,15 @@ import java.util.List;
  *  When parsing an expression into a function then these constants are recognized by a series of digit characters
  *  optionally separated by '.' to represent decimal digits. <br>
  *  So for example, when creating a function by calling the following factory method...     	<br>
- *                                                                                          	<br>
- *  {@link Function#of}( "I[1] + (4 * I[0]) / 2.1" )                                      	<br>
+ *                                                                                           	<br>
+ *  {@link Function#of}( "I[1] + (4 * I[0]) / 2.1" )                                        	<br>
  *                                                                                          	<br>
  *  ...then the substrings "4" and "2.1" will be parsed into instances of this class!   		<br>
  *
  */
-public class FunctionConstant implements Function
+public final class FunctionConstant implements Function
 {
 	private final double _value;
-
-	public double value() { return _value; }
 
 	public FunctionConstant(String expression)
 	{
@@ -44,38 +42,26 @@ public class FunctionConstant implements Function
 		_value = Double.parseDouble( number.toString() );
 	}
 
-	//------------------------------------------------------------------------------------------------------------------
 
-	@Override
-	public boolean isFlat() { return  true; }
+	public double value() { return _value; }
 
-	@Override
-	public boolean isDoingAD() { return false; }
+	@Override public boolean isFlat() { return  true; }
 
-	@Override
-	public AbstractOperation getOperation() { return null; }
+	@Override public boolean isDoingAD() { return false; }
 
-	@Override
-	public boolean dependsOn( int index ) { return false; }
+	@Override public AbstractOperation getOperation() { return null; }
 
-	@Override
-	public Function getDerivative( int index ) { return Function.of( "0" ); }
+	@Override public boolean dependsOn( int index ) { return false; }
 
-	@Override
-	public List<Function> getSubFunctions() { return new ArrayList<>(); }
+	@Override public Function getDerivative( int index ) { return Function.of( "0" ); }
 
-	//------------------------------------------------------------------------------------------------------------------
+	@Override public List<Function> getSubFunctions() { return new ArrayList<>(); }
 
-	@Override
-    public double call( final double[] inputs, int j ) { return _value; }
+	@Override public double call( final double[] inputs, int j ) { return _value; }
 
-	@Override
-	public double derive( double[] inputs, int index ) { return 0; }
+	@Override public double derive( double[] inputs, int index ) { return 0; }
 
-	@Override
-	public double derive( double[] inputs, int index, int j ) { return 0; }
-
-	//------------------------------------------------------------------------------------------------------------------
+	@Override public double derive( double[] inputs, int index, int j ) { return 0; }
 
 	@Override
 	public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
@@ -97,10 +83,6 @@ public class FunctionConstant implements Function
 				.setIsIntermediate( true );
 	}
 
-	//------------------------------------------------------------------------------------------------------------------
-
-	@Override
-	public String toString() { return String.valueOf( _value ); }
-
+	@Override public String toString() { return String.valueOf( _value ); }
 
 }

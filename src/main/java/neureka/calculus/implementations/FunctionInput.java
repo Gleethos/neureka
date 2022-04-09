@@ -32,6 +32,7 @@ public class FunctionInput implements Function, GradientProvider
 {
     private final int _index;
 
+
     public static Function of(String equation) {
         if ( equation.charAt( 0 ) == '-' )
             return new FunctionBuilder( Neureka.get().backend() )
@@ -52,35 +53,25 @@ public class FunctionInput implements Function, GradientProvider
         return new FunctionInput(number);
     }
 
-    private FunctionInput( int number ) {
-        _index = number;
-    }
 
-    //------------------------------------------------------------------------------------------------------------------
+    private FunctionInput( int number ) { _index = number; }
 
-    public boolean providesGradient() { return ( _index < 0 ); }
 
-    //------------------------------------------------------------------------------------------------------------------
+    public int index() { return ( this.providesGradient() ? ( Math.abs(_index) - 1 ) : _index ); }
 
-    @Override
-    public boolean isFlat() { return true; }
+    @Override public boolean providesGradient() { return ( _index < 0 ); }
 
-    @Override
-    public boolean isDoingAD() { return false; }
+    @Override public boolean isFlat() { return true; }
 
-    @Override
-    public AbstractOperation getOperation() { return null; }
+    @Override public boolean isDoingAD() { return false; }
 
-    @Override
-    public boolean dependsOn( int index ) { return index() == index; }
+    @Override public AbstractOperation getOperation() { return null; }
 
-    @Override
-    public Function getDerivative( int index ) { return ( index == _index ) ? Function.of( "1" ) : Function.of( "0" ); }
+    @Override public boolean dependsOn( int index ) { return index() == index; }
 
-    @Override
-    public List<Function> getSubFunctions() { return new ArrayList<>(); }
+    @Override public Function getDerivative( int index ) { return ( index == _index ) ? Function.of( "1" ) : Function.of( "0" ); }
 
-    //------------------------------------------------------------------------------------------------------------------
+    @Override public List<Function> getSubFunctions() { return new ArrayList<>(); }
 
     private Tsr<?> _extract( Tsr<?> t )
     {
@@ -101,8 +92,6 @@ public class FunctionInput implements Function, GradientProvider
         return t;
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     @Override
     public double call( final double[] inputs, int j ) {
         if ( j < 0 ) {
@@ -111,8 +100,7 @@ public class FunctionInput implements Function, GradientProvider
         return inputs[index()];
     }
 
-    @Override
-    public double derive( final double[] inputs, final int index ) { return ( index == index() ) ? 1 : 0; }
+    @Override public double derive( final double[] inputs, final int index ) { return ( index == index() ) ? 1 : 0; }
 
     @Override
     public double derive( double[] inputs, int index, int j ) {
@@ -121,8 +109,6 @@ public class FunctionInput implements Function, GradientProvider
         else
             return 0;
     }
-
-    //------------------------------------------------------------------------------------------------------------------
 
     @Override
     public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
@@ -141,11 +127,7 @@ public class FunctionInput implements Function, GradientProvider
         return _extract( tensors[ index() ] );
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-
     @Override
     public String toString() { return "I" + ( this.providesGradient() ? "g" : "" ) + "[" + index() + "]"; }
-
-    public int index() { return ( this.providesGradient() ? ( Math.abs(_index) - 1 ) : _index ); }
 
 }

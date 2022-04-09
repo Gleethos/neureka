@@ -8,12 +8,11 @@ import neureka.backend.api.Operation;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.linear.MatMul;
-import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.assembly.ParseUtil;
-import neureka.calculus.implementations.FunctionNode;
+import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
@@ -133,7 +132,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     }
 
     @Override
-    public Tsr<?> dispatch( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+    public Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call ) {
         return CalcUtil.defaultRecursiveExecution( caller, call );
     }
 
