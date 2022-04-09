@@ -61,12 +61,12 @@ public class ADAM<V> implements Optimizer<V> {
 
     public ADAM(Tsr<V> target) {
         int[] shape = target.getNDConf().shape();
-        m  = (Tsr<V>) Tsr.of(target.getValueClass(), shape, 0);
-        v  = (Tsr<V>) Tsr.of(target.getValueClass(), shape, 0);
-        a  = (Tsr<V>) Tsr.of(target.getValueClass(), shape, 0.01); // Step size!
-        b1 = (Tsr<V>) Tsr.of(target.getValueClass(), shape, 0.9);
-        b2 = (Tsr<V>) Tsr.of(target.getValueClass(), shape, 0.999);
-        e  = (Tsr<V>) Tsr.of(target.getValueClass(), shape, 1e-7);
+        m  = Tsr.of(target.getValueClass(), shape, 0);
+        v  = Tsr.of(target.getValueClass(), shape, 0);
+        a  = Tsr.of(target.getValueClass(), shape, 0.01); // Step size!
+        b1 = Tsr.of(target.getValueClass(), shape, 0.9);
+        b2 = Tsr.of(target.getValueClass(), shape, 0.999);
+        e  = Tsr.of(target.getValueClass(), shape, 1e-7);
     }
 
     private Tsr<V> _optimize( Tsr<V> w ) {

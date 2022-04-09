@@ -59,13 +59,13 @@ public class SGD<V> implements Optimizer<V>
     public SGD( double leaningRate )
     {
         _learningRate = leaningRate;
-        _function = Function.of("I[ 0 ] <- (-1 * (I[ 0 ] - "+leaningRate+"))", false);
+        _function = Function.of("(-1 * (I[ 0 ] - "+leaningRate+"))", false);
     }
 
     @Override
     public Tsr<V> optimize( Tsr<V> w ) {
         Tsr<V> g = w.getGradient();
-        return Neureka.get().backend().getFunction().idy().call( _function.call( g ) );
+        return _function.call( g );
     }
 
     public double learningRate() {

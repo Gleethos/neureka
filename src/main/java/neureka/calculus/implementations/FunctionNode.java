@@ -92,6 +92,8 @@ public final class FunctionNode implements Function
                                                                             .running(_operation)
                                                                             .on( _deviceFor( tensors ) );
 
+                    if ( _isFlat ) call.checkArity();
+
                     int d = arguments.valOfOr( Arg.DerivIdx.class, -1 );
 
                     if ( _isFlat )
@@ -192,9 +194,9 @@ public final class FunctionNode implements Function
             Function function,
             Supplier<Tsr<?>> activation
     ) {
-        if ( !function.isDoingAD() ) {
+        if ( !function.isDoingAD() )
             return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
-        }
+
         boolean allLocked = true; // Input tensors might all have graph nodes which are left from previous computation.
         // ( => needs to be locked again! )
         Tsr<?> untracked = null;
