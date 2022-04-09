@@ -50,25 +50,25 @@ class Cross_Device_Type_Unit_Tests extends Specification
         })
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && type == OpenCLDevice }) // We need to assure that this system supports OpenCL!
     def 'Querying for Device implementations works as expected.'(
             String query, Class type
     ) {
         when : 'The query is being passed to the "find" method...'
-            def device = Device.find(query)
+            var device = Device.find(query)
 
         then : 'The resulting Device variable has the expected type.'
             device.class == type
 
         where :
             query                       || type
-            "cPu"                       || CPU.class
-            "jVm"                       || CPU.class
-            "natiVe"                    || CPU.class
-            "Threaded"                  || CPU.class
-            "openCl"                    || OpenCLDevice.class
-            "nvidia or amd or intel"    || OpenCLDevice.class // This assumes that there is an amd/intel/nvidia gpu!
-            "first"                     || OpenCLDevice.class
+            "cPu"                       || CPU
+            "jVm"                       || CPU
+            "natiVe"                    || CPU
+            "Threaded"                  || CPU
+            "openCl"                    || OpenCLDevice
+            "nvidia or amd or intel"    || OpenCLDevice // This assumes that there is an amd/intel/nvidia gpu!
+            "first"                     || OpenCLDevice
     }
 
 
@@ -158,8 +158,8 @@ class Cross_Device_Type_Unit_Tests extends Specification
         given : 'The given device is available and Neureka is being reset.'
             if ( device == null ) return
         and : 'A mocked ExecutionCall with mocked operation implementation and a mocked drain instantiator lambda...'
-            def call = Mock(ExecutionCall)
-            def implementation = Mock(Algorithm)
+            var call = Mock(ExecutionCall)
+            var implementation = Mock(Algorithm)
         and :
             call.getDevice() >> device
 
@@ -183,8 +183,6 @@ class Cross_Device_Type_Unit_Tests extends Specification
             ]
 
     }
-
-
 
     /**
      *  Device implementations always also behave as storage units for tensors.
@@ -294,7 +292,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             Tsr a = Tsr.of([2, 3], ";)")
             Tsr b = a[1, 0..2]
         and :
-            def initialSize = device.size()
+            var initialSize = device.size()
 
         expect : 'The given device is initially empty.'
             device.isEmpty() == ( device.size() == 0 )
@@ -305,7 +303,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             device.store( b )
 
         then : '...tensor "a" is now on the device.'
-            def exception = thrown(IllegalStateException)
+            var exception = thrown(IllegalStateException)
             exception.message.contains("Data parent is not outsourced!")
 
         expect : 'The given device is initially empty.'
