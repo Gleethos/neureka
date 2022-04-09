@@ -29,20 +29,20 @@ class Backend_Extension_Spec extends Specification
     def 'Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.'() {
 
         given : 'A new mock operation type is being created.'
-            def type = Mock(Operation)
+            var type = Mock(Operation)
 
         and : 'A list of mocked function source nodes.'
-            def children = [Mock(FunctionInput), Mock(FunctionInput)]
+            var children = [Mock(FunctionInput), Mock(FunctionInput)]
 
         and : 'A mock tensor which is the expected output'
             Tsr output = Mock(Tsr)
             var mutate = Mock(AbstractTensor.Unsafe)
 
         and : 'A mocked operation implementation.'
-            def implementation = Mock(Algorithm)
+            var implementation = Mock(Algorithm)
 
         when : 'A FunctionNode is being instantiated via the given mocks...'
-            def function = new FunctionNode(type, children, false)
+            var function = new FunctionNode(type, children, false)
 
         then : 'The mock type has been called as expected and the function has the following properties.'
             (1.._) * type.getArity() >> 2
@@ -50,7 +50,7 @@ class Backend_Extension_Spec extends Specification
             !function.isDoingAD()
 
         when : 'The function is being called with an empty tensor array...'
-            def result = function.call(new Tsr[0])
+            var result = function.call(new Tsr[0])
 
         then : 'The custom call hook should be accessed as outlined below.'
             (1.._) * type.getAlgorithmFor(_) >> implementation
@@ -75,27 +75,27 @@ class Backend_Extension_Spec extends Specification
     def 'Lambda properties of mock implementation interact with FunctionNode (AbstractFunction) as expected.'()
     {
         given : 'A mock agent.'
-            def agent = Mock(ADAgent)
+            var agent = Mock(ADAgent)
 
         and : 'A new operation type with a new implementation.'
-            def type = Mock(Operation)
+            var type = Mock(Operation)
 
         and : 'A list of function source nodes.'
-            def children = [Mock(FunctionInput), Mock(FunctionInput)]
+            var children = [Mock(FunctionInput), Mock(FunctionInput)]
 
         and : 'A mock tensor which is the expected output, an input and a graph node.'
             Tsr output = Mock(Tsr)
             Tsr input = Mock(Tsr)
             Device device = Mock(Device)
             GraphNode node = Mock(GraphNode)
-            def ndc = Mock(NDConfiguration)
+            var ndc = Mock(NDConfiguration)
             var mutate = Mock(AbstractTensor.Unsafe)
 
         and : 'A mocked operation implementation.'
-            def implementation = Mock(Algorithm)
+            var implementation = Mock(Algorithm)
 
         when : 'A FunctionNode is being instantiated via the given mocks...'
-            def function = new FunctionNode(type, children, true)
+            var function = new FunctionNode(type, children, true)
 
         then : 'The mock type has been called as expected and the function has the following properties.'
             (1.._) * type.getArity() >> 2

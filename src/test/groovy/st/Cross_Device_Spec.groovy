@@ -57,11 +57,11 @@ class Cross_Device_Spec extends Specification
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 
         and : 'Two tensors, one requiring gradients and the other one does not.'
-            def tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{
+            var tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{
                     1,  2, //  3, 1,
                     2, -3, // -2, -1,
             }).setRqsGradient( true )
-            def tensor2 = Tsr.of(new int[]{1, 2, 2}, new double[]{
+            var tensor2 = Tsr.of(new int[]{1, 2, 2}, new double[]{
                     -2, 3, //  0  7
                     1, 2,  // -7  0
             })

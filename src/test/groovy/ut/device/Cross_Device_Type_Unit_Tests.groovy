@@ -344,9 +344,9 @@ class Cross_Device_Type_Unit_Tests extends Specification
             String deviceType
     ) {
         given : 'We create a homogeneously filled tensor, which is therefor "virtual".'
-            def t = Tsr.ofFloats().withShape(4,3).all(-0.54f)
+            var t = Tsr.ofFloats().withShape(4,3).all(-0.54f)
         and : 'We also get a device for testing...'
-            def device = Device.find(deviceType)
+            var device = Device.find(deviceType)
 
         expect : 'We expect that the tensor is virtual, meaning its underlying data array stores only a single value...'
             t.isVirtual()

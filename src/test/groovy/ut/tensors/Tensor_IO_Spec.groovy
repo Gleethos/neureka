@@ -164,16 +164,16 @@ class Tensor_IO_Spec extends Specification
             Tsr t1 = Tsr.of([4, 3], 1d..12d)
 
         when : 'Recording the index behavior before and after a reshape operation...'
-            def t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})
-            def t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})
-            def t1_indices = t1.indicesOfIndex(5)
+            var t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})
+            var t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})
+            var t1_indices = t1.indicesOfIndex(5)
 
             Tsr t2 = Function.of(" [ 1, 0 ]:( I[0] ) ")(t1)
-            def t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})
-            def t2_idx = t2.indicesOfIndex(7)
+            var t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})
+            var t2_idx = t2.indicesOfIndex(7)
 
-            def t1_ioi_3 = t1.indexOfIndices(t1.indicesOfIndex(7)) // Element 7 '8.0' is at index 7!
-            def t2_ioi_2 =  t2.indexOfIndices(t2.indicesOfIndex(7)) // Element 7 '11.0' is at index 10!
+            var t1_ioi_3 = t1.indexOfIndices(t1.indicesOfIndex(7)) // Element 7 '8.0' is at index 7!
+            var t2_ioi_2 =  t2.indexOfIndices(t2.indicesOfIndex(7)) // Element 7 '11.0' is at index 10!
 
         then : 'These recorded values are as one would expect.'
             t1_ioi_1 == 7
@@ -470,11 +470,11 @@ class Tensor_IO_Spec extends Specification
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
         and : 'Two tensors which will be used for testing IO.'
-            def t = Tsr.of([2, 2], [
+            var t = Tsr.of([2, 2], [
                     1.0d, 4.0d,
                     2.0d, 7.0d,
             ])
-            def v = Tsr.of([2, 2], [
+            var v = Tsr.of([2, 2], [
                     1.0d, -1.0d,
                     1.0d, -1.0d
             ])

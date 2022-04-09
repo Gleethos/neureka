@@ -132,11 +132,11 @@ class Backend_Algorithm_Implementation_Spec extends Specification
     ){
 
         given : 'Mock instances to simulate an ExecutionCall instance.'
-            def call = Mock( ExecutionCall )
-            def device = Mock( OpenCLDevice )
-            def tensor = Mock( Tsr )
-            def clExecutor = imp.getImplementationFor( OpenCLDevice.class )
-            def kernel = Mock( KernelCaller )
+            var call = Mock( ExecutionCall )
+            var device = Mock( OpenCLDevice )
+            var tensor = Mock( Tsr )
+            var clExecutor = imp.getImplementationFor( OpenCLDevice.class )
+            var kernel = Mock( KernelCaller )
 
         when : 'CL-executor instance is being called...'
             clExecutor.run( call )
