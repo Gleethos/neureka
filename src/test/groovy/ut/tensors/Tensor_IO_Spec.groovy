@@ -276,7 +276,7 @@ class Tensor_IO_Spec extends Specification
             (t as String) == t.toString()
     }
 
-    @IgnoreIf({ device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ data.device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'We can re-populate a tensor of shorts from a single scalar value!'(
          String device, Class<?> type
     ) {
@@ -304,7 +304,7 @@ class Tensor_IO_Spec extends Specification
     }
 
 
-    @IgnoreIf({ device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ data.device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'We can manipulate the underlying data array of a tensor through the unsafe API.'(
             String device, Class<?> type
     ) {
@@ -342,7 +342,7 @@ class Tensor_IO_Spec extends Specification
             //'GPU'  | Float
     }
 
-    @IgnoreIf({ device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ data.device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'When we try to manipulate the underlying data array of a virtual tensor then it will become actual.'(
             String device, Class<?> type
     ) {

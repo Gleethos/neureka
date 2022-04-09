@@ -41,7 +41,7 @@ class Calculus_Integration_Spec extends Specification
         })
     }
 
-    @IgnoreIf({ device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ data.device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'Tensor results of various Function instances return expected results.'(
             String equation, List<Tsr> inputs, Integer index, Map<List<Integer>,List<Double>> expected
     ) {

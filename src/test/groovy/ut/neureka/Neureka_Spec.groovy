@@ -162,7 +162,7 @@ class Neureka_Spec extends Specification
 
     }
 
-    @IgnoreIf({ neurekaObject == null })
+    @IgnoreIf({ data.neurekaObject == null })
     def 'Various library objects adhere to the same toString formatting convention!'(
             Object neurekaObject
     ) {

@@ -39,8 +39,8 @@ Kotlin_Compatibility_Unit_Testing {
     }
 
     @Test
-    fun operator_overloading_works_for_scalars_in_kotlin() {
-
+    fun operator_overloading_works_for_scalars_in_kotlin()
+    {
         listOf(
             Pair(-4.0, { t1 : Tsr<Double>, t2 : Tsr<Double> -> t1 * t2 }),
             Pair( 3.0, { t1 : Tsr<Double>, t2 : Tsr<Double> -> t1 + t2 }),
@@ -77,7 +77,6 @@ Kotlin_Compatibility_Unit_Testing {
     @Test
     fun tensor_operations_translate_to_custom_ComplexNumber_type_written_in_kotlin()
     {
-
         // Given :
         val a : Tsr<ComplexNumber> = Tsr.of(
                                         DataType.of(ComplexNumber::class.java),
@@ -101,8 +100,8 @@ Kotlin_Compatibility_Unit_Testing {
     }
 
     @Test
-    fun optimization_is_being_called() {
-
+    fun optimization_is_being_called()
+    {
         listOf(
             Pair( -3.0, { g : Tsr<Double> -> g - 4.0 } ), // 'g' will always be 1
             Pair(  5.0, { g : Tsr<Double> -> g + 4.0 } ),
@@ -134,8 +133,8 @@ Kotlin_Compatibility_Unit_Testing {
 
 
     @Test
-    fun we_can_use_the_subscription_operator_to_slice_tensors() {
-
+    fun we_can_use_the_subscription_operator_to_slice_tensors()
+    {
         // Given :
         val t : Tsr<ComplexNumber> = Tsr.of(
                         DataType.of(ComplexNumber::class.java),
@@ -247,8 +246,8 @@ Kotlin_Compatibility_Unit_Testing {
     }
 
     @Test
-    fun convenience_methods_in_function_API_are_consistent() {
-
+    fun convenience_methods_in_function_API_are_consistent()
+    {
         listOf(
             Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").callWith(Arg.DerivIdx.of(0))(Tsr.of(5.0)) } ),
             Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").invoke(Call.to(CPU.get()).with(Tsr.of(5.0)).andArgs( Arg.DerivIdx.of(0) )) } ),
@@ -268,8 +267,8 @@ Kotlin_Compatibility_Unit_Testing {
     }
 
     @Test
-    fun settings_API_for_formatting_tensors_is_convenient_in_kotlin() {
-
+    fun settings_API_for_formatting_tensors_is_convenient_in_kotlin()
+    {
         // Given:
         val viewSettings = Neureka.get().settings().view()
         // And :
@@ -348,8 +347,8 @@ Kotlin_Compatibility_Unit_Testing {
 
 
     @Test
-    fun settings_API_for_formatting_tensors_allows_us_to_configure_the_indent() {
-
+    fun settings_API_for_formatting_tensors_allows_us_to_configure_the_indent()
+    {
         // Given:
         val viewSettings = Neureka.get().settings().view()
         // And :

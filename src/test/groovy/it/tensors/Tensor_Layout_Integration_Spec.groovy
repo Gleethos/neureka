@@ -68,7 +68,7 @@ class Tensor_Layout_Integration_Spec extends Specification
     }
 
 
-    @IgnoreIf({device == 'GPU' && !Neureka.get().canAccessOpenCL()})
+    @IgnoreIf({ data.device == 'GPU' && !Neureka.get().canAccessOpenCL() })
     def 'Matrix multiplication works for both column and row major matrices across devices.'(
             String device, String expectedString
     ) {
@@ -97,7 +97,6 @@ class Tensor_Layout_Integration_Spec extends Specification
             device  |  expectedString
             'CPU'   |  '(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'
             'GPU'   |  '(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'
-
     }
 
 }
