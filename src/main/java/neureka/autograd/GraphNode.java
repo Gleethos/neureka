@@ -123,14 +123,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     private final int _payloadReferenceVersion;
 
-    /**
-     * Keys are {@link GraphNode} targets and values are {@link ADAgent}s which most of the times
-     * simply store derivatives as well as operation specific implementations
-     * to propagate these derivatives with respect to mentioned  {@link GraphNode} targets.  <br>
-     * Note: values can be null if the recorded function is of type 'reshape'!
-     * Why? => because reshape operation does not need variables for _backward pass!
-     */
-    private final TreeMap<GraphNode<V>, List<ADAgent>> _targetsToAgents;
+    private final List<BackPropBridge<V>> _targetsToAgents;
 
     private final long _nodeID;
 
@@ -661,17 +654,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
     }
 
     /**
-     * This method returns what is needed for AD, usually a derivative of AD-Agent.
-     *
-     * @param target The targeted derivation graph node reference.
-     * @return Tsr&lt;ValType&gt;
-     */
-    public List<ADAgent> get( GraphNode<V> target ) {
-        if ( _targetsToAgents == null ) return null;
-        return _targetsToAgents.get( target );
-    }
-
-    /**
      * This method checks if a given graph node is an AD target of this node.
      * This would mean that this node contains an AD-action for the given GraphNode (target).
      *
@@ -680,7 +662,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public boolean has( GraphNode<V> target ) {
         if ( _targetsToAgents == null ) return false;
-        return _targetsToAgents.containsKey( target );
+        return _targetsToAgents.stream().anyMatch( ref -> ref.target() == target );
     }
 
     /**
@@ -696,8 +678,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public void forEachDerivative( BiConsumer<GraphNode<V>, ADAgent> action ) {
         if ( _targetsToAgents == null ) return;
-        new TreeMap<>(_targetsToAgents).forEach(
-            ( t, agents ) -> agents.forEach( a -> action.accept( t, a ) )
+        new ArrayList<>(_targetsToAgents).forEach(
+            ( ref ) -> ref.agents().forEach( a -> action.accept( ref.target(), a ) )
         );
     }
 
@@ -708,9 +690,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public void forEachBackward( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
         if ( _targetsToAgents == null ) return;
         error.getUnsafe().setIsIntermediate( false );
-        new TreeMap<>(_targetsToAgents).forEach( ( t, agents ) -> {
-            for ( ADAgent a : agents )
-                action.accept( t, a.backward( t, error ) );
+        new ArrayList<>(_targetsToAgents).forEach( ref -> {
+            for ( ADAgent a : ref.agents() )
+                action.accept( ref.target(), a.backward( ref.target(), error ) );
         });
     }
 
@@ -719,7 +701,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public void forEachTarget( Consumer<GraphNode<V>> action ) {
         if ( _targetsToAgents == null ) return;
-        new TreeMap<>(_targetsToAgents).forEach( ( t, o ) -> action.accept( t ) );
+        new ArrayList<>(_targetsToAgents).forEach( ref -> action.accept( ref.target() ) );
     }
 
     /**
@@ -727,9 +709,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public void forEachTargetAgentPair( BiConsumer<GraphNode<V>, ADAgent> action ) {
         if ( _targetsToAgents == null ) return;
-        new TreeMap<>(_targetsToAgents)
+        new ArrayList<>(_targetsToAgents)
                 .forEach(
-                    ( targetNode, agents ) -> agents.forEach( a -> action.accept( targetNode, a ) )
+                    ( ref ) -> ref.agents().forEach( a -> action.accept( ref.target(), a ) )
                 );
     }
 
@@ -825,7 +807,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  The children are {@link GraphNode} instances which represent computations
      *  involving the payload of this very {@link GraphNode} instance.
      */
-    public List<WeakReference<GraphNode<V>>> getChildren() { return new ArrayList<>(_children); }
+    public List<WeakReference<GraphNode<V>>> getChildren() { return Collections.unmodifiableList(_children); }
 
     /**
      * @return The long Node-ID (Used for caching to avoid redundant computation within one computation graph)

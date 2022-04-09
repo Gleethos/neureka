@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  *  This class exists in order to allow for {@link GraphNode}s to be instantiated
@@ -46,10 +47,16 @@ final class GraphNodeAssemblyState<V> {
             _targetsToAgents.get( target ).add( agent );
         else
             _targetsToAgents.put( target, new ArrayList<>( Arrays.asList( agent ) ) );
-
     }
 
-    public TreeMap<GraphNode<V>, List<ADAgent>> getTargets() { return _targetsToAgents; }
+    public List<BackPropBridge<V>> getTargets() {
+        if ( _targetsToAgents == null ) return null;
+        else
+            return _targetsToAgents.entrySet()
+                                .stream()
+                                .map( e -> new BackPropBridge<>( e.getKey(), e.getValue() ) )
+                                .collect(Collectors.toList());
+    }
 
     /**
      * This is the number of AD-actions stored inside this node.
