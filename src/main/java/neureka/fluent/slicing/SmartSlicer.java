@@ -19,7 +19,7 @@ public class SmartSlicer {
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
      */
-    private static Logger _LOG = LoggerFactory.getLogger(SmartSlicer.class); // Why is this not final ? : For unit testing!
+    private static final Logger _LOG = LoggerFactory.getLogger(SmartSlicer.class); // Why is this not final ? : For unit testing!
 
     public static <ValType> Tsr<ValType> slice(
             Object[] ranges,
