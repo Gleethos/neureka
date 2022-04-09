@@ -415,7 +415,7 @@ class Tensor_Operation_Integration_Spec extends Specification
             ]
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && device == 'GPU' })
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && data.device == 'GPU' })
     def 'Auto reshaping and broadcasting works and the result can be back propagated.'(// TODO: Cover more broadcasting operations!
             Class<Object> type, boolean whichGrad, List<Integer> bShape,
             BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String cValue, String wGradient, String device

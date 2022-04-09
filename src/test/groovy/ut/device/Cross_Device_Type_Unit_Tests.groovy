@@ -339,7 +339,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
     }
 
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && deviceType == 'GPU' })
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && data.deviceType == 'GPU' })
     def 'Virtual tensors stay virtual when outsourced.'(
             String deviceType
     ) {
