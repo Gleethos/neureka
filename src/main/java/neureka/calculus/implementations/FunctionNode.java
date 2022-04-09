@@ -12,14 +12,15 @@ import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-
+/**
+ *  The most common type of {@link Function} which references other {@link Function}s to
+ *  form an abstract syntax tree.
+ */
 public class FunctionNode implements Function
 {
     private final Operation _operation;
@@ -82,7 +83,7 @@ public class FunctionNode implements Function
 
     @Override
     public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
-        return preprocess(
+        return _preprocess(
                 tensors,
                 this,
                 () -> {
@@ -177,14 +178,16 @@ public class FunctionNode implements Function
         return this.getOperation().calculate( inputs, -1, d, _src );
     }
 
+    @Override
     public Operation getOperation() { return _operation; }
 
+    @Override
     public boolean isFlat() { return _isFlat; }
 
+    @Override
     public boolean isDoingAD() { return _isDoingAD; }
 
-
-    private Tsr<?> preprocess(
+    private Tsr<?> _preprocess(
             Tsr<?>[] inputs,
             Function function,
             Supplier<Tsr<?>> activation
@@ -203,14 +206,14 @@ public class FunctionNode implements Function
             }
         }
         if ( untracked == null || !allLocked ) { // If graph tracking (nodes) has not yet been initialized!
-            return commit( inputs, function, activation );
+            return _commit( inputs, function, activation );
         }
         GraphLock lock =  untracked.get( GraphNode.class ).getLock();
-        attachGraph( inputs, function, lock );
+        _attachGraph( inputs, function, lock );
         return activation.get();
     }
 
-    private static Tsr<?> commit(
+    private static Tsr<?> _commit(
             Tsr<?>[] inputs,
             Function function,
             Supplier<Tsr<?>> activation
@@ -218,7 +221,7 @@ public class FunctionNode implements Function
         Reshape.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
 
         GraphLock newLock = new GraphLock( function );
-        attachGraph( inputs, function, newLock );
+        _attachGraph( inputs, function, newLock );
         Tsr<?> result;
         if ( activation == null ) result = function.execute( inputs );
         else result = activation.get();
@@ -227,7 +230,7 @@ public class FunctionNode implements Function
         return result;
     }
 
-    private static void attachGraph(
+    private static void _attachGraph(
             Tsr<?>[] inputs,
             Function function,
             GraphLock newLock
