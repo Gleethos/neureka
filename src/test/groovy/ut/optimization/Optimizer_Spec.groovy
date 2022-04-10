@@ -34,6 +34,25 @@ class Optimizer_Spec extends Specification
         })
     }
 
+    def 'The optimization function for the SGD algorithm produces the expected result'()
+    {
+        given : 'We use a common learning rate.'
+            var learningRate = 0.01
+        and : 'Based on that we instantiate the SGD optimization inline function.'
+            var fun = Function.of("I[0] <- (-1 * (I[0] - $learningRate))")
+        and : 'A tensor, which will be treated as gradient.'
+            var g = Tsr.of(1.0)
+
+        when : 'We apply the function to the gradient...'
+            var result = fun(g)
+
+        then : 'Both the result tensor and the gradient will have the expected value.'
+            result.toString() == "(1):[-0.99]"
+            g.toString() == "(1):[-0.99]"
+        and : 'The result will be identical to the gradient, simply because its an inline function.'
+            result === g
+    }
+
     @Ignore
     def 'Conv dot based feed forward and activation produces expected result.'()
     {

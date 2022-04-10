@@ -36,7 +36,8 @@ public class AssignLeft extends AbstractOperation
             new Scalarization()
             .setIsSuitableFor(
                call -> {
-                   if ( call.input( 1 ).isVirtual() || call.input( 1 ).size() == 1 )
+                   int offset = ( call.arity() == 1 ? 0 : 1 );
+                   if ( call.input( offset ).isVirtual() || call.input( offset ).size() == 1 )
                        return SuitabilityPredicate.GOOD;
                    else
                        return SuitabilityPredicate.UNSUITABLE;
