@@ -18,6 +18,8 @@ class Calculus_Integration_Spec extends Specification
             <p>
                 Specified below are strict tests covering the behavior
                 of the classes located within the calculus package.
+                Most importantly the specification ensures that tensors supplied
+                to functions are executed successfully.
             </p>
         """
     }
@@ -39,6 +41,26 @@ class Calculus_Integration_Spec extends Specification
             it.prefix            = ""
             it.hasSlimNumbers    = false
         })
+    }
+
+
+    def 'The optimization function for the SGD algorithm produces the expected result'()
+    {
+        given : 'We use a common learning rate.'
+            var learningRate = 0.01
+        and : 'Based on that we instantiate the SGD optimization inline function.'
+            var fun = Function.of("I[0] <- (-1 * (I[0] - $learningRate))")
+        and : 'A tensor, which will be treated as gradient.'
+            var g = Tsr.of(1.0)
+
+        when : 'We apply the function to the gradient...'
+            var result = fun(g)
+
+        then : 'Both the result tensor and the gradient will have the expected value.'
+            result.toString() == "(1):[-0.99]"
+            g.toString() == "(1):[-0.99]"
+        and : 'The result will be identical to the gradient, simply because its an inline function.'
+            result === g
     }
 
     @IgnoreIf({ data.device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
@@ -170,9 +192,6 @@ class Calculus_Integration_Spec extends Specification
             result1.toString() == "(5):[2.0, 1.25, 1.09, 5.0, 65.0]"
             result2.toString() == "(5):[2.0, 1.25, 1.09, 5.0, 65.0]"
             result3.toString() == "(5):[2.0, 1.25, 1.09, 5.0, 65.0]"
-
-
-
     }
 
 
