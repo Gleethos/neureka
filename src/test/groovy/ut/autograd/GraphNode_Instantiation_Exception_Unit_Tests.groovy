@@ -47,14 +47,15 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
         })
     }
 
-    def 'GraphNode throws exception when trying to instantiate with the wrong context.'()
+    def 'GraphNode throws an exception when trying to instantiate it with the wrong context.'()
     {
-        given : 'Arguments used to call the GraphNode constructor where the context variable contains the wrong type.'
+        given : 'Mocked arguments used to call the GraphNode constructor...'
             Function function = Mock(Function)
             Supplier<Tsr> supplier = () -> Mock(Tsr)
+        and : 'Also a nonsensical context object which is of type "Integer".'
             Object context = new Integer(3)
 
-        when : 'We try to instantiate a GraphNode...'
+        when : 'We try to instantiate a GraphNode using the above variables...'
             new GraphNode<Object>(function, context, supplier)
 
         then : 'The constructor throws the expected error message.'
@@ -66,7 +67,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             0 * function.isDoingAD()
     }
 
-    def 'GraphNode throws exception when trying to instantiate with Function argument being null.'()
+    def 'GraphNode throws exception when trying to instantiate it with the Function argument being null.'()
     {
         given : 'Arguments used to call the GraphNode constructor where the Function variable is null.'
             Function function = null
