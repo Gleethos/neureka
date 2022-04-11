@@ -50,7 +50,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
         })
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && type == OpenCLDevice }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && data.type == OpenCLDevice }) // We need to assure that this system supports OpenCL!
     def 'Querying for Device implementations works as expected.'(
             String query, Class type
     ) {
