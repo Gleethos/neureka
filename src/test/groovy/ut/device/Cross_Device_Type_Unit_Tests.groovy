@@ -74,7 +74,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
 
     /**
      * The data of a tensor located on an Device should
-     * be update when passing a float or double array!
+     * be updated when passing a float or double array!
      */
     def 'Passing a numeric array to a tensor should modify its content!'(
             Device device, Object data1, Object data2, String expected
@@ -151,19 +151,17 @@ class Cross_Device_Type_Unit_Tests extends Specification
     /**
      *  Every argument within an ExecutionCall instance has a purpose. Null is not permissible.
      */
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && data.device instanceof OpenCLDevice || data.device == null })
     def 'Execution calls containing null arguments will cause an exception to be thrown in device instances.'(
         Device device
     ) {
-
-        given : 'The given device is available and Neureka is being reset.'
-            if ( device == null ) return
-        and : 'A mocked ExecutionCall with mocked operation implementation and a mocked drain instantiator lambda...'
+        given : 'A mocked ExecutionCall with mocked algorithm...'
             var call = Mock(ExecutionCall)
             var implementation = Mock(Algorithm)
-        and :
+        and : 'We construct a plausable mocked call by making it expose the given device.'
             call.getDevice() >> device
 
-        when : 'The call is being passed to the device for execution...'
+        when : 'The call is being passed to the execution utility method ..'
             CalcUtil.recursiveExecution(call, (executionCall, executor) -> null)
 
         then : '...the implementation is being accessed in order to access the mocked lambda...'
