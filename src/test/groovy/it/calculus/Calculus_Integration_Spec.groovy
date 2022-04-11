@@ -43,7 +43,6 @@ class Calculus_Integration_Spec extends Specification
         })
     }
 
-
     def 'The optimization function for the SGD algorithm produces the expected result'()
     {
         given : 'We use a common learning rate.'

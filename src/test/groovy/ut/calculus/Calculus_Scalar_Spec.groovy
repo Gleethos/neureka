@@ -7,7 +7,7 @@ import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
 
-@Title("A Function as such!.")
+@Title("A Function as such!")
 @Narrative('''
     
     This specification defines the expected behaviour of the Function API
