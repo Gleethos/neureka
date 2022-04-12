@@ -40,6 +40,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,12 +71,13 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     /**
      *  Use this factory method to build {@link ExecutionCall} instances in a readable fashion.
      *
-     * @param tensors The input tensors for the {@link ExecutionCall}.
+     * @param inputs The input tensors for the {@link ExecutionCall}.
      * @param <D> The device type parameter of the device which is targeted.
      * @return A builder for an {@link ExecutionCall}.
      */
-    public static <D extends Device<?>> Builder<D> of( Tsr<?>... tensors ) {
-        return new Builder<D>(tensors);
+    public static <D extends Device<?>> Builder<D> of( Tsr<?>... inputs ) {
+        LogUtil.nullArgCheck( inputs, "inputs", Tsr[].class );
+        return new Builder<D>(inputs);
     }
 
 
@@ -137,6 +139,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      * @return A new {@link ExecutionCall} instance with the provided array of input tensors.
      */
     public ExecutionCall<D> withInputs( Tsr<?>... inputs ) {
+        LogUtil.nullArgCheck( inputs, "inputs", Tsr[].class );
         return new ExecutionCall<>(
                    _device, _operation, inputs, _algorithm, _arguments.getAll(Arg.class)
                );
@@ -149,6 +152,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      * @return A new {@link ExecutionCall} instance with the provided set of meta arguments.
      */
     public ExecutionCall<D> withArgs( Arg<?>... args ) {
+        LogUtil.nullArgCheck( args, "args", Arg[].class );
         List<Arg> old = _arguments.getAll(Arg.class);
         old.addAll(Arrays.stream(args).collect(Collectors.toList()));
         return new ExecutionCall<>( _device, _operation, _tensors, _algorithm, old );
@@ -164,7 +168,8 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      *
      * @return The {@link Algorithm} suitable for this {@link ExecutionCall}.
      */
-    public Algorithm<?> getAlgorithm() {
+    public Algorithm<?> getAlgorithm()
+    {
         if ( _algorithm != null )
             return _algorithm;
         else
@@ -172,7 +177,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
 
         if ( _algorithm == null )
             _LOG.error(
-                "No suitable '"+Algorithm.class.getSimpleName()+"' implementation found for this '"+this+"'!"
+                "No suitable '" + Algorithm.class.getSimpleName() + "' implementation found for this '" + this + "'!"
             );
 
         return _algorithm;
@@ -247,26 +252,31 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         private Builder(Tsr<?>[] tensors) { _tensors = tensors; }
 
         public <D extends Device<?>> ExecutionCall<D> on( D device ) {
+            LogUtil.nullArgCheck( device, "device", Device.class );
             return new ExecutionCall<>( device, _operation, _tensors, _algorithm, _arguments );
         }
 
         public Builder<D> running( Operation operation ) {
+            LogUtil.nullArgCheck( operation, "operation", Operation.class, "Cannot build an '"+ExecutionCall.class.getSimpleName()+"' without operation." );
             _operation = operation;
             return this;
         }
 
         public Builder<D> algorithm( Algorithm<?> algorithm ) {
+            LogUtil.nullArgCheck( algorithm, "algorithm", Algorithm.class );
             _algorithm = algorithm;
             return this;
         }
 
-        public Builder<D> andArgs( List<Arg> context ) {
-            _arguments.addAll(context);
+        public Builder<D> andArgs( List<Arg> arguments ) {
+            LogUtil.nullArgCheck( arguments, "arguments", List.class );
+            _arguments.addAll(arguments);
             return this;
         }
 
-        public Builder<D> andArgs( Arg<?>... context ) {
-            return andArgs(Arrays.stream(context).collect(Collectors.toList()));
+        public Builder<D> andArgs( Arg<?>... arguments ) {
+            LogUtil.nullArgCheck( arguments, "arguments", Arg[].class );
+            return andArgs(Arrays.stream(arguments).collect(Collectors.toList()));
         }
 
     }

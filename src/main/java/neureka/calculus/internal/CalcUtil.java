@@ -401,9 +401,9 @@ public class CalcUtil
             call.setInput( 0,
                     finalExecution.apply(
                         ExecutionCall.of( call.inputs() )
-                                .andArgs(call.allMetaArgs())
-                                .running(type)
-                                .on(device)
+                                .andArgs( call.allMetaArgs() )
+                                .running( type )
+                                .on( device )
                                 .withArgs( Arg.DerivIdx.of(d) )
                     )
                );

@@ -37,6 +37,7 @@ package neureka.optimization.implementations;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
 
 /**
@@ -60,6 +61,7 @@ public class ADAM<V> implements Optimizer<V> {
     private Tsr<V> v; // Velocity
 
     public ADAM(Tsr<V> target) {
+        LogUtil.nullArgCheck( target, "target", Tsr.class );
         int[] shape = target.getNDConf().shape();
         m  = Tsr.of(target.getValueClass(), shape, 0);
         v  = Tsr.of(target.getValueClass(), shape, 0);
@@ -85,6 +87,7 @@ public class ADAM<V> implements Optimizer<V> {
 
     @Override
     public Tsr<V> optimize( Tsr<V> w ) {
+        LogUtil.nullArgCheck( w, "w", Tsr.class );
         return _optimize(w);
     }
 

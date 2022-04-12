@@ -353,7 +353,7 @@ public class UnitTester_Tensor extends UnitTester
                                     (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
                             )
                             .andArgs( Arg.DerivIdx.of(0) )
-                            .running(Neureka.get().backend().getOperation(((char) 171) + "*"))
+                            .running(Neureka.get().backend().getOperation("*"))
                             .on(CPU.get())
                 );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
@@ -366,7 +366,7 @@ public class UnitTester_Tensor extends UnitTester
                                     (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
                             )
                             .andArgs( Arg.DerivIdx.of(0) )
-                            .running(Neureka.get().backend().getOperation("*" + ((char) 187)))
+                            .running(Neureka.get().backend().getOperation("*"))
                             .on(CPU.get())
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
