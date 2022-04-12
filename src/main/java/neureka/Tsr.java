@@ -1615,7 +1615,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     ) {
         if ( newConf.isVirtual() )
             throw new IllegalStateException("Layout conversion produced a virtual nd-configuration!");
-        if ( newConf.getLayout() != targetLayout )
+        if ( !newConf.getLayout().isCompatible(targetLayout) )
             throw new IllegalArgumentException(
                     "Failed to convert this tensor from its original layout '"+oldConf.getLayout()+"' " +
                     "to target layout '"+targetLayout+"'. Instead this tensor has layout '"+newConf.getLayout()+"'."

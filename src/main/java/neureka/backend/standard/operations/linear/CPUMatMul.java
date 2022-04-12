@@ -41,7 +41,7 @@ public class CPUMatMul implements ImplementationFor<CPU> {
     @Override
     public void run( ExecutionCall<CPU> call )
     {
-        if ( !call.validate().allShare( t -> t.getNDConf().getLayout() ).isValid() )
+        if ( !call.validate().all( (t1, t2) -> t1.getNDConf().getLayout().isCompatible(t2.getNDConf().getLayout()) ).isValid() )
             throw new IllegalArgumentException(
                         "Data layout inconsistency between provided tensors encountered. " +
                         "All tensors must be of the same layout."

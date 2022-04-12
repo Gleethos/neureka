@@ -47,9 +47,18 @@ public interface NDConfiguration
     /**
      *  Types of common data layouts.
      */
-    enum Layout {
+    enum Layout
+    {
+        ROW_MAJOR,
+        COLUMN_MAJOR,
+        SYMMETRIC, // Both row- and column-major compatible!
+        UNSPECIFIC; // Possibly a slice or something reshaped or whatnot...
 
-        ROW_MAJOR, COLUMN_MAJOR, UNSPECIFIC;
+        public boolean isCompatible(Layout other) {
+            if ( this == UNSPECIFIC || other == UNSPECIFIC ) return false;
+            if ( this == SYMMETRIC || other == SYMMETRIC ) return true;
+            return this == other;
+        }
 
         @Contract(pure = true)
         public int[] newTranslationFor( int[] shape ) {
@@ -60,7 +69,7 @@ public interface NDConfiguration
                     translation[ i ] = prod;
                     prod *= shape[ i ];
                 }
-            } else if ( this == ROW_MAJOR || this == UNSPECIFIC ) {
+            } else if ( this == ROW_MAJOR || this == UNSPECIFIC || this == SYMMETRIC ) {
                 for ( int i = translation.length - 1; i >= 0; i-- ) {
                     translation[i] = prod;
                     prod *= shape[i];
@@ -97,16 +106,16 @@ public interface NDConfiguration
         if ( !this.isCompact() )
             return Layout.UNSPECIFIC;
         else {
-            int[] translation1 = Layout.ROW_MAJOR.newTranslationFor(this.shape());
-            boolean basicIndices = Arrays.equals(translation1, indicesMap());
+            int[] translationRM = Layout.ROW_MAJOR.newTranslationFor(this.shape());
+            boolean hasRMIndices = Arrays.equals(translationRM, indicesMap());
+            boolean isRM =( Arrays.equals(translationRM, translation()) && hasRMIndices );
 
-            if ( Arrays.equals(translation1, translation()) && basicIndices )
-                return Layout.ROW_MAJOR;
+            int[] translationCM = Layout.COLUMN_MAJOR.newTranslationFor(this.shape());
+            boolean isCM = ( Arrays.equals(translationCM, translation()) && hasRMIndices );
 
-            int[] translation2 = Layout.COLUMN_MAJOR.newTranslationFor(this.shape());
-            if ( Arrays.equals(translation2, translation()) && basicIndices )
-                return Layout.COLUMN_MAJOR;
-
+            if ( isRM && isCM ) return Layout.SYMMETRIC;
+            if ( isRM ) return Layout.ROW_MAJOR;
+            if ( isCM ) return Layout.COLUMN_MAJOR;
         }
         return Layout.UNSPECIFIC;
     }
