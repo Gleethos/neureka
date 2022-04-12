@@ -10,7 +10,7 @@ dependencies on which Neureka is built : <br>
 
 - Code quality is very important, therefore take a look at the `README.md` in `main/java` for the code convention rules.
 - Neureka relies on **Spock** as a testing framework which
-relies on the philosophy of writing readable living documentation
+is based on the philosophy of writing readable living documentation
 in a BDD like structure
 instead of plain old unit tests.
 Read more about it [here](https://spockframework.org/) or visit the test suite
