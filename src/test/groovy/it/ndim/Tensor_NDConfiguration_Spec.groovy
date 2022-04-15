@@ -9,7 +9,7 @@ import neureka.ndim.config.types.sliced.Sliced1DConfiguration
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
-class Tensor_NDConfiguration_Integration_Spec extends Specification
+class Tensor_NDConfiguration_Spec extends Specification
 {
     def setupSpec()
     {
