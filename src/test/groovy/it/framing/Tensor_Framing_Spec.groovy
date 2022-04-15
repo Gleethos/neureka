@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 import java.lang.ref.WeakReference
 
-class Tensor_Framing_Integration_Spec extends Specification
+class Tensor_Framing_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """
