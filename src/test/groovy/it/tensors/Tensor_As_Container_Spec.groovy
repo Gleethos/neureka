@@ -6,7 +6,7 @@ import neureka.dtype.DataType
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
-class Tensor_As_Container_Integration_Spec extends Specification
+class Tensor_As_Container_Spec extends Specification
 {
 
     def setupSpec()
@@ -58,10 +58,10 @@ class Tensor_As_Container_Integration_Spec extends Specification
 
     def 'Tensor operations translate to custom data type "ComplexNumber".'()
     {
-        given : ''
+        given : 'We create 2 simple complex numbers'
             def c1 = new ComplexNumber(2.3, -1.54)
             def c2 = new ComplexNumber(1.0, 0.5)
-        and :
+        and : 'Then we use them to populate 2 matrices.'
             Tsr a = Tsr.of([3, 2], c1)
             Tsr b = Tsr.of([3, 2], c2)
 
@@ -77,7 +77,7 @@ class Tensor_As_Container_Integration_Spec extends Specification
 
     def 'More tensor operations translate to custom data type "ComplexNumber".'()
     {
-        given : ''
+        given : 'We create 2 simple matrices of complex numbers using filler lambdas '
             Tsr a = Tsr.of(
                         DataType.of(ComplexNumber.class),
                         [3, 2],
