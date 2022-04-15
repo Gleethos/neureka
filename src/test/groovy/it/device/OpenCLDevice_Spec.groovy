@@ -27,7 +27,7 @@ import spock.lang.Title
     Also, an OpenCLDevice should allows us to compile OpenCL kernel code on the fly...
                     
 ''')
-class OpenCLDevice_Integration_Spec extends Specification
+class OpenCLDevice_Spec extends Specification
 {
     def setupSpec()
     {
