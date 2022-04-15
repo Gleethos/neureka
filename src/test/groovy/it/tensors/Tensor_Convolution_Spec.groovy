@@ -6,7 +6,7 @@ import neureka.ndim.config.NDConfiguration
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
-class Tensor_Indexing_Integration_Spec extends Specification
+class Tensor_Convolution_Spec extends Specification
 {
     def setup() {
         Neureka.get().reset()
