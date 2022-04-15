@@ -5,7 +5,7 @@ import neureka.Tsr
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
-class Tensor_Version_Integration_Spec extends Specification
+class Tensor_Version_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """
