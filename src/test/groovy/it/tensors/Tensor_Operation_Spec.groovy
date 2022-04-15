@@ -49,52 +49,6 @@ class Tensor_Operation_Spec extends Specification
         })
     }
 
-    def 'Test "x-mul" (convolution) operator produces expected results. (Not on device)'(
-            Class<?> type, String expected
-    ) {
-        reportInfo """
-            The 'x' operator performs convolution on the provided operands.
-        """
-
-        given: 'Gradient auto apply for tensors in ue is set to false.'
-            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
-        and: 'Tensor legacy view is set to true.'
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
-        and: 'Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].'
-            var x = Tsr.of(new int[]{2, 3, 1},
-                                new double[]{
-                                        3,  2, -1,
-                                        -2,  2,  4
-                                }
-                            )
-                            .unsafe.toType(type)
-
-            var y = Tsr.of(new int[]{1, 3, 2},
-                                    new double[]{
-                                            4, -1,
-                                            3,  2,
-                                            3, -1
-                                    }
-                                )
-                                .unsafe.toType(type)
-
-        when : 'The x-mul result is being instantiated by passing a simple equation to the tensor constructor.'
-            var z = Tsr.of("I0xi1", x, y)
-        then: 'The result contains the expected String.'
-            z.toString().contains(expected)
-
-        when: 'The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.'
-            z = Tsr.of(new Object[]{x, "x", y})
-        then: 'The result contains the expected String.'
-            z.toString().contains(expected)
-
-        where :
-            type   || expected
-            Double || "[2x1x2]:(15.0, 2.0, 10.0, 2.0)"
-            Float  || "[2x1x2]:(15.0, 2.0, 10.0, 2.0)"
-    }
-
-
     def 'The "dot" operation reshapes and produces valid "x" operation result.'( Class<?> type )
     {
         given : 'Two multi-dimensional tensors.'
@@ -290,106 +244,6 @@ class Tensor_Operation_Spec extends Specification
             ( a %= c                    ).toString().contains("(-1.0)")
     }
 
-    def 'Manual convolution produces expected result.'()
-    {
-        given :
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
-            Tsr a = Tsr.of([100, 100], 3d..19d)
-            Tsr x = a[1..-2,0..-1]
-            Tsr y = a[0..-3,0..-1]
-            Tsr z = a[2..-1,0..-1]
-
-        when :
-            Tsr rowconvol = x + y + z // (98, 100) (98, 100) (98, 100)
-            Tsr k = rowconvol[0..-1,1..-2]
-            Tsr v = rowconvol[0..-1,0..-3]
-            Tsr j = rowconvol[0..-1,2..-1]
-            Tsr u = a[1..-2,1..-2]
-            Tsr colconvol = k + v + j - 9 * u // (98, 98)+(98, 98)+(98, 98)-9*(98, 98)
-            String xAsStr = x.toString()
-            String yAsStr = y.toString()
-            String zAsStr = z.toString()
-            String rcAsStr = rowconvol.toString()
-            String kAsStr = k.toString()
-            String vAsStr = v.toString()
-            String jAsStr = j.toString()
-            String uAsStr = u.toString()
-
-        then :
-            assert xAsStr.contains("(98x100)")
-            assert xAsStr.contains("):[18.0, 19.0, 3.0, 4.0, 5.0")
-
-            assert yAsStr.contains("(98x100)")
-            assert yAsStr.contains("):[3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0")
-
-            assert zAsStr.contains("(98x100)")
-            zAsStr.contains("):[16.0, 17.0, 18.0, 19.0, 3.0")
-
-            assert rcAsStr.contains("(98x100)")
-            assert rcAsStr.contains("):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0")
-
-            assert kAsStr.contains("(98x98)")
-            kAsStr.contains("):[40.0, 26.0, 29.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0")
-
-            assert vAsStr.contains("(98x98)")
-            assert vAsStr.contains("):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0, 21.0")
-
-            assert jAsStr.contains("(98x98)")
-            jAsStr.contains("):[26.0, 29.0, 15.0, 18.0, 21.0, 24.0")
-
-            assert uAsStr.contains("(98x98)")
-            assert uAsStr.contains("):[19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, ")
-            String ccAsStr = colconvol.toString()
-            assert ccAsStr.contains("(98x98)")
-            ccAsStr.contains("(98x98):[-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, " +
-                    "-34.0, -68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, -34.0, " +
-                    "-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, ... + 9554 more]")
-    }
-
-
-    def 'Very simple manual convolution produces expected result.'(
-         Device device
-    ) {
-        given :
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
-            Tsr a = Tsr.of([4, 4], 0d..16d).to( device )
-
-            Tsr x = a[1..-2,0..-1]
-            Tsr y = a[0..-3,0..-1]
-            Tsr z = a[2..-1,0..-1]
-
-        when :
-            Tsr rowconvol = x + y + z
-            Tsr k = rowconvol[0..-1,1..-2]
-            Tsr v = rowconvol[0..-1,0..-3]
-            Tsr j = rowconvol[0..-1,2..-1]
-            Tsr u = a[1..-2,1..-2]
-            Tsr colconvol = k + v + j - 9 * u
-            String xAsStr = x.toString()
-            String yAsStr = y.toString()
-            String zAsStr = z.toString()
-            String rcAsStr = rowconvol.toString()
-            String kAsStr = k.toString()
-            String vAsStr = v.toString()
-            String jAsStr = j.toString()
-            String uAsStr = u.toString()
-
-        then :
-            assert xAsStr.contains("(2x4):[4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0]")
-            assert yAsStr.contains("(2x4):[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]")
-            assert zAsStr.contains("(2x4):[8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0]")
-            assert rcAsStr.contains("(2x4):[12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0]")
-            assert kAsStr.contains("(2x2):[15.0, 18.0, 27.0, 30.0]")
-            assert vAsStr.contains("(2x2):[12.0, 15.0, 24.0, 27.0]")
-            assert jAsStr.contains("(2x2):[18.0, 21.0, 30.0, 33.0]")
-            assert uAsStr.contains("(2x2):[5.0, 6.0, 9.0, 10.0]")
-            String ccAsStr = colconvol.toString()
-            assert ccAsStr.contains("(2x2):[0.0, 0.0, 0.0, 0.0]")
-
-        where : 'The following data is being used for tensor instantiation :'
-            device  << [CPU.get(), Device.find("openCL") ]
-    }
-
     def 'Simple slice addition produces expected result.'(
             Device device
     ) {
@@ -400,11 +254,11 @@ class Tensor_Operation_Spec extends Specification
             Tsr y = a[0..-3,0..-1]
 
         when :
-            Tsr rowconvol = x + y
-            String rcAsStr = rowconvol.toString({it.setRowLimit(50)})
+            Tsr t = x + y
+            String tAsStr = t.toString({it.setRowLimit(50)})
 
         then :
-            assert rcAsStr.contains("(9x11):[17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
+            tAsStr.contains("(9x11):[17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
                     "26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
                     "26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, ... + 49 more]")
 
