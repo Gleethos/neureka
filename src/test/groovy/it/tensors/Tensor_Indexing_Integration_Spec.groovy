@@ -27,7 +27,7 @@ class Tensor_Indexing_Integration_Spec extends Specification
         })
     }
 
-    void 'Test convolution with legacy indexing.'()
+    void 'Autograd works with simple 2D convolution.'()
     {
         given : 'The following library configuration is being used.'
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
