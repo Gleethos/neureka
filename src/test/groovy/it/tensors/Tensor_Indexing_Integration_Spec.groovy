@@ -94,7 +94,7 @@ class Tensor_Indexing_Integration_Spec extends Specification
 
 
 
-    def 'Convolution using legacy indexing works as expected.'()
+    def 'Sime convolution works as expected eith autograd.'()
     {
         given :
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
@@ -147,7 +147,7 @@ class Tensor_Indexing_Integration_Spec extends Specification
     }
 
 
-    def 'Indexing modes produce expected results when doing convolution.'()
+    def 'Tensors have the correct layout after convolution.'()
     {
         given :
             Tsr<Double> t0 = Tsr.of([3, 2, 1], [
