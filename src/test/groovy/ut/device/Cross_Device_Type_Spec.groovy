@@ -17,7 +17,7 @@ import spock.lang.Specification
 
 import java.util.function.BiConsumer
 
-class Cross_Device_Type_Unit_Tests extends Specification
+class Cross_Device_Type_Spec extends Specification
 {
     def setupSpec()
     {
