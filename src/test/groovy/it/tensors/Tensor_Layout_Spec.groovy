@@ -22,7 +22,7 @@ import spock.lang.Title
     (The features in this specification involve mutating tensors, be careful when playing around with this yourself)
     
 ''')
-class Tensor_Layout_Integration_Spec extends Specification
+class Tensor_Layout_Spec extends Specification
 {
     def setup() {
         // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
