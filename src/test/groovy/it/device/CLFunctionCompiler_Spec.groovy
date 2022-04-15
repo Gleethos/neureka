@@ -8,7 +8,7 @@ import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
-class CLFunctionCompiler_Integration_Spec extends Specification {
+class CLFunctionCompiler_Spec extends Specification {
 
     def setupSpec()
     {
