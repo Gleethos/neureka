@@ -7,7 +7,7 @@ import neureka.calculus.assembly.FunctionBuilder
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
-class JITProp_Autograd_Tensor_Integration_Spec extends Specification
+class JITProp_Autograd_Tensor_Spec extends Specification
 {
 
     def setupSpec()
