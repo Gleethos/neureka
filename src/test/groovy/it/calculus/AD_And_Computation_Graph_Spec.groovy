@@ -8,7 +8,7 @@ import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
 
-class AD_And_Computation_Graph_Integration_Spec extends Specification{
+class AD_And_Computation_Graph_Spec extends Specification{
 
     def setup() {
         Neureka.get().reset()
