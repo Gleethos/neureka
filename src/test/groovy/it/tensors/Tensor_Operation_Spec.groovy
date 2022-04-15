@@ -27,7 +27,7 @@ import java.util.function.BiFunction
     runs tensors through operations and validates that the results are valid. 
 
 ''')
-class Tensor_Operation_Integration_Spec extends Specification
+class Tensor_Operation_Spec extends Specification
 {
     def setup() {
         // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
