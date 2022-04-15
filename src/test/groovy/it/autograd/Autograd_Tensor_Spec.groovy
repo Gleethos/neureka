@@ -9,7 +9,7 @@ import spock.lang.Specification
  * These tests were originally JUnit test cases.
  * They have been ported to Spock tests almost without syntax modification.
  */
-class Autograd_Tensor_Integration_Spec extends Specification
+class Autograd_Tensor_Spec extends Specification
 {
     def setupSpec()
     {
