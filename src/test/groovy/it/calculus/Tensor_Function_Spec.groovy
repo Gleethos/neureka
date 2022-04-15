@@ -9,7 +9,7 @@ import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
-class Calculus_Integration_Spec extends Specification
+class Tensor_Function_Spec extends Specification
 {
     def setupSpec()
     {
