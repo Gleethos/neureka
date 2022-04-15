@@ -24,7 +24,7 @@ import spock.lang.Title
     for optimal execution speed!
 
 ''')
-class CLFunctionCompiler_Unit_Tests extends Specification
+class CLFunctionCompiler_Spec extends Specification
 {
 
     def 'The CLFunctionCompiler produces an operation which properly integrates to the backend.'() {
