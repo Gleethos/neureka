@@ -11,7 +11,7 @@ import neureka.dtype.custom.I16
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
-class FileDevice_Unit_Tests extends Specification
+class FileDevice_Spec extends Specification
 {
     def setupSpec()
     {
