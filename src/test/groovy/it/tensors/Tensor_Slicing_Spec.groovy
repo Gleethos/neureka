@@ -18,7 +18,7 @@ import spock.lang.Title
     This specification covers these APIs for tensor slicing.
                     
 ''')
-class Tensor_Slicing_Integration_Spec extends Specification
+class Tensor_Slicing_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """
