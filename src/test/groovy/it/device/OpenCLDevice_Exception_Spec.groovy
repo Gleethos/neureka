@@ -10,7 +10,7 @@ import spock.lang.IgnoreIf
 import spock.lang.Shared
 import spock.lang.Specification
 
-class OpenCLDevice_Exception_Integration_Spec extends Specification
+class OpenCLDevice_Exception_Spec extends Specification
 {
 
     @Shared def oldStream
