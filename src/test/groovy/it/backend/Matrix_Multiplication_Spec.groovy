@@ -4,12 +4,16 @@ import neureka.Tsr
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
-class Matrix_Multiplication_Spec extends Specification {
-
+class Matrix_Multiplication_Spec extends Specification
+{
     def 'The simple CPU matrix multiplication implementation works as expected.'(
             String layout, Class<Object> type, int M, int K, int N, Object A, Object B, def expectedC
     ) {
-        given :
+        reportInfo """
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        """
+        given : 'We instantiate 2 matrices based on the data from the data table at the end of this method.'
             Tsr<?> a = Tsr.of(type, [M,K] as int[], A)
             Tsr<?> b = Tsr.of(type, [K,N] as int[], B)
         and :
