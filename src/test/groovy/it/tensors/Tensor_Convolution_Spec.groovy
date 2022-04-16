@@ -2,6 +2,7 @@ package it.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.ndim.config.NDConfiguration
@@ -11,7 +12,9 @@ import spock.lang.Specification
 class Tensor_Convolution_Spec extends Specification
 {
     def setup() {
-        Neureka.get().reset()
+        // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
+        SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
+
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().tensors({ TsrStringSettings it ->
             it.isScientific      = true
