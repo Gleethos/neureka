@@ -7,19 +7,30 @@ import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device
 import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("Applying Functions on Tensors")
+@Narrative('''
+
+    A tensor would be nothing without being able to apply operations on them.
+    However, calling operations manually in order to process your
+    tensors can be a verbose and error prone task.
+    This is where functions come into play.
+    Neurekas functions are composed of operations forming an abstract syntax tree.
+    Passing tensors to a function will route them trough this tree and apply
+    all of the operations on the tensors.
+
+''')
 class Tensor_Function_Spec extends Specification
 {
     def setupSpec()
     {
-        reportHeader """
-            <h2> Calculus Integration Tests </h2>
+        reportHeader """ 
             <p>
-                Specified below are strict tests covering the behavior
-                of the classes located within the calculus package.
-                Most importantly the specification ensures that tensors supplied
-                to functions are executed successfully.
+                This specification ensures that tensors supplied
+                to functions are executed successfully and produce the expected results.
             </p>
         """
     }
@@ -48,7 +59,7 @@ class Tensor_Function_Spec extends Specification
         given : 'We use a common learning rate.'
             var learningRate = 0.01
         and : 'Based on that we instantiate the SGD optimization inline function.'
-            var fun = Function.of("I[0] <- (-1 * (I[0] - $learningRate))")
+            var fun = Function.of("I[0] <- (I[0] * -$learningRate)")
         and : 'A tensor, which will be treated as gradient.'
             var g = Tsr.of(1.0)
 
@@ -56,8 +67,8 @@ class Tensor_Function_Spec extends Specification
             var result = fun(g)
 
         then : 'Both the result tensor and the gradient will have the expected value.'
-            result.toString() == "(1):[-0.99]"
-            g.toString() == "(1):[-0.99]"
+            result.toString() == "(1):[-0.01]"
+            g.toString() == "(1):[-0.01]"
         and : 'The result will be identical to the gradient, simply because its an inline function.'
             result === g
     }
