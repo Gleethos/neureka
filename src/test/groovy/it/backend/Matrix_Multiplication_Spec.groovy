@@ -16,24 +16,24 @@ class Matrix_Multiplication_Spec extends Specification
         given : 'We instantiate 2 matrices based on the data from the data table at the end of this method.'
             Tsr<?> a = Tsr.of(type, [M,K] as int[], A)
             Tsr<?> b = Tsr.of(type, [K,N] as int[], B)
-        and :
-            def dataLayout = layout == 'ROW' ? NDConfiguration.Layout.ROW_MAJOR : NDConfiguration.Layout.COLUMN_MAJOR
-        and :
+        and : 'We create the data layout type based on the provided string...'
+            var dataLayout = layout == 'ROW' ? NDConfiguration.Layout.ROW_MAJOR : NDConfiguration.Layout.COLUMN_MAJOR
+        and : 'After that we convert both matrices to the layout!'
             a.unsafe.toLayout( dataLayout )
             b.unsafe.toLayout( dataLayout )
-        expect :
+        expect : 'This should of cause make report that they indeed have this new layout.'
             a.NDConf.layout == dataLayout
             b.NDConf.layout == dataLayout
 
-        when :
+        when : 'We now perform the matrix multiplication with the 2 matrix tensors...'
             Tsr<?> c = a.matMul(b)
 
-        then :
+        then : 'The result will have the expected (M x N) shape.'
             c.shape == [M,N]
-        and :
+        and : 'It should have the expected value array.'
             c.value == expectedC
 
-        where :
+        where : 'We use the following scenario parameters:'
            layout |  type  | M | K | N | A                        | B                              || expectedC
            'ROW'  | Double | 2 | 2 | 2 | [4, 3, 2, 1] as double[] | [-0.5, 1.5, 1, -2] as double[] || [1, 0, 0, 1 ] as double[]
            'ROW'  | Double | 1 | 2 | 1 | [-2,1] as double[]       | [-1, -1.5] as double[]         || [ 0.5 ] as double[]
@@ -47,7 +47,6 @@ class Matrix_Multiplication_Spec extends Specification
            'COL'  | Float  | 2 | 2 | 2 | [4,3,2,1] as float[]     | [-0.5, 1.5, 1, -2] as float[]  || [ 1, 0, 0, 1 ] as float[]
            'COL'  | Float  | 1 | 2 | 1 | [-2,1] as float[]        | [-1, -1.5] as float[]          || [ 0.5 ] as float[]
            'COL'  | Float  | 2 | 1 | 2 | [-2,1] as float[]        | [-1, -1.5] as float[]          || [ 2.0, 3.0, -1.0, -1.5 ] as float[]
-
     }
 
 }
