@@ -1,4 +1,4 @@
-package it.calculus.mocks;
+package it.backend.mocks;
 
 import testutility.opencl.DispatchUtility;
 

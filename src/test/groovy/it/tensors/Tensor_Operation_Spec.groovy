@@ -9,7 +9,6 @@ import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.dtype.DataType
-import neureka.ndim.config.NDConfiguration
 import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
 import spock.lang.Narrative

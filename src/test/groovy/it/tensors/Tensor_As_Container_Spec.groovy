@@ -4,8 +4,19 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.dtype.DataType
 import neureka.view.TsrStringSettings
+import spock.lang.Narrative
 import spock.lang.Specification
 
+@Narrative("Why not have a tensor of words?")
+@Narrative('''
+
+    Technically, tensors are merely fancy ND-arrays with some useful mathematical operations
+    applicable to them...
+    Therefore, there is no reason why a tensor would not also be able to store
+    other kinds of objects besides numbers like strings for example.
+    This specification ensures that tensors can hold and index many other things...
+
+''')
 class Tensor_As_Container_Spec extends Specification
 {
 
@@ -14,7 +25,8 @@ class Tensor_As_Container_Spec extends Specification
         Neureka.get().reset()
 
         reportHeader """
-                         
+           Although you can create a tensor of almost anything, you will
+           not be able to execute operations on every kind of tensor...        
         """
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().tensors({ TsrStringSettings it ->
@@ -100,6 +112,10 @@ class Tensor_As_Container_Spec extends Specification
     }
 
 
+    /**
+     *  A class modeling a complex number which we can use as
+     *  a custom number data type for tensors.
+     */
     class ComplexNumber
     {
         private double real = 0.0

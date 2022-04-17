@@ -1,4 +1,4 @@
-package it.calculus
+package it.autograd
 
 import neureka.Neureka
 import neureka.Tsr
@@ -8,9 +8,10 @@ import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
 
-class AD_And_Computation_Graph_Spec extends Specification{
-
-    def setup() {
+class AD_And_Computation_Graph_Spec extends Specification
+{
+    def setup()
+    {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().tensors({ TsrStringSettings it ->
@@ -46,29 +47,29 @@ class AD_And_Computation_Graph_Spec extends Specification{
             GraphNode nb = b.get( GraphNode.class )
 
         then :
-            assert na.getChildren().size()==1
-            assert b.toString().contains("")//Todo!
+            na.getChildren().size() == 1
+            b.toString().contains("")//Todo!
             b.backward(Tsr.of([3, 2],[
                                 -1d, 2d,
                                  4d, 7d,
                                 -9d, 8d
                         ]))
-            assert a.toString().contains("[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)")
-            assert b.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
-            assert na.isLeave()
-            assert na.function==null
-            assert na.getMode() == 1
+            a.toString().contains("[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)")
+            b.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
+            na.isLeave()
+            na.function==null
+            na.getMode() == 1
         and : 'We expect the partial derivative to be cleaned up! (size == 0)'
-            assert na.size()==0
-            assert na.getNodeID()==1
-            assert !na.getLock().isLocked()
+            na.size()==0
+            na.getNodeID()==1
+            !na.getLock().isLocked()
 
-            assert !nb.isLeave()
-            assert nb.function != null
-            assert nb.getMode() == -1
-            assert nb.size()==0
-            assert nb.getNodeID()!=1
-            assert !nb.getLock().isLocked()
+            !nb.isLeave()
+            nb.function != null
+            nb.getMode() == -1
+            nb.size()==0
+            nb.getNodeID()!=1
+            !nb.getLock().isLocked()
     }
 
     def "Payloads and derivatives are null after garbage collection."()
@@ -83,11 +84,11 @@ class AD_And_Computation_Graph_Spec extends Specification{
 
         when : System.gc()
         then :
-            assert n.parents[0].isCacheable()
-            assert !n.parents[0].isLeave()
-            assert n.parents[0].isGraphLeave()
-            assert n.parents[1].isLeave()
-            assert n.parents[1].isGraphLeave()
+            n.parents[0].isCacheable()
+            !n.parents[0].isLeave()
+            n.parents[0].isGraphLeave()
+            n.parents[1].isLeave()
+            n.parents[1].isGraphLeave()
 
         and :
             for ( int i = 0; i < n.parents.length; i++ ) {

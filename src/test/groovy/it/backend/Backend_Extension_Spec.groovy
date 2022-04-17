@@ -1,6 +1,6 @@
-package it.calculus
+package it.backend
 
-import it.calculus.mocks.CLContext
+import it.backend.mocks.CLContext
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.ADAgent
@@ -32,7 +32,7 @@ class Backend_Extension_Spec extends Specification
             //def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)
             //def kernel = new GEMMKernelReferenceImplementation( clContext )
 
-        BackendContext oldContext = Neureka.get().backend()
+            BackendContext oldContext = Neureka.get().backend()
             BackendContext testContext = oldContext.clone()
 
         when:
@@ -59,7 +59,7 @@ class Backend_Extension_Spec extends Specification
                                 .setStringifier(
                                         children -> {
                                             String expression = String.join(", ", children);
-                                            if (expression.charAt(0) === '(' && expression.charAt(expression.length() - 1) === ')') {
+                                            if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
                                                 return "test_function" + expression;
                                             }
                                             return "test_function" + "(" + expression + ")";
@@ -130,14 +130,14 @@ class Backend_Extension_Spec extends Specification
                                 )
                 )
             }
-            Function matMul = run { Function.of("test_function(I[0],I[1])") }
+            Function testFun = run { Function.of("test_function(I[0],I[1])") }
 
 
         then :
-            matMul.toString() == "test_function(I[0], I[1])"
+            testFun.toString() == "test_function(I[0], I[1])"
 
         when :
-            Tsr t3 = run { matMul([t1, t2]) }
+            Tsr t3 = run { testFun([t1, t2]) }
 
         then :
             t3 != null

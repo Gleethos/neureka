@@ -1,7 +1,4 @@
-package it.calculus.mocks;
-
-import neureka.Neureka;
-
+package it.backend.mocks;
 
 
 public class GEMMKernelReferenceImplementation
