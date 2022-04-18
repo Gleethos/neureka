@@ -6,8 +6,9 @@ import neureka.dtype.DataType
 import neureka.view.TsrStringSettings
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
-@Narrative("Why not have a tensor of words?")
+@Title("Why not have a tensor of words?")
 @Narrative('''
 
     Technically, tensors are merely fancy ND-arrays with some useful mathematical operations
