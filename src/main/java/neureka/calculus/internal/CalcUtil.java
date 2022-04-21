@@ -250,7 +250,6 @@ public class CalcUtil
                     return tensors[ 0 ];
                 });
 
-        Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
         Tsr<?> out = null;
         for ( int i = 0; i < nodes.length; i++ )
@@ -260,13 +259,7 @@ public class CalcUtil
             if ( di >= 0 )
                 if ( out == null ) out = actor.get();
                 else
-                    CalcUtil.recursiveExecution(
-                            ExecutionCall.of( null, actor.get(), out )
-                                    .andArgs( Arg.DerivIdx.of( -1 ) )
-                                    .running( Neureka.get().backend().getOperation( "+" ) )
-                                    .on( device ),
-                            null
-                    );
+                    break;
         }
         return out;
     }
