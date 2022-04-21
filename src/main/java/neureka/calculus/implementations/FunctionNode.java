@@ -125,7 +125,9 @@ public final class FunctionNode implements Function
         Tsr<?> alternative = call.getAlgorithm().dispatch( this, call );
         if ( alternative != null ) return alternative;
         throw new IllegalStateException(
-                "Missing return value of "+ ExecutionDispatcher.class.getSimpleName() +" in algorithm '"+call.getAlgorithm().getClass().getSimpleName()+"' in operation '"+call.getOperation().getClass().getName()+"'"
+                "Missing return value of " + ExecutionDispatcher.class.getSimpleName() + " in algorithm '" +
+                call.getAlgorithm().getClass().getSimpleName() + "' in operation '" +
+                call.getOperation().getClass().getName()+"'"
         );
     }
 

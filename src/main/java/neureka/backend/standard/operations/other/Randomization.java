@@ -190,12 +190,10 @@ public class Randomization extends AbstractOperation
         return src[ 0 ].call( inputs, j );
     }
 
-    public static long initialScramble(long seed) {
-        return (seed ^ MULTIPLIER) & MASK;
-    }
+    public static long initialScramble( long seed ) { return (seed ^ MULTIPLIER) & MASK; }
 
-    public static void gaussianFrom( long seed, double[] out ) {
-
+    public static void gaussianFrom( long seed, double[] out )
+    {
         // See Knuth, ACP, Section 3.4.1 Algorithm C.
         double v1, v2, s;
         do {
@@ -216,7 +214,8 @@ public class Randomization extends AbstractOperation
         out[1] = v2 * multiplier;
     }
 
-    private static long _next( long currentSeed ) {
+    private static long _next( long currentSeed )
+    {
         long oldseed, nextseed;
         do {
             oldseed = currentSeed;
@@ -225,12 +224,11 @@ public class Randomization extends AbstractOperation
         return nextseed;
     }
 
-    private static double _doubleFrom( long seed1, long seed2 ) {
+    private static double _doubleFrom( long seed1, long seed2 )
+    {
         return (((long)(_intFrom(26, seed1)) << 27) + _intFrom(27, seed2)) * DOUBLE_UNIT;
     }
 
-    private static int _intFrom( int bits, long seed ) {
-        return (int)(seed >>> (48 - bits));
-    }
+    private static int _intFrom( int bits, long seed ) { return (int)(seed >>> (48 - bits)); }
 
 }
