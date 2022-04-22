@@ -6,7 +6,6 @@ import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.common.utility.SettingsLoader
 import neureka.view.TsrStringSettings
-import org.slf4j.Logger
 import spock.lang.Shared
 import spock.lang.Specification
 import testutility.Utility
@@ -90,7 +89,7 @@ class Benchmark_System_Test extends Specification
             result.values().every { it.size() == 21 && it.every { it > 0 } }
 
         when : 'Only continue if testing system supports OpenCL.'
-            if ( !Neureka.get().canAccessOpenCL() ) return
+            if ( !Neureka.get().canAccessOpenCLDevice() ) return
 
         and : 'The benchmark is now being executed with the first found OpenCLDevice instance...'
             hash = ""

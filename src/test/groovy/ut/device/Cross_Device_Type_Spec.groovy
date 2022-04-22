@@ -50,7 +50,7 @@ class Cross_Device_Type_Spec extends Specification
         })
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && data.type == OpenCLDevice }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.type == OpenCLDevice }) // We need to assure that this system supports OpenCL!
     def 'Querying for Device implementations works as expected.'(
             String query, Class type
     ) {
@@ -151,7 +151,7 @@ class Cross_Device_Type_Spec extends Specification
     /**
      *  Every argument within an ExecutionCall instance has a purpose. Null is not permissible.
      */
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && data.device instanceof OpenCLDevice || data.device == null })
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device instanceof OpenCLDevice || data.device == null })
     def 'Execution calls containing null arguments will cause an exception to be thrown in device instances.'(
         Device device
     ) {
@@ -237,7 +237,7 @@ class Cross_Device_Type_Spec extends Specification
 
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && (data.device instanceof OpenCLDevice) })
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && (data.device instanceof OpenCLDevice) })
     def 'Devices store slices which can also be restored.'(
             Device device
     ) {
@@ -333,7 +333,7 @@ class Cross_Device_Type_Spec extends Specification
     }
 
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && data.deviceType == 'GPU' })
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.deviceType == 'GPU' })
     def 'Virtual tensors stay virtual when outsourced.'(
             String deviceType
     ) {

@@ -113,10 +113,12 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
 
         for ( BackendExtension extension : Neureka.get().backend().getExtensions() ) {
             BackendExtension.DeviceOption found = extension.find( key );
-            if ( found != null && (deviceType.isAssignableFrom( found.device().getClass() )) ) {
-                if ( found.confidence() > desireForCPU || justTakeFirstOne )
-                    return (D) found.device();
-            }
+            if ( found == null           ) continue;
+            if ( found.device() == null  ) continue;
+            if ( found.confidence() <= 0 ) continue;
+            if ( !deviceType.isAssignableFrom( found.device().getClass() ) ) continue;
+            if ( found.confidence() > desireForCPU || justTakeFirstOne )
+                return (D) found.device();
         }
 
         if ( probablyWantsGPU )

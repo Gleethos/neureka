@@ -294,7 +294,7 @@ class Tensor_State_Spec extends Specification
             t.isVirtual()
     }
 
-    @IgnoreIf({ data.device == 'GPU' && !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ data.device == 'GPU' && !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'The data and the value of a tensor a 2 different things!'(
         String device
     ) {

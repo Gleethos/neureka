@@ -57,7 +57,7 @@ class OpenCLDevice_Spec extends Specification
         })
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'An OpenCLDevice loads tensors in a provided lambda temporarily.'()
     {
         given: 'The first found OpenCLDevice instance.'
@@ -88,7 +88,7 @@ class OpenCLDevice_Spec extends Specification
 
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'The "getValue()" method of an outsourced tensor will return the expected array type.'()
     {
         given : 'A new tensor.'
@@ -116,7 +116,7 @@ class OpenCLDevice_Spec extends Specification
         //    value instanceof float[] // WIP!
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'The "getData()" method of an outsourced tensor will return null when outsourced.'()
     {
         given : 'A new tensor belonging to the first found OpenCLDevice instance.'
@@ -134,7 +134,7 @@ class OpenCLDevice_Spec extends Specification
             data == null
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'Ad hoc compilation produces executable kernel.'() {
 
         given :
@@ -185,7 +185,7 @@ class OpenCLDevice_Spec extends Specification
     }
 
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'Ad hoc compilation works for WIP general purpose matrix multiplication.'(
            int regSize, int locSize, int M, int K, int N, String expected
     ) {
@@ -341,7 +341,7 @@ class OpenCLDevice_Spec extends Specification
 
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'Ad hoc matrix multiplication works for multiple of 16 matrices.'(
             int seed, int M, int K, int N, String expected
     ) {
@@ -428,7 +428,7 @@ class OpenCLDevice_Spec extends Specification
     }
 
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'Ad hoc compilation works for custom simple row major based matrix multiplication.'(
             int seed, int M, int K, int N, String expected
     ) {
@@ -506,7 +506,7 @@ class OpenCLDevice_Spec extends Specification
     }
 
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'Ad hoc compilation works for custom column major based tiled matrix multiplication.'(
             int seed, int M, int K, int N, String expected
     ) {

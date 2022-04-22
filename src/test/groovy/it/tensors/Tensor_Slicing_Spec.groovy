@@ -43,7 +43,7 @@ class Tensor_Slicing_Spec extends Specification
             if ( device == null ) return
 
         and: 'The found device is also supported (Which might not always be the case for the OpenCLDevice).'
-            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
+            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
             Tsr<Double> t = Tsr.of([2, 4, 3], -3d..7d)
@@ -87,7 +87,7 @@ class Tensor_Slicing_Spec extends Specification
             if ( device == null ) return
 
         and: 'The found device is also supported (Which might not always be the case for the OpenCLDevice).'
-            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
+            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
             Tsr<Double> t = Tsr.of([3, 3, 4], -11d..3d)
@@ -132,7 +132,7 @@ class Tensor_Slicing_Spec extends Specification
             if ( device == null ) return
 
         and: 'The found device is also supported (Which might not always be the case for the OpenCLDevice).'
-            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
+            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
             Tsr t = Tsr.of([3, 3, 4], -11..3)
@@ -177,7 +177,7 @@ class Tensor_Slicing_Spec extends Specification
             if ( device == null ) return
 
         and: 'The found device is also supported (Which might not always be the case for the OpenCLDevice).'
-            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
+            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
             Tsr t = Tsr.of([3, 3, 4], -11..3)
@@ -217,7 +217,7 @@ class Tensor_Slicing_Spec extends Specification
             if ( device == null ) return
 
         and: 'The found device is also supported (Which might not always be the case for the OpenCLDevice).'
-            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
+            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
             Tsr<Double> t = Tsr.of([3, 3, 4], -11d..3d)
