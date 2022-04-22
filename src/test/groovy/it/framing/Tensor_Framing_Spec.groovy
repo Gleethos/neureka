@@ -4,9 +4,27 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
+import spock.lang.Title
+import spock.lang.Narrative
 
 import java.lang.ref.WeakReference
 
+@Title("Naming Tensors and their Dimensions.")
+@Narrative('''
+
+    In the data science as well as machine learning
+    world exists a powerful concept which is mostly
+    referred to as "Data Frames".
+    These are usually highly flexible 2D data structures
+    used to load and store CSV, CRV, etc... for 
+    data exploration and further processing.
+    These data structures are so powerful because
+    their indixes are labeled and therefore human readable.
+    Neurekas tensors are general purpose data containers
+    which may also stored data in 2 dimensions whose
+    indices may also be something other than integers.
+
+''')
 class Tensor_Framing_Spec extends Specification
 {
     def setupSpec() {
@@ -16,7 +34,7 @@ class Tensor_Framing_Spec extends Specification
                 <p>
                     This specification covers the behavior
                     of the classes contained in the "framing" package, which 
-                    contains logic in order to provide the possibility to alias
+                    contains logic in order to set aliases for
                     tensor indices.          
                 </p>
             """
