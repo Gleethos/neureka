@@ -455,7 +455,7 @@ class Autograd_NN_Spec extends Specification
     }
 
 
-    @IgnoreIf({!(Neureka.get().canAccessOpenCL() || !(data.device instanceof OpenCLDevice))})
+    @IgnoreIf({!(Neureka.get().canAccessOpenCLDevice() || !(data.device instanceof OpenCLDevice))})
     def 'Autograd works for 2 matrix multiplications in a row.'(Device<?> device) {
 
         given :

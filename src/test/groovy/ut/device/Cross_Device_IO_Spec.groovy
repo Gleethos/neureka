@@ -24,7 +24,7 @@ import spock.lang.Title
 class Cross_Device_IO_Spec extends Specification
 {
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && data.deviceType == 'GPU' })
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.deviceType == 'GPU' })
     def 'We can use the access device API to read from a tensor.'(
             String deviceType, Class<Object> type, Object[] fill, Object expected
     ) {
@@ -64,7 +64,7 @@ class Cross_Device_IO_Spec extends Specification
     }
 
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() && data.deviceType == 'GPU' })
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.deviceType == 'GPU' })
     def 'We can use the access device API to write to a tensor'(
             String deviceType, Class<Object> type, Object[] fill, Object write, Object expected
     ) {

@@ -192,7 +192,20 @@ public final class Neureka
     /**
      * @return The truth value determining if OpenCL is accessible.
      */
-    public boolean canAccessOpenCL() { return _OPENCL_AVAILABLE; }
+    public boolean canAccessOpenCL() {
+        return _OPENCL_AVAILABLE &&
+                get().backend().has(CLContext.class) &&
+                get().backend().get(CLContext.class).getTotalNumberOfDevices() > 0;
+    }
+
+    /**
+     * @return The truth value determining if at least 1 {@link neureka.devices.opencl.OpenCLDevice} is accessible.
+     */
+    public boolean canAccessOpenCLDevice() {
+        return canAccessOpenCL() &&
+                get().backend().has(CLContext.class) &&
+                get().backend().get(CLContext.class).getTotalNumberOfDevices() > 0;
+    }
 
     /**
      * @return An instance of library wide {@link Settings} determining the behaviour of many classes...

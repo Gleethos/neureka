@@ -194,7 +194,7 @@ class Neureka_Spec extends Specification
             ]
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() })
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() })
     def 'OpenCL related library objects adhere to the same toString formatting convention!'(
             Object neurekaCLObject
     ) {

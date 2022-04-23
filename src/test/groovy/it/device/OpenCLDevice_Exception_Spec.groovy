@@ -5,7 +5,6 @@ import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.opencl.CLContext
 import neureka.dtype.DataType
-import org.slf4j.Logger
 import spock.lang.IgnoreIf
 import spock.lang.Shared
 import spock.lang.Specification
@@ -37,7 +36,7 @@ class OpenCLDevice_Exception_Spec extends Specification
         System.err = oldStream
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
     {
         given: 'The first found OpenCLDevice instance.'
@@ -61,7 +60,7 @@ class OpenCLDevice_Exception_Spec extends Specification
             exception.message == "Data parent is not outsourced!"
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'Ad hoc compilation produces expected exceptions.'()
     {
         given :
@@ -93,7 +92,7 @@ class OpenCLDevice_Exception_Spec extends Specification
 
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'Ad hoc compilation produces expected exceptions when duplication is found.'()
     {
         given :
@@ -134,7 +133,7 @@ class OpenCLDevice_Exception_Spec extends Specification
     }
 
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'Trying to restore a tensor which is not on a device raises exception.'()
     {
         given :

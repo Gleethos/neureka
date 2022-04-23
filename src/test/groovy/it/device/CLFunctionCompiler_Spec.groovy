@@ -41,7 +41,7 @@ class CLFunctionCompiler_Spec extends Specification {
         })
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'The OpenCLDevice produces a working optimized Function (internally using the CLFunctionCompiler).'() {
 
         given : 'We get the first available OpenCLDevice we can find in the CLContext!'

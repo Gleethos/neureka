@@ -4,9 +4,26 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
+import spock.lang.Title
+import spock.lang.Narrative
 
 import java.lang.ref.WeakReference
 
+@Title("Naming Tensors and their Dimensions.")
+@Narrative('''
+
+    A powerful concept in the data science as well as machine learning
+    world is mostly being referred to as "Data Frames".
+    These are highly flexible 2D data structures
+    used to load and store CSV, CRV, etc... files for 
+    data exploration and further processing.
+    Data frames are so powerful because
+    their indices are labeled and therefore human readable.
+    Neurekas tensors are general purpose data containers
+    which may also stored data in 2 dimensions whose
+    indices may also be something other than integers.
+
+''')
 class Tensor_Framing_Spec extends Specification
 {
     def setupSpec() {
@@ -16,7 +33,7 @@ class Tensor_Framing_Spec extends Specification
                 <p>
                     This specification covers the behavior
                     of the classes contained in the "framing" package, which 
-                    contains logic in order to provide the possibility to alias
+                    contains logic in order to set aliases for
                     tensor indices.          
                 </p>
             """
@@ -40,7 +57,7 @@ class Tensor_Framing_Spec extends Specification
 
     def 'Added labels to tensors are accessible through the "index()" method.'()
     {
-        given :
+        given : 'We create a 3D tensor and label its indices.'
             Tsr t = Tsr.of([2, 3, 2], 1..100)
             t.label([
                     ["1", "2"],
@@ -49,7 +66,7 @@ class Tensor_Framing_Spec extends Specification
             ])
             String asString = t.frame().toString()
 
-        expect :
+        expect : 'The string representation of the tensor should include these labels.'
             asString.contains("a")
             asString.contains("b")
             asString.contains("c")
@@ -59,7 +76,7 @@ class Tensor_Framing_Spec extends Specification
             !asString.contains("Axis Two")
             !asString.contains("Axis Three")
 
-        when :
+        when : 'We provide a map, where the keys are axis labels...'
             t.label([
                     "Axis One" : ["1", "2"],
                     "Axis Two" : ["a", "b", "c"],
@@ -67,7 +84,7 @@ class Tensor_Framing_Spec extends Specification
             ])
             asString = t.frame().toString()
 
-        then :
+        then : 'Once again, the string will mention all labels'
             asString.contains("a")
             asString.contains("b")
             asString.contains("c")

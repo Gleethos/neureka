@@ -48,6 +48,15 @@ public final class CLContext implements BackendExtension
     public CLContext() {}
 
     /**
+     * @return The number of all {@link OpenCLDevice} instances across all {@link OpenCLPlatform}s.
+     */
+    public int getTotalNumberOfDevices() {
+        List<OpenCLPlatform> platforms = getPlatforms();
+        if ( getPlatforms().isEmpty() ) return 0;
+        return platforms.stream().mapToInt( p -> p.getDevices().size() ).sum();
+    }
+
+    /**
      * @return A list of context specific {@link OpenCLPlatform} instances possible containing {@link OpenCLDevice}s.
      */
     public List<OpenCLPlatform> getPlatforms() { return Collections.unmodifiableList( _platforms ); }
