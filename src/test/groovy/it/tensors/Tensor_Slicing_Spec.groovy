@@ -9,10 +9,13 @@ import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
 
-@Title("The tensor slicing specification")
+@Title("Tensors within Tensors")
 @Narrative('''
 
-    Slicing can be a tedious and complicated procedure.
+    ND-Array data structures can be "sliced" in the sense
+    that one can create a subset view of the underlying data inside a tensor
+    through a new tensor instance...
+    This can be a tedious and complicated procedure.
     Therefore a tensor should expose a various user friendly API for slicing which
     are also fit for various languages.
     This specification covers these APIs for tensor slicing.
