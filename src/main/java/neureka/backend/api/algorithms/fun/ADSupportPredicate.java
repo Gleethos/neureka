@@ -7,12 +7,10 @@ import neureka.devices.Device;
 /**
  *  A {@link ADSupportPredicate} lambda checks if which auto differentiation mode
  *  can be performed for a given {@link ExecutionCall}.
- *  The analyzer returns a {@link ADMode} enum instance.
+ *  The analyzer returns a {@link AutoDiff} enum instance.
  */
 public interface ADSupportPredicate {
 
-    enum ADMode { FORWARD_ONLY, BACKWARD_ONLY, NO_AD, FORWARD_AND_BACKWARD }
-
-    ADMode autogradModeFrom( ExecutionCall<? extends Device<?>> call );
+    AutoDiff autoDiffModeFrom(ExecutionCall<? extends Device<?>> call );
 
 }

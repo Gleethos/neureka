@@ -296,7 +296,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     /**
      *  A {@link ADSupportPredicate} lambda checks what kind of auto differentiation mode an
      *  {@link Algorithm} supports for a given {@link ExecutionCall}.
-     *  The lambda will be called by the {@link #autogradModeFrom(ExecutionCall)} method
+     *  The lambda will be called by the {@link #autoDiffModeFrom(ExecutionCall)} method
      *  by any given {@link Operation} instances this algorithm belongs to.
      *
      * @param autogradModeFor A predicate lambda which determines the auto diff mode of this algorithm a given execution call.
@@ -308,9 +308,9 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     }
 
     @Override
-    public ADMode autogradModeFrom( ExecutionCall<? extends Device<?>> call ) {
+    public AutoDiff autoDiffModeFrom(ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
-        return _autogradModeFor.autogradModeFrom( call );
+        return _autogradModeFor.autoDiffModeFrom( call );
     }
 }
 

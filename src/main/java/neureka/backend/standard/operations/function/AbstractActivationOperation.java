@@ -1,6 +1,6 @@
 package neureka.backend.standard.operations.function;
 
-import neureka.backend.api.algorithms.fun.ADSupportPredicate;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -53,8 +53,8 @@ abstract class AbstractActivationOperation extends AbstractOperation {
             .setAutogradModeFor(
                     call -> call
                             .validate().allNotNullHaveSame(NDimensional::shape)
-                            .ifValid(ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD)
-                            .orElse(ADSupportPredicate.ADMode.BACKWARD_ONLY)
+                            .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
+                            .orElse(AutoDiff.BACKWARD_ONLY)
             )
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
@@ -76,8 +76,8 @@ abstract class AbstractActivationOperation extends AbstractOperation {
             .setAutogradModeFor(
                     call -> call
                             .validate().allNotNullHaveSame(NDimensional::shape)
-                            .ifValid(ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD)
-                            .orElse(ADSupportPredicate.ADMode.BACKWARD_ONLY)
+                            .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
+                            .orElse(AutoDiff.BACKWARD_ONLY)
             )
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)

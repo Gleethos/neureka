@@ -4,20 +4,20 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.ADSupportPredicate;
-import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
+import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
-import neureka.calculus.internal.RecursiveExecutor;
 import neureka.calculus.args.Arg;
+import neureka.calculus.internal.CalcUtil;
+import neureka.calculus.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -157,7 +157,7 @@ public class Power extends AbstractOperation
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast(rja)
-                .setAutogradModeFor( call -> ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD )
+                .setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
@@ -220,7 +220,7 @@ public class Power extends AbstractOperation
         Scalarization scalarization =
                 new Scalarization()
                         .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                        .setAutogradModeFor( call -> ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD )
+                        .setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD )
                         .setSupplyADAgentFor( getDefaultAlgorithm() )
                         .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, rja ) )
                         .buildFunAlgorithm();

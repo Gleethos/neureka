@@ -38,7 +38,7 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.backend.api.algorithms.fun.ADSupportPredicate;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.common.utility.LogUtil;
@@ -188,17 +188,17 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      *  This method queries the underlying {@link Operation} for a suitable {@link Algorithm}
      *  for this {@link ExecutionCall} to see what kind of auto differentiation can be performed.
      *
-     * @return The {@link neureka.backend.api.algorithms.fun.ADSupportPredicate.ADMode} for this call.
+     * @return The {@link AutoDiff} for this call.
      */
-    public ADSupportPredicate.ADMode autogradMode() {
+    public AutoDiff autogradMode() {
         Algorithm<?> algorithm = getAlgorithm();
         if ( algorithm != null ) {
-            ADSupportPredicate.ADMode mode = algorithm.autogradModeFrom(this);
+            AutoDiff mode = algorithm.autoDiffModeFrom(this);
             if ( mode == null )
                 throw new IllegalStateException("Algorithm '"+algorithm+"' returned null instead of a valid autograd mode!");
             return mode;
         }
-        return ADSupportPredicate.ADMode.NO_AD;
+        return AutoDiff.NOT_SUPPORTED;
     }
 
     public ADAgent getADAgentFrom( Function function, boolean forward ) {

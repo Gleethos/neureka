@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.ADSupportPredicate;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -40,7 +40,7 @@ public class DimTrim extends AbstractOperation
             Algorithm
                 .withName("dimTrim")
                 .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
-                .setAutogradModeFor( call -> ADSupportPredicate.ADMode.BACKWARD_ONLY )
+                .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {

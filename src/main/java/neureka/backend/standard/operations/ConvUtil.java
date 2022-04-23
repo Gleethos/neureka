@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.ADSupportPredicate;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.operations.other.Reshape;
 import neureka.calculus.Function;
@@ -25,14 +25,14 @@ public class ConvUtil {
     public static Convolution createDeconvolutionFor( String operator ) {
         return new Convolution()
                 .setAutogradModeFor( call -> {
-                    if ( call.getOperation().supports( Convolution.class ) ) return ADSupportPredicate.ADMode.BACKWARD_ONLY;
-                    if ( call.getOperation().getOperator().equals(",") ) return ADSupportPredicate.ADMode.BACKWARD_ONLY; //Reshape
+                    if ( call.getOperation().supports( Convolution.class ) ) return AutoDiff.BACKWARD_ONLY;
+                    if ( call.getOperation().getOperator().equals(",") ) return AutoDiff.BACKWARD_ONLY; //Reshape
                     Tsr<?> last = null;
                     for ( Tsr<?> t : call.inputs() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return ADSupportPredicate.ADMode.BACKWARD_ONLY;
+                        if ( last != null && !last.shape().equals(t.shape()) ) return AutoDiff.BACKWARD_ONLY;
                         last = t; // Note: shapes are cached!
                     }
-                    return ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD;
+                    return AutoDiff.FORWARD_AND_BACKWARD;
                 })
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->

@@ -2,13 +2,13 @@ package ut.autograd
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.backend.api.algorithms.fun.ADSupportPredicate
-import neureka.devices.Device
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
-import neureka.calculus.Function
 import neureka.backend.api.ExecutionCall
+import neureka.backend.api.algorithms.fun.AutoDiff
 import neureka.backend.api.operations.AbstractOperation
+import neureka.calculus.Function
+import neureka.devices.Device
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
@@ -108,7 +108,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             (1.._) * inputs[0].rqsGradient() >> true
             (1.._) * inputs[1].rqsGradient() >> false
             (1.._) * inputs[2].rqsGradient() >> true
-            (1.._) * call.autogradMode() >> ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD
+            (1.._) * call.autogradMode() >> AutoDiff.FORWARD_AND_BACKWARD
             (3.._) * function.getOperation() >> type
             (0.._) * type.isDifferentiable() >> true
             (3.._) * type.isInline() >> false

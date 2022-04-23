@@ -3,6 +3,7 @@ package neureka.backend.standard.algorithms;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.standard.algorithms.internal.FunTuple;
@@ -17,7 +18,7 @@ public class ScalarActivation extends AbstractFunctionalAlgorithm<ScalarActivati
 {
     public ScalarActivation(FunTuple<Fun.F64ToF64> funs) {
         super("scalar activation");
-        setAutogradModeFor( call -> ADMode.FORWARD_AND_BACKWARD );
+        setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD );
         setIsSuitableFor( call ->
             call.validate()
                 .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )

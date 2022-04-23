@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.standard.algorithms.internal.FunTuple;
 import neureka.backend.standard.algorithms.internal.WithForward;
@@ -29,7 +30,7 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
                     .allNotNull( t -> t.getDataType().typeClassImplements( NumericType.class ) )
                     .basicSuitability()
         );
-        setAutogradModeFor( call -> ADMode.FORWARD_AND_BACKWARD );
+        setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD );
         setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, finalExecutor ) );
         setCallPreparation(
             call -> {

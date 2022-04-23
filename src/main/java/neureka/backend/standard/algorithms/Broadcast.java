@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.standard.algorithms.internal.WithForward;
@@ -52,14 +53,13 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                 return SuitabilityPredicate.GOOD;
             }
         );
-        setAutogradModeFor( call -> {
-            Tsr<?> last = null;
-            for ( Tsr<?> t : call.inputs() ) {
-                if ( last != null && !last.shape().equals( t.shape() ) ) return ADMode.BACKWARD_ONLY;
-                last = t;
-            }
-            return ADMode.FORWARD_AND_BACKWARD;
-        });
+        setAutogradModeFor(
+            call ->
+                call.validate()
+                    .all( ( first, second ) -> first.shape().equals(second.shape()) )
+                    .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
+                    .orElse(AutoDiff.BACKWARD_ONLY)
+        );
         setExecutionDispatcher(
             ( caller, call ) -> {
                 int offset = ( call.input( Number.class, 0 ) == null ? 1 : 0 );

@@ -2,7 +2,7 @@ package neureka.autograd;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.ADSupportPredicate;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.calculus.Function;
 import neureka.devices.Device;
 
@@ -100,12 +100,12 @@ final class GraphNodeAssemblyState<V> {
             modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.getMode();
             inputMode += ( modes[ i ] != 0) ? 1 : 0;
         }
-        ADSupportPredicate.ADMode adMode = call.autogradMode();
+        AutoDiff adMode = call.autogradMode();
         switch ( adMode ) {
             case FORWARD_AND_BACKWARD: _allowsForward = true; _allowsBackward = true;  break;
             case FORWARD_ONLY:         _allowsForward = true; _allowsBackward = false; break;
-            case BACKWARD_ONLY:       _allowsForward = false; _allowsBackward = true;  break;
-            case NO_AD:               _allowsForward = false; _allowsBackward = false; break;
+            case BACKWARD_ONLY:        _allowsForward = false; _allowsBackward = true;  break;
+            case NOT_SUPPORTED:        _allowsForward = false; _allowsBackward = false; break;
         }
         if ( inputMode == 1 && _allowsForward) { // Convolution and reshaping prohibit forward AutoDiff
             for ( int i = 0; i < inputs.length; i++ ) {

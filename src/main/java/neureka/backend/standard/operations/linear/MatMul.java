@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.ADSupportPredicate;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
@@ -52,7 +52,7 @@ public class MatMul extends AbstractOperation
                                                 .badIfAnyNonNull( t -> !( t.getNDConf() instanceof Simple2DConfiguration) )
                                                 .getEstimation()
                             )
-                            .setAutogradModeFor( call -> ADSupportPredicate.ADMode.BACKWARD_ONLY )
+                            .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
                             .setSupplyADAgentFor(
                                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                 {

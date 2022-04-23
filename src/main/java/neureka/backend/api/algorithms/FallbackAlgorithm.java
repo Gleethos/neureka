@@ -5,9 +5,8 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.fun.BackwardADPredicate;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.backend.api.algorithms.fun.ExecutionPreparation;
-import neureka.backend.api.algorithms.fun.ForwardADPredicate;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.linear.MatMul;
@@ -236,5 +235,5 @@ implements ExecutionPreparation
     }
 
     @Override
-    public ADMode autogradModeFrom( ExecutionCall<? extends Device<?>> call ) { return ADMode.FORWARD_AND_BACKWARD; }
+    public AutoDiff autoDiffModeFrom(ExecutionCall<? extends Device<?>> call ) { return AutoDiff.FORWARD_AND_BACKWARD; }
 }

@@ -3,7 +3,7 @@ package neureka.backend.standard.operations.other;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.ADSupportPredicate;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -44,7 +44,7 @@ public class AssignLeft extends AbstractOperation
                        return SuitabilityPredicate.UNSUITABLE;
                }
             )
-            .setAutogradModeFor( call -> ADSupportPredicate.ADMode.NO_AD )
+            .setAutogradModeFor( call -> AutoDiff.NOT_SUPPORTED)
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
             .setCallPreparation(
@@ -105,7 +105,7 @@ public class AssignLeft extends AbstractOperation
                         .tensors( tensors -> tensors.length == 2 || tensors.length == 3 )
                         .suitabilityIfValid(SuitabilityPredicate.EXCELLENT)
             )
-            .setAutogradModeFor( call -> ADSupportPredicate.ADMode.NO_AD )
+            .setAutogradModeFor( call -> AutoDiff.NOT_SUPPORTED)
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
             .setCallPreparation(

@@ -4,19 +4,19 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.ADSupportPredicate;
-import neureka.backend.standard.algorithms.internal.Fun;
+import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
+import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.operations.JunctionUtil;
-import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -91,8 +91,8 @@ public class Division extends AbstractOperation
                                         .setAutogradModeFor(
                                                 call -> call
                                                         .validate().allNotNullHaveSame(NDimensional::shape)
-                                                        .ifValid(ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD)
-                                                        .orElse(ADSupportPredicate.ADMode.BACKWARD_ONLY)
+                                                        .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
+                                                        .orElse(AutoDiff.BACKWARD_ONLY)
                                         )
                                         .setSupplyADAgentFor(
                                             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
@@ -153,7 +153,7 @@ public class Division extends AbstractOperation
 
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                .setAutogradModeFor( call -> ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD )
+                .setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD )
                 .setSupplyADAgentFor( getDefaultAlgorithm() )
                 .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forDivisionsOrModuli ) )
                 .buildFunAlgorithm();
