@@ -5,6 +5,9 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.fun.BackwardADPredicate;
+import neureka.backend.api.algorithms.fun.ExecutionPreparation;
+import neureka.backend.api.algorithms.fun.ForwardADPredicate;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.linear.MatMul;
@@ -23,7 +26,9 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgorithm> {
+public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgorithm>
+implements ExecutionPreparation
+{
 
     private static final Logger _LOG = LoggerFactory.getLogger(FallbackAlgorithm.class);
 
@@ -106,12 +111,6 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
         if ( call.getOperation().getClass() == MatMul.class ) return 0;
         return 0.5f;
     }
-
-    @Override
-    public boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call ) { return true; }
-
-    @Override
-    public boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) { return true; }
 
     @Override
     public ADAgent supplyADAgentFor( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
@@ -236,4 +235,6 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
         return null;
     }
 
+    @Override
+    public ADMode autogradModeFrom( ExecutionCall<? extends Device<?>> call ) { return ADMode.FORWARD_AND_BACKWARD; }
 }

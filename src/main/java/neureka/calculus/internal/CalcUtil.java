@@ -6,6 +6,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.fun.ExecutionPreparation;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.JunctionUtil;
@@ -282,7 +283,9 @@ public class CalcUtil
             ExecutionCall<? extends Device<?>> executionCall,
             RecursiveExecutor executor
     ) {
-        executionCall = executionCall.getAlgorithm().prepare( executionCall );
+        Algorithm<?> currentAlgorithm = executionCall.getAlgorithm();
+        if ( currentAlgorithm instanceof ExecutionPreparation )
+            executionCall = ( (ExecutionPreparation) currentAlgorithm ).prepare( executionCall );
 
         for ( Tsr<?> t : executionCall.inputs() )
             if ( t == null ) throw new IllegalArgumentException(

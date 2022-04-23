@@ -38,6 +38,7 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.backend.api.algorithms.fun.ADSupportPredicate;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.common.utility.LogUtil;
@@ -184,29 +185,20 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     }
 
     /**
-     *  This method queries the underlying {@link Operation} of this {@link ExecutionCall} to see
-     *  if forward mode auto differentiation can be performed.
+     *  This method queries the underlying {@link Operation} for a suitable {@link Algorithm}
+     *  for this {@link ExecutionCall} to see what kind of auto differentiation can be performed.
      *
-     * @return The truth value determining if forward mode auto differentiation can be performed for this.
+     * @return The {@link neureka.backend.api.algorithms.fun.ADSupportPredicate.ADMode} for this call.
      */
-    public boolean allowsForward() {
+    public ADSupportPredicate.ADMode autogradMode() {
         Algorithm<?> algorithm = getAlgorithm();
-        if ( algorithm != null )
-            return algorithm.canPerformForwardADFor( this );
-        return false;
-    }
-
-    /**
-     *  This method queries the underlying {@link Operation} of this {@link ExecutionCall} to see
-     *  if backward mode auto differentiation can be performed.
-     *
-     * @return The truth value determining if backward mode auto differentiation can be performed for this.
-     */
-    public boolean allowsBackward() {
-        Algorithm<?> algorithm = getAlgorithm();
-        if ( algorithm != null )
-            return algorithm.canPerformBackwardADFor( this );
-        return false;
+        if ( algorithm != null ) {
+            ADSupportPredicate.ADMode mode = algorithm.autogradModeFrom(this);
+            if ( mode == null )
+                throw new IllegalStateException("Algorithm '"+algorithm+"' returned null instead of a valid autograd mode!");
+            return mode;
+        }
+        return ADSupportPredicate.ADMode.NO_AD;
     }
 
     public ADAgent getADAgentFrom( Function function, boolean forward ) {

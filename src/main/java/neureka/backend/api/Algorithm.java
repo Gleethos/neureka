@@ -58,7 +58,7 @@ import neureka.devices.Device;
  *   algorithm might be called to perform the operation.
  */
 public interface Algorithm<C extends Algorithm<C>>
-extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSupplier, ExecutionPreparation, ExecutionDispatcher
+extends SuitabilityPredicate, ADSupportPredicate, ADAgentSupplier, ExecutionDispatcher
 {
     /**
      * This is a factory method for creating a new instance of this {@link FunAlgorithm} class.

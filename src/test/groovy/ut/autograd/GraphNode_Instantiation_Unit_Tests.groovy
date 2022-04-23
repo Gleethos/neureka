@@ -2,6 +2,7 @@ package ut.autograd
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.backend.api.algorithms.fun.ADSupportPredicate
 import neureka.devices.Device
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
@@ -75,13 +76,13 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             Supplier<Tsr> supplier = () -> payload
             AbstractOperation type = Mock( AbstractOperation )
             Function function = Mock( Function )
-            Object context = Mock( ExecutionCall )
+            Object call = Mock( ExecutionCall )
             Device device = Mock( Device )
             def inputsNodeMock = Mock( GraphNode )
             GraphNode result
 
         when : 'We try to instantiate a GraphNode...'
-            result = new GraphNode( function, context, supplier )
+            result = new GraphNode( function, call, supplier )
 
         then : 'The resulting GraphNode has expected properties.'
             result.getNodeID() != 0
@@ -94,7 +95,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             result.usesReverseAD()
 
         and : 'The mock objects have been called as expected.'
-            (3.._) * context.inputs() >> inputs
+            (3.._) * call.inputs() >> inputs
             (5.._) * inputsNodeMock.getLock() >> Mock( GraphLock )
             (1.._) * function.isDoingAD() >> true
             (1.._) * payload.getDevice() >> device
@@ -107,8 +108,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             (1.._) * inputs[0].rqsGradient() >> true
             (1.._) * inputs[1].rqsGradient() >> false
             (1.._) * inputs[2].rqsGradient() >> true
-            (1.._) * context.allowsForward() >> true
-            (1.._) * context.allowsBackward() >> true
+            (1.._) * call.autogradMode() >> ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD
             (3.._) * function.getOperation() >> type
             (0.._) * type.isDifferentiable() >> true
             (3.._) * type.isInline() >> false

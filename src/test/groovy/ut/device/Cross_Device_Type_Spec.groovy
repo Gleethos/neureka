@@ -166,7 +166,6 @@ class Cross_Device_Type_Spec extends Specification
 
         then : '...the implementation is being accessed in order to access the mocked lambda...'
             (1.._) * call.getAlgorithm() >> implementation
-            1 * implementation.prepare(call) >> call
         and : 'The tensor array is being accessed to check for null. (For exception throwing)'
             1 * call.inputs() >> new Tsr[]{ Mock(Tsr), null }
         and : 'The expected exception is being thrown alongside a descriptive message.'

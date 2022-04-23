@@ -2,6 +2,7 @@ package ut.backend
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.backend.api.algorithms.fun.ADSupportPredicate
 import neureka.devices.Device
 import neureka.autograd.ADAgent
 import neureka.autograd.GraphLock
@@ -126,8 +127,7 @@ class Backend_Extension_Spec extends Specification
 
         and : 'The given ADAnalyzer instance is being called because auto-differentiation is enabled.'
             (1.._) * input.rqsGradient() >> true
-            (1.._) * implementation.canPerformForwardADFor(_) >> false
-            (1.._) * implementation.canPerformBackwardADFor(_) >> true
+            (1.._) * implementation.autogradModeFrom(_) >> ADSupportPredicate.ADMode.BACKWARD_ONLY
             (1.._) * node.getPayload() >> input
             (1.._) * node.usesAD() >> true
 

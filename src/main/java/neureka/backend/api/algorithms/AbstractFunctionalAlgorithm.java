@@ -37,7 +37,8 @@ import java.util.Arrays;
  *
  * @param <C> The final type extending this class.
  */
-public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extends AbstractBaseAlgorithm<C>
+public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>>
+extends AbstractBaseAlgorithm<C> implements ExecutionPreparation, ForwardADPredicate, BackwardADPredicate
 {
     private static final Logger _LOG = LoggerFactory.getLogger( AbstractFunctionalAlgorithm.class );
     /*
@@ -345,6 +346,15 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
         return this;
     }
 
+    @Override
+    public ADMode autogradModeFrom(ExecutionCall<? extends Device<?>> call) {
+        boolean forward = this.canPerformForwardADFor(call);
+        boolean backward = this.canPerformBackwardADFor(call);
+        if ( forward && backward ) return ADMode.FORWARD_AND_BACKWARD;
+        if ( forward ) return ADMode.FORWARD_ONLY;
+        if ( backward ) return ADMode.BACKWARD_ONLY;
+        return ADMode.NO_AD;
+    }
 }
 
 
