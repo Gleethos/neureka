@@ -17,6 +17,6 @@ public interface ADSupportPredicate {
      * @param call The {@link ExecutionCall} which should be checked.
      * @return A {@link AutoDiff} enum instance describing what kind of differentiation can be performed.
      */
-    AutoDiff autoDiffModeFrom(ExecutionCall<? extends Device<?>> call );
+    AutoDiff autoDiffModeFrom( ExecutionCall<? extends Device<?>> call );
 
 }

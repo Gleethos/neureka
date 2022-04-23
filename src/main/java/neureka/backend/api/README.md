@@ -117,22 +117,16 @@ that it fits the call best! <br>
 ```
 ---
 
-This method checks if forward mode auto differentiation
-can be performed for a given `ExecutionCall` passed to an `Algorithm`.
-The analyzer returns a boolean truth value.
+
+This method, defined by the `ADSupportPredicate` interface,
+checks which auto differentiation mode
+can be performed for a given `ExecutionCall`.
+The method returns a `AutoDiff` enum instance.
+This check is important so that the autograd system can apply 
+a suitable autograd strategy...
 
 ```java
-    boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call );
-```
----
-
-This method checks if backward mode auto differentiation
-(also known as back-propagation)
-can be performed for a given `ExecutionCall` passed to an `Algorithm`.
-The analyzer returns a boolean truth value.
-
-```java
-    boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call );
+    AutoDiff autoDiffModeFrom( ExecutionCall<? extends Device<?>> call );
 ```
 ---
 
