@@ -8,6 +8,7 @@ import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.backend.api.BackendContext
+import neureka.backend.api.algorithms.fun.ADSupportPredicate
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate
 import neureka.backend.standard.implementations.CPUImplementation
 import neureka.calculus.internal.CalcUtil
@@ -15,6 +16,7 @@ import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device
 import neureka.devices.host.CPU
+import neureka.ndim.NDimensional
 import testutility.opencl.DispatchUtility
 import spock.lang.Specification
 
@@ -69,8 +71,7 @@ class Backend_Extension_Spec extends Specification
                                 .setAlgorithm(
                                         Algorithm.withName(null)
                                                 .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )
-                                                .setCanPerformBackwardADFor(call -> true)
-                                                .setCanPerformForwardADFor(call -> false)
+                                                .setAutogradModeFor(call -> ADSupportPredicate.ADMode.BACKWARD_ONLY )
                                                 .setSupplyADAgentFor(
                                                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward) -> {
                                                             if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");

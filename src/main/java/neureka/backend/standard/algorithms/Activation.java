@@ -28,12 +28,18 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
                        .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
                        .basicSuitability()
         );
-        setCanPerformBackwardADFor( call -> true );
-        setCanPerformForwardADFor(
-            call -> call
-                    .validate()
-                    .all( ( first, second ) -> first.shape().equals(second.shape()) )
-                    .isValid()
+        setAutogradModeFor(
+            call -> {
+                if (
+                    call
+                        .validate()
+                        .all( ( first, second ) -> first.shape().equals(second.shape()) )
+                        .isValid()
+                )
+                    return ADMode.FORWARD_AND_BACKWARD;
+                else
+                    return ADMode.BACKWARD_ONLY;
+            }
         );
         setExecutionDispatcher( CalcUtil::defaultRecursiveExecution );
         setCallPreparation(

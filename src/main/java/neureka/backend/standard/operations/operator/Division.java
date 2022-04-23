@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.ADSupportPredicate;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
@@ -19,6 +20,7 @@ import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
+import neureka.ndim.NDimensional;
 import org.jetbrains.annotations.Contract;
 
 
@@ -86,15 +88,18 @@ public class Division extends AbstractOperation
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast( JunctionUtil::forDivisionsOrModuli )
-                                        .setCanPerformBackwardADFor( call -> true )
-                                        .setCanPerformForwardADFor( call -> {
-                                                Tsr<?> last = null;
-                                                for ( Tsr<?> t : call.inputs() ) {
-                                                    if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                                                    last = t;
+                                        .setAutogradModeFor(
+                                                call -> {
+                                                    if (
+                                                        call
+                                                            .validate().allNotNullHaveSame(NDimensional::shape)
+                                                            .isValid()
+                                                    )
+                                                        return ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD;
+                                                    else
+                                                        return ADSupportPredicate.ADMode.BACKWARD_ONLY;
                                                 }
-                                                return true;
-                                        })
+                                        )
                                         .setSupplyADAgentFor(
                                             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                             {
@@ -154,8 +159,7 @@ public class Division extends AbstractOperation
 
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> true )
+                .setAutogradModeFor( call -> ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD )
                 .setSupplyADAgentFor( getDefaultAlgorithm() )
                 .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forDivisionsOrModuli ) )
                 .buildFunAlgorithm();

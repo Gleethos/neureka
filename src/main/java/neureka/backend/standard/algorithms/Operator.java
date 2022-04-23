@@ -29,8 +29,7 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
                     .allNotNull( t -> t.getDataType().typeClassImplements( NumericType.class ) )
                     .basicSuitability()
         );
-        setCanPerformBackwardADFor( call -> true );
-        setCanPerformForwardADFor( call -> true );
+        setAutogradModeFor( call -> ADMode.FORWARD_AND_BACKWARD );
         setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, finalExecutor ) );
         setCallPreparation(
             call -> {

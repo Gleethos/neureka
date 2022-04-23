@@ -2,6 +2,7 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.ADSupportPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -46,8 +47,7 @@ public class Randomization extends AbstractOperation
 
         setAlgorithm(
             new Activation()
-                .setCanPerformBackwardADFor( call -> false )
-                .setCanPerformForwardADFor( call -> false )
+                .setAutogradModeFor( call -> ADSupportPredicate.ADMode.NO_AD )
                 .setSupplyADAgentFor( getDefaultAlgorithm() )
                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
                 .setCallPreparation( call ->

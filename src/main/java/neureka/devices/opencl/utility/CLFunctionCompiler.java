@@ -6,6 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.fun.ADSupportPredicate;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.Function;
@@ -74,8 +75,7 @@ public final class CLFunctionCompiler {
                 .setAlgorithm(
                         Algorithm.withName( "generic_algorithm_for_"+ _functionName )
                                 .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
-                                .setCanPerformBackwardADFor( call -> true )
-                                .setCanPerformForwardADFor( call -> false )
+                                .setAutogradModeFor( call -> ADSupportPredicate.ADMode.BACKWARD_ONLY )
                                 .setSupplyADAgentFor(
                                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward) -> {
                                             // TODO: calculate derivative and supply agent!

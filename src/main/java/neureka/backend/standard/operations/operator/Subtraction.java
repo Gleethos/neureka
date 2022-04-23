@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.operator;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.ADSupportPredicate;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
@@ -148,7 +149,7 @@ public class Subtraction extends AbstractOperation
         Broadcast broadcast =
                 (Broadcast)
                 new Broadcast(JunctionUtil::forSubtractions)
-                .setCanPerformBackwardADFor( call -> true )
+                .setAutogradModeFor( call -> ADSupportPredicate.ADMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {

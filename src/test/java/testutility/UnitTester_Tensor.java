@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.ADSupportPredicate;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.internal.Fun;
@@ -16,6 +17,7 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
+import neureka.ndim.NDimensional;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
@@ -221,16 +223,17 @@ public class UnitTester_Tensor extends UnitTester
         int[] drnMxd  = _shpOfBrc(frstShp, scndShp);
 
         Broadcast right = new Broadcast((executionCall, executor) -> null)
-                                .setCanPerformBackwardADFor( call -> true )
-                                .setCanPerformForwardADFor(
-                                        call -> {
-                                            Tsr<?> last = null;
-                                            for ( Tsr<?> t : call.inputs() ) {
-                                                if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                                                last = t; // Note: shapes are cached!
-                                            }
-                                            return true;
-                                        }
+                                .setAutogradModeFor(
+                                    call -> {
+                                        if (
+                                            call
+                                                .validate().allNotNullHaveSame(NDimensional::shape)
+                                                .isValid()
+                                        )
+                                            return ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD;
+                                        else
+                                            return ADSupportPredicate.ADMode.BACKWARD_ONLY;
+                                    }
                                 )
                                 .setSupplyADAgentFor(
                                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
@@ -283,15 +286,16 @@ public class UnitTester_Tensor extends UnitTester
                                 );
 
         Broadcast left = new Broadcast((executionCall, executor) -> null)
-                                    .setCanPerformBackwardADFor( call -> true )
-                                    .setCanPerformForwardADFor(
+                                    .setAutogradModeFor(
                                             call -> {
-                                                Tsr<?> last = null;
-                                                for ( Tsr<?> t : call.inputs() ) {
-                                                    if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                                                    last = t; // Note: shapes are cached!
-                                                }
-                                                return true;
+                                                if (
+                                                        call
+                                                                .validate().allNotNullHaveSame(NDimensional::shape)
+                                                                .isValid()
+                                                )
+                                                    return ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD;
+                                                else
+                                                    return ADSupportPredicate.ADMode.BACKWARD_ONLY;
                                             }
                                     )
                                     .setSupplyADAgentFor(

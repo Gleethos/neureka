@@ -18,8 +18,7 @@ public class ScalarBroadcast extends AbstractFunctionalAlgorithm<ScalarBroadcast
 {
     public ScalarBroadcast(FunTuple<Fun.F64ToF64> funs) {
         super("scalar broadcast");
-        setCanPerformBackwardADFor( call -> true );
-        setCanPerformForwardADFor( call -> true );
+        setAutogradModeFor( call -> ADMode.FORWARD_AND_BACKWARD );
         setIsSuitableFor( call ->
                 call.validate()
                         .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )

@@ -17,8 +17,7 @@ public class ScalarActivation extends AbstractFunctionalAlgorithm<ScalarActivati
 {
     public ScalarActivation(FunTuple<Fun.F64ToF64> funs) {
         super("scalar activation");
-        setCanPerformBackwardADFor( call -> true );
-        setCanPerformForwardADFor( call -> true );
+        setAutogradModeFor( call -> ADMode.FORWARD_AND_BACKWARD );
         setIsSuitableFor( call ->
             call.validate()
                 .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )

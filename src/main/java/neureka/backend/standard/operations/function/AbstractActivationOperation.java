@@ -1,5 +1,6 @@
 package neureka.backend.standard.operations.function;
 
+import neureka.backend.api.algorithms.fun.ADSupportPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -49,10 +50,12 @@ abstract class AbstractActivationOperation extends AbstractOperation {
 
         setAlgorithm(
             new ScalarBroadcast(Fun.F64ToF64.pair(this::_activate, this::_derive))
-            .setCanPerformBackwardADFor( call -> true )
-            .setCanPerformForwardADFor(
-                call -> call.validate().allNotNullHaveSame(NDimensional::shape).isValid()
-            )
+            .setAutogradModeFor( call -> {
+                if ( call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
+                    return ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD;
+                else
+                    return ADSupportPredicate.ADMode.BACKWARD_ONLY;
+            })
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
             .buildFunAlgorithm()
@@ -70,10 +73,12 @@ abstract class AbstractActivationOperation extends AbstractOperation {
 
         setAlgorithm(
             new ScalarActivation(Fun.F64ToF64.pair(this::_activate, this::_derive))
-            .setCanPerformBackwardADFor( call -> true )
-            .setCanPerformForwardADFor(
-                call -> call.validate().allNotNullHaveSame(NDimensional::shape).isValid()
-            )
+            .setAutogradModeFor( call -> {
+                if ( call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
+                    return ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD;
+                else
+                    return ADSupportPredicate.ADMode.BACKWARD_ONLY;
+            })
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
             .buildFunAlgorithm()

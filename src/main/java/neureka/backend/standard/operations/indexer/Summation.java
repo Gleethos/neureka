@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.ADSupportPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -48,8 +49,7 @@ public final class Summation extends AbstractOperation
         // BROADCASTING :
 
         Broadcast operationAlgorithm = new Broadcast(JunctionUtil::forAdditions)
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> true )
+                .setAutogradModeFor( call -> ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
@@ -104,8 +104,7 @@ public final class Summation extends AbstractOperation
         // ACTIVATION :
 
         Activation activation = new Activation()
-        .setCanPerformBackwardADFor( call -> true )
-        .setCanPerformForwardADFor( call -> true )
+        .setAutogradModeFor( call -> ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD )
         .setSupplyADAgentFor(
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
             {

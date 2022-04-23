@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.ADSupportPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -83,8 +84,7 @@ public class Multiplication extends AbstractOperation
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast( JunctionUtil::forMultiplications )
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> false )
+                .setAutogradModeFor( call -> ADSupportPredicate.ADMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
@@ -141,8 +141,7 @@ public class Multiplication extends AbstractOperation
         // TENSOR SCALAR OPERATION :
 
         Scalarization scalarization = new Scalarization()
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> true )
+                .setAutogradModeFor( call -> ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD )
                 .setSupplyADAgentFor( getDefaultAlgorithm() )
                 .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications ) )
                 .buildFunAlgorithm();

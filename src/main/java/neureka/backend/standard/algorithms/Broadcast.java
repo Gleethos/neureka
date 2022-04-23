@@ -52,13 +52,13 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                 return SuitabilityPredicate.GOOD;
             }
         );
-        setCanPerformForwardADFor( call -> {
+        setAutogradModeFor( call -> {
             Tsr<?> last = null;
             for ( Tsr<?> t : call.inputs() ) {
-                if ( last != null && !last.shape().equals( t.shape() ) ) return false;
+                if ( last != null && !last.shape().equals( t.shape() ) ) return ADMode.BACKWARD_ONLY;
                 last = t;
             }
-            return true;
+            return ADMode.FORWARD_AND_BACKWARD;
         });
         setExecutionDispatcher(
             ( caller, call ) -> {

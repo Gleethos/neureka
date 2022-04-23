@@ -16,8 +16,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
 {
     public Scalarization() {
         super("scalarization");
-        setCanPerformBackwardADFor( call -> true );
-        setCanPerformForwardADFor( call -> true );
+        setAutogradModeFor( call -> ADMode.FORWARD_AND_BACKWARD );
         setIsSuitableFor( call ->
             call.validate()
                 .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )

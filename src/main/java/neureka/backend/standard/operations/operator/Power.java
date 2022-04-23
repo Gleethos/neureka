@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.ADSupportPredicate;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
@@ -156,8 +157,7 @@ public class Power extends AbstractOperation
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast(rja)
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> true )
+                .setAutogradModeFor( call -> ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
@@ -220,8 +220,7 @@ public class Power extends AbstractOperation
         Scalarization scalarization =
                 new Scalarization()
                         .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                        .setCanPerformBackwardADFor( call -> true )
-                        .setCanPerformForwardADFor( call -> true )
+                        .setAutogradModeFor( call -> ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD )
                         .setSupplyADAgentFor( getDefaultAlgorithm() )
                         .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, rja ) )
                         .buildFunAlgorithm();

@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.ADSupportPredicate;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
@@ -87,16 +88,17 @@ public class Modulo extends AbstractOperation {
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast((executionCall, executor) -> null)
-            .setCanPerformBackwardADFor( call -> true )
-            .setCanPerformForwardADFor(
-                call -> {
-                    Tsr<?> last = null;
-                    for ( Tsr<?> t : call.inputs() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
+            .setAutogradModeFor(
+                    call -> {
+                        if (
+                                call
+                                        .validate().allNotNullHaveSame(NDimensional::shape)
+                                        .isValid()
+                        )
+                            return ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD;
+                        else
+                            return ADSupportPredicate.ADMode.BACKWARD_ONLY;
                     }
-                    return true;
-                }
             )
             .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
@@ -157,9 +159,16 @@ public class Modulo extends AbstractOperation {
 
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor(
-                    call -> call.validate().allNotNullHaveSame(NDimensional::shape).isValid()
+                .setAutogradModeFor(
+                        call -> {
+                            if (
+                                call.validate().allNotNullHaveSame(NDimensional::shape)
+                                    .isValid()
+                            )
+                                return ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD;
+                            else
+                                return ADSupportPredicate.ADMode.BACKWARD_ONLY;
+                        }
                 )
                 .setSupplyADAgentFor( getDefaultAlgorithm() )
                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)

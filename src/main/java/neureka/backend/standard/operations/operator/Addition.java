@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.operator;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.ADSupportPredicate;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -28,7 +29,7 @@ public class Addition extends AbstractOperation {
     private final Broadcast _broadcast =
             (Broadcast)
                 new Broadcast((executionCall, executor) -> null)
-                .setCanPerformBackwardADFor( call -> true )
+                .setAutogradModeFor( call -> ADSupportPredicate.ADMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {

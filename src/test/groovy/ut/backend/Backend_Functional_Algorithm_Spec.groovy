@@ -4,11 +4,13 @@ package ut.backend
 import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm
+import neureka.backend.api.algorithms.fun.ADSupportPredicate
 import neureka.backend.api.algorithms.fun.ExecutionDispatcher
 import neureka.backend.api.algorithms.fun.ExecutionPreparation
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate
 import neureka.calculus.Function
 import neureka.devices.Device
+import neureka.ndim.NDimensional
 import spock.lang.Specification
 
 import java.util.function.Consumer
@@ -33,8 +35,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
 
         where : 'We call the following methods:'
             caller << [
-                    { Algorithm it -> it.canPerformBackwardADFor(null) },
-                    { Algorithm it -> it.canPerformForwardADFor(null) },
+                    { Algorithm it -> it.autogradModeFrom(null) },
                     { Algorithm it -> it.dispatch(null, null) },
                     { Algorithm it -> it.prepare(null) },
                     { Algorithm it -> it.supplyADAgentFor(null, null, false) }
@@ -51,8 +52,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
         when : 'We build it thoroughly...'
             algorithm
                     .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)
-                    .setCanPerformBackwardADFor( call -> true )
-                    .setCanPerformForwardADFor( call -> false )
+                    .setAutogradModeFor( call ->  ADSupportPredicate.ADMode.BACKWARD_ONLY )
                     .setSupplyADAgentFor((Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) -> null)
                     .setExecutionDispatcher(( caller, call ) -> null)
                     .setCallPreparation(call -> null)
@@ -60,8 +60,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
 
         then : 'The algorithm should be usable just fine!'
             algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT
-            algorithm.canPerformBackwardADFor(null)
-            !algorithm.canPerformForwardADFor(null)
+            algorithm.autogradModeFrom(null) == ADSupportPredicate.ADMode.BACKWARD_ONLY
             algorithm.supplyADAgentFor(null, null, true) == null
             algorithm.dispatch(null, null) == null
             algorithm.prepare(null) == null
@@ -71,8 +70,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
         and : 'Which we do not build fully this time...'
             algorithm
                     .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)
-                    .setCanPerformBackwardADFor( call -> true )
-                    .setCanPerformForwardADFor( call -> false )
+                    .setAutogradModeFor( call ->  ADSupportPredicate.ADMode.BACKWARD_ONLY )
                     .setSupplyADAgentFor((Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) -> null)
                     .setExecutionDispatcher(( caller, call ) -> null)
                     .setCallPreparation(null) // This is not acceptable!
@@ -97,8 +95,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
         when : 'We build it thoroughly...'
             algorithm
                     .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)
-                    .setCanPerformBackwardADFor( call -> true )
-                    .setCanPerformForwardADFor( call -> false )
+                    .setAutogradModeFor( call ->  ADSupportPredicate.ADMode.BACKWARD_ONLY )
                     .setSupplyADAgentFor((Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) -> null)
                     .setExecutionDispatcher(( caller, call ) -> null)
                     .setCallPreparation(call -> null)
@@ -106,9 +103,8 @@ class Backend_Functional_Algorithm_Spec extends Specification
 
         then : 'The algorithm should be usable just fine!'
             algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT
-            algorithm.canPerformBackwardADFor(null)
-            !algorithm.canPerformForwardADFor(null)
-            algorithm.supplyADAgentFor(null, null, true) == null
+            algorithm.autogradModeFrom(null) == ADSupportPredicate.ADMode.BACKWARD_ONLY
+        algorithm.supplyADAgentFor(null, null, true) == null
             algorithm.dispatch(null, null) == null
             algorithm.prepare(null) == null
 

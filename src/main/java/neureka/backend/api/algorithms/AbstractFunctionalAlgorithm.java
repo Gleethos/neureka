@@ -38,7 +38,7 @@ import java.util.Arrays;
  * @param <C> The final type extending this class.
  */
 public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>>
-extends AbstractBaseAlgorithm<C> implements ExecutionPreparation, ForwardADPredicate, BackwardADPredicate
+extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
 {
     private static final Logger _LOG = LoggerFactory.getLogger( AbstractFunctionalAlgorithm.class );
     /*
@@ -47,8 +47,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation, ForwardADPredi
         This makes the backend somewhat hackable, but also manageable with respect to complexity.
      */
     private SuitabilityPredicate _isSuitableFor;
-    private ForwardADPredicate   _canPerformForwardADFor;
-    private BackwardADPredicate  _canPerformBackwardADFor;
+    private ADSupportPredicate   _autogradModeFor;
     private ADAgentSupplier      _supplyADAgentFor;
     private ExecutionDispatcher  _handleInsteadOfDevice;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
@@ -70,28 +69,6 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation, ForwardADPredi
     public final float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         return _isSuitableFor.isSuitableFor(call);
-    }
-
-    /**
-     *  The {@link ForwardADPredicate} lambda implemented by this method checks if forward mode auto differentiation
-     *  can be performed for a given {@link ExecutionCall}.
-     *  The analyzer returns a boolean truth value.
-     */
-    @Override
-    public final boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call ) {
-        _checkReadiness();
-        return _canPerformForwardADFor.canPerformForwardADFor(call);
-    }
-
-    /**
-     *  A {@link BackwardADPredicate} lambda checks if backward mode auto differentiation
-     *  (also known as back-propagation) can be performed for a given {@link ExecutionCall}.
-     *  The analyzer returns a boolean truth value.
-     */
-    @Override
-    public final boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) {
-        _checkReadiness();
-        return _canPerformBackwardADFor.canPerformBackwardADFor( call );
     }
 
     /**
@@ -186,8 +163,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation, ForwardADPredi
     public final C buildFunAlgorithm() {
         if (
             _isSuitableFor == null ||
-            _canPerformForwardADFor == null ||
-            _canPerformBackwardADFor == null ||
+            _autogradModeFor == null ||
             _supplyADAgentFor == null ||
             _handleInsteadOfDevice == null ||
             _instantiateNewTensorsForExecutionIn == null
@@ -255,35 +231,6 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation, ForwardADPredi
     }
 
     /**
-     *  A {@link ForwardADPredicate} lambda checks if this
-     *  {@link Algorithm} can perform forward AD for a given {@link ExecutionCall}.
-     *  The lambda will be called by the {@link #canPerformForwardADFor(ExecutionCall)} method
-     *  by any given {@link Operation} instances this algorithm belongs to.
-     *
-     *
-     * @param canPerformForwardADFor The lambda which evaluates if a provided {@link ExecutionCall} can be forward propagated.
-     * @return This very instance to enable method chaining.
-     */
-    public final AbstractFunctionalAlgorithm<C> setCanPerformForwardADFor( ForwardADPredicate canPerformForwardADFor ) {
-        _canPerformForwardADFor = _checked(canPerformForwardADFor, _canPerformForwardADFor, ForwardADPredicate.class);
-        return this;
-    }
-
-    /**
-     *  A {@link BackwardADPredicate} lambda checks if this
-     *  {@link Algorithm} can perform backward AD for a given {@link ExecutionCall}.
-     *  The lambda will be called by the {@link #canPerformBackwardADFor(ExecutionCall)} method
-     *  by any given {@link Operation} instances this algorithm belongs to.
-     *
-     * @param canPerformBackwardADFor A predicate lambda which determines if this algorithm can perform backward AD for a given execution call.
-     * @return This very instance to enable method chaining.
-     */
-    public final AbstractFunctionalAlgorithm<C> setCanPerformBackwardADFor( BackwardADPredicate canPerformBackwardADFor ) {
-        _canPerformBackwardADFor = _checked(canPerformBackwardADFor, _canPerformBackwardADFor, BackwardADPredicate.class);
-        return this;
-    }
-
-    /**
      *  This method receives a {@link neureka.backend.api.algorithms.fun.ADAgentSupplier} which will supply
      *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
      *  The lambda will be called by the {@link #supplyADAgentFor(Function, ExecutionCall, boolean)} method
@@ -346,14 +293,24 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation, ForwardADPredi
         return this;
     }
 
+    /**
+     *  A {@link ADSupportPredicate} lambda checks what kind of auto differentiation mode an
+     *  {@link Algorithm} supports for a given {@link ExecutionCall}.
+     *  The lambda will be called by the {@link #autogradModeFrom(ExecutionCall)} method
+     *  by any given {@link Operation} instances this algorithm belongs to.
+     *
+     * @param autogradModeFor A predicate lambda which determines the auto diff mode of this algorithm a given execution call.
+     * @return This very instance to enable method chaining.
+     */
+    public final AbstractFunctionalAlgorithm<C> setAutogradModeFor( ADSupportPredicate autogradModeFor ) {
+        _autogradModeFor = _checked(autogradModeFor, _autogradModeFor, ADSupportPredicate.class);
+        return this;
+    }
+
     @Override
-    public ADMode autogradModeFrom(ExecutionCall<? extends Device<?>> call) {
-        boolean forward = this.canPerformForwardADFor(call);
-        boolean backward = this.canPerformBackwardADFor(call);
-        if ( forward && backward ) return ADMode.FORWARD_AND_BACKWARD;
-        if ( forward ) return ADMode.FORWARD_ONLY;
-        if ( backward ) return ADMode.BACKWARD_ONLY;
-        return ADMode.NO_AD;
+    public ADMode autogradModeFrom( ExecutionCall<? extends Device<?>> call ) {
+        _checkReadiness();
+        return _autogradModeFor.autogradModeFrom( call );
     }
 }
 
