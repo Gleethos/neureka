@@ -153,6 +153,7 @@ public class Call<D>
 
     }
 
+    public interface Else<T> { T orElse(T value); }
 
     /**
      *  This is a simple nested class offering various lambda based methods
@@ -165,8 +166,12 @@ public class Call<D>
 
         private boolean _isValid = true;
 
-
         public boolean isValid() { return _isValid; }
+
+        public <T> Else<T> ifValid( T value ) {
+            if ( isValid() ) return other -> value;
+            else return other -> other;
+        }
 
         /**
          *  The validity as float being &#62;0/true and 0/false.

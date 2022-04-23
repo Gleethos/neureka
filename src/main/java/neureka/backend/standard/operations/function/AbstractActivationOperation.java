@@ -50,12 +50,12 @@ abstract class AbstractActivationOperation extends AbstractOperation {
 
         setAlgorithm(
             new ScalarBroadcast(Fun.F64ToF64.pair(this::_activate, this::_derive))
-            .setAutogradModeFor( call -> {
-                if ( call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
-                    return ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD;
-                else
-                    return ADSupportPredicate.ADMode.BACKWARD_ONLY;
-            })
+            .setAutogradModeFor(
+                    call -> call
+                            .validate().allNotNullHaveSame(NDimensional::shape)
+                            .ifValid(ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD)
+                            .orElse(ADSupportPredicate.ADMode.BACKWARD_ONLY)
+            )
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
             .buildFunAlgorithm()
@@ -73,12 +73,12 @@ abstract class AbstractActivationOperation extends AbstractOperation {
 
         setAlgorithm(
             new ScalarActivation(Fun.F64ToF64.pair(this::_activate, this::_derive))
-            .setAutogradModeFor( call -> {
-                if ( call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
-                    return ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD;
-                else
-                    return ADSupportPredicate.ADMode.BACKWARD_ONLY;
-            })
+            .setAutogradModeFor(
+                    call -> call
+                            .validate().allNotNullHaveSame(NDimensional::shape)
+                            .ifValid(ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD)
+                            .orElse(ADSupportPredicate.ADMode.BACKWARD_ONLY)
+            )
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
             .buildFunAlgorithm()

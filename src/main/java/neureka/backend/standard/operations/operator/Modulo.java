@@ -89,16 +89,10 @@ public class Modulo extends AbstractOperation {
 
         Broadcast broadcast = new Broadcast((executionCall, executor) -> null)
             .setAutogradModeFor(
-                    call -> {
-                        if (
-                                call
-                                        .validate().allNotNullHaveSame(NDimensional::shape)
-                                        .isValid()
-                        )
-                            return ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD;
-                        else
-                            return ADSupportPredicate.ADMode.BACKWARD_ONLY;
-                    }
+                    call -> call
+                                .validate().allNotNullHaveSame(NDimensional::shape)
+                                .ifValid(ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD)
+                                .orElse(ADSupportPredicate.ADMode.BACKWARD_ONLY)
             )
             .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
@@ -160,15 +154,10 @@ public class Modulo extends AbstractOperation {
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setAutogradModeFor(
-                        call -> {
-                            if (
-                                call.validate().allNotNullHaveSame(NDimensional::shape)
-                                    .isValid()
-                            )
-                                return ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD;
-                            else
-                                return ADSupportPredicate.ADMode.BACKWARD_ONLY;
-                        }
+                        call -> call
+                                .validate().allNotNullHaveSame(NDimensional::shape)
+                                .ifValid(ADSupportPredicate.ADMode.FORWARD_AND_BACKWARD)
+                                .orElse(ADSupportPredicate.ADMode.BACKWARD_ONLY)
                 )
                 .setSupplyADAgentFor( getDefaultAlgorithm() )
                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
