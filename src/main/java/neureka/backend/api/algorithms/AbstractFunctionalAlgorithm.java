@@ -48,8 +48,9 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
      */
     private SuitabilityPredicate _isSuitableFor;
     private ADSupportPredicate   _autogradModeFor;
+    private Execution            _execution;
     private ADAgentSupplier      _supplyADAgentFor;
-    private ExecutionDispatcher  _handleInsteadOfDevice;
+    private ExecutionDispatcher _dispatcher;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
     /*
         This flag will ensure that we can warn the user that the state has been illegally modified.
@@ -109,8 +110,8 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
      */
     public final Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
-        if ( call == null ) return _handleInsteadOfDevice.dispatch( caller, call );
-        MemValidator checker = MemValidator.forInputs( call.inputs(), ()->_handleInsteadOfDevice.dispatch( caller, call ) );
+        if ( call == null ) return _dispatcher.dispatch( caller, call );
+        MemValidator checker = MemValidator.forInputs( call.inputs(), ()-> _dispatcher.dispatch( caller, call ) );
         if ( checker.isWronglyIntermediate() ) {
             throw new IllegalStateException(
                     "Output of algorithm '" + this.getName() + "' " +
@@ -163,8 +164,8 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
         if (
             _isSuitableFor == null ||
             _autogradModeFor == null ||
-            _supplyADAgentFor == null ||
-            _handleInsteadOfDevice == null ||
+            (_supplyADAgentFor == null && _execution == null) ||
+            (_dispatcher == null && _execution == null) ||
             _instantiateNewTensorsForExecutionIn == null
         ) {
             throw new IllegalStateException(
@@ -266,7 +267,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
      * @return This very instance to enable method chaining.
      */
     public final AbstractFunctionalAlgorithm<C> setExecutionDispatcher(ExecutionDispatcher handleInsteadOfDevice ) {
-        _handleInsteadOfDevice = _checked(handleInsteadOfDevice, _handleInsteadOfDevice, ExecutionDispatcher.class);
+        _dispatcher = _checked(handleInsteadOfDevice, _dispatcher, ExecutionDispatcher.class);
         return this;
     }
 
@@ -312,9 +313,14 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
         return _autogradModeFor.autoDiffModeFrom( call );
     }
 
+    public final AbstractFunctionalAlgorithm<C> setExecution( Execution execution ) {
+        _execution = _checked(execution, _execution, Execution.class);
+        return this;
+    }
 
     @Override
     public Result execute( Function caller, ExecutionCall<? extends Device<?>> call ) {
+        if ( _execution != null ) return _execution.execute( caller, call );
         return Result.of(this.dispatch(caller, call)).withADAgent(this);
     }
 }

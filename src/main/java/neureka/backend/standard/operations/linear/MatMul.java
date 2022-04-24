@@ -5,7 +5,9 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.ADAgentSupplier;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
@@ -53,35 +55,34 @@ public class MatMul extends AbstractOperation
                                                 .getEstimation()
                             )
                             .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
-                            .setSupplyADAgentFor(
-                                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                                {
-                                    if ( forward ) throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
-
-                                    Function matMul = Neureka.get().backend().getFunction().matMul();
-                                    int d = ( 1 + call.getValOf( Arg.DerivIdx.class ) ) % 2;
-                                    Tsr<?> derivative = call.input( d ).T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
-                                    derivative.to(call.getDevice());
-                                    return ADAgent.of( derivative )
-                                                  .setBackward( (node, error) -> {
-                                                      if ( d == 1 )
-                                                          return matMul.execute( error, derivative );
-                                                      else
-                                                          return matMul.execute( derivative, error );
-                                                  });
-                                }
-                            )
-                            .setExecutionDispatcher(
+                            .setExecution(
                                 ( caller, call ) -> {
+                                    ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                                    {
+                                        if ( forward ) throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
+
+                                        Function matMul = Neureka.get().backend().getFunction().matMul();
+                                        int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
+                                        Tsr<?> derivative = adCall.input( d ).T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                                        derivative.to(adCall.getDevice());
+                                        return ADAgent.of( derivative )
+                                                .setBackward( (node, error) -> {
+                                                    if ( d == 1 )
+                                                        return matMul.execute( error, derivative );
+                                                    else
+                                                        return matMul.execute( derivative, error );
+                                                });
+                                    };
+
                                     if ( !caller.isFlat() )
-                                        return CalcUtil.defaultRecursiveExecution( caller, call );
+                                        return Result.of(CalcUtil.defaultRecursiveExecution( caller, call )).withADAgent(autoDiff);
 
                                     Tsr<?>[] tensors = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
                                     for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
                                     ExecutionCall<Device<Object>> preparedCall = _prepare( call.withInputs(tensors) );
-                                    return MatMul.this.simpleMatMulAlgorithm
+                                    return Result.of(MatMul.this.simpleMatMulAlgorithm
                                                         .getImplementationFor(call.getDeviceFor(Object.class))
-                                                        .runAndGetFirstTensor(preparedCall);
+                                                        .runAndGetFirstTensor(preparedCall)).withADAgent(autoDiff);
                                 }
                             )
                             .setCallPreparation( MatMul::_prepare )
