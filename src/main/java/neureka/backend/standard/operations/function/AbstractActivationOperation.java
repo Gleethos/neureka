@@ -57,8 +57,7 @@ abstract class AbstractActivationOperation extends AbstractOperation {
                             .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
                             .orElse(AutoDiff.BACKWARD_ONLY)
             )
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
-            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
+            .setExecution( (caller, call) -> Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withADAgent(getDefaultAlgorithm()) )
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
@@ -75,22 +74,22 @@ abstract class AbstractActivationOperation extends AbstractOperation {
         setAlgorithm(
             new ScalarActivation(Fun.F64ToF64.pair(this::_activate, this::_derive))
             .setAutogradModeFor(
-                    call -> call
-                            .validate().allNotNullHaveSame(NDimensional::shape)
-                            .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
-                            .orElse(AutoDiff.BACKWARD_ONLY)
+                call -> call
+                        .validate().allNotNullHaveSame(NDimensional::shape)
+                        .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
+                        .orElse(AutoDiff.BACKWARD_ONLY)
             )
             .setExecution( (caller, call) -> Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withADAgent(getDefaultAlgorithm()))
             .buildFunAlgorithm()
             .setImplementationFor(
-                    CPU.class,
-                    ScalarActivation.implementationForCPU()
-                            .with(Fun.F64ToF64.pair(this::_activate, this::_derive))
-                            .with(Fun.F32ToF32.pair(this::_activate, this::_derive))
-                            .with(Fun.I32ToI32.pair(this::_activate, this::_derive))
-                            .with(Fun.I8ToI8.pair(this::_activate, this::_derive))
-                            .with(Fun.I16ToI16.pair(this::_activate, this::_derive))
-                            .get()
+                CPU.class,
+                ScalarActivation.implementationForCPU()
+                        .with(Fun.F64ToF64.pair(this::_activate, this::_derive))
+                        .with(Fun.F32ToF32.pair(this::_activate, this::_derive))
+                        .with(Fun.I32ToI32.pair(this::_activate, this::_derive))
+                        .with(Fun.I8ToI8.pair(this::_activate, this::_derive))
+                        .with(Fun.I16ToI16.pair(this::_activate, this::_derive))
+                        .get()
             )
         );
     }
