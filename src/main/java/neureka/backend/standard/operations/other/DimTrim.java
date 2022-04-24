@@ -5,7 +5,9 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.ADAgentSupplier;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -41,29 +43,28 @@ public class DimTrim extends AbstractOperation
                 .withName("dimTrim")
                 .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
                 .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
-                .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                    {
-                        int[] endings = endsFrom( call.input( 0 ).getNDConf().shape() );
-                        int prefix  = endings[ 0 ];
-                        int postfix = endings[ 1 ];
-                        if ( forward )
-                            throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
-
-                        return ADAgent.of( null )
-                                .withArgs( Arg.Ends.of(endings) )
-                                .setForward(
-                                      (t, derivative) ->
-                                          new FunctionBuilder( Neureka.get().backend() )
-                                                  .build(f.toString(), false)
-                                                  .derive(new Tsr[]{derivative},0)
-                                )
-                                .setBackward( (t, error) -> _pad(error, new int[]{prefix, postfix}, true) );
-                    }
-                )
-                .setExecutionDispatcher(
+                .setExecution(
                     ( caller, call ) ->
                     {
+                        ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                        {
+                            int[] endings = endsFrom( adCall.input( 0 ).getNDConf().shape() );
+                            int prefix  = endings[ 0 ];
+                            int postfix = endings[ 1 ];
+                            if ( forward )
+                                throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
+
+                            return ADAgent.of( null )
+                                    .withArgs( Arg.Ends.of(endings) )
+                                    .setForward(
+                                            (t, derivative) ->
+                                                    new FunctionBuilder( Neureka.get().backend() )
+                                                            .build(f.toString(), false)
+                                                            .derive(new Tsr[]{derivative},0)
+                                    )
+                                    .setBackward( (t, error) -> _pad(error, new int[]{prefix, postfix}, true) );
+                        };
+
                         Tsr<?>[] inputs = CalcUtil.srcActivation(
                                                 call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0,
                                                 caller.getSubFunctions().toArray(new Function[0])
@@ -73,9 +74,9 @@ public class DimTrim extends AbstractOperation
                         if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {
                             int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
                             int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
-                            return _pad( t, new int[]{prefix, postfix}, true );
+                            return Result.of(_pad( t, new int[]{prefix, postfix}, true )).withADAgent(autoDiff);
                         } else
-                            return _trim( t, true );
+                            return Result.of(_trim( t, true )).withADAgent(autoDiff);
                     }
                 )
                 .setCallPreparation( call -> call )
