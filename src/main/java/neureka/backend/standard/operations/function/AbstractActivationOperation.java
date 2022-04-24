@@ -1,6 +1,7 @@
 package neureka.backend.standard.operations.function;
 
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -79,8 +80,7 @@ abstract class AbstractActivationOperation extends AbstractOperation {
                             .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
                             .orElse(AutoDiff.BACKWARD_ONLY)
             )
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
-            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
+            .setExecution( (caller, call) -> Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withADAgent(getDefaultAlgorithm()))
             .buildFunAlgorithm()
             .setImplementationFor(
                     CPU.class,
