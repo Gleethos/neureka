@@ -7,6 +7,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -65,40 +66,41 @@ public final class CLFunctionCompiler {
                 .setStringifier(
                         children -> {
                             String expression = String.join( ", ", children );
-                            if ( expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')' ) {
+                            if ( expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')' )
                                 return _functionName + expression;
-                            }
                             return _functionName + "(" + expression + ")";
                         }
                 )
                 .build()
                 .setAlgorithm(
-                        Algorithm.withName( "generic_algorithm_for_"+ _functionName )
-                                .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
-                                .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
-                                .setSupplyADAgentFor(
-                                        (Function f, ExecutionCall<? extends Device<?>> call, boolean forward) -> {
-                                            // TODO: calculate derivative and supply agent!
-                                            return ADAgent.of( null )
-                                                            .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
-                                                            .setBackward((t, error) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
-                                        }
-                                )
-                                .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
-                                .setCallPreparation(
-                                        call -> {
-                                            if ( call.input( 0 ) == null ) // Creating a new tensor:
-                                            {
-                                                Tsr<Double> output = Tsr.of(call.input(1).getNDConf().shape(), 0.0);
-                                                output.setIsVirtual( false );
-                                                call.getDeviceFor(Double.class).store(output);
-                                                call.setInput( 0, output );
-                                            }
-                                            return call;
-                                        }
-                                )
-                                .buildFunAlgorithm()
-                                .setImplementationFor( OpenCLDevice.class, this::_adHocKernelFor )
+                    Algorithm
+                        .withName( "generic_algorithm_for_"+ _functionName )
+                        .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
+                        .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
+                        .setExecution(
+                            (caller, call) ->
+                                Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
+                                    .withADAgent((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward) -> {
+                                        // TODO: calculate derivative and supply agent!
+                                        return ADAgent.of( null )
+                                                .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
+                                                .setBackward((t, error) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                    })
+                        )
+                        .setCallPreparation(
+                            call -> {
+                                if ( call.input( 0 ) == null ) // Creating a new tensor:
+                                {
+                                    Tsr<Double> output = Tsr.of(call.input(1).getNDConf().shape(), 0.0);
+                                    output.setIsVirtual( false );
+                                    call.getDeviceFor(Double.class).store(output);
+                                    call.setInput( 0, output );
+                                }
+                                return call;
+                            }
+                        )
+                        .buildFunAlgorithm()
+                        .setImplementationFor( OpenCLDevice.class, this::_adHocKernelFor )
                 );
     }
 
