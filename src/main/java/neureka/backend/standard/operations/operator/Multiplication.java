@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -142,8 +143,7 @@ public class Multiplication extends AbstractOperation
 
         Scalarization scalarization = new Scalarization()
                 .setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD )
-                .setSupplyADAgentFor( getDefaultAlgorithm() )
-                .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications ) )
+                .setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications )).withADAgent(getDefaultAlgorithm()) )
                 .buildFunAlgorithm();
 
         setAlgorithm(

@@ -6,6 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -218,12 +219,11 @@ public class Power extends AbstractOperation
         // TENSOR SCALAR OPERATION :
 
         Scalarization scalarization =
-                new Scalarization()
-                        .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                        .setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD )
-                        .setSupplyADAgentFor( getDefaultAlgorithm() )
-                        .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, rja ) )
-                        .buildFunAlgorithm();
+            new Scalarization()
+                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
+                .setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD )
+                .setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, rja )).withADAgent(getDefaultAlgorithm()) )
+                .buildFunAlgorithm();
 
         setAlgorithm(
             Scalarization.class,

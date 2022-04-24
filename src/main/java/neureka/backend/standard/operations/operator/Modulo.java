@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -159,8 +160,7 @@ public class Modulo extends AbstractOperation {
                                 .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
                                 .orElse(AutoDiff.BACKWARD_ONLY)
                 )
-                .setSupplyADAgentFor( getDefaultAlgorithm() )
-                .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
+                .setExecution( (caller, call) -> Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withADAgent(getDefaultAlgorithm()) )
                 .buildFunAlgorithm();
 
         setAlgorithm(
