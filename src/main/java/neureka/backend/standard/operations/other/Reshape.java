@@ -6,6 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -38,18 +39,7 @@ public class Reshape extends AbstractOperation
             .withName( "reshape" )
             .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
             .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
-            .setSupplyADAgentFor(
-                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                {
-                    if ( forward )
-                        throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-
-                    return ADAgent.of( null )
-                            .setForward( (t, derivative ) -> new FunctionBuilder( Neureka.get().backend() ).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
-                            .setBackward( (t, error ) -> new FunctionBuilder( Neureka.get().backend() ).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
-                }
-            )
-            .setExecutionDispatcher(
+            .setExecution(
                 ( caller, call ) ->
                 {
                     Tsr<?>[] inputs = CalcUtil.srcActivation( call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );
@@ -60,7 +50,16 @@ public class Reshape extends AbstractOperation
                     if ( call.getValOf( Arg.DerivIdx.class ) >= 0 ) //reverse reshape:
                         newForm = invert( newForm );
 
-                    return _reshaped( inputs[ inputs.length - 1 ], newForm, true );
+                    return Result.of(_reshaped( inputs[ inputs.length - 1 ], newForm, true ))
+                            .withADAgent( ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                            {
+                                if ( forward )
+                                    throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
+
+                                return ADAgent.of( null )
+                                        .setForward( (t, derivative ) -> new FunctionBuilder( Neureka.get().backend() ).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
+                                        .setBackward( (t, error ) -> new FunctionBuilder( Neureka.get().backend() ).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
+                            });
                 }
             )
             .setCallPreparation( call -> call )
