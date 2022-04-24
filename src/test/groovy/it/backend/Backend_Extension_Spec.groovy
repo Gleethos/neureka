@@ -9,6 +9,7 @@ import neureka.backend.api.BackendContext
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.backend.api.algorithms.fun.AutoDiff
+import neureka.backend.api.algorithms.fun.Result
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate
 import neureka.backend.standard.implementations.CPUImplementation
 import neureka.calculus.Function
@@ -69,64 +70,64 @@ class Backend_Extension_Spec extends Specification
                                 .build()
                                 .setAlgorithm(
                                         Algorithm.withName(null)
-                                                .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )
-                                                .setAutogradModeFor(call -> AutoDiff.BACKWARD_ONLY )
-                                                .setSupplyADAgentFor(
-                                                        (Function f, ExecutionCall<? extends Device<?>> call, boolean forward) -> {
-                                                            if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-                                                            return ADAgent.of( null )
-                                                                    .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
-                                                                    .setBackward((t, error) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                            .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )
+                                            .setAutogradModeFor(call -> AutoDiff.BACKWARD_ONLY )
+                                            .setExecution( (caller, call) ->
+                                                Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
+                                                    .withADAgent((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward) -> {
+                                                        if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
+                                                        return ADAgent.of( null )
+                                                                .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
+                                                                .setBackward((t, error) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                                    })
+                                            )
+                                            .setCallPreparation(
+                                                    call -> {
+                                                         Device<?> device = call.getDevice();
+                                                        if ( call.input( 0 ) == null ) // Creating a new tensor:
+                                                        {
+                                                            int[] shp = new int[]{call.input( 1 ).getNDConf().shape(0), call.input( 2 ).getNDConf().shape(1)}
+                                                            Tsr output = Tsr.of(shp, 0.0);
+                                                            output.setIsVirtual(false);
+                                                            device.store( output );
+                                                            call.setInput( 0, output );
                                                         }
-                                                )
-                                                .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
-                                                .setCallPreparation(
-                                                        call -> {
-                                                             Device<?> device = call.getDevice();
-                                                            if ( call.input( 0 ) == null ) // Creating a new tensor:
-                                                            {
-                                                                int[] shp = new int[]{call.input( 1 ).getNDConf().shape(0), call.input( 2 ).getNDConf().shape(1)}
-                                                                Tsr output = Tsr.of(shp, 0.0);
-                                                                output.setIsVirtual(false);
-                                                                device.store( output );
-                                                                call.setInput( 0, output );
-                                                            }
-                                                            return call;
-                                                        }
-                                                )
-                                                .setImplementationFor(
-                                                        CPU.class,
-                                                        CPUImplementation
-                                                            .withArity(3)
-                                                            .andImplementation(
-                                                                (call) -> {
-                                                                    Tsr drn = call.input(Number.class, 0)
-                                                                    Tsr src1 = call.input(Number.class, 1)
-                                                                    Tsr src2 = call.input(Number.class, 2)
-                                                                    assert src1.shape(1) == src2.shape(0)
+                                                        return call;
+                                                    }
+                                            )
+                                            .setImplementationFor(
+                                                    CPU.class,
+                                                    CPUImplementation
+                                                        .withArity(3)
+                                                        .andImplementation(
+                                                            (call) -> {
+                                                                Tsr drn = call.input(Number.class, 0)
+                                                                Tsr src1 = call.input(Number.class, 1)
+                                                                Tsr src2 = call.input(Number.class, 2)
+                                                                assert src1.shape(1) == src2.shape(0)
 
-                                                                    //for ( int i=0; i<clContext.getGws(); i++ ) {
-                                                                    //    kernel.gemm_template(
-                                                                    //            drn.getDataAs( float[].class ),                     //__global float[] drain,
-                                                                    //            drn.getNDConf().asInlineArray(),   //__global int[] drn_conf,
-                                                                    //            src1.getDataAs( float[].class ),                    //const __global float[] src1,
-                                                                    //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,
-                                                                    //            src2.getDataAs( float[].class ),                    //const __global float[] src2,
-                                                                    //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,
-                                                                    //            //call.getTsrOfType( Number.class, 0).rank(),//int rank, == 2
-                                                                    //            //-1, //const int d,
-                                                                    //            clContext.getMaxTSRow(),//128, //const u int max_ts_row,//  = 128, // ts := tile size
-                                                                    //            clContext.getMaxTSCol(),//128, //const u int max_ts_col,//  = 128,
-                                                                    //            clContext.getMaxTSCom(),//16, //const u int max_ts_com,//  = 16,
-                                                                    //            clContext.getMaxWPTRow(),//8, //const u int max_wpt_row,// = 8,   // wpt := work per thread
-                                                                    //            clContext.getMaxWPTCol()//8  //const u int max_wpt_col // = 8,
-                                                                    //    )
-                                                                    //    clContext.increment()
-                                                                    //}
-                                                                }
-                                                            )
-                                                )
-                                                .buildFunAlgorithm()
+                                                                //for ( int i=0; i<clContext.getGws(); i++ ) {
+                                                                //    kernel.gemm_template(
+                                                                //            drn.getDataAs( float[].class ),                     //__global float[] drain,
+                                                                //            drn.getNDConf().asInlineArray(),   //__global int[] drn_conf,
+                                                                //            src1.getDataAs( float[].class ),                    //const __global float[] src1,
+                                                                //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,
+                                                                //            src2.getDataAs( float[].class ),                    //const __global float[] src2,
+                                                                //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,
+                                                                //            //call.getTsrOfType( Number.class, 0).rank(),//int rank, == 2
+                                                                //            //-1, //const int d,
+                                                                //            clContext.getMaxTSRow(),//128, //const u int max_ts_row,//  = 128, // ts := tile size
+                                                                //            clContext.getMaxTSCol(),//128, //const u int max_ts_col,//  = 128,
+                                                                //            clContext.getMaxTSCom(),//16, //const u int max_ts_com,//  = 16,
+                                                                //            clContext.getMaxWPTRow(),//8, //const u int max_wpt_row,// = 8,   // wpt := work per thread
+                                                                //            clContext.getMaxWPTCol()//8  //const u int max_wpt_col // = 8,
+                                                                //    )
+                                                                //    clContext.increment()
+                                                                //}
+                                                            }
+                                                        )
+                                            )
+                                            .buildFunAlgorithm()
                                 )
                 )
             }

@@ -48,16 +48,14 @@ class Backend_Functional_Algorithm_Spec extends Specification
             algorithm
                     .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)
                     .setAutogradModeFor( call ->  AutoDiff.BACKWARD_ONLY )
-                    .setSupplyADAgentFor((Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) -> null)
-                    .setExecutionDispatcher(( caller, call ) -> null)
+                    .setExecution(( caller, call ) -> null)
                     .setCallPreparation(call -> null)
                     .buildFunAlgorithm()
 
         then : 'The algorithm should be usable just fine!'
             algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT
             algorithm.autoDiffModeFrom(null) == AutoDiff.BACKWARD_ONLY
-            algorithm.supplyADAgentFor(null, null, true) == null
-            algorithm.dispatch(null, null) == null
+            algorithm.execute(null, null) == null
             algorithm.prepare(null) == null
 
         when : 'We create a new instance!'
@@ -65,9 +63,8 @@ class Backend_Functional_Algorithm_Spec extends Specification
         and : 'Which we do not build fully this time...'
             algorithm
                     .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)
-                    .setAutogradModeFor( call ->  ADSupportPredicate.AutoDiff.BACKWARD_ONLY )
-                    .setSupplyADAgentFor((Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) -> null)
-                    .setExecutionDispatcher(( caller, call ) -> null)
+                    .setAutogradModeFor( call ->  AutoDiff.BACKWARD_ONLY )
+                    .setExecution(( caller, call ) -> null)
                     .setCallPreparation(null) // This is not acceptable!
                     .buildFunAlgorithm()
 
@@ -91,16 +88,14 @@ class Backend_Functional_Algorithm_Spec extends Specification
             algorithm
                     .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)
                     .setAutogradModeFor( call ->  AutoDiff.BACKWARD_ONLY )
-                    .setSupplyADAgentFor((Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) -> null)
-                    .setExecutionDispatcher(( caller, call ) -> null)
+                    .setExecution(( caller, call ) -> null)
                     .setCallPreparation(call -> null)
                     .buildFunAlgorithm()
 
         then : 'The algorithm should be usable just fine!'
             algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT
             algorithm.autoDiffModeFrom(null) == AutoDiff.BACKWARD_ONLY
-        algorithm.supplyADAgentFor(null, null, true) == null
-            algorithm.dispatch(null, null) == null
+            algorithm.execute(null, null) == null
             algorithm.prepare(null) == null
 
         when : 'We try to modify the algorithm even if it is already built...'
@@ -110,7 +105,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
                     "[Test worker] WARN neureka.backend.api.algorithms.AbstractFunctionalAlgorithm - " +
                     "Implementation '$type.simpleName' in algorithm '$algorithm' was modified! " +
                     "Please consider only modifying the standard backend state of Neureka for experimental reasons."
-            )
+                )
 
         cleanup :
             System.err = oldStream
@@ -119,7 +114,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
             type                        | setter
             ExecutionPreparation.class  | { TestAlgorithm it -> it.setCallPreparation( call -> null ) }
             SuitabilityPredicate.class  | { TestAlgorithm it -> it.setIsSuitableFor( call -> SuitabilityPredicate.NOT_GOOD ) }
-            ExecutionDispatcher.class   | { TestAlgorithm it -> it.setExecutionDispatcher(( caller, call ) -> null ) }
+            Execution.class             | { TestAlgorithm it -> it.setExecution(( caller, call ) -> null ) }
     }
 
 
