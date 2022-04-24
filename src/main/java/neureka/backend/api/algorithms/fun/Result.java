@@ -4,14 +4,16 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.common.utility.LogUtil;
 
+/**
+ *  An immutable wrapper for a tensor as a result of anb {@link Execution}
+ *  as well as an {@link ADAgentSupplier} for providing auto-differentiation support.
+ */
 public class Result
 {
     private final Tsr<?> _tensor;
     private final ADAgentSupplier _agent;
 
-    public static Result of(Tsr<?> tensor) {
-        return new Result(tensor, null);
-    }
+    public static Result of(Tsr<?> tensor) { return new Result(tensor, null); }
 
     private Result( Tsr<?> tensor, ADAgentSupplier agent ) {
         _tensor = tensor;
@@ -25,9 +27,7 @@ public class Result
         return new Result( _tensor, agent );
     }
 
-    public <V> Tsr<V> get() {
-        return (Tsr<V>) _tensor;
-    }
+    public <V> Tsr<V> get() { return (Tsr<V>) _tensor; }
 
     public ADAgentSupplier getAgentSupplier() { return _agent; }
 

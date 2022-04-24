@@ -148,10 +148,10 @@ to perform said procedures.
 ```
 ---
 
-This method is defined by the `ExecutionDispatcher` functional interface which
+This method is defined by the `Execution` functional interface which
 is supposed to be the final execution procedure responsible for electing an `neureka.backend.api.ImplementationFor`
 the chosen `Device` in a given `ExecutionCall`.
-However, the  `ExecutionDispatcher` does not have to select a device specific implementation.
+However, the  `Execution` does not have to select a device specific implementation.
 It can also occupy the rest of the execution without any other steps being taken.
 For example, a `neureka.backend.api.ImplementationFor` or a `RecursiveExecutor`
 would not be used if not explicitly called.
@@ -164,7 +164,7 @@ one can simply ignore it and find a custom one which fits the contents of the gi
 `ExecutionCall` instance better.
 
 ```java
-    Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call );
+    Result execute(Function caller, ExecutionCall<? extends Device<?>> call );
 ```
 
 ---
