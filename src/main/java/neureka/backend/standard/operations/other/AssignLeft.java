@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -45,8 +46,10 @@ public class AssignLeft extends AbstractOperation
                }
             )
             .setAutogradModeFor( call -> AutoDiff.NOT_SUPPORTED)
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
-            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
+            .setExecution(
+                    (caller, call) ->
+                            Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withADAgent(getDefaultAlgorithm())
+            )
             .setCallPreparation(
                 call -> {
                     int offset = ( call.input( 0 ) == null ? 1 : 0 );
@@ -106,8 +109,10 @@ public class AssignLeft extends AbstractOperation
                         .suitabilityIfValid(SuitabilityPredicate.EXCELLENT)
             )
             .setAutogradModeFor( call -> AutoDiff.NOT_SUPPORTED)
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
-            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
+            .setExecution(
+                    (caller, call) ->
+                            Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withADAgent(getDefaultAlgorithm())
+            )
             .setCallPreparation(
                     call -> {
                         int offset = ( call.input( 0 ) == null ? 1 : 0 );
