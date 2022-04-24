@@ -110,49 +110,25 @@ class Backend_Algorithm_AD_Spec extends Specification
     }
 
 
-    def 'Convolution implementations behave as expected.'(
-            Algorithm imp
-    ){
+    def 'Convolution implementations behave as expected.'( Algorithm imp ){
 
         given : 'The current Neureka instance is being reset.'
             Neureka.get().reset()
 
-        and : 'A mock Function.'
-            def function = Mock(Function)
-            def derivative = Mock(Tsr)
-            function.derive(*_) >> derivative
-            function.executeDerive(*_) >> derivative
-
         and : 'A mock ExecutionCall.'
-            def call = Mock(ExecutionCall)
+            var call = ExecutionCall.of().running(Mock(Operation)).algorithm(imp).on(Mock(Device))
 
-        when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
-            ADAgent agent = imp.supplyADAgentFor(
-                                    function,
-                                    call,
-                                    true
-                            )
-
-        then : 'An exception is being thrown because implementations of type "Convolution" can only perform reverse mode AD!'
-            def exception = thrown(IllegalArgumentException)
-            exception.message == "Convolution does not support forward-AD!"
-
-        when : 'The agent generator is called once more with the forward flag set to false...'
-            agent = imp.supplyADAgentFor(
-                                function,
-                                call,
-                                false
-                            )
+        when :
+            var suitability = imp.isSuitableFor(call)
         then :
-            (0.._) * call.inputs() >> [Tsr.of(1), Tsr.of(2)]
-            (1.._) * call.arity() >> 2
-            (1.._) * call.input(_) >> Tsr.of(1)
+            0 <= suitability && suitability <= 1
 
-        then : 'No exception is being thrown and the agent is configured to perform backward-AD.'
-            //!agent.isForward() //TODO: Fix this
-            agent.derivative() == derivative
+        when :
+            var mode = imp.autoDiffModeFrom(call)
+        then :
+            mode != null
 
-        where : 'The variable "imp" is from a List of OperationType implementations of type "Convolution".'
+        where : 'The variable "imp" is from a List of Operation implementations of type "Convolution".'
             imp << Neureka.get().backend()
                                 .getOperations()
                                 .stream()
