@@ -6,7 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.ADAgentSupplier;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -54,7 +54,7 @@ public class MatMul extends AbstractOperation
                                                 .badIfAnyNonNull( t -> !( t.getNDConf() instanceof Simple2DConfiguration) )
                                                 .getEstimation()
                             )
-                            .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
+                            .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                             .setExecution(
                                 ( caller, call ) -> {
                                     ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
@@ -75,14 +75,14 @@ public class MatMul extends AbstractOperation
                                     };
 
                                     if ( !caller.isFlat() )
-                                        return Result.of(CalcUtil.defaultRecursiveExecution( caller, call )).withADAgent(autoDiff);
+                                        return Result.of(CalcUtil.defaultRecursiveExecution( caller, call )).withAutoDiff(autoDiff);
 
                                     Tsr<?>[] tensors = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
                                     for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
                                     ExecutionCall<Device<Object>> preparedCall = _prepare( call.withInputs(tensors) );
                                     return Result.of(MatMul.this.simpleMatMulAlgorithm
                                                         .getImplementationFor(call.getDeviceFor(Object.class))
-                                                        .runAndGetFirstTensor(preparedCall)).withADAgent(autoDiff);
+                                                        .runAndGetFirstTensor(preparedCall)).withAutoDiff(autoDiff);
                                 }
                             )
                             .setCallPreparation( MatMul::_prepare )

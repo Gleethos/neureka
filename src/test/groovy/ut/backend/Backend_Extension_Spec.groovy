@@ -8,7 +8,7 @@ import neureka.autograd.GraphNode
 import neureka.backend.api.Algorithm
 import neureka.backend.api.Operation
 import neureka.backend.api.algorithms.fun.ADAgentSupplier
-import neureka.backend.api.algorithms.fun.AutoDiff
+import neureka.backend.api.algorithms.fun.AutoDiffMode
 import neureka.backend.api.algorithms.fun.Result
 import neureka.calculus.implementations.FunctionInput
 import neureka.calculus.implementations.FunctionNode
@@ -116,7 +116,7 @@ class Backend_Extension_Spec extends Specification
             (1.._) * ndc.shape() >> new int[]{1,2}
             (1.._) * type.isInline() >> false
             (1.._) * type.getAlgorithmFor(_) >> implementation
-            (1.._) * implementation.execute(_,_) >> Result.of(output).withADAgent(adSource)
+            (1.._) * implementation.execute(_,_) >> Result.of(output).withAutoDiff(adSource)
             (1.._) * output.getUnsafe() >> mutate
             (1.._) * mutate.setIsIntermediate(false) >> output
             (1.._) * output.isIntermediate() >> true
@@ -132,7 +132,7 @@ class Backend_Extension_Spec extends Specification
 
         and : 'The given ADAnalyzer instance is being called because auto-differentiation is enabled.'
             (1.._) * input.rqsGradient() >> true
-            (1.._) * implementation.autoDiffModeFrom(_) >> AutoDiff.BACKWARD_ONLY
+            (1.._) * implementation.autoDiffModeFrom(_) >> AutoDiffMode.BACKWARD_ONLY
             (1.._) * node.getPayload() >> input
             (1.._) * node.usesAD() >> true
 

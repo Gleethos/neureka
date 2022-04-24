@@ -9,8 +9,6 @@ import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.*;
 import neureka.backend.standard.memory.MemValidator;
 import neureka.calculus.Function;
-import neureka.calculus.implementations.FunctionNode;
-import neureka.calculus.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -236,7 +234,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     }
 
     @Override
-    public AutoDiff autoDiffModeFrom(ExecutionCall<? extends Device<?>> call ) {
+    public AutoDiffMode autoDiffModeFrom(ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         return _autogradModeFor.autoDiffModeFrom( call );
     }
@@ -251,13 +249,13 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
         _checkReadiness();
         if ( call == null ) {
             if ( _supplyADAgentFor != null )
-                return _execution.execute( caller, call ).withADAgent(_supplyADAgentFor);
+                return _execution.execute( caller, call ).withAutoDiff(_supplyADAgentFor);
             else
                 return _execution.execute( caller, call );
         }
         MemValidator checker = MemValidator.forInputs( call.inputs(), ()-> {
             if ( _supplyADAgentFor != null )
-                return _execution.execute( caller, call ).withADAgent(_supplyADAgentFor);
+                return _execution.execute( caller, call ).withAutoDiff(_supplyADAgentFor);
             else
                 return _execution.execute( caller, call );
         });

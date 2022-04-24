@@ -3,7 +3,7 @@ package neureka.backend.standard.operations.operator;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -30,7 +30,7 @@ public class Addition extends AbstractOperation {
     private final Broadcast _broadcast =
             (Broadcast)
                 new Broadcast((executionCall, executor) -> null)
-                .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
+                .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
@@ -147,7 +147,7 @@ public class Addition extends AbstractOperation {
 
         Scalarization scalarization =
             new Scalarization()
-                .setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions )).withADAgent(getDefaultAlgorithm()) )
+                .setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions )).withAutoDiff(getDefaultAlgorithm()) )
                 .buildFunAlgorithm();
 
         setAlgorithm(

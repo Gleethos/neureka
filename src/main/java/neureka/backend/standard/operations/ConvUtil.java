@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.ADAgentSupplier;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.operations.other.Reshape;
@@ -27,13 +27,13 @@ public class ConvUtil {
     public static Convolution createDeconvolutionFor( String operator ) {
         return new Convolution()
                 .setAutogradModeFor( call -> {
-                    if ( call.getOperation().supports( Convolution.class ) ) return AutoDiff.BACKWARD_ONLY;
+                    if ( call.getOperation().supports( Convolution.class ) ) return AutoDiffMode.BACKWARD_ONLY;
                     Tsr<?> last = null;
                     for ( Tsr<?> t : call.inputs() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return AutoDiff.BACKWARD_ONLY;
+                        if ( last != null && !last.shape().equals(t.shape()) ) return AutoDiffMode.BACKWARD_ONLY;
                         last = t; // Note: shapes are cached!
                     }
-                    return AutoDiff.FORWARD_AND_BACKWARD;
+                    return AutoDiffMode.FORWARD_AND_BACKWARD;
                 })
                 .setExecution(
                     ( caller, call ) -> {
@@ -68,7 +68,7 @@ public class ConvUtil {
                                                     )
                                     );
                         };
-                        if ( !caller.isFlat() ) return Result.of(CalcUtil.defaultRecursiveExecution( caller, call )).withADAgent(autoDiff);
+                        if ( !caller.isFlat() ) return Result.of(CalcUtil.defaultRecursiveExecution( caller, call )).withAutoDiff(autoDiff);
                         if ( call.getOperation().getOperator().equals("x") ) {
                             Tsr<?>[] tensors = new Tsr[]{null, call.input( 0 ), call.input( 1 )};
                             tensors[ 0 ] =
@@ -86,7 +86,7 @@ public class ConvUtil {
                             tensors[ 0 ] = CalcUtil.recursiveExecution( call.withInputs(tensors), JunctionUtil::forConvolution );
                             if ( tensors[ 0 ] == null )
                                 throw new IllegalStateException("Failed to execute convolution!");
-                            return Result.of(tensors[ 0 ]).withADAgent(autoDiff);
+                            return Result.of(tensors[ 0 ]).withAutoDiff(autoDiff);
                         } else {
                             if ( call.getValOf( Arg.DerivIdx.class ) < 0 ) {
                                 Tsr<?>[] tensors = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
@@ -100,12 +100,12 @@ public class ConvUtil {
                                                             JunctionUtil::forConvolution
                                                         );
                                 if ( call.getOperation() == Neureka.get().backend().getOperation("x>>") )
-                                    return Result.of(tensors[ 2 ]).withADAgent(autoDiff);
+                                    return Result.of(tensors[ 2 ]).withAutoDiff(autoDiff);
                                 else
-                                    return Result.of(tensors[ 0 ]).withADAgent(autoDiff);
+                                    return Result.of(tensors[ 0 ]).withAutoDiff(autoDiff);
                             }
                         }
-                        return Result.of(CalcUtil.defaultRecursiveExecution( caller, call )).withADAgent(autoDiff);
+                        return Result.of(CalcUtil.defaultRecursiveExecution( caller, call )).withAutoDiff(autoDiff);
                     }
                 )
                 .setCallPreparation(

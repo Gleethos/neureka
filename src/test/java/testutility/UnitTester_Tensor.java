@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
@@ -227,12 +227,12 @@ public class UnitTester_Tensor extends UnitTester
                                 .setAutogradModeFor(
                                         call -> call
                                                 .validate().allNotNullHaveSame(NDimensional::shape)
-                                                .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
-                                                .orElse(AutoDiff.BACKWARD_ONLY)
+                                                .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
+                                                .orElse(AutoDiffMode.BACKWARD_ONLY)
                                 )
                                 .setExecution( (caller, call) ->
                                     Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
-                                        .withADAgent((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                                        .withAutoDiff((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
                                         {
                                             Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
                                             Function mul = Neureka.get().backend().getFunction().mul();
@@ -284,12 +284,12 @@ public class UnitTester_Tensor extends UnitTester
                                     .setAutogradModeFor(
                                             call -> call
                                                     .validate().allNotNullHaveSame(NDimensional::shape)
-                                                    .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
-                                                    .orElse(AutoDiff.BACKWARD_ONLY)
+                                                    .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
+                                                    .orElse(AutoDiffMode.BACKWARD_ONLY)
                                     )
                                     .setExecution( (caller, call) ->
                                         Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
-                                            .withADAgent((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                                            .withAutoDiff((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
                                             {
                                                 Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
                                                 Function mul = Neureka.get().backend().getFunction().mul();

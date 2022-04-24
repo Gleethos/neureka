@@ -3,7 +3,7 @@ package neureka.backend.standard.operations.other;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
@@ -45,10 +45,10 @@ public class AssignLeft extends AbstractOperation
                        return SuitabilityPredicate.UNSUITABLE;
                }
             )
-            .setAutogradModeFor( call -> AutoDiff.NOT_SUPPORTED)
+            .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
             .setExecution(
                     (caller, call) ->
-                            Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withADAgent(getDefaultAlgorithm())
+                            Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withAutoDiff(getDefaultAlgorithm())
             )
             .setCallPreparation(
                 call -> {
@@ -108,10 +108,10 @@ public class AssignLeft extends AbstractOperation
                         .tensors( tensors -> tensors.length == 2 || tensors.length == 3 )
                         .suitabilityIfValid(SuitabilityPredicate.EXCELLENT)
             )
-            .setAutogradModeFor( call -> AutoDiff.NOT_SUPPORTED)
+            .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
             .setExecution(
                     (caller, call) ->
-                            Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withADAgent(getDefaultAlgorithm())
+                            Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withAutoDiff(getDefaultAlgorithm())
             )
             .setCallPreparation(
                     call -> {

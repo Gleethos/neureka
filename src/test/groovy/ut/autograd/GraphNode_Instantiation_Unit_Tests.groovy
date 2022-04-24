@@ -5,7 +5,7 @@ import neureka.Tsr
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.backend.api.ExecutionCall
-import neureka.backend.api.algorithms.fun.AutoDiff
+import neureka.backend.api.algorithms.fun.AutoDiffMode
 import neureka.backend.api.algorithms.fun.Result
 import neureka.backend.api.operations.AbstractOperation
 import neureka.calculus.Function
@@ -109,7 +109,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             (1.._) * inputs[0].rqsGradient() >> true
             (1.._) * inputs[1].rqsGradient() >> false
             (1.._) * inputs[2].rqsGradient() >> true
-            (1.._) * call.autogradMode() >> AutoDiff.FORWARD_AND_BACKWARD
+            (1.._) * call.autogradMode() >> AutoDiffMode.FORWARD_AND_BACKWARD
             (3.._) * function.getOperation() >> type
             (0.._) * type.isDifferentiable() >> true
             (3.._) * type.isInline() >> false

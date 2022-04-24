@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -85,7 +85,7 @@ public class Multiplication extends AbstractOperation
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast( JunctionUtil::forMultiplications )
-                .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
+                .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
@@ -142,8 +142,8 @@ public class Multiplication extends AbstractOperation
         // TENSOR SCALAR OPERATION :
 
         Scalarization scalarization = new Scalarization()
-                .setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD )
-                .setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications )).withADAgent(getDefaultAlgorithm()) )
+                .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
+                .setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications )).withAutoDiff(getDefaultAlgorithm()) )
                 .buildFunAlgorithm();
 
         setAlgorithm(

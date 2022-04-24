@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.devices.Device;
@@ -17,7 +17,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
 {
     public Scalarization() {
         super("scalarization");
-        setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD );
+        setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD );
         setIsSuitableFor( call ->
             call.validate()
                 .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )

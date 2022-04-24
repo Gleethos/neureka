@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
@@ -38,7 +38,7 @@ public class Reshape extends AbstractOperation
             Algorithm
             .withName( "reshape" )
             .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
-            .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
+            .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
             .setExecution(
                 ( caller, call ) ->
                 {
@@ -51,7 +51,7 @@ public class Reshape extends AbstractOperation
                         newForm = invert( newForm );
 
                     return Result.of(_reshaped( inputs[ inputs.length - 1 ], newForm, true ))
-                            .withADAgent( ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                            .withAutoDiff( (Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
                             {
                                 if ( forward )
                                     throw new IllegalArgumentException("Reshape operation does not support forward-AD!");

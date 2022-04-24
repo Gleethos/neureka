@@ -18,7 +18,7 @@ public class Result
         _agent = agent;
     }
 
-    public Result withADAgent( ADAgentSupplier agent ) {
+    public Result withAutoDiff( ADAgentSupplier agent ) {
         LogUtil.nullArgCheck( agent, "agent", ADAgent.class );
         if ( _agent != null )
             throw new IllegalArgumentException("Autograd algorithm already specified!");

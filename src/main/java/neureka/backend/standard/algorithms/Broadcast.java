@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.standard.algorithms.internal.Fun;
@@ -58,8 +58,8 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
             call ->
                 call.validate()
                     .all( ( first, second ) -> first.shape().equals(second.shape()) )
-                    .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
-                    .orElse(AutoDiff.BACKWARD_ONLY)
+                    .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
+                    .orElse(AutoDiffMode.BACKWARD_ONLY)
         );
         setExecution(
             ( caller, call ) -> {

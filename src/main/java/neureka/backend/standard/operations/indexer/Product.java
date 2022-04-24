@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -49,7 +49,7 @@ public final class Product extends AbstractOperation
 
         setAlgorithm(
             new Broadcast(JunctionUtil::forMultiplications)
-            .setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD )
+            .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
             .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 {
@@ -99,11 +99,11 @@ public final class Product extends AbstractOperation
         // ACTIVATION :
 
         Activation activation = new Activation()
-        .setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD )
+        .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
         .setExecution(
             (caller, call) ->
                 Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications ))
-                    .withADAgent( ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                    .withAutoDiff( (Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
                     {
                         Function mul = Neureka.get().backend().getFunction().mul();
                         Tsr<?> derivative = f.executeDerive( adCall.inputs(), adCall.getDerivativeIndex() );

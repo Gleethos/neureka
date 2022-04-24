@@ -2,7 +2,7 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -48,10 +48,10 @@ public class Randomization extends AbstractOperation
 
         setAlgorithm(
             new Activation()
-                .setAutogradModeFor( call -> AutoDiff.NOT_SUPPORTED)
+                .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
                 .setExecution(
                    (caller, call) ->
-                       Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withADAgent(getDefaultAlgorithm())
+                       Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withAutoDiff(getDefaultAlgorithm())
                 )
                 .setCallPreparation( call ->
                 {

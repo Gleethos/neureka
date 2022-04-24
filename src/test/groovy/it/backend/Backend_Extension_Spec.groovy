@@ -8,7 +8,7 @@ import neureka.backend.api.Algorithm
 import neureka.backend.api.BackendContext
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
-import neureka.backend.api.algorithms.fun.AutoDiff
+import neureka.backend.api.algorithms.fun.AutoDiffMode
 import neureka.backend.api.algorithms.fun.Result
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate
 import neureka.backend.standard.implementations.CPUImplementation
@@ -71,10 +71,10 @@ class Backend_Extension_Spec extends Specification
                                 .setAlgorithm(
                                         Algorithm.withName(null)
                                             .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )
-                                            .setAutogradModeFor(call -> AutoDiff.BACKWARD_ONLY )
+                                            .setAutogradModeFor(call -> AutoDiffMode.BACKWARD_ONLY )
                                             .setExecution( (caller, call) ->
                                                 Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
-                                                    .withADAgent((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward) -> {
+                                                    .withAutoDiff((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward) -> {
                                                         if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                                                         return ADAgent.of( null )
                                                                 .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))

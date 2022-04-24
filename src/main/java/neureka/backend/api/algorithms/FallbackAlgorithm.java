@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.ExecutionPreparation;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.standard.implementations.CPUImplementation;
@@ -235,10 +235,10 @@ implements ExecutionPreparation
     }
 
     @Override
-    public AutoDiff autoDiffModeFrom(ExecutionCall<? extends Device<?>> call ) { return AutoDiff.FORWARD_AND_BACKWARD; }
+    public AutoDiffMode autoDiffModeFrom(ExecutionCall<? extends Device<?>> call ) { return AutoDiffMode.FORWARD_AND_BACKWARD; }
 
     @Override
     public Result execute(Function caller, ExecutionCall<? extends Device<?>> call) {
-        return Result.of(this.dispatch(caller, call)).withADAgent(this);
+        return Result.of(this.dispatch(caller, call)).withAutoDiff(this);
     }
 }

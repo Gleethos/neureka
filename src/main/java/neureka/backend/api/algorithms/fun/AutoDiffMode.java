@@ -1,6 +1,6 @@
 package neureka.backend.api.algorithms.fun;
 
-public enum AutoDiff
+public enum AutoDiffMode
 {
     FORWARD_ONLY,
     BACKWARD_ONLY,

@@ -2,7 +2,7 @@ package ut.backend
 
 import neureka.backend.api.Algorithm
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm
-import neureka.backend.api.algorithms.fun.AutoDiff
+import neureka.backend.api.algorithms.fun.AutoDiffMode
 import neureka.backend.api.algorithms.fun.Execution
 import neureka.backend.api.algorithms.fun.ExecutionPreparation
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate
@@ -47,14 +47,14 @@ class Backend_Functional_Algorithm_Spec extends Specification
         when : 'We build it thoroughly...'
             algorithm
                     .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)
-                    .setAutogradModeFor( call ->  AutoDiff.BACKWARD_ONLY )
+                    .setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )
                     .setExecution(( caller, call ) -> null)
                     .setCallPreparation(call -> null)
                     .buildFunAlgorithm()
 
         then : 'The algorithm should be usable just fine!'
             algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT
-            algorithm.autoDiffModeFrom(null) == AutoDiff.BACKWARD_ONLY
+            algorithm.autoDiffModeFrom(null) == AutoDiffMode.BACKWARD_ONLY
             algorithm.execute(null, null) == null
             algorithm.prepare(null) == null
 
@@ -63,7 +63,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
         and : 'Which we do not build fully this time...'
             algorithm
                     .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)
-                    .setAutogradModeFor( call ->  AutoDiff.BACKWARD_ONLY )
+                    .setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )
                     .setExecution(( caller, call ) -> null)
                     .setCallPreparation(null) // This is not acceptable!
                     .buildFunAlgorithm()
@@ -87,14 +87,14 @@ class Backend_Functional_Algorithm_Spec extends Specification
         when : 'We build it thoroughly...'
             algorithm
                     .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)
-                    .setAutogradModeFor( call ->  AutoDiff.BACKWARD_ONLY )
+                    .setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )
                     .setExecution(( caller, call ) -> null)
                     .setCallPreparation(call -> null)
                     .buildFunAlgorithm()
 
         then : 'The algorithm should be usable just fine!'
             algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT
-            algorithm.autoDiffModeFrom(null) == AutoDiff.BACKWARD_ONLY
+            algorithm.autoDiffModeFrom(null) == AutoDiffMode.BACKWARD_ONLY
             algorithm.execute(null, null) == null
             algorithm.prepare(null) == null
 

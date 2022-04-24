@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
@@ -158,7 +158,7 @@ public class Power extends AbstractOperation
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast(rja)
-                .setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD )
+                .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
@@ -221,8 +221,8 @@ public class Power extends AbstractOperation
         Scalarization scalarization =
             new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                .setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD )
-                .setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, rja )).withADAgent(getDefaultAlgorithm()) )
+                .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
+                .setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, rja )).withAutoDiff(getDefaultAlgorithm()) )
                 .buildFunAlgorithm();
 
         setAlgorithm(

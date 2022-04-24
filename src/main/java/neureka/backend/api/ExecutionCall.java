@@ -37,9 +37,7 @@ SOFTWARE.
 package neureka.backend.api;
 
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
-import neureka.backend.api.algorithms.fun.AutoDiff;
-import neureka.calculus.Function;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.calculus.args.Arg;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
@@ -188,17 +186,17 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      *  This method queries the underlying {@link Operation} for a suitable {@link Algorithm}
      *  for this {@link ExecutionCall} to see what kind of auto differentiation can be performed.
      *
-     * @return The {@link AutoDiff} for this call.
+     * @return The {@link AutoDiffMode} for this call.
      */
-    public AutoDiff autogradMode() {
+    public AutoDiffMode autogradMode() {
         Algorithm<?> algorithm = getAlgorithm();
         if ( algorithm != null ) {
-            AutoDiff mode = algorithm.autoDiffModeFrom(this);
+            AutoDiffMode mode = algorithm.autoDiffModeFrom(this);
             if ( mode == null )
                 throw new IllegalStateException("Algorithm '"+algorithm+"' returned null instead of a valid autograd mode!");
             return mode;
         }
-        return AutoDiff.NOT_SUPPORTED;
+        return AutoDiffMode.NOT_SUPPORTED;
     }
 
     /**

@@ -6,7 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.ADAgentSupplier;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
@@ -42,7 +42,7 @@ public class DimTrim extends AbstractOperation
             Algorithm
                 .withName("dimTrim")
                 .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
-                .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
+                .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setExecution(
                     ( caller, call ) ->
                     {
@@ -74,9 +74,9 @@ public class DimTrim extends AbstractOperation
                         if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {
                             int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
                             int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
-                            return Result.of(_pad( t, new int[]{prefix, postfix}, true )).withADAgent(autoDiff);
+                            return Result.of(_pad( t, new int[]{prefix, postfix}, true )).withAutoDiff(autoDiff);
                         } else
-                            return Result.of(_trim( t, true )).withADAgent(autoDiff);
+                            return Result.of(_trim( t, true )).withAutoDiff(autoDiff);
                     }
                 )
                 .setCallPreparation( call -> call )

@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
@@ -92,8 +92,8 @@ public class Modulo extends AbstractOperation {
             .setAutogradModeFor(
                     call -> call
                                 .validate().allNotNullHaveSame(NDimensional::shape)
-                                .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
-                                .orElse(AutoDiff.BACKWARD_ONLY)
+                                .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
+                                .orElse(AutoDiffMode.BACKWARD_ONLY)
             )
             .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
@@ -157,10 +157,10 @@ public class Modulo extends AbstractOperation {
                 .setAutogradModeFor(
                         call -> call
                                 .validate().allNotNullHaveSame(NDimensional::shape)
-                                .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
-                                .orElse(AutoDiff.BACKWARD_ONLY)
+                                .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
+                                .orElse(AutoDiffMode.BACKWARD_ONLY)
                 )
-                .setExecution( (caller, call) -> Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withADAgent(getDefaultAlgorithm()) )
+                .setExecution( (caller, call) -> Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withAutoDiff(getDefaultAlgorithm()) )
                 .buildFunAlgorithm();
 
         setAlgorithm(

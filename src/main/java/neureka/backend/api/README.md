@@ -121,12 +121,12 @@ that it fits the call best! <br>
 This method, defined by the `ADSupportPredicate` interface,
 checks which auto differentiation mode
 can be performed for a given `ExecutionCall`.
-The method returns a `AutoDiff` enum instance.
+The method returns a `AutoDiffMode` enum instance.
 This check is important so that the autograd system can apply 
 a suitable autograd strategy...
 
 ```java
-    AutoDiff autoDiffModeFrom( ExecutionCall<? extends Device<?>> call );
+    AutoDiffMode autoDiffModeFrom( ExecutionCall<? extends Device<?>> call );
 ```
 ---
 

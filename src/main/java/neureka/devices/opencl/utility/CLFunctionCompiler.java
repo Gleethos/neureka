@@ -6,7 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.calculus.Function;
@@ -76,11 +76,11 @@ public final class CLFunctionCompiler {
                     Algorithm
                         .withName( "generic_algorithm_for_"+ _functionName )
                         .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
-                        .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
+                        .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                         .setExecution(
                             (caller, call) ->
                                 Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
-                                    .withADAgent((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward) -> {
+                                    .withAutoDiff((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward) -> {
                                         // TODO: calculate derivative and supply agent!
                                         return ADAgent.of( null )
                                                 .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))

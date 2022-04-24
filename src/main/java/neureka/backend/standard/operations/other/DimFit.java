@@ -5,7 +5,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.ADAgentSupplier;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
@@ -37,7 +37,7 @@ public class DimFit extends AbstractOperation
                 Algorithm
                     .withName("reshape")
                     .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
-                    .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
+                    .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                     .setExecution(
                         ( caller, call ) ->
                         {
@@ -85,7 +85,7 @@ public class DimFit extends AbstractOperation
                                     change[ i ] = newReshape;
                                 }
                             }
-                            return Result.of(null).withADAgent(autDiff);
+                            return Result.of(null).withAutoDiff(autDiff);
                         }
                     )
                     .setCallPreparation( call -> call )

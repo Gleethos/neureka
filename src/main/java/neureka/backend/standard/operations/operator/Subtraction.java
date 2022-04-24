@@ -3,7 +3,7 @@ package neureka.backend.standard.operations.operator;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
@@ -89,7 +89,7 @@ public class Subtraction extends AbstractOperation
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setExecution( (caller, call) ->
                     Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forSubtractions ))
-                            .withADAgent(getDefaultAlgorithm())
+                            .withAutoDiff(getDefaultAlgorithm())
                 )
                 .buildFunAlgorithm();
 
@@ -153,7 +153,7 @@ public class Subtraction extends AbstractOperation
         Broadcast broadcast =
                 (Broadcast)
                 new Broadcast(JunctionUtil::forSubtractions)
-                .setAutogradModeFor( call -> AutoDiff.BACKWARD_ONLY )
+                .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {

@@ -2,7 +2,7 @@ package neureka.autograd;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.calculus.Function;
 import neureka.devices.Device;
 
@@ -100,7 +100,7 @@ final class GraphNodeAssemblyState<V> {
             modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.getMode();
             inputMode += ( modes[ i ] != 0) ? 1 : 0;
         }
-        AutoDiff adMode = call.autogradMode();
+        AutoDiffMode adMode = call.autogradMode();
         switch ( adMode ) {
             case FORWARD_AND_BACKWARD: _allowsForward = true; _allowsBackward = true;  break;
             case FORWARD_ONLY:         _allowsForward = true; _allowsBackward = false; break;
