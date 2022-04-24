@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -105,53 +106,56 @@ public final class Summation extends AbstractOperation
 
         Activation activation = new Activation()
         .setAutogradModeFor( call -> AutoDiff.FORWARD_AND_BACKWARD )
-        .setSupplyADAgentFor(
-            ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-            {
-                Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                Function mul = Neureka.get().backend().getFunction().mul();
-                if ( ctxDerivative != null )
-                    return ADAgent.of( ctxDerivative )
-                            .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
-                            .setBackward( (node, backwardError ) -> mul.execute( backwardError, ctxDerivative ) );
+        .setExecution(
+            (caller, call) ->
+                Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ))
+                    .withADAgent(
+                        ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                        {
+                            Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
+                            Function mul = Neureka.get().backend().getFunction().mul();
+                            if ( ctxDerivative != null )
+                                return ADAgent.of( ctxDerivative )
+                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                                        .setBackward( (node, backwardError ) -> mul.execute( backwardError, ctxDerivative ) );
 
-                int d = call.getDerivativeIndex();
-                if ( forward )
-                {
-                    Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                    return ADAgent.of( derivative )
-                            .setForward( ( t, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
-                            .setBackward( ( t, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) );
-                }
-                else
-                {
-                    if ( this.supports(Convolution.class) )
-                    {
-                        Function deConv = new FunctionBuilder( Neureka.get().backend() ).build(
-                                "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
-                                false
-                        );
-                        Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                        return ADAgent.of( derivative )
-                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
-                                .setBackward( (t, error) ->
+                            int d = adCall.getDerivativeIndex();
+                            if ( forward )
+                            {
+                                Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
+                                return ADAgent.of( derivative )
+                                        .setForward( ( t, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                        .setBackward( ( t, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) );
+                            }
+                            else
+                            {
+                                if ( this.supports(Convolution.class) )
+                                {
+                                    Function deConv = new FunctionBuilder( Neureka.get().backend() ).build(
+                                            "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
+                                            false
+                                    );
+                                    Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
+                                    return ADAgent.of( derivative )
+                                            .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                            .setBackward( (t, error) ->
                                                     deConv.execute(
-                                                                error,
-                                                                derivative,
-                                                                Tsr.of(t.getPayload().shape(), 0) ).getUnsafe().setIsIntermediate( true )
-                                        );
-                    }
-                    else
-                    {
-                        Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                        return ADAgent.of( derivative )
-                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
-                                .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
-                    }
-                }
-            }
+                                                            error,
+                                                            derivative,
+                                                            Tsr.of(t.getPayload().shape(), 0) ).getUnsafe().setIsIntermediate( true )
+                                            );
+                                }
+                                else
+                                {
+                                    Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
+                                    return ADAgent.of( derivative )
+                                            .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                            .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
+                                }
+                            }
+                        }
+                    )
         )
-        .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
         .setCallPreparation(
                 call -> {
                     Device<Number> device = call.getDeviceFor(Number.class);

@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -144,10 +145,10 @@ public class Addition extends AbstractOperation {
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        Scalarization scalarization = new Scalarization()
-                                            .setSupplyADAgentFor( getDefaultAlgorithm() )
-                                            .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
-                                            .buildFunAlgorithm();
+        Scalarization scalarization =
+            new Scalarization()
+                .setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions )).withADAgent(getDefaultAlgorithm()) )
+                .buildFunAlgorithm();
 
         setAlgorithm(
             scalarization.setImplementationFor(
