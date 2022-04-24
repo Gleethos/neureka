@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -83,11 +84,14 @@ public class Subtraction extends AbstractOperation
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        Scalarization scalarization = new Scalarization()
-                                        .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                                        .setSupplyADAgentFor( getDefaultAlgorithm() )
-                                        .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forSubtractions ) )
-                                        .buildFunAlgorithm();
+        Scalarization scalarization =
+            new Scalarization()
+                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
+                .setExecution( (caller, call) ->
+                    Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forSubtractions ))
+                            .withADAgent(getDefaultAlgorithm())
+                )
+                .buildFunAlgorithm();
 
         setAlgorithm(
             Scalarization.class,

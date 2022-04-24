@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.standard.algorithms.internal.WithForward;
@@ -60,7 +61,7 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
                     .orElse(AutoDiff.BACKWARD_ONLY)
         );
-        setExecutionDispatcher(
+        setExecution(
             ( caller, call ) -> {
                 int offset = ( call.input( Number.class, 0 ) == null ? 1 : 0 );
                 if (
@@ -70,9 +71,9 @@ public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     Tsr<?>[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };
                     Reshape.makeFit( inputs, caller.isDoingAD() );
                     inputs = new Tsr[]{ null, inputs[0], inputs[1] };
-                    return CalcUtil.recursiveExecution( call.withInputs( inputs ), (executionCall, executor) -> null );
+                    return Result.of(CalcUtil.recursiveExecution( call.withInputs( inputs ), (executionCall, executor) -> null ));
                 }
-                return CalcUtil.executeFor( caller, call, finalExecutor );
+                return Result.of(CalcUtil.executeFor( caller, call, finalExecutor ));
             }
         );
         setCallPreparation(

@@ -320,7 +320,12 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
 
     @Override
     public Result execute( Function caller, ExecutionCall<? extends Device<?>> call ) {
-        if ( _execution != null ) return _execution.execute( caller, call );
+        if ( _execution != null ) {
+            if ( _supplyADAgentFor != null )
+                return _execution.execute( caller, call ).withADAgent(_supplyADAgentFor);
+            else
+                return _execution.execute( caller, call );
+        }
         return Result.of(this.dispatch(caller, call)).withADAgent(this);
     }
 }
