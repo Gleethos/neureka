@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.standard.algorithms.internal.Fun;
 import neureka.backend.standard.algorithms.internal.WithForward;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -37,7 +38,7 @@ public final class Activation extends AbstractFunctionalAlgorithm<Activation>
                     .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
                     .orElse(AutoDiff.BACKWARD_ONLY)
         );
-        setExecutionDispatcher( CalcUtil::defaultRecursiveExecution );
+        setExecution( (caller, call) -> Result.of(CalcUtil.defaultRecursiveExecution(caller, call)) );
         setCallPreparation(
             call -> {
                 Device device = call.getDeviceFor(Number.class);
