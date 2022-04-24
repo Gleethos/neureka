@@ -41,6 +41,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Call;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.memory.MemValidator;
 import neureka.calculus.args.Arg;
@@ -226,7 +227,7 @@ public interface Function
            @SafeVarargs @Override public final <T> Tsr<T> invoke(  Tsr<T>... tensors ) { return (Tsr<T>) this.execute( tensors ); }
            @Override public Tsr<?> execute( Tsr<?>... tensors )
            {
-               MemValidator validation = MemValidator.forInputs( tensors, ()->Function.this.execute( arguments, tensors ) );
+               MemValidator validation = MemValidator.forInputs( tensors, ()-> Result.of(Function.this.execute( arguments, tensors )));
                if ( validation.isWronglyIntermediate() ) {
                    throw new IllegalStateException(
                            "Output of function '" + Function.this + "' " +
@@ -247,7 +248,7 @@ public interface Function
                    );
                }
                MemUtil.autoDelete( tensors );
-               return validation.getResult();
+               return validation.getResult().get();
            }
        };
     }

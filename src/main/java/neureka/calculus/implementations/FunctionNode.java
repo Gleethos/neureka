@@ -5,7 +5,7 @@ import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.fun.ExecutionDispatcher;
+import neureka.backend.api.algorithms.fun.Execution;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.standard.operations.other.Reshape;
 import neureka.calculus.Function;
@@ -126,7 +126,7 @@ public final class FunctionNode implements Function
         Result alternative = call.getAlgorithm().execute( this, call );
         if ( alternative != null ) return alternative;
         throw new IllegalStateException(
-                "Missing return value of " + ExecutionDispatcher.class.getSimpleName() + " in algorithm '" +
+                "Missing return value of " + Execution.class.getSimpleName() + " in algorithm '" +
                 call.getAlgorithm().getClass().getSimpleName() + "' in operation '" +
                 call.getOperation().getClass().getName()+"'"
         );

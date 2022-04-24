@@ -1,6 +1,7 @@
 package neureka.backend.standard.memory;
 
 import neureka.Tsr;
+import neureka.backend.api.algorithms.fun.Result;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
@@ -18,7 +19,7 @@ import java.util.stream.IntStream;
  */
 public class MemValidator {
 
-    private final Tsr<?>  _result;
+    private final Result _result;
     private final boolean _wronglyIntermediate;
     private final boolean _wronglyNonIntermediate;
 
@@ -27,11 +28,11 @@ public class MemValidator {
      * @param resultProvider The callback providing the result which ought to be validated.
      * @return The {@link MemValidator} which ought to validate the provided result.
      */
-    public static MemValidator forInputs( Tsr<?>[] inputs, Supplier<Tsr<?>> resultProvider ) {
+    public static MemValidator forInputs( Tsr<?>[] inputs, Supplier<Result> resultProvider ) {
         return new MemValidator( inputs, resultProvider );
     }
 
-    private MemValidator( Tsr<?>[] tensors, Supplier<Tsr<?>> execution ) {
+    private MemValidator( Tsr<?>[] tensors, Supplier<Result> execution ) {
         /*
             Now before calling the function we will do a snapshot of the inputs
             in order to later on verify the output validity with respect
@@ -43,7 +44,7 @@ public class MemValidator {
         /*
             Finally, we dispatch the call to the function implementation to get as result!
         */
-        Tsr<?> result = execution.get();
+        Result result = execution.get();
         /*
             Now on to validation!
             First we check if the function executed successfully:
@@ -56,8 +57,8 @@ public class MemValidator {
             We expect internally created tensors to be flagged as 'intermediate':
             First we check if the result tensor was created inside the function or not:
          */
-        boolean resultIsInputGradient = Arrays.stream( tensors ).anyMatch( t -> t.getGradient() == result );
-        boolean resultIsInputMember   = Arrays.stream( tensors ).anyMatch( t -> t == result );
+        boolean resultIsInputGradient = Arrays.stream( tensors ).anyMatch( t -> t.getGradient() == result.get() );
+        boolean resultIsInputMember   = Arrays.stream( tensors ).anyMatch( t -> t == result.get() );
         /*
             Then we check if this is valid with respect to the "isIntermediate" flag:
          */
@@ -65,11 +66,11 @@ public class MemValidator {
             int positionInInput =
                     resultIsInputGradient
                         ? IntStream.range( 0, inputs.length )
-                                   .filter( i -> inputs[i].getGradient() == result)
+                                   .filter( i -> inputs[i].getGradient() == result.get())
                                    .findFirst()
                                    .getAsInt()
                         : IntStream.range( 0, inputs.length )
-                                   .filter( i -> inputs[i] == result)
+                                   .filter( i -> inputs[i] == result.get())
                                    .findFirst()
                                    .getAsInt();
 
@@ -78,9 +79,9 @@ public class MemValidator {
                                 ? gradIntermediates[positionInInput]
                                 : areIntermediates[positionInInput];
 
-            _wronglyIntermediate = result.isIntermediate() && !resultWasIntermediate;
+            _wronglyIntermediate = result.get().isIntermediate() && !resultWasIntermediate;
             _wronglyNonIntermediate = false;
-        } else if ( !result.isIntermediate() ) {
+        } else if ( !result.get().isIntermediate() ) {
             _wronglyIntermediate = false;
             _wronglyNonIntermediate = true;
         } else {
@@ -106,6 +107,6 @@ public class MemValidator {
     /**
      * @return The result tensor returned by the {@link Supplier} lambda passed to this {@link MemValidator}.
      */
-    public Tsr<?> getResult() { return _result; }
+    public Result getResult() { return _result; }
 
 }

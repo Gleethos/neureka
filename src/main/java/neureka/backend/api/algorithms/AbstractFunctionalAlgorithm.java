@@ -50,7 +50,6 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     private ADSupportPredicate   _autogradModeFor;
     private Execution            _execution;
     private ADAgentSupplier      _supplyADAgentFor;
-    private ExecutionDispatcher _dispatcher;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
     /*
         This flag will ensure that we can warn the user that the state has been illegally modified.
@@ -89,50 +88,6 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     }
 
     /**
-     *  This method implements the {@link ExecutionDispatcher} lambda which
-     *  is the final execution procedure responsible for electing an {@link neureka.backend.api.ImplementationFor}
-     *  the chosen {@link Device} in a given {@link ExecutionCall}.
-     *  However, the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
-     *  It can also occupy the rest of the execution without any other steps being taken.
-     *  For example, a {@link neureka.backend.api.ImplementationFor} or a {@link RecursiveExecutor}
-     *  would not be used if not explicitly called.
-     *  Bypassing other procedures is useful for full control and of course to implement unorthodox types of operations
-     *  like the {@link neureka.backend.standard.operations.other.Reshape} operation
-     *  which is very different from classical operations.
-     *  Although the {@link ExecutionCall} passed to implementations of this will contain
-     *  a fairly suitable {@link Device} assigned to a given {@link neureka.backend.api.Algorithm},
-     *  one can simply ignore it and find a custom one which fits the contents of the given
-     *  {@link ExecutionCall} instance better.
-     *
-     * @param caller The {@link FunctionNode} from which this request for execution emerged.
-     * @param call The {@link ExecutionCall} whose contents ought to be executed.
-     * @return The result of the execution.
-     */
-    public final Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call ) {
-        _checkReadiness();
-        if ( call == null ) return _dispatcher.dispatch( caller, call );
-        MemValidator checker = MemValidator.forInputs( call.inputs(), ()-> _dispatcher.dispatch( caller, call ) );
-        if ( checker.isWronglyIntermediate() ) {
-            throw new IllegalStateException(
-                    "Output of algorithm '" + this.getName() + "' " +
-                    "is marked as intermediate result, despite the fact " +
-                    "that it is a member of the input array. " +
-                    "Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged " +
-                    "as 'intermediate', because they are not eligible for deletion!"
-            );
-        }
-        if ( checker.isWronglyNonIntermediate() ) {
-            throw new IllegalStateException(
-                    "Output of algorithm '" + this.getName() + "' " +
-                    "is neither marked as intermediate result nor a member of the input array. " +
-                    "Tensors instantiated by operations in the backend are expected to be flagged " +
-                    "as 'intermediate' in order to be eligible for deletion!"
-            );
-        }
-        return checker.getResult();
-    }
-
-    /**
      *  Preparing refers to instantiating output tensors for the provided {@link ExecutionCall}.
      *  
      * @param call The execution call which needs to be prepared for execution.
@@ -165,7 +120,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
             _isSuitableFor == null ||
             _autogradModeFor == null ||
             (_supplyADAgentFor == null && _execution == null) ||
-            (_dispatcher == null && _execution == null) ||
+            _execution == null ||
             _instantiateNewTensorsForExecutionIn == null
         ) {
             throw new IllegalStateException(
@@ -245,33 +200,6 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     }
 
     /**
-     *  The {@link ExecutionDispatcher} lambda
-     *  is the most important procedure within an {@link Algorithm}, which is responsible for
-     *  electing an {@link neureka.backend.api.ImplementationFor}
-     *  the chosen {@link Device} in a given {@link ExecutionCall} passed to the {@link ExecutionDispatcher}.
-     *  However, the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
-     *  It can also occupy the rest of the execution without any other steps being taken.
-     *  For example, a {@link neureka.backend.api.ImplementationFor} or a {@link RecursiveExecutor}
-     *  would not be used if not explicitly called.
-     *  Bypassing other procedures is useful for full control and of course to implement unorthodox types of operations
-     *  like the {@link neureka.backend.standard.operations.other.Reshape} operation
-     *  which is very different from classical operations.
-     *  Although the {@link ExecutionCall} passed to implementations of this will contain
-     *  a fairly suitable {@link Device} assigned to a given {@link neureka.backend.api.Algorithm},
-     *  one can simply ignore it and find a custom one which fits the contents of the given
-     *  {@link ExecutionCall} instance better.
-     *  The lambda passed to this will be called by the {@link #dispatch(Function, ExecutionCall)} method
-     *  by any given {@link Operation} instances this algorithm belongs to.
-     *
-     * @param handleInsteadOfDevice The {@link ExecutionDispatcher} which is the main entrypoint for execution.
-     * @return This very instance to enable method chaining.
-     */
-    public final AbstractFunctionalAlgorithm<C> setExecutionDispatcher(ExecutionDispatcher handleInsteadOfDevice ) {
-        _dispatcher = _checked(handleInsteadOfDevice, _dispatcher, ExecutionDispatcher.class);
-        return this;
-    }
-
-    /**
      *  An {@link Algorithm} will typically produce a result when executing an {@link ExecutionCall}.
      *  This result must be created somehow.
      *  A {@link ExecutionPreparation} implementation instance will do just that...
@@ -320,13 +248,37 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
 
     @Override
     public Result execute( Function caller, ExecutionCall<? extends Device<?>> call ) {
-        if ( _execution != null ) {
+        _checkReadiness();
+        if ( call == null ) {
             if ( _supplyADAgentFor != null )
                 return _execution.execute( caller, call ).withADAgent(_supplyADAgentFor);
             else
                 return _execution.execute( caller, call );
         }
-        return Result.of(this.dispatch(caller, call)).withADAgent(this);
+        MemValidator checker = MemValidator.forInputs( call.inputs(), ()-> {
+            if ( _supplyADAgentFor != null )
+                return _execution.execute( caller, call ).withADAgent(_supplyADAgentFor);
+            else
+                return _execution.execute( caller, call );
+        });
+        if ( checker.isWronglyIntermediate() ) {
+            throw new IllegalStateException(
+                    "Output of algorithm '" + this.getName() + "' " +
+                            "is marked as intermediate result, despite the fact " +
+                            "that it is a member of the input array. " +
+                            "Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged " +
+                            "as 'intermediate', because they are not eligible for deletion!"
+            );
+        }
+        if ( checker.isWronglyNonIntermediate() ) {
+            throw new IllegalStateException(
+                    "Output of algorithm '" + this.getName() + "' " +
+                            "is neither marked as intermediate result nor a member of the input array. " +
+                            "Tensors instantiated by operations in the backend are expected to be flagged " +
+                            "as 'intermediate' in order to be eligible for deletion!"
+            );
+        }
+        return checker.getResult();
     }
 }
 

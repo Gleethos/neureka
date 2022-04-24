@@ -6,6 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.AutoDiff;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.internal.Fun;
@@ -229,28 +230,28 @@ public class UnitTester_Tensor extends UnitTester
                                                 .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
                                                 .orElse(AutoDiff.BACKWARD_ONLY)
                                 )
-                                .setSupplyADAgentFor(
-                                        (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                                .setExecution( (caller, call) ->
+                                    Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
+                                        .withADAgent((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
                                         {
-                                            Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                                            Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
                                             Function mul = Neureka.get().backend().getFunction().mul();
                                             if ( ctxDerivative != null ) {
                                                 return ADAgent.of( ctxDerivative )
                                                         .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
                                                         .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                                             }
-                                            int d = call.getDerivativeIndex();
+                                            int d = adCall.getDerivativeIndex();
                                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                                             else
                                             {
-                                                Tsr<?> derivative = f.executeDerive( call.inputs(), d );
+                                                Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
                                                 return ADAgent.of( derivative )
                                                         .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                                         .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
                                             }
-                                        }
+                                        })
                                 )
-                                .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
                                 .setCallPreparation(
                                         call -> {
                                             int offset = ( call.input( 0 ) == null ) ? 1 : 0;
@@ -286,18 +287,19 @@ public class UnitTester_Tensor extends UnitTester
                                                     .ifValid(AutoDiff.FORWARD_AND_BACKWARD)
                                                     .orElse(AutoDiff.BACKWARD_ONLY)
                                     )
-                                    .setSupplyADAgentFor(
-                                            (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                                    .setExecution( (caller, call) ->
+                                        Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
+                                            .withADAgent((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
                                             {
-                                                Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                                                Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
                                                 Function mul = Neureka.get().backend().getFunction().mul();
                                                 if ( ctxDerivative != null ) {
                                                     return ADAgent.of( ctxDerivative )
                                                             .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
                                                             .setBackward( null );
                                                 }
-                                                Tsr<?>[] inputs = call.inputs();
-                                                int d = call.getDerivativeIndex();
+                                                Tsr<?>[] inputs = adCall.inputs();
+                                                int d = adCall.getDerivativeIndex();
                                                 if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                                                 else
                                                 {
@@ -306,9 +308,8 @@ public class UnitTester_Tensor extends UnitTester
                                                             .setForward( ( node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                                                             .setBackward( ( node, backwardError ) -> mul.execute( backwardError, derivative ) );
                                                 }
-                                            }
+                                            })
                                     )
-                                    .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
                                     .setCallPreparation(
                                             call -> {
                                                 Tsr<?>[] tsrs = call.inputs();

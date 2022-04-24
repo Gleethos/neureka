@@ -1,11 +1,11 @@
 package ut.backend
 
 import neureka.backend.api.Algorithm
-import neureka.backend.api.ExecutionCall
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm
-import neureka.backend.api.algorithms.fun.*
-import neureka.calculus.Function
-import neureka.devices.Device
+import neureka.backend.api.algorithms.fun.AutoDiff
+import neureka.backend.api.algorithms.fun.Execution
+import neureka.backend.api.algorithms.fun.ExecutionPreparation
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate
 import spock.lang.Specification
 
 import java.util.function.Consumer
@@ -31,7 +31,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
         where : 'We call the following methods:'
             caller << [
                     { Algorithm it -> it.autoDiffModeFrom(null) },
-                    { Algorithm it -> it.dispatch(null, null) },
+                    { Algorithm it -> it.execute(null, null) },
                     { Algorithm it -> it.prepare(null) },
                     { Algorithm it -> it.supplyADAgentFor(null, null, false) }
             ]
