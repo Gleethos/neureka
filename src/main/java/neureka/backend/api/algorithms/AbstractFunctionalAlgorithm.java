@@ -38,7 +38,7 @@ import java.util.Arrays;
  * @param <C> The final type extending this class.
  */
 public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>>
-extends AbstractBaseAlgorithm<C> implements ExecutionPreparation, ExecutionDispatcher
+extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
 {
     private static final Logger _LOG = LoggerFactory.getLogger( AbstractFunctionalAlgorithm.class );
     /*
@@ -107,7 +107,6 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation, ExecutionDispa
      * @param call The {@link ExecutionCall} whose contents ought to be executed.
      * @return The result of the execution.
      */
-    @Override
     public final Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         if ( call == null ) return _handleInsteadOfDevice.dispatch( caller, call );

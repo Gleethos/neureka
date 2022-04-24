@@ -201,10 +201,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return AutoDiff.NOT_SUPPORTED;
     }
 
-    public ADAgent getADAgentFrom( Function function, boolean forward ) {
-        return getAlgorithm().supplyADAgentFor( function, this, forward );
-    }
-
     /**
      *  Warning! This is the only way to mutate the inner state of an {@link ExecutionCall}.
      *  Only use this to set a suitable output tensor to be returned as result.
