@@ -38,7 +38,7 @@ import java.util.Arrays;
  * @param <C> The final type extending this class.
  */
 public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>>
-extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
+extends AbstractBaseAlgorithm<C> implements ExecutionPreparation, ExecutionDispatcher
 {
     private static final Logger _LOG = LoggerFactory.getLogger( AbstractFunctionalAlgorithm.class );
     /*
@@ -311,6 +311,12 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     public AutoDiff autoDiffModeFrom(ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         return _autogradModeFor.autoDiffModeFrom( call );
+    }
+
+
+    @Override
+    public Result execute( Function caller, ExecutionCall<? extends Device<?>> call ) {
+        return Result.of(this.dispatch(caller, call)).withADAgent(this);
     }
 }
 

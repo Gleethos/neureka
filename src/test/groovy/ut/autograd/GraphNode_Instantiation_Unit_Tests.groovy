@@ -6,6 +6,7 @@ import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.algorithms.fun.AutoDiff
+import neureka.backend.api.algorithms.fun.Result
 import neureka.backend.api.operations.AbstractOperation
 import neureka.calculus.Function
 import neureka.devices.Device
@@ -51,7 +52,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
     {
         given : 'Mocked arguments used to call the GraphNode constructor.'
             Tsr           payload  = Mock( Tsr )
-            Supplier<Tsr> supplier = () -> payload
+            Supplier<Tsr> supplier = () -> Result.of(payload)
             Function      function = Mock( Function )
             Object        context = Mock( GraphLock )
             Device        device = Mock( Device )
@@ -73,7 +74,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
         given : 'Mocked arguments used to call the GraphNode constructor.'
             Tsr payload = Mock( Tsr )
             Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
-            Supplier<Tsr> supplier = () -> payload
+            Supplier<Tsr> supplier = () -> Result.of(payload)
             AbstractOperation type = Mock( AbstractOperation )
             Function function = Mock( Function )
             Object call = Mock( ExecutionCall )

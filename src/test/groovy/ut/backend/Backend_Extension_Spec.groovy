@@ -7,7 +7,9 @@ import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.backend.api.Algorithm
 import neureka.backend.api.Operation
+import neureka.backend.api.algorithms.fun.ADAgentSupplier
 import neureka.backend.api.algorithms.fun.AutoDiff
+import neureka.backend.api.algorithms.fun.Result
 import neureka.calculus.implementations.FunctionInput
 import neureka.calculus.implementations.FunctionNode
 import neureka.devices.Device
@@ -55,7 +57,7 @@ class Backend_Extension_Spec extends Specification
 
         then : 'The custom call hook should be accessed as outlined below.'
             (1.._) * type.getAlgorithmFor(_) >> implementation
-            (1.._) * implementation.dispatch(_,_) >> output
+            (1.._) * implementation.execute(_,_) >> Result.of(output)
             (1.._) * output.getUnsafe() >> mutate
             (1.._) * mutate.setIsIntermediate(false) >> output
             (1.._) * output.isIntermediate() >> true
@@ -73,7 +75,7 @@ class Backend_Extension_Spec extends Specification
             result == output
     }
 
-    def 'Lambda properties of mock implementation interact with FunctionNode (AbstractFunction) as expected.'()
+    def 'Lambda properties of mock implementation interact with FunctionNode as expected.'()
     {
         given : 'A mock agent.'
             var agent = Mock(ADAgent)
@@ -94,6 +96,8 @@ class Backend_Extension_Spec extends Specification
 
         and : 'A mocked operation implementation.'
             var implementation = Mock(Algorithm)
+        and : 'An autodiff supplier:'
+            var adSource = Mock(ADAgentSupplier)
 
         when : 'A FunctionNode is being instantiated via the given mocks...'
             var function = new FunctionNode(type, children, true)
@@ -106,12 +110,13 @@ class Backend_Extension_Spec extends Specification
         when : 'The function is being called with an empty tensor array...'
             def result = function.call([input])
 
+
         then : 'The custom call hook is being accessed as outlined below.'
             (1.._) * input.getNDConf() >> ndc
             (1.._) * ndc.shape() >> new int[]{1,2}
             (1.._) * type.isInline() >> false
             (1.._) * type.getAlgorithmFor(_) >> implementation
-            (1.._) * implementation.dispatch(_,_) >> output
+            (1.._) * implementation.execute(_,_) >> Result.of(output).withADAgent(adSource)
             (1.._) * output.getUnsafe() >> mutate
             (1.._) * mutate.setIsIntermediate(false) >> output
             (1.._) * output.isIntermediate() >> true
@@ -132,7 +137,7 @@ class Backend_Extension_Spec extends Specification
             (1.._) * node.usesAD() >> true
 
         and : 'The agent creator is being accessed because "doAD" is set to true and the input requires gradients.'
-            1 * implementation.supplyADAgentFor(_,_,_) >> agent
+            1 * adSource.supplyADAgentFor(_,_,_) >> agent
             1 * agent.derivative() >> null
 
         and : 'The result is the same as the mock tensor returned by the custom call hook.'

@@ -7,6 +7,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.AutoDiff;
 import neureka.backend.api.algorithms.fun.ExecutionPreparation;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.linear.MatMul;
@@ -129,7 +130,6 @@ implements ExecutionPreparation
         // TODO: Maybe delete local derivative??
     }
 
-    @Override
     public Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call ) {
         return CalcUtil.defaultRecursiveExecution( caller, call );
     }
@@ -236,4 +236,9 @@ implements ExecutionPreparation
 
     @Override
     public AutoDiff autoDiffModeFrom(ExecutionCall<? extends Device<?>> call ) { return AutoDiff.FORWARD_AND_BACKWARD; }
+
+    @Override
+    public Result execute(Function caller, ExecutionCall<? extends Device<?>> call) {
+        return Result.of(this.dispatch(caller, call)).withADAgent(this);
+    }
 }

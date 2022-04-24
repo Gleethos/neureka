@@ -6,6 +6,7 @@ import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.ExecutionDispatcher;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.standard.operations.other.Reshape;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -103,7 +104,7 @@ public final class FunctionNode implements Function
                             only flat functions can be executed directly                         */
 
                         if ( d < 0 && _isDoingAD ) {
-                            Tsr[] ref = {null}; // We need to keep a reference so that the garbage collector does not collect the result!
+                            Result[] ref = {null}; // We need to keep a reference so that the garbage collector does not collect the result!
                             new GraphNode<>(
                                     this,
                                     call,
@@ -112,17 +113,17 @@ public final class FunctionNode implements Function
                                         return ref[0];
                                     }
                             );
-                            return ref[0];
+                            return ref[0].get();
                         }
                     }
-                    return _execute( call );
+                    return _execute( call ).get();
                 }
         );
     }
 
-    private Tsr<?> _execute( ExecutionCall<? extends Device<?>> call )
+    private Result _execute( ExecutionCall<? extends Device<?>> call )
     {
-        Tsr<?> alternative = call.getAlgorithm().dispatch( this, call );
+        Result alternative = call.getAlgorithm().execute( this, call );
         if ( alternative != null ) return alternative;
         throw new IllegalStateException(
                 "Missing return value of " + ExecutionDispatcher.class.getSimpleName() + " in algorithm '" +
@@ -241,7 +242,7 @@ public final class FunctionNode implements Function
     ) {
         for ( Tsr<?> t : inputs ) {
             if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( newLock );
-            else new GraphNode<>( function, newLock, () -> t );
+            else new GraphNode<>( function, newLock, () -> Result.of(t) );
         }
     }
 

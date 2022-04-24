@@ -42,6 +42,7 @@ package neureka.autograd;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.Result;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.common.composition.Component;
@@ -145,7 +146,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param context         Can be either an array of tensors or a new lock (for leave node or fresh function locking)
      * @param payloadSupplier Provides the payload of this node.
      */
-    public GraphNode( Function function, Object context, Supplier<Tsr<V>> payloadSupplier ) {
+    public GraphNode( Function function, Object context, Supplier<Result> payloadSupplier ) {
         if ( function == null )
             throw new IllegalArgumentException("Passed constructor argument of type Function must not be null!");
 
@@ -171,15 +172,15 @@ public class GraphNode<V> implements Component<Tsr<V>>
             _checkInputValidity( inputs, function );
         }
 
-        Tsr<V> out = payloadSupplier.get();
+        Result out = payloadSupplier.get();
         if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
         GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
-        a.setPayloadReferenceVersion( out.getVersion() );
+        a.setPayloadReferenceVersion( out.get().getVersion() );
         if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
-            _setPayload(out);
+            _setPayload(out.get());
             if ( context instanceof GraphLock ) { // Note function is always null in this case:
                 a.setLock( (GraphLock) context );
-                a.setMode( out.rqsGradient() ? 1 : 0 );
+                a.setMode( out.get().rqsGradient() ? 1 : 0 );
                 a.setFunction(null);
                 a.setParents(null);
             } else { // -> context instanceof ExecutionCall
@@ -190,7 +191,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 a.setFunction( function );
                 a.setParents( new GraphNode[inputs.length] );
             }
-            out.set(this);
+            ((Tsr<V>)out.get()).set(this);
             if ( context instanceof ExecutionCall<?> ) {
                 Tsr<V>[] inputs = (Tsr<V>[]) ((ExecutionCall<Device<?>>) context).inputs();
                 for ( int i = 0; i < inputs.length; i++ ) {
@@ -259,12 +260,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  when doing back-prop/autograd later on...
      */
     private void _registerAgents(
-            GraphNodeAssemblyState<V> a, Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call
+            GraphNodeAssemblyState<V> a, Result output, Function function, ExecutionCall<? extends Device<?>> call
     ) {
         Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
         /* Returning if the above cannot form an AutoDiff computation graph! : */
         for ( Tsr<V> t : inputs )
-            if ( t.equals(output) ) return; // Output must be a unique tensor for AD!
+            if ( t.equals(output.get()) ) return; // Output must be a unique tensor for AD!
 
         if ( this.usesAD() && function.isFlat() ) {
             /* Preparing for back propagation: */
@@ -278,7 +279,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
                             !srcNode.isLeave() && !srcNode._allows_forward
                         ) {
-                            ADAgent agent = call.withArgs(Arg.DerivIdx.of(i), Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))).getADAgentFrom( function, true );
+                            ADAgent agent = output.getAgentSupplier().supplyADAgentFor(
+                                    function,
+                                    call.withArgs(Arg.DerivIdx.of(i), Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))),
+                                    true
+                            );
                             a.put( srcNode, agent );
                             _informPartialDerivative(agent);
                         } else {
@@ -291,12 +296,15 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                     // The agent multiplies the local derivative with its stored partial derivative...
                                     Tsr<?> targetDerivative = localAgent.forward( this, localDerivative );
                                     // ...this is now the new partial derivative with respect to the target node!
-                                    ADAgent agent = call.withArgs(
-                                                            Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
-                                                            Arg.DerivIdx.of(finalI),
-                                                            Arg.Derivative.of(targetDerivative)
-                                                    )
-                                                    .getADAgentFrom( function, true );
+                                    ADAgent agent = output.getAgentSupplier().supplyADAgentFor(
+                                            function,
+                                            call.withArgs(
+                                                    Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
+                                                    Arg.DerivIdx.of(finalI),
+                                                    Arg.Derivative.of(targetDerivative)
+                                            ),
+                                            true
+                                    );
                                     a.put( targetNode, agent );
                                     _informPartialDerivative(agent);
                                     // TODO: flag within src Tsr<ValType>s that grant that the tensor
@@ -312,9 +320,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 for ( int i = 0; i < inputs.length; i++ ) {
                     GraphNode<V> srcNode = inputs[ i ].getGraphNode();
                     if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {
-                        ADAgent agent =
-                                call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)))
-                                        .getADAgentFrom( function, false );
+                        ADAgent agent = output.getAgentSupplier().supplyADAgentFor(
+                                                        function,
+                                                        call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))),
+                                                        false
+                                                    );
                         a.put( srcNode, agent );
                         _informPartialDerivative(agent);
                     }
