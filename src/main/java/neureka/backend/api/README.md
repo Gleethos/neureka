@@ -130,24 +130,6 @@ a suitable autograd strategy...
 ```
 ---
 
-The method below ought to return a new instance
-if the `ADAgent` class responsible for performing automatic differentiation
-both for forward and backward mode differentiation. <br>
-Therefore an `ADAgent` exposes 2 different procedures. <br>
-One is the forward mode differentiation, and the other one <br>
-is the backward mode differentiation which is more commonly known as back-propagation... <br>
-Besides that it may also contain context information used <br>
-to perform said procedures.
-
-```java
-    ADAgent supplyADAgentFor(
-            neureka.calculus.Function f,
-            ExecutionCall<? extends Device<?>> call,
-            boolean forward
-    );
-```
----
-
 This method is defined by the `Execution` functional interface which
 is supposed to be the final execution procedure responsible for electing an `neureka.backend.api.ImplementationFor`
 the chosen `Device` in a given `ExecutionCall`.
@@ -165,24 +147,6 @@ one can simply ignore it and find a custom one which fits the contents of the gi
 
 ```java
     Result execute(Function caller, ExecutionCall<? extends Device<?>> call );
-```
-
----
-
-An `ExecutionCall` instance contains an array of arguments.<br>
-Some of these arguments (usually the leading one(s)) are null.
-This is because they serve as output locations for the result of a given `Algorithm`. <br>
-The instantiation of these output tensors should be left to the
-algorithm instance in most cases. The reason for this is because a given algorithm
-"knows best" what shape(s), size(s), data type(s)... these tensors ought to have.<br>
-<br>
-An example would be algorithms performing element-wise operations vs broadcasting. <br>
-The shape of an output tensor produced by an element-wise operation would most likely be
-different from the shape of a tensor produced by broadcasting... <br>
-<br>
-This method ought to instantiate necessary output tensors:
-```java
-    ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call );
 ```
 
 ---
@@ -205,6 +169,52 @@ implementations...
 ```java
     <D extends Device<?>> ImplementationFor<D> getImplementationFor( Class<D> deviceClass );
 ```
+
+---
+
+### Related Concepts ###
+
+The `Execution` method returns a `Result` instance which is expected to wrap
+a result tensor, **as well as an `ADAgentSupplier` needed for the autograd system**.
+
+The method defined in such a supplier ought to return a new instance
+if the `ADAgent` class, which responsible for performing automatic differentiation
+both for forward and backward mode differentiation. <br>
+Therefore an `ADAgent` exposes 2 different procedures. <br>
+One is the forward mode differentiation, and the other one <br>
+is the backward mode differentiation which is more commonly known as back-propagation... <br>
+Besides that it may also contain context information used <br>
+to perform said procedures.
+
+```java
+    ADAgent supplyADAgentFor(
+            neureka.calculus.Function f,
+            ExecutionCall<? extends Device<?>> call,
+            boolean forward
+    );
+```
+
+---
+
+Besides the above mentioned there is also an interface which is not part of the algorithm API
+but still implemented by many backend algorithms in order to prepare 
+for execution in terms of output instantiation...
+An `ExecutionCall` instance contains an array of arguments.<br>
+Some of these arguments (usually the leading one(s)) are null.
+This is because they serve as output locations for the result of a given `Algorithm`. <br>
+The instantiation of these output tensors should be left to the
+algorithm instance in most cases. The reason for this is because a given algorithm
+"knows best" what shape(s), size(s), data type(s)... these tensors ought to have.<br>
+<br>
+An example would be algorithms performing element-wise operations vs broadcasting. <br>
+The shape of an output tensor produced by an element-wise operation would most likely be
+different from the shape of a tensor produced by broadcasting... <br>
+<br>
+This method ought to instantiate necessary output tensors:
+```java
+    ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call );
+```
+ 
 
 ## ImplementationFor&#60;Device&#62; ##
 

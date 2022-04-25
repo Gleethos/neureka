@@ -6,7 +6,9 @@ import neureka.devices.Device;
 
 /**
  *  Implementations of this functional interface
- *  is supposed to be the final execution procedure responsible for electing an {@link neureka.backend.api.ImplementationFor}
+ *  is supposed to be the final execution procedure responsible for dispatching
+ *  the execution further into the backend.
+ *  This usually involves electing an {@link neureka.backend.api.ImplementationFor}
  *  the chosen {@link Device} in a given {@link ExecutionCall}.
  *  However, the  {@link Execution} does not have to select a device specific implementation.
  *  It can also occupy the rest of the execution without any other steps being taken.
