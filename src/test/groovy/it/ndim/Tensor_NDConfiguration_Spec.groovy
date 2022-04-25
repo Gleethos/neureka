@@ -84,8 +84,8 @@ class Tensor_NDConfiguration_Spec extends Specification
         and : 'Also, scalar slices have the expected configs'
             x[2].NDConf instanceof Sliced0DConfiguration
             y[1.1].NDConf instanceof Sliced0DConfiguration
-            y[1.1].NDConf !== x[2].NDConf
-            y[1.1].NDConf === z[1].NDConf
+            y[1.1].NDConf != x[2].NDConf
+            y[1.1].NDConf == z[1].NDConf
 
         when : 'We try to extract a slice by using a BigDecimal instance...'
             x = x[new BigDecimal(2)]
