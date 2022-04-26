@@ -73,8 +73,8 @@ class Tensor_NDConfiguration_Spec extends Specification
             y.NDConf instanceof Simple1DConfiguration
             z.NDConf instanceof Simple1DConfiguration
         and : 'They all share the same (cached) SimpleD1Configuration instance because they do not require otherwise.'
-            x.NDConf === y.NDConf
-            y.NDConf === z.NDConf
+            x.NDConf == y.NDConf
+            y.NDConf == z.NDConf
         and : 'The configuration behaves as expected.'
             x.NDConf.shape(0) == 3
             x.NDConf.translation(0) == 1
