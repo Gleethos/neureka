@@ -153,6 +153,12 @@ public final class Neureka
      * @return The thread local library configuration state called {@link Neureka}.
      */
     public static Neureka get() {
+        if ( Thread.currentThread().getName().startsWith(CPU.THREAD_PREFIX) )
+            throw new IllegalAccessError(
+                "Thread pool thread named '"+Thread.currentThread().getName()+"' may not " +
+                   "access thread local library instance directly!" +
+                   "This is because this settings instance is not representative of the main thread library context."
+            );
         Neureka n = _INSTANCES.get();
         if ( n == null ) {
             n = new Neureka();
@@ -175,6 +181,12 @@ public final class Neureka
      * @param instance The {@link Neureka} instance which ought to be set as thread local singleton.
      */
     public static void set( Neureka instance ) {
+        if ( Thread.currentThread().getName().startsWith(CPU.THREAD_PREFIX) )
+            throw new IllegalAccessError(
+                    "Thread pool thread named '"+Thread.currentThread().getName()+"' may not " +
+                       "access thread local library instance directly!" +
+                       "This is because this settings instance is not representative of the main thread library context."
+                    );
         _INSTANCES.set(instance);
     }
 
@@ -211,15 +223,7 @@ public final class Neureka
     /**
      * @return An instance of library wide {@link Settings} determining the behaviour of many classes...
      */
-    public Settings settings() {
-        if ( Thread.currentThread().getName().startsWith(CPU.THREAD_PREFIX) )
-            throw new IllegalAccessError(
-                      "Thread pool thread named '"+Thread.currentThread().getName()+"' may not " +
-                         "access thread local library settings directly!" +
-                         "This is because this settings instance is not representative of the main thread settings."
-                );
-        return _settings;
-    }
+    public Settings settings() { return _settings; }
 
     /**
      *  This allows you to configure Neureka using a Groovy DSL.
