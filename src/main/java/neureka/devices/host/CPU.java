@@ -37,7 +37,8 @@ public class CPU extends AbstractDevice<Object>
     private static final WorkScheduler.Divider _DIVIDER;
     private static final IntSupplier _PARALLELISM;
 
-    public static int PARALLELIZATION_THRESHOLD = 32;
+    public static final int PARALLELIZATION_THRESHOLD = 32;
+    public static final String THREAD_PREFIX = "neureka-daemon";
 
     static {
         _INSTANCE = new CPU();
@@ -351,7 +352,7 @@ public class CPU extends AbstractDevice<Object>
     public static class JVMExecutor
     {
         private static final AtomicInteger _COUNTER = new AtomicInteger();
-        private static final ThreadGroup   _GROUP   = new ThreadGroup("neureka-daemon-group");
+        private static final ThreadGroup   _GROUP   = new ThreadGroup(THREAD_PREFIX+"-group");
 
         /*
             The following 2 constants determine if any given workload size will be parallelize or not...
@@ -367,7 +368,7 @@ public class CPU extends AbstractDevice<Object>
                                                     5L,
                                                     TimeUnit.SECONDS,
                                                     new SynchronousQueue<Runnable>(), // This is basically always of size 1
-                                                    _newThreadFactory("neureka-daemon-")
+                                                    _newThreadFactory(THREAD_PREFIX+"-")
                                             );
 
         private static ThreadFactory _newThreadFactory( final String name ) {

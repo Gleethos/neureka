@@ -40,6 +40,7 @@ import neureka.backend.api.BackendContext;
 import neureka.backend.api.Operation;
 import neureka.common.utility.LogUtil;
 import neureka.common.utility.SettingsLoader;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.CLContext;
 import neureka.devices.opencl.utility.Messages;
 import neureka.dtype.custom.F64;
@@ -210,7 +211,15 @@ public final class Neureka
     /**
      * @return An instance of library wide {@link Settings} determining the behaviour of many classes...
      */
-    public Settings settings() { return _settings; }
+    public Settings settings() {
+        if ( Thread.currentThread().getName().startsWith(CPU.THREAD_PREFIX) )
+            throw new IllegalAccessError(
+                      "Thread pool thread named '"+Thread.currentThread().getName()+"' may not " +
+                         "access thread local library settings directly!" +
+                         "This is because this settings instance is not representative of the main thread settings."
+                );
+        return _settings;
+    }
 
     /**
      *  This allows you to configure Neureka using a Groovy DSL.
