@@ -8,13 +8,14 @@ import neureka.ndim.config.types.sliced.Sliced0DConfiguration
 import neureka.ndim.config.types.sliced.Sliced1DConfiguration
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("What it means to be N-Dimensional")
 class Tensor_NDConfiguration_Spec extends Specification
 {
     def setupSpec()
     {
         reportHeader """
-            <h2> Tensor NDConfiguration Integration Tests </h2>
             <p>
                 Specified below are strict integration tests for tensors and
                 their behaviour with regards to the usage of implementations of the
@@ -51,7 +52,7 @@ class Tensor_NDConfiguration_Spec extends Specification
             a.NDConf instanceof Simple0DConfiguration
         and : 'Both tensors "a" and "b" share the same (cached) "NDConfiguration" instance because they are both scalars.'
             a.NDConf == b.NDConf
-        and : 'This ND-Configuration behaves as expected.'
+        and : 'This ND-Configuration has the expected state.'
             a.NDConf.shape(0) == 1
             a.NDConf.translation(0) == 1
             a.NDConf.indicesMap(0) == 1
@@ -80,6 +81,7 @@ class Tensor_NDConfiguration_Spec extends Specification
             x.NDConf.indicesMap(0) == 1
             x.NDConf.offset(0) == 0
             x.NDConf.spread(0) == 1
+        and : 'Also, scalar slices have the expected configs'
             x[2].NDConf instanceof Sliced0DConfiguration
             y[1.1].NDConf instanceof Sliced0DConfiguration
             y[1.1].NDConf != x[2].NDConf
@@ -98,6 +100,7 @@ class Tensor_NDConfiguration_Spec extends Specification
             y = y[1..2]
         then : 'This produces the expected slice.'
             y.toString().contains("(2):[4.5, 2.0]")
+        and : 'The NDConfiguration of this slice has the expected state.'
             y.NDConf instanceof Sliced1DConfiguration
             y.NDConf.shape(0) == 2
             y.NDConf.translation(0) == 1
