@@ -54,7 +54,53 @@ class Tensor_Version_Spec extends Specification
         })
     }
 
-    def 'Non-inline operations causes version incrementation.'(
+    def 'Inline operations causes version incrementation.'(
+            String code,
+            boolean safe_inline,
+            int version_of_c,
+            int version_of_a,
+            int version_of_b,
+            String expected
+    ) {
+        given :
+            Neureka.get().settings().autograd().setIsPreventingInlineOperations( safe_inline )
+            Tsr a = Tsr.of(4) + Tsr.of(2)
+            Tsr b = Tsr.of(-1) + Tsr.of(-3).setRqsGradient(true)
+            Binding binding = new Binding()
+            binding.setVariable('a', a)
+            binding.setVariable('b', b)
+
+        expect :
+            a.getVersion() == 0
+            b.getVersion() == 0
+
+        when : 'The groovy code is being evaluated.'
+            Tsr c = new GroovyShell(binding).evaluate((code))
+
+        then : 'The resulting tensor (toString) will contain the expected String.'
+            c.toString().contains(expected)
+            c == a
+
+        and : 'The three tensors have the expected versions.'
+            a.getVersion() == version_of_a
+            b.getVersion() == version_of_b
+            c.getVersion() == version_of_c
+
+        where :
+            code                  | safe_inline || version_of_c | version_of_a | version_of_b | expected
+            ' a.plusAssign(b) '   |   true      ||      1       |      1       |      0       | "(1):[2.0]"
+            ' a.minusAssign(b) '  |   true      ||      1       |      1       |      0       | "(1):[10.0]"
+            ' a.timesAssign(b) '  |   true      ||      1       |      1       |      0       | "(1):[-24.0]"
+            ' a.divAssign(b) '    |   true      ||      1       |      1       |      0       | "(1):[-1.5]"
+
+            ' a.plusAssign(b) '   |   false     ||      0       |      0       |      0       | "(1):[2.0]"
+            ' a.minusAssign(b) '  |   false     ||      0       |      0       |      0       | "(1):[10.0]"
+            ' a.timesAssign(b) '  |   false     ||      0       |      0       |      0       | "(1):[-24.0]"
+            ' a.divAssign(b) '    |   false     ||      0       |      0       |      0       | "(1):[-1.5]"
+    }
+
+
+    def 'Non-inline operations do not cause version incrementation.'(
             String code,
             boolean no_inline,
             int version_of_c,
@@ -62,7 +108,9 @@ class Tensor_Version_Spec extends Specification
             int version_of_b,
             String expected
     ) {
-        given : 'Two tensors, one requiring gradients and the other one not.'
+        given :
+            Neureka.get().settings().autograd().setIsPreventingInlineOperations( no_inline )
+        and : 'Two tensors, one requiring gradients and the other one not.'
             Tsr a = Tsr.of(6).setRqsGradient(true)
             Tsr b = Tsr.of(-4)
         and : 'A binding for both tensors as preparation for calling the Groovy shell.'
@@ -92,58 +140,15 @@ class Tensor_Version_Spec extends Specification
             ' a - b '  |   false     ||      0       |      0       |      0       | "(1):[10.0]"
             ' a * b '  |   false     ||      0       |      0       |      0       | "(1):[-24.0]"
             ' a / b '  |   false     ||      0       |      0       |      0       | "(1):[-1.5]"
+            ' a % b '  |   false     ||      0       |      0       |      0       | "(1):[2.0]"
 
             ' a + b '  |   true      ||      0       |      0       |      0       | "(1):[2.0]"
             ' a - b '  |   true      ||      0       |      0       |      0       | "(1):[10.0]"
             ' a * b '  |   true      ||      0       |      0       |      0       | "(1):[-24.0]"
             ' a / b '  |   true      ||      0       |      0       |      0       | "(1):[-1.5]"
+            ' a % b '  |   true      ||      0       |      0       |      0       | "(1):[2.0]"
     }
 
-
-    def 'Inline operations causes version incrementation.'(
-            String code,
-            boolean save_inline,
-            int version_of_c,
-            int version_of_a,
-            int version_of_b,
-            String expected
-    ) {
-        given :
-            Neureka.get().settings().autograd().setIsPreventingInlineOperations( save_inline )
-            Tsr a = Tsr.of(4) + Tsr.of(2)
-            Tsr b = Tsr.of(-1) + Tsr.of(-3).setRqsGradient(true)
-            Binding binding = new Binding()
-            binding.setVariable('a', a)
-            binding.setVariable('b', b)
-
-        expect :
-            a.getVersion() == 0
-            b.getVersion() == 0
-
-        when : 'The groovy code is being evaluated.'
-            Tsr c = new GroovyShell(binding).evaluate((code))
-
-        then : 'The resulting tensor (toString) will contain the expected String.'
-            c.toString().contains(expected)
-            c == a
-
-        and : 'The three tensors have the expected versions.'
-            a.getVersion() == version_of_a
-            b.getVersion() == version_of_b
-            c.getVersion() == version_of_c
-
-        where :
-            code                  | save_inline || version_of_c | version_of_a | version_of_b | expected
-            ' a.plusAssign(b) '   |   true      ||      1       |      1       |      0       | "(1):[2.0]"
-            ' a.minusAssign(b) '  |   true      ||      1       |      1       |      0       | "(1):[10.0]"
-            ' a.timesAssign(b) '  |   true      ||      1       |      1       |      0       | "(1):[-24.0]"
-            ' a.divAssign(b) '    |   true      ||      1       |      1       |      0       | "(1):[-1.5]"
-
-            ' a.plusAssign(b) '   |   false     ||      0       |      0       |      0       | "(1):[2.0]"
-            ' a.minusAssign(b) '  |   false     ||      0       |      0       |      0       | "(1):[10.0]"
-            ' a.timesAssign(b) '  |   false     ||      0       |      0       |      0       | "(1):[-24.0]"
-            ' a.divAssign(b) '    |   false     ||      0       |      0       |      0       | "(1):[-1.5]"
-    }
 
 
     def 'Inline operations cause illegal state exceptions.'(

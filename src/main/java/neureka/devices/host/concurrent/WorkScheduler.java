@@ -92,9 +92,7 @@ public abstract class WorkScheduler {
             rangeWorkload.execute(start, end);
     }
 
-    public WorkScheduler() {
-        super();
-    }
+    public WorkScheduler() { super(); }
 
     /**
      * Synchronous execution - wait until it's finished.
@@ -104,13 +102,14 @@ public abstract class WorkScheduler {
      * @param threshold The work size threshold.
      */
     public final void invoke(
+            final ExecutorService executor,
             final int first,
             final int limit,
             final int threshold
     ) {
         int availableWorkers = ConcreteMachine.ENVIRONMENT.threads;
         _call(
-                CPU.get().getExecutor().getPool(),
+                executor,
                 first,
                 limit,
                 threshold,

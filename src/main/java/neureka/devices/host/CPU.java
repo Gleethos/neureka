@@ -42,7 +42,7 @@ public class CPU extends AbstractDevice<Object>
 
     static {
         _INSTANCE = new CPU();
-        _DIVIDER = new WorkScheduler.Divider(CPU.get().getExecutor().getPool());
+        _DIVIDER = new WorkScheduler.Divider(CPU.get()._executor._pool);
         _PARALLELISM = Parallelism.THREADS;
     }
 
@@ -79,7 +79,7 @@ public class CPU extends AbstractDevice<Object>
      */
     @Override
     public void dispose() {
-        _executor.getPool().shutdown();
+        _executor._pool.shutdown();
         _tensors.clear();
         _LOG.warn(
                 "Main thread pool in '"+this.getClass()+"' shutting down! " +
@@ -389,7 +389,37 @@ public class CPU extends AbstractDevice<Object>
             };
         }
 
-        public ThreadPoolExecutor getPool() { return _pool; }
+        /**
+         * Returns the approximate number of threads that are actively
+         * executing tasks.
+         *
+         * @return the number of threads
+         */
+        public int getActiveThreadCount() {
+            return _pool.getActiveCount();
+        }
+
+        /**
+         * Returns the core number of threads.
+         *
+         * @return the core number of threads
+         */
+        public int getCorePoolSize() {
+            return _pool.getCorePoolSize();
+        }
+
+        /**
+         * Returns the approximate total number of tasks that have
+         * completed execution. Because the states of tasks and threads
+         * may change dynamically during computation, the returned value
+         * is only an approximation, but one that does not ever decrease
+         * across successive calls.
+         *
+         * @return the number of tasks
+         */
+        public long getCompletedTaskCount() {
+            return _pool.getCompletedTaskCount();
+        }
 
         /**
          *  This method slices the provided workload size into multiple ranges which can be executed in parallel.

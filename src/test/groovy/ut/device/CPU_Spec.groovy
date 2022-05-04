@@ -22,9 +22,7 @@ class CPU_Spec extends Specification
 {
     def setupSpec()
     {
-        reportHeader """
-                <h2> $CPU Behavior </h2>
-                <br> 
+        reportHeader """ 
                 <p>
                     The thread pool of the $CPU executor becomes
                     more active when receiving larger workloads which
@@ -69,20 +67,20 @@ class CPU_Spec extends Specification
         expect : 'This device should not be null but be an instance of the CPU representative device type.'
             cpu != null
             cpu instanceof CPU
+
         when : 'Accessing the executor of the cpu device...'
             CPU.JVMExecutor exec = ( (CPU) cpu ).getExecutor()
         then : 'The executor is not null as well as its internal thread pool!'
             exec != null
-            exec.getPool() != null
 
         expect :
-            if ( exec.getPool().getCorePoolSize() <= 2 ) true
+            if ( exec.getCorePoolSize() <= 2 ) true
             else {
-                int[] min = new int[]{ exec.getPool().getCorePoolSize() }
+                int[] min = new int[]{ exec.getCorePoolSize() }
                 assert min[0] > 0 && min[0] <= Runtime.getRuntime().availableProcessors()
                 Thread t = new Thread(() -> {
                     while ( min[0] > 0 ) {
-                        int current = exec.getPool().getCorePoolSize() - exec.getPool().getActiveCount()
+                        int current = exec.getCorePoolSize() - exec.getActiveThreadCount()
                         if ( current < min[0] ) min[0] = current
                     }
                 })
@@ -96,17 +94,24 @@ class CPU_Spec extends Specification
                 } catch (InterruptedException e) {
                     e.printStackTrace()
                 }
-                assert result <= (exec.getPool().getCorePoolSize() / 2)
+                assert result <= (exec.getCorePoolSize() / 2)
             }
     }
 
-
-    def 'CPU knows the current number of available processor cores!'() {
-
+    def 'CPU knows the current number of available processor cores!'()
+    {
         expect :
             CPU.get().coreCount == Runtime.getRuntime().availableProcessors()
-
     }
 
+    def 'The CPU exposes a non null API for executing workloads in parallel.'()
+    {
+        expect :
+            CPU.get().executor != null
+        and :
+            CPU.get().executor.activeThreadCount >= 0
+            CPU.get().executor.corePoolSize >= 0
+            CPU.get().executor.completedTaskCount >= 0
+    }
 
 }
