@@ -29,8 +29,8 @@ import java.util.TreeSet;
  * </ul>
  *
  */
-public final class Hardware extends CommonMachine implements Comparable<Hardware> {
-
+public final class Hardware extends CommonMachine implements Comparable<Hardware>
+{
     /**
      * Practically all architectures/OS:s have a page size of 4k (one notable exception is Solaris/SPARC that
      * have 8k)
@@ -56,8 +56,13 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * </li>
      * </ul>
      */
-    static final Hardware PPC__01 = new Hardware("ppc",
-            new BasicMachine[] { new BasicMachine(5L * 256L * K * K, 1), new BasicMachine(512L * K, 1), new BasicMachine(64L * K, 1) });
+    static final Hardware PPC__01 =
+            new Hardware("ppc",
+                new BasicMachine[] {
+                        new BasicMachine(5L * 256L * K * K, 1),
+                        new BasicMachine(512L * K, 1),
+                        new BasicMachine(64L * K, 1)
+                });
 
     /**
      * <ul>
@@ -74,8 +79,13 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * </li>
      * </ul>
      */
-    static final Hardware X86__01 = new Hardware("x86",
-            new BasicMachine[] { new BasicMachine(1L * K * K * K, 1), new BasicMachine(1L * K * K, 1), new BasicMachine(32L * K, 1) });
+    static final Hardware X86__01 =
+            new Hardware("x86",
+                new BasicMachine[] {
+                        new BasicMachine(1L * K * K * K, 1),
+                        new BasicMachine(1L * K * K, 1),
+                        new BasicMachine(32L * K, 1)
+                });
 
     /**
      * <ul>
@@ -92,8 +102,13 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * </li>
      * </ul>
      */
-    static final Hardware X86__02 = new Hardware("x86",
-            new BasicMachine[] { new BasicMachine(7L * 512L * K * K, 2), new BasicMachine(6L * K * K, 2), new BasicMachine(32L * K, 1) });
+    static final Hardware X86__02 =
+            new Hardware("x86",
+                new BasicMachine[] {
+                        new BasicMachine(7L * 512L * K * K, 2),
+                        new BasicMachine(6L * K * K, 2),
+                        new BasicMachine(32L * K, 1)
+                });
 
     /**
      * <ul>
@@ -110,14 +125,25 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * </li>
      * </ul>
      */
-    static final Hardware X86_64__02 = new Hardware("x86_64",
-            new BasicMachine[] { new BasicMachine(3L * K * K * K, 2), new BasicMachine(4L * K * K, 2), new BasicMachine(32L * K, 1) });
+    static final Hardware X86_64__02 =
+            new Hardware("x86_64",
+                new BasicMachine[] {
+                        new BasicMachine(3L * K * K * K, 2),
+                        new BasicMachine(4L * K * K, 2),
+                        new BasicMachine(32L * K, 1)
+                });
 
     /**
      * Combination of {@link #X86_64__04_1_L2}, {@link #X86_64__04_1_L3} and {@link #X86_64__04_2}
      */
-    static final Hardware X86_64__04 = new Hardware("x86_64", new BasicMachine[] { new BasicMachine(32L * K * K * K, 4), new BasicMachine(3L * K * K, 4),
-            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+    static final Hardware X86_64__04 =
+            new Hardware("x86_64",
+                    new BasicMachine[] {
+                            new BasicMachine(32L * K * K * K, 4),
+                            new BasicMachine(3L * K * K, 4),
+                            new BasicMachine(256L * K, 2),
+                            new BasicMachine(32L * K, 2)
+                });
 
     /**
      * <ul>
@@ -145,8 +171,13 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * </li>
      * </ul>
      */
-    static final Hardware X86_64__04_1_L2 = new Hardware("x86_64",
-            new BasicMachine[] { new BasicMachine(8L * K * K * K, 4), new BasicMachine(3L * K * K, 2), new BasicMachine(32L * K, 1) });
+    static final Hardware X86_64__04_1_L2 =
+            new Hardware("x86_64",
+                new BasicMachine[] {
+                        new BasicMachine(8L * K * K * K, 4),
+                        new BasicMachine(3L * K * K, 2),
+                        new BasicMachine(32L * K, 1)
+                });
 
     /**
      * <ul>
@@ -176,8 +207,14 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * </li>
      * </ul>
      */
-    static final Hardware X86_64__04_1_L3 = new Hardware("x86_64", new BasicMachine[] { new BasicMachine(32L * K * K * K, 4), new BasicMachine(6L * K * K, 4),
-            new BasicMachine(256L * K, 1), new BasicMachine(32L * K, 1) });
+    static final Hardware X86_64__04_1_L3 =
+            new Hardware("x86_64",
+                    new BasicMachine[] {
+                            new BasicMachine(32L * K * K * K, 4),
+                            new BasicMachine(6L * K * K, 4),
+                            new BasicMachine(256L * K, 1),
+                            new BasicMachine(32L * K, 1)
+                });
 
     /**
      * <ul>
@@ -219,8 +256,14 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * </li>
      * </ul>
      */
-    static final Hardware X86_64__04_2 = new Hardware("x86_64", new BasicMachine[] { new BasicMachine(8L * K * K * K, 4), new BasicMachine(3L * K * K, 4),
-            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+    static final Hardware X86_64__04_2 =
+            new Hardware("x86_64",
+                    new BasicMachine[] {
+                            new BasicMachine(8L * K * K * K, 4),
+                            new BasicMachine(3L * K * K, 4),
+                            new BasicMachine(256L * K, 2),
+                            new BasicMachine(32L * K, 2)
+                });
 
     /**
      * <ul>
@@ -286,8 +329,14 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * </li>
      * </ul>
      */
-    static final Hardware X86_64__08 = new Hardware("x86_64", new BasicMachine[] { new BasicMachine(32L * K * K * K, 8), new BasicMachine(8L * K * K, 8),
-            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+    static final Hardware X86_64__08 =
+            new Hardware("x86_64",
+                    new BasicMachine[] {
+                            new BasicMachine(32L * K * K * K, 8),
+                            new BasicMachine(8L * K * K, 8),
+                            new BasicMachine(256L * K, 2),
+                            new BasicMachine(32L * K, 2)
+                });
 
     /**
      * <pre>
@@ -313,8 +362,14 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * </li>
      * </ul>
      */
-    static final Hardware X86_64__12 = new Hardware("x86_64", new BasicMachine[] { new BasicMachine(12L * K * K * K, 12), new BasicMachine(12L * K * K, 12),
-            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+    static final Hardware X86_64__12 =
+            new Hardware("x86_64",
+                    new BasicMachine[] {
+                            new BasicMachine(12L * K * K * K, 12),
+                            new BasicMachine(12L * K * K, 12),
+                            new BasicMachine(256L * K, 2),
+                            new BasicMachine(32L * K, 2)
+                });
 
     /**
      * <ul>
@@ -344,8 +399,14 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * </li>
      * </ul>
      */
-    static final Hardware X86_64__16 = new Hardware("x86_64", new BasicMachine[] { new BasicMachine(64L * K * K * K, 16), new BasicMachine(8L * K * K, 16),
-            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+    static final Hardware X86_64__16 =
+            new Hardware("x86_64",
+                    new BasicMachine[] {
+                            new BasicMachine(64L * K * K * K, 16),
+                            new BasicMachine(8L * K * K, 16),
+                            new BasicMachine(256L * K, 2),
+                            new BasicMachine(32L * K, 2)
+                });
 
     /**
      * <ul>
@@ -375,8 +436,14 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * </li>
      * </ul>
      */
-    static final Hardware X86_64__64 = new Hardware("x86_64", new BasicMachine[] { new BasicMachine(512L * K * K * K, 64), new BasicMachine(20L * K * K, 32),
-            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+    static final Hardware X86_64__64 =
+            new Hardware("x86_64",
+                    new BasicMachine[] {
+                            new BasicMachine(512L * K * K * K, 64),
+                            new BasicMachine(20L * K * K, 32),
+                            new BasicMachine(256L * K, 2),
+                            new BasicMachine(32L * K, 2)
+                });
 
     /**
      * <ul>
@@ -394,8 +461,14 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
      * </li>
      * </ul>
      */
-    static final Hardware X86_64__96 = new Hardware("x86_64", new BasicMachine[] { new BasicMachine(512L * K * K * K, 96), new BasicMachine(30L * K * K, 24),
-            new BasicMachine(256L * K, 2), new BasicMachine(32L * K, 2) });
+    static final Hardware X86_64__96 =
+            new Hardware("x86_64",
+                    new BasicMachine[] {
+                            new BasicMachine(512L * K * K * K, 96),
+                            new BasicMachine(30L * K * K, 24),
+                            new BasicMachine(256L * K, 2),
+                            new BasicMachine(32L * K, 2)
+                });
 
     static {
         PREDEFINED.add(PPC__01);

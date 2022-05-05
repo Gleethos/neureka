@@ -6,45 +6,44 @@ package neureka.devices.host.machine;
  * cache).
  *
  */
-public class BasicMachine {
-
-    private static final String BYTES = "bytes/";
-    private static final String GIGA = "GB/";
-    private static final String KILO = "kB/";
-    private static final String MEGA = "MB/";
-    private static final String THREAD = "thread";
+public class BasicMachine
+{
+    private static final String BYTES   = "bytes/";
+    private static final String GIGA    = "GB/";
+    private static final String KILO    = "kB/";
+    private static final String MEGA    = "MB/";
+    private static final String THREAD  = "thread";
     private static final String THREADS = "threads";
 
     public final long memory;
-    public final int threads;
+    public final int  threads;
 
-    public BasicMachine(final long memory, final int threads) {
-
+    public BasicMachine(final long memory, final int threads)
+    {
         super();
-
         this.memory = memory;
         this.threads = threads;
     }
 
     @SuppressWarnings("unused")
-    private BasicMachine() {
-        this(0L, 0);
-    }
+    private BasicMachine() { this(0L, 0); }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (!(obj instanceof BasicMachine)) return false;
+    public boolean equals(final Object obj)
+    {
+        if ( this == obj ) return true;
+        if ( obj == null ) return false;
+        if ( !(obj instanceof BasicMachine) ) return false;
         final BasicMachine other = (BasicMachine) obj;
-        if (memory != other.memory)
+        if ( memory != other.memory )
             return false;
-        return
-                threads == other.threads;
+        else
+            return threads == other.threads;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         final int prime = 31;
         int result = 1;
         result = (prime * result) + (int) (memory ^ (memory >>> 32));
@@ -53,8 +52,8 @@ public class BasicMachine {
     }
 
     @Override
-    public String toString() {
-
+    public String toString()
+    {
         int prefix = 1;
         long measure = memory / CommonMachine.K;
 
@@ -63,12 +62,12 @@ public class BasicMachine {
             measure /= CommonMachine.K;
         }
 
-        switch (prefix) {
-            case 1: return measure + KILO + threads + ((threads == 1) ? THREAD : THREADS);
-            case 2: return measure + MEGA + threads + ((threads == 1) ? THREAD : THREADS);
-            case 3: return measure + GIGA + threads + ((threads == 1) ? THREAD : THREADS);
+        switch ( prefix ) {
+            case 1:  return measure + KILO + threads + ((threads == 1) ? THREAD : THREADS);
+            case 2:  return measure + MEGA + threads + ((threads == 1) ? THREAD : THREADS);
+            case 3:  return measure + GIGA + threads + ((threads == 1) ? THREAD : THREADS);
             default: return memory + BYTES + threads + ((threads == 1) ? THREAD : THREADS);
         }
-
     }
+
 }

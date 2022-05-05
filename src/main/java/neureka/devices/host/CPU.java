@@ -42,7 +42,7 @@ public class CPU extends AbstractDevice<Object>
 
     static {
         _INSTANCE = new CPU();
-        _DIVIDER = new WorkScheduler.Divider(CPU.get()._executor._pool);
+        _DIVIDER = new WorkScheduler.Divider(_INSTANCE._executor._pool);
         _PARALLELISM = Parallelism.THREADS;
     }
 
@@ -97,10 +97,10 @@ public class CPU extends AbstractDevice<Object>
         return this;
     }
 
-    @Override protected <T> void _updateNDConf(Tsr<T> tensor) { /* Nothing to do here */ }
+    @Override protected final <T> void _updateNDConf(Tsr<T> tensor) { /* Nothing to do here */ }
 
     @Override
-    protected <T> int _sizeOccupiedBy(Tsr<T> tensor) {
+    protected final <T> int _sizeOccupiedBy(Tsr<T> tensor) {
         Object data = tensor.getUnsafe().getData();
         if      ( data instanceof float[] )  return ( (float[])   data).length;
         else if ( data instanceof double[] ) return ( (double[])  data).length;
@@ -114,7 +114,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected <T> Object _readAll(Tsr<T> tensor, boolean clone ) {
+    protected final <T> Object _readAll(Tsr<T> tensor, boolean clone ) {
         Object data = tensor.getUnsafe().getData();
         if ( clone ) {
             if ( data instanceof double[]  ) return ( (double[])  data ).clone();
@@ -131,7 +131,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected <T> T _readItem( Tsr<T> tensor, int index ) {
+    protected final <T> T _readItem( Tsr<T> tensor, int index ) {
         Object data = tensor.getUnsafe().getData();
         if      ( data instanceof float[] )  return (T)(Float)  ( (float[])   data)[ index ];
         else if ( data instanceof double[] ) return (T)(Double) ( (double[])  data)[ index ];
@@ -145,7 +145,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected <T, A> A _readArray(
+    protected final <T, A> A _readArray(
             Tsr<T> tensor, Class<A> arrayType, int start, int size
     ) {
         if ( arrayType == float[].class ) {
@@ -190,7 +190,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected <T> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
+    protected final <T> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
         Object data = tensor.getUnsafe().getData();
         Class<?> arrayType = data.getClass();
         if ( arrayType == float[].class ) {
@@ -232,7 +232,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected <T> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int size) {
+    protected final <T> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int size) {
         Object data = tensor.getUnsafe().getData();
         Class<?> arrayType = data.getClass();
         if ( arrayType == float[].class ) {
@@ -355,7 +355,7 @@ public class CPU extends AbstractDevice<Object>
         private static final ThreadGroup   _GROUP   = new ThreadGroup(THREAD_PREFIX+"-group");
 
         /*
-            The following 2 constants determine if any given workload size will be parallelize or not...
+            The following 2 constants determine if any given workload size will be parallelized or not...
             We might want to adjust this some more for better performance...
          */
         private static final int _MIN_THREADED_WORKLOAD_SIZE = 32;
