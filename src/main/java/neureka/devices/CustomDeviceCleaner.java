@@ -45,15 +45,19 @@ final class CustomDeviceCleaner implements DeviceCleaner, Runnable
     public void run() {
         while ( _registered > 0 ) {
             try {
-                ReferenceWithCleanup ref = (ReferenceWithCleanup) _referenceQueue.remove( _timeout );
+                ReferenceWithCleanup ref = (ReferenceWithCleanup) _referenceQueue.remove(_timeout);
                 if ( ref != null ) {
-                    ref.cleanup();
+                    try {
+                        ref.cleanup();
+                    } catch ( Throwable e ) {
+                        e.printStackTrace();
+                        // ignore exceptions from the cleanup action
+                        // (including interruption of cleanup thread)
+                    }
                     _registered--;
                 }
             } catch ( Throwable e ) {
-                e.printStackTrace();
-                // ignore exceptions from the cleanup action
-                // (including interruption of cleanup thread)
+                e.printStackTrace(); // The queue failed
             }
         }
     }
