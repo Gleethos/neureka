@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.fun.ADAgentSupplier;
 import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.ExecutionPreparation;
 import neureka.backend.api.algorithms.fun.Result;
@@ -27,7 +28,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgorithm>
-implements ExecutionPreparation
+implements ExecutionPreparation, ADAgentSupplier
 {
 
     private static final Logger _LOG = LoggerFactory.getLogger(FallbackAlgorithm.class);

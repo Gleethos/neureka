@@ -95,7 +95,7 @@ public abstract class AbstractOperation implements Operation
      *  - A simple result tensor instantiation implementation.                                                          <br>
      *  - A basic threaded execution based on the AST of a given Function object.                                       <br>
      */
-    private final Algorithm<?> _defaultAlgorithm;
+    private final FallbackAlgorithm _defaultAlgorithm;
 
     public AbstractOperation( OperationBuilder builder )
     {
@@ -224,7 +224,7 @@ public abstract class AbstractOperation implements Operation
 
     @Override public boolean isInline() { return _isInline; }
 
-    public final Algorithm<?> getDefaultAlgorithm() { return _defaultAlgorithm; }
+    public final FallbackAlgorithm getDefaultAlgorithm() { return _defaultAlgorithm; }
 
     @Override
     public final String toString() {

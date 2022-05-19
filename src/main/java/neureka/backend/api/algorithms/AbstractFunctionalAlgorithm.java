@@ -79,7 +79,6 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
      *  Besides that it may also contain context information used <br>
      *  to perform said procedures.
      */
-    @Override
     public final ADAgent supplyADAgentFor(Function function, ExecutionCall<? extends Device<?>> call, boolean forward ) {
         _checkReadiness();
         return _supplyADAgentFor.supplyADAgentFor(function, call, forward );

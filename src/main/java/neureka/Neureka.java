@@ -147,7 +147,7 @@ public final class Neureka
     /**
      *  The {@link Neureka} class represents the configuration of this library.
      *  Instances of this configuration are stored local to every thread in order to make
-     *  both the library settings as well as the execution context threadsafe!
+     *  both the library settings and the execution context threadsafe!
      *  This method will return the {@link Neureka} instance which corresponds to the thread calling it.
      *
      * @return The thread local library configuration state called {@link Neureka}.
@@ -156,8 +156,8 @@ public final class Neureka
         if ( Thread.currentThread().getName().startsWith(CPU.THREAD_PREFIX) )
             throw new IllegalAccessError(
                 "Thread pool thread named '"+Thread.currentThread().getName()+"' may not " +
-                   "access thread local library instance directly!" +
-                   "This is because this settings instance is not representative of the main thread library context."
+                "access thread local library instance directly!" +
+                "This is because this settings instance is not representative of the main thread library context."
             );
         Neureka n = _INSTANCES.get();
         if ( n == null ) {
