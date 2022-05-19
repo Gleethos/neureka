@@ -1,5 +1,6 @@
 package neureka.backend.api;
 
+import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.devices.Device;
 
 /**
@@ -8,7 +9,18 @@ import neureka.devices.Device;
  *
  * @param <C>
  */
-public interface DeviceAlgorithm<C extends DeviceAlgorithm<C>> extends Algorithm {
+public interface DeviceAlgorithm<C extends DeviceAlgorithm<C>> extends Algorithm
+{
+
+    /**
+     * This is a factory method for creating a new instance of this {@link FunAlgorithm} class.
+     *
+     * @param name The name of the functional algorithm.
+     * @return A new {@link FunAlgorithm} with the provided name.
+     */
+    static FunAlgorithm withName(String name) {
+        return new FunAlgorithm(name);
+    }
 
     /**
      * Implementations of the {@link DeviceAlgorithm} interface ought to express a compositional design pattern. <br>

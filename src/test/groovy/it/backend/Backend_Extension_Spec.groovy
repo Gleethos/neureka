@@ -6,6 +6,7 @@ import neureka.Tsr
 import neureka.autograd.ADAgent
 import neureka.backend.api.Algorithm
 import neureka.backend.api.BackendContext
+import neureka.backend.api.DeviceAlgorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.backend.api.algorithms.fun.AutoDiffMode
@@ -69,7 +70,7 @@ class Backend_Extension_Spec extends Specification
                                 )
                                 .build()
                                 .setAlgorithm(
-                                        Algorithm.withName(null)
+                                        DeviceAlgorithm.withName(null)
                                             .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )
                                             .setAutogradModeFor(call -> AutoDiffMode.BACKWARD_ONLY )
                                             .setExecution( (caller, call) ->

@@ -61,16 +61,6 @@ public interface Algorithm
 extends SuitabilityPredicate, ADSupportPredicate, Execution
 {
     /**
-     * This is a factory method for creating a new instance of this {@link FunAlgorithm} class.
-     *
-     * @param name The name of the functional algorithm.
-     * @return A new {@link FunAlgorithm} with the provided name.
-     */
-    static FunAlgorithm withName(String name) {
-        return new FunAlgorithm(name);
-    }
-
-    /**
      *  The name of an {@link Algorithm} may be used for OpenCL kernel compilation or simply
      *  for debugging purposes to identify which type of algorithm is being executed at any
      *  given time...

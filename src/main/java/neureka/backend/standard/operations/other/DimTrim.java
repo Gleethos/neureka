@@ -3,7 +3,7 @@ package neureka.backend.standard.operations.other;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.backend.api.Algorithm;
+import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.ADAgentSupplier;
 import neureka.backend.api.algorithms.fun.AutoDiffMode;
@@ -39,7 +39,7 @@ public class DimTrim extends AbstractOperation
         );
         setAlgorithm(
             FunAlgorithm.class,
-            Algorithm
+            DeviceAlgorithm
                 .withName("dimTrim")
                 .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )

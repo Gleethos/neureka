@@ -2,7 +2,7 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.backend.api.Algorithm;
+import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.ADAgentSupplier;
 import neureka.backend.api.algorithms.fun.AutoDiffMode;
@@ -34,7 +34,7 @@ public class DimFit extends AbstractOperation
         );
 
         FunAlgorithm implementation =
-                Algorithm
+                DeviceAlgorithm
                     .withName("reshape")
                     .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
                     .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )

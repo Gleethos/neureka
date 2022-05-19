@@ -3,7 +3,7 @@ package neureka.backend.standard.operations.linear;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.backend.api.Algorithm;
+import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.ADAgentSupplier;
 import neureka.backend.api.algorithms.fun.AutoDiffMode;
@@ -44,7 +44,7 @@ public class MatMul extends AbstractOperation
         );
 
         simpleMatMulAlgorithm =
-                        Algorithm
+                        DeviceAlgorithm
                             .withName("simple_matmul")
                             .setIsSuitableFor(
                                 call -> call.validate()

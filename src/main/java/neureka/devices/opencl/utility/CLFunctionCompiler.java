@@ -3,7 +3,7 @@ package neureka.devices.opencl.utility;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.backend.api.Algorithm;
+import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.AutoDiffMode;
@@ -73,7 +73,7 @@ public final class CLFunctionCompiler {
                 )
                 .build()
                 .setAlgorithm(
-                    Algorithm
+                    DeviceAlgorithm
                         .withName( "generic_algorithm_for_"+ _functionName )
                         .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
                         .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
