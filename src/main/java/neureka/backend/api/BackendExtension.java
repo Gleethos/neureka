@@ -34,8 +34,8 @@ public interface BackendExtension extends Component<Extensions> {
      *  It exists because a typical {@link BackendExtension} will most likely also have a
      *  custom {@link Device} implementation exposing a specific API for executing tensors on them...
      */
-    class DeviceOption {
-
+    class DeviceOption
+    {
         private final Device<?> _device;
         private final double _confidence;
 
