@@ -4,6 +4,7 @@ package neureka.backend.api.algorithms;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
+import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.*;
@@ -35,7 +36,7 @@ import java.util.Arrays;
  *
  * @param <C> The final type extending this class.
  */
-public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>>
+public abstract class AbstractFunctionalAlgorithm<C extends DeviceAlgorithm<C>>
 extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
 {
     private static final Logger _LOG = LoggerFactory.getLogger( AbstractFunctionalAlgorithm.class );

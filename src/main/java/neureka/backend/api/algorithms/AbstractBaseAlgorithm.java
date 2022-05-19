@@ -1,6 +1,7 @@
 package neureka.backend.api.algorithms;
 
 import neureka.backend.api.Algorithm;
+import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.Device;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
  *
  * @param <C> The type of the concrete extension of this class.
  */
-public abstract class AbstractBaseAlgorithm<C extends Algorithm<C>> implements Algorithm<C>
+public abstract class AbstractBaseAlgorithm<C extends DeviceAlgorithm<C>> implements DeviceAlgorithm<C>
 {
     private final Logger _LOG = LoggerFactory.getLogger(AbstractBaseAlgorithm.class);
 

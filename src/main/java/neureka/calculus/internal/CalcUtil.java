@@ -2,10 +2,7 @@ package neureka.calculus.internal;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.Algorithm;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.ImplementationFor;
-import neureka.backend.api.Operation;
+import neureka.backend.api.*;
 import neureka.backend.api.algorithms.fun.ExecutionPreparation;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.memory.MemUtil;
@@ -317,7 +314,8 @@ public class CalcUtil
                             _LOG.error( message );
                             throw new IllegalStateException( message );
                         } else {
-                            ImplementationFor<Device<?>> implementation = algorithm.getImplementationFor( device );
+                            DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
+                            ImplementationFor<Device<?>> implementation =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(device) );
                             if ( implementation == null ) {
                                 String message = _couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
                                 _LOG.error( message );

@@ -2,6 +2,7 @@ package neureka.devices.opencl;
 
 import neureka.Neureka;
 import neureka.backend.api.Algorithm;
+import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
 import neureka.backend.standard.algorithms.*;
@@ -164,12 +165,13 @@ public class OpenCLPlatform {
 
         for ( Operation type : Neureka.get().backend().getOperations() ) {
             for (Algorithm<?> algorithm : type.getAllAlgorithms()) {
-                ImplementationFor<OpenCLDevice> impl = algorithm.getImplementationFor(OpenCLDevice.class);
+                DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
+                ImplementationFor<OpenCLDevice> impl =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(OpenCLDevice.class) );
                 if ( impl instanceof CLImplementation ) {
                     CLImplementation cli = ((CLImplementation) impl);
-                    if ( cli instanceof SimpleCLImplementation) {
-                        names.add(((SimpleCLImplementation) cli).getKernelCode(  ).getName());
-                        sources.add(((SimpleCLImplementation) cli).getKernelCode().getCode());
+                    if ( cli instanceof SimpleCLImplementation ) {
+                        names.add(cli.getKernelCode().getName());
+                        sources.add(cli.getKernelCode().getCode());
                     }
                 }
             }

@@ -50,9 +50,7 @@ package neureka.devices.opencl;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.ImplementationFor;
-import neureka.backend.api.Operation;
+import neureka.backend.api.*;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
 import neureka.common.composition.Component;
@@ -632,10 +630,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @return The kernel call which uses the builder pattern to receive kernel arguments.
      */
     public KernelCaller getKernel( ExecutionCall<OpenCLDevice> call ) {
-        // We create the kernel name from the chosen algorithm:
-        ImplementationFor<OpenCLDevice> impl = call.getAlgorithm().getImplementationFor(OpenCLDevice.class);
         String chosen;
-        if ( impl instanceof CLImplementation && _platform.hasKernel( ((CLImplementation) impl).getKernelFor( call ).getName()) ) {
+        Algorithm<?> algorithm = call.getAlgorithm();
+        DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
+        // We create the kernel name from the chosen algorithm:
+        ImplementationFor<OpenCLDevice> impl = ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(OpenCLDevice.class) );
+        if ( impl instanceof CLImplementation && _platform.hasKernel(((CLImplementation) impl).getKernelFor(call).getName()) ) {
             chosen = ((CLImplementation) impl).getKernelFor( call ).getName();
         }
         else
