@@ -1392,7 +1392,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public final Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
 
-    public final Tsr<V> to( String deviceType ) { return this.to(Device.find(deviceType)); }
+    public final Tsr<V> to( String deviceType ) { return this.to(Device.get(deviceType)); }
 
     /*==================================================================================================================
     |

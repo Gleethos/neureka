@@ -61,7 +61,7 @@ class OpenCLDevice_Spec extends Specification
     def 'An OpenCLDevice loads tensors in a provided lambda temporarily.'()
     {
         given: 'The first found OpenCLDevice instance.'
-            Device<?> device = Device.find('first')
+            Device<?> device = Device.get('first')
         and : 'We create 2 tensors with different default devices.'
             Tsr<?> t = Tsr.of([4, 3], 2)
             Tsr<?> s = Tsr.of([3, 2], -1).to(device)
@@ -98,7 +98,7 @@ class OpenCLDevice_Spec extends Specification
             t.dataType == DataType.of( Double.class )
 
         when : 'The tensor is being transferred to the first found OpencCLDevice...'
-            Device.find('first').store( t )
+            Device.get('first').store( t )
 
         then : 'The data type of the tensor is being converted to single precision.'
             t.dataType == DataType.of( Float.class )
@@ -126,7 +126,7 @@ class OpenCLDevice_Spec extends Specification
             t.unsafe.data != null
 
         when : 'The tensor is being stored on the device...'
-            t.to(Device.find('first'))
+            t.to(Device.get('first'))
         and : 'The tensor value is being fetched...'
             def data = t.unsafe.data
 

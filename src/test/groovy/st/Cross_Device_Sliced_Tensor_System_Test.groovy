@@ -98,7 +98,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'
 
         where:
-            device << [ Device.find('gpu'), CPU.get() ]
+            device << [Device.get('gpu'), CPU.get() ]
 
     }
 
@@ -327,7 +327,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             x.toString().contains("[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)")
 
         where:
-            device << [CPU.get(),Device.find('gpu')]
+            device << [CPU.get(),Device.get('gpu')]
     }
 
 

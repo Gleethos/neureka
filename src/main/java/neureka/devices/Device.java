@@ -68,7 +68,7 @@ import java.util.stream.Stream;
  * as well as the device itself which may also know about the tensors it holds.
  * A tensor stored on a device will have its "isOutsourced" property set to true!
  *
- * @param <V> The value type of super type of the values stored on a {@link Device} implementation...
+ * @param <V> The super type of all values that can be stored on a {@link Device} implementation...
  */
 public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V>>
 {
@@ -78,7 +78,9 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @param searchKeys The search parameter and name of the requested {@link Device} instance.
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
-    static Device<Object> find( String... searchKeys ) { return find( Device.class, searchKeys ); }
+    static Optional<Device<Object>> find( String... searchKeys ) {
+        return Optional.ofNullable( Query.query( Device.class, searchKeys ) );
+    }
 
     /**
      *  This method returns {@link Device} instances matching
@@ -90,44 +92,46 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @param <D> The device type parameter.
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
-    static <T, D extends Device<T>> D find( Class<D> deviceType, String... searchKeys )
-    {
-        if ( deviceType == CPU.class ) return (D) CPU.get();
-        String key;
-        if ( searchKeys.length == 0 ) key = "";
-        else key = String.join(" ", searchKeys).toLowerCase();
-
-        boolean justTakeFirstOne = key.equals("first");
-
-        boolean probablyWantsGPU = Stream.of(
-                                        "gpu", "nvidia", "amd", "intel", "opencl", "fpga", "radeon", "cuda", "apu", "graphics"
-                                    )
-                                    .anyMatch(key::contains);
-
-        double desireForCPU = Stream.of("jvm","native","host","cpu","threaded")
-                                    .mapToDouble( word -> ParseUtil.similarity( word, key ) )
-                                    .max()
-                                    .orElse(0);
-
-        if ( probablyWantsGPU ) desireForCPU /= 10; // CPU instance is most likely not meant!
-
-        for ( BackendExtension extension : Neureka.get().backend().getExtensions() ) {
-            BackendExtension.DeviceOption found = extension.find( key );
-            if ( found == null           ) continue;
-            if ( found.device() == null  ) continue;
-            if ( found.confidence() <= 0 ) continue;
-            if ( !deviceType.isAssignableFrom( found.device().getClass() ) ) continue;
-            if ( found.confidence() > desireForCPU || justTakeFirstOne )
-                return (D) found.device();
-        }
-
-        if ( probablyWantsGPU )
-            return null; // User wants OpenCL but cannot have it :/
-        else if ( deviceType.isAssignableFrom( CPU.class ) )
-            return (D) CPU.get();
-        else
-            return null; // We don't know what the user wants, but we do not have it :/
+    static <T, D extends Device<T>> Optional<D> find( Class<D> deviceType, String... searchKeys ) {
+        return Optional.ofNullable( Query.query( deviceType, searchKeys ) );
     }
+
+    /**
+     *  This method returns {@link Device} instances matching
+     *  the given search parameter.
+     *  If the provided keys do not match anything then this method will simply return a {@link CPU} instance.
+     *
+     * @param searchKeys The search parameter and name of the requested {@link Device} instance.
+     * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
+     */
+    static Device<Object> any( String... searchKeys ) {
+        Device<Object> found = get( Device.class, searchKeys );
+        return ( found == null ? CPU.get() : found );
+    }
+
+    /**
+     *  This method returns {@link Device} instances matching
+     *  the given search parameter.
+     *  If the provided keys do not match anything then this method may return null.
+     *
+     * @param searchKeys The search parameter and name of the requested {@link Device} instance.
+     * @return The found {@link Device} instance or simply {@code null} by default.
+     */
+    static Device<Object> get( String... searchKeys ) {
+        return get( Device.class, searchKeys );
+    }
+
+    /**
+     *  This method returns {@link Device} instances matching
+     *  the given search parameters.
+     *
+     * @param deviceType The device type class which should be found.
+     * @param searchKeys The search parameter and name of the requested {@link Device} instance.
+     * @param <T> The value super types of the tensors stored on the requested device.
+     * @param <D> The device type parameter.
+     * @return The found {@link Device} instance or null if nothing was found which matches the provided search hints well enough.
+     */
+    static <T, D extends Device<T>> D get( Class<D> deviceType, String... searchKeys ) { return Query.query( deviceType, searchKeys ); }
 
     /**
      *  This method signals the device to get ready for garbage collection.

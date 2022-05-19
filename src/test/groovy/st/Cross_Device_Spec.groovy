@@ -51,7 +51,7 @@ class Cross_Device_Spec extends Specification
     @IgnoreIf({ data.deviceType == "GPU" && !Neureka.get().canAccessOpenCLDevice() })
     def 'Convolution can model matrix multiplications across devices.'(String deviceType) {
         given : 'A given device of any type and the settings configured for testing.'
-            Device device = ( deviceType == "CPU" ) ? CPU.get() : Device.find('first')
+            Device device = ( deviceType == "CPU" ) ? CPU.get() : Device.get('first')
             Neureka.get().reset()
             Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
@@ -107,7 +107,7 @@ class Cross_Device_Spec extends Specification
             String deviceType
     ) {
         given : 'A given device of any type and the settings configured for testing.'
-            Device device = ( deviceType == "CPU" ) ? CPU.get() : Device.find('first')
+            Device device = ( deviceType == "CPU" ) ? CPU.get() : Device.get('first')
             Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 
@@ -131,7 +131,7 @@ class Cross_Device_Spec extends Specification
                 new SimpleNNSystemTest(SimpleNNSystemTest.Mode.MAT_MUL).on(device)
 
         where :
-            device << [new DummyDevice(), Device.find('first gpu')]
+            device << [new DummyDevice(), Device.get('first gpu')]
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && (data.device instanceof OpenCLDevice) || data.device == null })
@@ -161,7 +161,7 @@ class Cross_Device_Spec extends Specification
             //!g.isOutsourced()
 
         where :
-            device << [new DummyDevice(), Device.find('first gpu')]
+            device << [new DummyDevice(), Device.get('first gpu')]
 
     }
 
@@ -196,9 +196,9 @@ class Cross_Device_Spec extends Specification
         where : 'We use the following data to test this mapping for a wide range of types and values!'
             tensor                     | device               | target         | lambda  || expected
             Tsr.of(3.5)                | CPU.get()            | String.class   | {"~$it"}|| '(1):[~3.5]'
-            Tsr.of(3.5)                | Device.find('first') | String.class   | {"~$it"}|| '(1):[~3.5]'
+            Tsr.of(3.5)                | Device.get('first')  | String.class  | {"~$it"} || '(1):[~3.5]'
             Tsr.ofFloats().scalar(3.5f)| CPU.get()            | String.class   | {"~$it"}|| '(1):[~3.5]'
-            Tsr.ofFloats().scalar(3.5f)| Device.find('first') | String.class   | {"~$it"}|| '(1):[~3.5]'
+            Tsr.ofFloats().scalar(3.5f)| Device.get('first')  | String.class  | {"~$it"} || '(1):[~3.5]'
             Tsr.ofShorts().scalar(3.5f)| CPU.get()            | String.class   | {"~$it"} || '(1):[~3]'
             //Tsr.ofShorts().scalar(3.5f)| Device.find('first') | String.class   | {"~$it"}|| '(1):[~3]' // TODO: Allow for shorts on the GPU
             Tsr.ofBytes().scalar(2.7)  | CPU.get()            | String.class   | {"~$it"} || '(1):[~2]'
@@ -206,12 +206,12 @@ class Cross_Device_Spec extends Specification
             Tsr.ofInts().scalar(6.1f)  | CPU.get()            | String.class   | {"~$it"} || '(1):[~6]'
             //Tsr.ofInts().scalar(6.1f)  | Device.find('first') | String.class   | {"~$it"}|| '(1):[~6]' // TODO: Allow for ints on the GPU
 
-            Tsr.of( 3 )                | Device.find('first') | Double.class   | {it*it} || '(1):[9.0]'
-            Tsr.of(-1 )                | Device.find('first') | Float.class    | {it/2}  || '(1):[-0.5]'
-            Tsr.of(0.5)                | Device.find('first') | Integer.class  | {it*10} || '(1):[5.0]'
-            Tsr.of(0.7)                | Device.find('first') | Long.class     | {it*5}  || '(1):[3.0]'
-            Tsr.of(0.9)                | Device.find('first') | Byte.class     | {it*2}  || '(1):[1.0]'
-            Tsr.of(3.8)                | Device.find('first') | Short.class    | {it/2}  || '(1):[1.0]'
+            Tsr.of( 3 )                | Device.get('first')  | Double.class  | {it*it}  || '(1):[9.0]'
+            Tsr.of(-1 )                | Device.get('first')  | Float.class   | {it/2}   || '(1):[-0.5]'
+            Tsr.of(0.5)                | Device.get('first')  | Integer.class | {it*10}  || '(1):[5.0]'
+            Tsr.of(0.7)                | Device.get('first')  | Long.class    | {it*5}   || '(1):[3.0]'
+            Tsr.of(0.9)                | Device.get('first')  | Byte.class    | {it*2}   || '(1):[1.0]'
+            Tsr.of(3.8)                | Device.get('first')  | Short.class   | {it/2}   || '(1):[1.0]'
             Tsr.of( 3 )                | CPU.get()            | Double.class   | {it*it}  || '(1):[9.0]'
             Tsr.of(-1 )                | CPU.get()            | Float.class    | {it/2}   || '(1):[-0.5]'
             Tsr.of(0.5)                | CPU.get()            | Integer.class  | {it*10}  || '(1):[5.0]'
@@ -219,12 +219,12 @@ class Cross_Device_Spec extends Specification
             Tsr.of(0.9)                | CPU.get()            | Byte.class     | {it*2}   || '(1):[1.0]'
             Tsr.of(3.8)                | CPU.get()            | Short.class    | {it/2}   || '(1):[1.0]'
 
-            Tsr.ofFloats().scalar( 3f )| Device.find('first') | Double.class   | {it*it} || '(1):[9.0]'
-            Tsr.ofFloats().scalar(-1f )| Device.find('first') | Float.class    | {it/2}  || '(1):[-0.5]'
-            Tsr.ofFloats().scalar(0.5f)| Device.find('first') | Integer.class  | {it*10} || '(1):[5.0]'
-            Tsr.ofFloats().scalar(0.7f)| Device.find('first') | Long.class     | {it*5}  || '(1):[3.0]'
-            Tsr.ofFloats().scalar(0.9f)| Device.find('first') | Byte.class     | {it*2}  || '(1):[1.0]'
-            Tsr.ofFloats().scalar(3.8f)| Device.find('first') | Short.class    | {it/2}  || '(1):[1.0]'
+            Tsr.ofFloats().scalar( 3f )| Device.get('first')  | Double.class  | {it*it}  || '(1):[9.0]'
+            Tsr.ofFloats().scalar(-1f )| Device.get('first')  | Float.class   | {it/2}   || '(1):[-0.5]'
+            Tsr.ofFloats().scalar(0.5f)| Device.get('first')  | Integer.class | {it*10}  || '(1):[5.0]'
+            Tsr.ofFloats().scalar(0.7f)| Device.get('first')  | Long.class    | {it*5}   || '(1):[3.0]'
+            Tsr.ofFloats().scalar(0.9f)| Device.get('first')  | Byte.class    | {it*2}   || '(1):[1.0]'
+            Tsr.ofFloats().scalar(3.8f)| Device.get('first')  | Short.class   | {it/2}   || '(1):[1.0]'
             Tsr.ofFloats().scalar( 3f )| CPU.get()            | Double.class   | {it*it}  || '(1):[9.0]'
             Tsr.ofFloats().scalar(-1f )| CPU.get()            | Float.class    | {it/2}   || '(1):[-0.5]'
             Tsr.ofFloats().scalar(0.5f)| CPU.get()            | Integer.class  | {it*10}  || '(1):[5.0]'

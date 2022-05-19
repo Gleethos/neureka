@@ -80,7 +80,7 @@ class Tensor_Function_Spec extends Specification
         given : "A new Function instance created from ${equation}."
             Function f = new FunctionBuilder( Neureka.get().backend() ).build(equation, true) // TODO : test with 'doAD' : false!
         and :
-            inputs.each {it.to(Device.find(device))}
+            inputs.each {it.to(Device.get(device))}
 
         and : 'The result is being calculated by invoking the Function instance.'
             Tsr<?> result = ( index != null ? f.derive( inputs, index ) : f.call( inputs ) )

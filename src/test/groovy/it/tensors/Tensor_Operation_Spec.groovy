@@ -264,7 +264,7 @@ class Tensor_Operation_Spec extends Specification
         where : 'The following data is being used for tensor instantiation :'
             device  << [
                     CPU.get(),
-                    Device.find("openCL")
+                    Device.get("openCL")
             ]
     }
 
@@ -282,8 +282,8 @@ class Tensor_Operation_Spec extends Specification
         and :
             def aShape = [2, 2]
         and :
-            Tsr<Double> a = Tsr.of(aShape, 1d..5d).setRqsGradient(!whichGrad).to(Device.find(device))
-            Tsr<Double> b = Tsr.of(bShape, 8d..9d).setRqsGradient(whichGrad).to(Device.find(device))
+            Tsr<Double> a = Tsr.of(aShape, 1d..5d).setRqsGradient(!whichGrad).to(Device.get(device))
+            Tsr<Double> b = Tsr.of(bShape, 8d..9d).setRqsGradient(whichGrad).to(Device.get(device))
         and :
             a.unsafe.toType(type)
             b.unsafe.toType(type)

@@ -14,6 +14,7 @@ import neureka.view.TsrStringSettings
 import spock.lang.Ignore
 import spock.lang.IgnoreIf
 import spock.lang.Specification
+import testutility.mock.DummyDevice
 
 import java.util.function.BiConsumer
 
@@ -55,22 +56,56 @@ class Cross_Device_Type_Spec extends Specification
             String query, Class type
     ) {
         when : 'The query is being passed to the "find" method...'
-            var device = Device.find(query)
+            var device = Device.get(query)
 
         then : 'The resulting Device variable has the expected type.'
             device.class == type
 
         where :
-            query                       || type
-            "cPu"                       || CPU
-            "jVm"                       || CPU
-            "natiVe"                    || CPU
-            "Threaded"                  || CPU
-            "openCl"                    || OpenCLDevice
-            "nvidia or amd or intel"    || OpenCLDevice // This assumes that there is an amd/intel/nvidia gpu!
-            "first"                     || OpenCLDevice
+            query                          || type
+            "cPu"                          || CPU
+            "jVm"                          || CPU
+            "natiVe"                       || CPU
+            "Threaded"                     || CPU
+            "openCl"                       || OpenCLDevice
+            "nvidia or amd or intel"       || OpenCLDevice // This assumes that there is an amd/intel/nvidia gpu!
+            "rocm or cuda or amd or nvidia"|| OpenCLDevice // This assumes that there is an amd/intel/nvidia gpu!
+            "nvidia || amd or intel"       || OpenCLDevice // This assumes that there is an amd/intel/nvidia gpu!
+            "cuda||rocm || gpu"            || OpenCLDevice // This assumes that there is an amd/intel/nvidia gpu!
+            "first"                        || OpenCLDevice
     }
 
+    def 'Advanced device querying methods query as expected!'(Class<?> type, String key, Device<?> expected)
+    {
+        expect :
+            Device.get(type, key) === expected
+            Device.find(type, key).isEmpty() && expected == null || Device.find(type, key).get() === expected
+
+        where :
+            type        | key          || expected
+            Device      | 'cpu'        || CPU.get()
+            Device      | 'jvm'        || CPU.get()
+            Device      | 'processor'  || CPU.get()
+            DummyDevice | 'first'      || null
+            DummyDevice | 'any'        || null
+            DummyDevice | 'cpu'        || null
+            DummyDevice | 'gpu'        || null
+    }
+
+    def 'The simpler device querying methods query as expected!'(String key, Device<?> expected)
+    {
+        expect :
+            Device.get(key) === expected
+            Device.any(key) === expected || Device.any(key) === CPU.get()
+            Device.find(key).isEmpty() && expected == null || Device.find(key).get() === expected
+
+        where :
+            key             || expected
+            'cpu'           || CPU.get()
+            'e9rt56hqfwe5f0'|| null
+            '5638135dh90978'|| null
+            'banana device' || null
+    }
 
     /**
      * The data of a tensor located on an Device should
@@ -90,18 +125,18 @@ class Cross_Device_Type_Spec extends Specification
             t.toString().contains(expected)
 
         where : 'The following data is being used :'
-            device                | data1                      | data2                      || expected
-            Device.find("cpu")    | new float[0]               | new float[0]               || "(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]"
-            Device.find("cpu")    | new float[]{2, 3, 4, 5, 6} | new float[]{1, 1, 1, 1}    || "(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]"
-            Device.find("cpu")    | new float[]{3, 5, 6}       | new float[]{4, 2, 3}       || "(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]"
-            Device.find("cpu")    | new double[]{9, 4, 7, -12} | new double[]{-5, -2, 1}    || "(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]"
-            Device.find("cpu")    | new float[]{22, 24, 35, 80}| new double[]{-1, -1, -1}   || "(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"
+            device                | data1                       | data2                      || expected
+            Device.get("cpu")     | new float[0]                | new float[0]               || "(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]"
+            Device.get("cpu")     | new float[]{2, 3, 4, 5, 6}  | new float[]{1, 1, 1, 1}    || "(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]"
+            Device.get("cpu")     | new float[]{3, 5, 6}        | new float[]{4, 2, 3}       || "(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]"
+            Device.get("cpu")     | new double[]{9, 4, 7, -12}  | new double[]{-5, -2, 1}    || "(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]"
+            Device.get("cpu")     | new float[]{22, 24, 35, 80} | new double[]{-1, -1, -1}   || "(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"
 
-            Device.find("openCL") | new float[0]               | new float[0]               || "(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]"
-            Device.find("openCL") | new float[]{2, 3, 4, 5, 6} | new float[]{1, 1, 1, 1, 1} || "(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]"
-            Device.find("openCL") | new float[]{3, 5, 6}       | new float[]{4, 2, 3}       || "(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]"
-            Device.find("openCL") | new double[]{9, 4, 7, -12} | new double[]{-5, -2, 1}    || "(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]"
-            Device.find("openCL") | new float[]{22, 24, 35, 80}| new double[]{-1, -1, -1}   || "(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"
+            Device.get("openCL")  | new float[0]                | new float[0]               || "(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]"
+            Device.get("openCL")  | new float[]{2, 3, 4, 5, 6}  | new float[]{1, 1, 1, 1, 1} || "(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]"
+            Device.get("openCL")  | new float[]{3, 5, 6}        | new float[]{4, 2, 3}       || "(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]"
+            Device.get("openCL")  | new double[]{9, 4, 7, -12}  | new double[]{-5, -2, 1}    || "(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]"
+            Device.get("openCL")  | new float[]{22, 24, 35, 80} | new double[]{-1, -1, -1}   || "(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"
     }
 
     def 'Tensor data can be fetched from device if the tensor is stored on it...'(
@@ -130,22 +165,15 @@ class Cross_Device_Type_Spec extends Specification
 
         where : 'The following data is being used for tensor instantiation :'
             device                | shape           | data                                               || expected
-            Device.find("cpu")    | new int[]{3, 2} | new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}    || [-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]
-
-            Device.find("cpu")    | new int[]{3, 2} | new int[]{-5, -2, 1, -12, 3, -2}                   || [-5, -2, 1, -12, 3, -2]
-
-            Device.find("cpu")    | new int[]{3, 2} | new long[]{-5, -2, 1, -12, 3, -2}                  || [-5, -2, 1, -12, 3, -2]
-
-            Device.find("cpu")    | new int[]{3, 2} | new byte[]{-5, -2, 1, -12, 3, -2}                  || [-5, -2, 1, -12, 3, -2]
-
-            Device.find("cpu")    | new int[]{3, 2} | new short[]{-5, -2, 1, -12, 3, -2}                 || [-5, -2, 1, -12, 3, -2]
-
-            Device.find("cpu")    | new int[]{3, 2} | new float[]{-5, -2, 1, -12, 3, -2}                 || [-5, -2, 1, -12, 3, -2]
-
-            Device.find("cpu")    | new int[]{3, 2} | new boolean[]{true, false, false}                  || [true, false, false, true, false, false]
-
-            Device.find("openCL") | new int[]{3, 2} | new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}    || [-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]
-            Device.find("openCL") | new int[]{3, 2} | new float[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}     || [-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]
+            Device.get("cpu")     | new int[]{3, 2} | new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}    || [-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]
+            Device.get("cpu")     | new int[]{3, 2} | new int[]{-5, -2, 1, -12, 3, -2}                   || [-5, -2, 1, -12, 3, -2]
+            Device.get("cpu")     | new int[]{3, 2} | new long[]{-5, -2, 1, -12, 3, -2}                  || [-5, -2, 1, -12, 3, -2]
+            Device.get("cpu")     | new int[]{3, 2} | new byte[]{-5, -2, 1, -12, 3, -2}                  || [-5, -2, 1, -12, 3, -2]
+            Device.get("cpu")     | new int[]{3, 2} | new short[]{-5, -2, 1, -12, 3, -2}                 || [-5, -2, 1, -12, 3, -2]
+            Device.get("cpu")     | new int[]{3, 2} | new float[]{-5, -2, 1, -12, 3, -2}                 || [-5, -2, 1, -12, 3, -2]
+            Device.get("cpu")     | new int[]{3, 2} | new boolean[]{true, false, false}                  || [true, false, false, true, false, false]
+            Device.get("openCL")  | new int[]{3, 2} | new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}    || [-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]
+            Device.get("openCL")  | new int[]{3, 2} | new float[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}     || [-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]
     }
 
     /**
@@ -176,7 +204,7 @@ class Cross_Device_Type_Spec extends Specification
         where : 'The following Device instances are being tested :'
             device << [
                     CPU.get(),
-                    Device.find("openCL")
+                    Device.get("openCL")
             ]
 
     }
@@ -230,7 +258,7 @@ class Cross_Device_Type_Spec extends Specification
         where : 'The following Device instances are being tested :'
             device << [
                     CPU.get(),
-                    Device.find( "openCL" ),
+                    Device.get( "openCL" ),
                     FileDevice.at( "build/test-can" )
             ]
 
@@ -274,7 +302,7 @@ class Cross_Device_Type_Spec extends Specification
         where : 'The following Device instances are being tested :'
         device << [
                 CPU.get(),
-                Device.find( "openCL" )
+                Device.get( "openCL" )
         ]
 
     }
@@ -323,8 +351,8 @@ class Cross_Device_Type_Spec extends Specification
 
         where : 'The following Device instances are being tested :'
             device                                  | storageMethod
-            Device.find( "openCL" )                 | { d, t -> d.store(t) }
-            Device.find( "openCL" )                 | { d, t -> t.to(d)   }
+            Device.get( "openCL" ) | { d, t -> d.store(t) }
+            Device.get( "openCL" ) | { d, t -> t.to(d)   }
             //FileDevice.at( "build/test-can" )     | { d, t -> d.store(t) }
             //CPU.get()                    | { d, t -> t.set(d)   }
             //FileDevice.at( "build/test-can" )     | { d, t -> t.set(d)   }
@@ -339,7 +367,7 @@ class Cross_Device_Type_Spec extends Specification
         given : 'We create a homogeneously filled tensor, which is therefor "virtual".'
             var t = Tsr.ofFloats().withShape(4,3).all(-0.54f)
         and : 'We also get a device for testing...'
-            var device = Device.find(deviceType)
+            var device = Device.get(deviceType)
 
         expect : 'We expect that the tensor is virtual, meaning its underlying data array stores only a single value...'
             t.isVirtual()
@@ -361,6 +389,5 @@ class Cross_Device_Type_Spec extends Specification
         where : 'We test on the following devices:'
             deviceType << ['CPU','GPU']
     }
-
 
 }

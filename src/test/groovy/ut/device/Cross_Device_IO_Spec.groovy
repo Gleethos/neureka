@@ -29,7 +29,7 @@ class Cross_Device_IO_Spec extends Specification
             String deviceType, Class<Object> type, Object[] fill, Object expected
     ) {
         given : 'We fetch the required device instance from its interface.'
-            var device = Device.find(deviceType)
+            var device = Device.get(deviceType)
         and : 'We fetch the array type of the tested data type!'
             var arrayType = DataType.of(type).dataArrayType()
         and : 'A tensor filled with 4 values which we are going to store on the previously fetched device.'
@@ -69,7 +69,7 @@ class Cross_Device_IO_Spec extends Specification
             String deviceType, Class<Object> type, Object[] fill, Object write, Object expected
     ) {
         given : 'We fetch the required device instance from its interface.'
-            var device = Device.find(deviceType)
+            var device = Device.get(deviceType)
         and : 'We fetch the array type of the tested data type!'
             var arrayType = DataType.of(type).dataArrayType()
         and : 'A tensor filled with 4 values which we are going to store on the previously fetched device.'

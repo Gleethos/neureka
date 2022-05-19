@@ -11,7 +11,7 @@
 
             However it can be time consuming to read about the different types of devices provided
             and trying to reason about what is best,
-            therefore one can simply query devices via the following method :
+            therefore one can simply query devices via the following methods :
         </p>
     </div>
 </div>
@@ -26,21 +26,33 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    def device = Device.find('first gpu')
+    var device0         = Device.any('first gpu') // Returns CPU instance if GPU not found! (Never null)
+    var device1         = Device.get('first gpu') // Returns closest type of device matching the provided string or null.
+    var device2         = Device.get(OpenCLDevice, 'first gpu') // Returns requested device type or null.
+    var optionalDevice1 = Device.find('first gpu') // Optional of found device which may be null.
+    var optionalDevice2 = Device.find(OpenCLDevice, 'first gpu') // Optional of requested device type which may be null.
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Device device = Device.find("first gpu");
+    var device0         = Device.any("first gpu"); // Returns CPU instance if GPU not found! (Never null)
+    var device1         = Device.get("first gpu"); // Returns closest type of device matching the provided string or null.
+    var device2         = Device.get(OpenCLDevice.class, "first gpu"); // Returns requested device type or null.
+    var optionalDevice1 = Device.find("first gpu"); // Optional of found device which may be null.
+    var optionalDevice2 = Device.find(OpenCLDevice.class, "first gpu"); // Optional of requested device type which may be null.
 
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-    val device = Device.find("first gpu")
+    val device0         = Device.any("first gpu") // Returns CPU instance if GPU not found! (Never null)
+    val device1         = Device.get("first gpu") // Returns closest type of device matching the provided string or null.
+    val device2         = Device.get(OpenCLDevice::class.java, "first gpu") // Returns requested device type or null.
+    val optionalDevice1 = Device.find("first gpu") // Optional of found device which may be null.
+    val optionalDevice2 = Device.find(OpenCLDevice::class.java, "first gpu") // Optional of requested device type which may be null.
 
                 </code></pre>
             </div>

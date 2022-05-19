@@ -495,7 +495,7 @@ class Autograd_NN_Spec extends Specification
             b.toString() == "(3x1):[-4.0, -2.0, 0.0]:g:[0.5, 1.5, 2.5]"
 
         where :
-            device << [CPU.get(), Device.find('first gpu')]
+            device << [CPU.get(), Device.get('first gpu')]
 
     }
 

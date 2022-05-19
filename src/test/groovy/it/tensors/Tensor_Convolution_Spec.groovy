@@ -160,7 +160,7 @@ class Tensor_Convolution_Spec extends Specification
             colconvol.toString().contains("(2x2):[0.0, 0.0, 0.0, 0.0]")
 
         where : 'The following data is being used for tensor instantiation :'
-            device  << [CPU.get(), Device.find("openCL") ]
+            device  << [CPU.get(), Device.get("openCL") ]
     }
 
 

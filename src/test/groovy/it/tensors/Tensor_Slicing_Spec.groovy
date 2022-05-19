@@ -79,7 +79,7 @@ class Tensor_Slicing_Spec extends Specification
             s.shape() == [2, 2, 3]
 
         where: 'This works both on the GPU as well as CPU of course.'
-            device << [Device.find('gpu'), CPU.get() ]
+            device << [Device.get('gpu'), CPU.get() ]
 
     }
 
@@ -122,7 +122,7 @@ class Tensor_Slicing_Spec extends Specification
             s.shape() == [1, 3, 2]
 
         where: 'This works both on the GPU as well as CPU of course.'
-            device << [Device.find('gpu'), CPU.get() ]
+            device << [Device.get('gpu'), CPU.get() ]
 
     }
 
@@ -167,7 +167,7 @@ class Tensor_Slicing_Spec extends Specification
             s.shape() == [1, 3, 2]
 
         where: 'This works both on the GPU as well as CPU of course.'
-            device << [Device.find('gpu'), CPU.get() ]
+            device << [Device.get('gpu'), CPU.get() ]
 
     }
 
@@ -208,7 +208,7 @@ class Tensor_Slicing_Spec extends Specification
             s.shape() == [1, 3, 2]
 
         where: 'This works both on the GPU as well as CPU of course.'
-            device << [Device.find('gpu'), CPU.get() ]
+            device << [Device.get('gpu'), CPU.get() ]
 
     }
 
@@ -249,7 +249,7 @@ class Tensor_Slicing_Spec extends Specification
             s.shape() == [1, 1, 2]
 
         where: 'This works both on the GPU as well as CPU of course.'
-            device << [Device.find('gpu'), CPU.get() ]
+            device << [Device.get('gpu'), CPU.get() ]
 
     }
 

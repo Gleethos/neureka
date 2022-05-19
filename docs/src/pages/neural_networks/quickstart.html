@@ -19,6 +19,7 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -32,6 +33,13 @@
                 <pre><code class="hljs java">
 
     Settings settings = Neureka.get().settings();
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    val settings = Neureka.get().settings()
 
                 </code></pre>
             </div>
@@ -54,6 +62,7 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -75,6 +84,17 @@
     Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false );
     Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false );
     Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false );
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    Neureka.get().reset() // First we reset everything, just in case! 👍
+    // Then we use the following autograd settings :
+    Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
+    Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
+    Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
 
                 </code></pre>
             </div>
@@ -112,19 +132,27 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    def device = Device.find('first gpu')
+    var device = Device.any('first gpu') // Returns CPU instance if GPU not found! (Never null)
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Device device = Device.find("first gpu");
+    var device = Device.any("first gpu"); // Returns CPU instance if GPU not found! (Never null)
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    val device = Device.any("first gpu") // Returns CPU instance if GPU not found! (Never null)
 
                 </code></pre>
             </div>
@@ -146,6 +174,7 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -159,6 +188,13 @@
                 <pre><code class="hljs java">
 
     device.store( myTensor );
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    device.store( myTensor )
 
                 </code></pre>
             </div>

@@ -561,7 +561,7 @@ class Tensor_IO_Spec extends Specification
     def 'Adding OpenCL device to tensor makes tensor be "outsourced" and contain the Device instance as component.'()
     {
         given : 'Neureka can access OpenCL (JOCL).'
-            Device gpu = Device.find("gpu")
+            Device gpu = Device.get("gpu")
             Tsr t = Tsr.of([3, 4, 1], 3)
 
         expect : 'The following is to be expected with respect to the given :'

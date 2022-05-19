@@ -34,7 +34,7 @@ class OpenCL_Spec extends Specification
     def 'First found OpenCLDevice will have realistic numeric properties.'()
     {
        when : 'The first found Device instance is used.'
-            OpenCLDevice cld = Device.find('first') as OpenCLDevice
+            OpenCLDevice cld = Device.get('first') as OpenCLDevice
 
        then : 'The device has realistic properties.'
             cld.globalMemSize() > 1000
@@ -60,7 +60,7 @@ class OpenCL_Spec extends Specification
     def 'First found OpenCLDevice will have realistic text properties.'()
     {
         when :  'The first found Device instance is used.'
-            OpenCLDevice cld = Device.find('first') as OpenCLDevice
+            OpenCLDevice cld = Device.get('first') as OpenCLDevice
 
         then : 'The device has realistic properties.'
             !cld.name().isBlank()
@@ -74,7 +74,7 @@ class OpenCL_Spec extends Specification
     def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
     {
         given: 'The first found OpenCLDevice instance.'
-            Device device = Device.find('first')
+            Device device = Device.get('first')
 
         and : 'A mocked tensor that is not outsourced.'
             Tsr<?> t = Mock(Tsr) // Could be : Tsr.of([4, 3], 2)

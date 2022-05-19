@@ -95,7 +95,7 @@ class Benchmark_System_Test extends Specification
             hash = ""
             session(
                     configuration, null,
-                    Device.find("first"),
+                    Device.get("first"),
                         tsr -> {
                             hash = ( hash + tsr.toString() ).md5()
                         }

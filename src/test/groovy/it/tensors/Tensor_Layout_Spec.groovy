@@ -77,7 +77,7 @@ class Tensor_Layout_Spec extends Specification
         and :
             var a = Tsr.ofFloats().withShape(2, 3).andWhere({it, idx->((7**it)%11-5).floatValue()})
             var b = Tsr.ofFloats().withShape(3, 4).andWhere({it, idx->((5**it)%11-5).floatValue()})
-            Device.find(device).store(a).store(b)
+            Device.get(device).store(a).store(b)
         expect :
             a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
 

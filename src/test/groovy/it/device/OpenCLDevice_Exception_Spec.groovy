@@ -40,7 +40,7 @@ class OpenCLDevice_Exception_Spec extends Specification
     def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
     {
         given: 'The first found OpenCLDevice instance.'
-            Device device = Device.find('first')
+            Device device = Device.get('first')
         and : 'A tensor and a slice tensor of the prior.'
             Tsr t = Tsr.of([4, 3], 2d)
             Tsr s = t[1..3, 1..2]
