@@ -2,10 +2,16 @@ package neureka.backend.api;
 
 import neureka.devices.Device;
 
-public interface DeviceAlgorithm<C extends DeviceAlgorithm<C>> extends Algorithm<C> {
+/**
+ *  A {@link DeviceAlgorithm} is an advanced form of {@link Algorithm} which
+ *  delegates the execution to implementations of {@link ImplementationFor} specific {@link Device} types.
+ *
+ * @param <C>
+ */
+public interface DeviceAlgorithm<C extends DeviceAlgorithm<C>> extends Algorithm {
 
     /**
-     * Implementations of the Algorithm interface ought to express a compositional design pattern. <br>
+     * Implementations of the {@link DeviceAlgorithm} interface ought to express a compositional design pattern. <br>
      * This means that concrete implementations of an algorithm for a device are not extending
      * an Algorithm, they are components of it instead. <br>
      * These components can be stored on an Algorithm by passing

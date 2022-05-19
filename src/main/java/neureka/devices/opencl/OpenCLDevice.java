@@ -631,7 +631,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      */
     public KernelCaller getKernel( ExecutionCall<OpenCLDevice> call ) {
         String chosen;
-        Algorithm<?> algorithm = call.getAlgorithm();
+        Algorithm algorithm = call.getAlgorithm();
         DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
         // We create the kernel name from the chosen algorithm:
         ImplementationFor<OpenCLDevice> impl = ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(OpenCLDevice.class) );

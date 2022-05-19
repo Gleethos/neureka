@@ -63,7 +63,7 @@ public interface Operation
 {
     static OperationBuilder builder() { return new OperationBuilder(); }
 
-    Algorithm<?>[] getAllAlgorithms();
+    Algorithm[] getAllAlgorithms();
 
     /**
      *  Alongside a component system made up of {@link Algorithm} instances, implementations
@@ -72,10 +72,9 @@ public interface Operation
      *  This method signature describes this requirement.
      *
      * @param call The {@link ExecutionCall} instance which needs the best {@link Algorithm} for execution.
-     * @param <T> The type parameter describing the concrete type of the {@link Algorithm} implementation.
      * @return The chosen {@link Algorithm} which ought to be fir for execution the provided call.
      */
-    <T extends Algorithm<T>> Algorithm<T> getAlgorithmFor( ExecutionCall<?> call );
+    Algorithm getAlgorithmFor( ExecutionCall<?> call );
 
     //==================================================================================================================
 
@@ -90,9 +89,9 @@ public interface Operation
      * @param <T> The type parameter of the {@link Algorithm} type class.
      * @return This very {@link Operation} instance to enable method chaining on it.
      */
-    <T extends Algorithm<T>> Operation setAlgorithm( Class<T> type, T instance );
+    <T extends Algorithm> Operation setAlgorithm( Class<T> type, T instance );
 
-    default <T extends Algorithm<T>> Operation setAlgorithm( T instance ) {
+    default <T extends Algorithm> Operation setAlgorithm( T instance ) {
         return setAlgorithm( (Class<T>) instance.getClass(), instance );
     }
 
@@ -107,7 +106,7 @@ public interface Operation
      * @param <T> The type parameter of the {@link Algorithm} type class.
      * @return The instance of the specified type if any exists within this {@link Operation}.
      */
-    <T extends Algorithm<T>> T getAlgorithm( Class<T> type );
+    <T extends Algorithm> T getAlgorithm( Class<T> type );
 
     /**
      *  This method checks if this {@link Operation} contains an instance of the
@@ -117,7 +116,7 @@ public interface Operation
      * @param <T> The type parameter of the {@link Algorithm} type class.
      * @return The truth value determining if this {@link Operation} contains an instance of the specified {@link Algorithm} type.
      */
-    <T extends Algorithm<T>> boolean supportsAlgorithm( Class<T> type );
+    <T extends Algorithm> boolean supportsAlgorithm( Class<T> type );
 
     /**
      *  Concrete {@link Operation} types ought to be representable by a function name.
@@ -192,7 +191,7 @@ public interface Operation
      */
     boolean isInline();
 
-    <T extends Algorithm<T>> boolean supports( Class<T> implementation );
+    <T extends Algorithm> boolean supports( Class<T> implementation );
 
     /**
      * This method mainly ought to serve as a reference- and fallback- implementation for tensor backends and also

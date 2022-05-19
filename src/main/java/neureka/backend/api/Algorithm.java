@@ -57,7 +57,7 @@ import neureka.devices.Device;
  *   for performing element-wise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
  *   algorithm might be called to perform the operation.
  */
-public interface Algorithm<C extends Algorithm<C>>
+public interface Algorithm
 extends SuitabilityPredicate, ADSupportPredicate, Execution
 {
     /**

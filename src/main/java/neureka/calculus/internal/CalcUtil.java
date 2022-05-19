@@ -280,7 +280,7 @@ public class CalcUtil
             ExecutionCall<? extends Device<?>> executionCall,
             RecursiveExecutor executor
     ) {
-        Algorithm<?> currentAlgorithm = executionCall.getAlgorithm();
+        Algorithm currentAlgorithm = executionCall.getAlgorithm();
         if ( currentAlgorithm instanceof ExecutionPreparation )
             executionCall = ( (ExecutionPreparation) currentAlgorithm ).prepare( executionCall );
 
@@ -308,7 +308,7 @@ public class CalcUtil
                         Device<?> device = call.getDevice();
                         device.approve( call );
 
-                        Algorithm<?> algorithm = call.getAlgorithm();
+                        Algorithm algorithm = call.getAlgorithm();
                         if ( algorithm == null ) {
                             String message = _couldNotFindSuitableAlgorithmFor( device.getClass() );
                             _LOG.error( message );
@@ -460,7 +460,7 @@ public class CalcUtil
     }
 
     private static String _couldNotFindSuitableImplementationFor(
-            Algorithm<?> algorithm,
+            Algorithm algorithm,
             Class<?> type
     ) {
         return LogUtil.format(

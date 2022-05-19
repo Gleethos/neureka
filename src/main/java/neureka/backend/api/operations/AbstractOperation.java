@@ -79,7 +79,7 @@ public abstract class AbstractOperation implements Operation
     protected final boolean _isInline;
     protected final boolean _isOperator;
 
-    private final Map<Class<?>, Algorithm<?>> _algorithms = new LinkedHashMap<>();
+    private final Map<Class<?>, Algorithm> _algorithms = new LinkedHashMap<>();
 
     /**
      *  This is the default algorithm for every Operation extending this class.
@@ -112,7 +112,7 @@ public abstract class AbstractOperation implements Operation
     }
 
     @Override
-    public final Algorithm<?>[] getAllAlgorithms() { return _algorithms.values().toArray(new Algorithm[0]); }
+    public final Algorithm[] getAllAlgorithms() { return _algorithms.values().toArray(new Algorithm[0]); }
 
     /**
      *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.
@@ -126,7 +126,7 @@ public abstract class AbstractOperation implements Operation
      * @return The instance of the specified type if any exists within this {@link Operation}.
      */
     @Override
-    public final <T extends Algorithm<T>> T getAlgorithm( Class<T> type ) {
+    public final <T extends Algorithm> T getAlgorithm( Class<T> type ) {
         T found = (T) _algorithms.get( type );
         if ( found == null ) // Maybe the provided type is a superclass of one of the entries...
             return _algorithms.entrySet()
@@ -148,7 +148,7 @@ public abstract class AbstractOperation implements Operation
      * @return The truth value determining if this {@link Operation} contains an instance of the specified {@link Algorithm} type.
      */
     @Override
-    public final <T extends Algorithm<T>> boolean supportsAlgorithm( Class<T> type ) {
+    public final <T extends Algorithm> boolean supportsAlgorithm( Class<T> type ) {
         return _algorithms.containsKey( type );
     }
 
@@ -164,7 +164,7 @@ public abstract class AbstractOperation implements Operation
      * @return This very {@link Operation} instance to enable method chaining on it.
      */
     @Override
-    public final <T extends Algorithm<T>> Operation setAlgorithm( Class<T> type, T instance ) {
+    public final <T extends Algorithm> Operation setAlgorithm( Class<T> type, T instance ) {
         if ( _algorithms.containsKey( type ) )
             throw new IllegalArgumentException(
                         "Algorithm of type '"+type.getSimpleName()+"' already defined for this operation!"
@@ -175,17 +175,17 @@ public abstract class AbstractOperation implements Operation
     }
 
     @Override
-    public final <T extends Algorithm<T>> Algorithm<T> getAlgorithmFor( ExecutionCall<?> call )
+    public final Algorithm getAlgorithmFor( ExecutionCall<?> call )
     {
         float bestScore = 0f;
-        Algorithm<T> bestImpl = null;
-        for( Algorithm<?> impl : _algorithms.values() ) {
+        Algorithm bestImpl = null;
+        for( Algorithm impl : _algorithms.values() ) {
             float currentScore = impl.isSuitableFor( call );
             if ( currentScore > bestScore ) {
-                if ( currentScore == 1.0 ) return (Algorithm<T>) impl;
+                if ( currentScore == 1.0 ) return impl;
                 else {
                     bestScore = currentScore;
-                    bestImpl = (Algorithm<T>) impl;
+                    bestImpl = impl;
                 }
             }
         }
@@ -193,7 +193,7 @@ public abstract class AbstractOperation implements Operation
 
         if ( defaultSuitability > bestScore || ( bestImpl == null && defaultSuitability > 0f ) ) {
             _LOG.debug("Default algorithm picked for call targeting operation '"+call.getOperation()+"'.");
-            return (Algorithm<T>) _defaultAlgorithm;
+            return _defaultAlgorithm;
         }
 
         if ( bestImpl == null ) {
@@ -206,7 +206,7 @@ public abstract class AbstractOperation implements Operation
     }
 
     @Override
-    public final <T extends Algorithm<T>> boolean supports( Class<T> implementation ) {
+    public final <T extends Algorithm> boolean supports( Class<T> implementation ) {
         return _algorithms.containsKey( implementation );
     }
 

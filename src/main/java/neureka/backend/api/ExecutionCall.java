@@ -94,14 +94,14 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      *  Choosing an algorithm occurs through the {@link ExecutionCall#_operation} variable,
      *  which is of type {@link Operation} and contains multiple algorithms for different execution call scenarios...
      */
-    private Algorithm<?> _algorithm;
+    private Algorithm _algorithm;
 
 
     private ExecutionCall(
             D device,
             Operation operation,
             Tsr<?>[] tensors,
-            Algorithm<?> algorithm,
+            Algorithm algorithm,
             List<Arg> arguments
     ) {
         super( tensors, device, arguments );
@@ -167,7 +167,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      *
      * @return The {@link Algorithm} suitable for this {@link ExecutionCall}.
      */
-    public Algorithm<?> getAlgorithm()
+    public Algorithm getAlgorithm()
     {
         if ( _algorithm != null )
             return _algorithm;
@@ -189,7 +189,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      * @return The {@link AutoDiffMode} for this call.
      */
     public AutoDiffMode autogradMode() {
-        Algorithm<?> algorithm = getAlgorithm();
+        Algorithm algorithm = getAlgorithm();
         if ( algorithm != null ) {
             AutoDiffMode mode = algorithm.autoDiffModeFrom(this);
             if ( mode == null )
@@ -233,7 +233,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         private final Tsr<?>[] _tensors;
         private final List<Arg> _arguments = Stream.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1)).collect(Collectors.toList());
         private Operation _operation;
-        private Algorithm<?> _algorithm;
+        private Algorithm _algorithm;
 
         private Builder(Tsr<?>[] tensors) { _tensors = tensors; }
 
@@ -248,7 +248,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
             return this;
         }
 
-        public Builder<D> algorithm( Algorithm<?> algorithm ) {
+        public Builder<D> algorithm( Algorithm algorithm ) {
             LogUtil.nullArgCheck( algorithm, "algorithm", Algorithm.class );
             _algorithm = algorithm;
             return this;

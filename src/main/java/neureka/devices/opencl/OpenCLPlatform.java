@@ -164,7 +164,7 @@ public class OpenCLPlatform {
         }
 
         for ( Operation type : Neureka.get().backend().getOperations() ) {
-            for (Algorithm<?> algorithm : type.getAllAlgorithms()) {
+            for ( Algorithm algorithm : type.getAllAlgorithms()) {
                 DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
                 ImplementationFor<OpenCLDevice> impl =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(OpenCLDevice.class) );
                 if ( impl instanceof CLImplementation ) {
