@@ -100,11 +100,13 @@ class Cross_Device_Type_Spec extends Specification
             Device.find(key).isEmpty() && expected == null || Device.find(key).get() === expected
 
         where :
-            key             || expected
-            'cpu'           || CPU.get()
-            'e9rt56hqfwe5f0'|| null
-            '5638135dh90978'|| null
-            'banana device' || null
+            key                 || expected
+            'cpu'               || CPU.get()
+            'central processing'|| CPU.get()
+            'e9rt56hqfwe5f0'    || null
+            '5638135dh90978'    || null
+            'banana device'     || null
+            'cupcake'           || null
     }
 
     /**

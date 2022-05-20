@@ -10,10 +10,10 @@ import java.util.stream.Stream;
 
 class Query
 {
-    private static final double ACCEPTABILITY = 0.2;
+    private static final double ACCEPTABILITY = 0.42;
     private static final String[] takeFirst = {"first", "primary", "main", "any", "anything", "something"};
     private static final String[] wantsGPU = {"gpu", "nvidia", "amd", "intel", "opencl", "fpga", "radeon", "cuda", "apu", "graphics", "rdna", "rocm", "graphics"};
-    private static final String[] wantsCPU = {"jvm","native","host","cpu","threaded", "central processor", "central processing unit"};
+    private static final String[] wantsCPU = {"jvm","native","host","cpu","threaded", "processor", "main processor", "central processor", "central processing unit"};
 
     private Query() {}
 
