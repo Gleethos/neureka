@@ -113,7 +113,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
      * @return This very device instance in order to enable method chaining.
      */
     @Override
-    public Device<V> approve(ExecutionCall<? extends Device<?>> call )
+    public Device<V> approve( ExecutionCall<? extends Device<?>> call )
     {
         if ( !_approveExecutionOf( call.inputs(), call.getValOf( Arg.DerivIdx.class ), call.getOperation() ) ) {
             throw new IllegalArgumentException("Provided execution call has not been approved by this device.");

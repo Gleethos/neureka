@@ -48,45 +48,44 @@ public class CalcUtil
     ) {
         Function[] nodes = caller.getSubFunctions().toArray(new Function[0]);
         Operation operation = caller.getOperation();
+        assert call.getOperation() == operation;
         boolean isFlat = caller.isFlat();
         boolean isDoingAD = caller.isDoingAD();
         if ( call.getValOf( Arg.DerivIdx.class ) < 0 )
-            return _deepActivation( call, nodes, operation, isFlat, isDoingAD, executor );
+            return _deepActivation( call, nodes, isFlat, isDoingAD, executor );
         else
-            return _deepDerivative( call, nodes, operation, executor );
+            return _deepDerivative( call, nodes,  executor );
     }
 
     @Contract( pure = true )
     private static Tsr<?> _deepActivation(
             final ExecutionCall<? extends Device<?>> call,
             final Function[] nodes,
-            final Operation operation,
             final boolean isFlat,
             final boolean isDoingAD,
             final RecursiveExecutor executor
     ) {
-        Device<?> device = call.getDevice();
         int j = call.getValOf( Arg.VarIdx.class );
         assert call.getValOf( Arg.DerivIdx.class ) == -1;
 
         Tsr<?>[] tensors =
-                    operation.isIndexer()
+                    call.getOperation().isIndexer()
                         ? new Tsr[ 1 + call.arity() ]
                         : new Tsr[ 1 + nodes.length  ];
 
-        if ( operation.isIndexer() )
+        if ( call.getOperation().isIndexer() )
             for ( int i = 1; i < tensors.length; i++ )
                 tensors[ i ] = nodes[ 0 ].execute( call.inputs(), i - 1 );
         else
             if (
                 !isFlat && j < 0 && (
-                    operation.isOperator()
+                    call.getOperation().isOperator()
                             ||
-                    operation.supportsAlgorithm(Activation.class)
+                    call.getOperation().supportsAlgorithm(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
             tensors = srcActivation( call.inputs(), j, -1, 0, nodes );
-            String asStr = operation.stringify(
+            String asStr = call.getOperation().stringify(
                                                 IntStream.range( 0, nodes.length )
                                                          .mapToObj( i -> "I[" + i + "]" )
                                                          .toArray(String[]::new)
@@ -102,17 +101,13 @@ public class CalcUtil
             tensors = srcActivation( call.inputs(), j, -1, 1, nodes );
 
         tensors[0] = CalcUtil.recursiveExecution(
-                                ExecutionCall.of( tensors )
-                                                .andArgs( call.allMetaArgs() )
-                                                .running( operation )
-                                                .on( device )
-                                                .withArgs( Arg.DerivIdx.of(-1) )
-                                                .withArgs( Arg.VarIdx.of(-1) ),
+                                call.withInputs( tensors )
+                                    .withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),
                                 executor
                             );
 
         if ( tensors[ 0 ] == null ) // TODO: Fix this for 'left_inline'!!!
-            _LOG.debug("Executing operation '"+operation.getIdentifier()+"' did not yield a proper return value.");
+            _LOG.debug("Executing operation '"+call.getOperation().getIdentifier()+"' did not yield a proper return value.");
 
         return ( tensors[ 0 ] == null ? tensors[ 1 ] : tensors[ 0 ] );
     }
@@ -128,7 +123,7 @@ public class CalcUtil
      * @return The index of the tensor whose value is "1.0" (if all others are "0.0"), otherwise : -1
      */
     @Contract( pure = true )
-    private static int _indexOfFoundDerivative( Tsr<?>[] tensors )
+    private static int _indexOfFoundDerivative( final Tsr<?>[] tensors )
     {
         boolean allVirtual = true;
         for ( Tsr<?> t : tensors )
@@ -153,25 +148,24 @@ public class CalcUtil
     private static Tsr<?> _deepDerivative(
             final ExecutionCall<? extends Device<?>> call,
             final Function[] nodes,
-            final Operation operation,
             final RecursiveExecutor executor
     ) {
         Supplier<Tsr<?>> actor = () ->
                 MemUtil.keep( call.inputs(), () -> {
-                    Device<?> device = call.getDevice();
+                    final Device<?> device = call.getDevice();
                     int d = call.getValOf( Arg.DerivIdx.class );
-                    int j = call.getValOf( Arg.VarIdx.class );
+                    final int j = call.getValOf( Arg.VarIdx.class );
                     assert d >= 0;
 
                     Tsr<?>[] tensors;
-                    if ( operation.isIndexer() ) tensors = new Tsr[ 1 + call.arity() ];
+                    if ( call.getOperation().isIndexer() ) tensors = new Tsr[ 1 + call.arity() ];
                     else tensors = new Tsr[ 1 + nodes.length ];
 
                     // Chain-rule (forward AutoDiff):
                     // inner times outer means:
                     // first derive source!
                     // like so:
-                    if ( operation.isIndexer() )
+                    if ( call.getOperation().isIndexer() )
                         for ( int i = 1; i < tensors.length; i++ )
                             tensors[ i ] = nodes[ 0 ].executeDerive( call.inputs(), d, i - 1 );
                     else
@@ -202,7 +196,7 @@ public class CalcUtil
 
                     tensors[ 0 ] = null;
                     //...then activate (No differentiation!) the source like so:
-                    if ( operation.isIndexer() ) // Indexer pass an index j of course!
+                    if ( call.getOperation().isIndexer() ) // Indexer pass an index j of course!
                         for ( int i = 1; i < tensors.length; i++ )
                             tensors[ i ] = nodes[ 0 ].execute( call.inputs(), i - 1 ); // i - 1 := j
                     else
@@ -214,7 +208,7 @@ public class CalcUtil
 
                     //...get derivative index within src list:
                     for ( int i = 0; i < nodes.length; i++ )
-                        if ( nodes[ i ].dependsOn( d ) && !operation.isIndexer() ) {
+                        if ( nodes[ i ].dependsOn( d ) && !call.getOperation().isIndexer() ) {
                             d = i;
                             break;
                         }
@@ -223,7 +217,7 @@ public class CalcUtil
                     tensors[0] = CalcUtil.recursiveExecution(
                                             ExecutionCall.of( tensors )
                                                     .andArgs( Arg.DerivIdx.of( d ) )
-                                                    .running( operation )
+                                                    .running( call.getOperation() )
                                                     .on( device ),
                                             executor
                                     );

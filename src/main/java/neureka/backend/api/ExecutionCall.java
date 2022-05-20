@@ -140,7 +140,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     public ExecutionCall<D> withInputs( Tsr<?>... inputs ) {
         LogUtil.nullArgCheck( inputs, "inputs", Tsr[].class );
         return new ExecutionCall<>(
-                   _device, _operation, inputs, _algorithm, _arguments.getAll(Arg.class)
+                   _device, _operation, inputs, null, _arguments.getAll(Arg.class)
                );
     }
 
@@ -153,8 +153,9 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     public ExecutionCall<D> withArgs( Arg<?>... args ) {
         LogUtil.nullArgCheck( args, "args", Arg[].class );
         List<Arg> old = _arguments.getAll(Arg.class);
+        old = old.stream().filter( a -> Arrays.stream(args).noneMatch(b -> a.getClass().isAssignableFrom(b.getClass()) )).collect(Collectors.toList());
         old.addAll(Arrays.stream(args).collect(Collectors.toList()));
-        return new ExecutionCall<>( _device, _operation, _tensors, _algorithm, old );
+        return new ExecutionCall<>( _device, _operation, _tensors, null, old );
     }
 
     /**
