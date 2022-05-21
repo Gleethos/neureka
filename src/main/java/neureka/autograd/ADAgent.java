@@ -61,16 +61,16 @@ public interface ADAgent
      *  propagate partial differentiations forward along the computation graph.
      *
      * @param target The node which is targeted to hold the partial derivative.
-     * @param derivative The partial derivative which ought to be propagated forward.
+     * @param derivativeOrError The partial derivative which ought to be propagated forward.
      * @param <T> The type argument of the tensor that is being used.
      * @return The result of a forward mode auto differentiation.
      */
-    <T> Tsr<T> act(GraphNode<T> target, Tsr<T> derivative );
+    <T> Tsr<T> act( GraphNode<T> target, Tsr<T> derivativeOrError );
 
     /**
      * @return A partial derivative or null if the agent does not contain a partial derivative...
      */
-    Tsr<?> derivative();
+    Tsr<?> partialDerivative();
 
     boolean hasAction();
 

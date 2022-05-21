@@ -77,10 +77,10 @@ public final class DefaultADAgent extends Args implements ADAgent {
     }
 
     @Override
-    public <T> Tsr<T> act(GraphNode<T> target, Tsr<T> derivative ) { return (Tsr<T>) _action.execute( target, derivative); }
+    public <T> Tsr<T> act(GraphNode<T> target, Tsr<T> derivativeOrError) { return (Tsr<T>) _action.execute( target, derivativeOrError); }
 
     @Override
-    public Tsr<?> derivative() {
+    public Tsr<?> partialDerivative() {
         Arg.Derivative arg = get(Arg.Derivative.class);
         if ( arg != null ) return (Tsr<?>) arg.get(); else return null;
     }
@@ -102,7 +102,7 @@ public final class DefaultADAgent extends Args implements ADAgent {
      */
     @Override
     public String toString() {
-        if ( this.derivative() != null ) return derivative().toString();
+        if ( this.partialDerivative() != null ) return partialDerivative().toString();
         return getAll(Arg.class).stream()
                 .map( key -> key.getClass().getSimpleName() + "=" + get(key.getClass()) )
                 .collect( Collectors.joining( ", ", "{", "}" ) );

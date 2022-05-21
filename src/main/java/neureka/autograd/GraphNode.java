@@ -659,7 +659,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     }
 
     private void _informPartialDerivative( ADAgent agent ) {
-        Tsr<?> d = agent.derivative();
+        Tsr<?> d = agent.partialDerivative();
         if ( d != null && d.has( GraphNode.class ) ) d.get( GraphNode.class )._isUsedAsDerivative = true;
     }
 
