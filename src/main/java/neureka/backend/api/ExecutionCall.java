@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -94,19 +95,33 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      *  Choosing an algorithm occurs through the {@link ExecutionCall#_operation} variable,
      *  which is of type {@link Operation} and contains multiple algorithms for different execution call scenarios...
      */
-    private Algorithm _algorithm;
+    private final LazyRef<Algorithm> _algorithm;
+    private final LazyRef<AutoDiffMode> _autogradMode;
 
 
     private ExecutionCall(
             D device,
             Operation operation,
             Tsr<?>[] tensors,
-            Algorithm algorithm,
             List<Arg> arguments
     ) {
         super( tensors, device, arguments );
         _operation = operation;
-        _algorithm = algorithm;
+        _algorithm = LazyRef.of(()->{
+            Algorithm algorithm = _operation.getAlgorithmFor( this );
+            if ( algorithm == null )
+                _LOG.error(
+                        "No suitable '" + Algorithm.class.getSimpleName() + "' implementation found for this '" + this + "'!"
+                );
+            return algorithm;
+        });
+        _autogradMode = LazyRef.of(()->{
+            Algorithm algorithm = getAlgorithm();
+            AutoDiffMode mode = ( algorithm == null ? AutoDiffMode.NOT_SUPPORTED : algorithm.autoDiffModeFrom(this) );
+            if ( mode == null )
+                throw new IllegalStateException("Algorithm '"+algorithm+"' returned null instead of a valid autograd mode!");
+            return mode;
+        });
     }
 
     public void checkArity() {
@@ -140,7 +155,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     public ExecutionCall<D> withInputs( Tsr<?>... inputs ) {
         LogUtil.nullArgCheck( inputs, "inputs", Tsr[].class );
         return new ExecutionCall<>(
-                   _device, _operation, inputs, null, _arguments.getAll(Arg.class)
+                   _device, _operation, inputs, _arguments.getAll(Arg.class)
                );
     }
 
@@ -155,7 +170,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         List<Arg> old = _arguments.getAll(Arg.class);
         old = old.stream().filter( a -> Arrays.stream(args).noneMatch(b -> a.getClass().isAssignableFrom(b.getClass()) )).collect(Collectors.toList());
         old.addAll(Arrays.stream(args).collect(Collectors.toList()));
-        return new ExecutionCall<>( _device, _operation, _tensors, null, old );
+        return new ExecutionCall<>( _device, _operation, _tensors, old );
     }
 
     /**
@@ -168,20 +183,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      *
      * @return The {@link Algorithm} suitable for this {@link ExecutionCall}.
      */
-    public Algorithm getAlgorithm()
-    {
-        if ( _algorithm != null )
-            return _algorithm;
-        else
-            _algorithm = _operation.getAlgorithmFor( this );
-
-        if ( _algorithm == null )
-            _LOG.error(
-                "No suitable '" + Algorithm.class.getSimpleName() + "' implementation found for this '" + this + "'!"
-            );
-
-        return _algorithm;
-    }
+    public Algorithm getAlgorithm() { return _algorithm.get(); }
 
     /**
      *  This method queries the underlying {@link Operation} for a suitable {@link Algorithm}
@@ -189,16 +191,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      *
      * @return The {@link AutoDiffMode} for this call.
      */
-    public AutoDiffMode autogradMode() {
-        Algorithm algorithm = getAlgorithm();
-        if ( algorithm != null ) {
-            AutoDiffMode mode = algorithm.autoDiffModeFrom(this);
-            if ( mode == null )
-                throw new IllegalStateException("Algorithm '"+algorithm+"' returned null instead of a valid autograd mode!");
-            return mode;
-        }
-        return AutoDiffMode.NOT_SUPPORTED;
-    }
+    public AutoDiffMode autogradMode() { return _autogradMode.get(); }
 
     /**
      *  Warning! This is the only way to mutate the inner state of an {@link ExecutionCall}.
@@ -240,7 +233,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
 
         public <D extends Device<?>> ExecutionCall<D> on( D device ) {
             LogUtil.nullArgCheck( device, "device", Device.class );
-            return new ExecutionCall<>( device, _operation, _tensors, _algorithm, _arguments );
+            return new ExecutionCall<>( device, _operation, _tensors, _arguments );
         }
 
         public Builder<D> running( Operation operation ) {
