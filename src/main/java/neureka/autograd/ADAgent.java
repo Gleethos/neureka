@@ -70,7 +70,7 @@ public interface ADAgent
     <T> Tsr<T> act( GraphNode<T> target, Tsr<T> derivativeOrError );
 
     /**
-     * @return A partial derivative or null if the agent does not contain a partial derivative...
+     * @return An optional partial derivative which may not be present if the agent does not wrap a partial derivative...
      */
     Optional<Tsr<?>> partialDerivative();
 
