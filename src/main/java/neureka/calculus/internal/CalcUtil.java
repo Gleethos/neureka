@@ -151,96 +151,96 @@ public class CalcUtil
             final RecursiveExecutor executor
     ) {
         Supplier<Tsr<?>> actor = () ->
-                MemUtil.keep( call.inputs(), () -> {
-                    final Device<?> device = call.getDevice();
-                    int d = call.getValOf( Arg.DerivIdx.class );
-                    final int j = call.getValOf( Arg.VarIdx.class );
-                    assert d >= 0;
+            MemUtil.keep( call.inputs(), () -> {
+                final Device<?> device = call.getDevice();
+                int d = call.getValOf( Arg.DerivIdx.class );
+                final int j = call.getValOf( Arg.VarIdx.class );
+                assert d >= 0;
 
-                    Tsr<?>[] tensors;
-                    if ( call.getOperation().isIndexer() ) tensors = new Tsr[ 1 + call.arity() ];
-                    else tensors = new Tsr[ 1 + nodes.length ];
+                Tsr<?>[] tensors;
+                if ( call.getOperation().isIndexer() ) tensors = new Tsr[ 1 + call.arity() ];
+                else tensors = new Tsr[ 1 + nodes.length ];
 
-                    // Chain-rule (forward AutoDiff):
-                    // inner times outer means:
-                    // first derive source!
-                    // like so:
-                    if ( call.getOperation().isIndexer() )
-                        for ( int i = 1; i < tensors.length; i++ )
-                            tensors[ i ] = nodes[ 0 ].executeDerive( call.inputs(), d, i - 1 );
-                    else
-                        for ( int i = 1; i < tensors.length; i++ )
-                            tensors[ i ] =
-                                        j >= 0
-                                            ? nodes[ i - 1 ].executeDerive( call.inputs(), d, j )
-                                            : nodes[ i - 1 ].executeDerive( call.inputs(), d    );
-
-                    //...then add them all together! (is possible because of linearity...)
-                    Tsr<?> inner;
-                    if ( tensors.length > 2 ) {// Optimization: Finds index of "1.0" among otherwise all "0.0" virtual tensors!
-                        int index = _indexOfFoundDerivative( tensors );
-                        if ( index >= 0 ) inner = tensors[ index ];
-                        else {
-                            // Optimization above did not apply, so we accumulate all the derivatives!
-                            tensors[0] = CalcUtil.recursiveExecution(
-                                                    ExecutionCall.of( tensors )
-                                                            .andArgs( Arg.DerivIdx.of( -1 ) )
-                                                            .running( Neureka.get().backend().getOperation("+") )
-                                                            .on( device ),
-                                                    JunctionUtil::forAdditions
-                                            );
-                            inner = tensors[ 0 ];//-> this is now the inner derivative!
-                        }
-                    }
-                    else inner = tensors[ 1 ];
-
-                    tensors[ 0 ] = null;
-                    //...then activate (No differentiation!) the source like so:
-                    if ( call.getOperation().isIndexer() ) // Indexer pass an index j of course!
-                        for ( int i = 1; i < tensors.length; i++ )
-                            tensors[ i ] = nodes[ 0 ].execute( call.inputs(), i - 1 ); // i - 1 := j
-                    else
-                        for ( int i = 1; i < tensors.length; i++ )
-                            tensors[ i ] =
+                // Chain-rule (forward AutoDiff):
+                // inner times outer means:
+                // first derive source!
+                // like so:
+                if ( call.getOperation().isIndexer() )
+                    for ( int i = 1; i < tensors.length; i++ )
+                        tensors[ i ] = nodes[ 0 ].executeDerive( call.inputs(), d, i - 1 );
+                else
+                    for ( int i = 1; i < tensors.length; i++ )
+                        tensors[ i ] =
                                     j >= 0
-                                        ? nodes[ i - 1 ].execute( call.inputs(), j )
-                                        : nodes[ i - 1 ].execute( call.inputs() );
+                                        ? nodes[ i - 1 ].executeDerive( call.inputs(), d, j )
+                                        : nodes[ i - 1 ].executeDerive( call.inputs(), d    );
 
-                    //...get derivative index within src list:
-                    for ( int i = 0; i < nodes.length; i++ )
-                        if ( nodes[ i ].dependsOn( d ) && !call.getOperation().isIndexer() ) {
-                            d = i;
-                            break;
-                        }
-
-                    // Use those tensors for the outer derivative:
-                    tensors[0] = CalcUtil.recursiveExecution(
-                                            ExecutionCall.of( tensors )
-                                                    .andArgs( Arg.DerivIdx.of( d ) )
-                                                    .running( call.getOperation() )
-                                                    .on( device ),
-                                            executor
-                                    );
-                    // At the end:
-                    //...multiply inner times outer: ( if inner is not 1 entirely... )
-                    if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getValueAs( double[].class )[ 0 ] == 1.0 ) ) {
-                        tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
+                //...then add them all together! (is possible because of linearity...)
+                Tsr<?> inner;
+                if ( tensors.length > 2 ) {// Optimization: Finds index of "1.0" among otherwise all "0.0" virtual tensors!
+                    int index = _indexOfFoundDerivative( tensors );
+                    if ( index >= 0 ) inner = tensors[ index ];
+                    else {
+                        // Optimization above did not apply, so we accumulate all the derivatives!
                         tensors[0] = CalcUtil.recursiveExecution(
                                                 ExecutionCall.of( tensors )
                                                         .andArgs( Arg.DerivIdx.of( -1 ) )
-                                                        .running( Neureka.get().backend().getOperation("*") )
+                                                        .running( Neureka.get().backend().getOperation("+") )
                                                         .on( device ),
-                                                null
+                                                JunctionUtil::forAdditions
                                         );
-                        for ( int i = 1; i < tensors.length; i++ )
-                            _deleteIfNotIn( call.inputs(), tensors[ i ] );
+                        inner = tensors[ 0 ];//-> this is now the inner derivative!
                     }
-                    // done!
+                }
+                else inner = tensors[ 1 ];
 
-                    _delete( inner );
+                tensors[ 0 ] = null;
+                //...then activate (No differentiation!) the source like so:
+                if ( call.getOperation().isIndexer() ) // Indexer pass an index j of course!
+                    for ( int i = 1; i < tensors.length; i++ )
+                        tensors[ i ] = nodes[ 0 ].execute( call.inputs(), i - 1 ); // i - 1 := j
+                else
+                    for ( int i = 1; i < tensors.length; i++ )
+                        tensors[ i ] =
+                                j >= 0
+                                    ? nodes[ i - 1 ].execute( call.inputs(), j )
+                                    : nodes[ i - 1 ].execute( call.inputs() );
 
-                    return tensors[ 0 ];
-                });
+                //...get derivative index within src list:
+                for ( int i = 0; i < nodes.length; i++ )
+                    if ( nodes[ i ].dependsOn( d ) && !call.getOperation().isIndexer() ) {
+                        d = i;
+                        break;
+                    }
+
+                // Use those tensors for the outer derivative:
+                tensors[0] = CalcUtil.recursiveExecution(
+                                        ExecutionCall.of( tensors )
+                                                .andArgs( Arg.DerivIdx.of( d ) )
+                                                .running( call.getOperation() )
+                                                .on( device ),
+                                        executor
+                                );
+                // At the end:
+                //...multiply inner times outer: ( if inner is not 1 entirely... )
+                if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getValueAs( double[].class )[ 0 ] == 1.0 ) ) {
+                    tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
+                    tensors[0] = CalcUtil.recursiveExecution(
+                                            ExecutionCall.of( tensors )
+                                                    .andArgs( Arg.DerivIdx.of( -1 ) )
+                                                    .running( Neureka.get().backend().getOperation("*") )
+                                                    .on( device ),
+                                            null
+                                    );
+                    for ( int i = 1; i < tensors.length; i++ )
+                        _deleteIfNotIn( call.inputs(), tensors[ i ] );
+                }
+                // done!
+
+                _delete( inner );
+
+                return tensors[ 0 ];
+            });
 
         int d = call.getValOf( Arg.DerivIdx.class );
         Tsr<?> out = null;
