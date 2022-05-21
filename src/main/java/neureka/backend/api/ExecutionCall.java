@@ -111,7 +111,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
             Algorithm algorithm = _operation.getAlgorithmFor( this );
             if ( algorithm == null )
                 _LOG.error(
-                        "No suitable '" + Algorithm.class.getSimpleName() + "' implementation found for this '" + this + "'!"
+                    "No suitable '" + Algorithm.class.getSimpleName() + "' implementation found for this '" + this + "'!"
                 );
             return algorithm;
         });
@@ -126,7 +126,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
 
     public void checkArity() {
         int thisArity = _tensors.length;
-        if ( _operation != null && thisArity < Math.abs(_operation.getArity()) ) {
+        if ( _operation != null && thisArity < Math.abs(_operation.getArity()) )
             throw new IllegalArgumentException(
                 "Trying to instantiate an '" + this.getClass().getSimpleName() + "' with an arity " +
                 "of " + thisArity + ", which is not suitable for the targeted operation '" +
@@ -134,7 +134,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
                 ( _operation.getArity() < 0 ? "a minimum " : "the expected " ) +
                 "arity of "+Math.abs(_operation.getArity()) + "."
             );
-        }
     }
 
     /**
@@ -154,9 +153,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      */
     public ExecutionCall<D> withInputs( Tsr<?>... inputs ) {
         LogUtil.nullArgCheck( inputs, "inputs", Tsr[].class );
-        return new ExecutionCall<>(
-                   _device, _operation, inputs, _arguments.getAll(Arg.class)
-               );
+        return new ExecutionCall<>( _device, _operation, inputs, _arguments.getAll(Arg.class) );
     }
 
     /**
