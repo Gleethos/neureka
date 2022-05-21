@@ -6,6 +6,7 @@ import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -55,8 +56,8 @@ public final class DefaultADAgent implements ADAgent {
     public <T> Tsr<T> act(GraphNode<T> target, Tsr<T> derivativeOrError) { return (Tsr<T>) _action.execute( target, derivativeOrError); }
 
     @Override
-    public Tsr<?> partialDerivative() {
-        return _partialDerivative;
+    public Optional<Tsr<?>> partialDerivative() {
+        return Optional.ofNullable(_partialDerivative);
     }
 
     @Override
@@ -76,7 +77,7 @@ public final class DefaultADAgent implements ADAgent {
      */
     @Override
     public String toString() {
-        if ( this.partialDerivative() != null ) return partialDerivative().toString();
+        if ( this.partialDerivative().isPresent() ) return partialDerivative().get().toString();
         return "";//getAll(Arg.class).stream()
         //        .map( key -> key.getClass().getSimpleName() + "=" + get(key.getClass()) )
         //        .collect( Collectors.joining( ", ", "{", "}" ) );

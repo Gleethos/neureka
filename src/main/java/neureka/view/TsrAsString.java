@@ -287,11 +287,11 @@ public final class TsrAsString
             GraphNode<?> node = _tensor.get( GraphNode.class );
             _$( "; " );
             node.forEachDerivative( ( t, agent ) -> {
-                if ( agent.partialDerivative() == null ) _$( "->d(null), " );
+                if ( !agent.partialDerivative().isPresent() ) _$( "->d(null), " );
                 else {
                     _$(
                                     base + "=>d|[ " +
-                                    base + delimiter + agent.partialDerivative().toString( _config.clone().setPrefix("").setPostfix("") ) + " " +
+                                    base + delimiter + agent.partialDerivative().get().toString( _config.clone().setPrefix("").setPostfix("") ) + " " +
                                     base + half + "]|:t{ " +
                                     base + delimiter + (
                                     ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix("").setPostfix("") ) : t.toString("")
@@ -305,8 +305,8 @@ public final class TsrAsString
             if ( node.getMode() != 0 ) {
                 _$( "; " );
                 node.forEachDerivative( ( t, agent ) -> {
-                    if ( agent.partialDerivative() == null ) _$( "->d(" )._$( agent.toString() )._$( "), " );
-                    else _$( "->d" )._$( agent.partialDerivative().toString( _config.clone().setPrefix("").setPostfix("") ) )._$( ", " );
+                    if (!agent.partialDerivative().isPresent()) _$( "->d(" )._$( agent.toString() )._$( "), " );
+                    else _$( "->d" )._$( agent.partialDerivative().get().toString( _config.clone().setPrefix("").setPostfix("") ) )._$( ", " );
                 });
             }
         }

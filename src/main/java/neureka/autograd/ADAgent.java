@@ -42,6 +42,8 @@ package neureka.autograd;
 
 import neureka.Tsr;
 
+import java.util.Optional;
+
 /**
  *  {@link ADAgent} stands for "Auto-Differentiation-Agent", meaning
  *  that implementations of this class are responsible for managing
@@ -70,7 +72,7 @@ public interface ADAgent
     /**
      * @return A partial derivative or null if the agent does not contain a partial derivative...
      */
-    Tsr<?> partialDerivative();
+    Optional<Tsr<?>> partialDerivative();
 
     boolean hasAction();
 
