@@ -46,8 +46,8 @@ import neureka.Tsr;
  *  {@link ADAgent} stands for "Auto-Differentiation-Agent", meaning
  *  that implementations of this class are responsible for managing
  *  forward- and reverse- mode differentiation actions.
- *  These actions are accessible through the "{@link ADAgent#forward(GraphNode, Tsr)}"
- *  and "{@link ADAgent#backward(GraphNode, Tsr)}" method which are being triggered
+ *  These actions are accessible through the "{@link ADAgent#act(GraphNode, Tsr)}"
+ *  and "{@link ADAgent#act(GraphNode, Tsr)}" method which are being triggered
  *  by instances of the {@link GraphNode} class during propagation.
  */
 public interface ADAgent
@@ -57,7 +57,7 @@ public interface ADAgent
     }
     
     /**
-     *  The auto-differentiation forward pass of an ADAgent
+     *  The auto-differentiation forward or backward pass of an ADAgent
      *  propagate partial differentiations forward along the computation graph.
      *
      * @param target The node which is targeted to hold the partial derivative.
@@ -65,27 +65,14 @@ public interface ADAgent
      * @param <T> The type argument of the tensor that is being used.
      * @return The result of a forward mode auto differentiation.
      */
-    <T> Tsr<T> forward( GraphNode<T> target, Tsr<T> derivative );
-
-    /**
-     *  The auto-differentiation backward pass of an ADAgent
-     *  propagates error values backward along the computation graph.
-     *
-     * @param target The node which is targeted to hold the new error.
-     * @param error The error which ought to be propagated backward.
-     * @param <T> The type argument of the tensor that is being used.
-     * @return The result of a backward mode auto differentiation, and new error for the targeted graph node.
-     */
-    <T> Tsr<T> backward( GraphNode<T> target, Tsr<T> error );
+    <T> Tsr<T> act(GraphNode<T> target, Tsr<T> derivative );
 
     /**
      * @return A partial derivative or null if the agent does not contain a partial derivative...
      */
     Tsr<?> derivative();
 
-    boolean hasForward();
-
-    boolean hasBackward();
+    boolean hasAction();
 
     String toString();
 

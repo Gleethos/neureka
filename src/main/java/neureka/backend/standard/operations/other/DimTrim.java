@@ -56,13 +56,14 @@ public class DimTrim extends AbstractOperation
 
                             return ADAgent.of( null )
                                     .withArgs( Arg.Ends.of(endings) )
-                                    .setForward(
-                                            (t, derivative) ->
+                                    .setAction(
+                                        call.autogradMode() == AutoDiffMode.FORWARD_ONLY
+                                        ? (t, derivative) ->
                                                     new FunctionBuilder( Neureka.get().backend() )
                                                             .build(f.toString(), false)
                                                             .derive(new Tsr[]{derivative},0)
-                                    )
-                                    .setBackward( (t, error) -> _pad(error, new int[]{prefix, postfix}, true) );
+                                        : (t, error) -> _pad(error, new int[]{prefix, postfix}, true)
+                                    );
                         };
 
                         Tsr<?>[] inputs = CalcUtil.srcActivation(

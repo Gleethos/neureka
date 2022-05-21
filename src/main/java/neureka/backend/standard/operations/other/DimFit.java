@@ -48,10 +48,7 @@ public class DimFit extends AbstractOperation
                                 }
                                 return ADAgent.of( null )
                                         .withArgs(adCall.allMetaArgs())
-                                        .setForward(null)
-                                        .setBackward(
-                                                null//(t, error) -> pad(error, new int[]{prefix, postfix}, true)
-                                        );
+                                        .setAction(null);
                             };
 
                             Tsr<?>[] inputs = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]));

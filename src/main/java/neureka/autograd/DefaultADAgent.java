@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
  *  {@link ADAgent} stands for "Auto-Differentiation-Agent", meaning
  *  that implementations of this class are responsible for managing
  *  forward- and reverse- mode differentiation actions.
- *  These actions are accessible through the {@link #forward(GraphNode, Tsr)}
- *  and {@link #backward(GraphNode, Tsr)} method which are being triggered
+ *  These actions are accessible through the {@link #act(GraphNode, Tsr)}
+ *  and {@link #act(GraphNode, Tsr)} method which are being triggered
  *  by instances of the GraphNode class during propagation. <br>
  *  <br>
  *  This class stores implementations for these methods
@@ -37,15 +37,10 @@ public final class DefaultADAgent extends Args implements ADAgent {
     public static DefaultADAgent ofDerivative( Tsr<?> derivative ) { return new DefaultADAgent( derivative ); }
     
     /**
-     *  This lambda ought to perform the forward propagation
+     *  This lambda ought to perform the forward or backward propagation
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
-    private ADAction _forward = (node, forwardDerivative ) -> {throw new IllegalStateException("Forward AD not defined!");};
-    /**
-     *  This lambda ought to perform the backward propagation
-     *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
-     */
-    private ADAction _backward = (node, backwardError ) -> {throw new IllegalStateException("Backward AD not defined!");};
+    private ADAction _action = (node, forwardDerivative ) -> {throw new IllegalStateException("Forward AD not defined!");};
 
     /**
      * @param derivative The current derivative which will be stored with the name "derivative" in the agents context.
@@ -53,11 +48,8 @@ public final class DefaultADAgent extends Args implements ADAgent {
     private DefaultADAgent( Tsr<?> derivative ) { set( Arg.Derivative.of(derivative) ); }
 
 
-    public DefaultADAgent setForward( ADAction forward ) { _forward = forward; return this; }
+    public DefaultADAgent setAction( ADAction action ) { _action = action; return this; }
 
-    public DefaultADAgent setBackward( ADAction backward ) { _backward = backward; return this; }
-    
-    
     /**
      *  The {@link DefaultADAgent} will adopt the argument context of the {@link neureka.backend.api.ExecutionCall}
      *  from which it was born. This is so that they can be used by any backend implementation to
@@ -85,10 +77,7 @@ public final class DefaultADAgent extends Args implements ADAgent {
     }
 
     @Override
-    public <T> Tsr<T> forward( GraphNode<T> target, Tsr<T> derivative ) { return (Tsr<T>) _forward.execute( target, derivative); }
-
-    @Override
-    public <T> Tsr<T> backward( GraphNode<T> target, Tsr<T> error ) { return (Tsr<T>) _backward.execute( target, error ); }
+    public <T> Tsr<T> act(GraphNode<T> target, Tsr<T> derivative ) { return (Tsr<T>) _action.execute( target, derivative); }
 
     @Override
     public Tsr<?> derivative() {
@@ -97,10 +86,7 @@ public final class DefaultADAgent extends Args implements ADAgent {
     }
 
     @Override
-    public boolean hasForward() { return has(Arg.Derivative.class); }
-
-    @Override
-    public boolean hasBackward() { return _backward != null; }
+    public boolean hasAction() { return has(Arg.Derivative.class); }
 
     /**
      *  An {@link ADAgent} also contains a context of variables which have been
@@ -125,8 +111,8 @@ public final class DefaultADAgent extends Args implements ADAgent {
 
     /**
      * This interface is the declaration for
-     * lambda actions for both the {@link #forward(GraphNode, Tsr)}
-     * and {@link #backward(GraphNode, Tsr)} method of the {@link ADAgent} interface. <br><br>
+     * lambda actions for both the {@link #act(GraphNode, Tsr)}
+     * and {@link #act(GraphNode, Tsr)} method of the {@link ADAgent} interface. <br><br>
      *
      * Note: Do not access the {@link GraphNode#getPayload()} of the {@link GraphNode}
      *       passed to implementation of this.

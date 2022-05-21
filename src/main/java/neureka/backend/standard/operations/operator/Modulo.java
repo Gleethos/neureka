@@ -102,8 +102,7 @@ public class Modulo extends AbstractOperation {
                     Function mul = Neureka.get().backend().getFunction().mul();
                     if ( ctxDerivative != null ) {
                         return ADAgent.of( ctxDerivative )
-                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
-                                        .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
+                                        .setAction( (node, error ) -> mul.execute( error, ctxDerivative ) );
                     }
                     int d = call.getDerivativeIndex();
                     if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
@@ -111,8 +110,7 @@ public class Modulo extends AbstractOperation {
                     {
                         Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                         return ADAgent.of( derivative )
-                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
-                                        .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
+                                        .setAction( (node, error ) -> mul.execute( error, derivative ) );
                     }
                 }
             )

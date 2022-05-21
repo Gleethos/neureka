@@ -57,8 +57,7 @@ public final class Product extends AbstractOperation
                     Function mul = Neureka.get().backend().getFunction().mul();
                     if ( ctxDerivative != null ) {
                         return ADAgent.of( ctxDerivative )
-                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
-                                .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
+                                        .setAction( (node, error ) -> mul.execute( error, ctxDerivative ) );
                     }
                     int d = call.getValOf( Arg.DerivIdx.class );
                     if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
@@ -66,8 +65,7 @@ public final class Product extends AbstractOperation
                     {
                         Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                         return ADAgent.of( derivative )
-                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
-                                .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
+                                        .setAction( (node, error ) -> mul.execute( error, derivative ) );
                     }
                 }
             )
@@ -109,12 +107,10 @@ public final class Product extends AbstractOperation
                         Tsr<?> derivative = f.executeDerive( adCall.inputs(), adCall.getDerivativeIndex() );
                         if ( forward )
                             return ADAgent.of( derivative )
-                                    .setForward( (t, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
-                                    .setBackward( (t, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) );
+                                            .setAction( (t, error ) -> mul.execute( error, derivative ) );
                         else
                             return ADAgent.of( derivative )
-                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
-                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
+                                            .setAction( (node, error ) -> mul.execute( error, derivative ) );
                     })
         )
         .setCallPreparation(

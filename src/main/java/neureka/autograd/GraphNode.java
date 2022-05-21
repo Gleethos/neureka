@@ -294,7 +294,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                 ( targetNode, localAgent ) ->
                                 {
                                     // The agent multiplies the local derivative with its stored partial derivative...
-                                    Tsr<?> targetDerivative = localAgent.forward( this, localDerivative );
+                                    Tsr<?> targetDerivative = localAgent.act( this, localDerivative );
                                     // ...this is now the new partial derivative with respect to the target node!
                                     ADAgent agent = output.getAgentSupplier().supplyADAgentFor(
                                             function,
@@ -702,7 +702,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         error.getUnsafe().setIsIntermediate( false );
         new ArrayList<>(_targetsToAgents).forEach( ref -> {
             for ( ADAgent a : ref.agents() )
-                action.accept( ref.target(), a.backward( ref.target(), error ) );
+                action.accept( ref.target(), a.act( ref.target(), error ) );
         });
     }
 
