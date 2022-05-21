@@ -166,7 +166,7 @@ class Tensor_Function_Spec extends Specification
             Tsr trimmed = Function.of("dimtrim(I[0])")(t)
 
         then :
-            trimmed.toString().contains("(3x2):[8.0, 8.0, 8.0, 8.0, 8.0, 8.0]; ->d({")
+            trimmed.toString().contains("(3x2):[8.0, 8.0, 8.0, 8.0, 8.0, 8.0]; ->d(")
 
         when :
             Tsr back = trimmed.backward()

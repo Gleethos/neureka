@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  *  These variables are used by an implementation of the {@link neureka.backend.api.Operation} to perform auto differentiation
  *  or to facilitate further configuration of an {@link neureka.backend.api.ExecutionCall}.
  */
-public final class DefaultADAgent extends Args implements ADAgent {
+public final class DefaultADAgent implements ADAgent {
 
     public static DefaultADAgent ofDerivative( Tsr<?> derivative ) { return new DefaultADAgent( derivative ); }
     
@@ -41,52 +41,26 @@ public final class DefaultADAgent extends Args implements ADAgent {
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
     private ADAction _action = (node, forwardDerivative ) -> {throw new IllegalStateException("Forward AD not defined!");};
+    private final Tsr<?> _partialDerivative;
 
     /**
      * @param derivative The current derivative which will be stored with the name "derivative" in the agents context.
      */
-    private DefaultADAgent( Tsr<?> derivative ) { set( Arg.Derivative.of(derivative) ); }
+    private DefaultADAgent( Tsr<?> derivative ) { _partialDerivative = derivative; }
 
 
     public DefaultADAgent setAction( ADAction action ) { _action = action; return this; }
-
-    /**
-     *  The {@link DefaultADAgent} will adopt the argument context of the {@link neureka.backend.api.ExecutionCall}
-     *  from which it was born. This is so that they can be used by any backend implementation to
-     *  save variables useful to perform differentiation.
-     *
-     *  @param context A list of {@link neureka.backend.api.ExecutionCall} arguments which might be relevant to the autograd system.
-     *  @return This {@link DefaultADAgent} with the list of arguments set.
-     */
-    public DefaultADAgent withArgs( List<Arg> context  ) {
-        for ( Arg<?> arg : context ) this.set(arg);
-        return this;
-    }
-
-    /**
-     *  The {@link DefaultADAgent} will adopt the argument context of the {@link neureka.backend.api.ExecutionCall}
-     *  from which it was born. This is so that they can be used by any backend implementation to
-     *  save variables useful to perform differentiation.
-     *
-     *  @param context An array of {@link neureka.backend.api.ExecutionCall} arguments which might be relevant to the autograd system.
-     *  @return This {@link DefaultADAgent} with the list of arguments set.
-     */
-    public DefaultADAgent withArgs( Arg<?>... context  ) {
-        for ( Arg<?> arg : context ) this.set(arg);
-        return this;
-    }
 
     @Override
     public <T> Tsr<T> act(GraphNode<T> target, Tsr<T> derivativeOrError) { return (Tsr<T>) _action.execute( target, derivativeOrError); }
 
     @Override
     public Tsr<?> partialDerivative() {
-        Arg.Derivative arg = get(Arg.Derivative.class);
-        if ( arg != null ) return (Tsr<?>) arg.get(); else return null;
+        return _partialDerivative;
     }
 
     @Override
-    public boolean hasAction() { return has(Arg.Derivative.class); }
+    public boolean hasAction() { return _action != null; }
 
     /**
      *  An {@link ADAgent} also contains a context of variables which have been
@@ -103,9 +77,9 @@ public final class DefaultADAgent extends Args implements ADAgent {
     @Override
     public String toString() {
         if ( this.partialDerivative() != null ) return partialDerivative().toString();
-        return getAll(Arg.class).stream()
-                .map( key -> key.getClass().getSimpleName() + "=" + get(key.getClass()) )
-                .collect( Collectors.joining( ", ", "{", "}" ) );
+        return "";//getAll(Arg.class).stream()
+        //        .map( key -> key.getClass().getSimpleName() + "=" + get(key.getClass()) )
+        //        .collect( Collectors.joining( ", ", "{", "}" ) );
     }
 
 

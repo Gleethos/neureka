@@ -55,7 +55,6 @@ public class DimTrim extends AbstractOperation
                                 throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
 
                             return ADAgent.of( null )
-                                    .withArgs( Arg.Ends.of(endings) )
                                     .setAction(
                                         call.autogradMode() == AutoDiffMode.FORWARD_ONLY
                                         ? (t, derivative) ->
