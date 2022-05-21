@@ -2,36 +2,27 @@ package neureka.autograd;
 
 
 import neureka.Tsr;
-import neureka.calculus.args.Arg;
-import neureka.calculus.args.Args;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 /**
- *  This class implements the ADAgent interface.
  *  {@link ADAgent} stands for "Auto-Differentiation-Agent", meaning
  *  that implementations of this class are responsible for managing
  *  forward- and reverse- mode differentiation actions.
- *  These actions are accessible through the {@link #act(GraphNode, Tsr)}
- *  and {@link #act(GraphNode, Tsr)} method which are being triggered
- *  by instances of the GraphNode class during propagation. <br>
+ *  These differentiation actions are performed through the "{@link ADAgent#act(GraphNode, Tsr)}"
+ *  method which are being called
+ *  by instances of the {@link GraphNode} class during propagation.
+ *  An {@link ADAgent} may also wrap and expose a partial derivative
+ *  which may or may not be present for certain operations.
  *  <br>
- *  This class stores implementations for these methods
- *  inside the agent as lambda instances. <br>
+ *  This class stores implementations for the propagation method
+ *  inside the agent as a lambda instance. <br>
  *
- *  So in essence this class is a container for lambda actions
- *  allowing for easy instantiation of {@link ADAgent}s.
+ *  So in essence this class is a container for a lambda as well as an optional derivative.
  *  Additionally this class the class manages a variable context
  *  for storing useful data used by a particular {@link neureka.backend.api.Operation} to
  *  perform propagation. <br>
- *  This context will be populated by a given {@link neureka.backend.api.ExecutionCall},
- *  which will itself have gathered the context
- *  variables within a given backend implementation, more specifically an {@link neureka.backend.api.Operation}.
- *  These variables are used by an implementation of the {@link neureka.backend.api.Operation} to perform auto differentiation
- *  or to facilitate further configuration of an {@link neureka.backend.api.ExecutionCall}.
  */
 public final class DefaultADAgent implements ADAgent {
 
@@ -82,6 +73,7 @@ public final class DefaultADAgent implements ADAgent {
         //        .map( key -> key.getClass().getSimpleName() + "=" + get(key.getClass()) )
         //        .collect( Collectors.joining( ", ", "{", "}" ) );
     }
+
 
 
     /**
