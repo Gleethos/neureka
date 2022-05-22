@@ -44,7 +44,7 @@ public class Addition extends AbstractOperation {
                             Tsr<?> toBeDerived = JunctionUtil.newTsrLike(call.input( d ), 0);
                             Device device = call.getDeviceFor(Number.class);
                             return ADAgent.of( derivative )
-                                            .setAction(
+                                            .withAD(
                                                 ( node, backwardError ) ->
                                                     this.getAlgorithm( Broadcast.class )
                                                          .getImplementationFor( device )

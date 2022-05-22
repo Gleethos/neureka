@@ -166,7 +166,7 @@ public class Power extends AbstractOperation
                         Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
-                                    .setAction( (node, error ) -> mul.execute( error, ctxDerivative ) );
+                                    .withAD( (node, error ) -> mul.execute( error, ctxDerivative ) );
                         }
                         int d = call.getDerivativeIndex();
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
@@ -174,7 +174,7 @@ public class Power extends AbstractOperation
                         {
                             Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                             return ADAgent.of( derivative )
-                                    .setAction( (node, error ) -> mul.execute( error, derivative ) );
+                                    .withAD( (node, error ) -> mul.execute( error, derivative ) );
                         }
                     }
                 )

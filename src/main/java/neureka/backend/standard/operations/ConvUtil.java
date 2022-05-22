@@ -58,7 +58,7 @@ public class ConvUtil {
                             int[] shape = adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape();
                             // This is because it will be the shape of the output to the de-convolution!
                             return ADAgent.of( derivative )
-                                    .setAction(
+                                    .withAD(
                                             (node, error) ->
                                                     deConv.execute(
                                                             error,

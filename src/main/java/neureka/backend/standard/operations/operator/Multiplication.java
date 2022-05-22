@@ -93,7 +93,7 @@ public class Multiplication extends AbstractOperation
                         Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
-                                            .setAction( (node, error ) -> mul.execute( error, ctxDerivative ) );
+                                            .withAD( (node, error ) -> mul.execute( error, ctxDerivative ) );
                         }
                         int d = call.getDerivativeIndex();
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
@@ -101,7 +101,7 @@ public class Multiplication extends AbstractOperation
                         {
                             Tsr<?> derivative = MemUtil.keep( call.inputs(), () -> f.executeDerive( call.inputs(), d ) );
                             return ADAgent.of( derivative )
-                                    .setAction( (node, error ) -> mul.execute( error, derivative ) );
+                                    .withAD( (node, error ) -> mul.execute( error, derivative ) );
                         }
                     }
                 )

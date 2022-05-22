@@ -46,8 +46,7 @@ public class DimFit extends AbstractOperation
                                 if ( forward ) {
                                     throw new IllegalArgumentException("Dim-Fit operation does not support forward-AD!");
                                 }
-                                return ADAgent.of( null )
-                                        .setAction(null);
+                                return ADAgent.withAD(null);
                             };
 
                             Tsr<?>[] inputs = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]));

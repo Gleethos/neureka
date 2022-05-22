@@ -4,7 +4,6 @@ import it.backend.mocks.CLContext
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.ADAgent
-import neureka.backend.api.Algorithm
 import neureka.backend.api.BackendContext
 import neureka.backend.api.DeviceAlgorithm
 import neureka.backend.api.ExecutionCall
@@ -77,8 +76,7 @@ class Backend_Extension_Spec extends Specification
                                                 Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
                                                     .withAutoDiff((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward) -> {
                                                         if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-                                                        return ADAgent.of( null )
-                                                                .setAction((t, error) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                                        return ADAgent.withAD((t, error) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
                                                     })
                                             )
                                             .setCallPreparation(

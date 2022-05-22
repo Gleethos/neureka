@@ -58,7 +58,7 @@ public final class Summation extends AbstractOperation
                         Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
-                                            .setAction( (node, error ) -> mul.execute( error, ctxDerivative ) );
+                                            .withAD( (node, error ) -> mul.execute( error, ctxDerivative ) );
                         }
                         int d = call.getValOf( Arg.DerivIdx.class );
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
@@ -66,7 +66,7 @@ public final class Summation extends AbstractOperation
                         {
                             Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                             return ADAgent.of( derivative )
-                                            .setAction( (node, error ) -> mul.execute( error, derivative ) );
+                                            .withAD( (node, error ) -> mul.execute( error, derivative ) );
                         }
                     }
                 )
@@ -114,14 +114,14 @@ public final class Summation extends AbstractOperation
                             Function mul = Neureka.get().backend().getFunction().mul();
                             if ( ctxDerivative != null )
                                 return ADAgent.of( ctxDerivative )
-                                                .setAction( (node, error ) -> mul.execute( error, ctxDerivative ) );
+                                                .withAD( (node, error ) -> mul.execute( error, ctxDerivative ) );
 
                             int d = adCall.getDerivativeIndex();
                             if ( forward )
                             {
                                 Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
                                 return ADAgent.of( derivative )
-                                                .setAction( ( t, error ) -> mul.execute( error, derivative ) );
+                                                .withAD( (t, error ) -> mul.execute( error, derivative ) );
                             }
                             else
                             {
@@ -133,7 +133,7 @@ public final class Summation extends AbstractOperation
                                     );
                                     Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
                                     return ADAgent.of( derivative )
-                                            .setAction(
+                                            .withAD(
                                                 call.autogradMode() == AutoDiffMode.FORWARD_ONLY
                                                 ? (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative )
                                                 : (t, error) ->
@@ -147,7 +147,7 @@ public final class Summation extends AbstractOperation
                                 {
                                     Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
                                     return ADAgent.of( derivative )
-                                                    .setAction( (node, error ) -> mul.execute( error, derivative ) );
+                                                    .withAD( (node, error ) -> mul.execute( error, derivative ) );
                                 }
                             }
                         }

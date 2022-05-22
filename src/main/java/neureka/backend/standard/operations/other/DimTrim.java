@@ -54,8 +54,7 @@ public class DimTrim extends AbstractOperation
                             if ( forward )
                                 throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
 
-                            return ADAgent.of( null )
-                                    .setAction(
+                            return ADAgent.withAD(
                                         call.autogradMode() == AutoDiffMode.FORWARD_ONLY
                                         ? (t, derivative) ->
                                                     new FunctionBuilder( Neureka.get().backend() )

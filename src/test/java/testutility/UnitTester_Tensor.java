@@ -238,7 +238,7 @@ public class UnitTester_Tensor extends UnitTester
                                             Function mul = Neureka.get().backend().getFunction().mul();
                                             if ( ctxDerivative != null ) {
                                                 return ADAgent.of( ctxDerivative )
-                                                        .setAction( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
+                                                        .withAD( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                                             }
                                             int d = adCall.getDerivativeIndex();
                                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
@@ -246,7 +246,7 @@ public class UnitTester_Tensor extends UnitTester
                                             {
                                                 Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
                                                 return ADAgent.of( derivative )
-                                                        .setAction( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
+                                                        .withAD( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
                                             }
                                         })
                                 )
@@ -293,7 +293,7 @@ public class UnitTester_Tensor extends UnitTester
                                                 Function mul = Neureka.get().backend().getFunction().mul();
                                                 if ( ctxDerivative != null ) {
                                                     return ADAgent.of( ctxDerivative )
-                                                            .setAction( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
+                                                            .withAD( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                                                 }
                                                 Tsr<?>[] inputs = adCall.inputs();
                                                 int d = adCall.getDerivativeIndex();
@@ -302,7 +302,7 @@ public class UnitTester_Tensor extends UnitTester
                                                 {
                                                     Tsr<?> derivative = f.executeDerive( inputs, d );
                                                     return ADAgent.of( derivative )
-                                                            .setAction( ( node, backwardError ) -> mul.execute( backwardError, derivative ) );
+                                                            .withAD( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
                                                 }
                                             })
                                     )

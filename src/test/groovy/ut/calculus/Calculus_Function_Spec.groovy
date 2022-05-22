@@ -50,8 +50,9 @@ class Calculus_Function_Spec extends Specification {
                     ]
     }
 
-    def 'Function implementations ensure that outputs which are input members are not flagged as "intermediate"!'()
-    {
+    def 'Function implementations ensure that outputs which are input members are not flagged as "intermediate"!'(
+        Closure caller
+    ) {
         given :
             var fun1 = new DummyFunction((Args args, Tsr<?>[] tensors) -> tensors[0] )
         and :

@@ -120,12 +120,12 @@ implements ExecutionPreparation, ADAgentSupplier
         Function mul = Neureka.get().backend().getFunction().mul();
         if ( derivative != null ) {
             return ADAgent.of( derivative )
-                    .setAction( (node, error ) -> mul.execute( error, derivative ) );
+                    .withAD( (node, error ) -> mul.execute( error, derivative ) );
         }
         Tsr<?> localDerivative = MemUtil.keep( call.inputs(), () -> function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );
         localDerivative.getUnsafe().setIsIntermediate( false );
         return ADAgent.of( localDerivative )
-                    .setAction( (node, error ) -> mul.execute( error, localDerivative ) );
+                    .withAD( (node, error ) -> mul.execute( error, localDerivative ) );
         // TODO: Maybe delete local derivative??
     }
 

@@ -58,8 +58,10 @@ import java.util.Optional;
  */
 public interface ADAgent
 {
-    static DefaultADAgent of( Tsr<?> derivative ) { return DefaultADAgent.ofDerivative( derivative ); }
-    
+    static DefaultADAgent.WithAD of( Tsr<?> derivative ) { return DefaultADAgent.ofDerivative( derivative ); }
+
+    static ADAgent withAD( DefaultADAgent.ADAction action ) { return of( null ).withAD( action ); }
+
     /**
      *  The auto-differentiation forward or backward pass of an ADAgent
      *  propagate partial differentiations forward along the computation graph.
@@ -75,11 +77,6 @@ public interface ADAgent
      * @return An optional partial derivative which may not be present if the agent does not wrap a partial derivative...
      */
     Optional<Tsr<?>> partialDerivative();
-
-    /**
-     * @return The truth value determining if this {@link ADAgent} can perform propagation through its {@link #act(GraphNode, Tsr)} method.
-     */
-    boolean hasAction();
 
     String toString();
 

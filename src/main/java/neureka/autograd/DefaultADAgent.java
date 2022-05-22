@@ -20,40 +20,36 @@ import java.util.Optional;
  *  inside the agent as a lambda instance. <br>
  *
  *  So in essence this class is a container for a lambda as well as an optional derivative.
- *  Additionally this class the class manages a variable context
- *  for storing useful data used by a particular {@link neureka.backend.api.Operation} to
- *  perform propagation. <br>
  */
 public final class DefaultADAgent implements ADAgent {
 
-    public static DefaultADAgent ofDerivative( Tsr<?> derivative ) { return new DefaultADAgent( derivative ); }
+    public static WithAD ofDerivative( Tsr<?> derivative ) {
+        return action -> new DefaultADAgent( derivative, action );
+    }
     
     /**
      *  This lambda ought to perform the forward or backward propagation
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
-    private ADAction _action = (node, forwardDerivative ) -> {throw new IllegalStateException("Forward AD not defined!");};
+    private final ADAction _action;
     private final Tsr<?> _partialDerivative;
 
     /**
      * @param derivative The current derivative which will be stored with the name "derivative" in the agents context.
      */
-    private DefaultADAgent( Tsr<?> derivative ) { _partialDerivative = derivative; }
-
-
-    public DefaultADAgent setAction( ADAction action ) { _action = action; return this; }
+    private DefaultADAgent( Tsr<?> derivative, ADAction action ) { _partialDerivative = derivative; _action = action; }
 
     @Override
-    public <T> Tsr<T> act(GraphNode<T> target, Tsr<T> derivativeOrError) { return (Tsr<T>) _action.execute( target, derivativeOrError); }
+    public <T> Tsr<T> act(GraphNode<T> target, Tsr<T> derivativeOrError) {
+        if ( _action == null )
+            throw new IllegalStateException(
+                "Cannot perform propagation because this "+ADAgent.class.getSimpleName()+" does have an auto-diff implementation."
+            );
+        return (Tsr<T>) _action.act( target, derivativeOrError);
+    }
 
     @Override
     public Optional<Tsr<?>> partialDerivative() { return Optional.ofNullable(_partialDerivative); }
-
-    /**
-     * @return The truth value determining if this {@link ADAgent} has a {@link ADAction}.
-     */
-    @Override
-    public boolean hasAction() { return _action != null; }
 
     /**
      *  An {@link ADAgent} also contains a context of variables which have been
@@ -73,6 +69,10 @@ public final class DefaultADAgent implements ADAgent {
         return "";
     }
 
+    public interface WithAD {
+        ADAgent withAD( ADAction action );
+    }
+
     /**
      * This interface is the declaration for
      * lambda actions for both the {@link #act(GraphNode, Tsr)}
@@ -89,7 +89,7 @@ public final class DefaultADAgent implements ADAgent {
          * @param error The error which ought to be used for the forward or backward differentiation.
          * @return The result of the differentiation.
          */
-        Tsr<?> execute( GraphNode<?> node, Tsr<?> error );
+        Tsr<?> act( GraphNode<?> node, Tsr<?> error );
     }
 
 }
