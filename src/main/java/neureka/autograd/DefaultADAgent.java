@@ -47,10 +47,11 @@ public final class DefaultADAgent implements ADAgent {
     public <T> Tsr<T> act(GraphNode<T> target, Tsr<T> derivativeOrError) { return (Tsr<T>) _action.execute( target, derivativeOrError); }
 
     @Override
-    public Optional<Tsr<?>> partialDerivative() {
-        return Optional.ofNullable(_partialDerivative);
-    }
+    public Optional<Tsr<?>> partialDerivative() { return Optional.ofNullable(_partialDerivative); }
 
+    /**
+     * @return The truth value determining if this {@link ADAgent} has a {@link ADAction}.
+     */
     @Override
     public boolean hasAction() { return _action != null; }
 
@@ -69,12 +70,8 @@ public final class DefaultADAgent implements ADAgent {
     @Override
     public String toString() {
         if ( this.partialDerivative().isPresent() ) return partialDerivative().get().toString();
-        return "";//getAll(Arg.class).stream()
-        //        .map( key -> key.getClass().getSimpleName() + "=" + get(key.getClass()) )
-        //        .collect( Collectors.joining( ", ", "{", "}" ) );
+        return "";
     }
-
-
 
     /**
      * This interface is the declaration for
@@ -95,5 +92,4 @@ public final class DefaultADAgent implements ADAgent {
         Tsr<?> execute( GraphNode<?> node, Tsr<?> error );
     }
 
-    
 }
