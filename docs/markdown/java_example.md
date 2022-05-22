@@ -83,7 +83,7 @@ Convolution:
 
 GPU execution:
 ```java
-        Device gpu = Device.find("nvidia");
+        Device gpu = Device.find("nvidia").orElse(CPU.get());
         var x = Tsr.of(Double.class)
                     .withShape(3, 3)
                     .andFill(
