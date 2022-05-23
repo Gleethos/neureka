@@ -13,7 +13,7 @@ import java.lang.ref.WeakReference
 @Narrative('''
 
     A powerful concept in the data science as well as machine learning
-    world is mostly being referred to as "Data Frames".
+    world is something usually referred to as "Data Frames".
     These are highly flexible 2D data structures
     used to load and store CSV, CRV, etc... files for 
     data exploration and further processing.
