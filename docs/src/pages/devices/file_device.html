@@ -94,7 +94,7 @@ The following code shows how to store tensors on a file device :
     assert new File( 'my/relative/path/to/directory/' + 'tensor-name.idx' ).exists()
 
     // ... and the RAM will be freed ...
-    assert a.data == null
+    assert a.unsafe.data == null
 
     // If we want to delete the tensor from the device then we call the following :
     device.free( a )
@@ -123,7 +123,7 @@ The following code shows how to store tensors on a file device :
     assert new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists();
 
     // ... and the RAM will be freed ...
-    assert a.getData() == null;
+    assert a.getUnsafe().getData() == null;
 
     // If we want to delete the tensor from the device then we call the following :
     device.free( a );
@@ -152,7 +152,7 @@ The following code shows how to store tensors on a file device :
     assert( File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists() )
 
     // ... and the RAM will be freed ...
-    assert( a.getData() == null )
+    assert( a.unsafe.data == null )
 
     // If we want to delete the tensor from the device then we call the following :
     device.free( a )
