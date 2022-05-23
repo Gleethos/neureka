@@ -310,6 +310,11 @@ This is similar as the derivative of `a` with
 respect to `wi`,
 which would simply be `ai * a'`, where
 `i` is one of three connections.
+
+Note that the partial derivative `a'` is relying on the function input
+we calculated in the forward pass of the network.
+So in practise, one would compute the partial derivatives in the
+forward pass in order to perform the backward pass.
         </p>
     </div>
 </div>
@@ -340,6 +345,9 @@ then we proceed as follows: <br>
     e3 = e * a' * w3
 ```
 Where `e1`, `e2` and `e3` is the corresponding error for the values a1, a2 and a3 of a given layer. <br>
+
+Similar as to how the input of a neuron is the sum of its weighted connections,
+is the error of a current neuron based on the **outward going** weighted connections.
         </p>
     </div>
 </div>

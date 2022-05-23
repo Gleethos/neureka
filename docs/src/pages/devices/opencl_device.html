@@ -52,8 +52,7 @@ not support autograd.
                     unsigned int i = get_global_id( 0 );
                     output[i] = input[i] + value;
                 }
-        """
-    )
+        """)
 
     assert device.hasAdHocKernel( 'dummy_kernel' )
 
@@ -75,16 +74,16 @@ not support autograd.
 
     assert !device.hasAdHocKernel( "dummy_kernel" );
 
-    device.compileAdHocKernel( "dummy_kernel",
-        "__kernel void dummy_kernel (                      \n" +
-        "        __global float* output,                           \n" +
-        "        __global float* input,                             \n" +
-        "        float value                                             \n" +
-        "    ) {                                                              \n" +
-        "        unsigned int i = get_global_id( 0 );       \n" +
-        "        output[i] = input[i] + value;                    \n" +
-        "    }                                                                \n"
-    );
+    device.compileAdHocKernel( "dummy_kernel", """
+        __kernel void dummy_kernel (
+                __global float* output,
+                __global float* input,
+                float value
+            ) {
+                unsigned int i = get_global_id( 0 );
+                output[i] = input[i] + value;
+            }
+    """);
 
     assert device.hasAdHocKernel( "dummy_kernel" );
 
