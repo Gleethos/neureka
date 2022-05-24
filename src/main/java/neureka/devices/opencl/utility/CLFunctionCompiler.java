@@ -120,7 +120,7 @@ public final class CLFunctionCompiler {
                                 "_" +
                                         args.stream()
                                                 .map( arg ->
-                                                        arg.getDataType().getTypeClass().getSimpleName() +
+                                                        arg.getDataType().getRepresentativeType().getSimpleName() +
                                                         "$" +
                                                         (
                                                             arg.getNDConf().isSimple()
@@ -209,13 +209,13 @@ public final class CLFunctionCompiler {
                                                                                  .toLowerCase()
                                                                                  .replace("integer", "int");
         if ( dtype.typeClassImplements(NumericType.class) ) {
-            NumericType<?,?,?,?> instance = (NumericType<?,?,?,?>) dtype.getTypeClassInstance();
+            NumericType<?,?,?,?> instance = (NumericType<?,?,?,?>) dtype.getTypeClassInstance(NumericType.class);
             if ( instance.holderType() == instance.targetType() )
                 return formatter.apply(instance.holderType()); // Float, Double, Long, Short...
             else // Unsigned types:
                 return "u" + formatter.apply(instance.holderType());
         }
-        return formatter.apply(dtype.getTypeClass());
+        return formatter.apply(dtype.getRepresentativeType());
     }
 
     /**

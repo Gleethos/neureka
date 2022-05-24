@@ -152,7 +152,7 @@ public class MatMul extends AbstractOperation
         Device<Number> device = call.getDeviceFor(Number.class);
         if ( call.input( 0 ) == null ) // Creating a new tensor:
         {
-            Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getJVMTypeClass();
+            Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getValueTypeClass();
             int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };
             NDConfiguration.Layout targetLayout = call.input( 1 ).getNDConf().getLayout();
             call.input( 2 ).getUnsafe().toLayout(targetLayout);

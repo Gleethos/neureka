@@ -94,7 +94,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
     @SafeVarargs
     @Override
     public final Tsr<V> andFill( V... values ) {
-        LogUtil.nullArgCheck( values, "values", _dataType.getJVMTypeClass(), "Cannot fill a tensor will a value array that is null!" );
+        LogUtil.nullArgCheck( values, "values", _dataType.getValueTypeClass(), "Cannot fill a tensor will a value array that is null!" );
         if ( _isAllOne(values) ) return _get( values[0] );
         return _get( values );
     }
@@ -126,7 +126,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
 
     @Override
     public To<V> iterativelyFilledFrom( V index ) {
-        LogUtil.nullArgCheck(index, "index", _dataType.getJVMTypeClass(), "Cannot create a range where the last index is undefined!");
+        LogUtil.nullArgCheck(index, "index", _dataType.getValueTypeClass(), "Cannot create a range where the last index is undefined!");
         _from = _checked(index);
         return this;
     }
@@ -136,7 +136,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
 
     @Override
     public Tsr<V> andSeed( Object seed ) {
-        Class<V> type = (Class<V>) _dataType.getJVMTypeClass();
+        Class<V> type = (Class<V>) _dataType.getValueTypeClass();
         Class<?> seedType = seed.getClass();
         try {
             Function random = Neureka.get().backend().getFunction().random();
@@ -177,7 +177,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
     public Tsr<V> scalar( V value ) {
         if ( value != null ) {
             value = _checked( value );
-            if ( value.getClass() != _dataType.getJVMTypeClass() )
+            if ( value.getClass() != _dataType.getValueTypeClass() )
                 throw new IllegalArgumentException("Provided value is of the wrong type!");
         }
         _shape = new int[]{ 1 };
@@ -192,7 +192,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
      * @return The value converted to the type defined by the provided {@link #_dataType}.
      */
     private V _checked( V o ) {
-        Class<?> jvmType = _dataType.getJVMTypeClass();
+        Class<?> jvmType = _dataType.getValueTypeClass();
         if ( Number.class.isAssignableFrom(jvmType) ) {
             if ( o instanceof Number && o.getClass() != jvmType ) {
                 Number n = (Number) o;

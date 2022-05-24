@@ -56,7 +56,7 @@ implements ExecutionPreparation, ADAgentSupplier
                                                         .isValid();
 
                             Class<?> typeClass = Stream.of( call.inputs() )
-                                                        .map( t -> t.getDataType().getTypeClass() )
+                                                        .map( t -> t.getDataType().getRepresentativeType() )
                                                         .findFirst()
                                                         .get();
                             if ( allNumeric )

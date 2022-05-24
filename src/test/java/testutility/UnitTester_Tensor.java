@@ -54,8 +54,8 @@ public class UnitTester_Tensor extends UnitTester
         DataType type = tensor.getDataType();
         if ( type != null ) {
             if ( tensor.getDevice() instanceof OpenCLDevice ) {
-                this.assertStringContains("Tensor data type :", type.getTypeClass().getName(), "F32");
-            } else this.assertStringContains("Tensor data type :", type.getTypeClass().getName(), "F64");
+                this.assertStringContains("Tensor data type :", type.getRepresentativeType().getName(), "F32");
+            } else this.assertStringContains("Tensor data type :", type.getRepresentativeType().getName(), "F64");
         }
         else this.assertStringContains("Tensor data type :", "null", "F64");
         return testTensor(tensor, strings);

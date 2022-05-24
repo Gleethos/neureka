@@ -685,7 +685,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     private Tsr( int[] shape, DataType<?> type )
     {
-        _setDataType( DataType.of( type.getTypeClass() ) );
+        _setDataType( DataType.of( type.getRepresentativeType() ) );
         _constructAndAllocate( shape, true );
     }
 
@@ -2061,7 +2061,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public final Tsr<V> minus( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract 'null' from a tensor!");
         return minus(
-                 Tsr.of((Class<V>)this.getDataType().getTypeClass())
+                 Tsr.of((Class<V>)this.getDataType().getRepresentativeType())
                              .withShape(this.getNDConf().shape())
                              .all(other)
         );
@@ -2075,7 +2075,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public final Tsr<V> minusAssign( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract-assign 'null' from a tensor!");
         return minusAssign(
-                Tsr.of((Class<V>)this.getDataType().getTypeClass())
+                Tsr.of((Class<V>)this.getDataType().getRepresentativeType())
                         .withShape(this.getNDConf().shape())
                         .all(other)
         );
@@ -2117,7 +2117,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public final Tsr<V> multiply( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
         return multiply(
-                           Tsr.of( (Class<V>) this.getDataType().getTypeClass() )
+                           Tsr.of( (Class<V>) this.getDataType().getRepresentativeType() )
                                .withShape( this.getNDConf().shape() )
                                .all( other )
                         );
@@ -3241,7 +3241,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
      */
     public static <V> IterByOrIterFromOrAll<V> like( Tsr<V> template ) {
-        return Tsr.of( (Class<V>) template.getDataType().getJVMTypeClass() )
+        return Tsr.of( (Class<V>) template.getDataType().getValueTypeClass() )
                     .on( template.getDevice() )
                     .withShape( template.getNDConf().shape() );
     }

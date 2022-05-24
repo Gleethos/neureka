@@ -100,7 +100,7 @@ public final class TsrConstructor {
         boolean isDefinitelyScalarValue = ( dataType == DataType.of( data.getClass() ) );
 
         if ( data instanceof Number && !isDefinitelyScalarValue ) {
-            data = DataConverter.get().convert( data, dataType.getJVMTypeClass() );
+            data = DataConverter.get().convert( data, dataType.getValueTypeClass() );
             isDefinitelyScalarValue = true;
         }
 
@@ -124,7 +124,7 @@ public final class TsrConstructor {
     private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {
         if ( Arrays.stream( data ).anyMatch( e -> DataType.of(e.getClass()) != dataType ) ) {
             for ( int i = 0; i < ( data ).length; i++ ) {
-                ( data )[i] = DataConverter.get().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
+                ( data )[i] = DataConverter.get().convert( ( (Object[]) data )[i], dataType.getValueTypeClass() );
             }
         }
         return _optimizeObjectArray(dataType, data, size);

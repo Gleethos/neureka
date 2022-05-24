@@ -126,7 +126,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
      *
      * @return The {@link DataType} instance of this {@link Tsr} storing important type information.
      */
-    public DataType<?> getDataType() { _guardGet("data type"); return _dataType; }
+    public DataType<V> getDataType() { _guardGet("data type"); return (DataType<V>) _dataType; }
 
     protected Object _getData() { _guardGet("data object"); return _data; }
 
@@ -136,7 +136,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
      */
     @Override
     public Class<V> getValueClass() {
-        _guardGet("data type class"); return ( _dataType != null ? (Class<V>) _dataType.getJVMTypeClass() : null );
+        _guardGet("data type class"); return ( _dataType != null ? (Class<V>) _dataType.getValueTypeClass() : null );
     }
 
     /**
@@ -154,7 +154,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
      *         to model unsigned types or other JVM foreign numeric concepts.
      */
     public Class<?> getRepresentativeValueClass() {
-        _guardGet("representative data type class"); return ( _dataType != null ? _dataType.getTypeClass() : null );
+        _guardGet("representative data type class"); return ( _dataType != null ? _dataType.getRepresentativeType() : null );
     }
 
     /**
@@ -192,7 +192,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
             throw new IllegalStateException( message );
         }
         if ( data != null && _dataType.typeClassImplements( NumericType.class ) ) {
-            NumericType<?,?,?,?> numericType = (NumericType<?,?,?,?>) _dataType.getTypeClassInstance();
+            NumericType<?,?,?,?> numericType = (NumericType<?,?,?,?>) _dataType.getTypeClassInstance(NumericType.class);
             if ( numericType.targetArrayType() != data.getClass() ) {
                 String message = "Cannot set data whose type does not match what is defined by the DataType instance.\n" +
                         "Current type '"+numericType.targetArrayType().getSimpleName()+"' does not match '"+ data.getClass().getSimpleName()+"'.\n";
@@ -353,11 +353,11 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
                     &&
             getDataType().typeClassImplements( NumericType.class )
         ) {
-            NumericType<?,Object, ?, Object> targetType  = (NumericType<?, Object,?, Object>) newDT.getTypeClassInstance();
+            NumericType<?,Object, ?, Object> targetType  = (NumericType<?, Object,?, Object>) newDT.getTypeClassInstance(NumericType.class);
             return targetType.readForeignDataFrom( iterator(), this.size() );
         }
         else
-            return DataConverter.get().convert( _getData(), newDT.getTypeClass() );
+            return DataConverter.get().convert( _getData(), newDT.getRepresentativeType() );
     }
 
     /**

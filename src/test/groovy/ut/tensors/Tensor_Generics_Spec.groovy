@@ -48,7 +48,7 @@ class Tensor_Generics_Spec extends Specification
         expect :
             t.getRepresentativeValueClass() == Neureka.get().settings().dtype().defaultDataTypeClass
         and :
-            t.getValueClass() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getJVMTypeClass()
+            t.getValueClass() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getValueTypeClass()
 
 
     }

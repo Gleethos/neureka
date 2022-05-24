@@ -28,7 +28,7 @@ public final class IDXHead extends AbstractFileHead<IDXHead, Number>
     static {
         _LOG = LoggerFactory.getLogger( IDXHead.class );
     }
-    private DataType<NumericType<?,?,?,?>> _dataType;
+    private DataType<?> _dataType;
     private int _dataOffset;
     private int _valueSize;
     private int[] _shape;
@@ -68,7 +68,7 @@ public final class IDXHead extends AbstractFileHead<IDXHead, Number>
     public IDXHead( Tsr<Number> t, String filename ) {
         super( filename );
         _shape = t.getNDConf().shape();
-        _dataType = (DataType<NumericType<?, ?, ?, ?>>) t.getDataType();
+        _dataType = t.getDataType();
         t.setIsVirtual( false );
         store( t );
     }
@@ -127,7 +127,7 @@ public final class IDXHead extends AbstractFileHead<IDXHead, Number>
         try {
             f.write( new byte[]{ 0, 0 } );
             offset += 2;
-            f.write( CODE_MAP.get( _dataType.getTypeClass() ).byteValue() );
+            f.write( CODE_MAP.get( _dataType.getRepresentativeType() ).byteValue() );
             offset += 1;
             byte rank = (byte) _shape.length;
             f.write( rank );
@@ -142,7 +142,7 @@ public final class IDXHead extends AbstractFileHead<IDXHead, Number>
             }
             _dataOffset = offset;
             _valueSize = bodySize;
-            NumericType<Number, Object, Number, Object> type = (NumericType<Number, Object, Number, Object>) _dataType.getTypeClassInstance();
+            NumericType<Number, Object, Number, Object> type = (NumericType<Number, Object, Number, Object>) _dataType.getTypeClassInstance(NumericType.class);
 
             type.writeDataTo( new DataOutputStream( f ), (Iterator<Number>) data );
             f.close();
@@ -155,9 +155,9 @@ public final class IDXHead extends AbstractFileHead<IDXHead, Number>
     @Override
     protected Object _loadData() throws IOException {
         FileInputStream fs = new FileInputStream( _fileName );
-        Class<?> clazz = _dataType.getTypeClass();
+        Class<?> clazz = _dataType.getRepresentativeType();
         if ( NumericType.class.isAssignableFrom( clazz ) ) {
-            NumericType<?,?,?,?> type = _dataType.getTypeClassInstance();
+            NumericType<?,?,?,?> type = _dataType.getTypeClassInstance(NumericType.class);
             DataInput stream = new DataInputStream(
                     new BufferedInputStream( fs, _dataOffset + _valueSize * type.numberOfBytes() )
             );
@@ -175,7 +175,7 @@ public final class IDXHead extends AbstractFileHead<IDXHead, Number>
     {
         Object value = _loadData();
         DataType<?> type = Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes()
-                            ? DataType.of( _dataType.getTypeClassInstance().getNumericTypeTarget() )
+                            ? DataType.of( _dataType.getTypeClassInstance(NumericType.class).getNumericTypeTarget() )
                             : _dataType;
         return (Tsr<Number>) Tsr.of( type, _shape, value );
     }
@@ -183,7 +183,7 @@ public final class IDXHead extends AbstractFileHead<IDXHead, Number>
     @Override
     public int getDataSize() {
         int bytes = ( _dataType.typeClassImplements( NumericType.class ) )
-                ? _dataType.getTypeClassInstance().numberOfBytes()
+                ? _dataType.getTypeClassInstance(NumericType.class).numberOfBytes()
                 : 1;
         return _valueSize * bytes;
     }
@@ -199,7 +199,7 @@ public final class IDXHead extends AbstractFileHead<IDXHead, Number>
     }
 
 
-    public DataType<NumericType<?, ?, ?, ?>> getDataType() {
+    public DataType<?> getDataType() {
         return _dataType;
     }
 

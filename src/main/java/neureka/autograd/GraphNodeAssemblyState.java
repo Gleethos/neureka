@@ -27,11 +27,7 @@ final class GraphNodeAssemblyState<V> {
 
     private GraphNode<V>[] _parents;
 
-    private int _payloadReferenceVersion = -1;
-
     private GraphLock _lock;
-
-    private long _nodeID = -1;
 
     private TreeMap<GraphNode<V>, List<ADAgent>> _targetsToAgents;
 
@@ -129,13 +125,6 @@ final class GraphNodeAssemblyState<V> {
         return this;
     }
 
-    public int payloadReferenceVersion() { return _payloadReferenceVersion; }
-
-    public GraphNodeAssemblyState<V> setPayloadReferenceVersion(int payloadReferenceVersion) {
-        _payloadReferenceVersion = payloadReferenceVersion;
-        return this;
-    }
-
     public GraphLock lock() { return _lock; }
 
     public GraphNodeAssemblyState<V> setLock(GraphLock lock) {
@@ -143,10 +132,4 @@ final class GraphNodeAssemblyState<V> {
         return this;
     }
 
-    public long nodeID() { return _nodeID; }
-
-    public GraphNodeAssemblyState<V> setNodeID(long nodeID) {
-        _nodeID = nodeID;
-        return this;
-    }
 }

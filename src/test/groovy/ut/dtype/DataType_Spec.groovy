@@ -31,7 +31,7 @@ class DataType_Spec extends Specification
         expect : 'The found instance is not null!'
             dt != null
         and : 'It contains the Class that it represents.'
-            dt.getTypeClass() == targetClass
+            dt.getRepresentativeType() == targetClass
         and : 'This class either does or does not implement the "NumericType" interface.'
             dt.typeClassImplements(NumericType.class) == isNumericType
 

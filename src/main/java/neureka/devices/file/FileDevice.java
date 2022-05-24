@@ -142,7 +142,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
             return this;
         }
         String filename = tensor.shape().stream().map( Object::toString ).collect(Collectors.joining("x"));
-        filename = "tensor_" + filename + "_" + tensor.getDataType().getTypeClass().getSimpleName().toLowerCase();
+        filename = "tensor_" + filename + "_" + tensor.getDataType().getRepresentativeType().getSimpleName().toLowerCase();
         filename = filename + "_" + java.time.LocalDate.now().toString();
         filename = filename + "_" + java.time.LocalTime.now().toString();
         filename = filename.replace( ".", "_" ).replace( ":","-" ) + "_.idx";

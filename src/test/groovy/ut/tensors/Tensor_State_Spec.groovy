@@ -247,7 +247,7 @@ class Tensor_State_Spec extends Specification
         then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
             !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
-            t.dataType.getTypeClass() == Neureka.get().settings().dtype().defaultDataTypeClass
+            t.dataType.getRepresentativeType() == Neureka.get().settings().dtype().defaultDataTypeClass
             t.getValueAs( double[].class ) == null
             t.getValueAs( float[].class ) == null
             t.unsafe.data == null
@@ -279,7 +279,7 @@ class Tensor_State_Spec extends Specification
         then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
             !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
-            t.dataType.getTypeClass() == I8.class
+            t.dataType.getRepresentativeType() == I8.class
             t.getValueAs( double[].class ) == null
             t.getValueAs( float[].class ) == null
             t.unsafe.data == null

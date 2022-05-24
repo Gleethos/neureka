@@ -1,6 +1,7 @@
 package neureka.autograd;
 
 import neureka.Tsr;
+import neureka.dtype.DataType;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -9,16 +10,21 @@ import java.util.stream.Collectors;
 
 public class NodePayload<V> {
 
-    //private final int _payloadReferenceVersion;
+    private final int _payloadReferenceVersion;
 
     private final int[] _payloadShape;
 
-    private WeakReference<Tsr<V>> _payload;
+    private final DataType<V> _payloadDataType;
+
+    private final WeakReference<Tsr<V>> _payload;
+
 
     public NodePayload( Tsr<V> p, Runnable cleanup ) {
         if ( p == null ) {
             _payload = null;
             _payloadShape = null;
+            _payloadReferenceVersion = -1;
+            _payloadDataType = null;
         }
         else {
             assert !p.isUndefined();
@@ -27,8 +33,14 @@ public class NodePayload<V> {
                 if ( this.getPayload() == null ) cleanup.run();
             });
             _payloadShape = p.getNDConf().shape();
+            _payloadReferenceVersion = p.getVersion();
+            _payloadDataType = p.getDataType();
         }
     }
+
+    public DataType<V> payloadDataType() { return _payloadDataType; }
+
+    public int payloadReferenceVersion() { return _payloadReferenceVersion; }
 
     /**
      *  The value of a graph node is the tensor to which it belongs (is a component of).  <br><br>

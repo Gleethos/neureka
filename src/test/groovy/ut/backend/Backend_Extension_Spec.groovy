@@ -134,7 +134,7 @@ class Backend_Extension_Spec extends Specification
         and : 'The given ADAnalyzer instance is being called because auto-differentiation is enabled.'
             (1.._) * input.rqsGradient() >> true
             (1.._) * implementation.autoDiffModeFrom(_) >> AutoDiffMode.BACKWARD_ONLY
-            (1.._) * node.getPayload() >> input
+            (0.._) * node.getPayload() >> input
             (1.._) * node.usesAD() >> true
 
         and : 'The agent creator is being accessed because "doAD" is set to true and the input requires gradients.'

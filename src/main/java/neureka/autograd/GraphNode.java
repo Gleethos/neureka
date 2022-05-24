@@ -48,6 +48,7 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
+import neureka.dtype.DataType;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -94,8 +95,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * GraphNode has been formed.
      */
     private final GraphNode<V>[] _parents;
-
-    private final int _payloadReferenceVersion;
 
     private final List<BackPropBridge<V>> _targetsToAgents;
 
@@ -148,7 +147,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
         Result out = payloadSupplier.get();
         if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
         GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
-        a.setPayloadReferenceVersion( out.get().getVersion() );
         NodePayload<V> data = new NodePayload<>(null, null);
         if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
             GraphNode<V> node = this;
@@ -188,14 +186,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
             }
         }
         _nodePayload = data;
-        _payloadReferenceVersion = a.payloadReferenceVersion();
         _lock = a.lock();
         _mode = a.mode();
         _function = a.function();
         _adMode = a.adMode();
         _parents = a.parents();
-        _calculateNodeID( a );
-        _nodeID = a.nodeID();
+        _nodeID = _calculateNodeID( _function, _parents );
         if ( context instanceof ExecutionCall<?> && function.isFlat() ) // Leave nodes don't need agents!
             _registerAgents( a, out, function, (ExecutionCall<?>) context );
         _targetsToAgents = a.getTargets();
@@ -225,16 +221,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
         }
     }
 
-    private void _calculateNodeID(GraphNodeAssemblyState<?> a) {
-        if ( a.nodeID() == -1 ) {
-            long nid = 1;
-            if ( a.parents() != null ) {
-                for ( GraphNode<?> n : a.parents() )
-                    nid *= n.hashCode(); //payload might be 0! Why? -> garbage collected!
-            }
-            if ( a.function() != null ) nid += a.function().hashCode();
-            a.setNodeID( nid );
+    private static long _calculateNodeID(Function function, GraphNode[] parents) {
+        long nid = 1;
+        if ( parents != null ) {
+            for ( GraphNode<?> n : parents )
+                nid *= n.hashCode(); //payload might be 0! Why? -> garbage collected!
         }
+        if ( function != null ) nid += function.hashCode();
+       return nid;
     }
 
     /**
@@ -770,7 +764,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  However, it can be read freely in order to
      *  check that the version of the payload hasn't changed.
      */
-    public int getPayloadReferenceVersion() { return _payloadReferenceVersion; }
+    public int getPayloadReferenceVersion() { return _nodePayload.payloadReferenceVersion(); }
+
+    public DataType<V> getPayloadDataType() { return _nodePayload.payloadDataType(); }
 
     /**
      * "Lock object" for graph identity. (result caching)
@@ -812,9 +808,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
         Tsr<?> payload = getPayload();
         if ( m.equals("") ) {
             return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
-                        "parents=[" + Arrays.stream(_parents).map(GraphNode::getPayload).map(t -> (t==null ? "?" : t.shape().stream().map(Object::toString).collect(Collectors.joining("x")))).collect(Collectors.joining(", ")) + "]," +
-                        "function=" + _function.toString() + "," +
-                        "shape=" + (payload != null ? payload.shape().stream().map(Object::toString).collect(Collectors.joining("x")) : "?" ) +
+                        "parents=[" + (_parents == null ? "?" : Arrays.stream(_parents).map(GraphNode::getPayload).map(t -> (t==null ? "?" : t.shape().stream().map(Object::toString).collect(Collectors.joining("x")))).collect(Collectors.joining(", "))) + "]," +
+                        "function=" +_function + "," +
+                        "shape=" + (getPayloadShape() != null ? getPayloadShape().stream().map(Object::toString).collect(Collectors.joining("x")) : "?" ) +
                     "]";
         }
         if ( m.contains( "g" ) ) {

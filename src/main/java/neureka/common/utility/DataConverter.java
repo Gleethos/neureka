@@ -253,7 +253,7 @@ public final class DataConverter
         {
             fromMap = new HashMap<>();
             fromMap.put(to, conversion);
-            fromMap.put(DataType.of(to).getTypeClass(), conversion);
+            fromMap.put(DataType.of(to).getRepresentativeType(), conversion);
             _converters.put( from, fromMap );
         } else {
             Conversion found = fromMap.get(to);

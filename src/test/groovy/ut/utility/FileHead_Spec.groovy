@@ -67,7 +67,7 @@ class FileHead_Spec extends Specification
         then : 'The loaded tensor is as expected...'
             loaded != null
             loaded.toString() == expected
-            loaded.getDataType().getTypeClass() == type
+            loaded.getDataType().getRepresentativeType() == type
 
         where : 'The following paths and file names are being used for testing : '
             tensor                  | type      | filename          || expected
@@ -104,7 +104,7 @@ class FileHead_Spec extends Specification
         then : 'The hash is as expected.'
             hash == expected
         and : 'The loaded tensor has the expected data type.'
-            loaded.dataType.getTypeClass() == I16.class
+            loaded.dataType.getRepresentativeType() == I16.class
             loaded.dataType == DataType.of( I16.class )
         and : 'It contains the correct array type.'
             loaded.unsafe.data instanceof short[]
@@ -161,7 +161,7 @@ class FileHead_Spec extends Specification
             loaded != null
             !loaded.isVirtual()
             loaded.size() == shape.inject( 1, {prod, value -> prod * value} )
-            loaded.getDataType().getTypeClass() == I16.class // Auto convert! (stored as I16)
+            loaded.getDataType().getRepresentativeType() == I16.class // Auto convert! (stored as I16)
             hash == expected
 
         and :
@@ -191,7 +191,7 @@ class FileHead_Spec extends Specification
             loaded != null
             !loaded.isVirtual()
             loaded.size() == shape.inject( 1, {prod, value -> prod * value} )
-            loaded.getDataType().getTypeClass() == String.class // Auto convert! (stored as String)
+            loaded.getDataType().getValueTypeClass() == String.class // Auto convert! (stored as String)
             hash == expected
 
         and :
