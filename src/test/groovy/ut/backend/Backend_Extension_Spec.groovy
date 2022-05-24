@@ -112,6 +112,7 @@ class Backend_Extension_Spec extends Specification
 
 
         then : 'The custom call hook is being accessed as outlined below.'
+            (0.._) * output.getNDConf() >> Mock(NDConfiguration)
             (1.._) * input.getNDConf() >> ndc
             (1.._) * ndc.shape() >> new int[]{1,2}
             (1.._) * type.isInline() >> false

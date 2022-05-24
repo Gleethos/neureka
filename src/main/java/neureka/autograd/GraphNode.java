@@ -42,6 +42,7 @@ package neureka.autograd;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -83,35 +84,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private final int _mode;
 
-    /**
-     *  This flag records the support evaluation of the forward-AD availability analysis
-     *  done in the corresponding OperationTypeImplementation method
-     *  for a given ExecutionCall instance.
-     *
-     *  The difference between this flag and the "usesForwardAD()" truth value
-     *  is that the latter one can be false while the prior is true!
-     *  ( However the reverse is not possible! )
-     *  The reason is as follows:
-     *  If a GraphNode has multiple parent nodes which require auto-differentiation,
-     *  then said node will not be able to perform forward-AD even though it might very well
-     *  be possible given an ExecutionCall whose state allows for such...
-     */
-    private final boolean _allows_forward;
-
-    /**
-     *  This flag records the support evaluation of the backward-AD availability analysis
-     *  done in the corresponding OperationTypeImplementation method
-     *  for a given ExecutionCall instance.
-     *
-     *  The difference between this flag and the "usesBackwardAD()" truth value
-     *  is that the latter one can be false while the prior is true!
-     *  ( However the reverse is not possible! )
-     *  The reason is as follows:
-     *  If for example a GraphNode has only one parent node which require auto-differentiation,
-     *  then said node will most likely perform backward-AD even though it might very well
-     *  be possible given an ExecutionCall whose state allows for such...
-     */
-    private final boolean _allows_backward;
+    private final AutoDiffMode _adMode;
 
     private final Function _function;
 
@@ -127,6 +100,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     private final List<BackPropBridge<V>> _targetsToAgents;
 
     private final long _nodeID;
+    private final int[] _payloadShape;
 
     private boolean _isUsedAsDerivative = false;
 
@@ -176,8 +150,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
         GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
         a.setPayloadReferenceVersion( out.get().getVersion() );
+        int[] payloadShape = null;
         if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
-            _setPayload(out.get());
+            payloadShape = _setPayload( out.get() );
             if ( context instanceof GraphLock ) { // Note function is always null in this case:
                 a.setLock( (GraphLock) context );
                 a.setMode( out.get().rqsGradient() ? 1 : 0 );
@@ -204,12 +179,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
             }
         }
         _calculateNodeID( a );
+        _payloadShape = payloadShape;
         _payloadReferenceVersion = a.payloadReferenceVersion();
         _lock = a.lock();
         _mode = a.mode();
         _function = a.function();
-        _allows_backward = a.isAllowsBackward();
-        _allows_forward = a.isAllowsForward();
+        _adMode = a.adMode();
         _parents = a.parents();
         _nodeID = a.nodeID();
         if ( context instanceof ExecutionCall<?> && function.isFlat() ) // Leave nodes don't need agents!
@@ -277,7 +252,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         if (
                             srcNode.size() == 0 && this.size() == 0
                                ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
-                            !srcNode.isLeave() && !srcNode._allows_forward
+                            !srcNode.isLeave() && !srcNode._adMode.allowsForward()
                         ) {
                             ADAgent agent = output.getAgentSupplier().supplyADAgentFor(
                                     function,
@@ -413,9 +388,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
     }
 
     /**
-     * @return if the tensor to which this graph node is attached has been deleted!
+     *  Note: This method will never return null even if the actual payload tensor was garbage collected.
+     *  This is because the {@link GraphNode} will remember the shape of the tensor.
+     *
+     *  @return The shape of the payload tensor represented by this {@link GraphNode}.
      */
-    public boolean isVirtual() { return getPayload() == null; }
+    public List<Integer> getPayloadShape() {
+        return _payloadShape == null ? null : Arrays.stream(_payloadShape).boxed().collect(Collectors.toList());
+    }
 
     /**
      * @param newChild which references it's input namely the parent (this) has...
@@ -444,8 +424,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param p The {@link Tsr} ought to be set as payload / result of the
      *          computation modelled by this {@link GraphNode} instance.
      */
-    private void _setPayload( Tsr<V> p ) {
-        if ( p == null ) _payload = null;
+    private int[] _setPayload( Tsr<V> p ) {
+        if ( p == null ) {
+            _payload = null;
+            return null;
+        }
         else {
             assert !p.isUndefined();
             _payload = new WeakReference<>( p );
@@ -461,6 +444,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     if ( allChildrenUseForwardAD && _targetsToAgents != null ) _targetsToAgents.clear();
                 }
             });
+            return p.getNDConf().shape();
         }
     }
 

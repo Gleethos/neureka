@@ -75,8 +75,7 @@ public final class DefaultADAgent implements ADAgent {
 
     /**
      * This interface is the declaration for
-     * lambda actions for both the {@link #act(GraphNode, Tsr)}
-     * and {@link #act(GraphNode, Tsr)} method of the {@link ADAgent} interface. <br><br>
+     * lambda actions for both the {@link #act(GraphNode, Tsr)} method of the {@link ADAgent} interface. <br><br>
      *
      * Note: Do not access the {@link GraphNode#getPayload()} of the {@link GraphNode}
      *       passed to implementation of this.

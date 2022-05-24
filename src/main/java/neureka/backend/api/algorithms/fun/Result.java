@@ -2,6 +2,7 @@ package neureka.backend.api.algorithms.fun;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.autograd.DefaultADAgent;
 import neureka.common.utility.LogUtil;
 
 /**
@@ -18,6 +19,14 @@ public class Result
     private Result( Tsr<?> tensor, ADAgentSupplier agent ) {
         _tensor = tensor;
         _agent = agent;
+    }
+
+    public Result withADAction( DefaultADAgent.ADAction action ) {
+        return this.withAutoDiff( (caller, call, forward) -> ADAgent.withAD(action) );
+    }
+
+    public Result withADAgent( ADAgent agent ) {
+        return this.withAutoDiff( (caller, call, forward) -> agent );
     }
 
     public Result withAutoDiff( ADAgentSupplier agent ) {

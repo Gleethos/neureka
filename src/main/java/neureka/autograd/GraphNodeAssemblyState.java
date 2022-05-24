@@ -21,9 +21,7 @@ final class GraphNodeAssemblyState<V> {
 
     private int _mode;
 
-    private boolean _allowsForward;
-
-    private boolean _allowsBackward;
+    private AutoDiffMode _adMode;
 
     private Function _function;
 
@@ -100,14 +98,8 @@ final class GraphNodeAssemblyState<V> {
             modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.getMode();
             inputMode += ( modes[ i ] != 0) ? 1 : 0;
         }
-        AutoDiffMode adMode = call.autogradMode();
-        switch ( adMode ) {
-            case FORWARD_AND_BACKWARD: _allowsForward = true; _allowsBackward = true;  break;
-            case FORWARD_ONLY:         _allowsForward = true; _allowsBackward = false; break;
-            case BACKWARD_ONLY:        _allowsForward = false; _allowsBackward = true;  break;
-            case NOT_SUPPORTED:        _allowsForward = false; _allowsBackward = false; break;
-        }
-        if ( inputMode == 1 && _allowsForward) { // Convolution and reshaping prohibit forward AutoDiff
+        _adMode = call.autogradMode();
+        if ( inputMode == 1 && _adMode.allowsForward() ) { // Convolution and reshaping prohibit forward AutoDiff
             for ( int i = 0; i < inputs.length; i++ ) {
                 resultMode +=
                         ( modes[ i ] == 0 )
@@ -115,14 +107,13 @@ final class GraphNodeAssemblyState<V> {
                                 : ( modes[ i ] < 0 ) ? 1 : modes[ i ] + 1;
             }
         } // Reverse mode auto-differentiation :
-        else if (_allowsBackward) resultMode = -inputMode;
+        else if ( _adMode.allowsBackward() ) resultMode = -inputMode;
 
         _mode = resultMode;
     }
 
-    public boolean isAllowsForward() { return _allowsForward; }
+    public AutoDiffMode adMode() { return _adMode; }
 
-    public boolean isAllowsBackward() { return _allowsBackward; }
 
     public Function function() { return _function; }
 

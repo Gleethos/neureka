@@ -47,16 +47,13 @@ import java.util.function.Consumer;
  *  they have been derived.
  *  In case a tensor is a slice then it will have a {@link Relation} instance as
  *  component which will reference the parent tensor strongly (so that its data will not be lost).
- *  However in case a tensor is the "parent" of a slice tensor then it will
+ *  However, in case a tensor is the "parent" of a slice tensor then it will
  *  contain a {@link Relation} instance which references the slices weakly (so that they can be garbage collected). <br>
  *  <br>
- *  Disclosure: The words "children" and "parent" mentioned inside this file are meant to be understood as
- *  references to core concepts within common graph theory, <br>
- *  namely: synonyms to words like "branch", "leave", "root", "vertex"... <br>
  *
- * @param <ValType> The data type class of the elements of the tensor to which this can Relation belong to.
+ * @param <V> The data type class of the elements of the tensor to which this Relation belongs to.
  */
-public class Relation<ValType> implements Component<Tsr<ValType>>
+public class Relation<V> implements Component<Tsr<V>>
 {
     /**
      *  If the tensor owning this {@link Relation} component
@@ -68,14 +65,14 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
      *  The answer is simple: The parent tensor (as well as its slices)
      *  might be outsourced to a device which may store the data itself in various ways...
      */
-    private Tsr<ValType> _parent; // Children need their parents. They shall not be garbage collected.
+    private Tsr<V> _parent; // Children need their parents. They shall not be garbage collected.
 
     /**
      *  This is an array of the weakly referenced slice children of the tensor
      *  to which this Relation component belongs. <br>
      *  Children are not referenced strongly so they can be garbage collected.
      */
-    private WeakReference<Tsr<ValType>>[] _children; // Children may be garbage collected if not needed anywhere.
+    private WeakReference<Tsr<V>>[] _children; // Children may be garbage collected if not needed anywhere.
 
     /**
      *  When creating reshaped versions of slices then
@@ -95,15 +92,15 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
 
 
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
-        Tsr<ValType> oldOwner = changeRequest.getOldOwner();
-        Tsr<ValType> newOwner = changeRequest.getNewOwner();
+    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
+        Tsr<V> oldOwner = changeRequest.getOldOwner();
+        Tsr<V> newOwner = changeRequest.getNewOwner();
         if ( changeRequest.type() == IsBeing.ADDED || changeRequest.type() == IsBeing.REMOVED ) {
             changeRequest.executeChange();
             return true; // Initial/last update call: No action needed!
         }
         if ( _parent != null) {
-            Relation<ValType> pr = _parent.get( Relation.class );
+            Relation<V> pr = _parent.get( Relation.class );
             for ( int i = 0; i < pr._children.length; i++ ) {
                 if ( pr._children[ i ].get() == oldOwner ) {
                     pr._children[ i ] = new WeakReference<>(newOwner);
@@ -111,10 +108,10 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
             }
         }
         if ( _children != null ) {
-            for ( WeakReference<Tsr<ValType>> c : _children ) {
-                Tsr<ValType> t = c.get();
+            for ( WeakReference<Tsr<V>> c : _children ) {
+                Tsr<V> t = c.get();
                 if ( t != null ) {
-                    Relation<ValType> cr = (Relation<ValType>) t.get( Relation.class );
+                    Relation<V> cr = (Relation<V>) t.get( Relation.class );
                     if ( cr != null ) cr._parent = newOwner;
                 }
             }
@@ -124,20 +121,20 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
     }
 
 
-    public Relation<ValType> addParent( Tsr<ValType> parent )
+    public Relation<V> addParent(Tsr<V> parent )
     {
         _parent = parent;
         return this;
     }
 
 
-    public Relation<ValType> addChild( Tsr<ValType> child )
+    public Relation<V> addChild(Tsr<V> child )
     {
         if ( _children == null ) {
             _children = new WeakReference[]{ new WeakReference<>( child ) };
             _shapeRelations = new int[ 1 ][];
         } else {
-            WeakReference<Tsr<ValType>>[] newChildren = new WeakReference[ _children.length + 1 ];
+            WeakReference<Tsr<V>>[] newChildren = new WeakReference[ _children.length + 1 ];
             int[][] newShapeRelations = new int[ _children.length + 1 ][];
             System.arraycopy( _children, 0, newChildren, 0, _children.length );
             System.arraycopy( _shapeRelations, 0, newShapeRelations, 0, _children.length );
@@ -168,9 +165,9 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
      * @param reshape The int array defining the reshaping (dimension index mapping).
      * @return This very Relation instance in order to enable method chaining on this component.
      */
-    public Relation<ValType> addReshapeRelationFor( Tsr<ValType> child, int[] reshape ) {
+    public Relation<V> addReshapeRelationFor(Tsr<V> child, int[] reshape ) {
         for ( int i = 0; i < _shapeRelations.length; i++ ) {
-            Tsr<ValType> c = _children[ i ].get();
+            Tsr<V> c = _children[ i ].get();
             if ( c != null && c == child ) {
                 _shapeRelations[ i ] = reshape;
             }
@@ -196,10 +193,10 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
      * @param child The child (slice) tensor which has a shape whose dimensions are in a different order.
      * @return The int array defining the reshaping (dimension index mapping).
      */
-    public int[] getReshapeRelationFor( Tsr<ValType> child )
+    public int[] getReshapeRelationFor( Tsr<V> child )
     {
         for ( int i = 0; i < _shapeRelations.length; i++ ) {
-            Tsr<ValType> c = _children[ i ].get();
+            Tsr<V> c = _children[ i ].get();
             if ( c != null && c == child ) {
                 return _shapeRelations[ i ];
             }
@@ -207,14 +204,14 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
         return null;
     }
 
-    public Relation<ValType> foreachChild( Consumer<Tsr<ValType>> action )
+    public Relation<V> foreachChild(Consumer<Tsr<V>> action )
     {
         if ( _children != null ) {
-            for ( WeakReference<Tsr<ValType>> r : _children ) {
-                Tsr<ValType> c = r.get();
+            for ( WeakReference<Tsr<V>> r : _children ) {
+                Tsr<V> c = r.get();
                 if ( c != null ) {
                     action.accept( c );
-                    Relation<ValType> relation = (Relation<ValType>) c.get( Relation.class );
+                    Relation<V> relation = (Relation<V>) c.get( Relation.class );
                     if ( relation != null ) relation.foreachChild( action );
                 }
             }
@@ -229,7 +226,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
      *
      * @return The root data parent which actually owns the data of the sliced data or null if the tensor is not a slice.
      */
-    public Tsr<ValType> findRootTensor()
+    public Tsr<V> findRootTensor()
     {
         if ( _parent == null ) return null;
         else if ( !_parent.has( Relation.class ) ) return null;
@@ -252,7 +249,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
         return ( _children == null ) ? 0 : _children.length;
     }
 
-    public Relation<ValType> remove( Tsr<ValType> child )
+    public Relation<V> remove(Tsr<V> child )
     {
         throw new IllegalStateException();
     }
@@ -261,7 +258,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
         return "Relation[parent=" + _parent + ",children=" + java.util.Arrays.deepToString(_children) + ",shapeRelations=" + java.util.Arrays.deepToString(_shapeRelations) + "]";
     }
 
-    public Tsr<ValType> getParent() {
+    public Tsr<V> getParent() {
         return _parent;
     }
 }

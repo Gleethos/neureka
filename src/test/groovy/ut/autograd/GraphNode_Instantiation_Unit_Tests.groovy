@@ -10,6 +10,7 @@ import neureka.backend.api.algorithms.fun.Result
 import neureka.backend.api.operations.AbstractOperation
 import neureka.calculus.Function
 import neureka.devices.Device
+import neureka.ndim.config.NDConfiguration
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
@@ -66,6 +67,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             1 * function.isDoingAD() >> true
             1 * payload.set( _ )
             1 * device.access( _ ) >> Mock(Device.Access)
+            (1.._) * payload.getNDConf() >> Mock(NDConfiguration)
 
     }
 
@@ -101,6 +103,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             (1.._) * function.isDoingAD() >> true
             (1.._) * payload.getDevice() >> device
             (1.._) * payload.set( _ )
+            (1.._) * payload.getNDConf() >> Mock(NDConfiguration)
             (1.._) * device.access( _ ) >> Mock( Device.Access )
             (4.._) * inputs[0].getGraphNode() >> inputsNodeMock
             (3.._) * inputs[1].getGraphNode() >> inputsNodeMock

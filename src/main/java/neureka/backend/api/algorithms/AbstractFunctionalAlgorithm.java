@@ -198,7 +198,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     }
 
     /**
-     *  An {@link Algorithm} will typically produce a result when executing an {@link ExecutionCall}.
+     *  An {@link Algorithm} will produce a {@link Result} when executing an {@link ExecutionCall}.
      *  This result must be created somehow.
      *  A {@link ExecutionPreparation} implementation instance will do just that...
      *  Often times the first entry in the array of tensors stored inside the call
