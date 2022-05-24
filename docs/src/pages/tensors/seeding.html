@@ -49,9 +49,9 @@
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-        val t1 = Tsr.of(Double::class.java, IntArray.of(2, 3), "I am a seed! :)")
-        val t2 = Tsr.of(Double::class.java, IntArray.of(2, 3), "I am a seed! :)")
-        val t3 = Tsr.of(Double::class.java, IntArray.of(2, 3), "I am also a seed! But different. :)")
+        val t1 = Tsr.of(Double::class.java, intArrayOf(2, 3), "I am a seed! :)")
+        val t2 = Tsr.of(Double::class.java, intArrayOf(2, 3), "I am a seed! :)")
+        val t3 = Tsr.of(Double::class.java, intArrayOf(2, 3), "I am also a seed! But different. :)")
 
         // t1.toString() == t2.toString()
         // t3.toString() != t2.toString()
@@ -85,8 +85,8 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-        def t1 = Tsr.ofRandom(Double, 2, 3)
-        def t2 = Tsr.ofRandom(Double, 2, 3)
+        var t1 = Tsr.ofRandom(Double, 2, 3)
+        var t2 = Tsr.ofRandom(Double, 2, 3)
 
         // t1.toString() == t2.toString()
 

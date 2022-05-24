@@ -1,0 +1,44 @@
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h3>
+            What is Autograd?
+        </h3>
+        <p class="MarkdownMe">
+Autograd is an algorithm which automates backpropagation in a very efficient and general purpose way.
+It calculates the gradients of the weight variables within a neural network based on a provided error.
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h3>
+            How does it work?
+        </h3>
+        <p class="MarkdownMe">
+Autograd is really just an implementation of reverse automatic differentiation.
+Conceptually, autograd records a graph recording all the
+operations that created the data as you execute operations,
+giving you a directed acyclic graph whose leaves are the input
+tensors and roots are the output tensors.
+By tracing this graph from roots to leaves,
+autograd automatically computes the gradients based on the chain rule.
+
+Internally, this computation graph is modelled by `GraphNode` objects,
+which can be traversed recursively.
+When computing the forwards pass,
+autograd simultaneously performs the requested computations
+and builds up a graph representing the function that computes
+the gradient (the `getGraphNode()` attribute of each `Tsr` is an entry point
+into this graph).
+When the forwards pass is completed, we evaluate this graph in
+the backwards pass to compute the gradients.
+
+An important thing to note is that the graph is recreated from scratch
+at every iteration, and this is exactly what enables tensors to be used within
+flexible and complex control flow procedures, that can change the overall shape and size
+of the graph at every iteration. You don’t have to encode all possible computation paths
+before you launch the training - what you run is what you differentiate.
+        </p>
+    </div>
+</div>
