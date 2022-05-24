@@ -100,7 +100,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
     private final List<BackPropBridge<V>> _targetsToAgents;
 
     private final long _nodeID;
-    private final int[] _payloadShape;
 
     private boolean _isUsedAsDerivative = false;
 
@@ -108,7 +107,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     private PendingError<V> _pendingError = null;
 
-    private WeakReference<Tsr<V>> _payload;
+    private final NodePayload<V> _nodePayload;
 
     private GraphLock _lock;
 
@@ -150,9 +149,19 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( out == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
         GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
         a.setPayloadReferenceVersion( out.get().getVersion() );
-        int[] payloadShape = null;
+        NodePayload<V> data = new NodePayload<>(null, null);
         if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
-            payloadShape = _setPayload( out.get() );
+            GraphNode<V> node = this;
+            data = new NodePayload<>( out.get(), ()->{
+                boolean allChildrenUseForwardAD = true;
+                if ( _children != null ) {
+                    for ( WeakReference<GraphNode<V>> childRef : _children ) {
+                        GraphNode<V> childNode = childRef.get();
+                        if ( childNode != null && childNode.usesReverseAD() ) allChildrenUseForwardAD = false;
+                    }
+                }
+                if ( allChildrenUseForwardAD && node._targetsToAgents != null ) node._targetsToAgents.clear();
+            });
             if ( context instanceof GraphLock ) { // Note function is always null in this case:
                 a.setLock( (GraphLock) context );
                 a.setMode( out.get().rqsGradient() ? 1 : 0 );
@@ -178,14 +187,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 }
             }
         }
-        _calculateNodeID( a );
-        _payloadShape = payloadShape;
+        _nodePayload = data;
         _payloadReferenceVersion = a.payloadReferenceVersion();
         _lock = a.lock();
         _mode = a.mode();
         _function = a.function();
         _adMode = a.adMode();
         _parents = a.parents();
+        _calculateNodeID( a );
         _nodeID = a.nodeID();
         if ( context instanceof ExecutionCall<?> && function.isFlat() ) // Leave nodes don't need agents!
             _registerAgents( a, out, function, (ExecutionCall<?>) context );
@@ -221,7 +230,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             long nid = 1;
             if ( a.parents() != null ) {
                 for ( GraphNode<?> n : a.parents() )
-                    nid *= n.getPayload().hashCode(); //payload might be 0! Why? -> garbage collected!
+                    nid *= n.hashCode(); //payload might be 0! Why? -> garbage collected!
             }
             if ( a.function() != null ) nid += a.function().hashCode();
             a.setNodeID( nid );
@@ -393,9 +402,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      *  @return The shape of the payload tensor represented by this {@link GraphNode}.
      */
-    public List<Integer> getPayloadShape() {
-        return _payloadShape == null ? null : Arrays.stream(_payloadShape).boxed().collect(Collectors.toList());
-    }
+    public List<Integer> getPayloadShape() { return _nodePayload.getPayloadShape(); }
 
     /**
      * @param newChild which references it's input namely the parent (this) has...
@@ -418,39 +425,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @return The tensor payload of this graph-node.
      */
-    public Tsr<V> getPayload() { return ( _payload == null ? null : _payload.get() ); }
-
-    /**
-     * @param p The {@link Tsr} ought to be set as payload / result of the
-     *          computation modelled by this {@link GraphNode} instance.
-     */
-    private int[] _setPayload( Tsr<V> p ) {
-        if ( p == null ) {
-            _payload = null;
-            return null;
-        }
-        else {
-            assert !p.isUndefined();
-            _payload = new WeakReference<>( p );
-            p.getDevice().access( p ).cleanup( () -> {
-                if ( this.getPayload() == null ) {
-                    boolean allChildrenUseForwardAD = true;
-                    if ( _children != null ) {
-                        for ( WeakReference<GraphNode<V>> childRef : _children ) {
-                            GraphNode<V> childNode = childRef.get();
-                            if ( childNode != null && childNode.usesReverseAD() ) allChildrenUseForwardAD = false;
-                        }
-                    }
-                    if ( allChildrenUseForwardAD && _targetsToAgents != null ) _targetsToAgents.clear();
-                }
-            });
-            return p.getNDConf().shape();
-        }
-    }
+    public Tsr<V> getPayload() { return _nodePayload.getPayload(); }
 
     @Override
     public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
-        _setPayload( changeRequest.getNewOwner() );
+        //_setPayload( changeRequest.getNewOwner() );
         changeRequest.executeChange();
         return true;
     }

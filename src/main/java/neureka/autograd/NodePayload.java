@@ -1,0 +1,57 @@
+package neureka.autograd;
+
+import neureka.Tsr;
+
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class NodePayload<V> {
+
+    //private final int _payloadReferenceVersion;
+
+    private final int[] _payloadShape;
+
+    private WeakReference<Tsr<V>> _payload;
+
+    public NodePayload( Tsr<V> p, Runnable cleanup ) {
+        if ( p == null ) {
+            _payload = null;
+            _payloadShape = null;
+        }
+        else {
+            assert !p.isUndefined();
+            _payload = new WeakReference<>( p );
+            p.getDevice().access( p ).cleanup( () -> {
+                if ( this.getPayload() == null ) cleanup.run();
+            });
+            _payloadShape = p.getNDConf().shape();
+        }
+    }
+
+    /**
+     *  The value of a graph node is the tensor to which it belongs (is a component of).  <br><br>
+     *  Meaning it is the tensor owning this {@link GraphNode} component.
+     *  It is referenced weakly because it might not be needed any more (Not referenced inside AD-Agent for example)
+     *  and can therefore be garbage collected.
+     *
+     *  Warning: This method might return null because
+     *           the payload is weakly referenced!
+     *           Meaning that it might get garbage collected.
+     *
+     * @return The tensor payload of this graph-node.
+     */
+    public Tsr<V> getPayload() { return ( _payload == null ? null : _payload.get() ); }
+
+    /**
+     *  Note: This method will never return null even if the actual payload tensor was garbage collected.
+     *  This is because the {@link GraphNode} will remember the shape of the tensor.
+     *
+     *  @return The shape of the payload tensor represented by this {@link GraphNode}.
+     */
+    public List<Integer> getPayloadShape() {
+        return _payloadShape == null ? null : Arrays.stream(_payloadShape).boxed().collect(Collectors.toList());
+    }
+
+}

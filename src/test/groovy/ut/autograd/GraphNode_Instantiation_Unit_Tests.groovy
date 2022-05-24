@@ -117,8 +117,8 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             (0.._) * type.isDifferentiable() >> true
             (3.._) * type.isInline() >> false
             (0.._) * type.getOperator() >> "*"
-            (3.._) * inputsNodeMock.getPayload() >> payload
-            (3.._) * payload.hashCode() >> 3
+            (0.._) * inputsNodeMock.getPayload() >> payload
+            (0.._) * payload.hashCode() >> 3
 
     }
 
