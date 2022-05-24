@@ -7,7 +7,6 @@ import spock.lang.Specification
 
 class ConCat_Spec extends Specification
 {
-
     def 'We can concatenate 2 tensors alongside a specified axis!'()
     {
         given :
@@ -31,5 +30,23 @@ class ConCat_Spec extends Specification
             a.gradient.every( it -> it == -6 )
     }
 
+
+    def 'We can concatenate 2 string tensors alongside a specified axis!'()
+    {
+        given :
+            var a = Tsr.of(String, [2, 5], [':)', ':P', 'B)'])
+            var b = Tsr.of(String).withShape(1, 5).andFill('O.o', '._.')
+        and :
+            var cat = Function.of('concat(I[0], I[1])')
+
+        when :
+            var c = cat.callWith(Arg.Dim.of(0)).call(a, b)
+
+        then :
+            c.shape() == [3, 5]
+        and :
+            c.any( it -> it == ':P' )
+            c.any( it -> it == '._.' )
+    }
 
 }

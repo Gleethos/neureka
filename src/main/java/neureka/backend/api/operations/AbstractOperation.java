@@ -198,7 +198,7 @@ public abstract class AbstractOperation implements Operation
 
         if ( bestImpl == null ) {
             String message = "No suitable implementation for execution call '"+call+"' could be found.\n" +
-                    "Execution process aborted.";
+                                "Execution process aborted.";
             _LOG.error( message );
             throw new IllegalStateException( message );
         }

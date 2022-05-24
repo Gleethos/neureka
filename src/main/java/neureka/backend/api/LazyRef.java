@@ -28,6 +28,15 @@ final class LazyRef<V> {
     }
 
     @Override
-    public String toString() { return String.valueOf(this.get()); }
+    public String toString() {
+        String prefix = getClass().getSimpleName();
+        if ( _variable == null ) return prefix + "<>[?]";
+        try {
+            V value = this.get();
+            return prefix + "<" + value.getClass().getSimpleName() + ">" + "[" + value + "]";
+        } catch (Exception e) {
+            return prefix + "<>[?]";
+        }
+    }
 
 }

@@ -64,7 +64,7 @@ public class Cat extends AbstractOperation {
                     List<Integer> caShape = ca.shape();
                     List<Integer> cbShape = cb.shape();
                     Neureka.get().backend().getFunction().idy().execute(ca, a);
-                    Neureka.get().backend().getFunction().idy().execute(cb, a);
+                    Neureka.get().backend().getFunction().idy().execute(cb, b);
                     c.getUnsafe().setIsIntermediate(true);
                     return
                         Result.of(c)
