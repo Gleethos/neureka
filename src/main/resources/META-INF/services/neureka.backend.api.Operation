@@ -45,3 +45,4 @@ neureka.backend.standard.operations.other.DimTrim
 neureka.backend.standard.operations.other.Reshape
 neureka.backend.standard.operations.other.AssignLeft
 neureka.backend.standard.operations.other.Randomization
+neureka.backend.standard.operations.other.Cat

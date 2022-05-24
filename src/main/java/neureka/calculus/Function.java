@@ -223,8 +223,6 @@ public interface Function
      */
     default CallOptions callWith( Args arguments ) {
        return new CallOptions() {
-           @SafeVarargs @Override public final <T> Tsr<T> call(    Tsr<T>... tensors ) { return (Tsr<T>) this.execute( tensors ); }
-           @SafeVarargs @Override public final <T> Tsr<T> invoke(  Tsr<T>... tensors ) { return (Tsr<T>) this.execute( tensors ); }
            @Override public Tsr<?> execute( Tsr<?>... tensors )
            {
                MemValidator validation = MemValidator.forInputs( tensors, ()-> Result.of(Function.this.execute( arguments, tensors )));
@@ -338,8 +336,12 @@ public interface Function
      *  method.
      */
     interface CallOptions {
-        <T> Tsr<T> call( Tsr<T>... tensors );
-        <T> Tsr<T> invoke( Tsr<T>... tensors );
+        default <T> Tsr<T> invoke( Tsr<T>... tensors ) { return this.call( tensors ); }
+
+        default <T> Tsr<T> call( Tsr<T>... tensors ) {
+            return (Tsr<T>) this.execute( tensors ).getUnsafe().setIsIntermediate(false);
+        }
+
         /**
          *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
          *
