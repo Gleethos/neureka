@@ -1,6 +1,7 @@
 package neureka.ndim;
 
 import neureka.common.utility.DataConverter;
+import neureka.common.utility.LogUtil;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
 import neureka.ndim.config.AbstractNDC;
@@ -89,6 +90,10 @@ public final class TsrConstructor {
 
     public void tryConstructing( int[] shape, DataType<?> dataType, Object data )
     {
+        LogUtil.nullArgCheck( shape, "shape", int[].class );
+        LogUtil.nullArgCheck( dataType, "dataType", DataType.class );
+        LogUtil.nullArgCheck( data, "data", Object.class );
+
         int size = NDConfiguration.Utility.sizeOfShape( shape );
         if ( data instanceof List<?> ) {
             List<?> range = (List<?>) data;

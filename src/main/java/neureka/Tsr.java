@@ -406,7 +406,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A new {@link Tsr} instance for the generic type {@link T}.
      */
     public static <T> Tsr<T> of( List<Integer> shape, T value ) {
-        if ( value == null ) throw new IllegalArgumentException("Provided value is null!");
+        LogUtil.nullArgCheck( shape, "shape", List.class );
+        LogUtil.nullArgCheck( value, "value", Object.class );
         return of( (Class<T>) value.getClass(), shape, value );
     }
 
@@ -750,6 +751,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param <T> The type parameter for the actual data array items.
      */
     public static <T> Tsr<T> of( DataType<T> type, List<Integer> shape, Filler<T> filler) {
+        LogUtil.nullArgCheck( shape, "shape", List.class );
         return Tsr.of( type, shape.stream().mapToInt( e -> e ).toArray(), filler );
     }
 
@@ -793,6 +795,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Filler<T> filler)
     {
+        LogUtil.nullArgCheck( shape, "shape", int[].class );
+        LogUtil.nullArgCheck( type, "type", DataType.class );
+        LogUtil.nullArgCheck( type, "filler", Filler.class );
         _setDataType( type );
         _constructAndAllocate( shape, false );
         _initData(filler);
@@ -824,8 +829,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param expression A String which will be used for parsing a Function AST.
      * @param inputs An array of inputs which can be tensors or numeric types.
      */
+    @SafeVarargs
     public static <V extends Number> Tsr<V> of( String expression, V... inputs ) {
-        return Tsr.of( expression, Arrays.asList(inputs) );
+        return Function.of( expression, true ).call( Arrays.stream(inputs).map(args -> _of(args)).toArray(Tsr[]::new) );
     }
 
     /**
@@ -847,11 +853,34 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param expression A String which will be used for parsing a Function AST.
      * @param inputs A list of inputs which can be tensors or numeric types.
      */
-    public static <V> Tsr<V> of( String expression, List<? extends Object> inputs ) {
-        if ( inputs.stream().allMatch( e -> e instanceof Tsr ) )
-            return Function.of( expression, true ).call( inputs.stream().toArray( Tsr[]::new ) );
-        else
-            return Function.of( expression, true ).call(  inputs.stream().map(args -> _of(args)).toArray(Tsr[]::new) );
+    public static <V> Tsr<V> of( String expression, List<Tsr<V>> inputs ) {
+        return Function.of( expression, true ).call( inputs.stream().toArray( Tsr[]::new ) );
+    }
+
+    /**
+     *  This method takes a list of tensors and a String expression describing
+     *  operations which ought to be applied to the tensors in said list.
+     *  It also receives a boolean flag which determines if the defined function
+     *  should be executed with autograd enabled.
+     *  The provided expression will be parsed to a {@link Function} instance expecting as many inputs
+     *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...                    <br>
+     *  An example would be the following :                                                 <br>
+     * <ul>
+     *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) / I[1]", true, List.of(b, c) )'</i></li>
+     * </ul>
+     *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
+     *  element-wise to produce a new tensor 'a'!
+     *  Additionally, there is a helpful flag which allows one to specify if the
+     *  parsed {@link Function} instance emerging from the provided expression
+     *  should also allow the tracking of computations via a computation graph ({@link GraphNode} instances).
+     *  This history tracking then enables auto-differentiation. <br>
+     *
+     * @param expression The expression describing operations applied to the provided tensors.
+     * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
+     * @param tensors A list of tensors used as inputs to the Function instance parsed from the provided expression.
+     */
+    public static <V> Tsr<V> of( String expression, boolean doAD, List<Tsr<V>> tensors ) {
+        return Function.of( expression, doAD ).call( tensors );
     }
 
     /**
@@ -865,14 +894,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * </ul>
      *
      *  Which takes the tensor 'b' and applies the function "f(x) = sin(x) * 2"
-     *  elementwise to produce a new tensor 'a'! <br>
+     *  element-wise to produce a new tensor 'a'! <br>
      *  <br>
      *
      * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
      * @param expression The expression describing operations applied to the provided tensor.
      */
     public static <V> Tsr<V> of( String expression, Tsr<V> tensor ) {
-        return  Function.of( expression, true ).call( tensor );
+        return Function.of( expression, true ).call( tensor );
     }
 
     /**
@@ -917,7 +946,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param expression The expression describing operations applied to the provided tensors.
      * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
-     *
      */
     @SafeVarargs
     public static <V> Tsr<V> of( String expression, boolean doAD, Tsr<V>... tensors ) {
@@ -943,7 +971,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  on any descendant tensor within the computation graph.
      *
      * @param rqsGradient The truth value determining if this tensor ought to receive gradients via
-     *                     the built in automatic backpropagation system.
+     *                     the built-in automatic backpropagation system.
      * @return This very {@link Tsr} instance in order to enable method chaining.
      */
     public final Tsr<V> setRqsGradient( boolean rqsGradient ) {

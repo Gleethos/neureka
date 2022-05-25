@@ -93,12 +93,16 @@ class ADAM_Spec extends Specification
         given : 'We create tensors given an equation and array or list of input tensors...'
             var t1 = Tsr.of( expression, inputs )
             var t2 = Tsr.of( expression, inputs as Float[] )
-            var t3 = Tsr.of( expression, inputs as List<Object> )
+            var t3 = Tsr.of( expression, true, inputs.collect( it -> Tsr.of(it) ) )
+            var t4 = Tsr.of( expression, false, inputs.collect( it -> Tsr.of(it) ) )
+            var t5 = Tsr.of( expression, false, inputs.collect( it -> Tsr.of(it) ) as Tsr<Double>[] )
 
         expect : '...this produces the expected result String.'
             t1.toString().contains( expected )
             t2.toString().contains( expected.replace(".29999", ".30000") )
             t3.toString().contains( expected )
+            t4.toString().contains( expected )
+            t5.toString().contains( expected )
 
         where : 'The following expressions, inputs and expected String results are being used :'
             expression                                 | inputs                       || expected
