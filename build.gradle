@@ -66,6 +66,8 @@ String VERSION = "0.16.0"
 String GROUP_ID = "com.github.gleethos"
 String BASENAME = "neureka"
 
+boolean SIGN_ON_PUBLISH = false
+
 //----------------------------------------------------------------------------------------------------------------------
 // 3. UTILITY LAMBDAS FOR AUTOMATIC VERSION MIGRATION :
 
@@ -335,6 +337,7 @@ sourceSets.main.output.dir genOutputDir, builtBy: generateVersionTxt
 
 
 signing {
+    required { SIGN_ON_PUBLISH && gradle.taskGraph.hasTask("publish") }
     //Key-ID: 372447547E38B0A909776E4DD830DAE574A07986
     sign configurations.archives
     sign publishing.publications
