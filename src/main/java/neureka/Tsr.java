@@ -361,24 +361,21 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         */
         boolean containsString = false;
         int numberOfTensors = 0;
-        ArrayList<Tsr<T>> tsrList = new ArrayList<>();
         for ( Object o : args ) {
             containsString = ( o instanceof String ) || containsString;
-            if ( o instanceof Tsr ) {
-                tsrList.add( (Tsr<T>) o );
+            if ( o instanceof Tsr )
                 numberOfTensors++;
-            }
         }
         Tsr<T>[] tensors = new Tsr[ numberOfTensors ];
         StringBuilder f = new StringBuilder();
         int ti = 0;
         for ( Object o : args ) {
-            if ( tsrList.contains( o ) ) {
+            if ( o instanceof Tsr ) {
                 tensors[ ti ] = ( (Tsr<T>) o );
                 f.append( "I[" ).append( ti ).append( "]" );
                 ti++;
             }
-            else if ( o instanceof  String ) f.append( (String) o );
+            else if ( o instanceof String ) f.append( (String) o );
             else
                 _LOG.debug(
                     "Unexpected tensor construction argument of type '"+o.getClass().getSimpleName()+"'"
@@ -653,7 +650,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @param valueType The type class of the items stored by the resulting tensor.
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
-     * @param seed An abitrary {@link String} whose hash will be used to as a seed.
+     * @param seed An arbitrary {@link String} whose hash will be used to as a seed.
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created and seeded tensor of the provided type and shape.
      */
@@ -854,7 +851,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param inputs A list of inputs which can be tensors or numeric types.
      */
     public static <V> Tsr<V> of( String expression, List<Tsr<V>> inputs ) {
-        return Function.of( expression, true ).call( inputs.stream().toArray( Tsr[]::new ) );
+        return Function.of( expression, true ).call( inputs );
     }
 
     /**
@@ -915,7 +912,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * </ul>
      *
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
-     *  elementwise to produce a new tensor 'a'! <br>
+     *  element-wise to produce a new tensor 'a'! <br>
      *
      * @param expression The expression describing operations applied to the provided tensors.
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
@@ -1465,7 +1462,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return The number of slices derived from this tensor.
      */
     public int sliceCount() {
-        Relation<V> child = get( Relation.class );
+        Relation<V> child = this.get( Relation.class );
         return ( child != null ) ? child.childCount() : 0;
     }
 
@@ -1476,7 +1473,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return The truth value determining if slices have been derived from this tensor.
      */
     public boolean isSliceParent() {
-        Relation<V> parent = get( Relation.class );
+        Relation<V> parent = this.get( Relation.class );
         return ( parent != null && parent.hasChildren() );
     }
 
@@ -2023,13 +2020,13 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
 
     /**
-     *  The {@link #plus(Tsr)} method will produce the sum of
+     *  This method will produce the sum of
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular elementwise addition.
-     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  the result will be a regular element-wise addition.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
@@ -2049,11 +2046,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  The {@link #plus(double)} method will create a new {@link Tsr}
+     *  This method will create a new {@link Tsr}
      *  with the provided double scalar added to all elements of this {@link Tsr}.
      *
      *  The shapes of this tensor is irrelevant as the provided value will
-     *  simply be broadcastet to any possible shape.
+     *  simply be broadcast to any possible shape.
      *
      * @param value The right operand of the addition.
      * @return The sum between this instance as the left and the passed double as right operand.
@@ -2061,13 +2058,13 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public final Tsr<V> plus( double value ) { return plus( _of( this.shape(), value ) ); }
 
     /**
-     *  The {@link #minus(Tsr)} method will perform subtraction on
+     *  This method will perform subtraction on
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular elementwise subtraction.
-     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  the result will be a regular element-wise subtraction.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
@@ -2084,7 +2081,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public final Tsr<V> minus( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract 'null' from a tensor!");
         return minus(
-                 Tsr.of((Class<V>)this.getDataType().getRepresentativeType())
+                 Tsr.of( this.getDataType().getValueTypeClass() )
                              .withShape(this.getNDConf().shape())
                              .all(other)
         );
@@ -2098,7 +2095,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public final Tsr<V> minusAssign( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract-assign 'null' from a tensor!");
         return minusAssign(
-                Tsr.of((Class<V>)this.getDataType().getRepresentativeType())
+                Tsr.of( this.getDataType().getValueTypeClass() )
                         .withShape(this.getNDConf().shape())
                         .all(other)
         );
@@ -2107,19 +2104,17 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     /**
      * @return A clone of this tensor where the signs of all elements are flipped.
      */
-    public final Tsr<V> negative() {
-        return Neureka.get().backend().getAutogradFunction().neg().call( this );
-    }
+    public final Tsr<V> negative() { return Neureka.get().backend().getAutogradFunction().neg().call( this ); }
 
     /**
-     *  The {@link #multiply(Tsr)} method is synonymous with the {@link #times(Tsr)} method.
+     *  This method is synonymous to the {@link #times(Tsr)} method.
      *  Both of which will produce the product of
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular elementwise product.
-     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  the result will be a regular element-wise product.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
@@ -2140,7 +2135,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public final Tsr<V> multiply( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
         return multiply(
-                           Tsr.of( (Class<V>) this.getDataType().getRepresentativeType() )
+                           Tsr.of( this.getDataType().getValueTypeClass() )
                                .withShape( this.getNDConf().shape() )
                                .all( other )
                         );
@@ -2173,7 +2168,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A new clone of this tensor where all elements are multiplied by the provided value.
      */
     public final Tsr<V> times( V other ) {
-        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
+        LogUtil.nullArgCheck(other, "other", getValueClass(), "Cannot multiply 'null' with a tensor!");
         return multiply( other );
     }
 
@@ -2192,7 +2187,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public final Tsr<V> timesAssign( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply-assign 'null' to a tensor!");
-        return this.timesAssign( Tsr.of( this.getValueClass(), this.shape(), other ) );
+        return this.timesAssign( Tsr.of( getValueClass(), getNDConf().shape(), other ) );
     }
 
 
@@ -2200,7 +2195,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The value which should be broadcast to all elements of a clone of this tensor.
      * @return A new clone of this tensor where all elements are multiplied by the provided value.
      */
-    public final Tsr<V> multiply( double value ) { return multiply( _of( this.shape(), value ) ); }
+    public final Tsr<V> multiply( double value ) { return multiply( Tsr.of( getValueClass(), getNDConf().shape(), value ) ); }
 
     /**
      *  The {@link #div(Tsr)} method will produce the quotient of
@@ -2223,7 +2218,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return Neureka.get().backend().getAutogradFunction().div().call( this, other );
     }
 
-    public final Tsr<V> div( double value ) { return div( _of( this.shape(), value ) ); }
+    public final Tsr<V> div( double value ) { return div( Tsr.of( getValueClass(), getNDConf().shape(), value ) ); }
 
     public final Tsr<V> divAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
@@ -2251,9 +2246,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return Neureka.get().backend().getAutogradFunction().mod().call( this, other );
     }
 
-    public final Tsr<V> mod( int other ) { return mod((Tsr<V>) Tsr.of(this.getNDConf().shape(), other)); }
-
-    public final Tsr<V> rem( int other ) { return mod((Tsr<V>) Tsr.of(this.getNDConf().shape(), other)); }
+    public final Tsr<V> mod( int other ) { return mod(Tsr.of(getValueClass(), getNDConf().shape(), other)); }
+ 
+    /**
+     *  This method is synonymous to the {@link #mod(int)} method.
+     */
+    public final Tsr<V> rem( int other ) { return mod(Tsr.of(getValueClass(), getNDConf().shape(), other)); }
 
     public final Tsr<V> modAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
@@ -2293,9 +2291,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return Neureka.get().backend().getAutogradFunction().pow().call( this, other );
     }
 
-    public final Tsr<V> xor( double value ) {
-        return xor( _of( this.shape(), value ) );
-    }
+    /**
+     *  This method is synonymous to the {@link #power(Tsr)} method.
+     */
+    public final Tsr<V> xor( double value ) { return xor( _of( this.shape(), value ) ); }
 
     /*
         -----------------------------
@@ -2330,9 +2329,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
-    public final Tsr<V> getT() { // Transposed
-        return this.T();
-    }
+    public final Tsr<V> getT() { return this.T(); } // Transposed
 
     /**
      *  This method performs various operations by calling {@link Function} instances
@@ -2707,13 +2704,13 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             }
         }
         subset._setNDConf(
-                AbstractNDC.construct(
-                        newShape,
-                        newTranslation,
-                        newIndicesMap,
-                        newSpread,
-                        newOffset
-                )
+            AbstractNDC.construct(
+                newShape,
+                newTranslation,
+                newIndicesMap,
+                newSpread,
+                newOffset
+            )
         );
 
         if ( this.isOutsourced() ) {
@@ -2901,9 +2898,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         else success = false;
 
         if ( !success )
-            _LOG.warn(
-                    "Failed to set value of type '"+value.getClass().getSimpleName()+"'!"
-            );
+            _LOG.warn( "Failed to set value of type '"+value.getClass().getSimpleName()+"'!" );
+
         return this;
     }
 
@@ -3051,7 +3047,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 // We expect a tensor of shape (height x width x 3)!
                 BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
                 byte[] data = DataConverter.get().convert( _getData(), byte[].class);
-                writeImgData(new DataBufferByte(data, data.length), image);
+                _writeImgData(new DataBufferByte(data, data.length), image);
                 return image;
             }
             case BufferedImage.TYPE_4BYTE_ABGR:
@@ -3060,14 +3056,14 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 _checkRankForImageConversion(type, Number.class, 0, 0, 4);
                 BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
                 byte[] data = DataConverter.get().convert( _getData(), byte[].class);
-                writeImgData(new DataBufferByte(data, data.length), image);
+                _writeImgData(new DataBufferByte(data, data.length), image);
                 return image;
             }
             case BufferedImage.TYPE_INT_ARGB: {
                 _checkRankForImageConversion(type, Number.class, 0, 0, 1);
                 BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
                 int[] data = DataConverter.get().convert( _getData(), int[].class);
-                writeImgData(new DataBufferInt(data, data.length), image);
+                _writeImgData(new DataBufferInt(data, data.length), image);
                 return image;
             }
         }
@@ -3101,7 +3097,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             );
     }
 
-    private static void writeImgData( DataBuffer data, BufferedImage target ) {
+    private static void _writeImgData(DataBuffer data, BufferedImage target ) {
         target.setData(
             Raster.createRaster( target.getSampleModel(), data, new Point() )
         );
@@ -3173,7 +3169,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *     No exceptions will be thrown during backpropagation! <br>
      *  3. This method has not yet been implemented to also handle instances which
      *     are slices of parent tensors!
-     *     Therefore there might be unexpected performance penalties or side effects
+     *     Therefore, there might be unexpected performance penalties or side effects
      *     associated with this method.<br>
      *     <br>
      *
@@ -3204,8 +3200,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public <A> A getDataAs( Class<A> arrayTypeClass ) {
         return DataConverter.get().convert( getData(), arrayTypeClass );
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public String toString( String mode ) { return _toString( mode ); }
 
@@ -3264,7 +3258,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
      */
     public static <V> IterByOrIterFromOrAll<V> like( Tsr<V> template ) {
-        return Tsr.of( (Class<V>) template.getDataType().getValueTypeClass() )
+        return Tsr.of( template.getDataType().getValueTypeClass() )
                     .on( template.getDevice() )
                     .withShape( template.getNDConf().shape() );
     }
