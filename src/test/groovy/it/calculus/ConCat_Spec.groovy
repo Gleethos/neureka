@@ -16,7 +16,7 @@ class ConCat_Spec extends Specification
             var cat = Function.of('concat(I[0], I[1])')
 
         when :
-            var c = cat.callWith(Arg.Dim.of(1)).call(a, b)
+            var c = cat.callWith(Arg.Axis.of(1)).call(a, b)
 
         then :
             c.shape() == [3, 6, 2]
@@ -30,6 +30,30 @@ class ConCat_Spec extends Specification
             a.gradient.every( it -> it == -6 )
     }
 
+    def 'We can concatenate 2 float tensors alongside a specified axis!'()
+    {
+        given :
+            var a = Tsr.of(Float, [4, 2], [8f, -9f, 5f]).setRqsGradient(true)
+            var b = Tsr.ofFloats().withShape(4, 3).andFill(1,6,-6,3).setRqsGradient(true)
+        and :
+            var cat = Function.of('concat(I[0], I[1])')
+
+        when :
+            var c = cat.callWith(Arg.Axis.of(1)).call(a, b)
+
+        then :
+            c.shape() == [4, 5]
+
+        when :
+            var y = c * 5 + 1
+        and :
+            y.backward(-2)
+
+        then :
+            a.gradient.every( it -> it == -10 )
+            b.gradient.every( it -> it == -10 )
+    }
+
 
     def 'We can concatenate 2 string tensors alongside a specified axis!'()
     {
@@ -40,7 +64,7 @@ class ConCat_Spec extends Specification
             var cat = Function.of('concat(I[0], I[1])')
 
         when :
-            var c = cat.callWith(Arg.Dim.of(0)).call(a, b)
+            var c = cat.callWith(Arg.Axis.of(0)).call(a, b)
 
         then :
             c.shape() == [3, 5]

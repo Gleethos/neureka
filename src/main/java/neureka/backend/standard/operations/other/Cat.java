@@ -34,7 +34,7 @@ public class Cat extends AbstractOperation {
             DeviceAlgorithm
             .withName("concat")
             .setIsSuitableFor( call -> {
-                Integer dim = call.getValOf(Arg.Dim.class);
+                Integer dim = call.getValOf(Arg.Axis.class);
                 Tsr<?> a = call.input(0);
                 Tsr<?> b = call.input(1);
                 if ( a.rank() != b.rank() ) return SuitabilityPredicate.UNSUITABLE;
@@ -49,7 +49,7 @@ public class Cat extends AbstractOperation {
                 ( caller, call ) ->
                 {
                     // The dimension alongside we want to concat:
-                    Integer dim = call.getValOf(Arg.Dim.class);
+                    Integer dim = call.getValOf(Arg.Axis.class);
                     Tsr<?> a = call.input(0);
                     Tsr<?> b = call.input(1);
                     int aAxis = a.shape(dim);

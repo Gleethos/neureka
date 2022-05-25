@@ -45,9 +45,9 @@ public abstract class Arg<T> implements Component<Args> {
         private DerivIdx(int arg) { super(arg); }
     }
 
-    public static class Dim extends Arg<Integer> {
-        public static Dim of( int index ) { return new Dim(index); }
-        private Dim(int arg) { super(arg); }
+    public static class Axis extends Arg<Integer> {
+        public static Axis of(int index ) { return new Axis(index); }
+        private Axis(int arg) { super(arg); }
     }
 
     public static class Ends extends Arg<int[]> {
