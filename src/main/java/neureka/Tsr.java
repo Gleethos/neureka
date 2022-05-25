@@ -492,11 +492,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             return new Tsr<>( conf );
 
         ListReader.Result result = ListReader.read( conf, o -> ( o instanceof Number ? ((Number)o).doubleValue() : o ) );
-        Class resultType;
+        Class<T> resultType;
         Object[] resultData;
         int[] shape = result.getShape().stream().mapToInt(i -> i).toArray();
         if ( targetType == null ) {
-            resultType = result.getType();
+            resultType = (Class<T>) result.getType();
             resultData = result.getData().toArray();
         } else {
             DataConverter converter = DataConverter.get();
@@ -715,7 +715,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param dataType The data type of the data represented by {@link Tsr} instance created by this method.
      * @param shape An array of axis sizes describing the dimensionality of the {@link Tsr} created by this method.
      * @param data The data for the {@link Tsr} that is about to be created, which can be a list, an array or scalar.
-     * @param <V>
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
     public static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new Tsr<>( shape, dataType, data ); }
@@ -751,11 +750,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param <T> The type parameter for the actual data array items.
      */
     public static <T> Tsr<T> of( DataType<T> type, List<Integer> shape, Filler<T> filler) {
-        return Tsr.of(
-                    type,
-                    shape.stream().mapToInt( e -> e ).toArray(),
-                filler
-                );
+        return Tsr.of( type, shape.stream().mapToInt( e -> e ).toArray(), filler );
     }
 
     /**
@@ -913,8 +908,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) / I[1]", true, b, c )'</i></li>
      * </ul>
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
-     *  elementwise to produce a new tensor 'a'!
-     *  Additionally there is a helpful flag which allows one to specify if the
+     *  element-wise to produce a new tensor 'a'!
+     *  Additionally, there is a helpful flag which allows one to specify if the
      *  parsed {@link Function} instance emerging from the provided expression
      *  should also allow the tracking of computations via a computation graph ({@link GraphNode} instances).
      *  This history tracking then enables auto-differentiation. <br>
