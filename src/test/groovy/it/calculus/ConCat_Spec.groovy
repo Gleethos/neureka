@@ -3,6 +3,7 @@ package it.calculus
 import neureka.Tsr
 import neureka.calculus.Function
 import neureka.calculus.args.Arg
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class ConCat_Spec extends Specification
@@ -72,5 +73,32 @@ class ConCat_Spec extends Specification
             c.any( it -> it == ':P' )
             c.any( it -> it == '._.' )
     }
+
+    @Ignore
+    def 'We can concatenate 2 simple float tensors alongside a specified axis!'()
+    {
+        given :
+            var a = Tsr.of(Float, [3, 1], [8, -4, 7]).setRqsGradient(true)
+            var b = Tsr.of(Float).withShape(3, 1).andFill(5, -1, 2).setRqsGradient(true)
+        and :
+            var cat = Function.of('concat(I[0], I[1])')
+
+        when :
+            var c = cat.callWith(Arg.Axis.of(1)).call(a, b)
+
+        then :
+            c.shape() == [3, 2]
+
+        when :
+            var y = c / 2
+        and :
+            y.backward(Tsr.ofFloats().withShape(3,2).andFill(-1, 2, 0.5, 3, -0.1, 4))
+
+        then :
+            a.gradient.value == [-0.5, 0.25, -0.05] as float[]
+            b.gradient.value == [1.0, 1.5, 2.0] as float[]
+    }
+
+
 
 }

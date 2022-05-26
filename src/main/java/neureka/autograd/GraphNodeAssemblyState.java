@@ -7,7 +7,6 @@ import neureka.calculus.Function;
 import neureka.devices.Device;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -29,19 +28,19 @@ final class GraphNodeAssemblyState<V> {
 
     private GraphLock _lock;
 
-    private TreeMap<GraphNode<V>, List<ADAgent>> _targetsToAgents;
+    private TreeMap<GraphNode<V>, Value> _targetsToAgents;
 
     /**
      * @param target nodes are graph nodes which contain either tensors requiring errors for accumulation and/or more targets.
      * @param agent ADAgent's are used during back-propagation in order to distribute an error throughout the graph.
      */
-    public void put( GraphNode<V> target, ADAgent agent ) {
+    public void put( int index, GraphNode<V> target, ADAgent agent ) {
         if ( _targetsToAgents == null ) _targetsToAgents = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
 
         if ( _targetsToAgents.containsKey( target ) )
-            _targetsToAgents.get( target ).add( agent );
+            _targetsToAgents.get( target ).agents().add( agent );
         else
-            _targetsToAgents.put( target, new ArrayList<>( Arrays.asList( agent ) ) );
+            _targetsToAgents.put( target, new Value(index, agent) );
     }
 
     public List<BackPropBridge<V>> getTargets() {
@@ -49,7 +48,7 @@ final class GraphNodeAssemblyState<V> {
         else
             return _targetsToAgents.entrySet()
                                 .stream()
-                                .map( e -> new BackPropBridge<>( e.getKey(), e.getValue() ) )
+                                .map( e -> new BackPropBridge<>( e.getValue().index(), e.getKey(), e.getValue().agents() ) )
                                 .collect(Collectors.toList());
     }
 
@@ -120,16 +119,24 @@ final class GraphNodeAssemblyState<V> {
 
     public GraphNode<V>[] parents() { return _parents; }
 
-    public GraphNodeAssemblyState<V> setParents(GraphNode<V>[] parents ) {
-        _parents = parents;
-        return this;
-    }
+    public void setParents(GraphNode<V>[] parents ) { _parents = parents; }
 
     public GraphLock lock() { return _lock; }
 
-    public GraphNodeAssemblyState<V> setLock(GraphLock lock) {
-        _lock = lock;
-        return this;
+    public void setLock(GraphLock lock) { _lock = lock; }
+
+    private static class Value {
+        private final int _index;
+        private final List<ADAgent> _agents = new ArrayList<>();
+
+        private Value(int index, ADAgent agent) {
+            _index = index;
+            _agents.add(agent);
+        }
+
+        public int index() { return _index; }
+
+        public List<ADAgent> agents() { return _agents; }
     }
 
 }

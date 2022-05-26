@@ -243,7 +243,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
         /* Returning if the above cannot form an AutoDiff computation graph! : */
         for ( Tsr<V> t : inputs )
-            if ( t.equals(output.get()) ) return; // Output must be a unique tensor for AD!
+            if ( t == output.get() ) return; // Output must be a unique tensor for AD!
 
         if ( this.usesAD() && function.isFlat() ) {
             /* Preparing for back propagation: */
@@ -262,7 +262,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                     call.withArgs(Arg.DerivIdx.of(i), Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))),
                                     true
                             );
-                            a.put( srcNode, agent );
+                            a.put( i, srcNode, agent );
                             _informPartialDerivative(agent);
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
@@ -283,7 +283,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                             ),
                                             true
                                     );
-                                    a.put( targetNode, agent );
+                                    a.put( finalI, targetNode, agent );
                                     _informPartialDerivative(agent);
                                     // TODO: flag within src Tsr<ValType>s that grant that the tensor
                                     // has been created by function constructor!
@@ -303,7 +303,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                                         call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))),
                                                         false
                                                     );
-                        a.put( srcNode, agent );
+                        a.put( i, srcNode, agent );
                         _informPartialDerivative(agent);
                     }
                 }
