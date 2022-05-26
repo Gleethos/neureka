@@ -96,7 +96,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private final GraphNode<V>[] _parents;
 
-    private final List<BackPropBridge<V>> _targetsToAgents;
+    private final List<BackPropTargets<V>> _targetsToAgents;
 
     private final long _nodeID;
 
@@ -269,10 +269,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
                             int finalI = i;
                             Tsr<V> localDerivative = function.derive( inputs, i );
                             srcNode.forEachTargetAgentPair(
-                                ( targetNode, localAgent ) ->
+                                ( targets, localAgent ) ->
                                 {
                                     // The agent multiplies the local derivative with its stored partial derivative...
-                                    Tsr<?> targetDerivative = localAgent.act( this, localDerivative );
+                                    Tsr<?> targetDerivative = localAgent.act( new Target<>(targets.index(), this, localDerivative) );
                                     // ...this is now the new partial derivative with respect to the target node!
                                     ADAgent agent = output.getAgentSupplier().supplyADAgentFor(
                                             function,
@@ -283,7 +283,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                             ),
                                             true
                                     );
-                                    a.put( finalI, targetNode, agent );
+                                    a.put( finalI, targets.node(), agent );
                                     _informPartialDerivative(agent);
                                     // TODO: flag within src Tsr<ValType>s that grant that the tensor
                                     // has been created by function constructor!
@@ -631,7 +631,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public boolean has( GraphNode<V> target ) {
         if ( _targetsToAgents == null ) return false;
-        return _targetsToAgents.stream().anyMatch( ref -> ref.target() == target );
+        return _targetsToAgents.stream().anyMatch( ref -> ref.node() == target );
     }
 
     /**
@@ -648,7 +648,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public void forEachDerivative( BiConsumer<GraphNode<V>, ADAgent> action ) {
         if ( _targetsToAgents == null ) return;
         new ArrayList<>(_targetsToAgents).forEach(
-            ( ref ) -> ref.agents().forEach( a -> action.accept( ref.target(), a ) )
+            ( ref ) -> ref.agents().forEach( a -> action.accept( ref.node(), a ) )
         );
     }
 
@@ -661,7 +661,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         error.getUnsafe().setIsIntermediate( false );
         new ArrayList<>(_targetsToAgents).forEach( ref -> {
             for ( ADAgent a : ref.agents() )
-                action.accept( ref.target(), a.act( ref.target(), error ) );
+                action.accept( ref.node(), a.act( new Target<>(ref.index(), ref.node(), error) ) );
         });
     }
 
@@ -670,17 +670,17 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public void forEachTarget( Consumer<GraphNode<V>> action ) {
         if ( _targetsToAgents == null ) return;
-        new ArrayList<>(_targetsToAgents).forEach( ref -> action.accept( ref.target() ) );
+        new ArrayList<>(_targetsToAgents).forEach( ref -> action.accept( ref.node() ) );
     }
 
     /**
      * @param action The action which ought to be applied to each target {@link GraphNode} / {@link ADAgent} pair.
      */
-    public void forEachTargetAgentPair( BiConsumer<GraphNode<V>, ADAgent> action ) {
+    public void forEachTargetAgentPair( BiConsumer<BackPropTargets<V>, ADAgent> action ) {
         if ( _targetsToAgents == null ) return;
         new ArrayList<>(_targetsToAgents)
                 .forEach(
-                    ( ref ) -> ref.agents().forEach( a -> action.accept( ref.target(), a ) )
+                    ( ref ) -> ref.agents().forEach( a -> action.accept( ref, a ) )
                 );
     }
 

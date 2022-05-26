@@ -45,14 +45,14 @@ public class Addition extends AbstractOperation {
                             Device device = call.getDeviceFor(Number.class);
                             return ADAgent.of( derivative )
                                             .withAD(
-                                                ( node, backwardError ) ->
+                                                target ->
                                                     this.getAlgorithm( Broadcast.class )
                                                          .getImplementationFor( device )
                                                          .runAndGetFirstTensor(
                                                                  ExecutionCall.of(
                                                                          toBeDerived.setIsVirtual(false),
                                                                          derivative,
-                                                                         backwardError
+                                                                         target.error()
                                                                  )
                                                                  .andArgs( Arg.DerivIdx.of(d) )
                                                                  .running( this )

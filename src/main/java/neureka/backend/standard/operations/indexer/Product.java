@@ -57,7 +57,7 @@ public final class Product extends AbstractOperation
                     Function mul = Neureka.get().backend().getFunction().mul();
                     if ( ctxDerivative != null ) {
                         return ADAgent.of( ctxDerivative )
-                                        .withAD( (node, error ) -> mul.execute( error, ctxDerivative ) );
+                                        .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
                     }
                     int d = call.getValOf( Arg.DerivIdx.class );
                     if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
@@ -65,7 +65,7 @@ public final class Product extends AbstractOperation
                     {
                         Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                         return ADAgent.of( derivative )
-                                        .withAD( (node, error ) -> mul.execute( error, derivative ) );
+                                        .withAD( target -> mul.execute( target.error(), derivative ) );
                     }
                 }
             )
@@ -107,10 +107,10 @@ public final class Product extends AbstractOperation
                         Tsr<?> derivative = f.executeDerive( adCall.inputs(), adCall.getDerivativeIndex() );
                         if ( forward )
                             return ADAgent.of( derivative )
-                                            .withAD( (t, error ) -> mul.execute( error, derivative ) );
+                                            .withAD( target -> mul.execute( target.error(), derivative ) );
                         else
                             return ADAgent.of( derivative )
-                                            .withAD( (node, error ) -> mul.execute( error, derivative ) );
+                                            .withAD( target -> mul.execute( target.error(), derivative ) );
                     })
         )
         .setCallPreparation(

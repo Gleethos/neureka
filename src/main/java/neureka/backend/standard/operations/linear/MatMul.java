@@ -66,10 +66,10 @@ public class MatMul extends AbstractOperation
                                         Tsr<?> derivative = adCall.input( d ).T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                                         derivative.to(adCall.getDevice());
                                         return ADAgent.of( derivative )
-                                                .withAD( (node, error) ->
+                                                .withAD( target ->
                                                                 d == 1
-                                                                ? matMul.execute( error, derivative )
-                                                                : matMul.execute( derivative, error )
+                                                                ? matMul.execute( target.error(), derivative )
+                                                                : matMul.execute( derivative, target.error() )
                                                     );
                                     };
 

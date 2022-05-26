@@ -58,7 +58,7 @@ public final class Summation extends AbstractOperation
                         Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
-                                            .withAD( (node, error ) -> mul.execute( error, ctxDerivative ) );
+                                            .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
                         }
                         int d = call.getValOf( Arg.DerivIdx.class );
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
@@ -66,7 +66,7 @@ public final class Summation extends AbstractOperation
                         {
                             Tsr<?> derivative = f.executeDerive( call.inputs(), d );
                             return ADAgent.of( derivative )
-                                            .withAD( (node, error ) -> mul.execute( error, derivative ) );
+                                            .withAD( target -> mul.execute( target.error(), derivative ) );
                         }
                     }
                 )
@@ -114,14 +114,14 @@ public final class Summation extends AbstractOperation
                             Function mul = Neureka.get().backend().getFunction().mul();
                             if ( ctxDerivative != null )
                                 return ADAgent.of( ctxDerivative )
-                                                .withAD( (node, error ) -> mul.execute( error, ctxDerivative ) );
+                                                .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
 
                             int d = adCall.getDerivativeIndex();
                             if ( forward )
                             {
                                 Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
                                 return ADAgent.of( derivative )
-                                                .withAD( (t, error ) -> mul.execute( error, derivative ) );
+                                                .withAD( target -> mul.execute( target.error(), derivative ) );
                             }
                             else
                             {
@@ -135,19 +135,19 @@ public final class Summation extends AbstractOperation
                                     return ADAgent.of( derivative )
                                             .withAD(
                                                 call.autogradMode() == AutoDiffMode.FORWARD_ONLY
-                                                ? (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative )
-                                                : (t, error) ->
+                                                ? target -> mul.execute( target.error(), derivative )
+                                                : target ->
                                                     deConv.execute(
-                                                            error,
+                                                            target.error(),
                                                             derivative,
-                                                            Tsr.of(t.getPayload().shape(), 0) ).getUnsafe().setIsIntermediate( true )
+                                                            Tsr.of(target.node().getPayload().shape(), 0) ).getUnsafe().setIsIntermediate( true )
                                             );
                                 }
                                 else
                                 {
                                     Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
                                     return ADAgent.of( derivative )
-                                                    .withAD( (node, error ) -> mul.execute( error, derivative ) );
+                                                    .withAD( target -> mul.execute( target.error(), derivative ) );
                                 }
                             }
                         }

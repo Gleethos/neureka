@@ -43,12 +43,12 @@ final class GraphNodeAssemblyState<V> {
             _targetsToAgents.put( target, new Value(index, agent) );
     }
 
-    public List<BackPropBridge<V>> getTargets() {
+    public List<BackPropTargets<V>> getTargets() {
         if ( _targetsToAgents == null ) return null;
         else
             return _targetsToAgents.entrySet()
                                 .stream()
-                                .map( e -> new BackPropBridge<>( e.getValue().index(), e.getKey(), e.getValue().agents() ) )
+                                .map( e -> new BackPropTargets<>( e.getValue().index(), e.getKey(), e.getValue().agents() ) )
                                 .collect(Collectors.toList());
     }
 

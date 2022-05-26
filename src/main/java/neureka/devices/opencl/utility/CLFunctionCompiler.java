@@ -82,7 +82,7 @@ public final class CLFunctionCompiler {
                                 Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
                                     .withAutoDiff((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward) -> {
                                         // TODO: calculate derivative and supply agent!
-                                        return ADAgent.withAD((t, error) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                        return ADAgent.withAD( target -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{target.error()}, 0));
                                     })
                         )
                         .setCallPreparation(

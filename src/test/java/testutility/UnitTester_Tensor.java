@@ -238,7 +238,7 @@ public class UnitTester_Tensor extends UnitTester
                                             Function mul = Neureka.get().backend().getFunction().mul();
                                             if ( ctxDerivative != null ) {
                                                 return ADAgent.of( ctxDerivative )
-                                                        .withAD( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
+                                                        .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
                                             }
                                             int d = adCall.getDerivativeIndex();
                                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
@@ -246,7 +246,7 @@ public class UnitTester_Tensor extends UnitTester
                                             {
                                                 Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
                                                 return ADAgent.of( derivative )
-                                                        .withAD( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
+                                                        .withAD( target -> mul.execute( target.error(), derivative ) );
                                             }
                                         })
                                 )
@@ -280,10 +280,10 @@ public class UnitTester_Tensor extends UnitTester
 
         Broadcast left = new Broadcast((executionCall, executor) -> null)
                                     .setAutogradModeFor(
-                                            call -> call
-                                                    .validate().allNotNullHaveSame(NDimensional::shape)
-                                                    .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
-                                                    .orElse(AutoDiffMode.BACKWARD_ONLY)
+                                        call -> call
+                                                .validate().allNotNullHaveSame(NDimensional::shape)
+                                                .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
+                                                .orElse(AutoDiffMode.BACKWARD_ONLY)
                                     )
                                     .setExecution( (caller, call) ->
                                         Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
@@ -293,7 +293,7 @@ public class UnitTester_Tensor extends UnitTester
                                                 Function mul = Neureka.get().backend().getFunction().mul();
                                                 if ( ctxDerivative != null ) {
                                                     return ADAgent.of( ctxDerivative )
-                                                            .withAD( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
+                                                            .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
                                                 }
                                                 Tsr<?>[] inputs = adCall.inputs();
                                                 int d = adCall.getDerivativeIndex();
@@ -302,16 +302,16 @@ public class UnitTester_Tensor extends UnitTester
                                                 {
                                                     Tsr<?> derivative = f.executeDerive( inputs, d );
                                                     return ADAgent.of( derivative )
-                                                            .withAD( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
+                                                            .withAD( target -> mul.execute( target.error(), derivative ) );
                                                 }
                                             })
                                     )
                                     .setCallPreparation(
-                                            call -> {
-                                                Tsr<?>[] tsrs = call.inputs();
-                                                int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                                                return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
-                                            }
+                                        call -> {
+                                            Tsr<?>[] tsrs = call.inputs();
+                                            int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
+                                            return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
+                                        }
                                     )
                                     .buildFunAlgorithm()
                                     .setImplementationFor(

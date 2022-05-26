@@ -59,9 +59,9 @@ public class ConvUtil {
                             // This is because it will be the shape of the output to the de-convolution!
                             return ADAgent.of( derivative )
                                     .withAD(
-                                            (node, error) ->
+                                            target ->
                                                     deConv.execute(
-                                                            error,
+                                                            target.error(),
                                                             derivative,
                                                             Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )
                                                     )

@@ -10,7 +10,7 @@ import java.util.Optional;
  *  {@link ADAgent} stands for "Auto-Differentiation-Agent", meaning
  *  that implementations of this class are responsible for managing
  *  forward- and reverse- mode differentiation actions.
- *  These differentiation actions are performed through the "{@link ADAgent#act(GraphNode, Tsr)}"
+ *  These differentiation actions are performed through the "{@link ADAgent#act(Target)}"
  *  method which are being called
  *  by instances of the {@link GraphNode} class during propagation.
  *  An {@link ADAgent} may also wrap and expose a partial derivative
@@ -40,12 +40,12 @@ public final class DefaultADAgent implements ADAgent {
     private DefaultADAgent( Tsr<?> derivative, ADAction action ) { _partialDerivative = derivative; _action = action; }
 
     @Override
-    public <T> Tsr<T> act(GraphNode<T> target, Tsr<T> derivativeOrError) {
+    public <T> Tsr<T> act( Target<T> target ) {
         if ( _action == null )
             throw new IllegalStateException(
                 "Cannot perform propagation because this "+ADAgent.class.getSimpleName()+" does have an auto-diff implementation."
             );
-        return (Tsr<T>) _action.act( target, derivativeOrError);
+        return (Tsr<T>) _action.act( target );
     }
 
     @Override
@@ -75,7 +75,7 @@ public final class DefaultADAgent implements ADAgent {
 
     /**
      * This interface is the declaration for
-     * lambda actions for both the {@link #act(GraphNode, Tsr)} method of the {@link ADAgent} interface. <br><br>
+     * lambda actions for both the {@link #act(Target)} method of the {@link ADAgent} interface. <br><br>
      *
      * Note: Do not access the {@link GraphNode#getPayload()} of the {@link GraphNode}
      *       passed to implementation of this.
@@ -84,11 +84,10 @@ public final class DefaultADAgent implements ADAgent {
     public interface ADAction
     {
         /**
-         * @param node The {@link GraphNode} at which the differentiation ought to be performed.
-         * @param error The error which ought to be used for the forward or backward differentiation.
+         * @param target A container for the {@link GraphNode} at which the differentiation ought to be performed and error which ought to be used for the forward or backward differentiation.
          * @return The result of the differentiation.
          */
-        Tsr<?> act( GraphNode<?> node, Tsr<?> error );
+        Tsr<?> act( Target<?> target );
     }
 
 }

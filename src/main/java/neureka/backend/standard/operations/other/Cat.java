@@ -69,11 +69,11 @@ public class Cat extends AbstractOperation {
                     c.getUnsafe().setIsIntermediate(true);
                     return
                         Result.of(c)
-                            .withADAction((t, e)->{
-                                if ( t.getPayloadShape().equals(caShape) ) {
-                                    return e.slice().axis(dim).from(0).to(aAxis-1).get();
-                                } else if ( t.getPayloadShape().equals(cbShape) ) {
-                                    return e.slice().axis(dim).from(aAxis).to(newAxis-1).get();
+                            .withADAction( target -> {
+                                if ( target.index() == 0 ) {
+                                    return target.error().slice().axis(dim).from(0).to(aAxis-1).get();
+                                } else if ( target.index() == 1 ) {
+                                    return target.error().slice().axis(dim).from(aAxis).to(newAxis-1).get();
                                 } else
                                     throw new IllegalArgumentException("Error shape not suitable for back-prop!");
                             });

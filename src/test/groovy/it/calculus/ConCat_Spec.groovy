@@ -3,7 +3,6 @@ package it.calculus
 import neureka.Tsr
 import neureka.calculus.Function
 import neureka.calculus.args.Arg
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class ConCat_Spec extends Specification
@@ -74,8 +73,8 @@ class ConCat_Spec extends Specification
             c.any( it -> it == '._.' )
     }
 
-    @Ignore
-    def 'We can concatenate 2 simple float tensors alongside a specified axis!'()
+
+    def 'We can concatenate and then back-propagate 2 simple float tensors alongside a specified axis!'()
     {
         given :
             var a = Tsr.of(Float, [3, 1], [8, -4, 7]).setRqsGradient(true)
