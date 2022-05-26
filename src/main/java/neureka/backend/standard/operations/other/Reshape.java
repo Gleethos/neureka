@@ -51,13 +51,7 @@ public class Reshape extends AbstractOperation
                         newForm = invert( newForm );
 
                     return Result.of(_reshaped( inputs[ inputs.length - 1 ], newForm, true ))
-                            .withAutoDiff( (Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
-                            {
-                                if ( forward )
-                                    throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-
-                                return ADAgent.withAD( target -> new FunctionBuilder( Neureka.get().backend() ).build( f.toString(), false ).derive( new Tsr[]{ target.error() },0 ) );
-                            });
+                            .withADAction( target -> new FunctionBuilder( Neureka.get().backend() ).build( caller.toString(), false ).derive( new Tsr[]{ target.error() },0 ) );
                 }
             )
             .setCallPreparation( call -> call )

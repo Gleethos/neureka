@@ -41,14 +41,6 @@ public class DimFit extends AbstractOperation
                     .setExecution(
                         ( caller, call ) ->
                         {
-                            ADAgentSupplier autDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
-                            {
-                                if ( forward ) {
-                                    throw new IllegalArgumentException("Dim-Fit operation does not support forward-AD!");
-                                }
-                                return ADAgent.withAD(null);
-                            };
-
                             Tsr<?>[] inputs = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                             assert call.getValOf( Arg.DerivIdx.class ) < 0;
 
@@ -80,7 +72,7 @@ public class DimFit extends AbstractOperation
                                     change[ i ] = newReshape;
                                 }
                             }
-                            return Result.of(null).withAutoDiff(autDiff);
+                            return Result.of(null).withADAction(null);
                         }
                     )
                     .setCallPreparation( call -> call )

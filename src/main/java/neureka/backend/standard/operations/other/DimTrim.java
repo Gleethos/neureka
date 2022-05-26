@@ -2,6 +2,7 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.autograd.ADAction;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
@@ -46,22 +47,18 @@ public class DimTrim extends AbstractOperation
                 .setExecution(
                     ( caller, call ) ->
                     {
-                        ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                        ADAction autoDiff = target ->
                         {
-                            int[] endings = endsFrom( adCall.input( 0 ).getNDConf().shape() );
+                            int[] endings = endsFrom( call.input( 0 ).getNDConf().shape() );
                             int prefix  = endings[ 0 ];
                             int postfix = endings[ 1 ];
-                            if ( forward )
-                                throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
 
-                            return ADAgent.withAD(
-                                        call.autogradMode() == AutoDiffMode.FORWARD_ONLY
-                                        ? target ->
-                                                    new FunctionBuilder( Neureka.get().backend() )
-                                                            .build(f.toString(), false)
+                            return
+                                    call.autogradMode() == AutoDiffMode.FORWARD_ONLY
+                                        ? new FunctionBuilder( Neureka.get().backend() )
+                                                            .build(caller.toString(), false)
                                                             .derive(new Tsr[]{target.error()},0)
-                                        : target -> _pad(target.error(), new int[]{prefix, postfix}, true)
-                                    );
+                                        : _pad(target.error(), new int[]{prefix, postfix}, true);
                         };
 
                         Tsr<?>[] inputs = CalcUtil.srcActivation(
@@ -73,9 +70,9 @@ public class DimTrim extends AbstractOperation
                         if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {
                             int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
                             int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
-                            return Result.of(_pad( t, new int[]{prefix, postfix}, true )).withAutoDiff(autoDiff);
+                            return Result.of(_pad( t, new int[]{prefix, postfix}, true )).withADAction(autoDiff);
                         } else
-                            return Result.of(_trim( t, true )).withAutoDiff(autoDiff);
+                            return Result.of(_trim( t, true )).withADAction(autoDiff);
                     }
                 )
                 .setCallPreparation( call -> call )
