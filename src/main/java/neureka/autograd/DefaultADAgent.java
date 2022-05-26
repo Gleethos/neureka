@@ -73,21 +73,4 @@ public final class DefaultADAgent implements ADAgent {
         ADAgent withAD( ADAction action );
     }
 
-    /**
-     * This interface is the declaration for
-     * lambda actions for both the {@link #act(Target)} method of the {@link ADAgent} interface. <br><br>
-     *
-     * Note: Do not access the {@link GraphNode#getPayload()} of the {@link GraphNode}
-     *       passed to implementation of this.
-     *       The payload is weakly referenced, meaning that this method can return null!
-     */
-    public interface ADAction
-    {
-        /**
-         * @param target A container for the {@link GraphNode} at which the differentiation ought to be performed and error which ought to be used for the forward or backward differentiation.
-         * @return The result of the differentiation.
-         */
-        Tsr<?> act( Target<?> target );
-    }
-
 }

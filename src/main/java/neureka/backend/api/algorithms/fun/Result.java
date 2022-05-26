@@ -1,6 +1,7 @@
 package neureka.backend.api.algorithms.fun;
 
 import neureka.Tsr;
+import neureka.autograd.ADAction;
 import neureka.autograd.ADAgent;
 import neureka.autograd.DefaultADAgent;
 import neureka.common.utility.LogUtil;
@@ -21,7 +22,7 @@ public class Result
         _agent = agent;
     }
 
-    public Result withADAction( DefaultADAgent.ADAction action ) {
+    public Result withADAction( ADAction action ) {
         return this.withAutoDiff( (caller, call, forward) -> ADAgent.withAD(action) );
     }
 

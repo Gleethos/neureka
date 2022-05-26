@@ -60,7 +60,7 @@ public interface ADAgent
 {
     static DefaultADAgent.WithAD of( Tsr<?> derivative ) { return DefaultADAgent.ofDerivative( derivative ); }
 
-    static ADAgent withAD( DefaultADAgent.ADAction action ) { return of( null ).withAD( action ); }
+    static ADAgent withAD( ADAction action ) { return of( null ).withAD( action ); }
 
     /**
      *  The auto-differentiation forward or backward pass of an ADAgent

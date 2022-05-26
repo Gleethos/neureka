@@ -192,7 +192,7 @@ public interface Function
     }
 
     /**
-     *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+     *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.</b>
      */
     default Tsr<?> execute( Call<?> call ) {
         /*
@@ -262,25 +262,25 @@ public interface Function
     }
 
     /**
-     *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+     *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.</b>
      */
     Tsr<?> execute( Args arguments, Tsr<?>... tensors );
 
     /**
-     *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+     *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.</b>
      */
     default Tsr<?> execute( Tsr<?>... inputs ) { return execute( inputs, -1 ); }
 
     /**
-     *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+     *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.</b>
      */
     default Tsr<?> execute( Tsr<?>[] inputs, int j ) { return callWith(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j))).execute(inputs); }
     /**
-     *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+     *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.</b>
      */
     default Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return callWith(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j))).execute(inputs); }
     /**
-     *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+     *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.</b>
      */
     default Tsr<?> executeDerive( Tsr<?>[] inputs, int index ) { return executeDerive( inputs, index, -1 ); }
 
@@ -343,7 +343,7 @@ public interface Function
         }
 
         /**
-         *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other function.</b>
+         *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.</b>
          *
          * @param tensors The tensors which should be sent through this function.
          * @return The result from the execution of the provided tensors.
