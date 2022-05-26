@@ -7,7 +7,7 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +35,8 @@ public class FunctionInput implements Function, GradientProvider
 
     public static Function of(String equation) {
         if ( equation.charAt( 0 ) == '-' )
-            return new FunctionBuilder( Neureka.get().backend() )
-                    .build(
+            return new FunctionParser( Neureka.get().backend() )
+                    .parse(
                             equation.substring(1)+"*-1",
                             true
                     ); // TODO: This might be false!

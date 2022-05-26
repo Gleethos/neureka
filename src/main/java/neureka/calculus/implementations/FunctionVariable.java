@@ -6,7 +6,7 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,8 +80,8 @@ public final class FunctionVariable implements Function, GradientProvider
             for ( int i = 1; i < tensors.length; i++ )
                 exp.append("+I[").append(i).append("]");
 
-            return new FunctionBuilder( Neureka.get().backend() )
-                                        .build(exp.toString(), false)
+            return new FunctionParser( Neureka.get().backend() )
+                                        .parse(exp.toString(), false)
                                         .execute( tensors );
         }
         return tensors[j];

@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
 import neureka.calculus.args.Arg
-import neureka.calculus.assembly.FunctionBuilder
+import neureka.calculus.assembly.FunctionParser
 import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
 import neureka.devices.host.CPU
@@ -400,14 +400,14 @@ class Tensor_Operation_Spec extends Specification
         when :
             Tsr[] trs = new Tsr[]{x}
         and :
-            def fun = new FunctionBuilder( Neureka.get().backend() ).build("Ig[0]", false)
+            def fun = new FunctionParser( Neureka.get().backend() ).parse("Ig[0]", false)
         then :
             fun(trs).toString() == "[1]:(-8.0)"
 
         when :
             trs[0] = y
         and :
-            fun = new FunctionBuilder( Neureka.get().backend() ).build("Ig[0]", false)
+            fun = new FunctionParser( Neureka.get().backend() ).parse("Ig[0]", false)
         and :
             fun(trs)
 

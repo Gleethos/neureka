@@ -2,9 +2,7 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
 import neureka.backend.api.DeviceAlgorithm;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
@@ -12,9 +10,8 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.internal.CalcUtil;
-import neureka.devices.Device;
 import neureka.framing.Relation;
 import neureka.ndim.AbstractTensor;
 import neureka.ndim.config.NDConfiguration;
@@ -51,7 +48,7 @@ public class Reshape extends AbstractOperation
                         newForm = invert( newForm );
 
                     return Result.of(_reshaped( inputs[ inputs.length - 1 ], newForm, true ))
-                            .withADAction( target -> new FunctionBuilder( Neureka.get().backend() ).build( caller.toString(), false ).derive( new Tsr[]{ target.error() },0 ) );
+                            .withADAction( target -> new FunctionParser( Neureka.get().backend() ).parse( caller.toString(), false ).derive( new Tsr[]{ target.error() },0 ) );
                 }
             )
             .setCallPreparation( call -> call )

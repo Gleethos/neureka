@@ -39,12 +39,10 @@ package neureka.devices;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.BackendContext;
-import neureka.backend.api.BackendExtension;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
-import neureka.calculus.assembly.FunctionBuilder;
-import neureka.calculus.assembly.ParseUtil;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.common.composition.Component;
 import neureka.devices.host.CPU;
 import neureka.ndim.AbstractTensor;
@@ -53,7 +51,6 @@ import neureka.ndim.config.NDConfiguration;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Implementations of this represent computational
@@ -225,8 +222,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         if ( !currentContext.hasOperation( optimizedOperation ) )
             currentContext.addOperation( optimizedOperation );
 
-        return new FunctionBuilder( currentContext )
-                            .build(
+        return new FunctionParser( currentContext )
+                            .parse(
                                     optimizedOperation,
                                     function.numberOfArgs(),
                                     function.isDoingAD()

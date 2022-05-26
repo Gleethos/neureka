@@ -18,15 +18,15 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- *  The {@link FunctionBuilder} takes a {@link BackendContext} instance based on which it can then build
+ *  The {@link FunctionParser} takes a {@link BackendContext} instance based on which it can then build
  *  {@link Function} instances by calling one of its build methods.
  *  Usually one passes a {@link String} to be parsed to a {@link Function}.
  *  The information needed for parsing is being provided by the {@link Operation}s within the previously
  *  provided {@link BackendContext}...
  */
-public class FunctionBuilder
+public class FunctionParser
 {
-    private static Logger _LOG = LoggerFactory.getLogger(FunctionBuilder.class);
+    private static final Logger _LOG = LoggerFactory.getLogger(FunctionParser.class);
 
     private static final Pattern _variablePattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)");
     private static final Pattern _inputPattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)");
@@ -41,7 +41,7 @@ public class FunctionBuilder
      * @param context The {@link BackendContext} which will be used as a basis to parse new {@link Function}
      *                implementation instance from provided {@link String} expressions.
      */
-    public FunctionBuilder( BackendContext context ) { _context = context; }
+    public FunctionParser( BackendContext context ) { _context = context; }
     
     /**
      * @param operation The {@link Operation} based on which the {@link Function} ought to be created.
@@ -49,17 +49,17 @@ public class FunctionBuilder
      * @param doAD The flag determining if the {@link Function} built by this method should perform autograd or not.
      * @return A {@link Function} implementation instance which satisfied the supplied parameters.
      */
-    public Function build( Operation operation, int numberOfArgs, boolean doAD )
+    public Function parse( Operation operation, int numberOfArgs, boolean doAD )
     {
         if ( operation.isIndexer() )
-            return build( operation.getIdentifier() + "( I[j] )", doAD );
+            return parse( operation.getIdentifier() + "( I[j] )", doAD );
 
         String args = IntStream.iterate( 0, n -> n + 1 )
                                 .limit( numberOfArgs )
                                 .mapToObj( i -> "I[" + i + "]" )
                                 .collect( Collectors.joining( ", " ) );
 
-        return build( operation.getIdentifier() + "(" + args + ")", doAD );
+        return parse( operation.getIdentifier() + "(" + args + ")", doAD );
     }
 
     /**
@@ -67,7 +67,7 @@ public class FunctionBuilder
      * @param doAD       is used to turn autograd on or off for this function
      * @return the function which has been built from the expression
      */
-    public Function build( String expression, boolean doAD ) {
+    public Function parse( String expression, boolean doAD ) {
 
         if (
             expression.length() > 0 &&
@@ -79,7 +79,7 @@ public class FunctionBuilder
             return _context.getFunctionCache().get( expression, doAD );
 
         expression = ParseUtil.unpackAndCorrect( expression );
-        Function built = _build( expression, doAD );
+        Function built = _parse( expression, doAD );
         if ( built != null )
             _context.getFunctionCache().put( built );
         else
@@ -92,7 +92,7 @@ public class FunctionBuilder
      * @param doAD       enables or disables autograd for this function
      * @return a function which has been built by the given expression
      */
-    private Function _build( String expression, boolean doAD )
+    private Function _parse( String expression, boolean doAD )
     {
         // TODO: Remove this! It's error prone! (Operations should define parsing to some extent)
         expression = expression
@@ -220,7 +220,7 @@ public class FunctionBuilder
                                                                         possibleFunction.length()
                                                                 );
                     assert parameters != null;
-                    for ( String p : parameters ) sources.add(build(p, doAD));
+                    for ( String p : parameters ) sources.add(parse(p, doAD));
                     return new FunctionNode( _context.getOperation( oi ), sources, doAD );
                 }
             }
@@ -233,7 +233,7 @@ public class FunctionBuilder
         else if ( _variablePattern.matcher( component ).find() ) return new FunctionVariable( component );
         else if ( component.startsWith("-") ) {
             component = "-1 * "+component.substring(1);
-            return _build(component, doAD);
+            return _parse(component, doAD);
         }
         // If the component did not trigger constant/input/variable creation: -> Cleaning!
         String cleaned = ParseUtil.cleanedHeadAndTail( component );
@@ -244,7 +244,7 @@ public class FunctionBuilder
         // Let's try again:
         Function result;
         try {
-            result = build( component, doAD );
+            result = parse( component, doAD );
         } catch (Exception e) {
             throw new IllegalStateException("Failed to parse expression '"+component+"'! Cause: "+e.getCause());
         }
@@ -299,7 +299,7 @@ public class FunctionBuilder
         }
         for ( String component : foundComponents )
             sources.add(
-                    build(component, doAD) // a dangerous recursion lives here!
+                    parse(component, doAD) // a dangerous recursion lives here!
             );
 
         sources.trimToSize();

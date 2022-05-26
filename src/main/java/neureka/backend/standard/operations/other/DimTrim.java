@@ -3,10 +3,7 @@ package neureka.backend.standard.operations.other;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
-import neureka.autograd.ADAgent;
 import neureka.backend.api.DeviceAlgorithm;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.ADAgentSupplier;
 import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
@@ -15,9 +12,8 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.internal.CalcUtil;
-import neureka.devices.Device;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 
@@ -55,8 +51,8 @@ public class DimTrim extends AbstractOperation
 
                             return
                                     call.autogradMode() == AutoDiffMode.FORWARD_ONLY
-                                        ? new FunctionBuilder( Neureka.get().backend() )
-                                                            .build(caller.toString(), false)
+                                        ? new FunctionParser( Neureka.get().backend() )
+                                                            .parse(caller.toString(), false)
                                                             .derive(new Tsr[]{target.error()},0)
                                         : _pad(target.error(), new int[]{prefix, postfix}, true);
                         };

@@ -11,7 +11,7 @@ import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.operations.other.Reshape;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import org.jetbrains.annotations.Contract;
@@ -45,7 +45,7 @@ public class ConvUtil {
 
                             int d = adCall.getDerivativeIndex();
 
-                            Function deConv = new FunctionBuilder( Neureka.get().backend() ).build(
+                            Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
                                     "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
                                     false
                             );

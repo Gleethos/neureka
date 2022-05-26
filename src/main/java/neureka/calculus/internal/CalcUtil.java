@@ -9,7 +9,7 @@ import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.implementations.FunctionConstant;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
@@ -91,7 +91,7 @@ public class CalcUtil
                                                          .toArray(String[]::new)
                                             );
             Tsr<?>[] finalTensors = tensors;
-            Tsr<?> result = MemUtil.keep( tensors, () -> new FunctionBuilder( Neureka.get().backend() ).build( asStr, isDoingAD ).execute(finalTensors) );
+            Tsr<?> result = MemUtil.keep( tensors, () -> new FunctionParser( Neureka.get().backend() ).parse( asStr, isDoingAD ).execute(finalTensors) );
             for ( int i = 1; i < tensors.length; i++ )
                 _deleteIfNotIn( call.inputs(), tensors[ i ] );
 

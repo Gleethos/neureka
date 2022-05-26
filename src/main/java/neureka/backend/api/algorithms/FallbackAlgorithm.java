@@ -14,7 +14,7 @@ import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.operations.linear.MatMul;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
@@ -42,10 +42,10 @@ implements ExecutionPreparation, ADAgentSupplier
                     .withArity( arity )
                     .andImplementation(
                         call -> {
-                            Function f = new FunctionBuilder(
+                            Function f = new FunctionParser(
                                                     Neureka.get().backend()
                                                 )
-                                                .build(
+                                                .parse(
                                                         type,
                                                         call.arity() - 1,
                                                         false

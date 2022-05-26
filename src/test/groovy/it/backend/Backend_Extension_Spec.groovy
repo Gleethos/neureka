@@ -13,7 +13,7 @@ import neureka.backend.api.algorithms.fun.Result
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate
 import neureka.backend.standard.implementations.CPUImplementation
 import neureka.calculus.Function
-import neureka.calculus.assembly.FunctionBuilder
+import neureka.calculus.assembly.FunctionParser
 import neureka.calculus.internal.CalcUtil
 import neureka.devices.Device
 import neureka.devices.host.CPU
@@ -76,7 +76,7 @@ class Backend_Extension_Spec extends Specification
                                                 Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
                                                     .withAutoDiff((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward) -> {
                                                         if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-                                                        return ADAgent.withAD((t, error) -> new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                                        return ADAgent.withAD((t, error) -> new FunctionParser( Neureka.get().backend() ).parse(f.toString(), false).derive(new Tsr[]{error}, 0));
                                                     })
                                             )
                                             .setCallPreparation(

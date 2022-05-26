@@ -6,7 +6,7 @@ import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.calculus.Function
-import neureka.calculus.assembly.FunctionBuilder
+import neureka.calculus.assembly.FunctionParser
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.CLFunctionCompiler
@@ -56,8 +56,8 @@ class CLFunctionCompiler_Spec extends Specification
             var run = context.runner()
         and : 'We create a function based on our optimized operation...'
             Function fun = run {
-                            new FunctionBuilder( Neureka.get().backend() )
-                                        .build(resultOperation, 3, true)
+                            new FunctionParser( Neureka.get().backend() )
+                                        .parse(resultOperation, 3, true)
                         }
 
         then : 'This function should of course not be null!'

@@ -5,6 +5,7 @@ import neureka.Neureka;
 import neureka.calculus.Function;
 import neureka.calculus.FunctionCache;
 import neureka.calculus.Functions;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.assembly.ParseUtil;
 import org.slf4j.Logger;
 
@@ -20,7 +21,7 @@ import java.util.function.Supplier;
  *    pre-instantiated {@link Function} implementation instances.
  *    <br><br>
  *    The {@link BackendContext} initializes and stores {@link Operation} instances in various data structures
- *    for fast access and querying (Mostly used by the {@link ParseUtil} and {@link neureka.calculus.assembly.FunctionBuilder}).
+ *    for fast access and querying (Mostly used by the {@link ParseUtil} and {@link FunctionParser}).
  *    <br>
  *    {@link Operation}s are stored in simple list and map collections,
  *    namely: <br>

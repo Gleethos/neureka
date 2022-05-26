@@ -3,7 +3,7 @@ package it.calculus
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
-import neureka.calculus.assembly.FunctionBuilder
+import neureka.calculus.assembly.FunctionParser
 import neureka.devices.Device
 import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
@@ -78,7 +78,7 @@ class Tensor_Function_Spec extends Specification
             String equation, List<Tsr> inputs, Integer index, Map<List<Integer>,List<Double>> expected
     ) {
         given : "A new Function instance created from ${equation}."
-            Function f = new FunctionBuilder( Neureka.get().backend() ).build(equation, true) // TODO : test with 'doAD' : false!
+            Function f = new FunctionParser( Neureka.get().backend() ).parse(equation, true) // TODO : test with 'doAD' : false!
         and :
             inputs.each {it.to(Device.get(device))}
 

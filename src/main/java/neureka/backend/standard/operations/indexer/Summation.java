@@ -16,7 +16,7 @@ import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
@@ -127,7 +127,7 @@ public final class Summation extends AbstractOperation
                             {
                                 if ( this.supports(Convolution.class) )
                                 {
-                                    Function deConv = new FunctionBuilder( Neureka.get().backend() ).build(
+                                    Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
                                             "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                                             false
                                     );

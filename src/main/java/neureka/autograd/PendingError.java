@@ -3,7 +3,7 @@ package neureka.autograd;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.standard.memory.MemUtil;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 
 public final class PendingError<ValType>
 {
@@ -18,10 +18,10 @@ public final class PendingError<ValType>
     public void accumulate( Tsr<?> error ) {
         Tsr[] inputs = { _accumulatedError, error };
         MemUtil.keep( inputs, () -> {
-                    new FunctionBuilder(
+                    new FunctionParser(
                                 Neureka.get().backend()
                             )
-                            .build("I[ 0 ] <- (I[ 0 ] + I[ 1 ])", false)
+                            .parse("I[ 0 ] <- (I[ 0 ] + I[ 1 ])", false)
                             .call(inputs);
                     return null;
                 });

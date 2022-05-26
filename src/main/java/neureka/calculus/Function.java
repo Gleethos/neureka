@@ -46,7 +46,7 @@ import neureka.backend.standard.memory.MemUtil;
 import neureka.backend.standard.memory.MemValidator;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.implementations.FunctionInput;
 import neureka.devices.Device;
 
@@ -95,7 +95,7 @@ public interface Function
      * @return A {@link Function} instance created based on the provided {@link String}, ready to receive inputs and execute on them.
      */
     static Function of( String expression, boolean doAD ) {
-        return new FunctionBuilder( Neureka.get().backend() ).build( expression, doAD );
+        return new FunctionParser( Neureka.get().backend() ).parse( expression, doAD );
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -143,9 +143,9 @@ public interface Function
     default List<Function> getAllFunctions() {
         List<Function> allFuns = new ArrayList<>();
         allFuns.add(this);
-        for ( Function fun : this.getSubFunctions() ) {
+        for ( Function fun : this.getSubFunctions() )
             allFuns.addAll(fun.getAllFunctions());
-        }
+
         return allFuns;
     }
 
@@ -162,7 +162,7 @@ public interface Function
     //------------------------------------------------------------------------------------------------------------------
 
     default double call( double input )   { return call( new double[]{input} ); }
-    default double invoke( double input ) { return call( input               ); }
+    default double invoke( double input ) { return call( input ); }
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -171,25 +171,19 @@ public interface Function
 
 
     default double call( double... inputs )   { return call( inputs, -1 ); }
-    default double invoke( double... inputs ) { return call( inputs        ); }
+    default double invoke( double... inputs ) { return call( inputs ); }
 
 
     double derive( double[] inputs, int index, int j );
-    double derive( double[] inputs, int index        );
+    double derive( double[] inputs, int index );
 
     //------------------------------------------------------------------------------------------------------------------
 
     default <T, D extends Device<T>> Tsr<T> call( Call.Builder<T, D> call ) {
-        Tsr<T> result = (Tsr<T>) execute( call.get() );
-        result.getUnsafe().setIsIntermediate(false);
-        return result;
+        return (Tsr<T>) execute( call.get() ).getUnsafe().setIsIntermediate(false);
     }
 
-    default <T, D extends Device<T>> Tsr<T> invoke( Call.Builder<T, D> call ) {
-        Tsr<T> result = (Tsr<T>) execute( call.get() );
-        result.getUnsafe().setIsIntermediate(false);
-        return result;
-    }
+    default <T, D extends Device<T>> Tsr<T> invoke( Call.Builder<T, D> call ) { return this.call( call ); }
 
     /**
      *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.</b>
@@ -222,43 +216,39 @@ public interface Function
      * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
      */
     default CallOptions callWith( Args arguments ) {
-       return new CallOptions() {
-           @Override public Tsr<?> execute( Tsr<?>... tensors )
-           {
-               MemValidator validation = MemValidator.forInputs( tensors, ()-> Result.of(Function.this.execute( arguments, tensors )));
-               if ( validation.isWronglyIntermediate() ) {
-                   throw new IllegalStateException(
-                           "Output of function '" + Function.this + "' " +
-                           (Function.this.getOperation() != null ? "(" + Function.this.getOperation().getIdentifier() + ") " : "") +
-                           "is marked as intermediate result, despite the fact " +
-                           "that it is a member of the input array. " +
-                           "Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged " +
-                           "as 'intermediate', because they are not eligible for deletion!"
-                   );
-               }
-               if ( validation.isWronglyNonIntermediate() ) {
-                   throw new IllegalStateException(
-                           "Output of function '" + Function.this + "' " +
-                           (Function.this.getOperation() != null ? "(" + Function.this.getOperation().getIdentifier() + ") " : "") +
-                           "is neither marked as intermediate result nor a member of the input array. " +
-                           "Tensors instantiated by operations in the backend are expected to be flagged " +
-                           "as 'intermediate' in order to be eligible for deletion!"
-                   );
-               }
-               MemUtil.autoDelete( tensors );
-               return validation.getResult().get();
+       return
+       tensors -> {
+           MemValidator validation = MemValidator.forInputs( tensors, ()-> Result.of(Function.this.execute( arguments, tensors )));
+           if ( validation.isWronglyIntermediate() ) {
+               throw new IllegalStateException(
+                       "Output of function '" + Function.this + "' " +
+                       (Function.this.getOperation() != null ? "(" + Function.this.getOperation().getIdentifier() + ") " : "") +
+                       "is marked as intermediate result, despite the fact " +
+                       "that it is a member of the input array. " +
+                       "Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged " +
+                       "as 'intermediate', because they are not eligible for deletion!"
+               );
            }
+           if ( validation.isWronglyNonIntermediate() ) {
+               throw new IllegalStateException(
+                       "Output of function '" + Function.this + "' " +
+                       (Function.this.getOperation() != null ? "(" + Function.this.getOperation().getIdentifier() + ") " : "") +
+                       "is neither marked as intermediate result nor a member of the input array. " +
+                       "Tensors instantiated by operations in the backend are expected to be flagged " +
+                       "as 'intermediate' in order to be eligible for deletion!"
+               );
+           }
+           MemUtil.autoDelete( tensors );
+           return validation.getResult().get();
        };
     }
 
     default <T> Tsr<T> call( Args arguments, Tsr<T>... tensors ) {
-        Tsr<T> result = callWith( arguments ).call( tensors );
-        return result.getUnsafe().setIsIntermediate(false);
+        return callWith( arguments ).call( tensors ).getUnsafe().setIsIntermediate(false);
     }
 
     default <T> Tsr<T> invoke( Args arguments, Tsr<T>... tensors ) {
-        Tsr<T> result = callWith( arguments ).invoke( tensors );
-        return result.getUnsafe().setIsIntermediate(false);
+        return this.call( arguments, tensors );
     }
 
     /**
@@ -287,23 +277,21 @@ public interface Function
     //------------------------------------------------------------------------------------------------------------------
 
     default <T> Tsr<T> call( Tsr<T> input )   { return call( new Tsr[]{ input } ); }
-    default <T> Tsr<T> invoke( Tsr<T> input ) { return call( input );            }
+    default <T> Tsr<T> invoke( Tsr<T> input ) { return call( input ); }
 
     default <T> Tsr<T> call( List<Tsr<T>> input )   { return call( input.toArray(new Tsr[ 0 ]) ); }
-    default <T> Tsr<T> invoke( List<Tsr<T>> input ) { return call( input );                       }
+    default <T> Tsr<T> invoke( List<Tsr<T>> input ) { return call( input ); }
 
     //------------------------------------------------------------------------------------------------------------------
 
     default <T> Tsr<T> call( Tsr<T>[] inputs, int j )   {
-        Tsr<T> result = (Tsr<T>) execute( inputs, j );
-        return result.getUnsafe().setIsIntermediate(false);
+        return (Tsr<T>) execute( inputs, j ).getUnsafe().setIsIntermediate(false);
     }
 
-    default <T> Tsr<T> invoke( Tsr<T>[] inputs, int j ) { return call( inputs, j );             }
+    default <T> Tsr<T> invoke( Tsr<T>[] inputs, int j ) { return call( inputs, j ); }
 
     default <T> Tsr<T> call( Tsr<T>... inputs )   {
-        Tsr<T> result = (Tsr<T>) execute( inputs );
-        return result.getUnsafe().setIsIntermediate(false);
+        return (Tsr<T>) execute( inputs ).getUnsafe().setIsIntermediate(false);
     }
 
     default <T> Tsr<T> invoke( Tsr<T>... inputs ) { return call( inputs );             }

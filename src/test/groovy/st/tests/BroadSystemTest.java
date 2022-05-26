@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 import testutility.UnitTester_Tensor;
 
 public class BroadSystemTest
@@ -32,8 +32,8 @@ public class BroadSystemTest
         {
             Neureka.get().settings().debug().setIsDeletingIntermediateTensors(false);
             x = Tsr.of(new int[]{1}, 0.1).setRqsGradient(true);
-            Function tanh = new FunctionBuilder(Neureka.get().backend()).build("tanh(i0)", true);
-            Function tenxx = new FunctionBuilder(Neureka.get().backend()).build("i0*100", true);
+            Function tanh = new FunctionParser(Neureka.get().backend()).parse("tanh(i0)", true);
+            Function tenxx = new FunctionParser(Neureka.get().backend()).parse("i0*100", true);
             z = tenxx.call(tanh.call(x));
             tester.testTensor(z, new String[]{"[1]:(9.9668)"});
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
@@ -54,8 +54,8 @@ public class BroadSystemTest
         {
             Neureka.get().settings().debug().setIsDeletingIntermediateTensors(true);
             x = Tsr.of(new int[]{1}, 0.1d).setRqsGradient(true);
-            Function tanh = new FunctionBuilder(Neureka.get().backend()).build("tanh(i0)", true);
-            Function tenxx = new FunctionBuilder(Neureka.get().backend()).build("i0*100", true);
+            Function tanh = new FunctionParser(Neureka.get().backend()).parse("tanh(i0)", true);
+            Function tenxx = new FunctionParser(Neureka.get().backend()).parse("i0*100", true);
             z = tenxx.call(tanh.call(x));
             tester.testTensor(z, new String[]{"[1]:(9.9668)"});
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);

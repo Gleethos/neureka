@@ -2,7 +2,6 @@ package neureka.devices.opencl.utility;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
@@ -11,11 +10,10 @@ import neureka.backend.api.algorithms.fun.Result;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.implementations.FunctionInput;
 import neureka.calculus.implementations.FunctionVariable;
 import neureka.calculus.internal.CalcUtil;
-import neureka.devices.Device;
 import neureka.devices.opencl.KernelCaller;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
@@ -80,7 +78,7 @@ public final class CLFunctionCompiler {
                         .setExecution(
                             (caller, call) ->
                                 Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
-                                    .withADAction( target -> new FunctionBuilder( Neureka.get().backend() ).build(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )
+                                    .withADAction( target -> new FunctionParser( Neureka.get().backend() ).parse(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )
                         )
                         .setCallPreparation(
                             call -> {
