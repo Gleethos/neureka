@@ -11,9 +11,9 @@ import java.util.stream.Stream;
 class Query
 {
     private static final double ACCEPTABILITY = 0.42;
-    private static final String[] TAKE_FIRST = {"first", "primary", "main", "any", "anything", "something"};
-    private static final String[] WANTS_GPU = {"gpu", "nvidia", "amd", "intel", "opencl", "fpga", "radeon", "cuda", "apu", "graphics", "rdna", "rocm", "graphics"};
-    private static final String[] WANTS_CPU = {"jvm","native","host","cpu","threaded", "processor", "main processor", "central processor", "central processing unit"};
+    private static final String[] TAKE_FIRST = {"first device","first", "first gpu", "first cpu", "primary", "main", "any", "anything", "something"};
+    private static final String[] WANTS_GPU = {"first gpu", "gpu", "nvidia", "amd", "intel", "opencl", "fpga", "radeon", "cuda", "apu", "graphics", "rdna", "rocm", "graphics"};
+    private static final String[] WANTS_CPU = {"first cpu", "jvm","native","host","cpu","threaded", "processor", "main processor", "central processor", "central processing unit"};
 
     private Query() {}
 
@@ -26,6 +26,7 @@ class Query
                 .map(String::trim)
                 .filter( key -> !key.isEmpty() )
                 .flatMap( key -> key.equals("amd") ? Stream.of("amd", "advanced micro devices") : Stream.of(key) )
+                .flatMap( key -> key.equals("nvidia") ? Stream.of("nvidia", "nvidia corporation") : Stream.of(key) )
                 .toArray(String[]::new);
 
         return queryInternal( deviceType, flattened );
@@ -41,6 +42,7 @@ class Query
 
         boolean justTakeFirstOne = Arrays.asList(TAKE_FIRST).contains(key);
         boolean probablyWantsGPU = Arrays.stream(WANTS_GPU).anyMatch(key::contains);
+        probablyWantsGPU = probablyWantsGPU || key.equals("first") || key.equals("first device");
 
         double desireForCPU = Arrays.stream(WANTS_CPU)
                                         .flatMapToDouble(
@@ -60,7 +62,7 @@ class Query
                 if ( found.device() == null  ) continue;
                 if ( found.confidence() <= 0 ) continue;
                 if ( !deviceType.isAssignableFrom( found.device().getClass() ) ) continue;
-                if ( found.confidence() > ACCEPTABILITY && found.confidence() > desireForCPU || justTakeFirstOne )
+                if ( found.confidence() > ACCEPTABILITY && found.confidence() > desireForCPU || (justTakeFirstOne && probablyWantsGPU) )
                     return (D) found.device();
             }
 

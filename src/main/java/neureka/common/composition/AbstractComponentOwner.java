@@ -41,6 +41,7 @@ import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.backend.api.BackendContext;
+import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.framing.Relation;
 import neureka.optimization.Optimizer;
@@ -78,11 +79,10 @@ public abstract class AbstractComponentOwner<C>
      */
     private Component<C>[] _components = null;
 
+
     protected C _this() { return (C) this; }
 
-    private synchronized void _setComps( Component<C>[] components ) {
-        _components = components;
-    }
+    private synchronized void _setComps( Component<C>[] components ) { _components = components; }
 
     private synchronized void _addOrRemoveComp( Component<C> component, boolean remove ) {
         boolean[] changeExecuted = { false };
@@ -121,6 +121,7 @@ public abstract class AbstractComponentOwner<C>
     }
 
     private void _remove( Component<C> component ) {
+        LogUtil.nullArgCheck( component, "component", Component.class );
         if ( _components != null && _components.length != 0 ) {
             int count = 0;
             for ( int i = 0; i < _components.length; i++ )
@@ -138,7 +139,7 @@ public abstract class AbstractComponentOwner<C>
     }
 
     private void _add( Component<C> component ) {
-        if ( component   == null ) return;
+        LogUtil.nullArgCheck( component, "component", Component.class );
         if ( _components == null ) _setComps( new Component[]{ component } );
         else {
             for ( Component<C> c : _components ) if ( c == component ) return;
@@ -150,16 +151,16 @@ public abstract class AbstractComponentOwner<C>
                 Component<C> a = _components[ i - 1 ];
                 Component<C> b = _components[ i     ];
                 if ( _orderOf( b ) > _orderOf( a ) ) {
-                    _components[ i - 1 ] = b;
-                    _components[ i     ] = a;
+                    _components[ i - 1 ] = b; // Every time a component gets added, we do a little sorting.
+                    _components[ i     ] = a; // This leads to common components having faster access.
                 }
             }
         }
     }
 
     /**
-     *  The following method enables fast access to properties which describe
-     *  the "importance" of an implementation of the {@link Component} interface.
+     *  The following method enables fast access to components by assigning certain
+     *  implementations of the {@link Component} interface an order (determined by "importance").
      *  This is relevant only for performance reasons because
      *  the component owner referencing this component among
      *  others can store them according to their order to
@@ -171,7 +172,7 @@ public abstract class AbstractComponentOwner<C>
      */
     private static <T extends Component> int _orderOf( T component ) {
         Class<?> typeClass = component.getClass();
-        if ( GraphNode.class          .equals( typeClass ) ) return 6;
+        if ( GraphNode.class          .equals( typeClass ) ) return 6; // This component is accessed most often!
         if ( Device.class   .isAssignableFrom( typeClass ) ) return 5;
         if ( Relation.class           .equals( typeClass ) ) return 4;
         if ( Tsr.class                .equals( typeClass ) ) return 3;
@@ -192,7 +193,7 @@ public abstract class AbstractComponentOwner<C>
      * @param other The other owner which will be stripped of its components which are then incorporated into this owner.
      */
     protected void _transferFrom( AbstractComponentOwner<C> other ) {
-            if ( other._components != null ) {
+        if ( other._components != null ) {
             _setComps( other._components ); // Inform components about their new owner:
             for ( Component<C> c : _components )
                 c.update(
@@ -224,6 +225,7 @@ public abstract class AbstractComponentOwner<C>
      */
     public <T extends Component<?>> T get( Class<T> componentClass )
     {
+        LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
         if ( _components != null ) {
             for ( Component<?> component : _components ) {
                 if ( componentClass.isInstance( component ) ) return (T) component;
@@ -243,8 +245,9 @@ public abstract class AbstractComponentOwner<C>
      * @return The correct component or null if nothing has been found.
      */
     public <T extends Component<?>> List<T> getAll( Class<T> componentClass ) {
+        LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
         List<T> found = new ArrayList<>();
-        if ( _components != null && componentClass != null ) {
+        if ( _components != null ) {
             for ( Component<?> component : _components ) {
                 if (
                         component != null &&
@@ -266,6 +269,7 @@ public abstract class AbstractComponentOwner<C>
      */
     public <T extends Component<C>> C remove( Class<T> componentClass )
     {
+        LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
         T oldComponent = get( componentClass );
         if ( oldComponent != null ) _addOrRemoveComp( _removeOrReject( oldComponent ), true );
         if ( _components != null && _components.length == 0 ) _components = null;
@@ -279,7 +283,10 @@ public abstract class AbstractComponentOwner<C>
      * @param componentClass The class/type of component that might exist in components.
      * @return True if the component of the given type/class has been found.
      */
-    public <T extends Component<C>> boolean has( Class<T> componentClass ) { return get( componentClass ) != null; }
+    public <T extends Component<C>> boolean has( Class<T> componentClass ) {
+        LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
+        return get( componentClass ) != null;
+    }
 
     /**
      * This methods stores the passed component inside the component
@@ -293,7 +300,7 @@ public abstract class AbstractComponentOwner<C>
      */
     public <T extends Component<C>> C set( T newComponent )
     {
-        if ( newComponent == null ) return _this();
+        LogUtil.nullArgCheck( newComponent, "newComponent", Component.class );
         Component<C> oldCompartment;
         if ( _components != null ) {
             oldCompartment = (Component<C>) get( newComponent.getClass() );
@@ -321,7 +328,7 @@ public abstract class AbstractComponentOwner<C>
      * @param newComponent The component which should be added to the components list.
      * @return The same component or null if it has been rejected.
      */
-    protected abstract <T extends Component<C>> T _setOrReject(T newComponent );
+    protected abstract <T extends Component<C>> T _setOrReject( T newComponent );
 
     /**
      * This method abstract ought to be implemented further down
@@ -336,7 +343,7 @@ public abstract class AbstractComponentOwner<C>
      * @param newComponent The component which should be removed from the components list.
      * @return The same component or null if its removal has been rejected.
      */
-    protected abstract <T extends Component<C>> T _removeOrReject(T newComponent);
+    protected abstract <T extends Component<C>> T _removeOrReject( T newComponent );
 
     /**
      * This method tries to find a stored component by identifying it

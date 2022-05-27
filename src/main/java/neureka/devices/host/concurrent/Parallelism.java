@@ -10,8 +10,8 @@ import java.util.function.IntSupplier;
  * reserving a specified amount of memory per thread. The info about available cores/threads/memory comes from
  * {@link ConcreteMachine#ENVIRONMENT}.
  */
-public enum Parallelism implements IntSupplier {
-
+public enum Parallelism implements IntSupplier
+{
     /**
      * The total number of threads (incl. hyper-threads)
      */
@@ -43,12 +43,10 @@ public enum Parallelism implements IntSupplier {
 
     private final IntSupplier _supplier;
 
-    Parallelism( final IntSupplier value ) {
-        _supplier = value;
-    }
 
-    public int getAsInt() {
-        return _supplier.getAsInt();
-    }
+    Parallelism( final IntSupplier value ) { _supplier = value; }
+
+    @Override
+    public int getAsInt() { return _supplier.getAsInt(); }
 
 }

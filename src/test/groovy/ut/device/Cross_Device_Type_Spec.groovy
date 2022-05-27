@@ -58,7 +58,9 @@ class Cross_Device_Type_Spec extends Specification
         when : 'The query is being passed to the "find" method...'
             var device = Device.get(query)
 
-        then : 'The resulting Device variable has the expected type.'
+        then :
+            device != null
+        and : 'The resulting Device variable has the expected type.'
             device.class == type
 
         where :
@@ -67,7 +69,9 @@ class Cross_Device_Type_Spec extends Specification
             "jVm"                          || CPU
             "natiVe"                       || CPU
             "Threaded"                     || CPU
+            "first CPU"                    || CPU
             "openCl"                       || OpenCLDevice
+            "first gpu"                    || OpenCLDevice
             "nvidia or amd or intel"       || OpenCLDevice // This assumes that there is an amd/intel/nvidia gpu!
             "rocm or cuda or amd or nvidia"|| OpenCLDevice // This assumes that there is an amd/intel/nvidia gpu!
             "nvidia || amd or intel"       || OpenCLDevice // This assumes that there is an amd/intel/nvidia gpu!

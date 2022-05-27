@@ -265,9 +265,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param <T> The value item type parameter for the involved tensor.
      * @return The result of the operation(s) defined by the provided strings.
      */
-    public static <T> Tsr<T> of( String e1, Tsr<T> a, String e2 ) {
-        return _of( e1, a, e2 );
-    }
+    public static <T> Tsr<T> of( String e1, Tsr<T> a, String e2 ) { return _of( e1, a, e2 ); }
 
     /**
      *  Use this to conveniently operate on 2 tensors.
@@ -2964,7 +2962,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
            This is a problem if this tensor here lives somewhere other than the JVM.
            So, therefore, we invite it back home for dinner!
          */
-        return CPU.get() // This little API will temporarily migrate this to the JVM.
+        return _CPU // This little API will temporarily migrate this to the JVM.
                 .borrow( (Tsr<Object>) this )
                 .in( () -> {
                     Object data = _getData();

@@ -125,6 +125,8 @@ class Cross_Device_Spec extends Specification
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 
         expect:
+            device != null
+        and :
             new SimpleNNSystemTest(SimpleNNSystemTest.Mode.CONVOLUTION).on(device)
         and:
             if ( !(device instanceof OpenCLDevice) )

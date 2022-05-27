@@ -325,9 +325,7 @@ public class CPU extends AbstractDevice<Object>
     public int getCoreCount() { return Runtime.getRuntime().availableProcessors(); }
 
     @Override
-    public String toString() {
-        return this.getClass().getSimpleName()+"[coreCount="+getCoreCount()+"]";
-    }
+    public String toString() { return this.getClass().getSimpleName()+"[coreCount="+getCoreCount()+"]"; }
 
     /**
      *  A simple functional interface for executing a range whose implementations will
@@ -335,9 +333,7 @@ public class CPU extends AbstractDevice<Object>
      *  a thread-pool, given that the provided workload is large enough.
      */
     @FunctionalInterface
-    public interface RangeWorkload {
-        void execute( int start, int end );
-    }
+    public interface RangeWorkload {  void execute( int start, int end );  }
 
     /**
      *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
@@ -395,18 +391,14 @@ public class CPU extends AbstractDevice<Object>
          *
          * @return the number of threads
          */
-        public int getActiveThreadCount() {
-            return _pool.getActiveCount();
-        }
+        public int getActiveThreadCount() { return _pool.getActiveCount(); }
 
         /**
          * Returns the core number of threads.
          *
          * @return the core number of threads
          */
-        public int getCorePoolSize() {
-            return _pool.getCorePoolSize();
-        }
+        public int getCorePoolSize() { return _pool.getCorePoolSize(); }
 
         /**
          * Returns the approximate total number of tasks that have
@@ -417,9 +409,7 @@ public class CPU extends AbstractDevice<Object>
          *
          * @return the number of tasks
          */
-        public long getCompletedTaskCount() {
-            return _pool.getCompletedTaskCount();
-        }
+        public long getCompletedTaskCount() { return _pool.getCompletedTaskCount(); }
 
         /**
          *  This method slices the provided workload size into multiple ranges which can be executed in parallel.
