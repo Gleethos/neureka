@@ -16,6 +16,24 @@ import java.util.*;
 
 import static org.jocl.CL.*;
 
+/**
+ *  This class models the OpenCL concept of platforms, which refer to device
+ *  vendors / or vendor OpenCL runtime drivers.
+ *  For example, in a system with 1 Intel CPU, 1 Nvidia GPUs and 2 AMD GPU,
+ *  you will have 3 OpenCL platforms exposed by the OpenCL API, one for Intel,
+ *  one for Nvidia and one for AMD. With an AMD CPU and AMD GPU,
+ *  you will have a single Platform for both.
+ *  Same with Intel CPU and Intel GPU/FPGA, also 1 Platform only.
+ *
+ *  Here an example for an exception to the Platforms=vendors rule:
+ *  There is 1 Intel CPU in the system,
+ *  but the Intel OpenCL runtime and also POCL OpenCL runtime installed.
+ *  Then you have 2 Platforms (Intel and POCL),
+ *  each with the same Intel CPU as device.
+ *
+ *  For every platform exposed by the OpenCL runtime (modelled by a {@link CLContext} instance),
+ *  there will be a {@link OpenCLPlatform} instance.
+ */
 public class OpenCLPlatform {
 
     private final static Logger _LOG = LoggerFactory.getLogger( OpenCLPlatform.class );
