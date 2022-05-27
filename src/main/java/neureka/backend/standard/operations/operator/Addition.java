@@ -32,34 +32,32 @@ public class Addition extends AbstractOperation {
                 new Broadcast((executionCall, executor) -> null)
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                    ( Function f, ExecutionCall<? extends Device<?>> call ) ->
                     {
+                        if ( call.autogradMode().allowsForward() )
+                            throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         assert ctxDerivative == null;
                         int d = call.getDerivativeIndex();
-                        if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        else
-                        {
-                            Tsr<?> derivative = JunctionUtil.newTsrLike(call.input( d==0?1:0 ), 0);
-                            Tsr<?> toBeDerived = JunctionUtil.newTsrLike(call.input( d ), 0);
-                            Device device = call.getDeviceFor(Number.class);
-                            return ADAgent.of( derivative )
-                                            .withAD(
-                                                target ->
-                                                    this.getAlgorithm( Broadcast.class )
-                                                         .getImplementationFor( device )
-                                                         .runAndGetFirstTensor(
-                                                                 ExecutionCall.of(
-                                                                         toBeDerived.setIsVirtual(false),
-                                                                         derivative,
-                                                                         target.error()
-                                                                 )
-                                                                 .andArgs( Arg.DerivIdx.of(d) )
-                                                                 .running( this )
-                                                                 .on( device )
-                                                         )
-                                            );
-                        }
+                        Tsr<?> derivative = JunctionUtil.newTsrLike(call.input( d==0?1:0 ), 0);
+                        Tsr<?> toBeDerived = JunctionUtil.newTsrLike(call.input( d ), 0);
+                        Device device = call.getDeviceFor(Number.class);
+                        return ADAgent.of( derivative )
+                                        .withAD(
+                                            target ->
+                                                this.getAlgorithm( Broadcast.class )
+                                                     .getImplementationFor( device )
+                                                     .runAndGetFirstTensor(
+                                                             ExecutionCall.of(
+                                                                     toBeDerived.setIsVirtual(false),
+                                                                     derivative,
+                                                                     target.error()
+                                                             )
+                                                             .andArgs( Arg.DerivIdx.of(d) )
+                                                             .running( this )
+                                                             .on( device )
+                                                     )
+                                        );
                     }
                 )
                 .buildFunAlgorithm();

@@ -20,7 +20,7 @@ import neureka.devices.host.CPU
 import spock.lang.Specification
 import testutility.opencl.DispatchUtility
 
-class Backend_Extension_Spec extends Specification
+class Backend_MatMul_Extension_Spec extends Specification
 {
 
     def 'GEMM matrix multiplication reference implementation can be set as custom OperationType and works as expected.'(

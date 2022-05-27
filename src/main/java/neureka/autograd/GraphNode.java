@@ -257,7 +257,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
                             !srcNode.isLeave() && !srcNode._adMode.allowsForward()
                         ) {
-                            ADAgent agent = output.getAgentSupplier().supplyADAgentFor(function, call.withArgs(Arg.DerivIdx.of(i)), true);
+                            ADAgent agent = output.getAgentSupplier().supplyADAgentFor(function, call.withArgs(Arg.DerivIdx.of(i)) );
                             a.put( i, srcNode, agent );
                             _informPartialDerivative(agent);
                         } else {
@@ -276,8 +276,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                                     Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
                                                     Arg.DerivIdx.of(finalI),
                                                     Arg.Derivative.of(targetDerivative)
-                                            ),
-                                            true
+                                            )
                                     );
                                     a.put( finalI, targets.node(), agent );
                                     _informPartialDerivative(agent);
@@ -296,8 +295,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {
                         ADAgent agent = output.getAgentSupplier().supplyADAgentFor(
                                                         function,
-                                                        call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))),
-                                                        false
+                                                        call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)))
                                                     );
                         a.put( i, srcNode, agent );
                         _informPartialDerivative(agent);

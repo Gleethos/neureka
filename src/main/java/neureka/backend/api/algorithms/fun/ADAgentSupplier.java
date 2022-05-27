@@ -29,13 +29,11 @@ public interface ADAgentSupplier {
      *
      * @param function The function from where the request for auto differentiation originates.
      * @param call The execution call of the current execution which requires auto differentiation support.
-     * @param forward The truth value determining the type of differentiation that should be performed.
      * @return The resulting {@link ADAgent}.
      */
     ADAgent supplyADAgentFor(
             Function function,
-            ExecutionCall<? extends Device<?>> call,
-            boolean forward
+            ExecutionCall<? extends Device<?>> call
     );
 
 }

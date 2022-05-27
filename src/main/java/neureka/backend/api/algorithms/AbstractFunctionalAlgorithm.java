@@ -80,9 +80,9 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
      *  Besides that it may also contain context information used <br>
      *  to perform said procedures.
      */
-    public final ADAgent supplyADAgentFor(Function function, ExecutionCall<? extends Device<?>> call, boolean forward ) {
+    public final ADAgent supplyADAgentFor(Function function, ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
-        return _supplyADAgentFor.supplyADAgentFor(function, call, forward );
+        return _supplyADAgentFor.supplyADAgentFor( function, call );
     }
 
     /**
@@ -186,8 +186,6 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     /**
      *  This method receives a {@link neureka.backend.api.algorithms.fun.ADAgentSupplier} which will supply
      *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
-     *  The lambda will be called by the {@link #supplyADAgentFor(Function, ExecutionCall, boolean)} method
-     *  by any given {@link Operation} instances this algorithm belongs to.
      *
      * @param supplyADAgentFor A supplier for an {@link ADAgent} containing implementation details for autograd.
      * @return This very instance to enable method chaining.

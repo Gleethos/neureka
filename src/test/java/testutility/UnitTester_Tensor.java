@@ -232,7 +232,7 @@ public class UnitTester_Tensor extends UnitTester
                                 )
                                 .setExecution( (caller, call) ->
                                     Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
-                                        .withAutoDiff((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                                        .withAutoDiff(( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                                         {
                                             Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
                                             Function mul = Neureka.get().backend().getFunction().mul();
@@ -241,13 +241,9 @@ public class UnitTester_Tensor extends UnitTester
                                                         .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
                                             }
                                             int d = adCall.getDerivativeIndex();
-                                            if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                                            else
-                                            {
-                                                Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
-                                                return ADAgent.of( derivative )
-                                                        .withAD( target -> mul.execute( target.error(), derivative ) );
-                                            }
+                                            Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
+                                            return ADAgent.of( derivative )
+                                                    .withAD( target -> mul.execute( target.error(), derivative ) );
                                         })
                                 )
                                 .setCallPreparation(
@@ -287,7 +283,7 @@ public class UnitTester_Tensor extends UnitTester
                                     )
                                     .setExecution( (caller, call) ->
                                         Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
-                                            .withAutoDiff((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                                            .withAutoDiff(( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                                             {
                                                 Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
                                                 Function mul = Neureka.get().backend().getFunction().mul();
@@ -297,13 +293,9 @@ public class UnitTester_Tensor extends UnitTester
                                                 }
                                                 Tsr<?>[] inputs = adCall.inputs();
                                                 int d = adCall.getDerivativeIndex();
-                                                if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                                                else
-                                                {
-                                                    Tsr<?> derivative = f.executeDerive( inputs, d );
-                                                    return ADAgent.of( derivative )
-                                                            .withAD( target -> mul.execute( target.error(), derivative ) );
-                                                }
+                                                Tsr<?> derivative = f.executeDerive( inputs, d );
+                                                return ADAgent.of( derivative )
+                                                        .withAD( target -> mul.execute( target.error(), derivative ) );
                                             })
                                     )
                                     .setCallPreparation(

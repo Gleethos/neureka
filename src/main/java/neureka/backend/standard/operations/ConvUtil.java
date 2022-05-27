@@ -37,7 +37,7 @@ public class ConvUtil {
                 })
                 .setExecution(
                     ( caller, call ) -> {
-                        ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                        ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                         {
                             int d = adCall.getDerivativeIndex();
                             Function deConv = new FunctionParser( Neureka.get().backend() ).parse(

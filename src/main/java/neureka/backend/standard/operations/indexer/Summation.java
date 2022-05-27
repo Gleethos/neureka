@@ -52,8 +52,10 @@ public final class Summation extends AbstractOperation
         Broadcast operationAlgorithm = new Broadcast(JunctionUtil::forAdditions)
                 .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
                 .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                    ( Function f, ExecutionCall<? extends Device<?>> call ) ->
                     {
+                        if ( call.autogradMode().allowsForward() )
+                            throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
@@ -61,13 +63,9 @@ public final class Summation extends AbstractOperation
                                             .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
                         }
                         int d = call.getValOf( Arg.DerivIdx.class );
-                        if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        else
-                        {
-                            Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                            return ADAgent.of( derivative )
-                                            .withAD( target -> mul.execute( target.error(), derivative ) );
-                        }
+                        Tsr<?> derivative = f.executeDerive( call.inputs(), d );
+                        return ADAgent.of( derivative )
+                                        .withAD( target -> mul.execute( target.error(), derivative ) );
                     }
                 )
                 .buildFunAlgorithm();
@@ -108,7 +106,7 @@ public final class Summation extends AbstractOperation
             (caller, call) ->
                 Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ))
                     .withAutoDiff(
-                        ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                        ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                         {
                             Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
                             Function mul = Neureka.get().backend().getFunction().mul();
@@ -117,7 +115,7 @@ public final class Summation extends AbstractOperation
                                                 .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
 
                             int d = adCall.getDerivativeIndex();
-                            if ( forward )
+                            if ( adCall.autogradMode().allowsForward() )
                             {
                                 Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
                                 return ADAgent.of( derivative )

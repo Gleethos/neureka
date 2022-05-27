@@ -23,11 +23,11 @@ public class Result
     }
 
     public Result withADAction( ADAction action ) {
-        return this.withAutoDiff( (caller, call, forward) -> ADAgent.withAD(action) );
+        return this.withAutoDiff( (caller, call) -> ADAgent.withAD(action) );
     }
 
     public Result withADAgent( ADAgent agent ) {
-        return this.withAutoDiff( (caller, call, forward) -> agent );
+        return this.withAutoDiff( (caller, call) -> agent );
     }
 
     public Result withAutoDiff( ADAgentSupplier agent ) {

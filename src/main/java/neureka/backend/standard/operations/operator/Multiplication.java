@@ -87,8 +87,10 @@ public class Multiplication extends AbstractOperation
         Broadcast broadcast = new Broadcast( JunctionUtil::forMultiplications )
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                    ( Function f, ExecutionCall<? extends Device<?>> call ) ->
                     {
+                        if ( call.autogradMode().allowsForward() )
+                            throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
@@ -96,13 +98,9 @@ public class Multiplication extends AbstractOperation
                                             .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
                         }
                         int d = call.getDerivativeIndex();
-                        if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        else
-                        {
-                            Tsr<?> derivative = MemUtil.keep( call.inputs(), () -> f.executeDerive( call.inputs(), d ) );
-                            return ADAgent.of( derivative )
-                                    .withAD( target -> mul.execute( target.error(), derivative ) );
-                        }
+                        Tsr<?> derivative = MemUtil.keep( call.inputs(), () -> f.executeDerive( call.inputs(), d ) );
+                        return ADAgent.of( derivative )
+                                .withAD( target -> mul.execute( target.error(), derivative ) );
                     }
                 )
                 .buildFunAlgorithm();

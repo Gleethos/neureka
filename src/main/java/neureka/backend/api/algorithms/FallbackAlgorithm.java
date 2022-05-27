@@ -114,7 +114,7 @@ implements ExecutionPreparation, ADAgentSupplier
     }
 
     @Override
-    public ADAgent supplyADAgentFor( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
+    public ADAgent supplyADAgentFor( Function function, ExecutionCall<? extends Device<?>> call )
     {
         Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
         Function mul = Neureka.get().backend().getFunction().mul();

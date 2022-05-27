@@ -57,10 +57,10 @@ public class MatMul extends AbstractOperation
                             .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                             .setExecution(
                                 ( caller, call ) -> {
-                                    ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
+                                    ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                                     {
-                                        if ( forward ) throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
-
+                                        if ( adCall.autogradMode().allowsForward() )
+                                            throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
                                         Function matMul = Neureka.get().backend().getFunction().matMul();
                                         int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
                                         Tsr<?> derivative = adCall.input( d ).T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...

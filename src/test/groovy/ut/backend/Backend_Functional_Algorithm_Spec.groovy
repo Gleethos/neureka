@@ -20,7 +20,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
         given : 'We create a dumb test algorithm.'
             def algorithm = new TestAlgorithm()
 
-        when : 'We calle a method on the algorithm...'
+        when : 'We call a method on the algorithm...'
             caller(algorithm)
 
         then : 'This should throw an illegal state exception, simply because we have not built the algorithm properly!'
@@ -33,7 +33,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
                     { Algorithm it -> it.autoDiffModeFrom(null) },
                     { Algorithm it -> it.execute(null, null) },
                     { Algorithm it -> it.prepare(null) },
-                    { Algorithm it -> it.supplyADAgentFor(null, null, false) }
+                    { Algorithm it -> it.supplyADAgentFor(null, null) }
             ]
 
     }

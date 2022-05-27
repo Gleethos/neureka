@@ -68,9 +68,6 @@ class Backend_Extension_Spec extends Specification
         and : 'The ADAnalyzer of the mock implementation will not be called because "doAD" is set to "false".'
             0 * implementation.isSuitableFor(_)
 
-        and : 'The agent creator is never accessed because "doAD" is set to false.'
-            0 * implementation.supplyADAgentFor(_,_,_)
-
         and : 'The result is the same as the mock tensor returned by the custom call hook.'
             result == output
     }
@@ -138,7 +135,7 @@ class Backend_Extension_Spec extends Specification
             (1.._) * node.usesAD() >> true
 
         and : 'The agent creator is being accessed because "doAD" is set to true and the input requires gradients.'
-            1 * adSource.supplyADAgentFor(_,_,_) >> agent
+            1 * adSource.supplyADAgentFor(_,_) >> agent
             1 * agent.partialDerivative() >> Optional.ofNullable(null)
 
         and : 'The result is the same as the mock tensor returned by the custom call hook.'
