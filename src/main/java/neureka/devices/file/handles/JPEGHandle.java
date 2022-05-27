@@ -1,7 +1,8 @@
-package neureka.devices.file.heads;
+package neureka.devices.file.handles;
 
 import neureka.Tsr;
 import neureka.devices.Storage;
+import neureka.devices.file.FileHandle;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.I16;
@@ -16,21 +17,21 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- *  This class is one of many extensions of the {@link AbstractFileHead} which
- *  is therefore ultimately an implementation of the {@link neureka.devices.file.FileHead} interface.
- *  Like other {@link neureka.devices.file.FileHead} implementations of this class represents a file
+ *  This class is one of many extensions of the {@link AbstractFileHandle} which
+ *  is therefore ultimately an implementation of the {@link FileHandle} interface.
+ *  Like other {@link FileHandle} implementations of this class represents a file
  *  of a given type, in this case it represents a JPEG file.
  */
-public final class JPEGHead extends AbstractFileHead<JPEGHead, Number>
+public final class JPEGHandle extends AbstractFileHandle<JPEGHandle, Number>
 {
     static {
-        _LOG = LoggerFactory.getLogger( JPEGHead.class );
+        _LOG = LoggerFactory.getLogger( JPEGHandle.class );
     }
 
     int _width;
     int _height;
 
-    public JPEGHead( String fileName )
+    public JPEGHandle(String fileName )
     {
         super( fileName );
         try {
@@ -40,7 +41,7 @@ public final class JPEGHead extends AbstractFileHead<JPEGHead, Number>
         }
     }
 
-    public JPEGHead( Tsr<Number> t, String filename ) {
+    public JPEGHandle(Tsr<Number> t, String filename ) {
         super( filename );
         assert t.rank() == 3;
         assert t.shape( 2 ) == 3;

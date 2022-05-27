@@ -1,8 +1,9 @@
-package neureka.devices.file.heads;
+package neureka.devices.file.handles;
 
 
 import neureka.Tsr;
 import neureka.devices.Storage;
+import neureka.devices.file.FileHandle;
 import neureka.dtype.DataType;
 import neureka.framing.NDFrame;
 import org.slf4j.LoggerFactory;
@@ -16,15 +17,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- *  This class is one of many extensions of the {@link AbstractFileHead} which
- *  is therefore ultimately an implementation of the {@link neureka.devices.file.FileHead} interface.
- *  Like other {@link neureka.devices.file.FileHead} implementations this class represents a file
+ *  This class is one of many extensions of the {@link AbstractFileHandle} which
+ *  is therefore ultimately an implementation of the {@link FileHandle} interface.
+ *  Like other {@link FileHandle} implementations this class represents a file
  *  of a given type, in this case it represents a CSV file.
 */
-public final class CSVHead extends AbstractFileHead<CSVHead, String>
+public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
 {
     static {
-        _LOG = LoggerFactory.getLogger( CSVHead.class );
+        _LOG = LoggerFactory.getLogger( CSVHandle.class );
     }
 
     private String _tensorName;
@@ -39,7 +40,7 @@ public final class CSVHead extends AbstractFileHead<CSVHead, String>
     private Integer _numberOfBytes = null;
     private WeakReference<String[]> _rawData = null;
 
-    public CSVHead( Tsr<?> tensor, String filename )
+    public CSVHandle(Tsr<?> tensor, String filename )
     {
         super( filename );
         assert tensor.rank() == 2;
@@ -84,7 +85,7 @@ public final class CSVHead extends AbstractFileHead<CSVHead, String>
         tensor.getUnsafe().setDataType( DataType.of( String.class ) );
     }
 
-    public CSVHead(
+    public CSVHandle(
             String fileName,
             Map<String, Object> settings
     ) {

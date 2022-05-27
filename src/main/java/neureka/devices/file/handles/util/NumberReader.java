@@ -1,4 +1,4 @@
-package neureka.devices.file.heads.util;
+package neureka.devices.file.handles.util;
 
 import neureka.dtype.NumericType;
 

@@ -3,8 +3,8 @@ package ut.device
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.file.FileDevice
-import neureka.devices.file.FileHead
-import neureka.devices.file.heads.*
+import neureka.devices.file.FileHandle
+import neureka.devices.file.handles.*
 import neureka.dtype.DataType
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.I16
@@ -78,7 +78,7 @@ class FileDevice_Spec extends Specification
     }
 
     def 'A file device stores tensors in various file formats.'(
-            String path, String filename, int[] shape, Class<FileHead<?,Number>> fileHeadClass, Class<?> dataTypeClass
+            String path, String filename, int[] shape, Class<FileHandle<?,Number>> fileHandleClass, Class<?> dataTypeClass
     ) {
         given : 'A new tensor is being created for testing.'
             Tsr a = Tsr.of( shape, -8d..8d )
@@ -106,8 +106,8 @@ class FileDevice_Spec extends Specification
         and : 'The tensor is now of the expected data-type.'
             a.dataType == DataType.of( dataTypeClass )
 
-        and : 'The device contains a "FileHead" instances of the expected type.'
-            device.fileHeadOf( a ).class == fileHeadClass
+        and : 'The device contains a "FileHandle" instances of the expected type.'
+            device.fileHandleOf( a ).class == fileHandleClass
 
         when : 'Freeing the tensor...'
             device.free( a )
@@ -117,11 +117,11 @@ class FileDevice_Spec extends Specification
             !new File( path ).listFiles().any {it.name.startsWith('tensor_' + shapeStr + '_f64_') }
 
         where : 'The following parameters are being used:'
-            path             | filename            |  shape  || fileHeadClass  | dataTypeClass
-            "build/test-can" | "tensor_2x4x3_.idx" | [2,4,3] || IDXHead.class | F64.class
-            "build/test-can" | "tensor_2x4x3_.jpg" | [2,4,3] || JPEGHead.class | I16.class
-            "build/test-can" | null                | [2,4,3] || IDXHead.class  | F64.class
-            "build/test-can" | "tensor_4x3_.csv"   | [4,3]   || CSVHead.class  | String.class
+            path             | filename            |  shape  || fileHandleClass  | dataTypeClass
+            "build/test-can" | "tensor_2x4x3_.idx" | [2,4,3] || IDXHandle.class  | F64.class
+            "build/test-can" | "tensor_2x4x3_.jpg" | [2,4,3] || JPEGHandle.class | I16.class
+            "build/test-can" | null                | [2,4,3] || IDXHandle.class  | F64.class
+            "build/test-can" | "tensor_4x3_.csv"   | [4,3]   || CSVHandle.class  | String.class
     }
 
 

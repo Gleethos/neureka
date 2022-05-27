@@ -2,9 +2,9 @@ package ut.utility
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.devices.file.heads.CSVHead
-import neureka.devices.file.heads.IDXHead
-import neureka.devices.file.heads.JPEGHead
+import neureka.devices.file.handles.CSVHandle
+import neureka.devices.file.handles.IDXHandle
+import neureka.devices.file.handles.JPEGHandle
 import neureka.dtype.DataType
 import neureka.dtype.NumericType
 import neureka.dtype.custom.F64
@@ -13,18 +13,18 @@ import neureka.dtype.custom.UI8
 import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
-class FileHead_Spec extends Specification
+class FileHandle_Spec extends Specification
 {
     def setupSpec()
     {
         reportHeader """
             This specification covers the expected functionality of
-            various "FileHead" implementations.
+            various "FileHandle" implementations.
             Such implementations ought to be able to save tensors to
             a given directory in the file format that they represent.
             Functionalities like : "store", "restore" and "free" must
             behave as expected.
-            (For more information take a look a the "FileHead" & "Storage" interface)
+            (For more information take a look a the "FileHandle" & "Storage" interface)
         """
     }
 
@@ -56,7 +56,7 @@ class FileHead_Spec extends Specification
         })
 
         when : 'A new IDX file handle for the given filename is being instantiated.'
-            IDXHead idx = new IDXHead(tensor, "build/test-can/"+filename)
+            IDXHandle idx = new IDXHandle(tensor, "build/test-can/"+filename)
 
         then : 'The file will then exist at the following path: '
             new File("build/test-can/"+filename).exists()
@@ -84,7 +84,7 @@ class FileHead_Spec extends Specification
             def hash = ""
 
         when : 'The given idx file is being loaded by the "IDXHead" class into a new tensor...'
-            IDXHead idx = new IDXHead( "build/resources/test/idx/" + filename )
+        IDXHandle idx = new IDXHandle( "build/resources/test/idx/" + filename )
             Tsr loaded = idx.load()
         and : '... this new tensor is then hashed ...'
             loaded.forEach( e -> hash = ( hash + e ).digest("md5") )
@@ -134,7 +134,7 @@ class FileHead_Spec extends Specification
             def hash = ""
 
         when :
-            JPEGHead jpg = new JPEGHead( "build/resources/test/jpg/" + filename )
+            JPEGHandle jpg = new JPEGHandle( "build/resources/test/jpg/" + filename )
             Tsr loaded = jpg.load()
             loaded.forEach(e -> hash = ( hash + e ).digest('md5') )
             /*
@@ -183,7 +183,7 @@ class FileHead_Spec extends Specification
             String filename, Map<String, Object> params, int byteSize, List<Integer> shape, String expected
     ) {
         when :
-            CSVHead csv = new CSVHead( "build/resources/test/csv/" + filename, params )
+            CSVHandle csv = new CSVHandle( "build/resources/test/csv/" + filename, params )
             Tsr loaded = csv.load()
             def hash = loaded.toString().digest('md5')//.forEach( e -> hash = ( hash + e ).digest('md5') )
             //println(loaded)
@@ -232,7 +232,7 @@ class FileHead_Spec extends Specification
             !new File("build/resources/test/csv/test.csv").exists()
 
         when:
-            def csvHead = new CSVHead( t, "build/resources/test/csv/test.csv" )
+            def csvHead = new CSVHandle( t, "build/resources/test/csv/test.csv" )
             Tsr loaded = csvHead.load()
         then:
             loaded.toString() == "(2x3):[\n" +
@@ -272,7 +272,7 @@ class FileHead_Spec extends Specification
             !new File("build/resources/test/csv/test.csv").exists()
 
         when:
-            def csvHead = new CSVHead( t, "build/resources/test/csv/test.csv" )
+            def csvHead = new CSVHandle( t, "build/resources/test/csv/test.csv" )
             Tsr loaded = csvHead.load()
         then:
             loaded.toString() == "(2x3):[\n" +

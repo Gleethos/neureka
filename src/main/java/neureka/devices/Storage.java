@@ -43,11 +43,11 @@ import neureka.Tsr;
 
 /**
  *  This is an abstract interface which simply describes "a thing that stores tensors".
- *  Therefore the expected method signatures defining this abstract entity boil down
+ *  Therefore, the expected method signatures defining this abstract entity boil down
  *  to a "store" and a "restore" method.
  *  Classes like "OpenCLDevice" or "FileDevice" implement this interface indirectly (via the Device interface)
  *  because they are in essence also just entities that store tensors!
- *  Besides the "Device" interface this interface is also extended by the FileHead interface
+ *  Besides the "Device" interface this interface is also extended by the {@link neureka.devices.file.FileHandle} interface
  *  which is an internal component of the FileDevice architecture...
  *
  */

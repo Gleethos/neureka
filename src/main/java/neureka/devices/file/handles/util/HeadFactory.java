@@ -1,43 +1,43 @@
-package neureka.devices.file.heads.util;
+package neureka.devices.file.handles.util;
 
 import neureka.Tsr;
-import neureka.devices.file.FileHead;
-import neureka.devices.file.heads.CSVHead;
-import neureka.devices.file.heads.IDXHead;
-import neureka.devices.file.heads.JPEGHead;
+import neureka.devices.file.FileHandle;
+import neureka.devices.file.handles.CSVHandle;
+import neureka.devices.file.handles.IDXHandle;
+import neureka.devices.file.handles.JPEGHandle;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *  This class is a simple wrapper around "Loader" and "Saver" lambdas
- *  which instantiate FileHead classes.
+ *  which instantiate {@link FileHandle} classes.
  */
 public final class HeadFactory
 {
     public interface Loader
     {
-        FileHead load(String name, Map<String, Object> config);
+        FileHandle load(String name, Map<String, Object> config);
     }
 
     public interface Saver
     {
-        FileHead save(String name, Tsr tensor, Map<String, Object> config);
+        FileHandle save(String name, Tsr tensor, Map<String, Object> config);
     }
 
     private final Map<String, Loader> _LOADERS = new HashMap<>();
     private final Map<String, Saver> _SAVERS = new HashMap<>();
 
     public HeadFactory() {
-        _LOADERS.put("idx", (name, conf) -> new IDXHead(name));
-        _LOADERS.put("jpg", (name, conf) -> new JPEGHead(name));
+        _LOADERS.put("idx", (name, conf) -> new IDXHandle(name));
+        _LOADERS.put("jpg", (name, conf) -> new JPEGHandle(name));
         _LOADERS.put("png", (name, conf) -> null); // TODO!
-        _LOADERS.put("csv", (name, conf) -> new CSVHead(name, conf));
+        _LOADERS.put("csv", (name, conf) -> new CSVHandle(name, conf));
 
-        _SAVERS.put("idx", (name, tensor, conf) -> new IDXHead(tensor, name));
-        _SAVERS.put("jpg", (name, tensor, conf) -> new JPEGHead(tensor, name));
+        _SAVERS.put("idx", (name, tensor, conf) -> new IDXHandle(tensor, name));
+        _SAVERS.put("jpg", (name, tensor, conf) -> new JPEGHandle(tensor, name));
         _SAVERS.put("png", (name, tensor, conf) -> null); // TODO!
-        _SAVERS.put("csv", (name, tensor, conf) -> new CSVHead(tensor, name));
+        _SAVERS.put("csv", (name, tensor, conf) -> new CSVHandle(tensor, name));
     }
 
     public boolean hasLoader(String name){

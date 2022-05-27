@@ -1,8 +1,8 @@
-package neureka.devices.file.heads;
+package neureka.devices.file.handles;
 
 import neureka.Tsr;
 import neureka.devices.Storage;
-import neureka.devices.file.FileHead;
+import neureka.devices.file.FileHandle;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -14,7 +14,7 @@ import java.io.IOException;
  * @param <C> The concrete type extending this class.
  * @param <V> The value type of the data in the file represented by this class.
  */
-public abstract class AbstractFileHead<C, V> implements FileHead<C, V>
+public abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
 {
     protected static Logger _LOG;
 
@@ -22,7 +22,7 @@ public abstract class AbstractFileHead<C, V> implements FileHead<C, V>
 
     protected int _size = 0;
 
-    AbstractFileHead( String filename )
+    AbstractFileHandle(String filename )
     {
         _fileName = filename;
         if ( _fileName.equals( "" ) ) {
@@ -45,13 +45,9 @@ public abstract class AbstractFileHead<C, V> implements FileHead<C, V>
         }
     }
 
-    public int size() {
-        return _size;
-    }
+    public int size() { return _size; }
 
-    public boolean isEmpty() {
-        return _size == 0;
-    }
+    public boolean isEmpty() { return _size == 0; }
 
     public boolean contains( Tsr<V> o ) {
         return false; // TODO: implement...

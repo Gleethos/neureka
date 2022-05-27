@@ -41,7 +41,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
 
     private static final Cache<Cache.LazyEntry<String, FileDevice>> _CACHE = new Cache<>(64);
 
-    private Map<Tsr<Object>, FileHead<?, Object>> _stored = new HashMap<>();
+    private Map<Tsr<Object>, FileHandle<?, Object>> _stored = new HashMap<>();
 
     private String _directory;
     private final List<String> _loadable = new ArrayList<>();
@@ -76,7 +76,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
                     int i = file.getName().lastIndexOf( '.' );
                     if ( i > 0 ) {
                         String extension = file.getName().substring( i + 1 );
-                        if ( FileHead.FACTORY.hasLoader( extension ) ) found.add( file.getName() );
+                        if ( FileHandle.FACTORY.hasLoader( extension ) ) found.add( file.getName() );
                     }
                 }
                 _loadable.addAll( found ); // TODO! -> Update so that new files will be detected...
@@ -97,7 +97,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
         _updateFolderView();
         if ( _loadable.contains( filename ) ) {
             String extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );
-            FileHead<?,Object> head = FileHead.FACTORY.getLoader( extension ).load( _directory + "/" + filename, conf );
+            FileHandle<?,Object> head = FileHandle.FACTORY.getLoader( extension ).load( _directory + "/" + filename, conf );
             assert head != null;
             Tsr<Object> tensor = head.load();
             _stored.put( tensor, head );
@@ -108,7 +108,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
         return null;
     }
 
-    public FileHead<?, ?> fileHeadOf( Tsr<?> tensor ) { return _stored.get( tensor ); }
+    public FileHandle<?, ?> fileHandleOf( Tsr<?> tensor ) { return _stored.get( tensor ); }
 
     @Override
     public void dispose() {
@@ -120,7 +120,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
     public Device<Object> restore( Tsr<Object> tensor ) {
         if ( !this.has( tensor ) )
             throw new IllegalStateException( "The given tensor is not stored on this file device." );
-        FileHead<?, Object> head = _stored.get( tensor );
+        FileHandle<?, Object> head = _stored.get( tensor );
         try {
             head.restore( tensor );
         } catch ( Exception e ) {
@@ -133,7 +133,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
     public <T> Device<Object> store( Tsr<T> tensor )
     {
         if ( this.has( tensor ) ) {
-            FileHead<?, Object> head = _stored.get( tensor );
+            FileHandle<?, Object> head = _stored.get( tensor );
             try {
                 head.store( tensor );
             } catch ( Exception e ) {
@@ -168,10 +168,10 @@ public class FileDevice extends AbstractBaseDevice<Object>
             extension = filename.substring( i + 1 );
             fullFileName = filename;
         }
-        if ( FileHead.FACTORY.hasSaver( extension ) ) {
+        if ( FileHandle.FACTORY.hasSaver( extension ) ) {
             _stored.put(
                     (Tsr<Object>) tensor,
-                    FileHead.FACTORY.getSaver(extension).save( _directory + "/" + fullFileName, tensor, configurations )
+                    FileHandle.FACTORY.getSaver(extension).save( _directory + "/" + fullFileName, tensor, configurations )
             );
             tensor.setIsOutsourced(true);
         }
@@ -191,7 +191,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
     {
         if ( !this.has( tensor ) )
             throw new IllegalStateException( "The given tensor is not stored on this file device." );
-        FileHead<?,Object> head = _stored.get( tensor );
+        FileHandle<?,Object> head = _stored.get( tensor );
         try {
             head.free();
         } catch ( Exception e ) {
@@ -232,7 +232,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
         Tsr<Object> oldOwner = changeRequest.getOldOwner();
         Tsr<Object> newOwner = changeRequest.getNewOwner();
         if ( _stored.containsKey( oldOwner ) ) {
-            FileHead<?, Object> head = _stored.get( oldOwner );
+            FileHandle<?, Object> head = _stored.get( oldOwner );
             _stored.remove( oldOwner );
             _stored.put( newOwner, head );
         }

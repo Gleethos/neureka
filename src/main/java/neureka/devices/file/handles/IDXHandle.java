@@ -1,10 +1,11 @@
-package neureka.devices.file.heads;
+package neureka.devices.file.handles;
 
 
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.devices.file.heads.util.NumberReader;
+import neureka.devices.file.FileHandle;
+import neureka.devices.file.handles.util.NumberReader;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
@@ -18,15 +19,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- *  This class is one of many extensions of the {@link AbstractFileHead} which
- *  is therefore ultimately an implementation of the {@link neureka.devices.file.FileHead} interface.
- *  Like other {@link neureka.devices.file.FileHead} implementations this class represents a file
+ *  This class is one of many extensions of the {@link AbstractFileHandle} which
+ *  is therefore ultimately an implementation of the {@link FileHandle} interface.
+ *  Like other {@link FileHandle} implementations this class represents a file
  *  of a given type, in this case it represents a IDX file.
 */
-public final class IDXHead extends AbstractFileHead<IDXHead, Number>
+public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
 {
     static {
-        _LOG = LoggerFactory.getLogger( IDXHead.class );
+        _LOG = LoggerFactory.getLogger( IDXHandle.class );
     }
     private DataType<?> _dataType;
     private int _dataOffset;
@@ -54,7 +55,7 @@ public final class IDXHead extends AbstractFileHead<IDXHead, Number>
                                                                 )
                                                         );
 
-    public IDXHead( String fileName )
+    public IDXHandle(String fileName )
     {
         super( fileName );
         try {
@@ -65,7 +66,7 @@ public final class IDXHead extends AbstractFileHead<IDXHead, Number>
         }
     }
 
-    public IDXHead( Tsr<Number> t, String filename ) {
+    public IDXHandle(Tsr<Number> t, String filename ) {
         super( filename );
         _shape = t.getNDConf().shape();
         _dataType = t.getDataType();
@@ -102,7 +103,7 @@ public final class IDXHead extends AbstractFileHead<IDXHead, Number>
 
 
     @Override
-    public <T extends Number> IDXHead store( Tsr<T> tensor )
+    public <T extends Number> IDXHandle store(Tsr<T> tensor )
     {
         Iterator<T> data = tensor.iterator();
         FileOutputStream fos;
