@@ -9,7 +9,7 @@ class BackPropTargets<V>
     private final int _index;
     private final List<ADAgent> _agents;
 
-    public BackPropTargets(int index, GraphNode<V> node, List<ADAgent> agents ) {
+    public BackPropTargets( int index, GraphNode<V> node, List<ADAgent> agents ) {
         _node = node;
         _index = index;
         _agents = Collections.unmodifiableList(agents);

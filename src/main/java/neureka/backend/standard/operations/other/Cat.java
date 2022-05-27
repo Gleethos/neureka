@@ -2,7 +2,6 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.GraphNode;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.algorithms.fun.AutoDiffMode;
 import neureka.backend.api.algorithms.fun.Result;
@@ -70,9 +69,9 @@ public class Cat extends AbstractOperation {
                     return
                         Result.of(c)
                             .withADAction( target -> {
-                                if ( target.index() == 0 ) {
+                                if ( target.inputIndex() == 0 ) {
                                     return target.error().slice().axis(dim).from(0).to(aAxis-1).get();
-                                } else if ( target.index() == 1 ) {
+                                } else if ( target.inputIndex() == 1 ) {
                                     return target.error().slice().axis(dim).from(aAxis).to(newAxis-1).get();
                                 } else
                                     throw new IllegalArgumentException("Error shape not suitable for back-prop!");

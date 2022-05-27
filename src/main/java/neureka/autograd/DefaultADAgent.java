@@ -10,7 +10,7 @@ import java.util.Optional;
  *  {@link ADAgent} stands for "Auto-Differentiation-Agent", meaning
  *  that implementations of this class are responsible for managing
  *  forward- and reverse- mode differentiation actions.
- *  These differentiation actions are performed through the "{@link ADAgent#act(Target)}"
+ *  These differentiation actions are performed through the "{@link ADAgent#act(ADTarget)}"
  *  method which are being called
  *  by instances of the {@link GraphNode} class during propagation.
  *  An {@link ADAgent} may also wrap and expose a partial derivative
@@ -40,7 +40,7 @@ public final class DefaultADAgent implements ADAgent {
     private DefaultADAgent( Tsr<?> derivative, ADAction action ) { _partialDerivative = derivative; _action = action; }
 
     @Override
-    public <T> Tsr<T> act( Target<T> target ) {
+    public <T> Tsr<T> act( ADTarget<T> target ) {
         if ( _action == null )
             throw new IllegalStateException(
                 "Cannot perform propagation because this "+ADAgent.class.getSimpleName()+" does have an auto-diff implementation."

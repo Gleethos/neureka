@@ -39,12 +39,7 @@ public class ConvUtil {
                     ( caller, call ) -> {
                         ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ) ->
                         {
-                            Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
-                            if ( forward )
-                                throw new IllegalArgumentException("Convolution does not support forward-AD!");
-
                             int d = adCall.getDerivativeIndex();
-
                             Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
                                     "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
                                     false

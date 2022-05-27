@@ -257,11 +257,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
                             !srcNode.isLeave() && !srcNode._adMode.allowsForward()
                         ) {
-                            ADAgent agent = output.getAgentSupplier().supplyADAgentFor(
-                                    function,
-                                    call.withArgs(Arg.DerivIdx.of(i), Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))),
-                                    true
-                            );
+                            ADAgent agent = output.getAgentSupplier().supplyADAgentFor(function, call.withArgs(Arg.DerivIdx.of(i)), true);
                             a.put( i, srcNode, agent );
                             _informPartialDerivative(agent);
                         } else {
@@ -272,7 +268,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                 ( targets, localAgent ) ->
                                 {
                                     // The agent multiplies the local derivative with its stored partial derivative...
-                                    Tsr<?> targetDerivative = localAgent.act( new Target<>(targets.index(), this, localDerivative) );
+                                    Tsr<?> targetDerivative = localAgent.act( new ADTarget<>(targets.index(), this, localDerivative) );
                                     // ...this is now the new partial derivative with respect to the target node!
                                     ADAgent agent = output.getAgentSupplier().supplyADAgentFor(
                                             function,
@@ -661,7 +657,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         error.getUnsafe().setIsIntermediate( false );
         new ArrayList<>(_targetsToAgents).forEach( ref -> {
             for ( ADAgent a : ref.agents() )
-                action.accept( ref.node(), a.act( new Target<>(ref.index(), ref.node(), error) ) );
+                action.accept( ref.node(), a.act( new ADTarget<>(ref.index(), ref.node(), error) ) );
         });
     }
 

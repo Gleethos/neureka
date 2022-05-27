@@ -70,7 +70,7 @@ public interface ADAgent
      * @param <T> The type argument of the tensor that is being used.
      * @return The result of a forward or backward mode auto differentiation.
      */
-    <T> Tsr<T> act( Target<T> target );
+    <T> Tsr<T> act( ADTarget<T> target );
 
     /**
      * @return An optional partial derivative which may not be present if the agent does not wrap a partial derivative...
