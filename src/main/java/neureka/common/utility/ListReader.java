@@ -110,11 +110,11 @@ public final class ListReader {
             ListReader reader = new ListReader(
                                         data,
                                     0,
-                                        this._growingData,
-                                        this._growingShape,
+                                        _growingData,
+                                        _growingShape,
                                         valueFilter
                                     );
-            this._type = reader._type;
+            _type = reader._type;
         }
 
         public Class<?> getType() { return _type; }

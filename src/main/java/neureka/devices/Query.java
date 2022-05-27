@@ -11,9 +11,9 @@ import java.util.stream.Stream;
 class Query
 {
     private static final double ACCEPTABILITY = 0.42;
-    private static final String[] takeFirst = {"first", "primary", "main", "any", "anything", "something"};
-    private static final String[] wantsGPU = {"gpu", "nvidia", "amd", "intel", "opencl", "fpga", "radeon", "cuda", "apu", "graphics", "rdna", "rocm", "graphics"};
-    private static final String[] wantsCPU = {"jvm","native","host","cpu","threaded", "processor", "main processor", "central processor", "central processing unit"};
+    private static final String[] TAKE_FIRST = {"first", "primary", "main", "any", "anything", "something"};
+    private static final String[] WANTS_GPU = {"gpu", "nvidia", "amd", "intel", "opencl", "fpga", "radeon", "cuda", "apu", "graphics", "rdna", "rocm", "graphics"};
+    private static final String[] WANTS_CPU = {"jvm","native","host","cpu","threaded", "processor", "main processor", "central processor", "central processing unit"};
 
     private Query() {}
 
@@ -39,10 +39,10 @@ class Query
         if ( searchKeys.length == 0 ) key = "";
         else key = String.join(" ", searchKeys).toLowerCase();
 
-        boolean justTakeFirstOne = Arrays.asList(takeFirst).contains(key);
-        boolean probablyWantsGPU = Arrays.stream(wantsGPU).anyMatch(key::contains);
+        boolean justTakeFirstOne = Arrays.asList(TAKE_FIRST).contains(key);
+        boolean probablyWantsGPU = Arrays.stream(WANTS_GPU).anyMatch(key::contains);
 
-        double desireForCPU = Arrays.stream(wantsCPU)
+        double desireForCPU = Arrays.stream(WANTS_CPU)
                                         .flatMapToDouble(
                                             cpuWord ->
                                                 Arrays.stream(searchKeys)

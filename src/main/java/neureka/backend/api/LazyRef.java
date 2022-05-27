@@ -16,7 +16,7 @@ final class LazyRef<V> {
     private Supplier<V> _source;
     private V _variable = null;
 
-    private LazyRef(Supplier<V> source) { this._source = source; }
+    private LazyRef(Supplier<V> source) { _source = source; }
 
     public V get() {
         if ( _source == null ) return _variable;

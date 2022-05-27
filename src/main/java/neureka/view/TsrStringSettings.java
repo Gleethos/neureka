@@ -44,7 +44,7 @@ public final class TsrStringSettings {
 
     public TsrStringSettings clone() {
         TsrStringSettings clone = new TsrStringSettings(() -> false);
-        this._imposeOn(clone);
+        _imposeOn(clone);
         return clone;
     }
 

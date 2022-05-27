@@ -12,7 +12,7 @@ public class CLSettings {
     }
 
     public CLSettings setAutoConvertToFloat(boolean autoConvertToFloat) {
-        this._autoConvertToFloat = autoConvertToFloat;
+        _autoConvertToFloat = autoConvertToFloat;
         return this;
     }
 
