@@ -77,6 +77,4 @@ public interface ADAgent
      */
     Optional<Tsr<?>> partialDerivative();
 
-    String toString();
-
 }
