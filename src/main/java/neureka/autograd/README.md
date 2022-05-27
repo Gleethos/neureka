@@ -8,7 +8,7 @@ In order to achieve this, occurring computations are being recorded in a computa
 This graph is made up of GraphNode instances which store both references to parent and child nodes.
 
 When calling variations of the `backward(..)` method on a tensor with tracked computation, 
-then the GraphNode instances start recursively traversing the graph while also propagating
+then the `GraphNode` instances start recursively traversing the graph while also propagating
 a given error to tensors which require gradients.
 
 ---

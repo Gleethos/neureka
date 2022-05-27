@@ -10,7 +10,7 @@ import neureka.Tsr;
  *
  * @param <V>
  */
-public class ADTarget<V>
+public final class ADTarget<V>
 {
     private final int _inputIndex;
     private final GraphNode<V> _node;

@@ -3,7 +3,6 @@ package neureka.backend.api.algorithms.fun;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.autograd.ADAgent;
-import neureka.autograd.DefaultADAgent;
 import neureka.common.utility.LogUtil;
 
 /**

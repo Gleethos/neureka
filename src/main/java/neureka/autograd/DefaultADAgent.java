@@ -21,9 +21,9 @@ import java.util.Optional;
  *
  *  So in essence this class is a container for a lambda as well as an optional derivative.
  */
-public final class DefaultADAgent implements ADAgent {
+final class DefaultADAgent implements ADAgent {
 
-    public static WithAD ofDerivative( Tsr<?> derivative ) {
+    public static WithADAction ofDerivative( Tsr<?> derivative ) {
         return action -> new DefaultADAgent( derivative, action );
     }
     
@@ -67,10 +67,6 @@ public final class DefaultADAgent implements ADAgent {
     public String toString() {
         if ( this.partialDerivative().isPresent() ) return partialDerivative().get().toString();
         return "";
-    }
-
-    public interface WithAD {
-        ADAgent withAD( ADAction action );
     }
 
 }

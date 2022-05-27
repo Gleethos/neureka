@@ -3,7 +3,7 @@ package neureka.autograd;
 import java.util.Collections;
 import java.util.List;
 
-class BackPropTargets<V>
+final class BackPropTargets<V>
 {
     private final GraphNode<V> _node;
     private final int _index;
