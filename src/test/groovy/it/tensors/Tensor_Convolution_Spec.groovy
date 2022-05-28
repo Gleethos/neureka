@@ -7,6 +7,7 @@ import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.ndim.config.NDConfiguration
 import neureka.view.TsrStringSettings
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 class Tensor_Convolution_Spec extends Specification
@@ -120,7 +121,7 @@ class Tensor_Convolution_Spec extends Specification
                     "-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, ... + 9554 more]")
     }
 
-
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null }) // We need to assure that this system supports OpenCL!
     def 'Very simple manual convolution produces expected result.'(
             Device device
     ) {

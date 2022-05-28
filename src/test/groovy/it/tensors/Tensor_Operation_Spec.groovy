@@ -243,6 +243,7 @@ class Tensor_Operation_Spec extends Specification
             ( a %= c                    ).toString().contains("(-1.0)")
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null }) // We need to assure that this system supports OpenCL!
     def 'Simple slice addition produces expected result.'(
             Device device
     ) {

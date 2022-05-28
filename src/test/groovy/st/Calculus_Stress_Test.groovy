@@ -8,6 +8,7 @@ import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
 import neureka.dtype.DataType
 import neureka.view.TsrStringSettings
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 class Calculus_Stress_Test extends Specification
@@ -31,6 +32,7 @@ class Calculus_Stress_Test extends Specification
         })
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null }) // We need to assure that this system supports OpenCL!
     def 'Stress test runs error free and produces expected result'(
         Device device
     ) {
@@ -100,6 +102,7 @@ class Calculus_Stress_Test extends Specification
             [2, 1, 3]    || "(2x1x1x1x2):[29.0, 2.0, 2.0, 2.0]"
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null }) // We need to assure that this system supports OpenCL!
     def 'The broadcast operation stress test runs error free and produces expected result'(
             Device device,
             List<Integer> shape1, List<Integer> shape2,
