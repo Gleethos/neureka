@@ -8,6 +8,10 @@ import neureka.devices.host.CPU;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+/**
+ *  An internal class which queries the backend for {@link Device} instances based on a provided device
+ *  type and an array of search keys!
+ */
 class Query
 {
     private static final double ACCEPTABILITY = 0.42;

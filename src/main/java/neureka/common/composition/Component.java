@@ -26,7 +26,7 @@ public interface Component<O>
      *  given component about a state change related to said component.
      *  They are used by component owners to communicate and
      *  negotiate update events to their components using the {@link IsBeing} enum and
-     *  some useful methods providing both a context for a component as well as the ability
+     *  some useful methods providing both a context for a component and the ability
      *  for the component to trigger the state change itself.
      *
      * @param <O> The type parameter representing the concrete type of the component owner.

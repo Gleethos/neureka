@@ -112,11 +112,11 @@ public final class SettingsLoader
                 _LOG.warn("Illegal value '"+value+"' found for property name '"+key+"' in library settings.");
                 return this;
             }
-            String asString = (String) value;
+            String asString = value.toString();
             T toBeAssigned = null;
             if ( typeClass == Class.class ) {
                 try {
-                    try { getClass().getClassLoader().loadClass("neureka.dtype.custom."+asString); } catch (Exception e) {}
+                    try { getClass().getClassLoader().loadClass("neureka.dtype.custom."+asString); } catch (Exception ignored) {}
                     toBeAssigned = (T) Class.forName("neureka.dtype.custom."+asString);
                 }
                 catch ( ClassNotFoundException e ) {
@@ -174,14 +174,6 @@ public final class SettingsLoader
             _setup_source = instance.utility().readResource("scripting_setup.groovy");
         }
         try {
-            /*
-            String version = GroovySystem.getVersion();
-            if (Integer.parseInt(version.split("\\.")[ 0 ]) < 2) {
-                throw new IllegalStateException(
-                        "Wrong groovy version "+version+" found! Version 2.0.0 or greater required."
-                );
-            }
-            */
             scriptConsumer.accept(_settings_source);
             scriptConsumer.accept(_setup_source);
         } catch (Exception e) {

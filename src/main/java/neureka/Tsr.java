@@ -332,7 +332,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (List<?>) args[ 1 ] ).toArray() : args[ 1 ];
         if ( args[ 0 ] instanceof Object[] ) {
             if ( ( (Object[]) args[ 0 ] )[ 0 ] instanceof Integer || ((Object[])args[ 0 ])[ 0 ] instanceof Double) {
-                args[ 0 ] = DataConverter.get().convert((Object[]) args[ 0 ], int[].class);
+                args[ 0 ] = DataConverter.get().convert( args[ 0 ], int[].class );
             }
         }
         //CASES:
@@ -1641,16 +1641,15 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This method is responsible for incrementing
-     *  the "_version" field variable which represents the version of the data of this tensor.
-     *  Meaning :
-     *  Every time the underlying data (_value) changes this version ought to increment alongside.
-     *  The method is called during the execution procedure.
+     * This method is responsible for incrementing
+     * the "_version" field variable which represents the version of the data of this tensor.
+     * Meaning :
+     * Every time the underlying data (_value) changes this version ought to increment alongside.
+     * The method is called during the execution procedure.
      *
      * @param call The context object containing all relevant information that defines a call for tensor execution.
-     * @return This very tensor instance. (factory pattern)
      */
-    private Tsr<V> _incrementVersionBecauseOf( ExecutionCall<?> call ) {
+    private void _incrementVersionBecauseOf( ExecutionCall<?> call ) {
         if ( Neureka.get().settings().autograd().isPreventingInlineOperations() ) {
             _version++;
             GraphNode<?> node = get( GraphNode.class );
@@ -1663,7 +1662,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 }
             }
         }
-        return this;
     }
 
     /**
@@ -1708,14 +1706,13 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return new Iterator<V>()
         {
             private int _count = 0;
-            private final int _size = size();
+            private final int _size = Tsr.this.size();
 
-            @Override
-            public boolean hasNext() { return _count != _size; }
+            @Override public boolean hasNext() { return _count != _size; }
 
             @Override
             public V next() {
-                V value = getDataAt( _ndi.i() );
+                V value = Tsr.this.getDataAt( _ndi.i() );
                 _ndi.increment();
                 _count ++;
                 return value;
@@ -2973,10 +2970,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                         else
                             _LOG.error("Invalid tensor state encountered! Cannot map a tensor without data.");
                     }
-                    Object newData = null;
+                    Object newData;
                     String failMessage = "Conversion to type "+typeClass+" not yet supported.";
                     if ( Number.class.isAssignableFrom(typeClass) ) {
-                        java.util.function.Function<Integer, Number> access = null;
+                        java.util.function.Function<Integer, Number> access;
                         if ( this.getValueClass() == Integer.class ) {
                             int[] sourceData = (int[]) _getData();
                             access = (i -> (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));
@@ -3146,7 +3143,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         if ( typeClass == Tsr.class ) return (T) this;
         if ( Number.class.isAssignableFrom(this.valueClass()) && Number.class.isAssignableFrom(typeClass) ) {
             DataConverter converter = DataConverter.get();
-            return (T) converter.convert( mean().at(0).get(), typeClass );
+            return converter.convert( mean().at(0).get(), typeClass );
         }
         if ( typeClass == String.class )
             return (T) this.toString();

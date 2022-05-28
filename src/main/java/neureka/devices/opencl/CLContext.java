@@ -36,7 +36,7 @@ import static org.jocl.CL.clGetPlatformIDs;
  */
 public final class CLContext implements BackendExtension
 {
-    private static Logger _LOG = LoggerFactory.getLogger(CLContext.class);
+    private static final Logger _LOG = LoggerFactory.getLogger(CLContext.class);
 
     private final List<OpenCLPlatform> _platforms = new ArrayList<>();
     private final CLSettings _settings = new CLSettings();

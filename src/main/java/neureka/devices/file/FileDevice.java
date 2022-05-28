@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
+import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import neureka.common.utility.Cache;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  *  reads the files within this directory making the tensors accessible.
  *  Tensors on a file device however are not loaded onto memory entirely, instead
  *  a mere file handle for each "file tensor" is being instantiated.
- *  Therefore tensors that are stored on this device are not fit for computation.
+ *  Therefore, tensors that are stored on this device are not fit for computation.
  *  The "get(..)" method has to be called instead.
  *
  *  The abstraction provided by the "Device" interface
@@ -41,17 +42,19 @@ public class FileDevice extends AbstractBaseDevice<Object>
 
     private static final Cache<Cache.LazyEntry<String, FileDevice>> _CACHE = new Cache<>(64);
 
-    private Map<Tsr<Object>, FileHandle<?, Object>> _stored = new HashMap<>();
 
-    private String _directory;
+    private final String _directory;
     private final List<String> _loadable = new ArrayList<>();
     private final List<String> _loaded = new ArrayList<>();
+    private final Map<Tsr<Object>, FileHandle<?, Object>> _stored = new HashMap<>();
+
 
     /**
      * @param path The directory path for which the responsible {@link FileDevice} instance ought to be returned.
      * @return A {@link FileDevice} instance representing the provided directory path and all compatible files within it.
      */
     public static FileDevice at( String path ) {
+        LogUtil.nullArgCheck( path, "path", String.class );
         return _CACHE.process( new Cache.LazyEntry<>( path, FileDevice::new ) ).getValue();
     }
 
@@ -94,6 +97,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
     public <V> Tsr<V> load( String filename ) throws IOException { return load( filename, null ); }
 
     public <V> Tsr<V> load( String filename, Map<String, Object> conf ) throws IOException {
+        LogUtil.nullArgCheck(filename, "filename", String.class);
         _updateFolderView();
         if ( _loadable.contains( filename ) ) {
             String extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );
@@ -108,16 +112,21 @@ public class FileDevice extends AbstractBaseDevice<Object>
         return null;
     }
 
-    public FileHandle<?, ?> fileHandleOf( Tsr<?> tensor ) { return _stored.get( tensor ); }
+    public FileHandle<?, ?> fileHandleOf( Tsr<?> tensor ) {
+        LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
+        return _stored.get( tensor );
+    }
 
     @Override
     public void dispose() {
-            _stored = null;
-            _directory = null;
+        _stored.clear();
+        _loadable.clear();
+        _loaded.clear();
     }
 
     @Override
     public Device<Object> restore( Tsr<Object> tensor ) {
+        LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
         if ( !this.has( tensor ) )
             throw new IllegalStateException( "The given tensor is not stored on this file device." );
         FileHandle<?, Object> head = _stored.get( tensor );
@@ -130,8 +139,8 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T> Device<Object> store( Tsr<T> tensor )
-    {
+    public <T> Device<Object> store( Tsr<T> tensor ) {
+        LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
         if ( this.has( tensor ) ) {
             FileHandle<?, Object> head = _stored.get( tensor );
             try {
@@ -143,20 +152,20 @@ public class FileDevice extends AbstractBaseDevice<Object>
         }
         String filename = tensor.shape().stream().map( Object::toString ).collect(Collectors.joining("x"));
         filename = "tensor_" + filename + "_" + tensor.getDataType().getRepresentativeType().getSimpleName().toLowerCase();
-        filename = filename + "_" + java.time.LocalDate.now().toString();
+        filename = filename + "_" + java.time.LocalDate.now();
         filename = filename + "_" + java.time.LocalTime.now().toString();
         filename = filename.replace( ".", "_" ).replace( ":","-" ) + "_.idx";
         store( tensor, filename );
         return this;
     }
 
-    public <T> FileDevice store(Tsr<T> tensor, String filename )
-    {
-        return store( tensor, filename, null );
+    public <T> FileDevice store( Tsr<T> tensor, String filename ) {
+        return this.store( tensor, filename, null );
     }
 
-    public <T> FileDevice store(Tsr<T> tensor, String filename, Map<String, Object> configurations )
-    {
+    public <T> FileDevice store( Tsr<T> tensor, String filename, Map<String, Object> configurations ) {
+        LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
+        LogUtil.nullArgCheck( filename, "filename", String.class );
         String fullFileName;
         String extension;
         int i = filename.lastIndexOf( '.' );
@@ -179,16 +188,17 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T> Device<Object> store(Tsr<T> tensor, Tsr<T> parent ) { throw new IllegalStateException(); }
+    public <T> Device<Object> store( Tsr<T> tensor, Tsr<T> parent ) { throw new IllegalStateException(); }
 
     @Override
-    public <T> boolean has(Tsr<T> tensor ) {
+    public <T> boolean has( Tsr<T> tensor ) {
+        LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
         return _stored.containsKey( tensor );
     }
 
     @Override
-    public <T> Device<Object> free(Tsr<T> tensor )
-    {
+    public <T> Device<Object> free( Tsr<T> tensor ) {
+        LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
         if ( !this.has( tensor ) )
             throw new IllegalStateException( "The given tensor is not stored on this file device." );
         FileHandle<?,Object> head = _stored.get( tensor );
@@ -202,7 +212,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T> Access<T> access(Tsr<T> tensor) {
+    public <T> Access<T> access( Tsr<T> tensor) {
         throw new IllegalAccessError(
                 this.getClass().getSimpleName()+" instances do not support accessing the state of a stored tensor."
             );
@@ -216,9 +226,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public Collection<Tsr<Object>> getTensors() {
-        return _stored.keySet();
-    }
+    public Collection<Tsr<Object>> getTensors() { return _stored.keySet(); }
 
     @Override
     public Operation optimizedOperationOf( Function function, String name ) {

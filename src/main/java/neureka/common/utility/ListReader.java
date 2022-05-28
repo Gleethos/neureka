@@ -12,8 +12,8 @@ import java.util.stream.Stream;
  *  information which can be used to instantiate a tensor,
  *  namely: A flat data array, a shape array and a type class.
  */
-public final class ListReader {
-
+public final class ListReader
+{
     private final Class<?> _type;
     private final int _size;
 
@@ -44,12 +44,13 @@ public final class ListReader {
                                                     .map( valueFilter )
                                                     .collect(Collectors.toList());
 
-            long leaves = list.stream().filter( o -> _isLeave(o) ).count();
+            long leaves = list.stream().filter(this::_isLeave).count();
             if ( leaves != list.size() && leaves != 0 ) {
                 String message = "Inconsistent degree of list nesting encountered at depth " + depth + ".";
                 throw new IllegalArgumentException(message);
             }
             if ( growingShape.size() == depth ) growingShape.add(list.size());
+
             readers = list.stream()
                            .map( o -> new ListReader( o, depth + 1, growingData, growingShape, valueFilter ) )
                            .collect(Collectors.toList());
@@ -67,14 +68,14 @@ public final class ListReader {
 
     private Class<?> _findType( List<ListReader> readers ) {
         Supplier<Stream<Class<?>>> types = () -> readers.stream().map(r -> r._type );
-        Class<?> firstType = types.get().findFirst().get();
+        Class<?> firstType = types.get().findFirst().orElse(Object.class);
         long numberOfSameType = types.get().filter( t -> t == firstType ).count();
         if ( numberOfSameType != readers.size() ) {
             String message = "Type inconsistency encountered. Not all leave elements are of the same type!\n" +
                                 "Expected type '" +
                                             firstType.getSimpleName() +
                                 "', but encountered '" +
-                                            types.get().filter( t -> t != firstType ).findAny().get().getSimpleName() +
+                                            types.get().filter( t -> t != firstType ).findAny().orElse(Object.class).getSimpleName() +
                                 "'.";
             throw new IllegalArgumentException(message);
         }
@@ -83,20 +84,20 @@ public final class ListReader {
 
     private int _findSize( List<ListReader> readers, int depth ) {
         Supplier<Stream<Integer>> sizes = () -> readers.stream().map(r -> r._size );
-        int firstSize = sizes.get().findFirst().get();
+        int firstSize = sizes.get().findFirst().orElse(0);
         long numberOfSameSize = sizes.get().filter( s -> s == firstSize ).count();
         if ( numberOfSameSize != readers.size() ) {
             String message = "Size inconsistency encountered at nest level '"+depth+"'. Not all nested lists are equally sized.\n" +
-                            "Expected size '"+firstSize+"', but encountered '"+sizes.get().filter( s -> s != firstSize ).findAny().get()+"'.";
+                            "Expected size '"+firstSize+"', but encountered '"+sizes.get().filter( s -> s != firstSize ).findAny().orElse(0)+"'.";
             throw new IllegalArgumentException(message);
         }
         return readers.stream().map( r -> r._size ).reduce( 0, Integer::sum );
     }
 
-    private boolean _isLeave(Object o) {
+    private boolean _isLeave( Object o ) {
         if ( o == null ) return true;
         boolean isList = o instanceof List;
-        return isList && ((List) o).isEmpty();
+        return isList && ((List<?>) o).isEmpty();
     }
 
     public static class Result {

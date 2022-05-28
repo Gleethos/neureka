@@ -24,7 +24,7 @@ public final class LogUtil
 
     public static <T> void nullArgCheck( T var, String thing, Class<?> type, String... notes ) {
         if ( var == null ) {
-            String postfix = Arrays.stream(notes).collect(Collectors.joining(" "));
+            String postfix = String.join( " ", notes );
             postfix = ( postfix.trim().equals("") ? "" : " " ) + postfix;
             throw new IllegalArgumentException(
                 format(
