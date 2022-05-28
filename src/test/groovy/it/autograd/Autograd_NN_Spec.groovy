@@ -455,9 +455,9 @@ class Autograd_NN_Spec extends Specification
     }
 
 
-    @IgnoreIf({!(Neureka.get().canAccessOpenCLDevice() || !(data.device instanceof OpenCLDevice))})
-    def 'Autograd works for 2 matrix multiplications in a row.'(Device<?> device) {
-
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
+    def 'Autograd works for 2 matrix multiplications in a row.'( Device<?> device ) 
+    {
         given :
             def a = Tsr.of([2, 3], -1d..4d).setRqsGradient(true).to(device)
             def b = Tsr.of([3, 1], [-4d, -2d, 0d]).setRqsGradient(true).to(device)

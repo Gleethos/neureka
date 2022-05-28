@@ -117,6 +117,7 @@ class Cross_Device_Type_Spec extends Specification
      * The data of a tensor located on an Device should
      * be updated when passing a float or double array!
      */
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
     def 'Passing a numeric array to a tensor should modify its content!'(
             Device device, Object data1, Object data2, String expected
     ) {
@@ -270,7 +271,7 @@ class Cross_Device_Type_Spec extends Specification
 
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && (data.device instanceof OpenCLDevice) })
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
     def 'Devices store slices which can also be restored.'(
             Device device
     ) {

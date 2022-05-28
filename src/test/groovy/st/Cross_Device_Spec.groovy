@@ -119,7 +119,7 @@ class Cross_Device_Spec extends Specification
     }
 
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && (data.device instanceof OpenCLDevice) })
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
     def 'Test simple NN implementation with manual backprop'(Device device) {
         given:
             Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
@@ -136,7 +136,7 @@ class Cross_Device_Spec extends Specification
             device << [new DummyDevice(), Device.get('first gpu')]
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && (data.device instanceof OpenCLDevice) || data.device == null })
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
     def 'A gradient of ones can be set by calling the backward method on a tensor sitting on any device.'(
             Device device
     ) {
@@ -168,7 +168,7 @@ class Cross_Device_Spec extends Specification
     }
 
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && (data.device instanceof OpenCLDevice) }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null }) // We need to assure that this system supports OpenCL!
     def 'Mapping tensors works for every device (even if they are not used).'(
               def tensor, Device device, Class<?> target, Function<?,?> lambda, String expected
     ) {
