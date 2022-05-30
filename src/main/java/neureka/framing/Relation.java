@@ -96,7 +96,7 @@ public class Relation<V> implements Component<Tsr<V>>
         Tsr<V> oldOwner = changeRequest.getOldOwner();
         Tsr<V> newOwner = changeRequest.getNewOwner();
         if ( changeRequest.type() == IsBeing.ADDED || changeRequest.type() == IsBeing.REMOVED ) {
-            changeRequest.executeChange();
+            changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
             return true; // Initial/last update call: No action needed!
         }
         if ( _parent != null) {
@@ -116,7 +116,7 @@ public class Relation<V> implements Component<Tsr<V>>
                 }
             }
         }
-        changeRequest.executeChange();
+        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         return true;
     }
 

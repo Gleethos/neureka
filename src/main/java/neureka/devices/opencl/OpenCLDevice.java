@@ -140,7 +140,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         @Override
         public boolean update(OwnerChangeRequest<Tsr<T>> changeRequest) {
             // Update not needed...
-            changeRequest.executeChange();
+            changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
             return true;
         }
     }
@@ -568,7 +568,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             Tsr<Number> newOwner = changeRequest.getNewOwner();
             _updateInternal(newOwner, changeRequest::executeChange);
         } else
-            changeRequest.executeChange();
+            changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         return true;
     }
 

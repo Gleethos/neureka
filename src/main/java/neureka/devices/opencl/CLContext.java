@@ -77,7 +77,7 @@ public final class CLContext implements BackendExtension
     public boolean update( OwnerChangeRequest<Extensions> changeRequest ) {
         _platforms.clear();
         _platforms.addAll( _findLoadAndCompileForAllPlatforms() );
-        changeRequest.executeChange();
+        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         return true;
     }
 

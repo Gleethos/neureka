@@ -1393,7 +1393,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 );
             }
         }
-        changeRequest.executeChange();
+        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         // If the change request type is set to "REPLACED" then
         // this is means that this tensor is a gradient that is being
         // transferred to another tensor to serve as gradient...

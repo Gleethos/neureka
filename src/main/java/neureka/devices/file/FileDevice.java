@@ -244,7 +244,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
             _stored.remove( oldOwner );
             _stored.put( newOwner, head );
         }
-        changeRequest.executeChange();
+        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         return true;
     }
 
