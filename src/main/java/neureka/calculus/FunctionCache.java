@@ -42,7 +42,7 @@ import java.util.Map;
 public final class FunctionCache
 {
     private final static int CAPACITY = 1024;
-    private Logger _log = LoggerFactory.getLogger( FunctionCache.class );
+    private final Logger _LOG = LoggerFactory.getLogger( FunctionCache.class );
 
     private final Map<String, Function> _functionCache = new LinkedHashMap<String, Function>() {
         @Override
@@ -53,7 +53,7 @@ public final class FunctionCache
 
     public void put( Function function ) {
         if ( function == null ) {
-            _log.error("Null reference passed to '"+getClass().getSimpleName()+"'!");
+            _LOG.error("Null reference passed to '"+getClass().getSimpleName()+"'!");
             return;
         }
         boolean doAD = function.isDoingAD();
@@ -73,8 +73,6 @@ public final class FunctionCache
         return _functionCache.containsKey( k );
     }
 
-    public String toString() {
-        return this.getClass().getSimpleName()+"[size="+_functionCache.size()+"]";
-    }
+    public String toString() { return this.getClass().getSimpleName()+"[size="+_functionCache.size()+"]"; }
 
 }

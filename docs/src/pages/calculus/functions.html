@@ -137,9 +137,9 @@ inputs will be recognized by '`I[j]`', '`Ij`' or '`ij`', where `j` is the input 
 Usually a `Function` will create a dynamic computation graph during execution
 which is then responsible for enabling Neureka's autograd system.
 If you have tensors attached to a graph requiring autograd, but
-you do not want there to be derivatives created simply
-use the `Function` instances exposed by the `getFunction()`
-in the current backend context.
+you do not want there to be partial derivatives created automatically, simply
+select one of the many functions exposed by the `Functions` instance accessible though the `getFunction()`
+method in the current backend context.
         </p>
     </div>
 </div>
