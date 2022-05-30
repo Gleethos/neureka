@@ -25,8 +25,8 @@ If you want more options, consider implementing the interface for custom optimiz
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-        Tsr w = Tsr.of(0)
-        def o = new SGD(w)
+        var o = new SGD(0.01) // 0.01 learning rate
+        var w = Tsr.of(0f)
         w.set(o)
 
                 </code></pre>
@@ -34,8 +34,8 @@ If you want more options, consider implementing the interface for custom optimiz
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-        Tsr w = Tsr.of(0);
-        Optimizer o = new SGD(w);
+        Optimizer o = new SGD(0.01); // 0.01 learning rate
+        Tsr&#60;Float&#62; w = Tsr.of(0f);
         w.set(o);
 
                 </code></pre>
@@ -43,8 +43,8 @@ If you want more options, consider implementing the interface for custom optimiz
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-        val w = Tsr.of(0)
-        val o = new SGD(w)
+        val o = new SGD(0.01) // 0.01 learning rate
+        val w = Tsr.of(0f)
         w.set(o)
 
                 </code></pre>
