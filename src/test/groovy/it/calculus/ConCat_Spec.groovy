@@ -9,24 +9,24 @@ class ConCat_Spec extends Specification
 {
     def 'We can concatenate 2 tensors alongside a specified axis!'()
     {
-        given :
+        given : 'We create 2 rank 3 tensors, which we want to concatinate.'
             var a = Tsr.of(Double, [3, 4, 2], [-1.7, 2, 9.3, -3]).setRqsGradient(true)
             var b = Tsr.ofDoubles().withShape(3, 2, 2).andFill(3,2.5,-6)
-        and :
+        and : 'A function which should perform the concatenation.'
             var cat = Function.of('concat(I[0], I[1])')
 
-        when :
+        when : 'We call the previously created function alongside the axis alongside we want to concatinate '
             var c = cat.callWith(Arg.Axis.of(1)).call(a, b)
 
-        then :
+        then : 'The resulting tensor should have the expected shape.'
             c.shape() == [3, 6, 2]
 
-        when :
+        when : 'We use the result for some more operations...'
             var y = c * 2
-        and :
+        and : 'We back-propagate -3 on y...'
             y.backward(-3)
 
-        then :
+        then : 'The gradient of the furst tensor should look as follows!'
             a.gradient.every( it -> it == -6 )
     }
 
