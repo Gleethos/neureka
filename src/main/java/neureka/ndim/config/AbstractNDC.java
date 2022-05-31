@@ -58,41 +58,8 @@ public abstract class AbstractNDC implements NDConfiguration
      * @param data The integer array which ought to be cached.
      * @return The provided array or an already present array found in the int array cache.
      */
-    protected static int[] _cacheArray( int[] data )
-    {
-        return _CACHED_INT_ARRAYS.process( data );
-    }
+    protected static int[] _cacheArray( int[] data ) { return _CACHED_INT_ARRAYS.process( data ); }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    @Override
-    public int hashCode()
-    {
-        return Long.valueOf(
-                    this.getClass().hashCode() +
-                   Arrays.hashCode( shape() )       * 1L +
-                   Arrays.hashCode( translation() ) * 2L +
-                   Arrays.hashCode( indicesMap() )  * 3L +
-                   Arrays.hashCode( spread() )      * 4L +
-                   Arrays.hashCode( offset() )      * 5L +
-                   ( getLayout() == Layout.ROW_MAJOR ? 0 : 1 )
-            )
-            .hashCode();
-    }
-
-    @Override
-    public boolean equals( NDConfiguration ndc )
-    {
-        return  this.getClass() == ndc.getClass() &&
-                Arrays.equals(shape(),       ndc.shape()      ) &&
-                Arrays.equals(translation(), ndc.translation()) &&
-                Arrays.equals(indicesMap(),  ndc.indicesMap() ) &&
-                Arrays.equals(spread(),      ndc.spread()     ) &&
-                Arrays.equals(offset(),      ndc.offset()     ) &&
-                this.getLayout() == ndc.getLayout();
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public static NDConfiguration construct (
             int[] shape,
@@ -101,13 +68,12 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] spread,
             int[] offset
     ) {
-        for ( int dim : shape ) {
-            if ( dim == 0 ) {
-                String message = "Trying to create tensor configuration containing shape with dimension 0.\n" +
-                        "Shape dimensions must be greater than 0!\n";
-                throw new IllegalStateException( message );
-            }
-        }
+        for ( int dim : shape )
+            if ( dim == 0 )
+                throw new IllegalStateException(
+                    "Trying to create tensor configuration containing shape with dimension 0.\n" +
+                    "Shape dimensions must be greater than 0!\n"
+                );
 
         if ( Neureka.get().settings().ndim().isOnlyUsingDefaultNDConfiguration() )
             return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
@@ -157,10 +123,7 @@ public abstract class AbstractNDC implements NDConfiguration
         return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
     }
 
-    protected static <T extends NDConfiguration> T _cached( T ndc )
-    {
-        return _CACHED_NDCS.process( ndc );
-    }
+    protected static <T extends NDConfiguration> T _cached( T ndc ) { return _CACHED_NDCS.process( ndc ); }
 
     private static boolean _isSimpleConfiguration(
             int[] shape,
@@ -180,9 +143,7 @@ public abstract class AbstractNDC implements NDConfiguration
     }
 
     private static boolean _isSimpleTransposedConfiguration(
-            int[] shape,
-            int[] spread,
-            int[] offset
+            int[] shape, int[] spread, int[] offset
     ) {
         int[] newSpread = new int[ shape.length ];
         Arrays.fill( newSpread, 1 );
@@ -190,7 +151,6 @@ public abstract class AbstractNDC implements NDConfiguration
                Arrays.equals( spread, newSpread );
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public String toString() {
@@ -232,14 +192,36 @@ public abstract class AbstractNDC implements NDConfiguration
     public NDConfiguration newReshaped( int[] newForm )
     {
         //TODO : shape check!
-        if ( _isSimpleConfiguration( shape(), translation(), indicesMap(), spread(), offset() ) ) {
+        if ( _isSimpleConfiguration( shape(), translation(), indicesMap(), spread(), offset() ) )
             return _simpleReshape( newForm, this );
-        } else {
+        else
             return new SimpleReshapeView( newForm, this );
             //throw new IllegalStateException("Not ready");
-        }
+    }
 
+    @Override
+    public int hashCode() {
+        return Long.valueOf(
+                    this.getClass().hashCode() +
+                   Arrays.hashCode( shape() )       * 1L +
+                   Arrays.hashCode( translation() ) * 2L +
+                   Arrays.hashCode( indicesMap() )  * 3L +
+                   Arrays.hashCode( spread() )      * 4L +
+                   Arrays.hashCode( offset() )      * 5L +
+                   ( getLayout() == Layout.ROW_MAJOR ? 0 : 1 )
+            )
+            .hashCode();
+    }
 
+    @Override
+    public boolean equals( NDConfiguration ndc ) {
+        return  this.getClass() == ndc.getClass() &&
+                Arrays.equals(shape(),       ndc.shape()      ) &&
+                Arrays.equals(translation(), ndc.translation()) &&
+                Arrays.equals(indicesMap(),  ndc.indicesMap() ) &&
+                Arrays.equals(spread(),      ndc.spread()     ) &&
+                Arrays.equals(offset(),      ndc.offset()     ) &&
+                this.getLayout() == ndc.getLayout();
     }
 
 

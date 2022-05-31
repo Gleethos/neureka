@@ -385,20 +385,12 @@ public class CalcUtil
                                         _recursiveReductionOf( innerCall, finalExecution, executor )
                             );
 
-        if ( result == null ) {
-            call.setInput( 0,
-                    finalExecution.apply(
-                        ExecutionCall.of( call.inputs() )
-                                .andArgs( call.allMetaArgs() )
-                                .running( type )
-                                .on( device )
-                                .withArgs( Arg.DerivIdx.of(d) )
-                    )
-               );
-        } else
+        if ( result == null )
+            call.setInput( 0, finalExecution.apply( call ) );
+        else
             return result;
 
-        for (int i = 0; i < call.arity(); i++ )
+        for ( int i = 0; i < call.arity(); i++ )
             if ( call.input( i ) != null && !call.input( i ).isUndefined() )
                 rollbacks[ i ].accept( call.input( i ) );
 

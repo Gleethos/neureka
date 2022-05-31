@@ -64,7 +64,7 @@ public class KernelCaller
 
     /**
      * This method passes 1 argument to the kernel.
-     * Namely the data of the tensor!
+     * Namely, the data of the tensor!
      * @param tensor The tensor whose data ought to be passed to the kernel.
      * @return This very KernelCaller instance (factory patter).
      */
@@ -127,7 +127,7 @@ public class KernelCaller
             clWaitForEvents( events.length, events );
             _releaseEvents( _inputs.toArray( new Tsr[ 0 ] ) );
         }
-        if ( localWorkSizes != null ) assert globalWorkSizes.length == localWorkSizes.length;
+        assert localWorkSizes == null || globalWorkSizes.length == localWorkSizes.length;
         clEnqueueNDRangeKernel(
                 _queue, _kernel,
                 globalWorkSizes.length,
