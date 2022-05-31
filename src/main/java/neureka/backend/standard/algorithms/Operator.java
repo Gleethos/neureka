@@ -133,11 +133,11 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
 
         boolean isSimple = t0_drn.getNDConf().isSimple() && t1_src.getNDConf().isSimple() && t2_src.getNDConf().isSimple();
 
-        if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
+        if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() )
             return (start, end) -> t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );
-        } else {
+        else {
             if ( isSimple )
-                return  (start, end) -> {
+                return (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);
                 };
             else
@@ -179,9 +179,9 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
 
         boolean isSimple = t0_drn.getNDConf().isSimple() && t1_src.getNDConf().isSimple() && t2_src.getNDConf().isSimple();
 
-        if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
+        if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() )
             return (start, end) -> t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );
-        } else {
+        else {
             if ( isSimple )
                 return  (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);
@@ -225,9 +225,9 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
 
         boolean isSimple = t0_drn.getNDConf().isSimple() && t1_src.getNDConf().isSimple() && t2_src.getNDConf().isSimple();
 
-        if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
+        if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() )
             return (start, end) -> t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );
-        } else {
+        else {
             if ( isSimple )
                 return  (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);
@@ -259,18 +259,16 @@ public final class Operator extends AbstractFunctionalAlgorithm<Operator>
         private final T _a, _d1, _d2;
 
         public FunTriple(T a, T d, T d2 ) {
-            _a  = a; _d1 = d; _d2 = d2;
+            _a = a; _d1 = d; _d2 = d2;
         }
 
         @Override
         public T get(int derivativeIndex) {
-            return ( derivativeIndex < 0 ? _a : ( derivativeIndex == 0 ) ? _d1 : _d2 );
+            return ( derivativeIndex < 0 ? _a : ( derivativeIndex == 0 ? _d1 : _d2 ) );
         }
 
         @Override
-        public Class<T> getType() {
-            return (Class<T>) _a.getClass();
-        }
+        public Class<T> getType() { return (Class<T>) _a.getClass(); }
     }
 
 }

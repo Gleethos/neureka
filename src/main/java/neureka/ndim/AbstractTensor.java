@@ -70,9 +70,6 @@ import java.util.Arrays;
  */
 public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> implements TensorAPI<V>
 {
-    /**
-     *  An interface provided by sl4j which enables a modular logging backend!
-     */
     protected static Logger _LOG;
 
     /**
@@ -372,8 +369,6 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
         DataType<?> type = DataType.of( typeClass );
         return type == _dataType;
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      *  This method sets the NDConfiguration of this NDArray.

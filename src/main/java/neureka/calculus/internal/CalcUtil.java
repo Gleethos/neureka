@@ -98,7 +98,7 @@ public class CalcUtil
             return result;
         }
         else
-            tensors = srcActivation( call.inputs(), j, -1, 1, nodes );
+             tensors = srcActivation( call.inputs(), j, -1, 1, nodes );
 
         tensors[0] = CalcUtil.recursiveExecution(
                                 call.withInputs( tensors )

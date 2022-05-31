@@ -34,7 +34,7 @@ public class Multiplication extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setIdentifier(         "multiply"    )
+                        .setIdentifier(    "multiply"    )
                         .setOperator(         "*"        )
                         .setArity(            -1         )
                         .setIsOperator(       true       )
@@ -66,9 +66,9 @@ public class Multiplication extends AbstractOperation
                         ( a, b ) -> a  // deriving input 1
                     ))
                     .with(Fun.I32I32ToI32.triple(
-                            ( a, b ) -> a * b,
-                            ( a, b ) -> b, // Deriving at input 0
-                            ( a, b ) -> a  // deriving input 1
+                        ( a, b ) -> a * b,
+                        ( a, b ) -> b, // Deriving at input 0
+                        ( a, b ) -> a  // deriving input 1
                     ))
                     .get()
             )
