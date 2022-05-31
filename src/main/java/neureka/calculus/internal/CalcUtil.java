@@ -284,46 +284,42 @@ public class CalcUtil
                             "One or more tensor arguments within the given ExecutionCall instance is null."
             );
 
-        Tsr<?> result =
-                _recursiveReductionOf(
-                    executionCall,
-                    call -> {
-                        for ( Tsr<?> t : call.inputs() )
-                            if ( t == null ) throw new IllegalArgumentException(
-                                    "Device arguments may not be null!\n" +
-                                            "One or more tensor arguments within the given ExecutionCall instance is null."
-                            );
-
-                        call = ExecutionCall.of( call.inputs() )
-                                            .andArgs( call.allMetaArgs() )
-                                            .running( call.getOperation() )
-                                            .on( call.getDevice() );
-
-                        Device<?> device = call.getDevice();
-                        device.approve( call );
-
-                        Algorithm algorithm = call.getAlgorithm();
-                        if ( algorithm == null ) {
-                            String message = _couldNotFindSuitableAlgorithmFor( device.getClass() );
-                            _LOG.error( message );
-                            throw new IllegalStateException( message );
-                        } else {
-                            DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
-                            ImplementationFor<Device<?>> implementation =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(device) );
-                            if ( implementation == null ) {
-                                String message = _couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
-                                _LOG.error( message );
-                                throw new IllegalStateException( message );
-                            }
-                            else implementation.run( (ExecutionCall<Device<?>>) call );
-                        }
-                        return call.input( 0 );
-                    },
-                    executor
-                );
-
         //assert result == executionCall.tensor(0);
-        return result;
+        return
+        _recursiveReductionOf( executionCall, call -> {
+                for ( Tsr<?> t : call.inputs() )
+                    if ( t == null ) throw new IllegalArgumentException(
+                            "Device arguments may not be null!\n" +
+                                    "One or more tensor arguments within the given ExecutionCall instance is null."
+                    );
+
+                call = ExecutionCall.of( call.inputs() )
+                                    .andArgs( call.allMetaArgs() )
+                                    .running( call.getOperation() )
+                                    .on( call.getDevice() );
+
+                Device<?> device = call.getDevice();
+                device.approve( call );
+
+                Algorithm algorithm = call.getAlgorithm();
+                if ( algorithm == null ) {
+                    String message = _couldNotFindSuitableAlgorithmFor( device.getClass() );
+                    _LOG.error( message );
+                    throw new IllegalStateException( message );
+                } else {
+                    DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
+                    ImplementationFor<Device<?>> implementation =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(device) );
+                    if ( implementation == null ) {
+                        String message = _couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
+                        _LOG.error( message );
+                        throw new IllegalStateException( message );
+                    }
+                    else implementation.run( (ExecutionCall<Device<?>>) call );
+                }
+                return call.input( 0 );
+            },
+            executor
+        );
     }
 
     /**
@@ -351,8 +347,6 @@ public class CalcUtil
             final RecursiveExecutor executor
     ) {
         Device<Object> device = call.getDeviceFor(Object.class);
-        int d = call.getValOf( Arg.DerivIdx.class );
-        Operation type = call.getOperation();
 
         Consumer<Tsr<?>>[] rollbacks = new Consumer[ call.arity() ];
         for (int i = 0; i < call.arity(); i++ )
