@@ -147,9 +147,7 @@ public class Call<D>
             return andArgs(Arrays.stream(arguments).collect(Collectors.toList()));
         }
 
-        public Call<T> get() {
-            return new Call<T>( _tensors, _device, _arguments.getAll( Arg.class ) );
-        }
+        public Call<T> get() { return new Call<T>( _tensors, _device, _arguments.getAll( Arg.class ) ); }
 
     }
 
@@ -162,8 +160,8 @@ public class Call<D>
      *  request for execution, that is primarily used inside implementations of the middle
      *  layer of the backend-API architecture ({@link Algorithm#isSuitableFor(ExecutionCall)}).
      */
-    public class Validator {
-
+    public class Validator
+    {
         private boolean _isValid = true;
 
         public boolean isValid() { return _isValid; }
@@ -182,9 +180,7 @@ public class Call<D>
          *
          * @return The current validity of this Validator as float value.
          */
-        public float basicSuitability() {
-            return suitabilityIfValid( SuitabilityPredicate.GOOD );
-        }
+        public float basicSuitability() { return suitabilityIfValid( SuitabilityPredicate.GOOD ); }
 
         public float suitabilityIfValid(float estimationIfValid ) {
             return ( _isValid ? estimationIfValid : SuitabilityPredicate.UNSUITABLE );

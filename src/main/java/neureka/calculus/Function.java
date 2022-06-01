@@ -120,20 +120,23 @@ public interface Function
     Operation getOperation();
 
     /**
+     *  Use this to determine if this function directly or indirectly references an input with the provided index.
+     *
      * @param index The index which ought to match the input index of a potentially referenced {@link FunctionInput}.
-     * @return The truth value determining if this {@link Function} (or any sub-functions) reference an {@link FunctionInput} with the provided index.
+     * @return The truth value determining if this {@link Function} (or any sub-functions) reference a {@link FunctionInput} with the provided index.
      */
     boolean dependsOn( int index );
 
     /**
      *  This method builds a new {@link Function} which is the derivative of this {@link Function} with respect to the provided input index.
+     *
      * @param index The index of the input which ought to serve as the variable which ought to be derived.
      * @return The derivative of this {@link Function}.
      */
     Function getDerivative( int index );
 
     /**
-     * @return The child {@link Function} nodes of this {@link Function} AST.
+     * @return The referenced child {@link Function} nodes of this {@link Function} AST node.
      */
     List<Function> getSubFunctions();
 
@@ -149,6 +152,9 @@ public interface Function
         return allFuns;
     }
 
+    /**
+     * @return The number of inputs that this {@link Function} AST depends on.
+     */
     default int numberOfArgs() {
         return (int) getAllFunctions()
                         .stream()
@@ -159,25 +165,21 @@ public interface Function
                         .count();
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-
     default double call( double input )   { return call( new double[]{input} ); }
+
     default double invoke( double input ) { return call( input ); }
 
-    //------------------------------------------------------------------------------------------------------------------
-
     double call( double[] inputs, int j );
+
     default double invoke( double[] inputs, int j ) { return call( inputs, j ); }
 
-
     default double call( double... inputs )   { return call( inputs, -1 ); }
+
     default double invoke( double... inputs ) { return call( inputs ); }
 
-
     double derive( double[] inputs, int index, int j );
-    double derive( double[] inputs, int index );
 
-    //------------------------------------------------------------------------------------------------------------------
+    double derive( double[] inputs, int index );
 
     /**
      *  Use this for more control over the execution, which is often
@@ -192,6 +194,15 @@ public interface Function
         return (Tsr<T>) execute( call.get() ).getUnsafe().setIsIntermediate(false);
     }
 
+    /**
+     *  Use this for more control over the execution, which is often
+     *  needed when interfacing with more complex types of operations, requiring more context information.
+     *
+     * @param call A wrapper for input tensors, a target device and additional meta-arguments.
+     * @return The resulting tensor produced by this function executing the provided call.
+     * @param <T> The type parameter of the tensors wrapped by the provided call.
+     * @param <D> The type parameter of the device targeted by the provided call.
+     */
     default <T, D extends Device<T>> Tsr<T> invoke( Call.Builder<T, D> call ) { return this.call( call ); }
 
     /**
