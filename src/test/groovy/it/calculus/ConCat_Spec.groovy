@@ -43,7 +43,7 @@ class ConCat_Spec extends Specification
         and : 'We back-propagate -3 on y...'
             y.backward(-3)
 
-        then : 'The gradient of the furst tensor should look as follows!'
+        then : 'The gradient of the first tensor should look as follows!'
             a.gradient.every( it -> it == -6 )
     }
 
