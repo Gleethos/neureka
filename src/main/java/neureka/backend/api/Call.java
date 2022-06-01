@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
  */
 public class Call<D>
 {
-
     public static <V, T extends Device<V>> Call.Builder<V,T> to( T device ) { return new Builder<V,T>( device ); }
 
     /**
@@ -33,7 +32,7 @@ public class Call<D>
      *  however this is not a necessity.
      *  Some operation algorithms might use multiple argument entries as output tensors.
      */
-    protected final Tsr<?>[] _tensors;
+    protected final Tsr<?>[] _inputs;
     /**
      *  This field references the device on which this ExecutionCall should be executed.
      */
@@ -45,7 +44,7 @@ public class Call<D>
 
 
     protected Call( Tsr<?>[] tensors, D device, List<Arg> arguments ) {
-        _tensors = tensors.clone();
+        _inputs = tensors.clone();
         _device = device;
         for ( Arg<?> arg : arguments ) _arguments.set(arg);
     }
@@ -58,25 +57,23 @@ public class Call<D>
     /**
      * @return The {@link Tsr} parameters of this {@link Call} for execution.
      */
-    public Tsr<?>[] inputs() { return _tensors.clone(); }
+    public Tsr<?>[] inputs() { return _inputs.clone(); }
 
     /**
      * @return The number of input tensors.
      */
-    public int arity() { return _tensors.length; }
+    public int arity() { return _inputs.length; }
 
     /**
      * @param i The index of the tensor argument which should be returned.
      * @return The {@code i}'th {@link Tsr} parameter of this {@link Call} for execution.
      */
-    public Tsr<?> input( int i ) {
-        return _tensors[ i ];
-    }
+    public Tsr<?> input( int i ) { return _inputs[ i ]; }
 
     public void rearrangeInputs( int... indices ) {
-        Tsr<?>[] tensors = _tensors.clone();
+        Tsr<?>[] tensors = _inputs.clone();
         for ( int i = 0; i < indices.length; i++ ) {
-            _tensors[i] = tensors[indices[i]];
+            _inputs[i] = tensors[indices[i]];
         }
     }
 
@@ -97,20 +94,18 @@ public class Call<D>
         return _arguments.valOf(argumentClass);
     }
 
-    public int getDerivativeIndex() {
-        return this.getValOf( Arg.DerivIdx.class );
-    }
+    public int getDerivativeIndex() { return this.getValOf( Arg.DerivIdx.class ); }
 
     public  <V> Tsr<V> input( Class<V> valueTypeClass, int i ) {
-        Tsr<?>[] tensors = _tensors;
+        Tsr<?>[] inputs = _inputs;
         if ( valueTypeClass == null ) {
             throw new IllegalArgumentException(
                     "The provided tensor type class is null!\n" +
                             "Type safe access to the tensor parameter at index '"+i+"' failed."
             );
         }
-        if ( tensors[ i ] != null ) {
-            Class<?> tensorTypeClass = tensors[ i ].getValueClass();
+        if ( inputs[ i ] != null ) {
+            Class<?> tensorTypeClass = inputs[ i ].getValueClass();
             if ( !valueTypeClass.isAssignableFrom(tensorTypeClass) ) {
                 throw new IllegalArgumentException(
                     "The item value type of the tensor stored at parameter position '"+i+"' is " +
@@ -119,7 +114,7 @@ public class Call<D>
                 );
             }
         }
-        return (Tsr<V>) tensors[ i ];
+        return (Tsr<V>) inputs[ i ];
     }
 
     public Validator validate() { return new Validator(); }
@@ -199,7 +194,7 @@ public class Call<D>
         }
 
         public Validator tensors( TensorsCondition condition ) {
-            if ( _isValid && !condition.check( _tensors ) ) _isValid = false;
+            if ( _isValid && !condition.check(_inputs) ) _isValid = false;
             return this;
         }
 
@@ -212,7 +207,7 @@ public class Call<D>
         private boolean _anyMatch( TensorCondition condition )
         {
             boolean any = false;
-            for ( Tsr<?> t : _tensors ) any = condition.check( t ) || any;
+            for ( Tsr<?> t : _inputs) any = condition.check( t ) || any;
             return any;
         }
 
@@ -225,7 +220,7 @@ public class Call<D>
         private boolean _anyNotNullMatch( TensorCondition condition )
         {
             boolean any = false;
-            for ( Tsr<?> t : _tensors )
+            for ( Tsr<?> t : _inputs)
                 if ( t != null ) any = condition.check( t ) || any;
             return any;
         }
@@ -258,7 +253,7 @@ public class Call<D>
 
         private boolean _allMatch( TensorCondition condition ) {
             boolean all = true;
-            for ( Tsr<?> t : _tensors ) all = condition.check( t ) && all;
+            for ( Tsr<?> t : _inputs) all = condition.check( t ) && all;
             return all;
         }
 
@@ -271,7 +266,7 @@ public class Call<D>
         private boolean _allNotNullMatch( TensorCondition condition )
         {
             boolean all = true;
-            for ( Tsr<?> t : _tensors )
+            for ( Tsr<?> t : _inputs)
                 if ( t != null ) all = condition.check( t ) && all;
             return all;
         }
@@ -285,7 +280,7 @@ public class Call<D>
         private boolean _allMatch( TensorCompare compare ) {
             boolean all = true;
             Tsr<?> last = null;
-            for ( Tsr<?> current : _tensors ) {
+            for ( Tsr<?> current : _inputs) {
                 if ( last != null && !compare.check( last, current ) ) all = false;
                 last = current; // Note: shapes are cached!
             }
@@ -294,7 +289,7 @@ public class Call<D>
 
         public <T> Validator allShare( Function<Tsr<?>, T> propertyProvider ) {
             T first = null;
-            for ( Tsr<?> t : _tensors ) {
+            for ( Tsr<?> t : _inputs) {
                 if ( t != null ) {
                     T found = propertyProvider.apply( t );
                     if ( first == null && found != null ) first = found;

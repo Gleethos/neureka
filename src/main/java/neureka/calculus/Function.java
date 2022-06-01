@@ -197,6 +197,8 @@ public interface Function
     /**
      *  Use this for more control over the execution, which is often
      *  needed when interfacing with more complex types of operations, requiring more context information.
+     *  This method is functionally identically to {@link #call(Call.Builder)}, however it is best used
+     *  in Kotlin, where one can omit the function name entirely and call this {@link Function} directly!
      *
      * @param call A wrapper for input tensors, a target device and additional meta-arguments.
      * @return The resulting tensor produced by this function executing the provided call.
@@ -343,6 +345,9 @@ public interface Function
     default <T> Tsr<T> call( Tsr<T> input )   { return call( new Tsr[]{ input } ); }
 
     /**
+     *  This method is functionally identically to {@link #call(Tsr)}, however it is best used
+     *  in Kotlin, where one can omit the function name entirely and call this {@link Function} directly!
+     *
      * @param input The tensor which should be sent through this function.
      * @return The resulting tensor produced by this function.
      * @param <T> The type parameter of the tensor passed to and returned by this function.
@@ -357,6 +362,9 @@ public interface Function
     default <T> Tsr<T> call( List<Tsr<T>> inputs ) { return call( inputs.toArray(new Tsr[ 0 ]) ); }
 
     /**
+     *  This method is functionally identically to {@link #call(List)}, however it is best used
+     *  in Kotlin, where one can omit the function name entirely and call this {@link Function} directly!
+     *
      * @param input The tensor which should be sent through this function.
      * @return The resulting tensor produced by this function.
      * @param <T> The type parameter of the tensor passed to and returned by this function.
@@ -374,6 +382,9 @@ public interface Function
     }
 
     /**
+     *  This method is functionally identically to {@link #call(Tsr[], int)}, however it is best used
+     *  in Kotlin, where one can omit the function name entirely and call this {@link Function} directly!
+     *
      * @param inputs The tensors which should be sent through this function.
      * @param j The input index used by indexer operations to target a particular input.
      * @return The resulting tensor produced by this function.
@@ -391,6 +402,9 @@ public interface Function
     }
 
     /**
+     *  This method is functionally identically to {@link #call(Tsr[])}, however it is best used
+     *  in Kotlin, where one can omit the function name entirely and call this {@link Function} directly!
+     *
      * @param inputs The tensors which should be sent through this function.
      * @return The resulting tensor produced by this function.
      * @param <T> The type parameter of the tensors passed to and returned by this function.
@@ -447,6 +461,9 @@ public interface Function
     interface Callable 
     {
         /**
+         *  This method is functionally identically to {@link Callable#call(Tsr[])}, however it is best used
+         *  in Kotlin, where one can omit the function name entirely and call this {@link Function} directly!
+         *
          * @param inputs The tensors which should be sent through the owner function of this {@link Callable}.
          * @return The resulting tensor produced by this function.
          * @param <T> The type parameter of the tensors passed to and returned by this function.

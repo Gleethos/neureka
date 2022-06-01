@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -125,7 +124,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     }
 
     public void checkArity() {
-        int thisArity = _tensors.length;
+        int thisArity = _inputs.length;
         if ( _operation != null && thisArity < Math.abs(_operation.getArity()) )
             throw new IllegalArgumentException(
                 "Trying to instantiate an '" + this.getClass().getSimpleName() + "' with an arity " +
@@ -167,7 +166,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         List<Arg> old = _arguments.getAll(Arg.class);
         old = old.stream().filter( a -> Arrays.stream(args).noneMatch(b -> a.getClass().isAssignableFrom(b.getClass()) )).collect(Collectors.toList());
         old.addAll(Arrays.stream(args).collect(Collectors.toList()));
-        return new ExecutionCall<>( _device, _operation, _tensors, old );
+        return new ExecutionCall<>( _device, _operation, _inputs, old );
     }
 
     /**
@@ -197,7 +196,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      * @param i The index targeting the position where the provided tensor should be placed.
      * @param t The {@link Tsr} which ought to be placed at position {@code i}.
      */
-    public void setInput( int i, Tsr<?> t ) { _tensors[ i ] = t; }
+    public void setInput( int i, Tsr<?> t ) { _inputs[ i ] = t; }
 
 
     @Override
@@ -208,7 +207,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
             algorithmString = _algorithm.toString();
 
         return this.getClass().getSimpleName()+"[" +
-                    "inputs="         + "[.." + _tensors.length + "..]," +
+                    "inputs="         + "[.." + _inputs.length + "..]," +
                     "device="          + _device + "," +
                     "operation="       + _operation + "," +
                     "algorithm="       + algorithmString + "," +
