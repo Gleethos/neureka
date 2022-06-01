@@ -83,15 +83,15 @@ public final class FunctionNode implements Function
     public List<Function> getSubFunctions() { return Arrays.asList(_src); }
 
     @Override
-    public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
+    public Tsr<?> execute( Args arguments, Tsr<?>... inputs ) {
         return _preprocess(
-                tensors,
+                inputs,
                 this,
                 () -> {
-                    ExecutionCall<? extends Device<?>> call = ExecutionCall.of( tensors )
+                    ExecutionCall<? extends Device<?>> call = ExecutionCall.of(inputs)
                                                                             .andArgs( arguments.getAll(Arg.class) )
                                                                             .running(_operation)
-                                                                            .on( _deviceFor( tensors ) );
+                                                                            .on( _deviceFor(inputs) );
 
                     if ( _isFlat ) call.checkArity();
 

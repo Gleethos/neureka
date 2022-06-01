@@ -111,20 +111,20 @@ public class FunctionInput implements Function, GradientProvider
     }
 
     @Override
-    public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
+    public Tsr<?> execute( Args arguments, Tsr<?>... inputs ) {
         int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );
         if ( d >= 0 )
             return ( d == index() )
-                ? Tsr.of( tensors[ 0 ].getValueClass(), tensors[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true )
-                : Tsr.of( tensors[ 0 ].getValueClass(), tensors[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true );
+                ? Tsr.of( inputs[ 0 ].getValueClass(), inputs[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true )
+                : Tsr.of( inputs[ 0 ].getValueClass(), inputs[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true );
 
-        if ( index() >= tensors.length )
+        if ( index() >= inputs.length )
             throw new IllegalArgumentException(
                 "Function input '"+index()+"' not satisfied! " +
                 "Please supply at least "+(index()+1)+" input tensors."
             );
 
-        return _extract( tensors[ index() ] );
+        return _extract( inputs[ index() ] );
     }
 
     @Override

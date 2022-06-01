@@ -64,19 +64,19 @@ public final class FunctionConstant implements Function
 	@Override public double derive( double[] inputs, int index, int j ) { return 0; }
 
 	@Override
-	public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
+	public Tsr<?> execute( Args arguments, Tsr<?>... inputs ) {
 		if ( arguments.has(Arg.DerivIdx.class) && arguments.valOf(Arg.DerivIdx.class) >= 0 ) {
 			return Tsr.of(
-						tensors[ 0 ].getValueClass(),
-						tensors[ 0 ].shape(),
+						inputs[ 0 ].getValueClass(),
+						inputs[ 0 ].shape(),
 						0.0
 					)
 					.getUnsafe()
 					.setIsIntermediate( true );
 		}
 		return Tsr.of(
-					tensors[ 0 ].getValueClass(),
-					tensors[ 0 ].shape(),
+					inputs[ 0 ].getValueClass(),
+					inputs[ 0 ].shape(),
 					_value
 				)
 				.getUnsafe()

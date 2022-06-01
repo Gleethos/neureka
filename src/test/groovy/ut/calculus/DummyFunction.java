@@ -17,8 +17,8 @@ public class DummyFunction implements Function {
     }
 
     @Override
-    public Tsr<?> execute(Args arguments, Tsr<?>... tensors) {
-        return implementation.apply( arguments, tensors.clone() );
+    public Tsr<?> execute( Args arguments, Tsr<?>... inputs ) {
+        return implementation.apply( arguments, inputs.clone() );
     }
 
     @Override public boolean isDoingAD() { throw new IllegalAccessError("NOT PART OF THE TEST"); }

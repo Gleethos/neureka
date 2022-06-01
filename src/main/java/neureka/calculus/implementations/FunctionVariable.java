@@ -65,26 +65,26 @@ public final class FunctionVariable implements Function, GradientProvider
     }
 
     @Override
-    public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
+    public Tsr<?> execute( Args arguments, Tsr<?>... inputs ) {
         int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );
         int j = ( arguments.has(Arg.VarIdx.class)   ? arguments.valOf(Arg.VarIdx.class)   : -1 );
         if ( d >= 0 ) {
             if ( j < 0 )
-                return Tsr.of( tensors[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true );
+                return Tsr.of( inputs[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true );
 
-            return j != d ? Tsr.of( tensors[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true ) : executeDerive( tensors, d );
+            return j != d ? Tsr.of( inputs[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true ) : executeDerive(inputs, d );
         }
         if ( j < 0 ) {
             StringBuilder exp = new StringBuilder("I[ 0 ]");
 
-            for ( int i = 1; i < tensors.length; i++ )
+            for (int i = 1; i < inputs.length; i++ )
                 exp.append("+I[").append(i).append("]");
 
             return new FunctionParser( Neureka.get().backend() )
                                         .parse(exp.toString(), false)
-                                        .execute( tensors );
+                                        .execute(inputs);
         }
-        return tensors[j];
+        return inputs[j];
     }
 
     @Override
