@@ -111,7 +111,7 @@ class Tensor_Operation_Spec extends Specification
             ( r.unsafe.data as float[] ) == [1.0588075, 1.4017555, 1.2537496, -1.3897222, 1.0374786, 0.743316, 1.1692946, 1.3977289] as float[]
 
         when :
-            r = f.callWith(Arg.Seed.of(42)).call(t)
+            r = f.with(Arg.Seed.of(42)).call(t)
 
         then :
             r === t
@@ -132,7 +132,7 @@ class Tensor_Operation_Spec extends Specification
             var f = Function.of('random(I[0])')
 
         when :
-            f.callWith(Arg.Seed.of(-73L)).call(t)
+            f.with(Arg.Seed.of(-73L)).call(t)
             var stats = new Statistics( t.unsafe.data as double[] )
         then :
             -0.05d < stats.mean && stats.mean < 0.05d

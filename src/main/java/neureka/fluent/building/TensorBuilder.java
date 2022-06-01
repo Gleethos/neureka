@@ -141,9 +141,9 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
         try {
             Function random = Neureka.get().backend().getFunction().random();
             if (type == Double.class && seedType == Long.class)
-                return random.callWith(Arg.Seed.of((Long) seed)).call( _get( 0d ) );
+                return random.with( Arg.Seed.of((Long) seed) ).call( _get( 0d ) );
             else if (type == Float.class && seedType == Long.class)
-                return random.callWith(Arg.Seed.of((Long) seed)).call( _get( 0f ) );
+                return random.with( Arg.Seed.of((Long) seed) ).call( _get( 0f ) );
             else
                 return Tsr.of( type, _shape, seed.toString() ).to( _device );
         } catch ( Exception e ) {

@@ -33,7 +33,7 @@ class ConCat_Spec extends Specification
             var cat = Function.of('concat(I[0], I[1])')
 
         when : 'We call the previously created function alongside the axis alongside we want to concatinate '
-            var c = cat.callWith(Arg.Axis.of(1)).call(a, b)
+            var c = cat.with(Arg.Axis.of(1)).call(a, b)
 
         then : 'The resulting tensor should have the expected shape.'
             c.shape() == [3, 6, 2]
@@ -56,7 +56,7 @@ class ConCat_Spec extends Specification
             var cat = Function.of('concat(I[0], I[1])')
 
         when : 'We call the previously created function alongside the axis alongside we want to concatenate.'
-            var c = cat.callWith(Arg.Axis.of(1)).call(a, b)
+            var c = cat.with(Arg.Axis.of(1)).call(a, b)
 
         then : 'The resulting tensor should have the expected shape.'
             c.shape() == [4, 5]
@@ -81,7 +81,7 @@ class ConCat_Spec extends Specification
             var cat = Function.of('concat(I[0], I[1])')
 
         when : 'We call the previously created function alongside the axis alongside we want to concatenate.'
-            var c = cat.callWith(Arg.Axis.of(0)).call(a, b)
+            var c = cat.with(Arg.Axis.of(0)).call(a, b)
 
         then : 'The resulting tensor should have the expected shape.'
             c.shape() == [3, 5]
@@ -101,7 +101,7 @@ class ConCat_Spec extends Specification
             var cat = Function.of('concat(I[0], I[1])')
 
         when : 'We call the previously created function alongside the axis alongside we want to concatenate.'
-            var c = cat.callWith(Arg.Axis.of(1)).call(a, b)
+            var c = cat.with(Arg.Axis.of(1)).call(a, b)
 
         then : 'The resulting tensor should have the expected shape.'
             c.shape() == [3, 2]

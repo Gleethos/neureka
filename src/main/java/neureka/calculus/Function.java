@@ -198,7 +198,7 @@ public interface Function
         if ( call.getDevice() != null ) args.add(Arg.TargetDevice.of((Device<?>) call.getDevice()));
         Arg<?>[] argArray = new Arg[args.size()];
         for ( int i = 0; i < argArray.length; i++ ) argArray[i] = args.get(i);
-        return callWith(argArray).execute(call.inputs());
+        return with(argArray).execute(call.inputs());
     }
 
     /**
@@ -207,7 +207,7 @@ public interface Function
      *
      * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
      */
-    default CallOptions callWith( Arg<?>... arguments ) { return callWith( Args.of( arguments ) ); }
+    default CallOptions with( Arg<?>... arguments ) { return with( Args.of( arguments ) ); }
 
     /**
      * @param arguments A set of arguments you want to supply to this function for further
@@ -215,7 +215,7 @@ public interface Function
      *
      * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
      */
-    default CallOptions callWith( Args arguments ) {
+    default CallOptions with( Args arguments ) {
        return
        tensors -> {
            MemValidator validation = MemValidator.forInputs( tensors, ()-> Result.of(Function.this.execute( arguments, tensors )));
@@ -244,7 +244,7 @@ public interface Function
     }
 
     default <T> Tsr<T> call( Args arguments, Tsr<T>... tensors ) {
-        return callWith( arguments ).call( tensors ).getUnsafe().setIsIntermediate(false);
+        return with( arguments ).call( tensors ).getUnsafe().setIsIntermediate(false);
     }
 
     default <T> Tsr<T> invoke( Args arguments, Tsr<T>... tensors ) {
@@ -264,11 +264,11 @@ public interface Function
     /**
      *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.</b>
      */
-    default Tsr<?> execute( Tsr<?>[] inputs, int j ) { return callWith(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j))).execute(inputs); }
+    default Tsr<?> execute( Tsr<?>[] inputs, int j ) { return with(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j))).execute(inputs); }
     /**
      *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.</b>
      */
-    default Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return callWith(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j))).execute(inputs); }
+    default Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return with(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j))).execute(inputs); }
     /**
      *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.</b>
      */
@@ -320,7 +320,7 @@ public interface Function
 
     /**
      *  An API for calling a {@link Function} after having specified
-     *  a set of {@link Arg} instances through the {@link #callWith(Args)}
+     *  a set of {@link Arg} instances through the {@link #with(Args)}
      *  method.
      */
     interface CallOptions {
