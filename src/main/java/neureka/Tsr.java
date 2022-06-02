@@ -2925,7 +2925,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         if ( this.isOutsourced() ) {
             Device<V> device = get( Device.class );
             if ( device != null ) {
-                if ( this.getNDConf().isSimple() )
+                if ( this.getNDConf().isSimple() && !this.isSlice() )
                     return device.access(this).readAll(false);
                 else
                     return device.access( this.clone().setIsVirtual( false ) ).readAll(false);
@@ -2935,7 +2935,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             if ( _getData() == null ) return null;
             else return getDataType().actualize( _getData(), this.size() );
         }
-        else if ( this.getNDConf().isSimple() )
+        else if ( this.getNDConf().isSimple() && !this.isSlice() )
             return getData();
         else
             return this.clone()._getData();

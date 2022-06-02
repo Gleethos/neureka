@@ -24,6 +24,7 @@ import spock.lang.Title
 ''')
 class ConCat_Spec extends Specification
 {
+
     def 'We can concatenate 2 tensors alongside a specified axis!'()
     {
         given : 'We create 2 rank 3 tensors, which we want to concatenate, where the first one requires gradients.'
@@ -46,6 +47,7 @@ class ConCat_Spec extends Specification
         then : 'The gradient of the first tensor should look as follows!'
             a.gradient.every( it -> it == -6 )
     }
+
 
     def 'We can concatenate 2 float tensors alongside a specified axis!'()
     {
@@ -90,6 +92,7 @@ class ConCat_Spec extends Specification
             c.any( it -> it == '._.' )
     }
 
+
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
     def 'We can concatenate and then back-propagate 2 simple float tensors alongside a specified axis!'(
         Device<?> device
@@ -118,6 +121,39 @@ class ConCat_Spec extends Specification
         where :
             device << [CPU.get(), Device.get(OpenCLDevice, 'gpu')]
     }
+
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
+    def 'We can concatenate and then back-propagate 3 simple float tensors alongside a specified axis!'(
+            Device<?> device
+    ) {
+        given : 'We create 2 rank 2 tensors, which we want to concatenate, where both require gradients.'
+            var a = Tsr.of(Float, [1, 3], [8, -4, 7]).setRqsGradient(true)
+            var b = Tsr.of(Float).withShape(1, 3).andFill(5, -1, 2).setRqsGradient(true)
+            var c = Tsr.ofRandom(Float, 1, 3).setRqsGradient(true)
+        and : 'A function which should perform the concatenation.'
+            var cat = Function.of('concat(I[0], I[1], I[2])')
+
+        when : 'We call the previously created function alongside the axis alongside we want to concatenate.'
+            var d = cat.with(Arg.Axis.of(0)).call(a, b, c)
+
+        then : 'The resulting tensor should have the expected shape.'
+            d.shape() == [3, 3]
+
+        when :
+            var y = d ** 2
+        and :
+            y.backward(Tsr.ofFloats().withShape(3,3).andFill(-1, 2, 0.5, 3, -0.1, 4))
+
+        then :
+            a.gradient.value == [-16, -16, 7] as float[]
+            b.gradient.value == [30, 0.2, 16] as float[]
+            c.gradient.value == [0.30829078, -3.1254156, -0.52700233] as float[]
+
+        where :
+            device << [CPU.get(), Device.get(OpenCLDevice, 'gpu')]
+    }
+
 
 
 

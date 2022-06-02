@@ -13,7 +13,9 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Cat extends AbstractOperation
 {
@@ -23,7 +25,7 @@ public class Cat extends AbstractOperation
             new OperationBuilder()
                 .setIdentifier(       "concat"    )
                 .setOperator(         "concat"    )
-                .setArity(            2           )
+                .setArity(            -1          ) // Any number of arguments
                 .setIsOperator(       false       )
                 .setIsIndexer(        false       )
                 .setIsDifferentiable( true        )
@@ -50,29 +52,37 @@ public class Cat extends AbstractOperation
                 {
                     // The dimension alongside we want to concat:
                     Integer dim = call.getValOf(Arg.Axis.class);
-                    Tsr<?> a = call.input(0);
-                    Tsr<?> b = call.input(1);
-                    int aAxis = a.shape(dim);
-                    int newAxis = aAxis + b.shape(dim);
-                    List<Integer> newShape = new ArrayList<>();
-                    for ( int i = 0; i < a.rank(); i++ )
-                        newShape.add( i == dim ? newAxis : a.shape(i) );
 
-                    Tsr<?> c = Tsr.of( a.getValueClass(), newShape, 0 );
-                    Tsr<?> ca = c.slice().axis(dim).from(0).to(aAxis-1).get();
-                    Tsr<?> cb = c.slice().axis(dim).from(aAxis).to(newAxis-1).get();
-                    Neureka.get().backend().getFunction().idy().execute(ca, a);
-                    Neureka.get().backend().getFunction().idy().execute(cb, b);
+                    // First let's find out the shape of the concatenated result:
+                    Tsr<?>[] inputs = call.inputs();
+                    List<Integer> axes = Arrays.stream(inputs).map( t -> t.shape(dim) ).collect(Collectors.toList());
+                    int newAxisSize = axes.stream().mapToInt( i -> i ).sum();
+                    List<Integer> newShape = new ArrayList<>();
+                    for ( int i = 0; i < call.input(0).rank(); i++ )
+                        newShape.add( i == dim ? newAxisSize : call.input(0).shape(i) );
+
+                    // We create the output tensor:
+                    Tsr<?> c = Tsr.of( call.input(0).getValueClass(), newShape, 0 );
+
+                    // We make the axes list entries cumulative:
+                    for ( int i = 0; i < axes.size(); i++ )
+                        axes.set( i, ( i == 0 ? axes.get(i) : axes.get( i - 1 ) + axes.get(i) ) );
+
+                    // Now we need to create the slices of c needed to populate c:
+                    for ( int i = 0; i < inputs.length; i++ ) {
+                        int start = i == 0 ? 0 : axes.get( i - 1 );
+                        int end = ( axes.get( i ) - 1 );
+                        Tsr<?> slice = c.slice().axis( dim ).from( start ).to( end ).get();
+                        Neureka.get().backend().getFunction().idy().execute( slice, call.input( i ) );
+                    }
                     c.getUnsafe().setIsIntermediate(true);
                     return
                         Result.of(c)
                             .withADAction( target -> {
-                                if ( target.inputIndex() == 0 )
-                                    return target.error().slice().axis(dim).from(0).to(aAxis-1).get();
-                                else if ( target.inputIndex() == 1 )
-                                    return target.error().slice().axis(dim).from(aAxis).to(newAxis-1).get();
-                                else
-                                    throw new IllegalArgumentException("Error shape not suitable for back-prop!");
+                                int i = target.inputIndex();
+                                int start = i == 0 ? 0 : axes.get( i - 1 );
+                                int end = axes.get( i ) - 1;
+                                return target.error().slice().axis(dim).from(start).to(end).get();
                             });
                 }
             )
