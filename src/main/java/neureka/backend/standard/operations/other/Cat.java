@@ -15,19 +15,19 @@ import neureka.calculus.args.Arg;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cat extends AbstractOperation {
-
+public class Cat extends AbstractOperation
+{
     public Cat()
     {
         super(
-                new OperationBuilder()
-                        .setIdentifier(       "concat"    )
-                        .setOperator(         "concat"    )
-                        .setArity(            2           )
-                        .setIsOperator(       false       )
-                        .setIsIndexer(        false       )
-                        .setIsDifferentiable( true        )
-                        .setIsInline(         false       )
+            new OperationBuilder()
+                .setIdentifier(       "concat"    )
+                .setOperator(         "concat"    )
+                .setArity(            2           )
+                .setIsOperator(       false       )
+                .setIsIndexer(        false       )
+                .setIsDifferentiable( true        )
+                .setIsInline(         false       )
         );
         setAlgorithm(
             FunAlgorithm.class,
@@ -61,19 +61,17 @@ public class Cat extends AbstractOperation {
                     Tsr<?> c = Tsr.of( a.getValueClass(), newShape, 0 );
                     Tsr<?> ca = c.slice().axis(dim).from(0).to(aAxis-1).get();
                     Tsr<?> cb = c.slice().axis(dim).from(aAxis).to(newAxis-1).get();
-                    List<Integer> caShape = ca.shape();
-                    List<Integer> cbShape = cb.shape();
                     Neureka.get().backend().getFunction().idy().execute(ca, a);
                     Neureka.get().backend().getFunction().idy().execute(cb, b);
                     c.getUnsafe().setIsIntermediate(true);
                     return
                         Result.of(c)
                             .withADAction( target -> {
-                                if ( target.inputIndex() == 0 ) {
+                                if ( target.inputIndex() == 0 )
                                     return target.error().slice().axis(dim).from(0).to(aAxis-1).get();
-                                } else if ( target.inputIndex() == 1 ) {
+                                else if ( target.inputIndex() == 1 )
                                     return target.error().slice().axis(dim).from(aAxis).to(newAxis-1).get();
-                                } else
+                                else
                                     throw new IllegalArgumentException("Error shape not suitable for back-prop!");
                             });
                 }
