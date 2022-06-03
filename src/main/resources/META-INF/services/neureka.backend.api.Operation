@@ -1,4 +1,7 @@
 
+# This is where all the operations from the main backend implementation are loaded! #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
 # activation functions :
 neureka.backend.main.operations.function.Absolute
 neureka.backend.main.operations.function.Cosinus

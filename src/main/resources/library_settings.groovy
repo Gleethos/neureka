@@ -32,6 +32,7 @@ Neureka.configure {
                 it.isCellBound       = false
                 it.postfix           = ""
                 it.prefix            = ""
+                it.indent            = ""
                 it.isLegacy          = false
             }
         }
