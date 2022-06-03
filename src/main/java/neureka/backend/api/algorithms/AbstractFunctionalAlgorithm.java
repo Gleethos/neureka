@@ -30,8 +30,8 @@ import java.util.Arrays;
  *  The "+" operator for example has different {@link Algorithm} instances tailored to specific requirements
  *  originating from different {@link ExecutionCall} instances with unique arguments.
  *  {@link Tsr} instances within an execution call having the same shape would
- *  cause the {@link Operation} instance to chose an {@link Algorithm} instance which is responsible
- *  for performing elementwise operations, whereas otherwise the {@link neureka.backend.main.algorithms.Broadcast}
+ *  cause the {@link Operation} instance to choose an {@link Algorithm} instance which is responsible
+ *  for performing element-wise operations, whereas otherwise the {@link neureka.backend.main.algorithms.Broadcast}
  *  algorithm might be called to perform the operation.
  *
  * @param <C> The final type extending this class.
