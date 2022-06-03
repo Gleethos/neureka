@@ -1,4 +1,4 @@
-package neureka.backend.api.template.algorithms.fun;
+package neureka.backend.api.fun;
 
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
@@ -11,8 +11,9 @@ import neureka.devices.Device;
  *  residing in this {@link Algorithm} as components.
  *  It can be implemented as s simple lambda.
  */
-public interface SuitabilityPredicate {
-
+ @FunctionalInterface
+public interface SuitabilityPredicate
+{
     /*
         The following are reference values for calculating a suitability value for a given
         call for execution on any given algorithm...

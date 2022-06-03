@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
  *
  * @param <C> The type of the concrete extension of this class.
  */
-public abstract class AbstractBaseAlgorithm<C extends DeviceAlgorithm<C>> implements DeviceAlgorithm<C>
+public abstract class AbstractDeviceAlgorithm<C extends DeviceAlgorithm<C>> implements DeviceAlgorithm<C>
 {
-    private final Logger _LOG = LoggerFactory.getLogger(AbstractBaseAlgorithm.class);
+    private final Logger _LOG = LoggerFactory.getLogger(AbstractDeviceAlgorithm.class);
 
     /**
      *  This is the name of this {@link Algorithm}
@@ -32,7 +32,7 @@ public abstract class AbstractBaseAlgorithm<C extends DeviceAlgorithm<C>> implem
 
     protected final Map<Class<Device<?>>, ImplementationFor<Device<?>>> _implementations = new HashMap<>();
 
-    public AbstractBaseAlgorithm( String name ) { _name = name; }
+    public AbstractDeviceAlgorithm(String name ) { _name = name; }
 
     /**
      *  This method returns the name of this {@link Algorithm}

@@ -2,9 +2,9 @@ package neureka.backend.main.algorithms;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.template.algorithms.AbstractFunctionalAlgorithm;
-import neureka.backend.api.template.algorithms.fun.AutoDiffMode;
-import neureka.backend.api.template.algorithms.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.algorithms.internal.FunTuple;
 import neureka.calculus.args.Arg;
@@ -14,7 +14,7 @@ import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.NumericType;
 import org.jetbrains.annotations.Contract;
 
-public class ScalarActivation extends AbstractFunctionalAlgorithm<ScalarActivation>
+public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivation>
 {
     public ScalarActivation(FunTuple<Fun.F64ToF64> funs) {
         super("scalar activation");

@@ -3,14 +3,14 @@ package neureka.backend.main.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.template.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
 import neureka.ndim.iterator.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public final class Convolution extends AbstractFunctionalAlgorithm<Convolution>
+public final class Convolution extends AbstractFunDeviceAlgorithm<Convolution>
 {
     public Convolution() {
         super("convolution");

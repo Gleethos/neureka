@@ -1,4 +1,4 @@
-package neureka.backend.api.template.algorithms.fun;
+package neureka.backend.api;
 
 public enum AutoDiffMode
 {

@@ -3,11 +3,8 @@ package neureka.backend.api.template.algorithms;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.backend.api.Algorithm;
-import neureka.backend.api.DeviceAlgorithm;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Operation;
-import neureka.backend.api.template.algorithms.fun.*;
+import neureka.backend.api.*;
+import neureka.backend.api.fun.*;
 import neureka.backend.main.memory.MemValidator;
 import neureka.calculus.Function;
 import neureka.devices.Device;
@@ -36,10 +33,10 @@ import java.util.Arrays;
  *
  * @param <C> The final type extending this class.
  */
-public abstract class AbstractFunctionalAlgorithm<C extends DeviceAlgorithm<C>>
-extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
+public abstract class AbstractFunDeviceAlgorithm<C extends DeviceAlgorithm<C>>
+extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
 {
-    private static final Logger _LOG = LoggerFactory.getLogger( AbstractFunctionalAlgorithm.class );
+    private static final Logger _LOG = LoggerFactory.getLogger( AbstractFunDeviceAlgorithm.class );
     /*
         Consider the following lambdas as effectively immutable because this
         class will warn us if any field variable is set for a second time.
@@ -48,7 +45,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     private SuitabilityPredicate _isSuitableFor;
     private ADSupportPredicate _autogradModeFor;
     private Execution _execution;
-    private ADAgentSupplier      _supplyADAgentFor;
+    private ADAgentSupplier _supplyADAgentFor;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
     /*
         This flag will ensure that we can warn the user that the state has been illegally modified.
@@ -56,7 +53,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     private boolean _isFullyBuilt = false;
 
 
-    public AbstractFunctionalAlgorithm( String name ) { super(name); }
+    public AbstractFunDeviceAlgorithm(String name ) { super(name); }
 
     /**
      *  The {@link SuitabilityPredicate} checks if a given instance of an {@link ExecutionCall} is
@@ -110,7 +107,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     }
 
     /**
-     * @return A new concrete implementation of the {@link AbstractFunctionalAlgorithm} which
+     * @return A new concrete implementation of the {@link AbstractFunDeviceAlgorithm} which
      *         is fully built and ready to be used as an {@link Operation} component.
      */
     public final C buildFunAlgorithm() {
@@ -178,7 +175,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
      * @param isSuitableFor The suitability predicate which determines if the algorithm is suitable or not.
      * @return This very instance to enable method chaining.
      */
-    public final AbstractFunctionalAlgorithm<C> setIsSuitableFor( SuitabilityPredicate isSuitableFor ) {
+    public final AbstractFunDeviceAlgorithm<C> setIsSuitableFor(SuitabilityPredicate isSuitableFor ) {
         _isSuitableFor = _checked(isSuitableFor, _isSuitableFor, SuitabilityPredicate.class);
         return this;
     }
@@ -190,7 +187,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
      * @param supplyADAgentFor A supplier for an {@link ADAgent} containing implementation details for autograd.
      * @return This very instance to enable method chaining.
      */
-    public final AbstractFunctionalAlgorithm<C> setSupplyADAgentFor( ADAgentSupplier supplyADAgentFor ) {
+    public final AbstractFunDeviceAlgorithm<C> setSupplyADAgentFor(ADAgentSupplier supplyADAgentFor ) {
         _supplyADAgentFor = _checked(supplyADAgentFor, _supplyADAgentFor, ADAgentSupplier.class);
         return this;
     }
@@ -212,7 +209,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
      * @param instantiateNewTensorsForExecutionIn A lambda which prepares the provided execution call (usually output instantiation).
      * @return This very instance to enable method chaining.
      */
-    public final AbstractFunctionalAlgorithm<C> setCallPreparation( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
+    public final AbstractFunDeviceAlgorithm<C> setCallPreparation(ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
         _instantiateNewTensorsForExecutionIn = _checked(instantiateNewTensorsForExecutionIn, _instantiateNewTensorsForExecutionIn, ExecutionPreparation.class);
         return this;
     }
@@ -226,7 +223,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
      * @param autogradModeFor A predicate lambda which determines the auto diff mode of this algorithm a given execution call.
      * @return This very instance to enable method chaining.
      */
-    public final AbstractFunctionalAlgorithm<C> setAutogradModeFor( ADSupportPredicate autogradModeFor ) {
+    public final AbstractFunDeviceAlgorithm<C> setAutogradModeFor(ADSupportPredicate autogradModeFor ) {
         _autogradModeFor = _checked(autogradModeFor, _autogradModeFor, ADSupportPredicate.class);
         return this;
     }
@@ -237,7 +234,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
         return _autogradModeFor.autoDiffModeFrom( call );
     }
 
-    public final AbstractFunctionalAlgorithm<C> setExecution( Execution execution ) {
+    public final AbstractFunDeviceAlgorithm<C> setExecution(Execution execution ) {
         _execution = _checked(execution, _execution, Execution.class);
         return this;
     }

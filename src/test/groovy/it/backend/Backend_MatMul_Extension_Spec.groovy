@@ -8,9 +8,9 @@ import neureka.backend.api.BackendContext
 import neureka.backend.api.DeviceAlgorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
-import neureka.backend.api.template.algorithms.fun.AutoDiffMode
-import neureka.backend.api.template.algorithms.fun.Result
-import neureka.backend.api.template.algorithms.fun.SuitabilityPredicate
+import neureka.backend.api.AutoDiffMode
+import neureka.backend.api.Result
+import neureka.backend.api.fun.SuitabilityPredicate
 import neureka.backend.main.implementations.CPUImplementation
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionParser
@@ -69,7 +69,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                 )
                                 .build()
                                 .setAlgorithm(
-                                        DeviceAlgorithm.withName(null)
+                                        DeviceAlgorithm.withName("my_algorithm")
                                             .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )
                                             .setAutogradModeFor(call -> AutoDiffMode.BACKWARD_ONLY )
                                             .setExecution( (caller, call) ->

@@ -5,10 +5,10 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.template.algorithms.fun.ADAgentSupplier;
-import neureka.backend.api.template.algorithms.fun.AutoDiffMode;
-import neureka.backend.api.template.algorithms.fun.ExecutionPreparation;
-import neureka.backend.api.template.algorithms.fun.Result;
+import neureka.backend.api.fun.ADAgentSupplier;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.fun.ExecutionPreparation;
+import neureka.backend.api.Result;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.memory.MemUtil;
 import neureka.backend.main.operations.linear.MatMul;
@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgorithm>
+public final class FallbackAlgorithm extends AbstractDeviceAlgorithm<FallbackAlgorithm>
 implements ExecutionPreparation, ADAgentSupplier
 {
 

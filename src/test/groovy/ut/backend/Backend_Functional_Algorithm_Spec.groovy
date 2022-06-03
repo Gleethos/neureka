@@ -1,11 +1,11 @@
 package ut.backend
 
 import neureka.backend.api.Algorithm
-import neureka.backend.api.template.algorithms.AbstractFunctionalAlgorithm
-import neureka.backend.api.template.algorithms.fun.AutoDiffMode
-import neureka.backend.api.template.algorithms.fun.Execution
-import neureka.backend.api.template.algorithms.fun.ExecutionPreparation
-import neureka.backend.api.template.algorithms.fun.SuitabilityPredicate
+import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm
+import neureka.backend.api.AutoDiffMode
+import neureka.backend.api.fun.Execution
+import neureka.backend.api.fun.ExecutionPreparation
+import neureka.backend.api.fun.SuitabilityPredicate
 import spock.lang.Specification
 
 import java.util.function.Consumer
@@ -102,7 +102,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
             setter(algorithm)
         then : 'We will get a warning which wells us that mutating the state of the algorithm is discouraged!'
             1 * System.err.println(
-                    "[Test worker] WARN neureka.backend.api.template.algorithms.AbstractFunctionalAlgorithm - " +
+                    "[Test worker] WARN neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm - " +
                     "Implementation '$type.simpleName' in algorithm '$algorithm' was modified! " +
                     "Please consider only modifying the standard backend state of Neureka for experimental reasons."
                 )
@@ -118,7 +118,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
     }
 
 
-    class TestAlgorithm extends AbstractFunctionalAlgorithm<TestAlgorithm> {
+    class TestAlgorithm extends AbstractFunDeviceAlgorithm<TestAlgorithm> {
         TestAlgorithm() {
             super("test_name")
         }

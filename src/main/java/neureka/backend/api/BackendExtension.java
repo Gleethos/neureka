@@ -9,8 +9,8 @@ import neureka.devices.Device;
  *  via the {@link neureka.devices.opencl.CLContext} class used by the standard backend.
  *  If you want to introduce new backends to Neureka, this is the place to start!
  */
-public interface BackendExtension extends Component<Extensions> {
-
+public interface BackendExtension extends Component<Extensions>
+{
     /**
      *  The {@link BackendContext} does not handle {@link Device} instances directly.
      *  Instead, the task of instantiating and exposing {@link Device} implementations

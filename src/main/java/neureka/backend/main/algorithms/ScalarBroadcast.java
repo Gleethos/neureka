@@ -3,9 +3,9 @@ package neureka.backend.main.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.template.algorithms.AbstractFunctionalAlgorithm;
-import neureka.backend.api.template.algorithms.fun.AutoDiffMode;
-import neureka.backend.api.template.algorithms.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.algorithms.internal.FunTuple;
 import neureka.devices.Device;
@@ -15,7 +15,7 @@ import neureka.dtype.NumericType;
 import neureka.ndim.iterator.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public class ScalarBroadcast extends AbstractFunctionalAlgorithm<ScalarBroadcast>
+public class ScalarBroadcast extends AbstractFunDeviceAlgorithm<ScalarBroadcast>
 {
     public ScalarBroadcast(FunTuple<Fun.F64ToF64> funs) {
         super("scalar broadcast");

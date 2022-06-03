@@ -1,6 +1,7 @@
-package neureka.backend.api.template.algorithms.fun;
+package neureka.backend.api.fun;
 
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
 import neureka.calculus.Function;
 import neureka.devices.Device;
 
@@ -22,6 +23,7 @@ import neureka.devices.Device;
  *  one can simply ignore it and find a custom one which fits the contents of the given
  *  {@link ExecutionCall} instance better.
  */
+ @FunctionalInterface
 public interface Execution {
 
     /**

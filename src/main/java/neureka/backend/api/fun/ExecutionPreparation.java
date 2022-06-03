@@ -1,4 +1,4 @@
-package neureka.backend.api.template.algorithms.fun;
+package neureka.backend.api.fun;
 
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
@@ -16,6 +16,7 @@ import neureka.devices.Device;
  *  with the shape of the provided input tensors, whereas the execution of a
  *  linear operation like for example a broadcast operation will require a very different approach...
  */
+ @FunctionalInterface
 public interface ExecutionPreparation {
 
     /**

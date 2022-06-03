@@ -3,10 +3,10 @@ package neureka.backend.main.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.template.algorithms.AbstractFunctionalAlgorithm;
-import neureka.backend.api.template.algorithms.fun.AutoDiffMode;
-import neureka.backend.api.template.algorithms.fun.Result;
-import neureka.backend.api.template.algorithms.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Result;
+import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.algorithms.internal.WithForward;
 import neureka.backend.main.implementations.CLImplementation;
@@ -20,7 +20,7 @@ import neureka.dtype.NumericType;
 import neureka.ndim.iterator.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public final class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
+public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
 {
     public Broadcast( RecursiveExecutor finalExecutor )
     {

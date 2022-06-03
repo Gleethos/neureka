@@ -3,7 +3,7 @@ package neureka.calculus.internal;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.*;
-import neureka.backend.api.template.algorithms.fun.ExecutionPreparation;
+import neureka.backend.api.fun.ExecutionPreparation;
 import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.memory.MemUtil;
 import neureka.backend.main.operations.JunctionUtil;

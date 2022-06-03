@@ -39,14 +39,15 @@ SOFTWARE.
 package neureka.backend.api;
 
 import neureka.Tsr;
-import neureka.backend.api.template.algorithms.fun.ADSupportPredicate;
-import neureka.backend.api.template.algorithms.fun.Execution;
-import neureka.backend.api.template.algorithms.fun.SuitabilityPredicate;
+import neureka.backend.api.fun.ADSupportPredicate;
+import neureka.backend.api.fun.Execution;
+import neureka.backend.api.fun.SuitabilityPredicate;
 
 
 /**
- *   This class is the middle layer of the 3 tier compositional abstraction architecture of this backend, which
- *   consists of {@link Operation}s, {@link Algorithm}s and {@link ImplementationFor}. <br>
+ *   This class is the middle layer of the 3 tier compositional architecture of this backend, which
+ *   consists of {@link Operation}s, {@link Algorithm}s and
+ *   in case of a {@link DeviceAlgorithm} also {@link ImplementationFor}. <br>
  *
  *   Conceptually an implementation of the {@link Algorithm} interface represents "a sub-kind of operation" for
  *   an instance of an implementation of the {@link Operation} interface. <br>

@@ -41,7 +41,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Call;
 import neureka.backend.api.Operation;
-import neureka.backend.api.template.algorithms.fun.Result;
+import neureka.backend.api.Result;
 import neureka.backend.main.memory.MemUtil;
 import neureka.backend.main.memory.MemValidator;
 import neureka.calculus.args.Arg;

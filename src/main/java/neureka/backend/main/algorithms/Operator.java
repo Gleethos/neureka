@@ -3,9 +3,9 @@ package neureka.backend.main.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.template.algorithms.AbstractFunctionalAlgorithm;
-import neureka.backend.api.template.algorithms.fun.AutoDiffMode;
-import neureka.backend.api.template.algorithms.fun.Result;
+import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Result;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.algorithms.internal.FunTuple;
 import neureka.backend.main.algorithms.internal.WithForward;
@@ -19,7 +19,7 @@ import neureka.ndim.NDimensional;
 import neureka.ndim.iterator.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public final class Operator extends AbstractFunctionalAlgorithm<Operator>
+public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
 {
     public Operator( RecursiveExecutor finalExecutor ) {
         super("operator");

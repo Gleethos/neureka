@@ -5,8 +5,8 @@ import neureka.Tsr
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.backend.api.ExecutionCall
-import neureka.backend.api.template.algorithms.fun.AutoDiffMode
-import neureka.backend.api.template.algorithms.fun.Result
+import neureka.backend.api.AutoDiffMode
+import neureka.backend.api.Result
 import neureka.backend.api.template.operations.AbstractOperation
 import neureka.calculus.Function
 import neureka.devices.Device

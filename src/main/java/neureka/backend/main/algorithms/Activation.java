@@ -3,9 +3,9 @@ package neureka.backend.main.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.template.algorithms.AbstractFunctionalAlgorithm;
-import neureka.backend.api.template.algorithms.fun.AutoDiffMode;
-import neureka.backend.api.template.algorithms.fun.Result;
+import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Result;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.algorithms.internal.WithForward;
 import neureka.backend.main.implementations.CLImplementation;
@@ -21,7 +21,7 @@ import neureka.ndim.iterator.NDIterator;
  *  providing some basic functionality for implementing custom
  *  activation functions.
  */
-public final class Activation extends AbstractFunctionalAlgorithm<Activation>
+public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
 {
     public Activation() {
         super("activation");

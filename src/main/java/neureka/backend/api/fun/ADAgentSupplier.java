@@ -1,4 +1,4 @@
-package neureka.backend.api.template.algorithms.fun;
+package neureka.backend.api.fun;
 
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
@@ -15,8 +15,9 @@ import neureka.devices.Device;
  *  Besides that it may also contain context information used <br>
  *  to perform said procedures.
  */
-public interface ADAgentSupplier {
-
+ @FunctionalInterface
+public interface ADAgentSupplier
+{
     /**
      *  This method ought to return a new instance
      *  if the {@link ADAgent} class responsible for performing automatic differentiation

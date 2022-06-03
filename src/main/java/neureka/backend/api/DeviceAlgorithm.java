@@ -1,25 +1,26 @@
 package neureka.backend.api;
 
 import neureka.backend.main.algorithms.FunAlgorithm;
+import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 
 /**
  *  A {@link DeviceAlgorithm} is an advanced form of {@link Algorithm} which
  *  delegates the execution to implementations of {@link ImplementationFor} specific {@link Device} types.
  *
- * @param <C>
+ * @param <C> The type parameter defining the concrete type of implementations of this.
  */
 public interface DeviceAlgorithm<C extends DeviceAlgorithm<C>> extends Algorithm
 {
-
     /**
      * This is a factory method for creating a new instance of this {@link FunAlgorithm} class.
      *
      * @param name The name of the functional algorithm.
      * @return A new {@link FunAlgorithm} with the provided name.
      */
-    static FunAlgorithm withName(String name) {
-        return new FunAlgorithm(name);
+    static FunAlgorithm withName( String name ) {
+        LogUtil.nullArgCheck( name, "name", String.class );
+        return new FunAlgorithm( name );
     }
 
     /**
@@ -36,7 +37,7 @@ public interface DeviceAlgorithm<C extends DeviceAlgorithm<C>> extends Algorithm
      * @param <I>            The type of the {@link ImplementationFor} the provided {@link Device} type.
      * @return This very {@link Algorithm} instance to allow for method chaining.
      */
-    <D extends Device<?>, I extends ImplementationFor<D>> C setImplementationFor(Class<D> deviceClass, I implementation );
+    <D extends Device<?>, I extends ImplementationFor<D>> C setImplementationFor( Class<D> deviceClass, I implementation );
 
     /**
      * An {@link ImplementationFor} a specific {@link Device} can be accessed by passing the class of

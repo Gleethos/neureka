@@ -1,5 +1,6 @@
-package neureka.backend.api.template.algorithms.fun;
+package neureka.backend.api.fun;
 
+import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.Device;
 
@@ -9,6 +10,7 @@ import neureka.devices.Device;
  *  can be performed for a given {@link ExecutionCall}.
  *  The analyzer returns a {@link AutoDiffMode} enum instance.
  */
+ @FunctionalInterface
 public interface ADSupportPredicate {
 
     /**
