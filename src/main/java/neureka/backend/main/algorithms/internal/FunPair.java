@@ -1,6 +1,6 @@
 package neureka.backend.main.algorithms.internal;
 
-class FunPair<T extends Fun> implements FunTuple<T> {
+final class FunPair<T extends Fun> implements FunTuple<T> {
 
     private final Class<T> _type;
     private final T _a;

@@ -12,7 +12,7 @@ import java.util.stream.Stream;
  *  An internal class which queries the backend for {@link Device} instances based on a provided device
  *  type and an array of search keys!
  */
-class Query
+final class Query
 {
     private static final double ACCEPTABILITY = 0.42;
     private static final String[] TAKE_FIRST = {"first device","first", "first gpu", "first cpu", "primary", "main", "any", "anything", "something"};

@@ -9,8 +9,7 @@ import neureka.fluent.slicing.states.To;
 
 public class AxisSliceBuilder<V> implements FromOrAt<V>, To<V>, StepsOrAxisOrGet<V>, AxisOrGet<V>
 {
-
-    interface Resolution<V> { SliceBuilder<V> resolve(int from, int to, int steps ); }
+    interface Resolution<V> { SliceBuilder<V> resolve( int from, int to, int steps ); }
 
     private final Resolution<V> _then;
     private int _from;
