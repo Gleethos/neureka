@@ -108,22 +108,22 @@ public final class Product extends AbstractOperation
                     })
         )
         .setCallPreparation(
-                call -> {
-                    Device<Number> device = call.getDeviceFor(Number.class);
-                    if ( call.input( 0 ) == null ) // Creating a new tensor:
-                    {
-                        int[] shp = call.input( 1 ).getNDConf().shape();
-                        Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
-                        output.setIsVirtual( false );
-                        try {
-                            device.store( output );
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        call.setInput( 0, output );
+            call -> {
+                Device<Number> device = call.getDeviceFor(Number.class);
+                if ( call.input( 0 ) == null ) // Creating a new tensor:
+                {
+                    int[] shp = call.input( 1 ).getNDConf().shape();
+                    Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
+                    output.setIsVirtual( false );
+                    try {
+                        device.store( output );
+                    } catch( Exception e ) {
+                        e.printStackTrace();
                     }
-                    return call;
+                    call.setInput( 0, output );
                 }
+                return call;
+            }
         )
         .buildFunAlgorithm();
 

@@ -2,7 +2,7 @@ package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.DeviceAlgorithm;
+import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -32,7 +32,7 @@ public class Reshape extends AbstractOperation
                 .setIsInline(         false      )
         );
         setAlgorithm(
-            DeviceAlgorithm
+            Algorithm
             .withName( "reshape" )
             .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
             .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
@@ -51,7 +51,6 @@ public class Reshape extends AbstractOperation
                             .withADAction( target -> new FunctionParser( Neureka.get().backend() ).parse( caller.toString(), false ).derive( new Tsr[]{ target.error() },0 ) );
                 }
             )
-            .setCallPreparation( call -> call )
             .buildFunAlgorithm()
         );
     }
