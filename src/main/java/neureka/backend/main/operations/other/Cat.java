@@ -2,13 +2,12 @@ package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.DeviceAlgorithm;
+import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.FunAlgorithm;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 
@@ -32,8 +31,7 @@ public class Cat extends AbstractOperation
                 .setIsInline(         false       )
         );
         setAlgorithm(
-            FunAlgorithm.class,
-            DeviceAlgorithm
+            Algorithm
             .withName("concat")
             .setIsSuitableFor( call -> {
                 Integer dim = call.getValOf(Arg.Axis.class);
@@ -86,7 +84,6 @@ public class Cat extends AbstractOperation
                             });
                 }
             )
-            .setCallPreparation( call -> call )
             .buildFunAlgorithm()
         );
     }

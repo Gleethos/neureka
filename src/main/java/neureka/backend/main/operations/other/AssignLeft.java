@@ -24,13 +24,13 @@ public class AssignLeft extends AbstractOperation
     public AssignLeft() {
         super(
             new OperationBuilder()
-            .setIdentifier(       "left_inline"  )
-            .setOperator(         "<"            )
-            .setArity(            -2             )
-            .setIsOperator(       true           )
-            .setIsIndexer(        false          )
-            .setIsDifferentiable( false          )
-            .setIsInline(         true           )
+                .setIdentifier(       "left_inline"  )
+                .setOperator(         "<"            )
+                .setArity(            -2             )
+                .setIsOperator(       true           )
+                .setIsIndexer(        false          )
+                .setIsDifferentiable( false          )
+                .setIsInline(         true           )
         );
 
         setAlgorithm(

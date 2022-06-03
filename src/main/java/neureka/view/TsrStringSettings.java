@@ -8,7 +8,7 @@ import java.util.function.Supplier;
  */
 public final class TsrStringSettings {
 
-    private final Supplier<Boolean> _notModifyable;
+    private final Supplier<Boolean> _notModifiable;
     private int _cellSize;
     private int     _rowLimit;
     private boolean _hasGradient;
@@ -26,7 +26,7 @@ public final class TsrStringSettings {
     private boolean _legacy;
 
     public TsrStringSettings(Supplier<Boolean> notModifiable) {
-        _notModifyable = notModifiable;
+        _notModifiable = notModifiable;
         _isScientific = true;
         _multiline = true;
         _cellSize = 6;
@@ -99,7 +99,7 @@ public final class TsrStringSettings {
      * @param cellSize The width of the cell in terms of numbers of characters.
      */
     public TsrStringSettings setCellSize( int cellSize ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _cellSize = cellSize;
         return this;
     }
@@ -127,7 +127,7 @@ public final class TsrStringSettings {
      * @param shortage The maximum number of rows in the {@link String} representation of the tensor.
      */
     public TsrStringSettings setRowLimit( int shortage ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _rowLimit = shortage;
         return this;
     }
@@ -143,7 +143,7 @@ public final class TsrStringSettings {
      * @param hasGradient The truth value determining if the tensor should also print its gradient.
      */
     public TsrStringSettings setHasGradient( boolean hasGradient ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _hasGradient = hasGradient;
         return this;
     }
@@ -159,7 +159,7 @@ public final class TsrStringSettings {
      * @param isScientific The truth value determining if numeric values should be formatted in scientific notation.
      */
     public TsrStringSettings setIsScientific( boolean isScientific ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _isScientific = isScientific;
         return this;
     }
@@ -175,7 +175,7 @@ public final class TsrStringSettings {
      * @param isMultiline The truth value determining if the tensor should be printed in one line or across multiple lines.
      */
     public TsrStringSettings setIsMultiline( boolean isMultiline ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _multiline = isMultiline;
         return this;
     }
@@ -191,7 +191,7 @@ public final class TsrStringSettings {
      * @param haveSlimNumbers The truth value determining if numbers should be formatted more compactly (1.0 to 1).
      */
     public TsrStringSettings setHasSlimNumbers( boolean haveSlimNumbers ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _haveSlimNumbers = haveSlimNumbers;
         return this;
     }
@@ -207,7 +207,7 @@ public final class TsrStringSettings {
      * @param hasValue The truth value determining if the values of the tensor should be included in the {@link String} representation.
      */
     public TsrStringSettings setHasValue( boolean hasValue ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _hasValue = hasValue;
         return this;
     }
@@ -223,7 +223,7 @@ public final class TsrStringSettings {
      * @param hasShape The truth value determining if the tensor should have its shape included in the {@link String}.
      */
     public TsrStringSettings setHasShape( boolean hasShape ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _hasShape = hasShape;
         return this;
     }
@@ -242,7 +242,7 @@ public final class TsrStringSettings {
      *         tensor should have its computation graph attached (if present).
      */
     public TsrStringSettings setHasRecursiveGraph( boolean hasRecursiveGraph ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _hasRecursiveGraph = hasRecursiveGraph;
         return this;
     }
@@ -252,7 +252,7 @@ public final class TsrStringSettings {
     }
 
     public TsrStringSettings setHasDerivatives( boolean hasDerivatives ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _hasDerivatives = hasDerivatives;
         return this;
     }
@@ -262,7 +262,7 @@ public final class TsrStringSettings {
     }
 
     public TsrStringSettings setIsCellBound( boolean isCellBound ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _isCellBound = isCellBound;
         return this;
     }
@@ -278,7 +278,7 @@ public final class TsrStringSettings {
      * @param prefix The {@link String} which will be prepended at the beginning of a {@link neureka.Tsr} string representation.
      */
     public TsrStringSettings setPrefix( String prefix ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _prefix = prefix;
         return this;
     }
@@ -294,7 +294,7 @@ public final class TsrStringSettings {
      * @param postfix The {@link String} which will be appended at the end of a {@link neureka.Tsr} string representation.
      */
     public TsrStringSettings setPostfix( String postfix ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _postfix = postfix;
         return this;
     }
@@ -314,7 +314,7 @@ public final class TsrStringSettings {
      *               the {@link #getIsMultiline()} is set to {@code true}.
      */
     public TsrStringSettings setIndent( String indent ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _indent = indent;
         return this;
     }
@@ -338,7 +338,7 @@ public final class TsrStringSettings {
      * @param legacy The truth value determining the type of brackets used.
      */
     public TsrStringSettings setIsLegacy( boolean legacy ) {
-        if ( _notModifyable.get() ) return this;
+        if ( _notModifiable.get() ) return this;
         _legacy = legacy;
         return this;
     }

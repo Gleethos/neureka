@@ -34,8 +34,8 @@ import static org.jocl.CL.*;
  *  For every platform exposed by the OpenCL runtime (modelled by a {@link CLContext} instance),
  *  there will be a {@link OpenCLPlatform} instance.
  */
-public class OpenCLPlatform {
-
+public class OpenCLPlatform
+{
     private final static Logger _LOG = LoggerFactory.getLogger( OpenCLPlatform.class );
 
     private final cl_platform_id _pid;
@@ -159,11 +159,11 @@ public class OpenCLPlatform {
                         else if ( preName.contains("convolution") && type.supportsAlgorithm(Convolution.class) )
                             impl = type.getAlgorithm(Convolution.class).getImplementationFor( OpenCLDevice.class );
                         else if (
-                                type.supportsAlgorithm(FunAlgorithm.class)
+                                type.supportsAlgorithm(DeviceAlgorithm.class)
                                 &&
-                                preName.contains(type.getAlgorithm(FunAlgorithm.class).getName())
+                                preName.contains(type.getAlgorithm(DeviceAlgorithm.class).getName())
                         ) { // TODO: cover!
-                            impl = type.getAlgorithm(FunAlgorithm.class).getImplementationFor( OpenCLDevice.class );
+                            impl = type.getAlgorithm(DeviceAlgorithm.class).getImplementationFor( OpenCLDevice.class );
                         }
                         if ( impl instanceof CLImplementation ) {
                             KernelCode kernelCode = ((CLImplementation) impl).getKernelCode();
@@ -171,11 +171,7 @@ public class OpenCLPlatform {
                                 code.put( kernelCode.getName(), kernelCode.getCode() );
                         }
                     }
-                    code.forEach( ( n, s ) -> {
-                                names.add( n );
-                                sources.add( s );
-                            }
-                    );
+                    code.forEach( ( n, s ) -> { names.add( n ); sources.add( s ); } );
                 }
             }
             if ( !templateFound ) sources.add( kernelSource );

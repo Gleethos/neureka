@@ -254,10 +254,9 @@ public final class TsrAsString
         else if ( _tensor.isEmpty() ) return "empty";
         else if ( _tensor.isUndefined() ) return "undefined";
         _asStr = new StringBuilder();
-        String base      = ( !_isMultiline ? ""   : "\n" + "    "      );
-        String delimiter = ( !_isMultiline ? ""   : "    "            );
-        String half      = ( !_isMultiline ? ""   : "  "              );
-        String deeper    = ( !_isMultiline ? ""   : "    " + delimiter );
+        String base      = ( !_isMultiline ? ""   : "\n" + "    " );
+        String delimiter = ( !_isMultiline ? ""   : "    "        );
+        String half      = ( !_isMultiline ? ""   : "  "          );
         if ( _hasShape ) _strShape();
         if ( !_hasValue ) return _asStr.toString();
         _$( ":" );
@@ -273,12 +272,12 @@ public final class TsrAsString
             Tsr<?> gradient = _tensor.getGradient();
             if ( gradient != null )
                 _$(
-                        gradient.toString(
-                                t -> t.with( _config )
-                                        .setPrefix("").setPostfix("")
-                                        .setHasShape( false )
-                                        .setIsScientific( true )
-                        )
+                    gradient.toString(
+                        t -> t.with( _config )
+                                .setPrefix("").setPostfix("")
+                                .setHasShape( false )
+                                .setIsScientific( true )
+                    )
                 );
             else
                 _$( ( ( _legacy ) ? ":(null)" : ":[null]" ) );
@@ -288,16 +287,15 @@ public final class TsrAsString
             _$( "; " );
             node.forEachDerivative( ( t, agent ) -> {
                 if ( !agent.partialDerivative().isPresent() ) _$( "->d(null), " );
-                else {
-                    _$(
-                                    base + "=>d|[ " +
-                                    base + delimiter + agent.partialDerivative().get().toString( _config.clone().setPrefix("").setPostfix("") ) + " " +
-                                    base + half + "]|:t{ " +
-                                    base + delimiter + (
-                                    ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix("").setPostfix("") ) : t.toString("")
-                            ) + " " + base + half + "}, "
+                else _$(
+                        base + "=>d|[ " +
+                        base + delimiter + agent.partialDerivative().get().toString( _config.clone().setPrefix("").setPostfix("") ) + " " +
+                        base + half + "]|:t{ " +
+                        base + delimiter + (
+                            ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix("").setPostfix("") ) : t.toString("")
+                        ) +
+                        " " + base + half + "}, "
                     );
-                }
             });
         }
         if ( _hasDerivatives && _tensor.has( GraphNode.class ) && _tensor.get( GraphNode.class ).size() > 0 ) {
@@ -390,9 +388,9 @@ public final class TsrAsString
         NDFrame<?> alias = _tensor.get( NDFrame.class );
         if ( dim == indices.length - 1 ) {
             if (
-                    alias != null &&
-                            indices[ indices.length - 1 ] == 0 &&
-                            indices[ Math.max( indices.length - 2, 0 ) ] == 0
+                alias != null &&
+                indices[ indices.length - 1 ] == 0 &&
+                indices[ Math.max( indices.length - 2, 0 ) ] == 0
             ) {
                 List<Object> aliases = alias.atAxis( indices.length - 1 ).getAllAliases();
                 if ( aliases != null ) {

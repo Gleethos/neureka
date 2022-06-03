@@ -3,13 +3,12 @@ package neureka.backend.main.operations.other;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
-import neureka.backend.api.DeviceAlgorithm;
+import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.FunAlgorithm;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
@@ -25,54 +24,52 @@ public class DimTrim extends AbstractOperation
     public DimTrim()
     {
         super(
-                new OperationBuilder()
-                        .setIdentifier(         "dimtrim"   )
-                        .setOperator(         "dimtrim"   )
-                        .setArity(            1           )
-                        .setIsOperator(       false       )
-                        .setIsIndexer(        false       )
-                        .setIsDifferentiable( true        )
-                        .setIsInline(         false       )
+            new OperationBuilder()
+                .setIdentifier(       "dimtrim"   )
+                .setOperator(         "dimtrim"   )
+                .setArity(            1           )
+                .setIsOperator(       false       )
+                .setIsIndexer(        false       )
+                .setIsDifferentiable( true        )
+                .setIsInline(         false       )
         );
         setAlgorithm(
-            FunAlgorithm.class,
-            DeviceAlgorithm
-                .withName("dimTrim")
-                .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
-                .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-                .setExecution(
-                    ( caller, call ) ->
+            Algorithm
+            .withName("dimTrim")
+            .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
+            .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
+            .setExecution(
+                ( caller, call ) ->
+                {
+                    ADAction autoDiff = target ->
                     {
-                        ADAction autoDiff = target ->
-                        {
-                            int[] endings = endsFrom( call.input( 0 ).getNDConf().shape() );
-                            int prefix  = endings[ 0 ];
-                            int postfix = endings[ 1 ];
+                        int[] endings = endsFrom( call.input( 0 ).getNDConf().shape() );
+                        int prefix  = endings[ 0 ];
+                        int postfix = endings[ 1 ];
 
-                            return
-                                    call.autogradMode() == AutoDiffMode.FORWARD_ONLY
-                                        ? new FunctionParser( Neureka.get().backend() )
-                                                            .parse(caller.toString(), false)
-                                                            .derive(new Tsr[]{target.error()},0)
-                                        : _pad(target.error(), new int[]{prefix, postfix}, true);
-                        };
+                        return
+                                call.autogradMode() == AutoDiffMode.FORWARD_ONLY
+                                    ? new FunctionParser( Neureka.get().backend() )
+                                                        .parse(caller.toString(), false)
+                                                        .derive(new Tsr[]{target.error()},0)
+                                    : _pad(target.error(), new int[]{prefix, postfix}, true);
+                    };
 
-                        Tsr<?>[] inputs = CalcUtil.srcActivation(
-                                                call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0,
-                                                caller.getSubFunctions().toArray(new Function[0])
-                                            );
-                        assert inputs.length == 1;
-                        Tsr<?> t = inputs[ 0 ];
-                        if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {
-                            int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
-                            int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
-                            return Result.of(_pad( t, new int[]{prefix, postfix}, true )).withADAction(autoDiff);
-                        } else
-                            return Result.of(_trim( t, true )).withADAction(autoDiff);
-                    }
-                )
-                .setCallPreparation( call -> call )
-                .buildFunAlgorithm()
+                    Tsr<?>[] inputs = CalcUtil.srcActivation(
+                                            call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0,
+                                            caller.getSubFunctions().toArray(new Function[0])
+                                        );
+                    assert inputs.length == 1;
+                    Tsr<?> t = inputs[ 0 ];
+                    if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {
+                        int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
+                        int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
+                        return Result.of(_pad( t, new int[]{prefix, postfix}, true )).withADAction(autoDiff);
+                    } else
+                        return Result.of(_trim( t, true )).withADAction(autoDiff);
+                }
+            )
+            .buildFunAlgorithm()
         );
     }
 

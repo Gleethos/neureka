@@ -1,6 +1,6 @@
 package neureka.backend.api;
 
-import neureka.backend.main.algorithms.FunAlgorithm;
+import neureka.backend.api.template.algorithms.FunDeviceAlgorithm;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 
@@ -13,14 +13,14 @@ import neureka.devices.Device;
 public interface DeviceAlgorithm<C extends DeviceAlgorithm<C>> extends Algorithm
 {
     /**
-     * This is a factory method for creating a new instance of this {@link FunAlgorithm} class.
+     * This is a factory method for creating a new instance of this {@link FunDeviceAlgorithm} class.
      *
      * @param name The name of the functional algorithm.
-     * @return A new {@link FunAlgorithm} with the provided name.
+     * @return A new {@link FunDeviceAlgorithm} with the provided name.
      */
-    static FunAlgorithm withName( String name ) {
+    static FunDeviceAlgorithm withName(String name ) {
         LogUtil.nullArgCheck( name, "name", String.class );
-        return new FunAlgorithm( name );
+        return new FunDeviceAlgorithm( name );
     }
 
     /**
@@ -52,7 +52,7 @@ public interface DeviceAlgorithm<C extends DeviceAlgorithm<C>> extends Algorithm
     <D extends Device<?>> ImplementationFor<D> getImplementationFor( Class<D> deviceClass );
 
     /**
-     * An {@link ImplementationFor} a specific {@link Device} can be accessed by passing the
+     * An {@link ImplementationFor} a specific {@link Device} can be accessed by passing
      * the {@link Device} for which an implementation should be returned.
      * An Algorithm instance ought to contain a collection of these {@link Device} specific
      * implementations...

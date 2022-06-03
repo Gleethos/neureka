@@ -10,7 +10,7 @@ import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.FunAlgorithm;
+import neureka.backend.api.template.algorithms.FunDeviceAlgorithm;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.operations.linear.internal.opencl.GEMM;
@@ -28,120 +28,121 @@ import org.slf4j.LoggerFactory;
 public class MatMul extends AbstractOperation
 {
     private static final Logger _LOG = LoggerFactory.getLogger(MatMul.class);
-    private final FunAlgorithm simpleMatMulAlgorithm;
+    private final FunDeviceAlgorithm simpleMatMulAlgorithm;
+
 
     public MatMul()
     {
         super(
-                new OperationBuilder()
-                        .setIdentifier(         "matMul"    )
-                        .setOperator(         "@"         )
-                        .setArity(            2           )
-                        .setIsOperator(       true        )
-                        .setIsIndexer(        false       )
-                        .setIsDifferentiable( true        )
-                        .setIsInline(         false       )
+            new OperationBuilder()
+                .setIdentifier(       "matMul"    )
+                .setOperator(         "@"         )
+                .setArity(            2           )
+                .setIsOperator(       true        )
+                .setIsIndexer(        false       )
+                .setIsDifferentiable( true        )
+                .setIsInline(         false       )
         );
 
         simpleMatMulAlgorithm =
-                        DeviceAlgorithm
-                            .withName("simple_matmul")
-                            .setIsSuitableFor(
-                                call -> call.validate()
-                                            .allNotNull( t -> Number.class.isAssignableFrom(t.getValueClass()) )
-                                            .getEstimator()
-                                                .goodIfAnyNonNull( t -> t.getNDConf() instanceof Simple2DConfiguration)
-                                                .badIfAnyNonNull( t -> !( t.getNDConf() instanceof Simple2DConfiguration) )
-                                                .getEstimation()
-                            )
-                            .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-                            .setExecution(
-                                ( caller, call ) -> {
-                                    ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
-                                    {
-                                        if ( adCall.autogradMode().allowsForward() )
-                                            throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
-                                        Function matMul = Neureka.get().backend().getFunction().matMul();
-                                        int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
-                                        Tsr<?> derivative = adCall.input( d ).T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
-                                        derivative.to(adCall.getDevice());
-                                        return ADAgent.of( derivative )
-                                                .withAD( target ->
-                                                                d == 1
-                                                                ? matMul.execute( target.error(), derivative )
-                                                                : matMul.execute( derivative, target.error() )
-                                                    );
-                                    };
+            DeviceAlgorithm
+                .withName("simple_matmul")
+                .setIsSuitableFor(
+                    call -> call.validate()
+                                .allNotNull( t -> Number.class.isAssignableFrom(t.getValueClass()) )
+                                .getEstimator()
+                                    .goodIfAnyNonNull( t -> t.getNDConf() instanceof Simple2DConfiguration)
+                                    .badIfAnyNonNull( t -> !( t.getNDConf() instanceof Simple2DConfiguration) )
+                                    .getEstimation()
+                )
+                .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
+                .setExecution(
+                    ( caller, call ) -> {
+                        ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+                        {
+                            if ( adCall.autogradMode().allowsForward() )
+                                throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
+                            Function matMul = Neureka.get().backend().getFunction().matMul();
+                            int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
+                            Tsr<?> derivative = adCall.input( d ).T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                            derivative.to(adCall.getDevice());
+                            return ADAgent.of( derivative )
+                                    .withAD( target ->
+                                                    d == 1
+                                                    ? matMul.execute( target.error(), derivative )
+                                                    : matMul.execute( derivative, target.error() )
+                                        );
+                        };
 
-                                    if ( !caller.isFlat() )
-                                        return Result.of(CalcUtil.defaultRecursiveExecution( caller, call )).withAutoDiff(autoDiff);
+                        if ( !caller.isFlat() )
+                            return Result.of(CalcUtil.defaultRecursiveExecution( caller, call )).withAutoDiff(autoDiff);
 
-                                    Tsr<?>[] tensors = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
-                                    for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                                    ExecutionCall<Device<Object>> preparedCall = _prepare( call.withInputs(tensors) );
-                                    return Result.of(MatMul.this.simpleMatMulAlgorithm
-                                                        .getImplementationFor(call.getDeviceFor(Object.class))
-                                                        .runAndGetFirstTensor(preparedCall)).withAutoDiff(autoDiff);
-                                }
-                            )
-                            .setCallPreparation( MatMul::_prepare )
-                            .buildFunAlgorithm();
+                        Tsr<?>[] tensors = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
+                        for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
+                        ExecutionCall<Device<Object>> preparedCall = _prepare( call.withInputs(tensors) );
+                        return Result.of(MatMul.this.simpleMatMulAlgorithm
+                                            .getImplementationFor(call.getDeviceFor(Object.class))
+                                            .runAndGetFirstTensor(preparedCall)).withAutoDiff(autoDiff);
+                    }
+                )
+                .setCallPreparation( MatMul::_prepare )
+                .buildFunAlgorithm();
 
         setAlgorithm(
             simpleMatMulAlgorithm
-                .setImplementationFor(
-                    CPU.class,
-                    CPUImplementation
-                        .withArity(3)
-                        .andImplementation( new CPUMatMul() )
-                )
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    CLImplementation
-                        .fromSource()
-                        .arity( 3 )
-                        .kernelName( "simple_matMul" )
-                        .kernelSource(
-                            "   __kernel void simple_matMul(                                         \n" +
-                            "          const int M, const int N, const int K,                        \n" +
-                            "          const __global float* A,                                      \n" +
-                            "          const __global float* B,                                      \n" +
-                            "                __global float* C                                       \n" +
-                            "   ) {                                                                  \n" +
-                            "       const int m = get_global_id(0); // Row index of C (0..M)         \n" +
-                            "       const int n = get_global_id(1); // Col index of C (0..N)         \n" +
-                            "                                                                        \n" +
-                            "       // Compute a single element (loop over K)                        \n" +
-                            "       float acc = 0.0f;                                                \n" +
-                            "       for ( int k = 0; k < K; k++ )                                    \n" +
-                            "           acc += A[ k + m * K ] * B[ n + k * N ];                      \n" +
-                            "                                                                        \n" +
-                            "       // Store the result                                              \n" +
-                            "       C[ n + m * N ] = acc;                                            \n" +
-                            "   }                                                                    \n"
-                        )
-                        .lambda( call -> {
-                            if (
-                                call.validate()
-                                        .all( t -> t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
-                                        .isValid()
-                            ) {
-                                new GEMM().run( call );
-                            } else {
-                                int M = call.input(1).shape(0);
-                                int N = call.input(2).shape(1);
-                                int K = call.input(1).shape(1);
-                                call.getDevice()
-                                        .getKernel(call)
-                                        .pass(M).pass(N).pass(K)
-                                        .pass(call.input(Number.class, 1))
-                                        .pass(call.input(Number.class, 2))
-                                        .pass(call.input(Number.class, 0))
-                                        .call(new long[]{M, N}, null);
-                            }
-                        })
-                        .build()
-                )
+            .setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                .withArity(3)
+                .andImplementation( new CPUMatMul() )
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                CLImplementation
+                    .fromSource()
+                    .arity( 3 )
+                    .kernelName( "simple_matMul" )
+                    .kernelSource(
+                        "   __kernel void simple_matMul(                                         \n" +
+                        "          const int M, const int N, const int K,                        \n" +
+                        "          const __global float* A,                                      \n" +
+                        "          const __global float* B,                                      \n" +
+                        "                __global float* C                                       \n" +
+                        "   ) {                                                                  \n" +
+                        "       const int m = get_global_id(0); // Row index of C (0..M)         \n" +
+                        "       const int n = get_global_id(1); // Col index of C (0..N)         \n" +
+                        "                                                                        \n" +
+                        "       // Compute a single element (loop over K)                        \n" +
+                        "       float acc = 0.0f;                                                \n" +
+                        "       for ( int k = 0; k < K; k++ )                                    \n" +
+                        "           acc += A[ k + m * K ] * B[ n + k * N ];                      \n" +
+                        "                                                                        \n" +
+                        "       // Store the result                                              \n" +
+                        "       C[ n + m * N ] = acc;                                            \n" +
+                        "   }                                                                    \n"
+                    )
+                    .lambda( call -> {
+                        if (
+                            call.validate()
+                                .all( t -> t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
+                                .isValid()
+                        ) {
+                            new GEMM().run( call );
+                        } else {
+                            int M = call.input(1).shape(0);
+                            int N = call.input(2).shape(1);
+                            int K = call.input(1).shape(1);
+                            call.getDevice()
+                                .getKernel(call)
+                                .pass(M).pass(N).pass(K)
+                                .pass(call.input(Number.class, 1))
+                                .pass(call.input(Number.class, 2))
+                                .pass(call.input(Number.class, 0))
+                                .call(new long[]{M, N}, null);
+                        }
+                    })
+                    .build()
+            )
         );
 
 
@@ -219,7 +220,5 @@ public class MatMul extends AbstractOperation
     }
 
     @Override
-    public double calculate( double[] inputs, int j, int d, Function[] src ) {
-        return src[ 0 ].call( inputs, j );
-    }
+    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }
 }

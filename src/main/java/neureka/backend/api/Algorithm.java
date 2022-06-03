@@ -42,6 +42,8 @@ import neureka.Tsr;
 import neureka.backend.api.fun.ADSupportPredicate;
 import neureka.backend.api.fun.Execution;
 import neureka.backend.api.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.FunAlgorithm;
+import neureka.common.utility.LogUtil;
 
 
 /**
@@ -61,6 +63,18 @@ import neureka.backend.api.fun.SuitabilityPredicate;
 public interface Algorithm
 extends SuitabilityPredicate, ADSupportPredicate, Execution
 {
+    /**
+     * This is a factory method for creating a new instance of this {@link FunAlgorithm} class.
+     *
+     * @param name The name of the functional algorithm.
+     * @return A new {@link FunAlgorithm} with the provided name.
+     */
+    static FunAlgorithm withName( String name ) {
+        LogUtil.nullArgCheck( name, "name", String.class );
+        return new FunAlgorithm( name );
+    }
+
+
     /**
      *  The name of an {@link Algorithm} may be used for OpenCL kernel compilation or simply
      *  for debugging purposes to identify which type of algorithm is being executed at any

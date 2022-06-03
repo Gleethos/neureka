@@ -18,31 +18,15 @@ import java.util.stream.Collectors;
  *
  * @param <C> The type of the concrete extension of this class.
  */
-public abstract class AbstractDeviceAlgorithm<C extends DeviceAlgorithm<C>> implements DeviceAlgorithm<C>
+public abstract class AbstractDeviceAlgorithm<C extends DeviceAlgorithm<C>>
+extends AbstractAlgorithm
+implements DeviceAlgorithm<C>
 {
     private final Logger _LOG = LoggerFactory.getLogger(AbstractDeviceAlgorithm.class);
 
-    /**
-     *  This is the name of this {@link Algorithm}
-     *  which may be used as variable names in OpenCL kernels or other backends.
-     *  Therefore this name is expected to be void of any spaces
-     *  or non-numeric and alphabetic characters.
-     */
-    private final String _name;
-
     protected final Map<Class<Device<?>>, ImplementationFor<Device<?>>> _implementations = new HashMap<>();
 
-    public AbstractDeviceAlgorithm(String name ) { _name = name; }
-
-    /**
-     *  This method returns the name of this {@link Algorithm}
-     *  which may be used as variable names in OpenCL kernels or other backends.
-     *  Therefore this name is expected to be void of any spaces
-     *  or non-numeric and alphabetic characters.
-     *
-     * @return The name of this {@link Algorithm}.
-     */
-    public String getName() { return _name; }
+    public AbstractDeviceAlgorithm( String name ) { super( name ); }
 
     @Override
     public <D extends Device<?>, E extends ImplementationFor<D>> C setImplementationFor(
