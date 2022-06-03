@@ -43,5 +43,5 @@ Operation plus = backendContext.getOperation("+");
 plus.setAlgorithm(new MyAdditionAlgorithm());
 ``` 
 For further details take a look at the `Algorithm` documentation
-as well as the current implementations located in `neureka.backend.standard.*`
+as well as the current implementations located in `neureka.backend.main.*`
  
