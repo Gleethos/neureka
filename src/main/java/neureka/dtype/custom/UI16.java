@@ -11,39 +11,19 @@ import java.util.Iterator;
 public final class UI16 extends AbstractNumericType<Integer, int[], Short, short[]>
 {
 
-    public UI16() {
-        super();
-    }
+    public UI16() { super(); }
 
-    @Override
-    public boolean signed() {
-        return false;
-    }
+    @Override public boolean signed() { return false; }
 
-    @Override
-    public int numberOfBytes() {
-        return 2;
-    }
+    @Override public int numberOfBytes() { return 2; }
 
-    @Override
-    public Class<Integer> targetType() {
-        return Integer.class;
-    }
+    @Override public Class<Integer> targetType() { return Integer.class; }
 
-    @Override
-    public Class<int[]> targetArrayType() {
-        return int[].class;
-    }
+    @Override public Class<int[]> targetArrayType() { return int[].class; }
 
-    @Override
-    public Class<Short> holderType() {
-        return null;
-    }
+    @Override public Class<Short> holderType() { return Short.class; }
 
-    @Override
-    public Class<short[]> holderArrayType() {
-        return null;
-    }
+    @Override public Class<short[]> holderArrayType() { return short[].class; }
 
     @Override
     public Integer foreignHolderBytesToTarget(byte[] b ) {
@@ -55,9 +35,7 @@ public final class UI16 extends AbstractNumericType<Integer, int[], Short, short
     }
 
     @Override
-    public Integer toTarget( Short original ) {
-        return Short.toUnsignedInt( original );
-    }
+    public Integer toTarget( Short original ) { return Short.toUnsignedInt( original ); }
 
     @Override
     public byte[] targetToForeignHolderBytes(Integer number ) {

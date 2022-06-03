@@ -15,34 +15,20 @@ public final class I16 extends AbstractNumericType<Short, short[], Short, short[
     public I16() { super(); }
 
     @Override
-    public boolean signed() {
-        return true;
-    }
+    public boolean signed() { return true; }
 
     @Override
-    public int numberOfBytes() {
-        return 2;
-    }
+    public int numberOfBytes() { return 2; }
 
     @Override
-    public Class<Short> targetType() {
-        return Short.class;
-    }
+    public Class<Short> targetType() { return Short.class; }
 
     @Override
-    public Class<short[]> targetArrayType() {
-        return short[].class;
-    }
+    public Class<short[]> targetArrayType() { return short[].class; }
 
-    @Override
-    public Class<Short> holderType() {
-        return Short.class;
-    }
+    @Override public Class<Short> holderType() { return Short.class; }
 
-    @Override
-    public Class<short[]> holderArrayType() {
-        return short[].class;
-    }
+    @Override public Class<short[]> holderArrayType() { return short[].class; }
 
     @Override
     public Short foreignHolderBytesToTarget( byte[] bytes ) {

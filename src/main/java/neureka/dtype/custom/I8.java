@@ -14,44 +14,22 @@ import java.util.Iterator;
  */
 public final class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
 {
-    public I8() {
-        super();
-    }
+    public I8() { super(); }
+
+    @Override public boolean signed() { return true; }
+
+    @Override public int numberOfBytes() { return 1; }
+
+    @Override public Class<Byte> targetType() { return Byte.class; }
+
+    @Override public Class<byte[]> targetArrayType() { return byte[].class; }
+
+    @Override public Class<Byte> holderType() { return Byte.class; }
+
+    @Override public Class<byte[]> holderArrayType() { return byte[].class; }
 
     @Override
-    public boolean signed() {
-        return true;
-    }
-
-    @Override
-    public int numberOfBytes() {
-        return 1;
-    }
-
-    @Override
-    public Class<Byte> targetType() {
-        return Byte.class;
-    }
-
-    @Override
-    public Class<byte[]> targetArrayType() {
-        return byte[].class;
-    }
-
-    @Override
-    public Class<Byte> holderType() {
-        return Byte.class;
-    }
-
-    @Override
-    public Class<byte[]> holderArrayType() {
-        return byte[].class;
-    }
-
-    @Override
-    public Byte foreignHolderBytesToTarget( byte[] bytes ) {
-        return bytes[ 0 ];
-    }
+    public Byte foreignHolderBytesToTarget( byte[] bytes ) { return bytes[ 0 ]; }
 
     @Override
     public Byte toTarget( Byte original ) {

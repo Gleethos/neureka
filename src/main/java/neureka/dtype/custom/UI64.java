@@ -13,35 +13,20 @@ public final class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Lo
 
     public UI64() { super(); }
 
-    @Override
-    public boolean signed() {
-        return false;
-    }
+    @Override public boolean signed() { return false; }
+
+    @Override public int numberOfBytes() { return 8; }
+
+    @Override public Class<BigInteger> targetType() { return BigInteger.class; }
 
     @Override
-    public int numberOfBytes() {
-        return 8;
-    }
+    public Class<BigInteger[]> targetArrayType() { return BigInteger[].class; }
 
     @Override
-    public Class<BigInteger> targetType() {
-        return BigInteger.class;
-    }
+    public Class<Long> holderType() { return Long.class; }
 
     @Override
-    public Class<BigInteger[]> targetArrayType() {
-        return BigInteger[].class;
-    }
-
-    @Override
-    public Class<Long> holderType() {
-        return Long.class;
-    }
-
-    @Override
-    public Class<long[]> holderArrayType() {
-        return long[].class;
-    }
+    public Class<long[]> holderArrayType() { return long[].class; }
 
     @Override
     public BigInteger foreignHolderBytesToTarget(byte[] bytes ) { // This is working but not optimal
@@ -52,10 +37,7 @@ public final class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Lo
         return bi;
     }
 
-    @Override
-    public BigInteger toTarget( Long original ) {
-        return new BigInteger( Long.toUnsignedString( original ) );
-    }
+    @Override public BigInteger toTarget( Long original ) { return new BigInteger( Long.toUnsignedString( original ) ); }
 
     @Override
     public byte[] targetToForeignHolderBytes( BigInteger b ) {

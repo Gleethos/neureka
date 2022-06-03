@@ -14,35 +14,17 @@ public final class F32 extends AbstractNumericType<Float, float[], Float, float[
         super();
     }
 
-    @Override
-    public boolean signed() {
-        return true;
-    }
+    @Override public boolean signed() { return true; }
 
-    @Override
-    public int numberOfBytes() {
-        return 4;
-    }
+    @Override public int numberOfBytes() { return 4; }
 
-    @Override
-    public Class<Float> targetType() {
-        return Float.class;
-    }
+    @Override public Class<Float> targetType() { return Float.class; }
 
-    @Override
-    public Class<float[]> targetArrayType() {
-        return float[].class;
-    }
+    @Override public Class<float[]> targetArrayType() { return float[].class; }
 
-    @Override
-    public Class<Float> holderType() {
-        return Float.class;
-    }
+    @Override public Class<Float> holderType() { return Float.class; }
 
-    @Override
-    public Class<float[]> holderArrayType() {
-        return float[].class;
-    }
+    @Override public Class<float[]> holderArrayType() { return float[].class; }
 
     @Override
     public Float foreignHolderBytesToTarget( byte[] bytes ) {

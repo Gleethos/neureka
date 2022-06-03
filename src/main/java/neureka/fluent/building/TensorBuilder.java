@@ -136,7 +136,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
 
     @Override
     public Tsr<V> andSeed( Object seed ) {
-        Class<V> type = (Class<V>) _dataType.getValueTypeClass();
+        Class<V> type = _dataType.getValueTypeClass();
         Class<?> seedType = seed.getClass();
         try {
             Function random = Neureka.get().backend().getFunction().random();

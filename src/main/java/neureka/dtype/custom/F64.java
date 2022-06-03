@@ -11,39 +11,19 @@ import java.util.Iterator;
 public final class F64 extends AbstractNumericType<Double, double[], Double, double[]>
 {
 
-    public F64() {
-        super();
-    }
+    public F64() { super(); }
 
-    @Override
-    public boolean signed() {
-        return true;
-    }
+    @Override public boolean signed() { return true; }
 
-    @Override
-    public int numberOfBytes() {
-        return 8;
-    }
+    @Override public int numberOfBytes() { return 8; }
 
-    @Override
-    public Class<Double> targetType() {
-        return Double.class;
-    }
+    @Override public Class<Double> targetType() { return Double.class; }
 
-    @Override
-    public Class<double[]> targetArrayType() {
-        return double[].class;
-    }
+    @Override public Class<double[]> targetArrayType() { return double[].class; }
 
-    @Override
-    public Class<Double> holderType() {
-        return Double.class;
-    }
+    @Override public Class<Double> holderType() { return Double.class; }
 
-    @Override
-    public Class<double[]> holderArrayType() {
-        return double[].class;
-    }
+    @Override public Class<double[]> holderArrayType() { return double[].class; }
 
     @Override
     public Double foreignHolderBytesToTarget( byte[] bytes ) {

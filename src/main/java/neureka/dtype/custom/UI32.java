@@ -11,35 +11,17 @@ import java.util.Iterator;
 public final class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
 {
 
-    @Override
-    public boolean signed() {
-        return false;
-    }
+    @Override public boolean signed() { return false; }
 
-    @Override
-    public int numberOfBytes() {
-        return 4;
-    }
+    @Override public int numberOfBytes() { return 4; }
 
-    @Override
-    public Class<Long> targetType() {
-        return Long.class;
-    }
+    @Override public Class<Long> targetType() { return Long.class; }
 
-    @Override
-    public Class<long[]> targetArrayType() {
-        return long[].class;
-    }
+    @Override public Class<long[]> targetArrayType() { return long[].class; }
 
-    @Override
-    public Class<Integer> holderType() {
-        return Integer.class;
-    }
+    @Override public Class<Integer> holderType() { return Integer.class; }
 
-    @Override
-    public Class<int[]> holderArrayType() {
-        return int[].class;
-    }
+    @Override public Class<int[]> holderArrayType() { return int[].class; }
 
     @Override
     public Long foreignHolderBytesToTarget( byte[] bytes ) {
@@ -50,10 +32,7 @@ public final class UI32 extends AbstractNumericType<Long, long[], Integer, int[]
             ( bytes[ 3 ] & 0xff );
     }
 
-    @Override
-    public Long toTarget(Integer original) {
-        return Integer.toUnsignedLong( original );
-    }
+    @Override public Long toTarget(Integer original) { return Integer.toUnsignedLong( original ); }
 
     @Override
     public byte[] targetToForeignHolderBytes(Long number) {

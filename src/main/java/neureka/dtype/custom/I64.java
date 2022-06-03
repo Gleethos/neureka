@@ -14,35 +14,18 @@ public final class I64 extends AbstractNumericType<Long, long[], Long, long[]>
 
     public I64() { super(); }
 
-    @Override
-    public boolean signed() {
-        return true;
-    }
+    @Override public boolean signed() { return true; }
+
+    @Override public int numberOfBytes() { return 8; }
+
+    @Override public Class<Long> targetType() { return Long.class; }
+
+    @Override public Class<long[]> targetArrayType() { return long[].class; }
+
+    @Override public Class<Long> holderType() { return Long.class; }
 
     @Override
-    public int numberOfBytes() {
-        return 8;
-    }
-
-    @Override
-    public Class<Long> targetType() {
-        return Long.class;
-    }
-
-    @Override
-    public Class<long[]> targetArrayType() {
-        return long[].class;
-    }
-
-    @Override
-    public Class<Long> holderType() {
-        return Long.class;
-    }
-
-    @Override
-    public Class<long[]> holderArrayType() {
-        return long[].class;
-    }
+    public Class<long[]> holderArrayType() { return long[].class; }
 
     @Override
     public Long foreignHolderBytesToTarget( byte[] bytes ) {

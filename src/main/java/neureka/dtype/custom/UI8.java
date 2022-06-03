@@ -10,56 +10,26 @@ import java.util.Iterator;
 public final class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>
 {
 
-    public UI8() {
-        super();
-    }
+    public UI8() { super(); }
 
-    @Override
-    public boolean signed() {
-        return false;
-    }
+    @Override public boolean signed() { return false; }
 
-    @Override
-    public int numberOfBytes() {
-        return 1;
-    }
+    @Override public int numberOfBytes() { return 1; }
 
-    @Override
-    public Class<Short> targetType() {
-        return Short.class;
-    }
+    @Override public Class<Short> targetType() { return Short.class; }
 
-    @Override
-    public Class<short[]> targetArrayType() {
-        return short[].class;
-    }
+    @Override public Class<short[]> targetArrayType() { return short[].class; }
 
-    @Override
-    public Class<Byte> holderType() {
-        return Byte.class;
-    }
+    @Override public Class<Byte> holderType() { return Byte.class; }
 
-    @Override
-    public Class<byte[]> holderArrayType() {
-        return byte[].class;
-    }
+    @Override public Class<byte[]> holderArrayType() { return byte[].class; }
 
-    @Override
-    public Short foreignHolderBytesToTarget( byte[] bytes ) {
-        return (short) (((int)bytes[ 0 ]) & 0xFF);
-    }
+    @Override public Short foreignHolderBytesToTarget( byte[] bytes ) { return (short) (((int)bytes[ 0 ]) & 0xFF); }
 
 
-    @Override
-    public Short toTarget(Byte original) {
-        return (short) Byte.toUnsignedInt( original );
-        //return (short) (original & 0xFF);
-    }
+    @Override public Short toTarget(Byte original) { return (short) Byte.toUnsignedInt( original ); }
 
-    @Override
-    public byte[] targetToForeignHolderBytes(Short number) {
-        return new byte[]{(byte)(number & 0xFF)};
-    }
+    @Override public byte[] targetToForeignHolderBytes(Short number) { return new byte[]{(byte)(number & 0xFF)}; }
 
     @Override
     public short[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {

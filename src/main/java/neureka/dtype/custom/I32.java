@@ -11,39 +11,21 @@ import java.util.Iterator;
 public final class I32 extends AbstractNumericType<Integer, int[], Integer, int[]>
 {
 
-    public I32() {
-        super();
-    }
+    public I32() { super(); }
+
+    @Override public boolean signed() { return true; }
+
+    @Override public int numberOfBytes() { return 4; }
 
     @Override
-    public boolean signed() {
-        return true;
-    }
+    public Class<Integer> targetType() { return Integer.class; }
 
     @Override
-    public int numberOfBytes() {
-        return 4;
-    }
+    public Class<int[]> targetArrayType() { return int[].class; }
 
-    @Override
-    public Class<Integer> targetType() {
-        return Integer.class;
-    }
+    @Override public Class<Integer> holderType() { return Integer.class; }
 
-    @Override
-    public Class<int[]> targetArrayType() {
-        return int[].class;
-    }
-
-    @Override
-    public Class<Integer> holderType() {
-        return Integer.class;
-    }
-
-    @Override
-    public Class<int[]> holderArrayType() {
-        return int[].class;
-    }
+    @Override public Class<int[]> holderArrayType() { return int[].class; }
 
     @Override
     public Integer foreignHolderBytesToTarget( byte[] bytes ) {
