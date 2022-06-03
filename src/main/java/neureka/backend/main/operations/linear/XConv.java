@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.linear;
 
-import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.api.template.operations.AbstractOperation;
+import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Convolution;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;

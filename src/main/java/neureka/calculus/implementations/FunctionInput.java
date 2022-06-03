@@ -3,7 +3,7 @@ package neureka.calculus.implementations;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;

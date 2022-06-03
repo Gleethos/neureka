@@ -2,7 +2,7 @@ package neureka.backend.main.implementations;
 
 
 import neureka.backend.api.ImplementationFor;
-import neureka.backend.api.implementations.AbstractImplementationFor;
+import neureka.backend.api.template.implementations.AbstractImplementationFor;
 import neureka.devices.opencl.KernelSource;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.devices.opencl.StaticKernelSource;

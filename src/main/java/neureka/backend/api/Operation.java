@@ -41,7 +41,7 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
-import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
 
 /**

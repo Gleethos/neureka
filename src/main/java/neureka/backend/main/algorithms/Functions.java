@@ -2,7 +2,7 @@ package neureka.backend.main.algorithms;
 
 import neureka.backend.api.Call;
 import neureka.backend.api.ImplementationFor;
-import neureka.backend.api.implementations.AbstractImplementationFor;
+import neureka.backend.api.template.implementations.AbstractImplementationFor;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.algorithms.internal.FunImplementation;
 import neureka.backend.main.algorithms.internal.FunTuple;

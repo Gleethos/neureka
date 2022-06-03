@@ -8,9 +8,9 @@ import neureka.backend.api.BackendContext
 import neureka.backend.api.DeviceAlgorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
-import neureka.backend.api.algorithms.fun.AutoDiffMode
-import neureka.backend.api.algorithms.fun.Result
-import neureka.backend.api.algorithms.fun.SuitabilityPredicate
+import neureka.backend.api.template.algorithms.fun.AutoDiffMode
+import neureka.backend.api.template.algorithms.fun.Result
+import neureka.backend.api.template.algorithms.fun.SuitabilityPredicate
 import neureka.backend.main.implementations.CPUImplementation
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionParser

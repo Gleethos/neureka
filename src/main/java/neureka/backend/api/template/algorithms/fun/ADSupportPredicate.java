@@ -1,4 +1,4 @@
-package neureka.backend.api.algorithms.fun;
+package neureka.backend.api.template.algorithms.fun;
 
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.Device;

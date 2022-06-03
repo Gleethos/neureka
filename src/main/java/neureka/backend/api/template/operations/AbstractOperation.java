@@ -1,11 +1,11 @@
 
-package neureka.backend.api.operations;
+package neureka.backend.api.template.operations;
 
 
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.FallbackAlgorithm;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package neureka.backend.api.algorithms.fun;
+package neureka.backend.api.template.algorithms.fun;
 
 import neureka.Tsr;
 import neureka.autograd.ADAction;

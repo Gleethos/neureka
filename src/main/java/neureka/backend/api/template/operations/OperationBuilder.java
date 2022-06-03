@@ -1,4 +1,4 @@
-package neureka.backend.api.operations;
+package neureka.backend.api.template.operations;
 
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;

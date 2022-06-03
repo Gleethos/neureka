@@ -3,7 +3,7 @@ package neureka.backend.main.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.template.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;

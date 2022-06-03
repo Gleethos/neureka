@@ -1,4 +1,4 @@
-package neureka.backend.api.algorithms;
+package neureka.backend.api.template.algorithms;
 
 
 import neureka.Tsr;
@@ -7,7 +7,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.fun.*;
+import neureka.backend.api.template.algorithms.fun.*;
 import neureka.backend.main.memory.MemValidator;
 import neureka.calculus.Function;
 import neureka.devices.Device;
@@ -46,8 +46,8 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
         This makes the backend somewhat hackable, but also manageable with respect to complexity.
      */
     private SuitabilityPredicate _isSuitableFor;
-    private ADSupportPredicate   _autogradModeFor;
-    private Execution            _execution;
+    private ADSupportPredicate _autogradModeFor;
+    private Execution _execution;
     private ADAgentSupplier      _supplyADAgentFor;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
     /*
@@ -184,7 +184,7 @@ extends AbstractBaseAlgorithm<C> implements ExecutionPreparation
     }
 
     /**
-     *  This method receives a {@link neureka.backend.api.algorithms.fun.ADAgentSupplier} which will supply
+     *  This method receives a {@link ADAgentSupplier} which will supply
      *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
      *
      * @param supplyADAgentFor A supplier for an {@link ADAgent} containing implementation details for autograd.

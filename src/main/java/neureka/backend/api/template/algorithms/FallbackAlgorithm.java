@@ -1,14 +1,14 @@
-package neureka.backend.api.algorithms;
+package neureka.backend.api.template.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.fun.ADAgentSupplier;
-import neureka.backend.api.algorithms.fun.AutoDiffMode;
-import neureka.backend.api.algorithms.fun.ExecutionPreparation;
-import neureka.backend.api.algorithms.fun.Result;
+import neureka.backend.api.template.algorithms.fun.ADAgentSupplier;
+import neureka.backend.api.template.algorithms.fun.AutoDiffMode;
+import neureka.backend.api.template.algorithms.fun.ExecutionPreparation;
+import neureka.backend.api.template.algorithms.fun.Result;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.memory.MemUtil;
 import neureka.backend.main.operations.linear.MatMul;

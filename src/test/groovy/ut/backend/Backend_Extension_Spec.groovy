@@ -7,9 +7,9 @@ import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.backend.api.Algorithm
 import neureka.backend.api.Operation
-import neureka.backend.api.algorithms.fun.ADAgentSupplier
-import neureka.backend.api.algorithms.fun.AutoDiffMode
-import neureka.backend.api.algorithms.fun.Result
+import neureka.backend.api.template.algorithms.fun.ADAgentSupplier
+import neureka.backend.api.template.algorithms.fun.AutoDiffMode
+import neureka.backend.api.template.algorithms.fun.Result
 import neureka.calculus.implementations.FunctionInput
 import neureka.calculus.implementations.FunctionNode
 import neureka.devices.Device

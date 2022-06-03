@@ -1,8 +1,10 @@
-# Implementations #
+# (Device) Implementations #
 
-This package is disappointingly empty because the concrete  <br>
+This package contains template code for building device specific 
+algorithms for implementations of the `DeviceAlgorithm`.
+The package is disappointingly empty because the concrete  <br>
 implementations of this layer are (if no plugins or extensions are present)  <br> 
-only located in the acceleration package.  <br>
+only located in the `main` package.  <br>
 
 **Why?** <br>
 
@@ -14,7 +16,7 @@ dependent on the device backends than on anything  <br>
 contained in the `backend` package ! <br>
 
 So if you want to see examples of this, simply visit any  <br>
-sub package of the `backend.standard` package. <br>
+sub package of the `neureka.backend.main` package. <br>
 It contains its own `implementations` package hosting <br>
 implementations of the `ImplementationFor<TargetDevice extends Device>` class. <br>
 

@@ -35,7 +35,7 @@ import java.util.function.Supplier;
  *    context during the execution of provided lambdas.
  *
  */
-public class BackendContext implements Cloneable
+public final class BackendContext implements Cloneable
 {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(BackendContext.class);
 

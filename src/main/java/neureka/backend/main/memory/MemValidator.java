@@ -1,7 +1,7 @@
 package neureka.backend.main.memory;
 
 import neureka.Tsr;
-import neureka.backend.api.algorithms.fun.Result;
+import neureka.backend.api.template.algorithms.fun.Result;
 
 import java.util.Arrays;
 import java.util.function.Supplier;

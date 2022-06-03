@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.ADAgent
 import neureka.backend.api.Operation
-import neureka.backend.api.algorithms.fun.AutoDiffMode
+import neureka.backend.api.template.algorithms.fun.AutoDiffMode
 import neureka.calculus.args.Arg
 import neureka.calculus.Function
 import neureka.backend.api.ExecutionCall

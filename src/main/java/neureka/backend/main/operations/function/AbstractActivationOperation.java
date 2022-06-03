@@ -1,9 +1,9 @@
 package neureka.backend.main.operations.function;
 
-import neureka.backend.api.algorithms.fun.AutoDiffMode;
-import neureka.backend.api.algorithms.fun.Result;
-import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.api.template.algorithms.fun.AutoDiffMode;
+import neureka.backend.api.template.algorithms.fun.Result;
+import neureka.backend.api.template.operations.AbstractOperation;
+import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.ScalarActivation;
 import neureka.backend.main.algorithms.ScalarBroadcast;

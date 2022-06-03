@@ -7,7 +7,7 @@ import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.calculus.Function
 import neureka.backend.api.ExecutionCall
-import neureka.backend.api.operations.AbstractOperation
+import neureka.backend.api.template.operations.AbstractOperation
 import neureka.backend.api.Operation
 import neureka.view.TsrStringSettings
 import spock.lang.Specification

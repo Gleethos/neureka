@@ -1,6 +1,6 @@
 package neureka.backend.main.algorithms;
 
-import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.template.algorithms.AbstractFunctionalAlgorithm;
 
 public final class FunAlgorithm extends AbstractFunctionalAlgorithm<FunAlgorithm>
 {

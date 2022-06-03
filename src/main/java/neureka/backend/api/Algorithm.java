@@ -39,7 +39,9 @@ SOFTWARE.
 package neureka.backend.api;
 
 import neureka.Tsr;
-import neureka.backend.api.algorithms.fun.*;
+import neureka.backend.api.template.algorithms.fun.ADSupportPredicate;
+import neureka.backend.api.template.algorithms.fun.Execution;
+import neureka.backend.api.template.algorithms.fun.SuitabilityPredicate;
 
 
 /**

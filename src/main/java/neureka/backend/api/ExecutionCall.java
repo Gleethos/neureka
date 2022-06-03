@@ -37,7 +37,7 @@ SOFTWARE.
 package neureka.backend.api;
 
 import neureka.Tsr;
-import neureka.backend.api.algorithms.fun.AutoDiffMode;
+import neureka.backend.api.template.algorithms.fun.AutoDiffMode;
 import neureka.calculus.args.Arg;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;

@@ -40,14 +40,15 @@ made up of core concepts, namely: <br>
 - **Algorithms** : Representations of algorithms hosting multiple device specific implementations.
 - **Implementations** : Implementations of an algorithm tailored to a specific `Device`.
 
-This package models this architecture by exposing 3 interfaces which govern these concepts, 
+This package models this architecture by exposing 4 interfaces which govern these concepts, 
 and their relationship.
 The interfaces are the following :
 
-- `ImplementationFor<TargetDevice extends Device>`
-- `Algorithm<ConcreteType>`
-- `Operation`
-
+| layer | interfaces                            | purpose                                                                                                                          |
+|-------|---------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| 0     | `Operation`                           | A high level representation of an operation, hosting one or more algorithms.                                                     |
+| 1     | `Algorithm`, `DeviceAlgorithm`        | A simple `Algorithm` operating on an `ExecutionCall` or a `DeviceAlgorithm` hosting and calling device specific implementations. |
+| 2     | `ImplementationFor<D extends Device>` | `Device` specific implementations hosted and called by `DeviceAlgorithm`s.                                                       |
 
 Implementations of these interfaces are expected to form a composition / component based <br>
 top to bottom structure.
@@ -174,7 +175,7 @@ implementations...
 
 ### Related Concepts ###
 
-The `Execution` method returns a `Result` instance which is expected to wrap
+The `execute` method returns a `Result` instance which is expected to wrap
 a result tensor, **as well as an `ADAgentSupplier` needed for the autograd system**.
 
 The method defined in such a supplier ought to return a new instance
@@ -188,15 +189,15 @@ to perform said procedures.
 
 ```java
     ADAgent supplyADAgentFor(
-            neureka.calculus.Function f,
-            ExecutionCall<? extends Device<?>> call,
-            boolean forward
+        neureka.calculus.Function f,
+        ExecutionCall<? extends Device<?>> call,
+        boolean forward
     );
 ```
 
 ---
 
-Besides the above mentioned there is also an interface which is not part of the algorithm API
+Besides the above-mentioned there is also an interface which is not part of the algorithm API
 but still implemented by many backend algorithms in order to prepare 
 for execution in terms of output instantiation...
 An `ExecutionCall` instance contains an array of arguments.<br>

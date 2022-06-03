@@ -2,7 +2,7 @@ package neureka.autograd;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.AutoDiffMode;
+import neureka.backend.api.template.algorithms.fun.AutoDiffMode;
 import neureka.calculus.Function;
 import neureka.devices.Device;
 

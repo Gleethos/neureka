@@ -1,7 +1,7 @@
 package neureka.backend.api;
 
 import neureka.Tsr;
-import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.fun.SuitabilityPredicate;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
 import neureka.devices.Device;

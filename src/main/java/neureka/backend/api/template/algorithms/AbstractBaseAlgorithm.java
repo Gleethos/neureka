@@ -1,4 +1,4 @@
-package neureka.backend.api.algorithms;
+package neureka.backend.api.template.algorithms;
 
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.DeviceAlgorithm;

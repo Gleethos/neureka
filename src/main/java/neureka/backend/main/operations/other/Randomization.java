@@ -2,10 +2,10 @@ package neureka.backend.main.operations.other;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.fun.AutoDiffMode;
-import neureka.backend.api.algorithms.fun.Result;
-import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.api.template.algorithms.fun.AutoDiffMode;
+import neureka.backend.api.template.algorithms.fun.Result;
+import neureka.backend.api.template.operations.AbstractOperation;
+import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.calculus.Function;
