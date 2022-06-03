@@ -254,9 +254,9 @@ public final class TsrAsString
         else if ( _tensor.isEmpty() ) return "empty";
         else if ( _tensor.isUndefined() ) return "undefined";
         _asStr = new StringBuilder();
-        String base      = ( !_isMultiline ? ""   : "\n" + "    " );
-        String delimiter = ( !_isMultiline ? ""   : "    "        );
-        String half      = ( !_isMultiline ? ""   : "  "          );
+        String base      = ( !_isMultiline ? ""   : _breakAndIndent() + "    " );
+        String delimiter = ( !_isMultiline ? ""   : "    "                     );
+        String half      = ( !_isMultiline ? ""   : "  "                       );
         if ( _hasShape ) _strShape();
         if ( !_hasValue ) return _asStr.toString();
         _$( ":" );
@@ -407,7 +407,7 @@ public final class TsrAsString
                     _$( _legacy ? " ]" : " )" );
                     if ( alias.getTensorName() != null )
                         _$( (_legacy) ? ":[ " : ":( " )._$( alias.getTensorName() )._$( (_legacy) ? " ]" : " )" );
-                    _$( "\n" );
+                    _$( _breakAndIndent() );
                 }
             }
             _$( Util.indent( dim ) );
@@ -425,13 +425,13 @@ public final class TsrAsString
             _$( Util.indent( dim ) );
             if ( dim > 0 && alias != null )
                 _buildSingleLabel( alias, dim, indices )._$(":");
-            _$( _legacy ? "(\n" : "[\n" );
+            _$( ( _legacy ? "(" : "[" ) + _breakAndIndent() );
             int i = 0;
             do {
                 if ( i < trimStart || i >= trimEnd )
                     _recursiveFormatting( indices, dim + 1 );
                 else if ( i == trimStart )
-                    _$( Util.indent( dim + 1 ) )._$( "... " )._$( trimSize )._$( " more ...\n" );
+                    _$( Util.indent( dim + 1 ) )._$( "... " )._$( trimSize )._$( " more ..." + _breakAndIndent() );
                 else
                     indices[ dim ] = trimEnd + 1; // Jumping over trimmed entries!
                 i++;
@@ -441,7 +441,7 @@ public final class TsrAsString
         }
         int i = dim - 1;
         if ( i >= 0 && i < indices.length && indices[ i ] != 0 ) _$( "," );
-        if ( i >= 0 ) _$( "\n" );
+        if ( i >= 0 ) _$( _breakAndIndent() );
     }
 
     private TsrAsString _buildSingleLabel( NDFrame<?> alias, int dim, int[] indices ) {
@@ -471,6 +471,10 @@ public final class TsrAsString
             if ( i < _shape.length - 1 ) _$( "x" );
         }
         _$( legacy ? "]" : ")" );
+    }
+
+    private String _breakAndIndent() {
+        return "\n" + _indent;
     }
 
     @Contract( pure = true )

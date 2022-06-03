@@ -39,7 +39,7 @@ public final class TsrStringSettings {
         _isCellBound = false;
         _postfix = "";
         _prefix = "";
-        _indent = "    ";
+        _indent = "";
     }
 
     public TsrStringSettings clone() {
