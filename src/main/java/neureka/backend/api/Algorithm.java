@@ -40,8 +40,6 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.backend.api.algorithms.fun.*;
-import neureka.backend.standard.algorithms.FunAlgorithm;
-import neureka.devices.Device;
 
 
 /**
@@ -54,7 +52,7 @@ import neureka.devices.Device;
  *   originating from different {@link ExecutionCall} instances with unique arguments.
  *   {@link Tsr} instances within an execution call having the same shape would
  *   cause the {@link Operation} instance to choose an {@link Algorithm} instance which is responsible
- *   for performing element-wise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
+ *   for performing element-wise operations, whereas otherwise the {@link neureka.backend.main.algorithms.Broadcast}
  *   algorithm might be called to perform the operation.
  */
 public interface Algorithm

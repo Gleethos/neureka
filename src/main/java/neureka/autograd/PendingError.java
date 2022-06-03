@@ -2,7 +2,7 @@ package neureka.autograd;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.standard.memory.MemUtil;
+import neureka.backend.main.memory.MemUtil;
 import neureka.calculus.assembly.FunctionParser;
 
 public final class PendingError<ValType>

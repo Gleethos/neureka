@@ -15,7 +15,7 @@ import neureka.devices.Device;
  *  For example, a {@link neureka.backend.api.ImplementationFor} or a {@link neureka.calculus.internal.RecursiveExecutor}
  *  would not be used if not explicitly called.
  *  Bypassing other procedures is useful for full control and of course to implement unorthodox types of operations
- *  like the {@link neureka.backend.standard.operations.other.Reshape} operation
+ *  like the {@link neureka.backend.main.operations.other.Reshape} operation
  *  which is very different from classical operations.
  *  Although the `ExecutionCall` passed to implementations of this will contain
  *  a fairly suitable `Device` assigned to a given `neureka.backend.api.Algorithm`,

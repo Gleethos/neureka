@@ -7,7 +7,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.Execution;
 import neureka.backend.api.algorithms.fun.Result;
-import neureka.backend.standard.operations.other.Reshape;
+import neureka.backend.main.operations.other.Reshape;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;

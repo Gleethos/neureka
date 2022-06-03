@@ -5,7 +5,7 @@ This package consists of two important sub-packages:
 
 - The `api` package responsible for defining an extensible / modular API for operations
 
-- The `standard` package, which is the standard implementation for the backend API.
+- The `main` package, which is the standard implementation for the backend API.
 
 ## Why is there a backend? ##
 

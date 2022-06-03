@@ -1,8 +1,8 @@
 package ut.backend.core
 
 import groovy.transform.CompileStatic
-import neureka.backend.standard.operations.linear.internal.M32
-import neureka.backend.standard.operations.linear.internal.M64
+import neureka.backend.main.operations.linear.internal.M32
+import neureka.backend.main.operations.linear.internal.M64
 
 @CompileStatic
 class InternalMatMulTest {

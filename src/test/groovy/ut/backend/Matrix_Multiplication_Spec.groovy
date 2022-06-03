@@ -1,7 +1,7 @@
 package ut.backend
 
 
-import neureka.backend.standard.operations.linear.CPUMatMul
+import neureka.backend.main.operations.linear.CPUMatMul
 import spock.lang.Specification
 import ut.backend.core.InternalMatMulTest
 

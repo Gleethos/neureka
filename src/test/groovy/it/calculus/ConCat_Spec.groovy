@@ -155,6 +155,4 @@ class ConCat_Spec extends Specification
     }
 
 
-
-
 }

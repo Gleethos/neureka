@@ -11,7 +11,7 @@ import neureka.backend.api.Operation
 import neureka.backend.api.algorithms.fun.AutoDiffMode
 import neureka.backend.api.algorithms.fun.Result
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate
-import neureka.backend.standard.implementations.CPUImplementation
+import neureka.backend.main.implementations.CPUImplementation
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionParser
 import neureka.calculus.internal.CalcUtil

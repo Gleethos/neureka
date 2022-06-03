@@ -1,48 +1,48 @@
 
 # activation functions :
-neureka.backend.standard.operations.function.Absolute
-neureka.backend.standard.operations.function.Cosinus
-neureka.backend.standard.operations.function.Gaussian
-neureka.backend.standard.operations.function.GaussianFast
-neureka.backend.standard.operations.function.Identity
-neureka.backend.standard.operations.function.Quadratic
-neureka.backend.standard.operations.function.ReLU
-neureka.backend.standard.operations.function.Sigmoid
-neureka.backend.standard.operations.function.Sinus
-neureka.backend.standard.operations.function.Softplus
-neureka.backend.standard.operations.function.Tanh
-neureka.backend.standard.operations.function.TanhFast
-neureka.backend.standard.operations.function.GaTU
-neureka.backend.standard.operations.function.GaSU
-neureka.backend.standard.operations.function.Softsign
-neureka.backend.standard.operations.function.Logarithm
-neureka.backend.standard.operations.function.SiLU
-neureka.backend.standard.operations.function.GeLU
-neureka.backend.standard.operations.function.SeLU
+neureka.backend.main.operations.function.Absolute
+neureka.backend.main.operations.function.Cosinus
+neureka.backend.main.operations.function.Gaussian
+neureka.backend.main.operations.function.GaussianFast
+neureka.backend.main.operations.function.Identity
+neureka.backend.main.operations.function.Quadratic
+neureka.backend.main.operations.function.ReLU
+neureka.backend.main.operations.function.Sigmoid
+neureka.backend.main.operations.function.Sinus
+neureka.backend.main.operations.function.Softplus
+neureka.backend.main.operations.function.Tanh
+neureka.backend.main.operations.function.TanhFast
+neureka.backend.main.operations.function.GaTU
+neureka.backend.main.operations.function.GaSU
+neureka.backend.main.operations.function.Softsign
+neureka.backend.main.operations.function.Logarithm
+neureka.backend.main.operations.function.SiLU
+neureka.backend.main.operations.function.GeLU
+neureka.backend.main.operations.function.SeLU
 
 # indexer :
-neureka.backend.standard.operations.indexer.Summation
-neureka.backend.standard.operations.indexer.Product
+neureka.backend.main.operations.indexer.Summation
+neureka.backend.main.operations.indexer.Product
 
 # operator :
-neureka.backend.standard.operations.operator.Power
-neureka.backend.standard.operations.operator.Division
-neureka.backend.standard.operations.operator.Multiplication
-neureka.backend.standard.operations.operator.Modulo
-neureka.backend.standard.operations.operator.Subtraction
-neureka.backend.standard.operations.operator.Addition
+neureka.backend.main.operations.operator.Power
+neureka.backend.main.operations.operator.Division
+neureka.backend.main.operations.operator.Multiplication
+neureka.backend.main.operations.operator.Modulo
+neureka.backend.main.operations.operator.Subtraction
+neureka.backend.main.operations.operator.Addition
 
 # convolution :
-neureka.backend.standard.operations.linear.XConv
-neureka.backend.standard.operations.linear.XConvLeft
-neureka.backend.standard.operations.linear.XConvRight
+neureka.backend.main.operations.linear.XConv
+neureka.backend.main.operations.linear.XConvLeft
+neureka.backend.main.operations.linear.XConvRight
 
 # Matrix Multiplication :
-neureka.backend.standard.operations.linear.MatMul
+neureka.backend.main.operations.linear.MatMul
 
 # other :
-neureka.backend.standard.operations.other.DimTrim
-neureka.backend.standard.operations.other.Reshape
-neureka.backend.standard.operations.other.AssignLeft
-neureka.backend.standard.operations.other.Randomization
-neureka.backend.standard.operations.other.Cat
+neureka.backend.main.operations.other.DimTrim
+neureka.backend.main.operations.other.Reshape
+neureka.backend.main.operations.other.AssignLeft
+neureka.backend.main.operations.other.Randomization
+neureka.backend.main.operations.other.Cat

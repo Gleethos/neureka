@@ -1,7 +1,7 @@
 /*<#LICENSE#>*/
 package neureka.devices.host.machine;
 
-import neureka.backend.standard.operations.linear.internal.blas.COPY;
+import neureka.backend.main.operations.linear.internal.blas.COPY;
 
 import java.util.Arrays;
 import java.util.Set;

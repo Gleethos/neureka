@@ -7,7 +7,7 @@ import neureka.devices.Device;
 /**
  *  Extend this class to define additional meta arguments for {@link neureka.calculus.Functions}.
  *  More complex types of operations need additional parameters/arguments.
- *  The {@link neureka.backend.standard.operations.other.Randomization}
+ *  The {@link neureka.backend.main.operations.other.Randomization}
  *  operation for example receives the {@link Seed} argument as a basis
  *  for deterministic pseudo random number generation...
  *

@@ -8,7 +8,7 @@ import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.*;
-import neureka.backend.standard.memory.MemValidator;
+import neureka.backend.main.memory.MemValidator;
 import neureka.calculus.Function;
 import neureka.devices.Device;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ import java.util.Arrays;
  *  originating from different {@link ExecutionCall} instances with unique arguments.
  *  {@link Tsr} instances within an execution call having the same shape would
  *  cause the {@link Operation} instance to chose an {@link Algorithm} instance which is responsible
- *  for performing elementwise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
+ *  for performing elementwise operations, whereas otherwise the {@link neureka.backend.main.algorithms.Broadcast}
  *  algorithm might be called to perform the operation.
  *
  * @param <C> The final type extending this class.

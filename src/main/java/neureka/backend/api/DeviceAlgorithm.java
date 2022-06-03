@@ -1,6 +1,6 @@
 package neureka.backend.api;
 
-import neureka.backend.standard.algorithms.FunAlgorithm;
+import neureka.backend.main.algorithms.FunAlgorithm;
 import neureka.devices.Device;
 
 /**

@@ -1,7 +1,6 @@
 package ut.backend
 
-import neureka.backend.standard.operations.other.Randomization
-import neureka.calculus.Function
+import neureka.backend.main.operations.other.Randomization
 import spock.lang.Specification
 
 class Randomization_Spec extends Specification {

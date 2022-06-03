@@ -1,6 +1,6 @@
 package neureka.calculus;
 
-import neureka.backend.standard.operations.function.Tanh;
+import neureka.backend.main.operations.function.Tanh;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

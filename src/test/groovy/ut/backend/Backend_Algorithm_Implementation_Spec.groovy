@@ -7,8 +7,8 @@ import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Algorithm
-import neureka.backend.standard.algorithms.Activation
-import neureka.backend.standard.algorithms.Operator
+import neureka.backend.main.algorithms.Activation
+import neureka.backend.main.algorithms.Operator
 import neureka.ndim.AbstractTensor
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
