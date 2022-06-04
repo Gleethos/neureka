@@ -718,7 +718,7 @@ public final class Neureka
          */
         public static boolean isPresent( String className ) {
             boolean found = false;
-            String groovyInfo = ( (className.toLowerCase().contains("groovy") ) ? " Neureka settings uninitialized!" : "" );
+            String groovyInfo = ( (className.toLowerCase().contains("groovy") ) ? " Library settings uninitialized!" : "" );
             String cause = " unknown ";
             try {
                 Class.forName( className );
@@ -726,13 +726,14 @@ public final class Neureka
             } catch ( Throwable ex ) {// Class or one of its dependencies is not present...
                 cause = ex.getMessage();
             } finally {
-                if ( !found ) {
+                if ( !found )
                     System.out.println(
-                            "[Info]: '"+className+"' dependencies not found!"+groovyInfo+"\n" +
-                            "[Cause]: "+cause+"\n" +
-                            "[Tip]: "+ Messages.findTip().bootstrapTip()
+                        "Neureka:\n" +
+                        "    info: Failed to load class '" + className + "'!" + groovyInfo + "\n" +
+                        "    cause: " + cause + "\n" +
+                        "    tip: " + Messages.findTip().bootstrapTip()
                     );
-                }
+
                 return found;
             }
         }
