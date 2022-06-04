@@ -12,8 +12,9 @@ import java.util.Map;
 /**
  *  This class is a simple wrapper around "Loader" and "Saver" lambdas
  *  which instantiate {@link FileHandle} classes.
+ *  <b>This is an internal class. Do not depend on it!</b>
  */
-public final class HeadFactory
+public final class HandleFactory
 {
     public interface Loader
     {
@@ -28,7 +29,7 @@ public final class HeadFactory
     private final Map<String, Loader> _LOADERS = new HashMap<>();
     private final Map<String, Saver> _SAVERS = new HashMap<>();
 
-    public HeadFactory() {
+    public HandleFactory() {
         _LOADERS.put("idx", (name, conf) -> new IDXHandle(name));
         _LOADERS.put("jpg", (name, conf) -> new JPEGHandle(name));
         _LOADERS.put("png", (name, conf) -> null); // TODO!

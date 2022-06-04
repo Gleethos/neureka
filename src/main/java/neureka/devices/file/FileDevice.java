@@ -9,6 +9,7 @@ import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import neureka.common.utility.Cache;
+import neureka.devices.file.handles.util.HandleFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,10 +102,21 @@ public class FileDevice extends AbstractBaseDevice<Object>
         _updateFolderView();
         if ( _loadable.contains( filename ) ) {
             String extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );
-            FileHandle<?,Object> head = FileHandle.FACTORY.getLoader( extension ).load( _directory + "/" + filename, conf );
-            assert head != null;
-            Tsr<Object> tensor = head.load();
-            _stored.put( tensor, head );
+            String filePath = _directory + "/" + filename;
+            HandleFactory.Loader handleLoader = FileHandle.FACTORY.getLoader( extension );
+            if ( handleLoader == null )
+                throw new IllegalStateException(
+                    "Failed to create file handle loader for file with extension '" + extension + "'."
+                );
+
+            FileHandle<?,Object> handle = handleLoader.load( filePath, conf );
+            if ( handle == null )
+                throw new IllegalStateException(
+                    "Failed to create file handle for file path '" + filePath + " and loading conf '" + conf + "'."
+                );
+
+            Tsr<Object> tensor = handle.load();
+            _stored.put( tensor, handle );
             _loadable.remove( filename );
             _loaded.add( filename );
             return (Tsr<V>) tensor;
