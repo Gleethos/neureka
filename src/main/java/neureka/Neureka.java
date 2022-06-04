@@ -732,7 +732,7 @@ public final class Neureka
                         "Neureka:\n" +
                         "    info: Failed to load class '" + className + "'!" + groovyInfo + "\n" +
                         "    cause: " + cause + "\n" +
-                        "    tip: " + tip.get().replace("\n", "\n    ").trim() + "\n"
+                        "    tip: " + tip.get().replace("\n", "\n    "+"     ").trim() + "\n"
                     );
 
                 return found;
