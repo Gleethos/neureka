@@ -55,6 +55,7 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  *    {@link Neureka} is the key access point for thread local / global library settings ( see{@link Settings})
@@ -85,7 +86,7 @@ public final class Neureka
     static
     {
         _INSTANCES = new ThreadLocal<>();
-        _OPENCL_AVAILABLE = Utility.isPresent( "org.jocl.CL" );
+        _OPENCL_AVAILABLE = Utility.isPresent( "org.jocl.CL", () -> Messages.findTip().bootstrapTip() );
     }
 
     private final Settings _settings;
@@ -716,7 +717,7 @@ public final class Neureka
          * @param className The class whose presents ought to be checked.
          * @return The truth value determining if the class is present or not.
          */
-        public static boolean isPresent( String className ) {
+        public static boolean isPresent( String className, Supplier<String> tip ) {
             boolean found = false;
             String groovyInfo = ( (className.toLowerCase().contains("groovy") ) ? " Library settings uninitialized!" : "" );
             String cause = " unknown ";
@@ -731,7 +732,7 @@ public final class Neureka
                         "Neureka:\n" +
                         "    info: Failed to load class '" + className + "'!" + groovyInfo + "\n" +
                         "    cause: " + cause + "\n" +
-                        "    tip: " + Messages.findTip().bootstrapTip()
+                        "    tip: " + tip.get().replace("\n", "\n    ").trim() + "\n"
                     );
 
                 return found;

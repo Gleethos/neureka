@@ -28,7 +28,7 @@ public final class Messages
                 "OpenCL could not detect any devices in the current '{}'.\n{}",
                 CLContext.class.getSimpleName(),
                 findTip().HOW_TO_INSTALL_OPENCL_DRIVERS
-        );
+            );
     }
 
     public static Tips findTip()
@@ -61,7 +61,7 @@ public final class Messages
             }
         }
         //---
-        String foundOS = properties.getProperty("NAME").toLowerCase().replace("\"", "");
+        String foundOS = properties.getProperty("NAME").toLowerCase().replace("\"", "").trim();
         switch ( foundOS ) {
             case "ubuntu":  return Tips.UBUNTU;
             case "fedora":  return Tips.FEDORA;
@@ -70,26 +70,26 @@ public final class Messages
         return Tips.UNKNOWN;
     }
 
-    public enum Tips {
+    public enum Tips
+    {
         UBUNTU(
                 "Try executing the following command to install OpenCL: 'sudo apt install ocl-icd-opencl-dev'.\n",
-                "In order to allow OpenCL to find your GPUs consider executing 'sudo ubuntu-drivers autoinstall'!\n"
+                "In order to allow OpenCL to find your GPUs, consider executing 'sudo ubuntu-drivers autoinstall'!\n"
         ),
         FEDORA(
                 "Try executing the following command to install OpenCL: 'sudo dnf install ocl-icd-devel'.\n",
-                "In order to allow OpenCL to find your GPUs consider installing or updating your device drivers!\n"
+                "In order to allow OpenCL to find your GPUs, consider installing or updating your device drivers!\n"
         ),
         WINDOWS(
                 "", // Should already work
-                "Try to install the latest drivers of your GPU (Or other SIMD devices)."
+                "Try to install the latest drivers of your GPU (Or other SIMD devices).\n"
         ),
         UNKNOWN(
-                "Try to install the latest OpenCL runtime for your system.",
-                "If you already have an OpenCL runtime installed consider installing the latest drivers for your GPU (Or other SIMD devices)."
+                "Try to install the latest OpenCL runtime for your system.\n",
+                "If you already have an OpenCL runtime installed consider installing the latest drivers for your GPU (Or other SIMD devices).\n"
         );
 
-        public final String HOW_TO_INSTALL_OPENCL;
-        private final String HOW_TO_INSTALL_OPENCL_DRIVERS;
+        public final String HOW_TO_INSTALL_OPENCL, HOW_TO_INSTALL_OPENCL_DRIVERS;
 
         Tips( String howToInstallOpenCL, String howToInstallDrivers ) {
             HOW_TO_INSTALL_OPENCL = howToInstallOpenCL;

@@ -116,9 +116,9 @@ public final class CLContext implements BackendExtension
                 _LOG.error( message, e );
             }
         }
-        if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -> p.getDevices().isEmpty() ) ) {
+        if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -> p.getDevices().isEmpty() ) )
             _LOG.warn( Messages.clContextCouldNotFindAnyDevices() );
-        }
+
         return loadedPlatforms;
     }
 
