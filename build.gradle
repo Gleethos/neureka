@@ -152,7 +152,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-core:2.1-groovy-3.0'
     testImplementation 'com.athaydes:spock-reports:2.3.0-groovy-3.0'//, { transitive = false }
 
-    testRuntimeOnly group: 'net.bytebuddy', name: 'byte-buddy', version: '1.11.15' // allows mocking of classes (in addition to interfaces)
+    testRuntimeOnly group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.10' // allows mocking of classes (in addition to interfaces)
     testRuntimeOnly group: 'org.objenesis', name: 'objenesis', version: '3.2'      // allows mocking of classes without default constructor (together with ByteBuddy or CGLIB)
 
     // Kotlin tests:
