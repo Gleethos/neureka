@@ -5,6 +5,7 @@ import neureka.devices.file.FileHandle;
 import neureka.devices.file.handles.CSVHandle;
 import neureka.devices.file.handles.IDXHandle;
 import neureka.devices.file.handles.JPEGHandle;
+import neureka.devices.file.handles.PNGHandle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,12 +33,12 @@ public final class HandleFactory
     public HandleFactory() {
         _LOADERS.put("idx", (name, conf) -> new IDXHandle(name));
         _LOADERS.put("jpg", (name, conf) -> new JPEGHandle(name));
-        _LOADERS.put("png", (name, conf) -> null); // TODO!
+        _LOADERS.put("png", (name, conf) -> new PNGHandle(name)); // TODO!
         _LOADERS.put("csv", (name, conf) -> new CSVHandle(name, conf));
 
         _SAVERS.put("idx", (name, tensor, conf) -> new IDXHandle(tensor, name));
         _SAVERS.put("jpg", (name, tensor, conf) -> new JPEGHandle(tensor, name));
-        _SAVERS.put("png", (name, tensor, conf) -> null); // TODO!
+        _SAVERS.put("png", (name, tensor, conf) -> new PNGHandle(tensor, name)); // TODO!
         _SAVERS.put("csv", (name, tensor, conf) -> new CSVHandle(tensor, name));
     }
 
