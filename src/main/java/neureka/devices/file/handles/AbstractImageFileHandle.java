@@ -21,13 +21,13 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
         _LOG = LoggerFactory.getLogger( AbstractImageFileHandle.class );
     }
 
-    private final String _type;
+    private final ImageFileType _type;
     private int _width;
     private int _height;
 
 
-    protected AbstractImageFileHandle( String type, Tsr<Number> t, String filename ) {
-        super( filename );
+    protected AbstractImageFileHandle( Tsr<Number> t, String filename, ImageFileType type ) {
+        super( filename, type );
         _type = type;
         if ( t == null ) {
             try {
@@ -37,7 +37,7 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
             }
         } else {
             assert t.rank() == 3;
-            assert t.shape(2) == 3;
+            assert t.shape(2) == _type.numberOfChannels();
             _height = t.shape(0);
             _width = t.shape(1);
             t.setIsVirtual(false);
@@ -59,7 +59,7 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
             _height = data.getHeight();
             _width = data.getWidth();
         } catch ( Exception exception ) {
-            String message = _type.toUpperCase() + " '"+_fileName+"' could not be read from file!";
+            String message = _type.imageTypeName().toUpperCase() + " '"+_fileName+"' could not be read from file!";
             _LOG.error( message, exception );
             exception.printStackTrace();
         }
@@ -116,17 +116,17 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
 
     @Override
     public int getValueSize() {
-        return _width * _height * 3;
+        return _width * _height * _type.numberOfChannels();
     }
 
     @Override
     public int getDataSize() {
-        return _width * _height * 3;
+        return _width * _height * _type.numberOfChannels();
     }
 
     @Override
     public int getTotalSize() {
-        return _width * _height * 3;
+        return _width * _height * _type.numberOfChannels();
     }
 
     @Override
@@ -136,7 +136,7 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
 
     @Override
     public int[] getShape() {
-        return new int[]{ _height, _width, 3 };
+        return new int[]{ _height, _width, _type.numberOfChannels() };
     }
 
     @Override
@@ -145,7 +145,7 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
         assert tensor.shape(1) == _width;
         assert tensor.shape(0) == _height;
 
-        BufferedImage buffi = tensor.asImage(Tsr.ImageType.BGR_3BYTE);
+        BufferedImage buffi = tensor.asImage(_type.imageType());
 
         try {
             ImageIO.write( buffi, extension(), new File( _fileName ) );

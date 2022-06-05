@@ -34,7 +34,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
     private int _valueSize;
     private int[] _shape;
 
-    private static Map<Integer, Class<?>> TYPE_MAP;
+    private static final Map<Integer, Class<?>> TYPE_MAP;
     static {
         TYPE_MAP = new HashMap<>();
         TYPE_MAP.put( 0x08, UI8.class );  // unsigned byte
@@ -47,17 +47,17 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
     }
 
     private final static Map<Class<?>, Integer> CODE_MAP = TYPE_MAP.entrySet()
-                                                        .stream()
-                                                        .collect(
+                                                            .stream()
+                                                            .collect(
                                                                 Collectors.toMap(
-                                                                        Map.Entry::getValue,
-                                                                        Map.Entry::getKey
+                                                                    Map.Entry::getValue,
+                                                                    Map.Entry::getKey
                                                                 )
-                                                        );
+                                                            );
 
     public IDXHandle(String fileName )
     {
-        super( fileName );
+        super( fileName, new IDXType() );
         try {
             _loadHead();
         } catch( Exception e ) {
@@ -67,7 +67,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
     }
 
     public IDXHandle(Tsr<Number> t, String filename ) {
-        super( filename );
+        super( filename, new IDXType() );
         _shape = t.getNDConf().shape();
         _dataType = t.getDataType();
         t.setIsVirtual( false );
@@ -194,12 +194,6 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
         return getDataSize() + _dataOffset;
     }
 
-    @Override
-    public String extension() {
-        return "idx";
-    }
-
-
     public DataType<?> getDataType() {
         return _dataType;
     }
@@ -210,5 +204,10 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
 
     public int[] getShape() {
         return _shape;
+    }
+
+    private static class IDXType implements FileType
+    {
+        @Override public String defaultExtension() { return "idx"; }
     }
 }

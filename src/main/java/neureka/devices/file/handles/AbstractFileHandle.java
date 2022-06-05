@@ -18,13 +18,15 @@ public abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
 {
     protected static Logger _LOG;
 
+    private final String _extension;
     protected final String _fileName;
 
     protected int _size = 0;
 
-    AbstractFileHandle(String filename )
+    AbstractFileHandle( String filename, FileType type )
     {
         _fileName = filename;
+        _extension = type.defaultExtension();
         if ( _fileName.equals( "" ) ) {
             String message = "Loading tensor from '" + extension() + "' file failed because the provided file location string is empty!\n";
             _LOG.error( message );
@@ -50,7 +52,7 @@ public abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
     public boolean isEmpty() { return _size == 0; }
 
     public boolean contains( Tsr<V> o ) {
-        return false; // TODO: implement...
+        throw new IllegalStateException("Not supported!");
     }
 
 
@@ -98,9 +100,7 @@ public abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
     }
 
     @Override
-    public String getLocation() {
-        return _fileName;
-    }
+    public String getLocation() { return _fileName; }
 
     @Override
     public String getFileName() {
@@ -120,5 +120,6 @@ public abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
         return this;
     }
 
+    @Override public final String extension() { return _extension; }
 
 }

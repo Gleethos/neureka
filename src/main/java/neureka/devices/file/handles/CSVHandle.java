@@ -42,12 +42,12 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
 
     public CSVHandle(Tsr<?> tensor, String filename )
     {
-        super( filename );
+        super( filename, new CSVType() );
         assert tensor.rank() == 2;
         _delimiter = ",";
         NDFrame<?> alias = tensor.get( NDFrame.class );
-        List<Object> index = (alias != null) ? alias.atAxis( 0 ).getAllAliases() : null;
-        List<Object> labels = (alias != null ) ? alias.atAxis( 1 ).getAllAliases() : null;
+        List<Object> index  = ( alias != null ? alias.atAxis( 0 ).getAllAliases() : null );
+        List<Object> labels = ( alias != null ? alias.atAxis( 1 ).getAllAliases() : null );
         _tensorName = (alias != null) ? alias.getTensorName() : null;
         _firstRowIsLabels = labels != null;
         _firstColIsIndex = index != null;
@@ -89,7 +89,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
             String fileName,
             Map<String, Object> settings
     ) {
-        super( fileName );
+        super( fileName, new CSVType() );
         if ( settings != null ) {
             _delimiter = (String) settings.getOrDefault( "delimiter", "," );
             _firstRowIsLabels = (boolean) settings.getOrDefault( "firstRowIsLabels", false );
@@ -259,11 +259,6 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
         return new int[]{ _numberOfRows, _numberOfColumns };
     }
 
-    @Override
-    public String extension() {
-        return "csv";
-    }
-
     public String getDelimiter() {
         return _delimiter;
     }
@@ -291,4 +286,10 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
     public Integer getNumberOfColumns() {
         return _numberOfColumns;
     }
+
+    private static class CSVType implements FileType
+    {
+        @Override public String defaultExtension() { return "csv"; }
+    }
+
 }
