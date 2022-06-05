@@ -120,6 +120,7 @@ class FileDevice_Spec extends Specification
             path             | filename            |  shape  || fileHandleClass  | dataTypeClass
             "build/test-can" | "tensor_2x4x3_.idx" | [2,4,3] || IDXHandle.class  | F64.class
             "build/test-can" | "tensor_2x4x3_.jpg" | [2,4,3] || JPEGHandle.class | I16.class
+            "build/test-can" | "tensor_5x3x4_.png" | [5,3,4] || PNGHandle.class  | I16.class
             "build/test-can" | null                | [2,4,3] || IDXHandle.class  | F64.class
             "build/test-can" | "tensor_4x3_.csv"   | [4,3]   || CSVHandle.class  | String.class
     }

@@ -2,6 +2,7 @@ package ut.utility
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.devices.file.FileHandle
 import neureka.devices.file.handles.CSVHandle
 import neureka.devices.file.handles.IDXHandle
 import neureka.devices.file.handles.JPEGHandle
@@ -127,35 +128,38 @@ class FileHandle_Spec extends Specification
     }
 
 
-    def 'The FileDevice component "JPEGHead" can read JPG file formats and load them as tensors.'(
+    def 'We can load image files as tensors.'(
             String filename, List<Integer> shape, String expected
     ) {
         given :
-            def hash = ""
+            var hash = ""
+            var type = filename.split("\\.")[1].toLowerCase()
 
         when :
-            JPEGHandle jpg = new JPEGHandle( "build/resources/test/jpg/" + filename )
-            Tsr loaded = jpg.load()
+            FileHandle handle = FileHandle.FACTORY.getLoader(type).load("build/resources/test/$type/" + filename, null)
+            Tsr loaded = handle.load()
             loaded.forEach(e -> hash = ( hash + e ).digest('md5') )
-            /*
+        /*
             // Use the following code to get an ASCII representation of the image (from the loaded tensor):
             int i = 0
             float pixel = 0
             loaded.forEach({ e ->
-                def norm = (double)( (int) e& 0xff) / (255*3)
+                var channels = ( type == "png" ? 4 : 3 )
+                var norm = (double)( (int) e& 0xff) / ( 255 * channels )
                 pixel += norm
-                if (  ( i ) % 3==2 ) {
-                    if (pixel < 0.1) print(" ")
+
+                if (  i % channels == ( channels - 1 ) ) {
+                    if ( pixel < 0.1 ) print(" ")
                     else if ( pixel < 0.2 ) print("`")
                     else if ( pixel < 0.5 ) print(".")
                     else if ( pixel < 0.7 ) print("*")
                     else print("#")
-                    if ((i) % (loaded.shape(1)*3) == (loaded.shape(1)*3-1)) print("\n")
+                    if ((i) % (loaded.shape(1)*channels) == (loaded.shape(1)*channels-1)) print("\n")
                     pixel = 0
                 }
                 i ++
             })
-            */
+        */
 
         then :
             loaded != null
@@ -165,11 +169,11 @@ class FileHandle_Spec extends Specification
             hash == expected
 
         and :
-            jpg.shape == shape as int[]
-            jpg.valueSize == shape.inject( 1, {prod, value -> prod * value} )
-            jpg.totalSize == shape.inject( 1, {prod, value -> prod * value} ) //28 * 28 * 1 + 16
-            jpg.location.endsWith( filename )
-            jpg.dataType == DataType.of( UI8.class )
+            handle.shape == shape as int[]
+            handle.valueSize == shape.inject( 1, {prod, value -> prod * value} )
+            handle.totalSize == shape.inject( 1, {prod, value -> prod * value} ) //28 * 28 * 1 + 16
+            handle.location.endsWith( filename )
+            handle.dataType == DataType.of( UI8.class )
             loaded.dataType == DataType.of( I16.class )
 
         where : 'The following jpg files with their expected shape and hash were used.'
@@ -177,6 +181,7 @@ class FileHandle_Spec extends Specification
             "small.JPG"        || [260, 410, 3]  | "b0e336b03f2ead7297e56b8ca050f34d"
             "tiny.JPG"         || [10, 46, 3]    | "79bf5dd367b5ec05603e395c41dafaa7"
             "super-tiny.JPG"   || [3, 4, 3]      | "a834038d8ddc53f170fa426c76d45df2"
+            "tiny.png"         || [90, 183, 4]   | "63bcd21a7580242a1b562bb49cb53e74"
     }
 
     def 'The FileDevice component "CSVHead" can read CSV file formats and load them as tensors.'(
@@ -185,7 +190,7 @@ class FileHandle_Spec extends Specification
         when :
             CSVHandle csv = new CSVHandle( "build/resources/test/csv/" + filename, params )
             Tsr loaded = csv.load()
-            def hash = loaded.toString().digest('md5')//.forEach( e -> hash = ( hash + e ).digest('md5') )
+            var hash = loaded.toString().digest('md5')//.forEach( e -> hash = ( hash + e ).digest('md5') )
             //println(loaded)
         then :
             loaded != null

@@ -83,7 +83,7 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
     @Override
     public Tsr<Number> load() throws IOException {
         Object value = _loadData();
-        Tsr t = Tsr.of( I16.class, new int[]{_height, _width, 3}, value );
+        Tsr t = Tsr.of( I16.class, new int[]{_height, _width, _type.numberOfChannels()}, value );
         return (Tsr<Number>) t;
     }
 
@@ -96,14 +96,17 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
         {
             image = ImageIO.read( found );
             byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+            if ( data.length != (_height * _width * _type.numberOfChannels()) )
+                throw new IllegalStateException("Loaded image data array does not match expected number of elements!");
+
             short[] newData = new short[ data.length ];
 
             UI8 ui8 = new UI8();
             CPU.get().getExecutor().threaded(
-                    data.length,
-                    ( start, end ) -> {
-                        for ( int i=start; i<end; i++ ) newData[i] = ui8.toTarget( data[i] );
-                    }
+                data.length,
+                ( start, end ) -> {
+                    for ( int i = start; i < end; i++ ) newData[i] = ui8.toTarget( data[i] );
+                }
             );
             return newData;
         }
