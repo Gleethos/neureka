@@ -100,8 +100,7 @@ import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.F32;
-import neureka.dtype.custom.F64;
+import neureka.dtype.custom.*;
 import neureka.fluent.building.TensorBuilder;
 import neureka.fluent.building.states.IterByOrIterFromOrAll;
 import neureka.fluent.building.states.WithShapeOrScalarOrVector;
@@ -3324,21 +3323,27 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     public enum ImageType
     {
-        RGB_1INT(1),
-        ARGB_1INT(2),
-        ARGB_PRE_1INT(3),
-        BGR_1INT(4),
-        BGR_3BYTE(5),
-        ABGR_4BYTE(6),
-        ABGR_PRE_4BYTE(7),
-        RGB_565_USHORT(8),
-        RGB_555_USHORT(9),
-        GRAY_BYTE(0),
-        GRAY_USHORT(1);
+        RGB_1INT(1, UI32.class, 1),
+        ARGB_1INT(2, UI32.class, 1),
+        ARGB_PRE_1INT(3, UI32.class, 1),
+        BGR_1INT(4, UI32.class, 1),
+        BGR_3BYTE(5, UI8.class, 3),
+        ABGR_4BYTE(6, UI8.class, 4),
+        ABGR_PRE_4BYTE(7, UI8.class, 4),
+        RGB_565_USHORT(8, UI16.class, 1),
+        RGB_555_USHORT(9, UI16.class, 1),
+        GRAY_BYTE(0, UI8.class, 1),
+        GRAY_USHORT(1, UI16.class, 1);
 
         public final int bufferType;
+        public final DataType<?> dataType;
+        public final int numberOfChannels;
 
-        ImageType( int bufferType ) { this.bufferType = bufferType; }
+        ImageType( int bufferType, Class<?> valueTypeClass, int numberOfChannels ) {
+            this.bufferType = bufferType;
+            this.dataType = DataType.of( valueTypeClass );
+            this.numberOfChannels = numberOfChannels;
+        }
     }
 
 }
