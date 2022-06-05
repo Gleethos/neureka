@@ -58,7 +58,7 @@ public interface IterByOrIterFromOrAll<V>
      * @param index The start of the range which ought to supply the {@link Tsr} instance built by this API.
      * @return The next step in the builder method chain which expects to receive the end point of the range.
      */
-    To<V> iterativelyFilledFrom( V index );
+    To<V> andFillFrom( V index );
 
     /**
      *  This method creates and return a {@link Tsr} instance which

@@ -34,7 +34,7 @@ import java.util.stream.IntStream;
  *
  *    Tsr.of(Double.class)
  *          .withShape( 2, 3, 4 )
- *          .iterativelyFilledFrom( 2 ).to( 9 ).step( 2 )
+ *          .andFillFrom( 2 ).to( 9 ).step( 2 )
  *
  * }</pre>
  *
@@ -59,7 +59,7 @@ import java.util.stream.IntStream;
  *
  * }</pre>
  *
- * @param <V> The type of the values which ought to be represent by the {@link Tsr} built by this {@link TensorBuilder}.
+ * @param <V> The type of the values which ought to be represented by the {@link Tsr} built by this {@link TensorBuilder}.
  */
 public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, IterByOrIterFromOrAll<V>, To<V>, Step<V>
 {
@@ -72,19 +72,14 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
     private Device<V> _device = (Device<V>) CPU.get();
 
 
-    public TensorBuilder(
-            Class<V> typeClass
-    ) {
+    public TensorBuilder( Class<V> typeClass ) {
+        LogUtil.nullArgCheck( typeClass, "typeClass", Class.class, "Cannot build tensor without data type information!" );
         _dataType = DataType.of( typeClass );
     }
 
     private Tsr<V> _get( Object value ) {
+        LogUtil.nullArgCheck( value, "value", Object.class, "Cannot build tensor where value is null!" );
         return Tsr.of( _dataType, _shape, value ).to( _device );
-    }
-
-
-    private Tsr<V> _get( Filler<V> filler ) {
-        return Tsr.of( _dataType, _shape, filler ).to( _device );
     }
 
     /**
@@ -122,10 +117,12 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
      * @return A new {@link Tsr} instance populated by the lambda supplied to this method.
      */
     @Override
-    public Tsr<V> andWhere( Filler<V> filler ) { return _get( filler ); }
+    public Tsr<V> andWhere( Filler<V> filler ) {
+        return Tsr.of( _dataType, _shape, filler ).to( _device );
+    }
 
     @Override
-    public To<V> iterativelyFilledFrom( V index ) {
+    public To<V> andFillFrom( V index ) {
         LogUtil.nullArgCheck(index, "index", _dataType.getValueTypeClass(), "Cannot create a range where the last index is undefined!");
         _from = _checked(index);
         return this;

@@ -54,7 +54,7 @@ class Tensor_Building_Spec extends Specification
         given : 'We create a range based Tsr instance using the fluent builder API.'
             Tsr<?> t = Tsr.of( type )
                             .withShape( 3, 2 )
-                            .iterativelyFilledFrom( from ).to( to ).step( step )
+                            .andFillFrom( from ).to( to ).step( step )
 
         expect : 'This new instance will have the expected data type...'
             t.dataType == DataType.of(type)

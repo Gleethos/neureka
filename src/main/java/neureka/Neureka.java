@@ -102,6 +102,12 @@ public final class Neureka
      */
     private BackendContext _backend;
 
+
+    private Neureka() {
+        _settings = new Settings();
+        _utility = new Utility();
+    }
+
     public BackendContext backend() {
         if ( _backend == null ) {
             _backend = new BackendContext();
@@ -136,13 +142,8 @@ public final class Neureka
         return LogUtil.format(
                 "Unexpected '{}' state encountered:\n" +
                         "The operation '{}' String should not be null but was null!",
-                        type, Operation.class.getSimpleName()
-                );
-    }
-
-    private Neureka() {
-        _settings = new Settings();
-        _utility = new Utility();
+                type, Operation.class.getSimpleName()
+        );
     }
 
     /**
