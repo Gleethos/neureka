@@ -29,8 +29,6 @@ public final class JPEGHandle extends AbstractImageFileHandle<JPEGHandle>
 
     public JPEGHandle(Tsr<Number> t, String filename) {
         super(t, filename, new ImageFileType() {
-            @Override public int numberOfChannels() { return 3; }
-
             @Override public Tsr.ImageType imageType() { return Tsr.ImageType.BGR_3BYTE; }
 
             @Override public String imageTypeName() { return "jpeg"; }

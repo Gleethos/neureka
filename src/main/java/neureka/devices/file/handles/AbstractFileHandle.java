@@ -109,7 +109,7 @@ public abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
     }
 
     @Override
-    public Storage<V> restore(Tsr<V> tensor ) {
+    public Storage<V> restore( Tsr<V> tensor ) {
         try {
             Object value = _loadData();
             tensor.setValue( value );

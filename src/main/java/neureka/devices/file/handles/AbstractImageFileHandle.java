@@ -4,7 +4,6 @@ import neureka.Tsr;
 import neureka.devices.Storage;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.I16;
 import neureka.dtype.custom.UI8;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +82,11 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
     @Override
     public Tsr<Number> load() throws IOException {
         Object value = _loadData();
-        Tsr t = Tsr.of( I16.class, new int[]{_height, _width, _type.numberOfChannels()}, value );
+        Tsr t = Tsr.of(
+                    _type.targetedValueType(),
+                    new int[]{_height, _width, _type.numberOfChannels()},
+                    value
+                );
         return (Tsr<Number>) t;
     }
 
@@ -99,16 +102,18 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
             if ( data.length != (_height * _width * _type.numberOfChannels()) )
                 throw new IllegalStateException("Loaded image data array does not match expected number of elements!");
 
-            short[] newData = new short[ data.length ];
-
-            UI8 ui8 = new UI8();
-            CPU.get().getExecutor().threaded(
-                data.length,
-                ( start, end ) -> {
-                    for ( int i = start; i < end; i++ ) newData[i] = ui8.toTarget( data[i] );
-                }
-            );
-            return newData;
+            if ( _type.targetedValueType() == Short.class ) {
+                short[] newData = new short[data.length];
+                UI8 ui8 = new UI8();
+                CPU.get().getExecutor().threaded(
+                        data.length,
+                        (start, end) -> {
+                            for (int i = start; i < end; i++) newData[i] = ui8.toTarget(data[i]);
+                        }
+                );
+                return newData;
+            }
+            else throw new IllegalStateException("Alternative types not yet supported!");
         }
         catch ( IOException e )
         {
@@ -143,21 +148,21 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
     }
 
     @Override
-    public <T extends Number> Storage<Number> store(Tsr<T> tensor )
+    public <T extends Number> Storage<Number> store( Tsr<T> tensor )
     {
         assert tensor.shape(1) == _width;
         assert tensor.shape(0) == _height;
 
-        BufferedImage buffi = tensor.asImage(_type.imageType());
+        BufferedImage buffi = tensor.asImage( _type.imageType() );
 
         try {
             ImageIO.write( buffi, extension(), new File( _fileName ) );
         } catch ( Exception e ) {
-            _LOG.error("Failed writing tensor to " + extension() + "!", e);
+            _LOG.error("Failed writing tensor as " + extension() + " file!", e);
             return this;
         }
         tensor.setIsOutsourced( true );
-        tensor.getUnsafe().setDataType( DataType.of( I16.class ) );
+        tensor.getUnsafe().setDataType( DataType.of( _type.targetedValueType() ) );
         return this;
     }
 
