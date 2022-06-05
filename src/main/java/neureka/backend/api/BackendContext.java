@@ -59,7 +59,7 @@ public final class BackendContext implements Cloneable
     // Global context and cache:
     private final FunctionCache _functionCache = new FunctionCache();
 
-    private Functions _getAutogradFunction = null;
+    private final LazyRef<Functions> _getAutogradFunction;
 
     /**
      *  This {@link Functions} instance wraps pre-instantiated
@@ -67,7 +67,7 @@ public final class BackendContext implements Cloneable
      *  This means that no computation graph will be built by these instances.
      *  ( Computation graphs in Neureka are made of instances of the "GraphNode" class... )
      */
-    private Functions _getFunction = null;
+    private final LazyRef<Functions> _getFunction;
 
 
     /**
@@ -118,10 +118,7 @@ public final class BackendContext implements Cloneable
      *  This means that no computation graph will be built by these instances.
      *  ( Computation graphs in Neureka are made of instances of the {@link neureka.autograd.GraphNode} class... )
      */
-    public Functions getFunction() {
-        if ( _getFunction == null ) _getFunction = new Functions( false );
-        return _getFunction;
-    }
+    public Functions getFunction() { return _getFunction.get(); }
 
     /**
      *  This method returns a {@link Functions} instance which wraps pre-instantiated
@@ -131,10 +128,7 @@ public final class BackendContext implements Cloneable
      *
      * @return A container object which exposes various types of functions with autograd support.
      */
-    public Functions getAutogradFunction() {
-        if ( _getAutogradFunction == null ) _getAutogradFunction = new Functions( true );
-        return _getAutogradFunction;
-    }
+    public Functions getAutogradFunction() { return _getAutogradFunction.get(); }
 
     /**
      *  This creates a new context which is completely void of any {@link Operation} implementation instances.
@@ -142,6 +136,8 @@ public final class BackendContext implements Cloneable
      */
     public BackendContext()
     {
+        _getAutogradFunction = LazyRef.of( () -> new Functions( true ) );
+        _getFunction = LazyRef.of( () -> new Functions( false ) );
         _lookup = new HashMap<>();
         _operations = new ArrayList<>();
         _size = 0;
