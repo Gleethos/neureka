@@ -25,13 +25,9 @@ import java.io.IOException;
 public final class JPEGHandle extends AbstractImageFileHandle<JPEGHandle>
 {
 
-    public JPEGHandle( String fileName) {
-        super("jpeg", fileName);
-    }
+    public JPEGHandle( String fileName) { this( null, fileName ); }
 
-    public JPEGHandle(Tsr<Number> t, String filename) {
-        super("jpeg", t, filename);
-    }
+    public JPEGHandle(Tsr<Number> t, String filename) { super("jpeg", t, filename); }
 
     @Override
     public String extension() {

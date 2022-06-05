@@ -26,26 +26,23 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
     private int _height;
 
 
-    public AbstractImageFileHandle( String type, String fileName )
-    {
-        super( fileName );
-        try {
-            _loadHead();
-        } catch( Exception e ) {
-            _LOG.error("Failed reading JPG file!");
-        }
-        _type = type;
-    }
-
     protected AbstractImageFileHandle( String type, Tsr<Number> t, String filename ) {
         super( filename );
-        assert t.rank() == 3;
-        assert t.shape( 2 ) == 3;
         _type = type;
-        _height = t.shape(0);
-        _width = t.shape(1);
-        t.setIsVirtual( false );
-        store( t );
+        if ( t == null ) {
+            try {
+                _loadHead();
+            } catch( Exception e ) {
+                _LOG.error("Failed reading JPG file!");
+            }
+        } else {
+            assert t.rank() == 3;
+            assert t.shape(2) == 3;
+            _height = t.shape(0);
+            _width = t.shape(1);
+            t.setIsVirtual(false);
+            store(t);
+        }
     }
 
 
