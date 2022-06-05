@@ -25,7 +25,7 @@
 -   flexible tensor indexing and slicing
 -   seeding
 -   labeling
--   loading and saving as jpg/idx files
+-   loading and saving as jpg/png/idx files
 -   [a highly extensible and modular backend](docs/markdown/extending_neureka.md)
 
 ### Take a quick look ###
@@ -146,6 +146,8 @@ dependencies {
 
 import neureka.*
 ```
+
+- [Start scripting with just a few terminal commands!](docs/markdown/cookbook/neureka_in_groovy_scripts.md)
 
 ---
 
