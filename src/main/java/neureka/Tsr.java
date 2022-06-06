@@ -3271,10 +3271,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A randomly filled tensor of the provided type.
      */
     public static <V> Tsr<V> ofRandom( Class<V> valueTypeClass, int... shape ) {
-        long seed = 8701252152903546L;
         return Tsr.of( valueTypeClass )
                     .withShape( shape )
-                    .andSeed( seed );
+                    .andSeed( 8701252152903546L );// If the user does not provide a seed, we use this.
     }
 
     /**

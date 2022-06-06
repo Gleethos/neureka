@@ -15,10 +15,10 @@ import java.util.Map;
  *  the tensor API through default methods without littering the
  *  already large {@link Tsr} and {@link AbstractTensor} classes.
  *
- * @param <V> The value type parameter of the tensor.
+ * @param <V> The value type parameter of the items stored by this tensor.
  */
-public interface TensorAPI<V> extends NDimensional, Iterable<V> {
-
+public interface TensorAPI<V> extends NDimensional, Iterable<V>
+{
     /**
      * @return The type class of individual value items within this {@link Tsr} instance.
      */
@@ -154,7 +154,7 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
     Tsr<V> getAt( List<?> key );
 
     /**
-     *  This method enables assigning a provided tensor to be a subset of this tensor!
+     *  This method enables assigning a provided tensor to be a subset/slice of this tensor!
      *  It takes a key which is used to configure a slice
      *  sharing the same underlying data as the original tensor.
      *  This slice is then used to assign the second argument {@code value} to it.
@@ -178,7 +178,13 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
 
     Tsr<V> putAt( int[] indices, V value );
 
-
+    /**
+     *  Use this to place a single item at a particular position within this tensor!
+     *
+     * @param indices An array of indices targeting a particular position in this tensor...
+     * @param value the value which ought to be placed at the targeted position.
+     * @return This very tensor in order to enable method chaining...
+     */
     default Tsr<V> set( int[] indices, V value ) {
         return putAt( indices, value );
     }
@@ -195,9 +201,7 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
      * @param value The item which ought to be placed at the targeted position.
      * @return This very tensor in order to enable method chaining...
      */
-    default Tsr<V> putAt( int index, V value ) {
-        return putAt( indicesOfIndex(index), value );
-    }
+    default Tsr<V> putAt( int index, V value ) { return putAt( indicesOfIndex(index), value ); }
 
 
     /**
@@ -222,10 +226,17 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
      *
      * @param key This object is a list defining a targeted index or range of indices...
      * @param value the tensor which ought to be assigned to a slice of this tensor.
-     * @return A slice tensor or scalar value.
+     * @return This very tensor in order to enable method chaining...
      */
     Tsr<V> putAt( List<?> key, Tsr<V> value );
 
+    /**
+     *  Use this to place a single item at a particular position within this tensor!
+     *
+     * @param indices A list of indices targeting a particular position in this tensor...
+     * @param value the value which ought to be placed at the targeted position.
+     * @return This very tensor in order to enable method chaining...
+     */
     default Tsr<V> putAt( List<?> indices, V value ) {
         return this.putAt( indices, Tsr.of( this.getValueClass(), shape(), value ) );
     }
@@ -282,11 +293,9 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V> {
 
     default Access<V> at( int... indices ) {
         return new Access<V>() {
-            @Override
-            public V get() { return getValueAt( indices ); }
+            @Override public V get() { return getValueAt( indices ); }
 
-            @Override
-            public void set( V value ) { putAt( indices, value ); }
+            @Override public void set( V value ) { putAt( indices, value ); }
         };
     }
 
