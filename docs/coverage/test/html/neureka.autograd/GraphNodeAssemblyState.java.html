@@ -2,41 +2,72 @@
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.AutoDiffMode;
 import neureka.calculus.Function;
 import neureka.devices.Device;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  *  This class exists in order to allow for {@link GraphNode}s to be instantiated
  *  with final field variables by collecting them when defined
  *  within constructor methods...
  */
-<span class="fc" id="L13">final class GraphNodeAssemblyState&lt;V&gt; {</span>
+<span class="fc" id="L19">final class GraphNodeAssemblyState&lt;V&gt; {</span>
 
     private int _mode;
 
-    private boolean _allowsForward;
-
-    private boolean _allowsBackward;
+    private AutoDiffMode _adMode;
 
     private Function _function;
 
     private GraphNode&lt;V&gt;[] _parents;
 
-<span class="fc" id="L25">    private int _payloadReferenceVersion = -1;</span>
-
     private GraphLock _lock;
 
-<span class="fc" id="L29">    private long _nodeID = -1;</span>
+    private TreeMap&lt;GraphNode&lt;V&gt;, Value&gt; _targetsToAgents;
 
+    /**
+     * @param target nodes are graph nodes which contain either tensors requiring errors for accumulation and/or more targets.
+     * @param agent ADAgent's are used during back-propagation in order to distribute an error throughout the graph.
+     */
+    public void put( int index, GraphNode&lt;V&gt; target, ADAgent agent ) {
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if ( _targetsToAgents == null ) _targetsToAgents = new TreeMap&lt;&gt;((a, b) -&gt; a.hashCode() - b.hashCode());</span>
 
-<span class="fc" id="L32">    public int mode() { return _mode; }</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if ( _targetsToAgents.containsKey( target ) )</span>
+<span class="fc" id="L41">            _targetsToAgents.get( target ).agents().add( agent );</span>
+        else
+<span class="fc" id="L43">            _targetsToAgents.put( target, new Value(index, agent) );</span>
+<span class="fc" id="L44">    }</span>
+
+    public List&lt;BackPropTargets&lt;V&gt;&gt; getTargets() {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if ( _targetsToAgents == null ) return null;</span>
+        else
+<span class="fc" id="L49">            return _targetsToAgents.entrySet()</span>
+<span class="fc" id="L50">                                .stream()</span>
+<span class="fc" id="L51">                                .map( e -&gt; new BackPropTargets&lt;&gt;( e.getValue().index(), e.getKey(), e.getValue().agents() ) )</span>
+<span class="fc" id="L52">                                .collect(Collectors.toList());</span>
+    }
+
+    /**
+     * This is the number of AD-actions stored inside this node.
+     * It can be interpreted as the 'number of AD paths'.
+     *
+     * @return int
+     */
+<span class="nc bnc" id="L61" title="All 2 branches missed.">    public int size() { return _targetsToAgents != null ? _targetsToAgents.size() : 0; }</span>
+
+<span class="fc" id="L63">    public int mode() { return _mode; }</span>
 
     /**
      * @param mode The mode of this GraphNode! ( m&lt;0 : backward-AD, m&gt;0 : forward-AD, m=0 : no-AD )
      */
     public GraphNodeAssemblyState&lt;V&gt; setMode(int mode ) {
-<span class="fc" id="L38">        _mode = mode;</span>
-<span class="fc" id="L39">        return this;</span>
+<span class="fc" id="L69">        _mode = mode;</span>
+<span class="fc" id="L70">        return this;</span>
     }
 
     /**
@@ -51,69 +82,62 @@ import neureka.devices.Device;
      *
      * @param call The call containing inputs for the function which created the payload tensor of this GraphNode.
      */
-    public void _modeOf( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
+    public void modeOf(ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
     {
-<span class="fc" id="L56">        Tsr&lt;V&gt;[] inputs = (Tsr&lt;V&gt;[]) call.inputs();</span>
-<span class="fc" id="L57">        int resultMode = 0;</span>
-<span class="fc" id="L58">        int[] modes = new int[ inputs.length ];</span>
-<span class="fc" id="L59">        int inputMode = 0;</span>
-<span class="fc bfc" id="L60" title="All 2 branches covered.">        for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
-<span class="fc" id="L61">            GraphNode&lt;V&gt; node = inputs[ i ].getGraphNode(); // Not null checked in constructor!</span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">            modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.getMode();</span>
-<span class="fc bfc" id="L63" title="All 2 branches covered.">            inputMode += ( modes[ i ] != 0) ? 1 : 0;</span>
+<span class="fc" id="L87">        Tsr&lt;V&gt;[] inputs = (Tsr&lt;V&gt;[]) call.inputs();</span>
+<span class="fc" id="L88">        int resultMode = 0;</span>
+<span class="fc" id="L89">        int[] modes = new int[ inputs.length ];</span>
+<span class="fc" id="L90">        int inputMode = 0;</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
+<span class="fc" id="L92">            GraphNode&lt;V&gt; node = inputs[ i ].getGraphNode(); // Not null checked in constructor!</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.getMode();</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">            inputMode += ( modes[ i ] != 0) ? 1 : 0;</span>
         }
-<span class="fc" id="L65">        _allowsForward = call.allowsForward();</span>
-<span class="fc" id="L66">        _allowsBackward = call.allowsBackward();</span>
-<span class="fc bfc" id="L67" title="All 4 branches covered.">        if ( inputMode == 1 &amp;&amp; _allowsForward) { // Convolution and reshaping prohibit forward AutoDiff</span>
-<span class="fc bfc" id="L68" title="All 2 branches covered.">            for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
-<span class="fc" id="L69">                resultMode +=</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">                        ( modes[ i ] == 0 )</span>
-<span class="fc" id="L71">                                ? 0</span>
-<span class="fc bfc" id="L72" title="All 2 branches covered.">                                : ( modes[ i ] &lt; 0 ) ? 1 : modes[ i ] + 1;</span>
+<span class="fc" id="L96">        _adMode = call.autogradMode();</span>
+<span class="fc bfc" id="L97" title="All 4 branches covered.">        if ( inputMode == 1 &amp;&amp; _adMode.allowsForward() ) { // Convolution and reshaping prohibit forward AutoDiff</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
+<span class="fc" id="L99">                resultMode +=</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">                        ( modes[ i ] == 0 )</span>
+<span class="fc" id="L101">                                ? 0</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">                                : ( modes[ i ] &lt; 0 ) ? 1 : modes[ i ] + 1;</span>
             }
         } // Reverse mode auto-differentiation :
-<span class="fc bfc" id="L75" title="All 2 branches covered.">        else if (_allowsBackward) resultMode = -inputMode;</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        else if ( _adMode.allowsBackward() ) resultMode = -inputMode;</span>
 
-<span class="fc" id="L77">        _mode = resultMode;</span>
-<span class="fc" id="L78">    }</span>
+<span class="fc" id="L107">        _mode = resultMode;</span>
+<span class="fc" id="L108">    }</span>
 
-<span class="fc" id="L80">    public boolean isAllowsForward() { return _allowsForward; }</span>
+<span class="fc" id="L110">    public AutoDiffMode adMode() { return _adMode; }</span>
 
-<span class="fc" id="L82">    public boolean isAllowsBackward() { return _allowsBackward; }</span>
 
-<span class="fc" id="L84">    public Function function() { return _function; }</span>
+<span class="fc" id="L113">    public Function function() { return _function; }</span>
 
     public GraphNodeAssemblyState&lt;V&gt; setFunction(Function function ) {
-<span class="fc" id="L87">        _function = function;</span>
-<span class="fc" id="L88">        return this;</span>
+<span class="fc" id="L116">        _function = function;</span>
+<span class="fc" id="L117">        return this;</span>
     }
 
-<span class="fc" id="L91">    public GraphNode&lt;V&gt;[] parents() { return _parents; }</span>
+<span class="fc" id="L120">    public GraphNode&lt;V&gt;[] parents() { return _parents; }</span>
 
-    public GraphNodeAssemblyState&lt;V&gt; setParents(GraphNode&lt;V&gt;[] parents ) {
-<span class="fc" id="L94">        _parents = parents;</span>
-<span class="fc" id="L95">        return this;</span>
+<span class="fc" id="L122">    public void setParents(GraphNode&lt;V&gt;[] parents ) { _parents = parents; }</span>
+
+<span class="fc" id="L124">    public GraphLock lock() { return _lock; }</span>
+
+<span class="fc" id="L126">    public void setLock(GraphLock lock) { _lock = lock; }</span>
+
+    private static class Value {
+        private final int _index;
+<span class="fc" id="L130">        private final List&lt;ADAgent&gt; _agents = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L132">        private Value(int index, ADAgent agent) {</span>
+<span class="fc" id="L133">            _index = index;</span>
+<span class="fc" id="L134">            _agents.add(agent);</span>
+<span class="fc" id="L135">        }</span>
+
+<span class="fc" id="L137">        public int index() { return _index; }</span>
+
+<span class="fc" id="L139">        public List&lt;ADAgent&gt; agents() { return _agents; }</span>
     }
 
-<span class="fc" id="L98">    public int payloadReferenceVersion() { return _payloadReferenceVersion; }</span>
-
-    public GraphNodeAssemblyState&lt;V&gt; setPayloadReferenceVersion(int payloadReferenceVersion) {
-<span class="fc" id="L101">        _payloadReferenceVersion = payloadReferenceVersion;</span>
-<span class="fc" id="L102">        return this;</span>
-    }
-
-<span class="fc" id="L105">    public GraphLock lock() { return _lock; }</span>
-
-    public GraphNodeAssemblyState&lt;V&gt; setLock(GraphLock lock) {
-<span class="fc" id="L108">        _lock = lock;</span>
-<span class="fc" id="L109">        return this;</span>
-    }
-
-<span class="fc" id="L112">    public long nodeID() { return _nodeID; }</span>
-
-    public GraphNodeAssemblyState&lt;V&gt; setNodeID(long nodeID) {
-<span class="fc" id="L115">        _nodeID = nodeID;</span>
-<span class="fc" id="L116">        return this;</span>
-    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

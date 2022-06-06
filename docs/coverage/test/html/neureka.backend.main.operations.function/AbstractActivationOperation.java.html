@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractActivationOperation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.function</a> &gt; <span class="el_source">AbstractActivationOperation.java</span></div><h1>AbstractActivationOperation.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.function;
+
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Result;
+import neureka.backend.api.template.operations.AbstractOperation;
+import neureka.backend.api.template.operations.OperationBuilder;
+import neureka.backend.main.algorithms.Activation;
+import neureka.backend.main.algorithms.ScalarActivation;
+import neureka.backend.main.algorithms.ScalarBroadcast;
+import neureka.backend.main.algorithms.internal.Fun;
+import neureka.calculus.Function;
+import neureka.calculus.internal.CalcUtil;
+import neureka.devices.host.CPU;
+import neureka.devices.opencl.OpenCLDevice;
+import neureka.ndim.NDimensional;
+import org.jetbrains.annotations.Contract;
+
+abstract class AbstractActivationOperation extends AbstractOperation {
+
+    AbstractActivationOperation(String identifier)
+    {
+<span class="fc" id="L22">        super(</span>
+            new OperationBuilder()
+<span class="fc" id="L24">                .setIdentifier(       identifier    )</span>
+<span class="fc" id="L25">                .setOperator(         identifier    )</span>
+<span class="fc" id="L26">                .setArity(            1             )</span>
+<span class="fc" id="L27">                .setIsOperator(       false         )</span>
+<span class="fc" id="L28">                .setIsIndexer(        false         )</span>
+<span class="fc" id="L29">                .setIsDifferentiable( true          )</span>
+<span class="fc" id="L30">                .setIsInline(         false         )</span>
+        );
+<span class="fc" id="L32">        setAlgorithm(</span>
+<span class="fc" id="L33">            new Activation().setSupplyADAgentFor( getDefaultAlgorithm() ).buildFunAlgorithm()</span>
+<span class="fc" id="L34">                .setImplementationFor(</span>
+                    CPU.class,
+<span class="fc" id="L36">                    Activation.implementationForCPU()</span>
+<span class="fc" id="L37">                        .with(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L38">                        .with(Fun.F32ToF32.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L39">                        .with(Fun.I32ToI32.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L40">                        .with(Fun.I8ToI8.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L41">                        .with(Fun.I16ToI16.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L42">                        .get()</span>
+                )
+<span class="fc" id="L44">                .setImplementationFor(</span>
+                    OpenCLDevice.class,
+<span class="fc" id="L46">                    Activation.implementationForGPU( this.getIdentifier() )</span>
+<span class="fc" id="L47">                            .with( _activationCode() )</span>
+<span class="fc" id="L48">                            .and( _derivationCode() )</span>
+                )
+        );
+
+<span class="fc" id="L52">        setAlgorithm(</span>
+<span class="fc" id="L53">            new ScalarBroadcast(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L54">            .setAutogradModeFor(</span>
+                    call -&gt; call
+<span class="nc" id="L56">                            .validate().allNotNullHaveSame(NDimensional::shape)</span>
+<span class="nc" id="L57">                            .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)</span>
+<span class="nc" id="L58">                            .orElse(AutoDiffMode.BACKWARD_ONLY)</span>
+            )
+<span class="pc" id="L60">            .setExecution( (caller, call) -&gt; Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withAutoDiff(getDefaultAlgorithm()) )</span>
+<span class="fc" id="L61">            .buildFunAlgorithm()</span>
+<span class="fc" id="L62">            .setImplementationFor(</span>
+                CPU.class,
+<span class="fc" id="L64">                ScalarBroadcast.implementationForCPU()</span>
+<span class="fc" id="L65">                        .with(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L66">                        .with(Fun.F32ToF32.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L67">                        .with(Fun.I32ToI32.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L68">                        .with(Fun.I8ToI8.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L69">                        .with(Fun.I16ToI16.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L70">                        .get()</span>
+            )
+        );
+
+<span class="fc" id="L74">        setAlgorithm(</span>
+<span class="fc" id="L75">            new ScalarActivation(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L76">            .setAutogradModeFor(</span>
+                call -&gt; call
+<span class="nc" id="L78">                        .validate().allNotNullHaveSame(NDimensional::shape)</span>
+<span class="nc" id="L79">                        .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)</span>
+<span class="nc" id="L80">                        .orElse(AutoDiffMode.BACKWARD_ONLY)</span>
+            )
+<span class="fc" id="L82">            .setExecution( (caller, call) -&gt; Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withAutoDiff(getDefaultAlgorithm()))</span>
+<span class="fc" id="L83">            .buildFunAlgorithm()</span>
+<span class="fc" id="L84">            .setImplementationFor(</span>
+                CPU.class,
+<span class="fc" id="L86">                ScalarActivation.implementationForCPU()</span>
+<span class="fc" id="L87">                        .with(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L88">                        .with(Fun.F32ToF32.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L89">                        .with(Fun.I32ToI32.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L90">                        .with(Fun.I8ToI8.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L91">                        .with(Fun.I16ToI16.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L92">                        .get()</span>
+            )
+        );
+<span class="fc" id="L95">    }</span>
+
+    @Override
+    public final String stringify( String[] children ) {
+<span class="fc" id="L99">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L100" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return getIdentifier() + expression;</span>
+<span class="fc" id="L101">        return getIdentifier() + &quot;(&quot; + expression + &quot;)&quot;;</span>
+    }
+
+    @Override
+    public final double calculate( double[] inputs, int j, int d, Function[] src ) {
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        boolean derive = d &gt;= 0;</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        double inner = ( !derive ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
+<span class="fc" id="L108">        return calculate( src[ 0 ].call( inputs, j ),  derive ) * inner;</span>
+    }
+
+    @Contract(pure = true)
+    private double calculate(double input, boolean derive ) {
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        if ( !derive )</span>
+<span class="fc" id="L114">            return _activate( input );</span>
+        else
+<span class="fc" id="L116">            return _derive( input ) ;</span>
+    }
+
+    protected abstract String _activationCode();
+
+    protected abstract String _derivationCode();
+
+    protected abstract double _activate(double x);
+
+    protected abstract double _derive(double x);
+
+<span class="fc" id="L127">    protected float _activate(float x) { return (float) _activate( (double) x ); }</span>
+
+<span class="nc" id="L129">    protected float _derive(float x) { return (float) _derive( (double) x ); }</span>
+
+<span class="fc" id="L131">    protected int _activate(int x) { return (int) Math.round( _activate( (double) x ) ); }</span>
+
+<span class="fc" id="L133">    protected int _derive(int x) { return (int) Math.round( _derive( (double) x ) ); }</span>
+
+<span class="fc" id="L135">    protected byte _activate(byte x) { return (byte) Math.round( _activate( (double) x ) ); }</span>
+
+<span class="nc" id="L137">    protected byte _derive(byte x) { return (byte) Math.round( _derive( (double) x ) ); }</span>
+
+<span class="fc" id="L139">    protected short _activate(short x) { return (short) Math.round( _activate( (double) x ) ); }</span>
+
+<span class="nc" id="L141">    protected short _derive(short x) { return (short) Math.round( _derive( (double) x ) ); }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -3,29 +3,38 @@
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-<span class="fc" id="L6">public final class KernelCache {</span>
+/**
+ *  A fixed sized cache for ad-hoc (just in time compiled) {@link OpenCLDevice} kernels.
+ *  This cache will mostly only be utilized when integrating with custom kernels
+ *  or when {@link neureka.backend.api.Operation}s are being optimized for
+ *  the {@link OpenCLDevice}. &lt;br&gt; &lt;br&gt;
+ *  &lt;b&gt;Warning: This is an internal class, meaning it should not be used
+ *  anywhere but within this library. &lt;br&gt;
+ *  This class or its public methods might change or get removed in future versions!&lt;/b&gt;
+ */
+<span class="fc" id="L15">public final class KernelCache {</span>
 
     private final static int CAPACITY = 256;
 
-<span class="fc" id="L10">    private final Map&lt;String, OpenCLDevice.cl_ad_hoc&gt; _adhocKernels =</span>
-<span class="fc" id="L11">    new LinkedHashMap&lt;String, OpenCLDevice.cl_ad_hoc&gt;(CAPACITY) {</span>
+<span class="fc" id="L19">    private final Map&lt;String, OpenCLDevice.cl_ad_hoc&gt; _adhocKernels =</span>
+<span class="fc" id="L20">    new LinkedHashMap&lt;String, OpenCLDevice.cl_ad_hoc&gt;(CAPACITY) {</span>
         @Override
         protected boolean removeEldestEntry(final Map.Entry eldest) {
-<span class="pc bpc" id="L14" title="1 of 2 branches missed.">            return size() &gt; CAPACITY;</span>
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">            return size() &gt; CAPACITY;</span>
         }
     };
 
     public void put( String name, OpenCLDevice.cl_ad_hoc kernel ) {
         // Storing the ad hoc object in a fixed size map for fast access by operations:
-<span class="fc" id="L20">        _adhocKernels.put( name, kernel );</span>
-<span class="fc" id="L21">    }</span>
+<span class="fc" id="L29">        _adhocKernels.put( name, kernel );</span>
+<span class="fc" id="L30">    }</span>
 
     public boolean has( String name ) {
-<span class="fc" id="L24">        return _adhocKernels.containsKey( name );</span>
+<span class="fc" id="L33">        return _adhocKernels.containsKey( name );</span>
     }
 
     public OpenCLDevice.cl_ad_hoc get( String name ) {
-<span class="fc" id="L28">        return _adhocKernels.get( name );</span>
+<span class="fc" id="L37">        return _adhocKernels.get( name );</span>
     }
 
 }

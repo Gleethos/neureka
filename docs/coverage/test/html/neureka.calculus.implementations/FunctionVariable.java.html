@@ -2,11 +2,11 @@
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
  *  Instances of this implementation of the {@link Function} interface
  *  are leave nodes within the abstract syntax tree of a function, representing indexed inputs to a function.
  *  When parsing an expression into a function then these inputs are recognized by the character 'i' or 'I',
- *  followed by the character 'j' or 'J' (optinally wrapped by '[' and ']'), which is a placeholder for the index
+ *  followed by the character 'j' or 'J' (optionally wrapped by '[' and ']'), which is a placeholder for the index
  *  of the argument within the list/array of arguments passed to a concrete {@link Function} instance. &lt;br&gt;
  *  So for example, when creating a function by calling the following factory method...     &lt;br&gt;
  *                                                                                          &lt;br&gt;
@@ -24,85 +24,71 @@ import java.util.List;
  *  ...then the substrings &quot;I[j]&quot; will be parsed into instances of this class!              &lt;br&gt;
  *  The substring &quot;I[0]&quot; on the other hand will not be parsed into an instance of this class!
  */
-public class FunctionVariable implements Function, GradientProvider {
-
+public final class FunctionVariable implements Function, GradientProvider
+{
     private final boolean _providesGradient;
 
-<span class="fc" id="L31">    public FunctionVariable( String equation ) {</span>
-<span class="fc" id="L32">        _providesGradient = equation.contains(&quot;g&quot;);</span>
-<span class="fc" id="L33">    }</span>
 
-<span class="fc" id="L35">    public boolean providesGradient() { return _providesGradient; }</span>
+<span class="fc" id="L32">    public FunctionVariable( String equation ) { _providesGradient = equation.contains(&quot;g&quot;); }</span>
 
-    @Override
-<span class="nc" id="L38">    public boolean isFlat() { return true; }</span>
+<span class="fc" id="L34">    @Override public boolean providesGradient() { return _providesGradient; }</span>
 
-    @Override
-<span class="fc" id="L41">    public boolean isDoingAD() { return false; }</span>
+<span class="nc" id="L36">    @Override public boolean isFlat() { return true; }</span>
 
-    @Override
-<span class="nc" id="L44">    public AbstractOperation getOperation() { return null; }</span>
+<span class="fc" id="L38">    @Override public boolean isDoingAD() { return false; }</span>
 
-    @Override
-<span class="fc" id="L47">    public boolean dependsOn( int index ) { return true; }</span>
+<span class="nc" id="L40">    @Override public AbstractOperation getOperation() { return null; }</span>
 
-    @Override
-<span class="nc" id="L50">    public Function getDerivative( int index ) { return Function.of( &quot;1&quot; ); }</span>
+<span class="fc" id="L42">    @Override public boolean dependsOn( int index ) { return true; }</span>
 
-    @Override
-<span class="nc" id="L53">    public List&lt;Function&gt; getSubFunctions() { return new ArrayList&lt;&gt;(); }</span>
+<span class="nc" id="L44">    @Override public Function getDerivative( int index ) { return Function.of( &quot;1&quot; ); }</span>
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<span class="nc" id="L46">    @Override public List&lt;Function&gt; getSubFunctions() { return new ArrayList&lt;&gt;(); }</span>
 
     @Override
     public double call( final double[] inputs, int j ) {
-<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        if ( j &lt; 0 ) {</span>
-<span class="nc" id="L60">            double sum = 0;</span>
-<span class="nc bnc" id="L61" title="All 2 branches missed.">            for ( int i = 0; i &lt; inputs.length; i++ ) sum += call(inputs, i);</span>
-<span class="nc" id="L62">            return sum;</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if ( j &lt; 0 ) {</span>
+<span class="nc" id="L51">            double sum = 0;</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">            for ( int i = 0; i &lt; inputs.length; i++ ) sum += call(inputs, i);</span>
+<span class="nc" id="L53">            return sum;</span>
         }
-<span class="fc" id="L64">        return inputs[j];</span>
+<span class="fc" id="L55">        return inputs[j];</span>
     }
 
     @Override
-<span class="fc" id="L68">    public double derive( final double[] inputs, final int index ) { return 1.0; }</span>
+<span class="fc" id="L59">    public double derive( final double[] inputs, final int index ) { return 1.0; }</span>
 
     @Override
     public double derive( double[] inputs, int index, int j ) {
-<span class="fc bfc" id="L72" title="All 2 branches covered.">        if ( j != index ) return 0;</span>
-<span class="fc" id="L73">        return derive( inputs, index );</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if ( j != index ) return 0;</span>
+<span class="fc" id="L64">        return derive( inputs, index );</span>
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... tensors ) {
-<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );</span>
-<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        int j = ( arguments.has(Arg.VarIdx.class)   ? arguments.valOf(Arg.VarIdx.class)   : -1 );</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">        if ( d &gt;= 0 ) {</span>
-<span class="fc bfc" id="L82" title="All 2 branches covered.">            if ( j &lt; 0 ) {</span>
-<span class="fc" id="L83">                return Tsr.of( tensors[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true );</span>
-            }
-<span class="fc bfc" id="L85" title="All 2 branches covered.">            return ( j != d ) ? Tsr.of( tensors[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true ) : executeDerive( tensors, d );</span>
-        }
-<span class="fc bfc" id="L87" title="All 2 branches covered.">        if ( j &lt; 0 ) {</span>
-<span class="fc" id="L88">            StringBuilder exp = new StringBuilder(&quot;I[ 0 ]&quot;);</span>
+    public Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... inputs ) {
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        int j = ( arguments.has(Arg.VarIdx.class)   ? arguments.valOf(Arg.VarIdx.class)   : -1 );</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if ( d &gt;= 0 ) {</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            if ( j &lt; 0 )</span>
+<span class="fc" id="L73">                return Tsr.of( inputs[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true );</span>
 
-<span class="pc bpc" id="L90" title="1 of 2 branches missed.">            for( int i = 1; i &lt; tensors.length; i++ )</span>
-<span class="nc" id="L91">                exp.append(&quot;+I[&quot;).append(i).append(&quot;]&quot;);</span>
-
-<span class="fc" id="L93">            return new FunctionBuilder( Neureka.get().backend() )</span>
-<span class="fc" id="L94">                                        .build(exp.toString(), false)</span>
-<span class="fc" id="L95">                                        .execute( tensors );</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            return j != d ? Tsr.of( inputs[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true ) : executeDerive(inputs, d );</span>
         }
-<span class="fc" id="L97">        return tensors[j];</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if ( j &lt; 0 ) {</span>
+<span class="fc" id="L78">            StringBuilder exp = new StringBuilder(&quot;I[ 0 ]&quot;);</span>
+
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">            for (int i = 1; i &lt; inputs.length; i++ )</span>
+<span class="nc" id="L81">                exp.append(&quot;+I[&quot;).append(i).append(&quot;]&quot;);</span>
+
+<span class="fc" id="L83">            return new FunctionParser( Neureka.get().backend() )</span>
+<span class="fc" id="L84">                                        .parse(exp.toString(), false)</span>
+<span class="fc" id="L85">                                        .execute(inputs);</span>
+        }
+<span class="fc" id="L87">        return inputs[j];</span>
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public String toString() {
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        return &quot;I&quot; + ( (this.providesGradient()) ? &quot;g&quot; : &quot;&quot; ) + &quot;[j]&quot;;</span>
-    }
+<span class="fc bfc" id="L91" title="All 2 branches covered.">    public String toString() { return &quot;I&quot; + ( (this.providesGradient()) ? &quot;g&quot; : &quot;&quot; ) + &quot;[j]&quot;; }</span>
 
 
 }

@@ -92,9 +92,7 @@ public abstract class WorkScheduler {
 <span class="fc" id="L92">            rangeWorkload.execute(start, end);</span>
 <span class="fc" id="L93">    }</span>
 
-    public WorkScheduler() {
-<span class="nc" id="L96">        super();</span>
-<span class="nc" id="L97">    }</span>
+<span class="nc" id="L95">    public WorkScheduler() { super(); }</span>
 
     /**
      * Synchronous execution - wait until it's finished.
@@ -104,20 +102,21 @@ public abstract class WorkScheduler {
      * @param threshold The work size threshold.
      */
     public final void invoke(
+            final ExecutorService executor,
             final int first,
             final int limit,
             final int threshold
     ) {
-<span class="nc" id="L111">        int availableWorkers = ConcreteMachine.ENVIRONMENT.threads;</span>
-<span class="nc" id="L112">        _call(</span>
-<span class="nc" id="L113">                CPU.get().getExecutor().getPool(),</span>
+<span class="nc" id="L110">        int availableWorkers = ConcreteMachine.ENVIRONMENT.threads;</span>
+<span class="nc" id="L111">        _call(</span>
+                executor,
                 first,
                 limit,
                 threshold,
                 availableWorkers,
                 this::_work
         );
-<span class="nc" id="L120">    }</span>
+<span class="nc" id="L119">    }</span>
 
     protected abstract void _work(final int first, final int limit);
 

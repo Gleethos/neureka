@@ -8,7 +8,7 @@ import java.util.function.Supplier;
  */
 public final class TsrStringSettings {
 
-    private final Supplier&lt;Boolean&gt; _notModifyable;
+    private final Supplier&lt;Boolean&gt; _notModifiable;
     private int _cellSize;
     private int     _rowLimit;
     private boolean _hasGradient;
@@ -26,7 +26,7 @@ public final class TsrStringSettings {
     private boolean _legacy;
 
 <span class="fc" id="L28">    public TsrStringSettings(Supplier&lt;Boolean&gt; notModifiable) {</span>
-<span class="fc" id="L29">        _notModifyable = notModifiable;</span>
+<span class="fc" id="L29">        _notModifiable = notModifiable;</span>
 <span class="fc" id="L30">        _isScientific = true;</span>
 <span class="fc" id="L31">        _multiline = true;</span>
 <span class="fc" id="L32">        _cellSize = 6;</span>
@@ -39,12 +39,12 @@ public final class TsrStringSettings {
 <span class="fc" id="L39">        _isCellBound = false;</span>
 <span class="fc" id="L40">        _postfix = &quot;&quot;;</span>
 <span class="fc" id="L41">        _prefix = &quot;&quot;;</span>
-<span class="fc" id="L42">        _indent = &quot;    &quot;;</span>
+<span class="fc" id="L42">        _indent = &quot;&quot;;</span>
 <span class="fc" id="L43">    }</span>
 
     public TsrStringSettings clone() {
 <span class="fc" id="L46">        TsrStringSettings clone = new TsrStringSettings(() -&gt; false);</span>
-<span class="fc" id="L47">        this._imposeOn(clone);</span>
+<span class="fc" id="L47">        _imposeOn(clone);</span>
 <span class="fc" id="L48">        return clone;</span>
     }
 
@@ -99,7 +99,7 @@ public final class TsrStringSettings {
      * @param cellSize The width of the cell in terms of numbers of characters.
      */
     public TsrStringSettings setCellSize( int cellSize ) {
-<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if ( _notModifyable.get() ) return this;</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L103">        _cellSize = cellSize;</span>
 <span class="fc" id="L104">        return this;</span>
     }
@@ -127,7 +127,7 @@ public final class TsrStringSettings {
      * @param shortage The maximum number of rows in the {@link String} representation of the tensor.
      */
     public TsrStringSettings setRowLimit( int shortage ) {
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if ( _notModifyable.get() ) return this;</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L131">        _rowLimit = shortage;</span>
 <span class="fc" id="L132">        return this;</span>
     }
@@ -143,7 +143,7 @@ public final class TsrStringSettings {
      * @param hasGradient The truth value determining if the tensor should also print its gradient.
      */
     public TsrStringSettings setHasGradient( boolean hasGradient ) {
-<span class="fc bfc" id="L146" title="All 2 branches covered.">        if ( _notModifyable.get() ) return this;</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L147">        _hasGradient = hasGradient;</span>
 <span class="fc" id="L148">        return this;</span>
     }
@@ -159,7 +159,7 @@ public final class TsrStringSettings {
      * @param isScientific The truth value determining if numeric values should be formatted in scientific notation.
      */
     public TsrStringSettings setIsScientific( boolean isScientific ) {
-<span class="fc bfc" id="L162" title="All 2 branches covered.">        if ( _notModifyable.get() ) return this;</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L163">        _isScientific = isScientific;</span>
 <span class="fc" id="L164">        return this;</span>
     }
@@ -175,7 +175,7 @@ public final class TsrStringSettings {
      * @param isMultiline The truth value determining if the tensor should be printed in one line or across multiple lines.
      */
     public TsrStringSettings setIsMultiline( boolean isMultiline ) {
-<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        if ( _notModifyable.get() ) return this;</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L179">        _multiline = isMultiline;</span>
 <span class="fc" id="L180">        return this;</span>
     }
@@ -191,7 +191,7 @@ public final class TsrStringSettings {
      * @param haveSlimNumbers The truth value determining if numbers should be formatted more compactly (1.0 to 1).
      */
     public TsrStringSettings setHasSlimNumbers( boolean haveSlimNumbers ) {
-<span class="fc bfc" id="L194" title="All 2 branches covered.">        if ( _notModifyable.get() ) return this;</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L195">        _haveSlimNumbers = haveSlimNumbers;</span>
 <span class="fc" id="L196">        return this;</span>
     }
@@ -207,7 +207,7 @@ public final class TsrStringSettings {
      * @param hasValue The truth value determining if the values of the tensor should be included in the {@link String} representation.
      */
     public TsrStringSettings setHasValue( boolean hasValue ) {
-<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        if ( _notModifyable.get() ) return this;</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L211">        _hasValue = hasValue;</span>
 <span class="fc" id="L212">        return this;</span>
     }
@@ -223,7 +223,7 @@ public final class TsrStringSettings {
      * @param hasShape The truth value determining if the tensor should have its shape included in the {@link String}.
      */
     public TsrStringSettings setHasShape( boolean hasShape ) {
-<span class="pc bpc" id="L226" title="1 of 2 branches missed.">        if ( _notModifyable.get() ) return this;</span>
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L227">        _hasShape = hasShape;</span>
 <span class="fc" id="L228">        return this;</span>
     }
@@ -242,7 +242,7 @@ public final class TsrStringSettings {
      *         tensor should have its computation graph attached (if present).
      */
     public TsrStringSettings setHasRecursiveGraph( boolean hasRecursiveGraph ) {
-<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        if ( _notModifyable.get() ) return this;</span>
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L246">        _hasRecursiveGraph = hasRecursiveGraph;</span>
 <span class="fc" id="L247">        return this;</span>
     }
@@ -252,7 +252,7 @@ public final class TsrStringSettings {
     }
 
     public TsrStringSettings setHasDerivatives( boolean hasDerivatives ) {
-<span class="pc bpc" id="L255" title="1 of 2 branches missed.">        if ( _notModifyable.get() ) return this;</span>
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L256">        _hasDerivatives = hasDerivatives;</span>
 <span class="fc" id="L257">        return this;</span>
     }
@@ -262,7 +262,7 @@ public final class TsrStringSettings {
     }
 
     public TsrStringSettings setIsCellBound( boolean isCellBound ) {
-<span class="pc bpc" id="L265" title="1 of 2 branches missed.">        if ( _notModifyable.get() ) return this;</span>
+<span class="pc bpc" id="L265" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L266">        _isCellBound = isCellBound;</span>
 <span class="fc" id="L267">        return this;</span>
     }
@@ -278,7 +278,7 @@ public final class TsrStringSettings {
      * @param prefix The {@link String} which will be prepended at the beginning of a {@link neureka.Tsr} string representation.
      */
     public TsrStringSettings setPrefix( String prefix ) {
-<span class="pc bpc" id="L281" title="1 of 2 branches missed.">        if ( _notModifyable.get() ) return this;</span>
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L282">        _prefix = prefix;</span>
 <span class="fc" id="L283">        return this;</span>
     }
@@ -294,7 +294,7 @@ public final class TsrStringSettings {
      * @param postfix The {@link String} which will be appended at the end of a {@link neureka.Tsr} string representation.
      */
     public TsrStringSettings setPostfix( String postfix ) {
-<span class="pc bpc" id="L297" title="1 of 2 branches missed.">        if ( _notModifyable.get() ) return this;</span>
+<span class="pc bpc" id="L297" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L298">        _postfix = postfix;</span>
 <span class="fc" id="L299">        return this;</span>
     }
@@ -314,7 +314,7 @@ public final class TsrStringSettings {
      *               the {@link #getIsMultiline()} is set to {@code true}.
      */
     public TsrStringSettings setIndent( String indent ) {
-<span class="pc bpc" id="L317" title="1 of 2 branches missed.">        if ( _notModifyable.get() ) return this;</span>
+<span class="pc bpc" id="L317" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L318">        _indent = indent;</span>
 <span class="fc" id="L319">        return this;</span>
     }
@@ -338,7 +338,7 @@ public final class TsrStringSettings {
      * @param legacy The truth value determining the type of brackets used.
      */
     public TsrStringSettings setIsLegacy( boolean legacy ) {
-<span class="fc bfc" id="L341" title="All 2 branches covered.">        if ( _notModifyable.get() ) return this;</span>
+<span class="fc bfc" id="L341" title="All 2 branches covered.">        if ( _notModifiable.get() ) return this;</span>
 <span class="fc" id="L342">        _legacy = legacy;</span>
 <span class="fc" id="L343">        return this;</span>
     }

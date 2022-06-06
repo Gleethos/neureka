@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Apr 03 14:55:58 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Jun 06 11:39:47 CEST 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.144 seconds</td>
+<td>0.210 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -362,8 +362,9 @@ div.footer {
 <td colspan='10'>
 <div class='feature-description' id='163563224'>
 <span>A functional algorithm cannot be used if it was not built properly!</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.081 seconds)</div>
 </span>
 </div>
 </td>
@@ -387,7 +388,7 @@ div.footer {
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<div class='block-text'>We calle a method on the algorithm...</div>
+<div class='block-text'>We call a method on the algorithm...</div>
 </td>
 </tr>
 <tr>
@@ -446,39 +447,48 @@ div.footer {
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure1@ede272e</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure1@5f7df3f0</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.006 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure2@5868b4be</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure2@3ee00406</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.003 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure3@1d73f04d</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure3@751b79a3</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.003 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure4@187003e5</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure5@67dd3db9</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure4@52f4e761</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.069 seconds)</span>
+</td>
 </tr>
 </tbody>
 </table>
 </div>
 </td>
 <td>
-<div class='spec-status'>5/5 passed</div>
+<div class='spec-status'>4/4 passed</div>
 </td>
 </tr>
 <tr>
 <td colspan='10'>
 <div class='feature-description' id='-925329896'>
 <span>A functional algorithm does not accept null as an answer!</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.016 seconds)</div>
 </span>
 </div>
 </td>
@@ -510,10 +520,8 @@ div.footer {
 <td>
 <pre class='block-source'>algorithm
 .setIsSuitableFor(call -&gt; SuitabilityPredicate.EXCELLENT)
-.setCanPerformBackwardADFor( call -&gt; true )
-.setCanPerformForwardADFor( call -&gt; false )
-.setSupplyADAgentFor((Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt; null)
-.setExecutionDispatcher(( caller, call ) -&gt; null)
+.setAutogradModeFor( call -&gt;  AutoDiffMode.BACKWARD_ONLY )
+.setExecution(( caller, call ) -&gt; null)
 .setCallPreparation(call -&gt; null)
 .buildFunAlgorithm()</pre>
 </td>
@@ -530,10 +538,8 @@ div.footer {
 <td></td>
 <td>
 <pre class='block-source'>algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT
-algorithm.canPerformBackwardADFor(null)
-!algorithm.canPerformForwardADFor(null)
-algorithm.supplyADAgentFor(null, null, true) == null
-algorithm.dispatch(null, null) == null
+algorithm.autoDiffModeFrom(null) == AutoDiffMode.BACKWARD_ONLY
+algorithm.execute(null, null) == null
 algorithm.prepare(null) == null</pre>
 </td>
 </tr>
@@ -564,10 +570,8 @@ algorithm.prepare(null) == null</pre>
 <td>
 <pre class='block-source'>algorithm
 .setIsSuitableFor(call -&gt; SuitabilityPredicate.EXCELLENT)
-.setCanPerformBackwardADFor( call -&gt; true )
-.setCanPerformForwardADFor( call -&gt; false )
-.setSupplyADAgentFor((Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt; null)
-.setExecutionDispatcher(( caller, call ) -&gt; null)
+.setAutogradModeFor( call -&gt;  AutoDiffMode.BACKWARD_ONLY )
+.setExecution(( caller, call ) -&gt; null)
 .setCallPreparation(null) // This is not acceptable!
 .buildFunAlgorithm()</pre>
 </td>
@@ -604,8 +608,9 @@ algorithm.prepare(null) == null</pre>
 <td colspan='10'>
 <div class='feature-description' id='-44073423'>
 <span>A functional algorithm warns us when modified after it has been built!</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.029 seconds)</div>
 </span>
 </div>
 </td>
@@ -646,10 +651,8 @@ System.err = Mock(PrintStream)</pre>
 <td>
 <pre class='block-source'>algorithm
 .setIsSuitableFor(call -&gt; SuitabilityPredicate.EXCELLENT)
-.setCanPerformBackwardADFor( call -&gt; true )
-.setCanPerformForwardADFor( call -&gt; false )
-.setSupplyADAgentFor((Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt; null)
-.setExecutionDispatcher(( caller, call ) -&gt; null)
+.setAutogradModeFor( call -&gt;  AutoDiffMode.BACKWARD_ONLY )
+.setExecution(( caller, call ) -&gt; null)
 .setCallPreparation(call -&gt; null)
 .buildFunAlgorithm()</pre>
 </td>
@@ -666,10 +669,8 @@ System.err = Mock(PrintStream)</pre>
 <td></td>
 <td>
 <pre class='block-source'>algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT
-algorithm.canPerformBackwardADFor(null)
-!algorithm.canPerformForwardADFor(null)
-algorithm.supplyADAgentFor(null, null, true) == null
-algorithm.dispatch(null, null) == null
+algorithm.autoDiffModeFrom(null) == AutoDiffMode.BACKWARD_ONLY
+algorithm.execute(null, null) == null
 algorithm.prepare(null) == null</pre>
 </td>
 </tr>
@@ -699,9 +700,9 @@ algorithm.prepare(null) == null</pre>
 <td></td>
 <td>
 <pre class='block-source'>1 * System.err.println(
-        "[Test worker] WARN neureka.backend.api.algorithms.AbstractFunctionalAlgorithm - " +
-        "Implementation '$type.simpleName' in algorithm '$algorithm' was modified! " +
-        "Please consider only modifying the standard backend state of Neureka for experimental reasons."
+    "[Test worker] WARN neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm - " +
+    "Implementation '$type.simpleName' in algorithm '$algorithm' was modified! " +
+    "Please consider only modifying the standard backend state of Neureka for experimental reasons."
 )</pre>
 </td>
 </tr>
@@ -728,19 +729,28 @@ algorithm.prepare(null) == null</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>interface neureka.backend.api.algorithms.fun.ExecutionPreparation</td>
-<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure23@6a01db4f</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>interface neureka.backend.api.fun.ExecutionPreparation</td>
+<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure16@766f8b89</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.023 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>interface neureka.backend.api.algorithms.fun.SuitabilityPredicate</td>
-<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure24@57ed660a</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>interface neureka.backend.api.fun.SuitabilityPredicate</td>
+<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure17@367c0690</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>interface neureka.backend.api.algorithms.fun.ExecutionDispatcher</td>
-<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure25@3b5bc858</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>interface neureka.backend.api.fun.Execution</td>
+<td class='ex-value'>ut.backend.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure18@b7b3c69</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.004 seconds)</span>
+</td>
 </tr>
 </tbody>
 </table>

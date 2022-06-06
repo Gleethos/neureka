@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperationBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api.template.operations</a> &gt; <span class="el_source">OperationBuilder.java</span></div><h1>OperationBuilder.java</h1><pre class="source lang-java linenums">package neureka.backend.api.template.operations;
+
+import neureka.backend.api.Operation;
+import neureka.calculus.Function;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *  This builder class builds instances of the {@link Operation} interface.
+ *  Implementing the {@link Operation} interface manually can result in a lot of boilerplate code.
+ *  A builder class is the perfect fit for the {@link Operation} because the interface mostly
+ *  defines simple properties... &lt;br&gt;
+ *  In order to ensure that all necessary properties have been set the builder keeps track
+ *  of the passed parameters. If not all properties have been set, the builder will trow an exception.
+ */
+<span class="fc" id="L17">public class OperationBuilder</span>
+{
+
+<span class="fc" id="L20">    private Stringifier _stringifier = null;</span>
+<span class="fc" id="L21">    private Derivator _derivator = null;</span>
+    /**
+     *  Concrete {@link Operation} types ought to be representable by a function name.
+     *  This property will correspond to the {@link Operation#getIdentifier()} method.
+     */
+<span class="fc" id="L26">    private String _identifier = null;</span>
+
+<span class="fc" id="L28">    private String _operator = null;</span>
+    /**
+     *  Arity is the number of arguments or operands that this function or operation takes.
+     *  This property will correspond to the {@link Operation#getArity()} method.
+     */
+<span class="fc" id="L33">    private Integer _arity = null;</span>
+    /**
+     *  An operator is an alternative to a function like &quot;sum()&quot; or &quot;prod()&quot;. &lt;br&gt;
+     *  Examples would be &quot;+, -, * ...&quot;!
+     *
+     *  This property will correspond to the {@link Operation#isOperator()} method.
+     */
+<span class="fc" id="L40">    private Boolean _isOperator = null;</span>
+    /**
+     *  This boolean property tell the {@link Function} implementations that this {@link Operation}
+     *  ought to be viewed as something to be indexed.
+     *  The {@link Function} will use this information to iterate over all the provided inputs and
+     *  then execute the function wile also passing the index to the function AST.
+     *  The resulting array will then be available to this {@link Operation} as argument list.
+     *  This feature works alongside the {@link Function} implementation found in
+     *  {@link neureka.calculus.implementations.FunctionVariable}, which represents an input indexed
+     *  by the identifier 'j'!
+     *
+     */
+<span class="fc" id="L52">    private Boolean _isIndexer = null;</span>
+<span class="fc" id="L53">    private Boolean _isDifferentiable = null;</span>
+<span class="fc" id="L54">    private Boolean _isInline = null;</span>
+<span class="fc" id="L55">    private boolean _disposed = false;</span>
+
+    public interface Stringifier
+    {
+        String stringify( String[] children );
+    }
+
+    public interface Derivator
+    {
+        String asDerivative( Function[] children, int d );
+    }
+
+<span class="nc" id="L67">    public Stringifier getStringifier() { return _stringifier; }</span>
+
+<span class="nc" id="L69">    public Derivator getDerivator() { return _derivator; }</span>
+
+<span class="fc" id="L71">    public String getIdentifier() { return _identifier; }</span>
+
+<span class="fc" id="L73">    public String getOperator() { return _operator; }</span>
+
+<span class="fc" id="L75">    public Integer getArity() { return _arity; }</span>
+
+<span class="fc" id="L77">    public Boolean getIsOperator() { return _isOperator; }</span>
+
+<span class="fc" id="L79">    public Boolean getIsIndexer() { return _isIndexer; }</span>
+
+<span class="fc" id="L81">    public Boolean getIsDifferentiable() { return _isDifferentiable; }</span>
+
+<span class="fc" id="L83">    public Boolean getIsInline() { return _isInline; }</span>
+
+    public OperationBuilder setStringifier( Stringifier stringifier ) {
+<span class="fc" id="L86">        _stringifier = stringifier;</span>
+<span class="fc" id="L87">        return this;</span>
+    }
+
+    public OperationBuilder setDerivator( Derivator derivator ) {
+<span class="nc" id="L91">        _derivator = derivator;</span>
+<span class="nc" id="L92">        return this;</span>
+    }
+
+    public OperationBuilder setIdentifier( String identifier ) {
+<span class="fc" id="L96">        _identifier = identifier;</span>
+<span class="fc" id="L97">        return this;</span>
+    }
+
+    public OperationBuilder setOperator( String operator ) {
+<span class="fc" id="L101">        _operator = operator;</span>
+<span class="fc" id="L102">        return this;</span>
+    }
+
+    public OperationBuilder setArity( int arity ) {
+<span class="fc" id="L106">        _arity = arity;</span>
+<span class="fc" id="L107">        return this;</span>
+    }
+
+    public OperationBuilder setIsOperator( boolean isOperator ) {
+<span class="fc" id="L111">        _isOperator = isOperator;</span>
+<span class="fc" id="L112">        return this;</span>
+    }
+
+    public OperationBuilder setIsIndexer( boolean isIndexer ) {
+<span class="fc" id="L116">        _isIndexer = isIndexer;</span>
+<span class="fc" id="L117">        return this;</span>
+    }
+
+    public OperationBuilder setIsDifferentiable( boolean isDifferentiable ) {
+<span class="fc" id="L121">        _isDifferentiable = isDifferentiable;</span>
+<span class="fc" id="L122">        return this;</span>
+    }
+
+    public OperationBuilder setIsInline( boolean isInline ) {
+<span class="fc" id="L126">        _isInline = isInline;</span>
+<span class="fc" id="L127">        return this;</span>
+    }
+
+<span class="fc" id="L130">    public void dispose() { _disposed = true; }</span>
+
+    private List&lt;String&gt; _listOfMissingProperties() {
+<span class="fc" id="L133">        List&lt;String&gt; missing = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        if ( _identifier       == null ) missing.add( &quot;identifier&quot; );</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        if ( _operator         == null ) missing.add( &quot;operator&quot; );</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        if ( _arity            == null ) missing.add( &quot;arity&quot; );</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        if ( _isOperator       == null ) missing.add( &quot;isOperator&quot; );</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if ( _isIndexer        == null ) missing.add( &quot;isIndexer&quot; );</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if ( _isDifferentiable == null ) missing.add( &quot;isDifferentiable&quot; );</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if ( _isInline         == null ) missing.add( &quot;isInline&quot; );</span>
+<span class="fc" id="L141">        return missing;</span>
+    }
+
+    public Operation build()
+    {
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if ( _disposed ) return null;</span>
+<span class="fc" id="L147">        List&lt;String&gt; missing = _listOfMissingProperties();</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        if ( !missing.isEmpty() )</span>
+<span class="nc" id="L149">            throw new IllegalStateException(&quot;Factory not satisfied! The following properties are missing: '&quot;+ String.join(&quot;, &quot;, missing) +&quot;'&quot;);</span>
+        else
+<span class="fc" id="L151">            return new AbstractOperation( this ) {</span>
+                @Override
+                public String stringify( String[] children ) {
+<span class="fc" id="L154">                    return _stringifier.stringify( children );</span>
+                }
+
+                @Override
+                public String asDerivative( Function[] children, int derivationIndex) {
+<span class="nc" id="L159">                    return _derivator.asDerivative( children, derivationIndex);</span>
+                }
+
+                @Override
+                public double calculate( double[] inputs, int j, int d, Function[] src ) {
+<span class="nc" id="L164">                    return src[ 0 ].call( inputs, j );</span>
+                }
+            };
+    }
+}
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

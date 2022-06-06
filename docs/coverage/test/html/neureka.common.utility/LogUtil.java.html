@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
     public static &lt;T&gt; void nullArgCheck( T var, String thing, Class&lt;?&gt; type, String... notes ) {
 <span class="fc bfc" id="L26" title="All 2 branches covered.">        if ( var == null ) {</span>
-<span class="fc" id="L27">            String postfix = Arrays.stream(notes).collect(Collectors.joining(&quot; &quot;));</span>
+<span class="fc" id="L27">            String postfix = String.join( &quot; &quot;, notes );</span>
 <span class="pc bpc" id="L28" title="1 of 2 branches missed.">            postfix = ( postfix.trim().equals(&quot;&quot;) ? &quot;&quot; : &quot; &quot; ) + postfix;</span>
 <span class="fc" id="L29">            throw new IllegalArgumentException(</span>
 <span class="fc" id="L30">                format(</span>

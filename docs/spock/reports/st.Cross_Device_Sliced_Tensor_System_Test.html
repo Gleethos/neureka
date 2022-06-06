@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Apr 03 14:55:45 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Jun 06 11:39:59 CEST 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.184 seconds</td>
+<td>0.129 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -370,8 +370,9 @@ div.footer {
 <td colspan='10'>
 <div class='feature-description' id='1080498804'>
 <span>Slices can be created using the SliceBuilder.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.028 seconds)</div>
 </span>
 </div>
 </td>
@@ -384,7 +385,7 @@ div.footer {
 <pre class='block-source'>if ( device == null ) return
 Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
 Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
-if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.get().canAccessOpenCL() ) return</pre>
+if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.get().canAccessOpenCLDevice() ) return</pre>
 </td>
 </tr>
 <tr>
@@ -465,12 +466,18 @@ b.spread() != null</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x27861c76dc0],platform=OpenCLPlatform@c247fc5[pid=cl_platform_id[0x27861c774a0],context=cl_context[0x2786218ac50],kernels=[..46..]]]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x1d3ef8e1360],platform=OpenCLPlatform@75a000d8[pid=cl_platform_id[0x1d3ef8e18b0],context=cl_context[0x1d3ec14f330],kernels=[..46..]]]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.025 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>CPU[coreCount=12]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.003 seconds)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -484,8 +491,9 @@ b.spread() != null</pre>
 <td colspan='10'>
 <div class='feature-description' id='-1008503182'>
 <span>Cross device sliced tensor integration test runs without errors.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.090 seconds)</div>
 </span>
 </div>
 </td>
@@ -498,7 +506,7 @@ b.spread() != null</pre>
 <pre class='block-source'>if ( device == null ) return
 Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
 Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
-if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.get().canAccessOpenCL() ) return</pre>
+if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.get().canAccessOpenCLDevice() ) return</pre>
 </td>
 </tr>
 <tr>
@@ -786,11 +794,17 @@ x = Tsr.of(b, "x", c)</pre>
 <tbody>
 <tr class='ex-pass'>
 <td class='ex-value'>CPU[coreCount=12]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.028 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x27861c76dc0],platform=OpenCLPlatform@c247fc5[pid=cl_platform_id[0x27861c774a0],context=cl_context[0x2786218ac50],kernels=[..46..]]]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x1d3ef8e1360],platform=OpenCLPlatform@75a000d8[pid=cl_platform_id[0x1d3ef8e18b0],context=cl_context[0x1d3ec14f330],kernels=[..46..]]]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.062 seconds)</span>
+</td>
 </tr>
 </tbody>
 </table>

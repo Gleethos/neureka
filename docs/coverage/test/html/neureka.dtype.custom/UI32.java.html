@@ -11,96 +11,75 @@ import java.util.Iterator;
 <span class="fc" id="L11">public final class UI32 extends AbstractNumericType&lt;Long, long[], Integer, int[]&gt;</span>
 {
 
-    @Override
-    public boolean signed() {
-<span class="fc" id="L16">        return false;</span>
-    }
+<span class="fc" id="L14">    @Override public boolean signed() { return false; }</span>
 
-    @Override
-    public int numberOfBytes() {
-<span class="fc" id="L21">        return 4;</span>
-    }
+<span class="fc" id="L16">    @Override public int numberOfBytes() { return 4; }</span>
 
-    @Override
-    public Class&lt;Long&gt; targetType() {
-<span class="fc" id="L26">        return Long.class;</span>
-    }
+<span class="fc" id="L18">    @Override public Class&lt;Long&gt; targetType() { return Long.class; }</span>
 
-    @Override
-    public Class&lt;long[]&gt; targetArrayType() {
-<span class="fc" id="L31">        return long[].class;</span>
-    }
+<span class="fc" id="L20">    @Override public Class&lt;long[]&gt; targetArrayType() { return long[].class; }</span>
 
-    @Override
-    public Class&lt;Integer&gt; holderType() {
-<span class="nc" id="L36">        return Integer.class;</span>
-    }
+<span class="nc" id="L22">    @Override public Class&lt;Integer&gt; holderType() { return Integer.class; }</span>
 
-    @Override
-    public Class&lt;int[]&gt; holderArrayType() {
-<span class="nc" id="L41">        return int[].class;</span>
-    }
+<span class="nc" id="L24">    @Override public Class&lt;int[]&gt; holderArrayType() { return int[].class; }</span>
 
     @Override
     public Long foreignHolderBytesToTarget( byte[] bytes ) {
-<span class="fc" id="L46">        return</span>
-<span class="fc" id="L47">            ((long)( bytes[ 0 ] &amp; 0xff )) &lt;&lt; 24 |</span>
+<span class="fc" id="L28">        return</span>
+<span class="fc" id="L29">            ((long)( bytes[ 0 ] &amp; 0xff )) &lt;&lt; 24 |</span>
             ((long)( bytes[ 1 ] &amp; 0xff )) &lt;&lt; 16 |
             ( bytes[ 2 ] &amp; 0xff ) &lt;&lt; 8 |
             ( bytes[ 3 ] &amp; 0xff );
     }
 
-    @Override
-    public Long toTarget(Integer original) {
-<span class="fc" id="L55">        return Integer.toUnsignedLong( original );</span>
-    }
+<span class="fc" id="L35">    @Override public Long toTarget(Integer original) { return Integer.toUnsignedLong( original ); }</span>
 
     @Override
     public byte[] targetToForeignHolderBytes(Long number) {
-<span class="fc" id="L60">        final ByteBuffer buf = ByteBuffer.allocate(8);</span>
-<span class="fc" id="L61">        buf.putLong( number );</span>
-<span class="fc" id="L62">        byte[] b = buf.array();</span>
-<span class="fc" id="L63">        return new byte[]{ b[4], b[5], b[6], b[7] };</span>
+<span class="fc" id="L39">        final ByteBuffer buf = ByteBuffer.allocate(8);</span>
+<span class="fc" id="L40">        buf.putLong( number );</span>
+<span class="fc" id="L41">        byte[] b = buf.array();</span>
+<span class="fc" id="L42">        return new byte[]{ b[4], b[5], b[6], b[7] };</span>
     }
 
     @Override
     public long[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L68">        return new long[ 0 ];</span>
+<span class="nc" id="L47">        return new long[ 0 ];</span>
     }
 
     @Override
     public &lt;T&gt; long[] readAndConvertForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
-<span class="nc" id="L73">        return new long[0];</span>
+<span class="nc" id="L52">        return new long[0];</span>
     }
 
     @Override
     public int[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L78">        return new int[0];</span>
+<span class="nc" id="L57">        return new int[0];</span>
     }
 
     @Override
     public &lt;T&gt; int[] readForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
-<span class="nc" id="L83">        return new int[0];</span>
+<span class="nc" id="L62">        return new int[0];</span>
     }
 
     @Override
     public Integer convertToHolder( Object from ) {
-<span class="nc" id="L88">        return null;</span>
+<span class="fc" id="L67">        return DataConverter.get().convert( from, Integer.class );</span>
     }
 
     @Override
     public int[] convertToHolderArray( Object from ) {
-<span class="nc" id="L93">        return new int[0];</span>
+<span class="nc" id="L72">        return new int[0];</span>
     }
 
     @Override
     public Long convertToTarget( Object from ) {
-<span class="nc" id="L98">        return null;</span>
+<span class="nc" id="L77">        return null;</span>
     }
 
     @Override
     public long[] convertToTargetArray( Object from ) {
-<span class="fc" id="L103">        return DataConverter.get().convert( from, long[].class );</span>
+<span class="fc" id="L82">        return DataConverter.get().convert( from, long[].class );</span>
     }
 
 

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractDeviceAlgorithm.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api.template.algorithms</a> &gt; <span class="el_source">AbstractDeviceAlgorithm.java</span></div><h1>AbstractDeviceAlgorithm.java</h1><pre class="source lang-java linenums">package neureka.backend.api.template.algorithms;
+
+import neureka.backend.api.Algorithm;
+import neureka.backend.api.DeviceAlgorithm;
+import neureka.backend.api.ImplementationFor;
+import neureka.devices.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ *  This is a partial implementation of the {@link Algorithm} interface which implements
+ *  the component system for implementation instances of the {@link ImplementationFor} interface.
+ *  These components implement an algorithm for a specific {@link Algorithm}.
+ *
+ * @param &lt;C&gt; The type of the concrete extension of this class.
+ */
+public abstract class AbstractDeviceAlgorithm&lt;C extends DeviceAlgorithm&lt;C&gt;&gt;
+extends AbstractAlgorithm
+implements DeviceAlgorithm&lt;C&gt;
+{
+<span class="fc" id="L25">    private final Logger _LOG = LoggerFactory.getLogger(AbstractDeviceAlgorithm.class);</span>
+
+<span class="fc" id="L27">    protected final Map&lt;Class&lt;Device&lt;?&gt;&gt;, ImplementationFor&lt;Device&lt;?&gt;&gt;&gt; _implementations = new HashMap&lt;&gt;();</span>
+
+<span class="fc" id="L29">    public AbstractDeviceAlgorithm( String name ) { super( name ); }</span>
+
+    @Override
+    public &lt;D extends Device&lt;?&gt;, E extends ImplementationFor&lt;D&gt;&gt; C setImplementationFor(
+            Class&lt;D&gt; deviceClass, E implementation
+    ) {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if ( _implementations.containsKey( deviceClass ) )</span>
+<span class="fc" id="L36">            _LOG.info(</span>
+<span class="fc" id="L37">                    &quot;Implementation for device '&quot;+deviceClass.getSimpleName()+&quot;' already defined!&quot;</span>
+                );
+
+<span class="fc" id="L40">        _implementations.put(</span>
+            (Class&lt;Device&lt;?&gt;&gt;) deviceClass,
+            (ImplementationFor&lt;Device&lt;?&gt;&gt;) implementation
+        );
+<span class="fc" id="L44">        return (C) this;</span>
+    }
+
+    @Override
+    public &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( Class&lt;D&gt; deviceClass )
+    {
+<span class="fc" id="L50">        ImplementationFor&lt;D&gt; found = (ImplementationFor&lt;D&gt;) _implementations.get( deviceClass );</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if ( found == null )</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            for ( Class&lt;Device&lt;?&gt;&gt; type : _implementations.keySet() )</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">                if ( type.isAssignableFrom(deviceClass) )</span>
+<span class="fc" id="L54">                    return (ImplementationFor&lt;D&gt;) _implementations.get(type);</span>
+
+<span class="fc" id="L56">        return found;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L61">        String algorithmString = getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode());</span>
+<span class="fc" id="L62">        String implementations = _implementations.keySet().stream().map(Class::getSimpleName).collect(Collectors.joining(&quot;,&quot;));</span>
+<span class="fc" id="L63">        algorithmString = ( algorithmString + &quot;[name=&quot; + getName() + &quot;,support=[&quot; + implementations + &quot;]]&quot; );</span>
+<span class="fc" id="L64">        return algorithmString;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

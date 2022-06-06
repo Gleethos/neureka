@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPUImplementation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations</a> &gt; <span class="el_source">CPUImplementation.java</span></div><h1>CPUImplementation.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations;
+
+import neureka.backend.api.ImplementationFor;
+import neureka.backend.api.template.implementations.AbstractImplementationFor;
+import neureka.devices.host.CPU;
+
+/**
+ * This class is a wrapper class for the {@link ImplementationFor}&amp;lt;{@link CPU}&amp;gt; interface
+ * which enables a functional style of implementing the backend API!&lt;br&gt;
+ * It is used merely as a simple formality and implementation type specification.
+ *
+ * used to properly call a {@link CPU} instance via the
+ * {@link ImplementationFor}&amp;lt;{@link CPU}&amp;gt; lambda implementation
+ * receiving an instance of the ExecutionCall class.
+ */
+public class CPUImplementation extends AbstractImplementationFor&lt;CPU&gt;
+{
+<span class="fc" id="L18">    public static AndImplementation withArity( int arity ) { return lambda -&gt; new CPUImplementation( lambda, arity ); }</span>
+
+<span class="fc" id="L20">    private CPUImplementation( ImplementationFor&lt;CPU&gt; creator, int arity ) { super( creator, arity ); }</span>
+
+    /**
+     *  This is represents the second step in the simple builder API for {@link CPUImplementation} instances.
+     *  The starting point for constructing a new instance is {@link #withArity(int)}, a static factory method.
+     */
+    public interface AndImplementation {
+        CPUImplementation andImplementation( ImplementationFor&lt;CPU&gt; creator );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

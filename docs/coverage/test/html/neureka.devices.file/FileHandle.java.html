@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileHandle.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.file</a> &gt; <span class="el_source">FileHandle.java</span></div><h1>FileHandle.java</h1><pre class="source lang-java linenums">package neureka.devices.file;
+
+
+import neureka.Tsr;
+import neureka.devices.Storage;
+import neureka.devices.file.handles.util.HandleFactory;
+import neureka.dtype.DataType;
+
+import java.io.IOException;
+
+public interface FileHandle&lt;FinalType, ValType&gt; extends Storage&lt;ValType&gt;
+{
+<span class="fc" id="L13">    HandleFactory FACTORY = new HandleFactory();</span>
+
+    /**
+     *  An implementation of this method ought
+     *  to create a new tensor instance containing the data which
+     *  is stored in the file whose access this {@link FileHandle} manages.
+     *
+     * @return A new tensor filled with the data from the targeted file.
+     * @throws IOException If loading goes wrong an exception is being thrown.
+     */
+    Tsr&lt;ValType&gt; load() throws IOException;
+
+    /**
+     *
+     *  An implementation of this method ought to &quot;free&quot; up the memory used to store a tensor.
+     *  Therefore, the method is expected to delete the underlying file
+     *  whose access this very {@link FileHandle} implementation manages.
+     *  The method also returns an instance of the final implementation of this class,
+     *  meaning it adheres to the factory pattern.
+     *
+     * @return A reference of this very object in order to enable method chaining.
+     * @throws IOException Freeing / deleting resources might result in io exceptions.
+     */
+    FinalType free() throws IOException;
+
+    /**
+     *  This method return the size of the value which is stored
+     *  in the tensor of the file which is managed by this {@link FileHandle}.
+     *  The size however does not represent the byte size of the data.
+     *  This means that the returned size is dependent on the data type
+     *  of the underlying data of the file...
+     *
+     * @return The size of the value of the underlying tensor body.
+     */
+    int getValueSize();
+
+    /**
+     *  This method returns the byte size of the data which is stored
+     *  in the tensor of the file which is managed by this {@link FileHandle}.
+     *  The underlying datatype of the data within the file does not matter.
+     *
+     * @return The byte size of the data of the underlying tensor body.
+     */
+    int getDataSize();
+
+    /**
+     *  This method returns the number of bytes which are used to
+     *  store the tensor in the file whose access is being managed by an implementation
+     *  of th {@link FileHandle} interface.
+     *  Metadata stored inside the file will also be included in this returned size.
+     *
+     * @return The byte size of all the bytes used to represent the tensor in the file.
+     */
+    int getTotalSize();
+
+    /**
+     *
+     *
+     * @return The full path as well as name of the file which stores a tensor.
+     */
+    String getLocation();
+
+    /**
+     * @return The name of the file which stores a tensor.
+     */
+    String getFileName();
+
+    /**
+     * @return The data type of the tensor stored in the file which is managed by a {@link FileHandle}.
+     */
+    DataType&lt;?&gt; getDataType();
+
+    /**
+     * @return The shape of the tensor stored in the file which is managed by a {@link FileHandle}.
+     */
+    int[] getShape();
+
+    /**
+     *  The file ending which comes after the '.' character...
+     *
+     * @return The file ending which implies the encoding of the data in the file.
+     */
+    String extension();
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

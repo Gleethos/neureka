@@ -38,19 +38,57 @@ package neureka.optimization;
 import neureka.common.composition.Component;
 import neureka.Tsr;
 
+/**
+ *  {@link Optimizer}s are tensor components which implement the {@link Optimization} (functional)
+ *  interface applying various optimization algorithms to the gradients of tensors. &lt;br&gt;
+ *  A simple usage example would be the following:
+ *  &lt;pre&gt;{@code
+ *      Optimizer o = new SGD(0.01); // 0.01 learning rate
+ *      Tsr&lt;Float&gt; w = Tsr.of(0f);
+ *      w.set(o);
+ *  }&lt;/pre&gt;
+ *  &lt;br&gt;
+ *  If you want to create custom {@link Optimizer} implementations in a functional style
+ *  take a look at the following example:
+ *  &lt;pre&gt;{@code
+ *      Optimizer.of( t -&gt; {
+ *          Tsr&lt;?&gt; gradient = t.getGradient();
+ *          // ... apply algorithm ...
+ *      })
+ *  }&lt;/pre&gt;
+ *  Or consider using the factory method below to process gradients directly:
+ *  &lt;pre&gt;{@code
+ *      Optimizer.ofGradient( gradient -&gt; {
+ *          // ... apply algorithm ...
+ *      })
+ *  }&lt;/pre&gt;
+ *
+ *
+ * @param &lt;V&gt; The value type parameter of the tensors processed by this optimizer.
+ */
 public interface Optimizer&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Optimization&lt;V&gt;
 {
+    /**
+     * @param o The {@link Optimization} lambda which receives a tensor for optimization.
+     * @return An {@link Optimizer} which will process any passed tensor directly (see {@link #ofGradient(Optimization)} which processes gradients).
+     * @param &lt;T&gt; The value type parameter of the tensors processed by this optimizer.
+     */
     static &lt;T&gt; Optimizer&lt;T&gt; of( Optimization&lt;T&gt; o ) {
-<span class="nc" id="L44">        return new Optimizer&lt;T&gt;() {</span>
-<span class="nc" id="L45">            @Override public boolean update(OwnerChangeRequest&lt;Tsr&lt;T&gt;&gt; changeRequest) { return true; }</span>
-<span class="nc" id="L46">            @Override public Tsr&lt;T&gt; optimize(Tsr&lt;T&gt; w) { return o.optimize(w); }</span>
+<span class="nc" id="L77">        return new Optimizer&lt;T&gt;() {</span>
+<span class="nc" id="L78">            @Override public boolean update( OwnerChangeRequest&lt;Tsr&lt;T&gt;&gt; changeRequest ) { return true; }</span>
+<span class="nc" id="L79">            @Override public Tsr&lt;T&gt; optimize( Tsr&lt;T&gt; w ) { return o.optimize(w); }</span>
         };
     }
 
+    /**
+     * @param o The {@link Optimization} lambda which receives the gradient of a tensor for optimization.
+     * @return An {@link Optimizer} which will process the gradient of any passed tensor (see {@link #of(Optimization)} which processes tensors directly).
+     * @param &lt;T&gt; The value type parameter of the tensors processed by this optimizer.
+     */
     static &lt;T&gt; Optimizer&lt;T&gt; ofGradient( Optimization&lt;T&gt; o ) {
-<span class="fc" id="L51">        return new Optimizer&lt;T&gt;() {</span>
-<span class="fc" id="L52">            @Override public boolean update(OwnerChangeRequest&lt;Tsr&lt;T&gt;&gt; changeRequest) { return true; }</span>
-<span class="fc" id="L53">            @Override public Tsr&lt;T&gt; optimize(Tsr&lt;T&gt; w) { return o.optimize(w.getGradient()); }</span>
+<span class="fc" id="L89">        return new Optimizer&lt;T&gt;() {</span>
+<span class="fc" id="L90">            @Override public boolean update( OwnerChangeRequest&lt;Tsr&lt;T&gt;&gt; changeRequest ) { return true; }</span>
+<span class="fc" id="L91">            @Override public Tsr&lt;T&gt; optimize( Tsr&lt;T&gt; w ) { return o.optimize(w.getGradient()); }</span>
         };
     }
 

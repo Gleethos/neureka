@@ -74,7 +74,7 @@ Put the following code at the beginning of your script to load Neureka (or any o
 ```groovy
 
 @GrabResolver(name = 'jitpack.io', root = 'https://jitpack.io')
-@Grab('com.github.Gleethos:neureka:v0.16.0')
+@Grab('com.github.Gleethos:neureka:vx.y.z')
 
 import neureka.*
  

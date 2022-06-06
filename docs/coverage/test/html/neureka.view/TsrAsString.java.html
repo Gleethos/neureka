@@ -254,92 +254,90 @@ import java.util.function.Function;
 <span class="pc bpc" id="L254" title="1 of 2 branches missed.">        else if ( _tensor.isEmpty() ) return &quot;empty&quot;;</span>
 <span class="pc bpc" id="L255" title="1 of 2 branches missed.">        else if ( _tensor.isUndefined() ) return &quot;undefined&quot;;</span>
 <span class="fc" id="L256">        _asStr = new StringBuilder();</span>
-<span class="fc bfc" id="L257" title="All 2 branches covered.">        String base      = ( !_isMultiline ? &quot;&quot;   : &quot;\n&quot; + &quot;    &quot;      );</span>
-<span class="fc bfc" id="L258" title="All 2 branches covered.">        String delimiter = ( !_isMultiline ? &quot;&quot;   : &quot;    &quot;            );</span>
-<span class="fc bfc" id="L259" title="All 2 branches covered.">        String half      = ( !_isMultiline ? &quot;&quot;   : &quot;  &quot;              );</span>
-<span class="fc bfc" id="L260" title="All 2 branches covered.">        String deeper    = ( !_isMultiline ? &quot;&quot;   : &quot;    &quot; + delimiter );</span>
-<span class="fc bfc" id="L261" title="All 2 branches covered.">        if ( _hasShape ) _strShape();</span>
-<span class="pc bpc" id="L262" title="1 of 2 branches missed.">        if ( !_hasValue ) return _asStr.toString();</span>
-<span class="fc" id="L263">        _$( &quot;:&quot; );</span>
-<span class="fc bfc" id="L264" title="All 2 branches covered.">        if ( _isMultiline ) _recursiveFormatting( new int[ _tensor.rank() ], -1 );</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">        String base      = ( !_isMultiline ? &quot;&quot;   : _breakAndIndent() + &quot;    &quot; );</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">        String delimiter = ( !_isMultiline ? &quot;&quot;   : &quot;    &quot;                     );</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        String half      = ( !_isMultiline ? &quot;&quot;   : &quot;  &quot;                       );</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        if ( _hasShape ) _strShape();</span>
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">        if ( !_hasValue ) return _asStr.toString();</span>
+<span class="fc" id="L262">        _$( &quot;:&quot; );</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">        if ( _isMultiline ) _recursiveFormatting( new int[ _tensor.rank() ], -1 );</span>
         else {
-<span class="fc bfc" id="L266" title="All 2 branches covered.">            _$( _legacy ? &quot;(&quot; : &quot;[&quot; );</span>
-<span class="fc" id="L267">            _stringifyAllValues();</span>
-<span class="fc bfc" id="L268" title="All 2 branches covered.">            _$( _legacy ? &quot;)&quot; : &quot;]&quot; );</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">            _$( _legacy ? &quot;(&quot; : &quot;[&quot; );</span>
+<span class="fc" id="L266">            _stringifyAllValues();</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">            _$( _legacy ? &quot;)&quot; : &quot;]&quot; );</span>
         }
 
-<span class="fc bfc" id="L271" title="All 6 branches covered.">        if ( _hasGradient &amp;&amp; ( _tensor.rqsGradient() || _tensor.hasGradient() ) ) {</span>
-<span class="fc" id="L272">            _$( &quot;:g&quot; );</span>
-<span class="fc" id="L273">            Tsr&lt;?&gt; gradient = _tensor.getGradient();</span>
-<span class="fc bfc" id="L274" title="All 2 branches covered.">            if ( gradient != null )</span>
-<span class="fc" id="L275">                _$(</span>
-<span class="fc" id="L276">                        gradient.toString(</span>
-<span class="fc" id="L277">                                t -&gt; t.with( _config )</span>
-<span class="fc" id="L278">                                        .setPrefix(&quot;&quot;).setPostfix(&quot;&quot;)</span>
-<span class="fc" id="L279">                                        .setHasShape( false )</span>
-<span class="fc" id="L280">                                        .setIsScientific( true )</span>
-                        )
+<span class="fc bfc" id="L270" title="All 6 branches covered.">        if ( _hasGradient &amp;&amp; ( _tensor.rqsGradient() || _tensor.hasGradient() ) ) {</span>
+<span class="fc" id="L271">            _$( &quot;:g&quot; );</span>
+<span class="fc" id="L272">            Tsr&lt;?&gt; gradient = _tensor.getGradient();</span>
+<span class="fc bfc" id="L273" title="All 2 branches covered.">            if ( gradient != null )</span>
+<span class="fc" id="L274">                _$(</span>
+<span class="fc" id="L275">                    gradient.toString(</span>
+<span class="fc" id="L276">                        t -&gt; t.with( _config )</span>
+<span class="fc" id="L277">                                .setPrefix(&quot;&quot;).setPostfix(&quot;&quot;)</span>
+<span class="fc" id="L278">                                .setHasShape( false )</span>
+<span class="fc" id="L279">                                .setIsScientific( true )</span>
+                    )
                 );
             else
-<span class="fc bfc" id="L284" title="All 2 branches covered.">                _$( ( ( _legacy ) ? &quot;:(null)&quot; : &quot;:[null]&quot; ) );</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">                _$( ( ( _legacy ) ? &quot;:(null)&quot; : &quot;:[null]&quot; ) );</span>
         }
-<span class="fc bfc" id="L286" title="All 6 branches covered.">        if ( _hasRecursiveGraph &amp;&amp; _tensor.has( GraphNode.class ) &amp;&amp; _tensor.get( GraphNode.class ).size() &gt; 0 ) {</span>
-<span class="fc" id="L287">            GraphNode&lt;?&gt; node = _tensor.get( GraphNode.class );</span>
-<span class="fc" id="L288">            _$( &quot;; &quot; );</span>
-<span class="fc" id="L289">            node.forEachDerivative( ( t, agent ) -&gt; {</span>
-<span class="pc bpc" id="L290" title="1 of 2 branches missed.">                if ( agent.derivative() == null ) _$( &quot;-&gt;d(null), &quot; );</span>
-                else {
-<span class="fc" id="L292">                    _$(</span>
-                                    base + &quot;=&gt;d|[ &quot; +
-<span class="fc" id="L294">                                    base + delimiter + agent.derivative().toString( _config.clone().setPrefix(&quot;&quot;).setPostfix(&quot;&quot;) ) + &quot; &quot; +</span>
-                                    base + half + &quot;]|:t{ &quot; +
-                                    base + delimiter + (
-<span class="pc bpc" id="L297" title="1 of 2 branches missed.">                                    ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix(&quot;&quot;).setPostfix(&quot;&quot;) ) : t.toString(&quot;&quot;)</span>
-                            ) + &quot; &quot; + base + half + &quot;}, &quot;
+<span class="fc bfc" id="L285" title="All 6 branches covered.">        if ( _hasRecursiveGraph &amp;&amp; _tensor.has( GraphNode.class ) &amp;&amp; _tensor.get( GraphNode.class ).size() &gt; 0 ) {</span>
+<span class="fc" id="L286">            GraphNode&lt;?&gt; node = _tensor.get( GraphNode.class );</span>
+<span class="fc" id="L287">            _$( &quot;; &quot; );</span>
+<span class="fc" id="L288">            node.forEachDerivative( ( t, agent ) -&gt; {</span>
+<span class="pc bpc" id="L289" title="1 of 2 branches missed.">                if ( !agent.partialDerivative().isPresent() ) _$( &quot;-&gt;d(null), &quot; );</span>
+<span class="fc" id="L290">                else _$(</span>
+                        base + &quot;=&gt;d|[ &quot; +
+<span class="fc" id="L292">                        base + delimiter + agent.partialDerivative().get().toString( _config.clone().setPrefix(&quot;&quot;).setPostfix(&quot;&quot;) ) + &quot; &quot; +</span>
+                        base + half + &quot;]|:t{ &quot; +
+                        base + delimiter + (
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">                            ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix(&quot;&quot;).setPostfix(&quot;&quot;) ) : t.toString(&quot;&quot;)</span>
+                        ) +
+                        &quot; &quot; + base + half + &quot;}, &quot;
                     );
-                }
-<span class="fc" id="L301">            });</span>
+<span class="fc" id="L299">            });</span>
         }
-<span class="fc bfc" id="L303" title="All 6 branches covered.">        if ( _hasDerivatives &amp;&amp; _tensor.has( GraphNode.class ) &amp;&amp; _tensor.get( GraphNode.class ).size() &gt; 0 ) {</span>
-<span class="fc" id="L304">            GraphNode&lt;?&gt; node = _tensor.get( GraphNode.class );</span>
-<span class="pc bpc" id="L305" title="1 of 2 branches missed.">            if ( node.getMode() != 0 ) {</span>
-<span class="fc" id="L306">                _$( &quot;; &quot; );</span>
-<span class="fc" id="L307">                node.forEachDerivative( ( t, agent ) -&gt; {</span>
-<span class="fc bfc" id="L308" title="All 2 branches covered.">                    if ( agent.derivative() == null ) _$( &quot;-&gt;d(&quot; )._$( agent.toString() )._$( &quot;), &quot; );</span>
-<span class="fc" id="L309">                    else _$( &quot;-&gt;d&quot; )._$( agent.derivative().toString( _config.clone().setPrefix(&quot;&quot;).setPostfix(&quot;&quot;) ) )._$( &quot;, &quot; );</span>
-<span class="fc" id="L310">                });</span>
+<span class="fc bfc" id="L301" title="All 6 branches covered.">        if ( _hasDerivatives &amp;&amp; _tensor.has( GraphNode.class ) &amp;&amp; _tensor.get( GraphNode.class ).size() &gt; 0 ) {</span>
+<span class="fc" id="L302">            GraphNode&lt;?&gt; node = _tensor.get( GraphNode.class );</span>
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">            if ( node.getMode() != 0 ) {</span>
+<span class="fc" id="L304">                _$( &quot;; &quot; );</span>
+<span class="fc" id="L305">                node.forEachDerivative( ( t, agent ) -&gt; {</span>
+<span class="fc bfc" id="L306" title="All 2 branches covered.">                    if (!agent.partialDerivative().isPresent()) _$( &quot;-&gt;d(&quot; )._$( agent.toString() )._$( &quot;), &quot; );</span>
+<span class="fc" id="L307">                    else _$( &quot;-&gt;d&quot; )._$( agent.partialDerivative().get().toString( _config.clone().setPrefix(&quot;&quot;).setPostfix(&quot;&quot;) ) )._$( &quot;, &quot; );</span>
+<span class="fc" id="L308">                });</span>
             }
         }
-<span class="fc" id="L313">        return _postProcessed( _asStr.toString() );</span>
+<span class="fc" id="L311">        return _postProcessed( _asStr.toString() );</span>
     }
 
     private String _postProcessed( String asString )
     {
-<span class="fc" id="L318">        asString =  asString.trim(); // We need to get rid of line breaks</span>
+<span class="fc" id="L316">        asString =  asString.trim(); // We need to get rid of line breaks</span>
 
-<span class="fc bfc" id="L320" title="All 2 branches covered.">        if ( asString.endsWith(&quot;,&quot;) )</span>
-<span class="fc" id="L321">            asString = asString.substring(0, asString.length()-1);</span>
+<span class="fc bfc" id="L318" title="All 2 branches covered.">        if ( asString.endsWith(&quot;,&quot;) )</span>
+<span class="fc" id="L319">            asString = asString.substring(0, asString.length()-1);</span>
 
-<span class="fc" id="L323">        asString = _prefix + asString + _postfix;</span>
+<span class="fc" id="L321">        asString = _prefix + asString + _postfix;</span>
 
-<span class="fc" id="L325">        return asString;</span>
+<span class="fc" id="L323">        return asString;</span>
     }
 
     private void _stringifyAllValues()
     {
-<span class="fc" id="L330">        int max = _rowLimit;</span>
-<span class="fc bfc" id="L331" title="All 2 branches covered.">        Object data = ( _tensor.getUnsafe().getData() == null ? _tensor.getData() : _tensor.getUnsafe().getData() );</span>
-<span class="fc" id="L332">        ValStringifier getter = _createValStringifierAndFormatter( data );</span>
-<span class="fc" id="L333">        int size = _tensor.size();</span>
-<span class="fc" id="L334">        int trim = ( size - max );</span>
-<span class="fc bfc" id="L335" title="All 2 branches covered.">        size = ( trim &gt; 0 ? max : size );</span>
-<span class="fc bfc" id="L336" title="All 2 branches covered.">        for ( int i = 0; i &lt; size; i++ ) {</span>
-<span class="fc bfc" id="L337" title="All 2 branches covered.">            String vStr = getter.stringify( ( _tensor.isVirtual() ) ? 0 : _tensor.indexOfIndex( i ) );</span>
-<span class="fc" id="L338">            _$( vStr );</span>
-<span class="fc bfc" id="L339" title="All 2 branches covered.">            if ( i &lt; size - 1 ) _$( &quot;, &quot; );</span>
-<span class="fc bfc" id="L340" title="All 2 branches covered.">            else if ( trim &gt; 0 ) _$( &quot;, ... + &quot; )._$( trim )._$( &quot; more&quot; );</span>
+<span class="fc" id="L328">        int max = _rowLimit;</span>
+<span class="fc bfc" id="L329" title="All 2 branches covered.">        Object data = ( _tensor.getUnsafe().getData() == null ? _tensor.getData() : _tensor.getUnsafe().getData() );</span>
+<span class="fc" id="L330">        ValStringifier getter = _createValStringifierAndFormatter( data );</span>
+<span class="fc" id="L331">        int size = _tensor.size();</span>
+<span class="fc" id="L332">        int trim = ( size - max );</span>
+<span class="fc bfc" id="L333" title="All 2 branches covered.">        size = ( trim &gt; 0 ? max : size );</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">        for ( int i = 0; i &lt; size; i++ ) {</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">            String vStr = getter.stringify( ( _tensor.isVirtual() ) ? 0 : _tensor.indexOfIndex( i ) );</span>
+<span class="fc" id="L336">            _$( vStr );</span>
+<span class="fc bfc" id="L337" title="All 2 branches covered.">            if ( i &lt; size - 1 ) _$( &quot;, &quot; );</span>
+<span class="fc bfc" id="L338" title="All 2 branches covered.">            else if ( trim &gt; 0 ) _$( &quot;, ... + &quot; )._$( trim )._$( &quot; more&quot; );</span>
         }
-<span class="fc" id="L342">    }</span>
+<span class="fc" id="L340">    }</span>
 
     /**
      *  This method builds a single row of stringified and formatted tensor entries.
@@ -355,16 +353,16 @@ import java.util.function.Function;
     private void _buildRow(
             int trimStart, int trimEnd, int trimSize, int[] indices, NDValStringifier stringifier, String delimiter
     ) {
-<span class="fc bfc" id="L358" title="All 2 branches covered.">        for ( int i = 0; i &lt; _shape[ _shape.length - 1 ]; i++ ) {</span>
-<span class="fc bfc" id="L359" title="All 4 branches covered.">            if ( i &lt;= trimStart || i &gt; trimEnd ) {</span>
-<span class="fc" id="L360">                _$( stringifier.stringify( indices ) );</span>
-<span class="fc bfc" id="L361" title="All 2 branches covered.">                if ( i &lt; _shape[ _shape.length - 1 ] - 1 ) _$( delimiter );</span>
+<span class="fc bfc" id="L356" title="All 2 branches covered.">        for ( int i = 0; i &lt; _shape[ _shape.length - 1 ]; i++ ) {</span>
+<span class="fc bfc" id="L357" title="All 4 branches covered.">            if ( i &lt;= trimStart || i &gt; trimEnd ) {</span>
+<span class="fc" id="L358">                _$( stringifier.stringify( indices ) );</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">                if ( i &lt; _shape[ _shape.length - 1 ] - 1 ) _$( delimiter );</span>
             }
-<span class="fc bfc" id="L363" title="All 2 branches covered.">            else if ( i == trimStart + 1 ) _$( &quot;..&quot; )._$( trimSize )._$( &quot; more.., &quot; );</span>
+<span class="fc bfc" id="L361" title="All 2 branches covered.">            else if ( i == trimStart + 1 ) _$( &quot;..&quot; )._$( trimSize )._$( &quot; more.., &quot; );</span>
 
-<span class="fc" id="L365">            NDConfiguration.Utility.increment( indices, _shape );</span>
+<span class="fc" id="L363">            NDConfiguration.Utility.increment( indices, _shape );</span>
         }
-<span class="fc" id="L367">    }</span>
+<span class="fc" id="L365">    }</span>
 
 
     /**
@@ -380,84 +378,84 @@ import java.util.function.Function;
      */
     private void _recursiveFormatting( int[] indices, int dim )
     {
-<span class="fc" id="L383">        dim = Math.max( dim, 0 );</span>
-<span class="fc" id="L384">        int trimSize = ( _shape[ dim ] - _rowLimit );</span>
-<span class="fc" id="L385">        trimSize = Math.max( trimSize, 0 );</span>
-<span class="fc" id="L386">        int trimStart = ( _shape[ dim ] / 2 - trimSize / 2 );</span>
-<span class="fc" id="L387">        int trimEnd = ( _shape[ dim ] / 2 + trimSize / 2 );</span>
-<span class="fc" id="L388">        trimEnd += ( trimSize % 2 );</span>
-<span class="pc bpc" id="L389" title="2 of 6 branches missed.">        if ( _shape[ dim ] &gt; _rowLimit ) assert (_shape[ dim ] - (trimEnd - trimStart)) == _rowLimit;</span>
-<span class="fc" id="L390">        NDFrame&lt;?&gt; alias = _tensor.get( NDFrame.class );</span>
-<span class="fc bfc" id="L391" title="All 2 branches covered.">        if ( dim == indices.length - 1 ) {</span>
-<span class="pc bpc" id="L392" title="1 of 4 branches missed.">            if (</span>
-                    alias != null &amp;&amp;
-                            indices[ indices.length - 1 ] == 0 &amp;&amp;
-<span class="fc bfc" id="L395" title="All 2 branches covered.">                            indices[ Math.max( indices.length - 2, 0 ) ] == 0</span>
+<span class="fc" id="L381">        dim = Math.max( dim, 0 );</span>
+<span class="fc" id="L382">        int trimSize = ( _shape[ dim ] - _rowLimit );</span>
+<span class="fc" id="L383">        trimSize = Math.max( trimSize, 0 );</span>
+<span class="fc" id="L384">        int trimStart = ( _shape[ dim ] / 2 - trimSize / 2 );</span>
+<span class="fc" id="L385">        int trimEnd = ( _shape[ dim ] / 2 + trimSize / 2 );</span>
+<span class="fc" id="L386">        trimEnd += ( trimSize % 2 );</span>
+<span class="pc bpc" id="L387" title="2 of 6 branches missed.">        if ( _shape[ dim ] &gt; _rowLimit ) assert (_shape[ dim ] - (trimEnd - trimStart)) == _rowLimit;</span>
+<span class="fc" id="L388">        NDFrame&lt;?&gt; alias = _tensor.get( NDFrame.class );</span>
+<span class="fc bfc" id="L389" title="All 2 branches covered.">        if ( dim == indices.length - 1 ) {</span>
+<span class="pc bpc" id="L390" title="1 of 4 branches missed.">            if (</span>
+                alias != null &amp;&amp;
+                indices[ indices.length - 1 ] == 0 &amp;&amp;
+<span class="fc bfc" id="L393" title="All 2 branches covered.">                indices[ Math.max( indices.length - 2, 0 ) ] == 0</span>
             ) {
-<span class="fc" id="L397">                List&lt;Object&gt; aliases = alias.atAxis( indices.length - 1 ).getAllAliases();</span>
-<span class="pc bpc" id="L398" title="1 of 2 branches missed.">                if ( aliases != null ) {</span>
-<span class="fc" id="L399">                    _$( Util.indent( dim ) );</span>
-<span class="fc bfc" id="L400" title="All 2 branches covered.">                    _$( _legacy ? &quot;[ &quot; : &quot;( &quot; ); // The following assert has prevented many String miscarriages!</span>
-<span class="pc bpc" id="L401" title="2 of 4 branches missed.">                    assert aliases.size() - _shape[ indices.length - 1 ] == 0; // This is a basic requirement for the label size...</span>
-<span class="fc" id="L402">                    ValStringifier getter = _createValStringifierAndFormatter( aliases.toArray() );</span>
-<span class="fc" id="L403">                    _buildRow(</span>
+<span class="fc" id="L395">                List&lt;Object&gt; aliases = alias.atAxis( indices.length - 1 ).getAllAliases();</span>
+<span class="pc bpc" id="L396" title="1 of 2 branches missed.">                if ( aliases != null ) {</span>
+<span class="fc" id="L397">                    _$( Util.indent( dim ) );</span>
+<span class="fc bfc" id="L398" title="All 2 branches covered.">                    _$( _legacy ? &quot;[ &quot; : &quot;( &quot; ); // The following assert has prevented many String miscarriages!</span>
+<span class="pc bpc" id="L399" title="2 of 4 branches missed.">                    assert aliases.size() - _shape[ indices.length - 1 ] == 0; // This is a basic requirement for the label size...</span>
+<span class="fc" id="L400">                    ValStringifier getter = _createValStringifierAndFormatter( aliases.toArray() );</span>
+<span class="fc" id="L401">                    _buildRow(</span>
                             trimStart, trimEnd, trimSize,
                             new int[ indices.length ],
-<span class="fc" id="L406">                            iarr -&gt; getter.stringify( iarr[ iarr.length -1 ] ),</span>
-<span class="fc bfc" id="L407" title="All 2 branches covered.">                            _legacy ? &quot;][&quot; : &quot;)(&quot;</span>
+<span class="fc" id="L404">                            iarr -&gt; getter.stringify( iarr[ iarr.length -1 ] ),</span>
+<span class="fc bfc" id="L405" title="All 2 branches covered.">                            _legacy ? &quot;][&quot; : &quot;)(&quot;</span>
                     );
-<span class="fc bfc" id="L409" title="All 2 branches covered.">                    _$( _legacy ? &quot; ]&quot; : &quot; )&quot; );</span>
-<span class="fc bfc" id="L410" title="All 2 branches covered.">                    if ( alias.getTensorName() != null )</span>
-<span class="fc bfc" id="L411" title="All 4 branches covered.">                        _$( (_legacy) ? &quot;:[ &quot; : &quot;:( &quot; )._$( alias.getTensorName() )._$( (_legacy) ? &quot; ]&quot; : &quot; )&quot; );</span>
-<span class="fc" id="L412">                    _$( &quot;\n&quot; );</span>
+<span class="fc bfc" id="L407" title="All 2 branches covered.">                    _$( _legacy ? &quot; ]&quot; : &quot; )&quot; );</span>
+<span class="fc bfc" id="L408" title="All 2 branches covered.">                    if ( alias.getTensorName() != null )</span>
+<span class="fc bfc" id="L409" title="All 4 branches covered.">                        _$( (_legacy) ? &quot;:[ &quot; : &quot;:( &quot; )._$( alias.getTensorName() )._$( (_legacy) ? &quot; ]&quot; : &quot; )&quot; );</span>
+<span class="fc" id="L410">                    _$( _breakAndIndent() );</span>
                 }
             }
-<span class="fc" id="L415">            _$( Util.indent( dim ) );</span>
-<span class="fc bfc" id="L416" title="All 2 branches covered.">            _$( _legacy ? &quot;( &quot; : &quot;[ &quot; );</span>
-<span class="fc" id="L417">            ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );</span>
-<span class="pc bpc" id="L418" title="1 of 2 branches missed.">            NDValStringifier fun = _tensor.isVirtual()</span>
-<span class="nc" id="L419">                                        ? iarr -&gt; getter.stringify( 0 )</span>
-<span class="fc" id="L420">                                        : iarr -&gt; getter.stringify( _tensor.indexOfIndices( iarr ) );</span>
+<span class="fc" id="L413">            _$( Util.indent( dim ) );</span>
+<span class="fc bfc" id="L414" title="All 2 branches covered.">            _$( _legacy ? &quot;( &quot; : &quot;[ &quot; );</span>
+<span class="fc" id="L415">            ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );</span>
+<span class="pc bpc" id="L416" title="1 of 2 branches missed.">            NDValStringifier fun = _tensor.isVirtual()</span>
+<span class="nc" id="L417">                                        ? iarr -&gt; getter.stringify( 0 )</span>
+<span class="fc" id="L418">                                        : iarr -&gt; getter.stringify( _tensor.indexOfIndices( iarr ) );</span>
 
-<span class="fc" id="L422">            _buildRow( trimStart, trimEnd, trimSize, indices, fun, &quot;, &quot; );</span>
-<span class="fc bfc" id="L423" title="All 2 branches covered.">            _$( _legacy ? &quot; )&quot; : &quot; ]&quot; );</span>
+<span class="fc" id="L420">            _buildRow( trimStart, trimEnd, trimSize, indices, fun, &quot;, &quot; );</span>
+<span class="fc bfc" id="L421" title="All 2 branches covered.">            _$( _legacy ? &quot; )&quot; : &quot; ]&quot; );</span>
 
-<span class="fc bfc" id="L425" title="All 2 branches covered.">            if ( alias != null ) _$( &quot;:&quot; )._buildSingleLabel( alias, dim, indices );</span>
-<span class="fc" id="L426">        } else {</span>
-<span class="fc" id="L427">            _$( Util.indent( dim ) );</span>
-<span class="fc bfc" id="L428" title="All 4 branches covered.">            if ( dim &gt; 0 &amp;&amp; alias != null )</span>
-<span class="fc" id="L429">                _buildSingleLabel( alias, dim, indices )._$(&quot;:&quot;);</span>
-<span class="fc bfc" id="L430" title="All 2 branches covered.">            _$( _legacy ? &quot;(\n&quot; : &quot;[\n&quot; );</span>
-<span class="fc" id="L431">            int i = 0;</span>
+<span class="fc bfc" id="L423" title="All 2 branches covered.">            if ( alias != null ) _$( &quot;:&quot; )._buildSingleLabel( alias, dim, indices );</span>
+<span class="fc" id="L424">        } else {</span>
+<span class="fc" id="L425">            _$( Util.indent( dim ) );</span>
+<span class="fc bfc" id="L426" title="All 4 branches covered.">            if ( dim &gt; 0 &amp;&amp; alias != null )</span>
+<span class="fc" id="L427">                _buildSingleLabel( alias, dim, indices )._$(&quot;:&quot;);</span>
+<span class="fc bfc" id="L428" title="All 2 branches covered.">            _$( ( _legacy ? &quot;(&quot; : &quot;[&quot; ) + _breakAndIndent() );</span>
+<span class="fc" id="L429">            int i = 0;</span>
             do {
-<span class="fc bfc" id="L433" title="All 4 branches covered.">                if ( i &lt; trimStart || i &gt;= trimEnd )</span>
-<span class="fc" id="L434">                    _recursiveFormatting( indices, dim + 1 );</span>
-<span class="fc bfc" id="L435" title="All 2 branches covered.">                else if ( i == trimStart )</span>
-<span class="fc" id="L436">                    _$( Util.indent( dim + 1 ) )._$( &quot;... &quot; )._$( trimSize )._$( &quot; more ...\n&quot; );</span>
+<span class="fc bfc" id="L431" title="All 4 branches covered.">                if ( i &lt; trimStart || i &gt;= trimEnd )</span>
+<span class="fc" id="L432">                    _recursiveFormatting( indices, dim + 1 );</span>
+<span class="fc bfc" id="L433" title="All 2 branches covered.">                else if ( i == trimStart )</span>
+<span class="fc" id="L434">                    _$( Util.indent( dim + 1 ) )._$( &quot;... &quot; )._$( trimSize )._$( &quot; more ...&quot; + _breakAndIndent() );</span>
                 else
-<span class="fc" id="L438">                    indices[ dim ] = trimEnd + 1; // Jumping over trimmed entries!</span>
-<span class="fc" id="L439">                i++;</span>
+<span class="fc" id="L436">                    indices[ dim ] = trimEnd + 1; // Jumping over trimmed entries!</span>
+<span class="fc" id="L437">                i++;</span>
             }
-<span class="fc bfc" id="L441" title="All 2 branches covered.">            while ( indices[ dim ] != 0 );</span>
-<span class="fc bfc" id="L442" title="All 2 branches covered.">            _$( Util.indent( dim ) )._$( _legacy ? &quot;)&quot; : &quot;]&quot; );</span>
+<span class="fc bfc" id="L439" title="All 2 branches covered.">            while ( indices[ dim ] != 0 );</span>
+<span class="fc bfc" id="L440" title="All 2 branches covered.">            _$( Util.indent( dim ) )._$( _legacy ? &quot;)&quot; : &quot;]&quot; );</span>
         }
-<span class="fc" id="L444">        int i = dim - 1;</span>
-<span class="pc bpc" id="L445" title="1 of 6 branches missed.">        if ( i &gt;= 0 &amp;&amp; i &lt; indices.length &amp;&amp; indices[ i ] != 0 ) _$( &quot;,&quot; );</span>
-<span class="fc bfc" id="L446" title="All 2 branches covered.">        if ( i &gt;= 0 ) _$( &quot;\n&quot; );</span>
-<span class="fc" id="L447">    }</span>
+<span class="fc" id="L442">        int i = dim - 1;</span>
+<span class="pc bpc" id="L443" title="1 of 6 branches missed.">        if ( i &gt;= 0 &amp;&amp; i &lt; indices.length &amp;&amp; indices[ i ] != 0 ) _$( &quot;,&quot; );</span>
+<span class="fc bfc" id="L444" title="All 2 branches covered.">        if ( i &gt;= 0 ) _$( _breakAndIndent() );</span>
+<span class="fc" id="L445">    }</span>
 
     private TsrAsString _buildSingleLabel( NDFrame&lt;?&gt; alias, int dim, int[] indices ) {
-<span class="fc" id="L450">        int pos = dim - 1;</span>
-<span class="fc" id="L451">        List&lt;Object&gt; key = alias.atAxis( pos ).getAllAliases();</span>
-<span class="pc bpc" id="L452" title="2 of 4 branches missed.">        if ( pos &gt;= 0 &amp;&amp; key != null ) {</span>
-<span class="fc bfc" id="L453" title="All 2 branches covered.">            _$( _legacy ? &quot;[ &quot; : &quot;( &quot; );</span>
-<span class="fc bfc" id="L454" title="All 2 branches covered.">            int i = ( dim == indices.length - 1 )</span>
-<span class="fc" id="L455">                    ? ( _shape[ pos ] + indices[ pos ] - 1 ) % _shape[ pos ]</span>
-<span class="fc" id="L456">                    : indices[ pos ];</span>
-<span class="fc" id="L457">            _$( key.get( i ).toString() );</span>
-<span class="fc bfc" id="L458" title="All 2 branches covered.">            _$( _legacy ? &quot; ]&quot; : &quot; )&quot; );</span>
+<span class="fc" id="L448">        int pos = dim - 1;</span>
+<span class="fc" id="L449">        List&lt;Object&gt; key = alias.atAxis( pos ).getAllAliases();</span>
+<span class="pc bpc" id="L450" title="2 of 4 branches missed.">        if ( pos &gt;= 0 &amp;&amp; key != null ) {</span>
+<span class="fc bfc" id="L451" title="All 2 branches covered.">            _$( _legacy ? &quot;[ &quot; : &quot;( &quot; );</span>
+<span class="fc bfc" id="L452" title="All 2 branches covered.">            int i = ( dim == indices.length - 1 )</span>
+<span class="fc" id="L453">                    ? ( _shape[ pos ] + indices[ pos ] - 1 ) % _shape[ pos ]</span>
+<span class="fc" id="L454">                    : indices[ pos ];</span>
+<span class="fc" id="L455">            _$( key.get( i ).toString() );</span>
+<span class="fc bfc" id="L456" title="All 2 branches covered.">            _$( _legacy ? &quot; ]&quot; : &quot; )&quot; );</span>
         }
-<span class="fc" id="L460">        return this;</span>
+<span class="fc" id="L458">        return this;</span>
     }
 
     /**
@@ -466,35 +464,39 @@ import java.util.function.Function;
      */
     private void _strShape()
     {
-<span class="fc" id="L469">        boolean legacy = _legacy;</span>
-<span class="fc bfc" id="L470" title="All 2 branches covered.">        _$( legacy ? &quot;[&quot; : &quot;(&quot; );</span>
-<span class="fc bfc" id="L471" title="All 2 branches covered.">        for ( int i = 0; i &lt; _shape.length; i++ ) {</span>
-<span class="fc" id="L472">            _$( _shape[ i ] );</span>
-<span class="fc bfc" id="L473" title="All 2 branches covered.">            if ( i &lt; _shape.length - 1 ) _$( &quot;x&quot; );</span>
+<span class="fc" id="L467">        boolean legacy = _legacy;</span>
+<span class="fc bfc" id="L468" title="All 2 branches covered.">        _$( legacy ? &quot;[&quot; : &quot;(&quot; );</span>
+<span class="fc bfc" id="L469" title="All 2 branches covered.">        for ( int i = 0; i &lt; _shape.length; i++ ) {</span>
+<span class="fc" id="L470">            _$( _shape[ i ] );</span>
+<span class="fc bfc" id="L471" title="All 2 branches covered.">            if ( i &lt; _shape.length - 1 ) _$( &quot;x&quot; );</span>
         }
-<span class="fc bfc" id="L475" title="All 2 branches covered.">        _$( legacy ? &quot;]&quot; : &quot;)&quot; );</span>
-<span class="fc" id="L476">    }</span>
+<span class="fc bfc" id="L473" title="All 2 branches covered.">        _$( legacy ? &quot;]&quot; : &quot;)&quot; );</span>
+<span class="fc" id="L474">    }</span>
+
+    private String _breakAndIndent() {
+<span class="fc" id="L477">        return &quot;\n&quot; + _indent;</span>
+    }
 
     @Contract( pure = true )
     private static String formatFP( double v )
     {
-<span class="fc" id="L481">        DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.UK );</span>
-<span class="fc" id="L482">        DecimalFormat formatter = new DecimalFormat(&quot;##0.0##E0&quot;, formatSymbols);</span>
-<span class="fc" id="L483">        String vStr = String.valueOf( v );</span>
-<span class="fc" id="L484">        final int offset = 0;</span>
-<span class="fc bfc" id="L485" title="All 2 branches covered.">        if ( vStr.length() &gt; ( 7 - offset ) ) {</span>
-<span class="fc bfc" id="L486" title="All 2 branches covered.">            if ( vStr.startsWith(&quot;0.&quot;) )</span>
-<span class="fc" id="L487">                vStr = vStr.substring( 0, 7 - offset ) + &quot;E0&quot;;</span>
-<span class="fc bfc" id="L488" title="All 2 branches covered.">            else if ( vStr.startsWith( &quot;-0.&quot; ) )</span>
-<span class="fc" id="L489">                vStr = vStr.substring( 0, 8 - offset ) + &quot;E0&quot;;</span>
+<span class="fc" id="L483">        DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.UK );</span>
+<span class="fc" id="L484">        DecimalFormat formatter = new DecimalFormat(&quot;##0.0##E0&quot;, formatSymbols);</span>
+<span class="fc" id="L485">        String vStr = String.valueOf( v );</span>
+<span class="fc" id="L486">        final int offset = 0;</span>
+<span class="fc bfc" id="L487" title="All 2 branches covered.">        if ( vStr.length() &gt; ( 7 - offset ) ) {</span>
+<span class="fc bfc" id="L488" title="All 2 branches covered.">            if ( vStr.startsWith(&quot;0.&quot;) )</span>
+<span class="fc" id="L489">                vStr = vStr.substring( 0, 7 - offset ) + &quot;E0&quot;;</span>
+<span class="fc bfc" id="L490" title="All 2 branches covered.">            else if ( vStr.startsWith( &quot;-0.&quot; ) )</span>
+<span class="fc" id="L491">                vStr = vStr.substring( 0, 8 - offset ) + &quot;E0&quot;;</span>
             else {
-<span class="fc" id="L491">                vStr = formatter.format( v );</span>
-<span class="fc bfc" id="L492" title="All 2 branches covered.">                vStr = !vStr.contains(&quot;.0E0&quot;) ? vStr : vStr.replace(&quot;.0E0&quot;,&quot;.0&quot;);</span>
-<span class="fc bfc" id="L493" title="All 2 branches covered.">                vStr =  vStr.contains(&quot;.&quot;)    ? vStr : vStr.replace(&quot;E0&quot;,&quot;.0&quot;);</span>
+<span class="fc" id="L493">                vStr = formatter.format( v );</span>
+<span class="fc bfc" id="L494" title="All 2 branches covered.">                vStr = !vStr.contains(&quot;.0E0&quot;) ? vStr : vStr.replace(&quot;.0E0&quot;,&quot;.0&quot;);</span>
+<span class="fc bfc" id="L495" title="All 2 branches covered.">                vStr =  vStr.contains(&quot;.&quot;)    ? vStr : vStr.replace(&quot;E0&quot;,&quot;.0&quot;);</span>
             }
         }
-<span class="fc bfc" id="L496" title="All 2 branches covered.">        if ( vStr.endsWith(&quot;E0&quot;) ) vStr = vStr.substring(0, vStr.length()-2);</span>
-<span class="fc" id="L497">        return vStr.replace(&quot;E&quot;, &quot;e&quot;);</span>
+<span class="fc bfc" id="L498" title="All 2 branches covered.">        if ( vStr.endsWith(&quot;E0&quot;) ) vStr = vStr.substring(0, vStr.length()-2);</span>
+<span class="fc" id="L499">        return vStr.replace(&quot;E&quot;, &quot;e&quot;);</span>
     }
 
     /**
@@ -545,19 +547,19 @@ import java.util.function.Function;
      *  a collection of static and stateless methods containing
      *  useful functionalities for tensor stringification.
      */
-<span class="nc" id="L548">    public static class Util</span>
+<span class="nc" id="L550">    public static class Util</span>
     {
         @Contract( pure = true )
-<span class="fc" id="L551">        public static String indent( int n ) { return String.join(&quot;&quot;, Collections.nCopies( n, &quot;   &quot; )); }</span>
+<span class="fc" id="L553">        public static String indent( int n ) { return String.join(&quot;&quot;, Collections.nCopies( n, &quot;   &quot; )); }</span>
 
         @Contract( pure = true )
         public static String pad( int left, String s ) {
-<span class="fc" id="L555">            return String.join(&quot;&quot;, Collections.nCopies( left, &quot; &quot; )) + s;</span>
+<span class="fc" id="L557">            return String.join(&quot;&quot;, Collections.nCopies( left, &quot; &quot; )) + s;</span>
         }
 
         @Contract( pure = true )
         public static String pad( String s, int right ) {
-<span class="fc" id="L560">            return s + String.join(&quot;&quot;, Collections.nCopies( right, &quot; &quot; ));</span>
+<span class="fc" id="L562">            return s + String.join(&quot;&quot;, Collections.nCopies( right, &quot; &quot; ));</span>
         }
 
     }

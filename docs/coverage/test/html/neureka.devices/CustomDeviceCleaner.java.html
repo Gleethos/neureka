@@ -45,22 +45,26 @@ import java.util.List;
     public void run() {
 <span class="pc bpc" id="L46" title="1 of 2 branches missed.">        while ( _registered &gt; 0 ) {</span>
             try {
-<span class="fc" id="L48">                ReferenceWithCleanup ref = (ReferenceWithCleanup) _referenceQueue.remove( _timeout );</span>
+<span class="fc" id="L48">                ReferenceWithCleanup ref = (ReferenceWithCleanup) _referenceQueue.remove(_timeout);</span>
 <span class="pc bpc" id="L49" title="1 of 2 branches missed.">                if ( ref != null ) {</span>
-<span class="fc" id="L50">                    ref.cleanup();</span>
-<span class="fc" id="L51">                    _registered--;</span>
+                    try {
+<span class="fc" id="L51">                        ref.cleanup();</span>
+<span class="nc" id="L52">                    } catch ( Throwable e ) {</span>
+<span class="nc" id="L53">                        e.printStackTrace();</span>
+                        // ignore exceptions from the cleanup action
+                        // (including interruption of cleanup thread)
+<span class="fc" id="L56">                    }</span>
+<span class="fc" id="L57">                    _registered--;</span>
                 }
-<span class="nc" id="L53">            } catch ( Throwable e ) {</span>
-<span class="nc" id="L54">                e.printStackTrace();</span>
-                // ignore exceptions from the cleanup action
-                // (including interruption of cleanup thread)
-<span class="pc" id="L57">            }</span>
+<span class="nc" id="L59">            } catch ( Throwable e ) {</span>
+<span class="nc" id="L60">                e.printStackTrace(); // The queue failed</span>
+<span class="pc" id="L61">            }</span>
         }
-<span class="nc" id="L59">    }</span>
+<span class="nc" id="L63">    }</span>
 
     @Override
     public String toString() {
-<span class="fc" id="L63">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(this.hashCode())+&quot;[&quot; +</span>
+<span class="fc" id="L67">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(this.hashCode())+&quot;[&quot; +</span>
                     &quot;registered=&quot; + _registered +
                 &quot;]&quot;;
     }

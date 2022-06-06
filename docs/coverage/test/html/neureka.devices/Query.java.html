@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Query.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices</a> &gt; <span class="el_source">Query.java</span></div><h1>Query.java</h1><pre class="source lang-java linenums">package neureka.devices;
+
+import neureka.Neureka;
+import neureka.backend.api.BackendExtension;
+import neureka.calculus.assembly.ParseUtil;
+import neureka.devices.host.CPU;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
+
+/**
+ *  An internal class which queries the backend for {@link Device} instances based on a provided device
+ *  type and an array of search keys!
+ */
+final class Query
+{
+    private static final double ACCEPTABILITY = 0.42;
+<span class="fc" id="L18">    private static final String[] TAKE_FIRST = {&quot;first device&quot;,&quot;first&quot;, &quot;first gpu&quot;, &quot;first cpu&quot;, &quot;primary&quot;, &quot;main&quot;, &quot;any&quot;, &quot;anything&quot;, &quot;something&quot;};</span>
+<span class="fc" id="L19">    private static final String[] WANTS_GPU = {&quot;first gpu&quot;, &quot;gpu&quot;, &quot;nvidia&quot;, &quot;amd&quot;, &quot;intel&quot;, &quot;opencl&quot;, &quot;fpga&quot;, &quot;radeon&quot;, &quot;cuda&quot;, &quot;apu&quot;, &quot;graphics&quot;, &quot;rdna&quot;, &quot;rocm&quot;, &quot;graphics&quot;};</span>
+<span class="fc" id="L20">    private static final String[] WANTS_CPU = {&quot;first cpu&quot;, &quot;jvm&quot;,&quot;native&quot;,&quot;host&quot;,&quot;cpu&quot;,&quot;threaded&quot;, &quot;processor&quot;, &quot;main processor&quot;, &quot;central processor&quot;, &quot;central processing unit&quot;};</span>
+
+    private Query() {}
+
+
+    static &lt;T, D extends Device&lt;T&gt;&gt; D query( Class&lt;D&gt; deviceType, String... searchKeys ) {
+<span class="fc" id="L26">        String[] flattened =</span>
+<span class="fc" id="L27">            Arrays.stream(searchKeys)</span>
+<span class="fc" id="L28">                .flatMap( key -&gt; Arrays.stream(key.split(&quot; or &quot;)) )</span>
+<span class="fc" id="L29">                .flatMap( key -&gt; Arrays.stream(key.split(&quot;\\|\\|&quot;)) )</span>
+<span class="fc" id="L30">                .map(String::trim)</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">                .filter( key -&gt; !key.isEmpty() )</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">                .flatMap( key -&gt; key.equals(&quot;amd&quot;) ? Stream.of(&quot;amd&quot;, &quot;advanced micro devices&quot;) : Stream.of(key) )</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">                .flatMap( key -&gt; key.equals(&quot;nvidia&quot;) ? Stream.of(&quot;nvidia&quot;, &quot;nvidia corporation&quot;) : Stream.of(key) )</span>
+<span class="fc" id="L34">                .toArray(String[]::new);</span>
+
+<span class="fc" id="L36">        return queryInternal( deviceType, flattened );</span>
+    }
+
+
+    private static &lt;T, D extends Device&lt;T&gt;&gt; D queryInternal( Class&lt;D&gt; deviceType, String... searchKeys )
+    {
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if ( deviceType == CPU.class ) return (D) CPU.get();</span>
+        String key;
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        if ( searchKeys.length == 0 ) key = &quot;&quot;;</span>
+<span class="fc" id="L45">        else key = String.join(&quot; &quot;, searchKeys).toLowerCase();</span>
+
+<span class="fc" id="L47">        boolean justTakeFirstOne = Arrays.asList(TAKE_FIRST).contains(key);</span>
+<span class="fc" id="L48">        boolean probablyWantsGPU = Arrays.stream(WANTS_GPU).anyMatch(key::contains);</span>
+<span class="pc bpc" id="L49" title="1 of 6 branches missed.">        probablyWantsGPU = probablyWantsGPU || key.equals(&quot;first&quot;) || key.equals(&quot;first device&quot;);</span>
+
+<span class="fc" id="L51">        double desireForCPU = Arrays.stream(WANTS_CPU)</span>
+<span class="fc" id="L52">                                        .flatMapToDouble(</span>
+                                            cpuWord -&gt;
+<span class="fc" id="L54">                                                Arrays.stream(searchKeys)</span>
+<span class="fc" id="L55">                                                        .mapToDouble(word -&gt; ParseUtil.similarity( word, cpuWord ) )</span>
+                                        )
+<span class="fc" id="L57">                                        .max()</span>
+<span class="fc" id="L58">                                        .orElse(0);</span>
+
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if ( probablyWantsGPU ) desireForCPU /= 10; // CPU instance is most likely not meant!</span>
+
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        for ( String currentKey : searchKeys )</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            for ( BackendExtension extension : Neureka.get().backend().getExtensions() ) {</span>
+<span class="fc" id="L64">                BackendExtension.DeviceOption found = extension.find( currentKey );</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">                if ( found == null           ) continue;</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">                if ( found.device() == null  ) continue;</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">                if ( found.confidence() &lt;= 0 ) continue;</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                if ( !deviceType.isAssignableFrom( found.device().getClass() ) ) continue;</span>
+<span class="fc bfc" id="L69" title="All 8 branches covered.">                if ( found.confidence() &gt; ACCEPTABILITY &amp;&amp; found.confidence() &gt; desireForCPU || (justTakeFirstOne &amp;&amp; probablyWantsGPU) )</span>
+<span class="fc" id="L70">                    return (D) found.device();</span>
+<span class="fc" id="L71">            }</span>
+
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if ( probablyWantsGPU )</span>
+<span class="fc" id="L74">            return null; // User wants OpenCL but cannot have it :/</span>
+<span class="pc bpc" id="L75" title="1 of 6 branches missed.">        else if ( deviceType.isAssignableFrom( CPU.class ) &amp;&amp; (desireForCPU &gt; ACCEPTABILITY || justTakeFirstOne) )</span>
+<span class="fc" id="L76">            return (D) CPU.get();</span>
+        else
+<span class="fc" id="L78">            return null; // We don't know what the user wants, but we do not have it :/</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

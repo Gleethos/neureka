@@ -28,7 +28,7 @@ public final class Messages
                 &quot;OpenCL could not detect any devices in the current '{}'.\n{}&quot;,
 <span class="nc" id="L29">                CLContext.class.getSimpleName(),</span>
 <span class="nc" id="L30">                findTip().HOW_TO_INSTALL_OPENCL_DRIVERS</span>
-        );
+            );
     }
 
     public static Tips findTip()
@@ -61,7 +61,7 @@ public final class Messages
 <span class="nc" id="L61">            }</span>
         }
         //---
-<span class="nc" id="L64">        String foundOS = properties.getProperty(&quot;NAME&quot;).toLowerCase().replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+<span class="nc" id="L64">        String foundOS = properties.getProperty(&quot;NAME&quot;).toLowerCase().replace(&quot;\&quot;&quot;, &quot;&quot;).trim();</span>
 <span class="nc bnc" id="L65" title="All 4 branches missed.">        switch ( foundOS ) {</span>
 <span class="nc" id="L66">            case &quot;ubuntu&quot;:  return Tips.UBUNTU;</span>
 <span class="nc" id="L67">            case &quot;fedora&quot;:  return Tips.FEDORA;</span>
@@ -70,26 +70,26 @@ public final class Messages
 <span class="nc" id="L70">        return Tips.UNKNOWN;</span>
     }
 
-<span class="nc" id="L73">    public enum Tips {</span>
-<span class="nc" id="L74">        UBUNTU(</span>
+<span class="nc" id="L73">    public enum Tips</span>
+    {
+<span class="nc" id="L75">        UBUNTU(</span>
                 &quot;Try executing the following command to install OpenCL: 'sudo apt install ocl-icd-opencl-dev'.\n&quot;,
-                &quot;In order to allow OpenCL to find your GPUs consider executing 'sudo ubuntu-drivers autoinstall'!\n&quot;
+                &quot;In order to allow OpenCL to find your GPUs, consider executing 'sudo ubuntu-drivers autoinstall'!\n&quot;
         ),
-<span class="nc" id="L78">        FEDORA(</span>
+<span class="nc" id="L79">        FEDORA(</span>
                 &quot;Try executing the following command to install OpenCL: 'sudo dnf install ocl-icd-devel'.\n&quot;,
-                &quot;In order to allow OpenCL to find your GPUs consider installing or updating your device drivers!\n&quot;
+                &quot;In order to allow OpenCL to find your GPUs, consider installing or updating your device drivers!\n&quot;
         ),
-<span class="nc" id="L82">        WINDOWS(</span>
+<span class="nc" id="L83">        WINDOWS(</span>
                 &quot;&quot;, // Should already work
-                &quot;Try to install the latest drivers of your GPU (Or other SIMD devices).&quot;
+                &quot;Try to install the latest drivers of your GPU (Or other SIMD devices).\n&quot;
         ),
-<span class="nc" id="L86">        UNKNOWN(</span>
-                &quot;Try to install the latest OpenCL runtime for your system.&quot;,
-                &quot;If you already have an OpenCL runtime installed consider installing the latest drivers for your GPU (Or other SIMD devices).&quot;
+<span class="nc" id="L87">        UNKNOWN(</span>
+                &quot;Try to install the latest OpenCL runtime for your system.\n&quot;,
+                &quot;If you already have an OpenCL runtime installed consider installing the latest drivers for your GPU (Or other SIMD devices).\n&quot;
         );
 
-        public final String HOW_TO_INSTALL_OPENCL;
-        private final String HOW_TO_INSTALL_OPENCL_DRIVERS;
+        public final String HOW_TO_INSTALL_OPENCL, HOW_TO_INSTALL_OPENCL_DRIVERS;
 
 <span class="nc" id="L94">        Tips( String howToInstallOpenCL, String howToInstallDrivers ) {</span>
 <span class="nc" id="L95">            HOW_TO_INSTALL_OPENCL = howToInstallOpenCL;</span>

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Apr 03 14:55:39 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Jun 06 11:39:53 CEST 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.048 seconds</td>
+<td>0.036 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -373,8 +373,9 @@ div.footer {
 <td colspan='10'>
 <div class='feature-description' id='1578969987'>
 <span>Anonymous tensor instance has the default datatype class as defined in Neureka settings.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.004 seconds)</div>
 </span>
 </div>
 </td>
@@ -400,15 +401,16 @@ div.footer {
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>t.getValueClass() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getJVMTypeClass()</pre>
+<pre class='block-source'>t.getValueClass() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getValueTypeClass()</pre>
 </td>
 </tr>
 <tr>
 <td colspan='10'>
 <div class='feature-description' id='183473621'>
 <span>String tensor instance discovers expected class.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.001 seconds)</div>
 </span>
 </div>
 </td>
@@ -449,8 +451,9 @@ div.footer {
 <td colspan='10'>
 <div class='feature-description' id='1749540055'>
 <span>1D tensors can be created from primitive arrays.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.010 seconds)</div>
 </span>
 </div>
 </td>
@@ -506,31 +509,46 @@ div.footer {
 <td class='ex-value'>3</td>
 <td class='ex-value'>[-1.0, 3.0, 6.0]</td>
 <td class='ex-value'>class java.lang.Float</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>4</td>
 <td class='ex-value'>[1, -2, 9, 12]</td>
 <td class='ex-value'>class java.lang.Integer</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>2</td>
 <td class='ex-value'>[42, 73]</td>
 <td class='ex-value'>class java.lang.Byte</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>3</td>
 <td class='ex-value'>[-16, 54, 12]</td>
 <td class='ex-value'>class java.lang.Long</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>1</td>
 <td class='ex-value'>[26]</td>
 <td class='ex-value'>class java.lang.Short</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 </tbody>
 </table>

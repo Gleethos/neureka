@@ -273,7 +273,7 @@ public final class NDFrame&lt;ValType&gt; implements Component&lt;Tsr&lt;ValType
 
     @Override
     public boolean update( OwnerChangeRequest&lt;Tsr&lt;ValType&gt;&gt; changeRequest ) {
-<span class="fc" id="L276">        changeRequest.executeChange();</span>
+<span class="fc" id="L276">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
         // This component does not have anything to do when switching owner...
 <span class="fc" id="L278">        return true;</span>
     }

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Apr 03 14:55:48 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Jun 06 11:40:02 CEST 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.064 seconds</td>
+<td>1.531 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -358,15 +358,16 @@ div.footer {
 <a href='#1807119128' class='feature-toc-pass'>Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.</a>
 </li>
 <li>
-<a href='#-1266088296' class='feature-toc-pass'>Lambda properties of mock implementation interact with FunctionNode (AbstractFunction) as expected.</a>
+<a href='#-289181615' class='feature-toc-pass'>Lambda properties of mock implementation interact with FunctionNode as expected.</a>
 </li>
 </ul>
 <tr>
 <td colspan='10'>
 <div class='feature-description' id='1807119128'>
 <span>Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(1.371 seconds)</div>
 </span>
 </div>
 </td>
@@ -382,7 +383,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def type = Mock(Operation)</pre>
+<pre class='block-source'>var type = Mock(Operation)</pre>
 </td>
 </tr>
 <tr>
@@ -396,7 +397,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def children = [Mock(FunctionInput), Mock(FunctionInput)]</pre>
+<pre class='block-source'>var children = [Mock(FunctionInput), Mock(FunctionInput)]</pre>
 </td>
 </tr>
 <tr>
@@ -425,7 +426,7 @@ var mutate = Mock(AbstractTensor.Unsafe)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def implementation = Mock(Algorithm)</pre>
+<pre class='block-source'>var implementation = Mock(Algorithm)</pre>
 </td>
 </tr>
 <tr>
@@ -439,7 +440,7 @@ var mutate = Mock(AbstractTensor.Unsafe)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def function = new FunctionNode(type, children, false)</pre>
+<pre class='block-source'>var function = new FunctionNode(type, children, false)</pre>
 </td>
 </tr>
 <tr>
@@ -469,7 +470,7 @@ function.isFlat()
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def result = function.call(new Tsr[0])</pre>
+<pre class='block-source'>var result = function.call(new Tsr[0])</pre>
 </td>
 </tr>
 <tr>
@@ -484,7 +485,7 @@ function.isFlat()
 <td></td>
 <td>
 <pre class='block-source'>(1.._) * type.getAlgorithmFor(_) &gt;&gt; implementation
-(1.._) * implementation.dispatch(_,_) &gt;&gt; output
+(1.._) * implementation.execute(_,_) &gt;&gt; Result.of(output)
 (1.._) * output.getUnsafe() &gt;&gt; mutate
 (1.._) * mutate.setIsIntermediate(false) &gt;&gt; output
 (1.._) * output.isIntermediate() &gt;&gt; true</pre>
@@ -523,20 +524,6 @@ function.isFlat()
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<div class='block-text'>The agent creator is never accessed because "doAD" is set to false.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>0 * implementation.supplyADAgentFor(_,_,_)</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
 <div class='block-text'>The result is the same as the mock tensor returned by the custom call hook.</div>
 </td>
 </tr>
@@ -548,10 +535,11 @@ function.isFlat()
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-1266088296'>
-<span>Lambda properties of mock implementation interact with FunctionNode (AbstractFunction) as expected.</span>
-<span style='float: right; font-size: 60%;'>
+<div class='feature-description' id='-289181615'>
+<span>Lambda properties of mock implementation interact with FunctionNode as expected.</span>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.154 seconds)</div>
 </span>
 </div>
 </td>
@@ -567,7 +555,7 @@ function.isFlat()
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def agent = Mock(ADAgent)</pre>
+<pre class='block-source'>var agent = Mock(ADAgent)</pre>
 </td>
 </tr>
 <tr>
@@ -581,7 +569,7 @@ function.isFlat()
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def type = Mock(Operation)</pre>
+<pre class='block-source'>var type = Mock(Operation)</pre>
 </td>
 </tr>
 <tr>
@@ -595,7 +583,7 @@ function.isFlat()
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def children = [Mock(FunctionInput), Mock(FunctionInput)]</pre>
+<pre class='block-source'>var children = [Mock(FunctionInput), Mock(FunctionInput)]</pre>
 </td>
 </tr>
 <tr>
@@ -613,7 +601,7 @@ function.isFlat()
 Tsr input = Mock(Tsr)
 Device device = Mock(Device)
 GraphNode node = Mock(GraphNode)
-def ndc = Mock(NDConfiguration)
+var ndc = Mock(NDConfiguration)
 var mutate = Mock(AbstractTensor.Unsafe)</pre>
 </td>
 </tr>
@@ -628,7 +616,21 @@ var mutate = Mock(AbstractTensor.Unsafe)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def implementation = Mock(Algorithm)</pre>
+<pre class='block-source'>var implementation = Mock(Algorithm)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>An autodiff supplier:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var adSource = Mock(ADAgentSupplier)</pre>
 </td>
 </tr>
 <tr>
@@ -642,7 +644,7 @@ var mutate = Mock(AbstractTensor.Unsafe)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def function = new FunctionNode(type, children, true)</pre>
+<pre class='block-source'>var function = new FunctionNode(type, children, true)</pre>
 </td>
 </tr>
 <tr>
@@ -686,11 +688,12 @@ function.isDoingAD()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>(1.._) * input.getNDConf() &gt;&gt; ndc
+<pre class='block-source'>(0.._) * output.getNDConf() &gt;&gt; Mock(NDConfiguration)
+(1.._) * input.getNDConf() &gt;&gt; ndc
 (1.._) * ndc.shape() &gt;&gt; new int[]{1,2}
 (1.._) * type.isInline() &gt;&gt; false
 (1.._) * type.getAlgorithmFor(_) &gt;&gt; implementation
-(1.._) * implementation.dispatch(_,_) &gt;&gt; output
+(1.._) * implementation.execute(_,_) &gt;&gt; Result.of(output).withAutoDiff(adSource)
 (1.._) * output.getUnsafe() &gt;&gt; mutate
 (1.._) * mutate.setIsIntermediate(false) &gt;&gt; output
 (1.._) * output.isIntermediate() &gt;&gt; true
@@ -728,9 +731,8 @@ _ * type.getOperator() &gt;&gt; 'test_identifier'
 <td></td>
 <td>
 <pre class='block-source'>(1.._) * input.rqsGradient() &gt;&gt; true
-(1.._) * implementation.canPerformForwardADFor(_) &gt;&gt; false
-(1.._) * implementation.canPerformBackwardADFor(_) &gt;&gt; true
-(1.._) * node.getPayload() &gt;&gt; input
+(1.._) * implementation.autoDiffModeFrom(_) &gt;&gt; AutoDiffMode.BACKWARD_ONLY
+(0.._) * node.getPayload() &gt;&gt; input
 (1.._) * node.usesAD() &gt;&gt; true</pre>
 </td>
 </tr>
@@ -745,8 +747,8 @@ _ * type.getOperator() &gt;&gt; 'test_identifier'
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>1 * implementation.supplyADAgentFor(_,_,_) &gt;&gt; agent
-1 * agent.derivative() &gt;&gt; null</pre>
+<pre class='block-source'>1 * adSource.supplyADAgentFor(_,_) &gt;&gt; agent
+1 * agent.partialDerivative() &gt;&gt; Optional.ofNullable(null)</pre>
 </td>
 </tr>
 <tr>

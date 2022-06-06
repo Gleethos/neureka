@@ -19,7 +19,7 @@ import java.util.stream.Stream;
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
      */
-<span class="fc" id="L22">    private static Logger _LOG = LoggerFactory.getLogger(SmartSlicer.class); // Why is this not final ? : For unit testing!</span>
+<span class="fc" id="L22">    private static final Logger _LOG = LoggerFactory.getLogger(SmartSlicer.class); // Why is this not final ? : For unit testing!</span>
 
     public static &lt;ValType&gt; Tsr&lt;ValType&gt; slice(
             Object[] ranges,

@@ -12,8 +12,8 @@ import java.util.stream.Stream;
  *  information which can be used to instantiate a tensor,
  *  namely: A flat data array, a shape array and a type class.
  */
-public final class ListReader {
-
+public final class ListReader
+{
     private final Class&lt;?&gt; _type;
     private final int _size;
 
@@ -44,84 +44,85 @@ public final class ListReader {
 <span class="fc" id="L44">                                                    .map( valueFilter )</span>
 <span class="fc" id="L45">                                                    .collect(Collectors.toList());</span>
 
-<span class="fc" id="L47">            long leaves = list.stream().filter( o -&gt; _isLeave(o) ).count();</span>
+<span class="fc" id="L47">            long leaves = list.stream().filter(this::_isLeave).count();</span>
 <span class="pc bpc" id="L48" title="2 of 4 branches missed.">            if ( leaves != list.size() &amp;&amp; leaves != 0 ) {</span>
 <span class="nc" id="L49">                String message = &quot;Inconsistent degree of list nesting encountered at depth &quot; + depth + &quot;.&quot;;</span>
 <span class="nc" id="L50">                throw new IllegalArgumentException(message);</span>
             }
 <span class="fc bfc" id="L52" title="All 2 branches covered.">            if ( growingShape.size() == depth ) growingShape.add(list.size());</span>
-<span class="fc" id="L53">            readers = list.stream()</span>
-<span class="fc" id="L54">                           .map( o -&gt; new ListReader( o, depth + 1, growingData, growingShape, valueFilter ) )</span>
-<span class="fc" id="L55">                           .collect(Collectors.toList());</span>
 
-<span class="fc" id="L57">            _type = _findType(readers);</span>
-<span class="fc" id="L58">            _size = _findSize(readers, depth);</span>
-<span class="fc" id="L59">        }</span>
+<span class="fc" id="L54">            readers = list.stream()</span>
+<span class="fc" id="L55">                           .map( o -&gt; new ListReader( o, depth + 1, growingData, growingShape, valueFilter ) )</span>
+<span class="fc" id="L56">                           .collect(Collectors.toList());</span>
+
+<span class="fc" id="L58">            _type = _findType(readers);</span>
+<span class="fc" id="L59">            _size = _findSize(readers, depth);</span>
+<span class="fc" id="L60">        }</span>
         else
         {
-<span class="pc bpc" id="L62" title="1 of 2 branches missed.">            _type = ( data == null ? null : data.getClass() );</span>
-<span class="fc" id="L63">            _size = 1;</span>
-<span class="fc" id="L64">            growingData.add( data );</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">            _type = ( data == null ? null : data.getClass() );</span>
+<span class="fc" id="L64">            _size = 1;</span>
+<span class="fc" id="L65">            growingData.add( data );</span>
         }
-<span class="fc" id="L66">    }</span>
+<span class="fc" id="L67">    }</span>
 
     private Class&lt;?&gt; _findType( List&lt;ListReader&gt; readers ) {
-<span class="fc" id="L69">        Supplier&lt;Stream&lt;Class&lt;?&gt;&gt;&gt; types = () -&gt; readers.stream().map(r -&gt; r._type );</span>
-<span class="fc" id="L70">        Class&lt;?&gt; firstType = types.get().findFirst().get();</span>
-<span class="fc bfc" id="L71" title="All 2 branches covered.">        long numberOfSameType = types.get().filter( t -&gt; t == firstType ).count();</span>
-<span class="fc bfc" id="L72" title="All 2 branches covered.">        if ( numberOfSameType != readers.size() ) {</span>
-<span class="fc" id="L73">            String message = &quot;Type inconsistency encountered. Not all leave elements are of the same type!\n&quot; +</span>
+<span class="fc" id="L70">        Supplier&lt;Stream&lt;Class&lt;?&gt;&gt;&gt; types = () -&gt; readers.stream().map(r -&gt; r._type );</span>
+<span class="fc" id="L71">        Class&lt;?&gt; firstType = types.get().findFirst().orElse(Object.class);</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        long numberOfSameType = types.get().filter( t -&gt; t == firstType ).count();</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if ( numberOfSameType != readers.size() ) {</span>
+<span class="fc" id="L74">            String message = &quot;Type inconsistency encountered. Not all leave elements are of the same type!\n&quot; +</span>
                                 &quot;Expected type '&quot; +
-<span class="fc" id="L75">                                            firstType.getSimpleName() +</span>
+<span class="fc" id="L76">                                            firstType.getSimpleName() +</span>
                                 &quot;', but encountered '&quot; +
-<span class="fc bfc" id="L77" title="All 2 branches covered.">                                            types.get().filter( t -&gt; t != firstType ).findAny().get().getSimpleName() +</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">                                            types.get().filter( t -&gt; t != firstType ).findAny().orElse(Object.class).getSimpleName() +</span>
                                 &quot;'.&quot;;
-<span class="fc" id="L79">            throw new IllegalArgumentException(message);</span>
+<span class="fc" id="L80">            throw new IllegalArgumentException(message);</span>
         }
-<span class="fc" id="L81">        return firstType;</span>
+<span class="fc" id="L82">        return firstType;</span>
     }
 
     private int _findSize( List&lt;ListReader&gt; readers, int depth ) {
-<span class="fc" id="L85">        Supplier&lt;Stream&lt;Integer&gt;&gt; sizes = () -&gt; readers.stream().map(r -&gt; r._size );</span>
-<span class="fc" id="L86">        int firstSize = sizes.get().findFirst().get();</span>
-<span class="fc bfc" id="L87" title="All 2 branches covered.">        long numberOfSameSize = sizes.get().filter( s -&gt; s == firstSize ).count();</span>
-<span class="fc bfc" id="L88" title="All 2 branches covered.">        if ( numberOfSameSize != readers.size() ) {</span>
-<span class="fc" id="L89">            String message = &quot;Size inconsistency encountered at nest level '&quot;+depth+&quot;'. Not all nested lists are equally sized.\n&quot; +</span>
-<span class="fc bfc" id="L90" title="All 2 branches covered.">                            &quot;Expected size '&quot;+firstSize+&quot;', but encountered '&quot;+sizes.get().filter( s -&gt; s != firstSize ).findAny().get()+&quot;'.&quot;;</span>
-<span class="fc" id="L91">            throw new IllegalArgumentException(message);</span>
+<span class="fc" id="L86">        Supplier&lt;Stream&lt;Integer&gt;&gt; sizes = () -&gt; readers.stream().map(r -&gt; r._size );</span>
+<span class="fc" id="L87">        int firstSize = sizes.get().findFirst().orElse(0);</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        long numberOfSameSize = sizes.get().filter( s -&gt; s == firstSize ).count();</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if ( numberOfSameSize != readers.size() ) {</span>
+<span class="fc" id="L90">            String message = &quot;Size inconsistency encountered at nest level '&quot;+depth+&quot;'. Not all nested lists are equally sized.\n&quot; +</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                            &quot;Expected size '&quot;+firstSize+&quot;', but encountered '&quot;+sizes.get().filter( s -&gt; s != firstSize ).findAny().orElse(0)+&quot;'.&quot;;</span>
+<span class="fc" id="L92">            throw new IllegalArgumentException(message);</span>
         }
-<span class="fc" id="L93">        return readers.stream().map( r -&gt; r._size ).reduce( 0, Integer::sum );</span>
+<span class="fc" id="L94">        return readers.stream().map( r -&gt; r._size ).reduce( 0, Integer::sum );</span>
     }
 
-    private boolean _isLeave(Object o) {
-<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        if ( o == null ) return true;</span>
-<span class="fc" id="L98">        boolean isList = o instanceof List;</span>
-<span class="pc bpc" id="L99" title="1 of 4 branches missed.">        return isList &amp;&amp; ((List) o).isEmpty();</span>
+    private boolean _isLeave( Object o ) {
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if ( o == null ) return true;</span>
+<span class="fc" id="L99">        boolean isList = o instanceof List;</span>
+<span class="pc bpc" id="L100" title="1 of 4 branches missed.">        return isList &amp;&amp; ((List&lt;?&gt;) o).isEmpty();</span>
     }
 
     public static class Result {
 
-<span class="fc" id="L104">        private final List&lt;Integer&gt; _growingShape = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L105">        private final List&lt;Object&gt; _growingData = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L105">        private final List&lt;Integer&gt; _growingShape = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L106">        private final List&lt;Object&gt; _growingData = new ArrayList&lt;&gt;();</span>
         private final Class&lt;?&gt; _type;
 
         private Result(Object data, Function&lt;Object, Object&gt; valueFilter
-<span class="fc" id="L109">        ) {</span>
-<span class="fc" id="L110">            ListReader reader = new ListReader(</span>
+<span class="fc" id="L110">        ) {</span>
+<span class="fc" id="L111">            ListReader reader = new ListReader(</span>
                                         data,
                                     0,
-                                        this._growingData,
-                                        this._growingShape,
+                                        _growingData,
+                                        _growingShape,
                                         valueFilter
                                     );
-<span class="fc" id="L117">            this._type = reader._type;</span>
-<span class="fc" id="L118">        }</span>
+<span class="fc" id="L118">            _type = reader._type;</span>
+<span class="fc" id="L119">        }</span>
 
-<span class="fc" id="L120">        public Class&lt;?&gt; getType() { return _type; }</span>
+<span class="fc" id="L121">        public Class&lt;?&gt; getType() { return _type; }</span>
 
-<span class="fc" id="L122">        public List&lt;Integer&gt; getShape() { return _growingShape; }</span>
+<span class="fc" id="L123">        public List&lt;Integer&gt; getShape() { return _growingShape; }</span>
 
-<span class="fc" id="L124">        public List&lt;Object&gt; getData() { return _growingData; }</span>
+<span class="fc" id="L125">        public List&lt;Object&gt; getData() { return _growingData; }</span>
 
     }
 

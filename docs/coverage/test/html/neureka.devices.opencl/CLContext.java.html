@@ -36,7 +36,7 @@ import static org.jocl.CL.clGetPlatformIDs;
  */
 public final class CLContext implements BackendExtension
 {
-<span class="fc" id="L39">    private static Logger _LOG = LoggerFactory.getLogger(CLContext.class);</span>
+<span class="fc" id="L39">    private static final Logger _LOG = LoggerFactory.getLogger(CLContext.class);</span>
 
 <span class="fc" id="L41">    private final List&lt;OpenCLPlatform&gt; _platforms = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L42">    private final CLSettings _settings = new CLSettings();</span>
@@ -48,14 +48,23 @@ public final class CLContext implements BackendExtension
 <span class="fc" id="L48">    public CLContext() {}</span>
 
     /**
+     * @return The number of all {@link OpenCLDevice} instances across all {@link OpenCLPlatform}s.
+     */
+    public int getTotalNumberOfDevices() {
+<span class="fc" id="L54">        List&lt;OpenCLPlatform&gt; platforms = getPlatforms();</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        if ( getPlatforms().isEmpty() ) return 0;</span>
+<span class="fc" id="L56">        return platforms.stream().mapToInt( p -&gt; p.getDevices().size() ).sum();</span>
+    }
+
+    /**
      * @return A list of context specific {@link OpenCLPlatform} instances possible containing {@link OpenCLDevice}s.
      */
-<span class="fc" id="L53">    public List&lt;OpenCLPlatform&gt; getPlatforms() { return Collections.unmodifiableList( _platforms ); }</span>
+<span class="fc" id="L62">    public List&lt;OpenCLPlatform&gt; getPlatforms() { return Collections.unmodifiableList( _platforms ); }</span>
 
     /**
      * @return A container for OpenCL specific settings.
      */
-<span class="fc" id="L58">    public CLSettings getSettings() { return _settings; }</span>
+<span class="fc" id="L67">    public CLSettings getSettings() { return _settings; }</span>
 
     /**
      *  Updating the CLContext will cause the list of existing {@link OpenCLPlatform} instances to be
@@ -66,17 +75,17 @@ public final class CLContext implements BackendExtension
      */
     @Override
     public boolean update( OwnerChangeRequest&lt;Extensions&gt; changeRequest ) {
-<span class="fc" id="L69">        _platforms.clear();</span>
-<span class="fc" id="L70">        _platforms.addAll( _findLoadAndCompileForAllPlatforms() );</span>
-<span class="fc" id="L71">        changeRequest.executeChange();</span>
-<span class="fc" id="L72">        return true;</span>
+<span class="fc" id="L78">        _platforms.clear();</span>
+<span class="fc" id="L79">        _platforms.addAll( _findLoadAndCompileForAllPlatforms() );</span>
+<span class="fc" id="L80">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
+<span class="fc" id="L81">        return true;</span>
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L77">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
+<span class="fc" id="L86">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
                     &quot;platforms=[&quot;+
-<span class="fc" id="L79">                        _platforms.stream().map(Object::toString).collect(Collectors.joining(&quot;,&quot;))+</span>
+<span class="fc" id="L88">                        _platforms.stream().map(Object::toString).collect(Collectors.joining(&quot;,&quot;))+</span>
                     &quot;]&quot; +
                 &quot;]&quot;;
     }
@@ -87,51 +96,52 @@ public final class CLContext implements BackendExtension
     private static List&lt;OpenCLPlatform&gt; _findLoadAndCompileForAllPlatforms()
     {
         // Obtain the number of platforms
-<span class="fc" id="L90">        int[] numPlatforms = new int[ 1 ];</span>
-<span class="fc" id="L91">        clGetPlatformIDs( 0, null, numPlatforms );</span>
+<span class="fc" id="L99">        int[] numPlatforms = new int[ 1 ];</span>
+<span class="fc" id="L100">        clGetPlatformIDs( 0, null, numPlatforms );</span>
 
         // Obtain the platform IDs
-<span class="fc" id="L94">        cl_platform_id[] platforms = new cl_platform_id[ numPlatforms[ 0 ] ];</span>
-<span class="fc" id="L95">        clGetPlatformIDs( platforms.length, platforms, null );</span>
+<span class="fc" id="L103">        cl_platform_id[] platforms = new cl_platform_id[ numPlatforms[ 0 ] ];</span>
+<span class="fc" id="L104">        clGetPlatformIDs( platforms.length, platforms, null );</span>
 
-<span class="fc" id="L97">        List&lt;OpenCLPlatform&gt; loadedPlatforms = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L98" title="All 2 branches covered.">        for ( cl_platform_id id : platforms ) {</span>
+<span class="fc" id="L106">        List&lt;OpenCLPlatform&gt; loadedPlatforms = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        for ( cl_platform_id id : platforms ) {</span>
             OpenCLPlatform newPlatform;
             try {
-<span class="fc" id="L101">                newPlatform = new OpenCLPlatform( id );</span>
-<span class="fc" id="L102">                loadedPlatforms.add( newPlatform );</span>
-<span class="nc" id="L103">            } catch ( Exception e ) {</span>
-<span class="nc" id="L104">                String message =</span>
-<span class="nc" id="L105">                        &quot;Failed to instantiate '&quot;+OpenCLPlatform.class.getSimpleName()+&quot;' &quot; +</span>
-<span class="nc" id="L106">                        &quot;with id '0x&quot;+Long.toHexString(id.getNativePointer())+&quot;'!&quot;;</span>
-<span class="nc" id="L107">                _LOG.error( message, e );</span>
-<span class="fc" id="L108">            }</span>
+<span class="fc" id="L110">                newPlatform = new OpenCLPlatform( id );</span>
+<span class="fc" id="L111">                loadedPlatforms.add( newPlatform );</span>
+<span class="nc" id="L112">            } catch ( Exception e ) {</span>
+<span class="nc" id="L113">                String message =</span>
+<span class="nc" id="L114">                        &quot;Failed to instantiate '&quot;+OpenCLPlatform.class.getSimpleName()+&quot;' &quot; +</span>
+<span class="nc" id="L115">                        &quot;with id '0x&quot;+Long.toHexString(id.getNativePointer())+&quot;'!&quot;;</span>
+<span class="nc" id="L116">                _LOG.error( message, e );</span>
+<span class="fc" id="L117">            }</span>
         }
-<span class="pc bpc" id="L110" title="2 of 4 branches missed.">        if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -&gt; p.getDevices().isEmpty() ) ) {</span>
-<span class="nc" id="L111">            _LOG.warn( Messages.clContextCouldNotFindAnyDevices() );</span>
-        }
-<span class="fc" id="L113">        return loadedPlatforms;</span>
+<span class="pc bpc" id="L119" title="2 of 4 branches missed.">        if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -&gt; p.getDevices().isEmpty() ) )</span>
+<span class="nc" id="L120">            _LOG.warn( Messages.clContextCouldNotFindAnyDevices() );</span>
+
+<span class="fc" id="L122">        return loadedPlatforms;</span>
     }
 
     @Override
     public DeviceOption find( String searchKey ) {
-<span class="fc" id="L118">        Device&lt;Number&gt; result = null;</span>
-<span class="fc" id="L119">        double score = 0;</span>
-<span class="fc bfc" id="L120" title="All 2 branches covered.">        for ( OpenCLPlatform p : _platforms ) {</span>
-<span class="fc bfc" id="L121" title="All 2 branches covered.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
-<span class="fc" id="L122">                double similarity = Stream.of(&quot;opencl&quot;,d.type().name(),d.name(),d.vendor())</span>
-<span class="fc" id="L123">                                            .mapToDouble( word -&gt; ParseUtil.similarity( word, searchKey ) )</span>
-<span class="fc" id="L124">                                            .max()</span>
-<span class="fc" id="L125">                                            .orElse(0);</span>
-<span class="fc bfc" id="L126" title="All 2 branches covered.">                if ( similarity &gt; score ) {</span>
-<span class="fc" id="L127">                    result = d;</span>
-<span class="fc" id="L128">                    score = similarity;</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">                    if ( score == 1 )</span>
-<span class="fc" id="L130">                        return new DeviceOption( result, score );</span>
+<span class="fc" id="L127">        Device&lt;Number&gt; result = null;</span>
+<span class="fc" id="L128">        double score = 0;</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        for ( OpenCLPlatform p : _platforms ) {</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
+<span class="fc" id="L131">                double similarity = Stream.of(&quot;opencl&quot;,d.type().name(),d.name(),d.vendor())</span>
+<span class="fc" id="L132">                                            .map( word -&gt; word.trim().toLowerCase() )</span>
+<span class="fc" id="L133">                                            .mapToDouble( word -&gt; ParseUtil.similarity( word, searchKey ) )</span>
+<span class="fc" id="L134">                                            .max()</span>
+<span class="fc" id="L135">                                            .orElse(0);</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">                if ( similarity &gt; score ) {</span>
+<span class="fc" id="L137">                    result = d;</span>
+<span class="fc" id="L138">                    score = similarity;</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">                    if ( score == 1 )</span>
+<span class="fc" id="L140">                        return new DeviceOption( result, score );</span>
                 }
-<span class="fc" id="L132">            }</span>
-<span class="fc" id="L133">        }</span>
-<span class="fc" id="L134">        return new DeviceOption( result, score );</span>
+<span class="fc" id="L142">            }</span>
+<span class="fc" id="L143">        }</span>
+<span class="fc" id="L144">        return new DeviceOption( result, score );</span>
     }
 
     /**
@@ -141,14 +151,14 @@ public final class CLContext implements BackendExtension
      */
     @Override
     public void dispose() {
-<span class="fc bfc" id="L144" title="All 2 branches covered.">        for ( OpenCLPlatform platform : _platforms ) {</span>
-<span class="fc bfc" id="L145" title="All 2 branches covered.">            for ( OpenCLDevice device : platform.getDevices() ) {</span>
-<span class="fc" id="L146">                device.dispose();</span>
-<span class="fc" id="L147">            }</span>
-<span class="fc" id="L148">            platform.dispose();</span>
-<span class="fc" id="L149">        }</span>
-<span class="fc" id="L150">        _platforms.clear();</span>
-<span class="fc" id="L151">    }</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        for ( OpenCLPlatform platform : _platforms ) {</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">            for ( OpenCLDevice device : platform.getDevices() ) {</span>
+<span class="fc" id="L156">                device.dispose();</span>
+<span class="fc" id="L157">            }</span>
+<span class="fc" id="L158">            platform.dispose();</span>
+<span class="fc" id="L159">        }</span>
+<span class="fc" id="L160">        _platforms.clear();</span>
+<span class="fc" id="L161">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

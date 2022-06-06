@@ -2,8 +2,8 @@
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.standard.memory.MemUtil;
-import neureka.calculus.assembly.FunctionBuilder;
+import neureka.backend.main.memory.MemUtil;
+import neureka.calculus.assembly.FunctionParser;
 
 public final class PendingError&lt;ValType&gt;
 {
@@ -18,10 +18,10 @@ public final class PendingError&lt;ValType&gt;
     public void accumulate( Tsr&lt;?&gt; error ) {
 <span class="fc" id="L19">        Tsr[] inputs = { _accumulatedError, error };</span>
 <span class="fc" id="L20">        MemUtil.keep( inputs, () -&gt; {</span>
-<span class="fc" id="L21">                    new FunctionBuilder(</span>
+<span class="fc" id="L21">                    new FunctionParser(</span>
 <span class="fc" id="L22">                                Neureka.get().backend()</span>
                             )
-<span class="fc" id="L24">                            .build(&quot;I[ 0 ] &lt;- (I[ 0 ] + I[ 1 ])&quot;, false)</span>
+<span class="fc" id="L24">                            .parse(&quot;I[ 0 ] &lt;- (I[ 0 ] + I[ 1 ])&quot;, false)</span>
 <span class="fc" id="L25">                            .call(inputs);</span>
 <span class="fc" id="L26">                    return null;</span>
                 });

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Apr 03 14:55:55 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Jun 06 11:39:52 CEST 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.136 seconds</td>
+<td>0.282 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -365,8 +365,9 @@ div.footer {
 <td colspan='10'>
 <div class='feature-description' id='339642307'>
 <span>Function implementations ensure that internally created tensors are flagged as "intermediate" initially!</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.023 seconds)</div>
 </span>
 </div>
 </td>
@@ -460,15 +461,24 @@ var b = Tsr.of(-2.5)</pre>
 <tbody>
 <tr class='ex-pass'>
 <td class='ex-value'>&lt;executable&gt;</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.020 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>&lt;executable&gt;</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>&lt;executable&gt;</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -482,8 +492,9 @@ var b = Tsr.of(-2.5)</pre>
 <td colspan='10'>
 <div class='feature-description' id='1098765187'>
 <span>Function implementations ensure that outputs which are input members are not flagged as "intermediate"!</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.007 seconds)</div>
 </span>
 </div>
 </td>
@@ -571,15 +582,24 @@ var b = Tsr.of(-2.5)</pre>
 <tbody>
 <tr class='ex-pass'>
 <td class='ex-value'>&lt;executable&gt;</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.004 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>&lt;executable&gt;</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>&lt;executable&gt;</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -593,8 +613,9 @@ var b = Tsr.of(-2.5)</pre>
 <td colspan='10'>
 <div class='feature-description' id='1756605180'>
 <span>Function implementations will ensure the "call" and "invoke" does not return tensors flagged as "intermediate".</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.004 seconds)</div>
 </span>
 </div>
 </td>
@@ -651,8 +672,9 @@ t3.isIntermediate()</pre>
 <td colspan='10'>
 <div class='feature-description' id='1940004839'>
 <span>The library context exposes a set of useful functions.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.039 seconds)</div>
 </span>
 </div>
 </td>
@@ -691,168 +713,267 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 <tbody>
 <tr class='ex-pass'>
 <td class='ex-value'>ln(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure12@4332d2fe</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure12@da70480</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.007 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>ln(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure13@39e04b3b</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure13@1d834b28</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>gaus(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure14@479204bf</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure14@29d02aa2</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>gaus(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure15@7db8ae6c</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure15@7c97da9e</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>fast_gaus(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure16@66a5c673</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure16@27f065</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>fast_gaus(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure17@5f880934</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure17@240ef9aa</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sig(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure18@7963814d</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure18@e6fa178</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sig(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure19@e6d69f3</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure19@75bb3be3</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>tanh(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure20@13108aba</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure20@1d52bc1f</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.004 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>tanh(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure21@2c404d40</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure21@64adc30c</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>fast_tanh(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure22@7b90aa0f</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure22@37e76422</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>fast_tanh(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure23@12037f2c</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure23@23be072e</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>softsign(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure24@46eebee7</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure24@1bad653b</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>softsign(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure25@77bae2bd</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure25@69d8c092</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>softsign(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure26@2e1856ee</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure26@797c16fa</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>quad(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure27@1306b629</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure27@178376d4</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>quad(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure28@7f6b2955</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure28@7a29593</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>relu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure29@1526b8ef</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure29@16596f47</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>relu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure30@caa9014</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure30@65a4322b</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>abs(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure31@75a7a45f</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure31@515dae17</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>abs(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure32@6b3870df</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure32@6c8c1ce9</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sin(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure33@54ae2b7</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure33@22c72420</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sin(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure34@15e2938c</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure34@2329c86f</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>cos(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure35@23299ec7</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure35@8896347</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.009 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>cos(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure36@560ab002</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure36@78705cbf</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>softplus(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure37@36f5ccd2</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure37@1456b9c</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>softplus(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure38@18393d8</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure38@7cd24969</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>silu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure39@350cf0ae</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure39@23d84cd4</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>silu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure40@3e8e2aaf</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure40@620274e5</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>gelu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure41@6d8e51a8</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure41@3d914cb2</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>gelu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure42@6a0416c1</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure42@36df861d</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>selu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure43@416d346e</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure43@3b8b746b</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>selu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure44@20fcb25d</td>
-<td class='ex-result'>OK</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure44@7e052fe1</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 </tbody>
 </table>

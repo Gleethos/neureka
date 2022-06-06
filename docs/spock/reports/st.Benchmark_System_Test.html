@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Apr 03 14:55:45 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Jun 06 11:39:46 CEST 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>6.262 seconds</td>
+<td>7.034 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -359,8 +359,9 @@ div.footer {
 <td colspan='10'>
 <div class='feature-description' id='-1813290038'>
 <span>Tensor can be constructed by passing List instances.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(2.685 seconds)</div>
 </span>
 </div>
 </td>
@@ -420,8 +421,9 @@ assert t.toString().contains("(3):[1.0, 3.3, 6.0]")</pre>
 <td colspan='10'>
 <div class='feature-description' id='677091834'>
 <span>Test benchmark script and simple tensor constructor.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(4.340 seconds)</div>
 </span>
 </div>
 </td>
@@ -524,7 +526,7 @@ String expected = "7084fb60f29fcce1ac96c2bee9c37b37"</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if ( !Neureka.get().canAccessOpenCL() ) return</pre>
+<pre class='block-source'>if ( !Neureka.get().canAccessOpenCLDevice() ) return</pre>
 </td>
 </tr>
 <tr>
@@ -541,7 +543,7 @@ String expected = "7084fb60f29fcce1ac96c2bee9c37b37"</pre>
 <pre class='block-source'>hash = ""
 session(
         configuration, null,
-        Device.find("first"),
+        Device.get("first"),
             tsr -&gt; {
                 hash = ( hash + tsr.toString() ).md5()
             }

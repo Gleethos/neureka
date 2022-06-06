@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Apr 03 14:55:58 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Jun 06 11:39:51 CEST 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.024 seconds</td>
+<td>0.052 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -368,8 +368,9 @@ div.footer {
 <td colspan='10'>
 <div class='feature-description' id='-569626094'>
 <span>GraphNode instantiation works as expected when the context argument is a GraphLock.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.027 seconds)</div>
 </span>
 </div>
 </td>
@@ -386,7 +387,7 @@ div.footer {
 <td></td>
 <td>
 <pre class='block-source'>Tsr           payload  = Mock( Tsr )
-Supplier&lt;Tsr&gt; supplier = () -&gt; payload
+Supplier&lt;Tsr&gt; supplier = () -&gt; Result.of(payload)
 Function      function = Mock( Function )
 Object        context = Mock( GraphLock )
 Device        device = Mock( Device )</pre>
@@ -433,15 +434,17 @@ Device        device = Mock( Device )</pre>
 <td>
 <pre class='block-source'>1 * function.isDoingAD() &gt;&gt; true
 1 * payload.set( _ )
-1 * device.access( _ ) &gt;&gt; Mock(Device.Access)</pre>
+1 * device.access( _ ) &gt;&gt; Mock(Device.Access)
+(1.._) * payload.getNDConf() &gt;&gt; Mock(NDConfiguration)</pre>
 </td>
 </tr>
 <tr>
 <td colspan='10'>
 <div class='feature-description' id='-1170502803'>
 <span>GraphNode instantiation works as expected when the context argument is an ExecutionCall.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.016 seconds)</div>
 </span>
 </div>
 </td>
@@ -459,10 +462,10 @@ Device        device = Mock( Device )</pre>
 <td>
 <pre class='block-source'>Tsr payload = Mock( Tsr )
 Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
-Supplier&lt;Tsr&gt; supplier = () -&gt; payload
+Supplier&lt;Tsr&gt; supplier = () -&gt; Result.of(payload)
 AbstractOperation type = Mock( AbstractOperation )
 Function function = Mock( Function )
-Object context = Mock( ExecutionCall )
+Object call = Mock( ExecutionCall )
 Device device = Mock( Device )
 def inputsNodeMock = Mock( GraphNode )
 GraphNode result</pre>
@@ -479,7 +482,7 @@ GraphNode result</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>result = new GraphNode( function, context, supplier )</pre>
+<pre class='block-source'>result = new GraphNode( function, call, supplier )</pre>
 </td>
 </tr>
 <tr>
@@ -514,11 +517,12 @@ result.usesReverseAD()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>(3.._) * context.inputs() &gt;&gt; inputs
+<pre class='block-source'>(3.._) * call.inputs() &gt;&gt; inputs
 (5.._) * inputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
 (1.._) * function.isDoingAD() &gt;&gt; true
 (1.._) * payload.getDevice() &gt;&gt; device
 (1.._) * payload.set( _ )
+(1.._) * payload.getNDConf() &gt;&gt; Mock(NDConfiguration)
 (1.._) * device.access( _ ) &gt;&gt; Mock( Device.Access )
 (4.._) * inputs[0].getGraphNode() &gt;&gt; inputsNodeMock
 (3.._) * inputs[1].getGraphNode() &gt;&gt; inputsNodeMock
@@ -527,14 +531,13 @@ result.usesReverseAD()</pre>
 (1.._) * inputs[0].rqsGradient() &gt;&gt; true
 (1.._) * inputs[1].rqsGradient() &gt;&gt; false
 (1.._) * inputs[2].rqsGradient() &gt;&gt; true
-(1.._) * context.allowsForward() &gt;&gt; true
-(1.._) * context.allowsBackward() &gt;&gt; true
+(1.._) * call.autogradMode() &gt;&gt; AutoDiffMode.FORWARD_AND_BACKWARD
 (3.._) * function.getOperation() &gt;&gt; type
 (0.._) * type.isDifferentiable() &gt;&gt; true
 (3.._) * type.isInline() &gt;&gt; false
 (0.._) * type.getOperator() &gt;&gt; "*"
-(3.._) * inputsNodeMock.getPayload() &gt;&gt; payload
-(3.._) * payload.hashCode() &gt;&gt; 3</pre>
+(0.._) * inputsNodeMock.getPayload() &gt;&gt; payload
+(0.._) * payload.hashCode() &gt;&gt; 3</pre>
 </td>
 </tr>
 </tbody>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NodePayload.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">NodePayload.java</span></div><h1>NodePayload.java</h1><pre class="source lang-java linenums">package neureka.autograd;
+
+import neureka.Tsr;
+import neureka.dtype.DataType;
+
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+<span class="pc bpc" id="L11" title="1 of 2 branches missed.">final class NodePayload&lt;V&gt; {</span>
+
+    private final int _payloadReferenceVersion;
+
+    private final int[] _payloadShape;
+
+    private final DataType&lt;V&gt; _payloadDataType;
+
+    private final WeakReference&lt;Tsr&lt;V&gt;&gt; _payload;
+
+
+<span class="fc" id="L22">    public NodePayload( Tsr&lt;V&gt; p, Runnable cleanup ) {</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        if ( p == null ) {</span>
+<span class="fc" id="L24">            _payload = null;</span>
+<span class="fc" id="L25">            _payloadShape = null;</span>
+<span class="fc" id="L26">            _payloadReferenceVersion = -1;</span>
+<span class="fc" id="L27">            _payloadDataType = null;</span>
+        }
+        else {
+<span class="pc bpc" id="L30" title="2 of 4 branches missed.">            assert !p.isUndefined();</span>
+<span class="fc" id="L31">            _payload = new WeakReference&lt;&gt;( p );</span>
+<span class="fc" id="L32">            p.getDevice().access( p ).cleanup( () -&gt; {</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">                if ( this.getPayload() == null ) cleanup.run();</span>
+<span class="fc" id="L34">            });</span>
+<span class="fc" id="L35">            _payloadShape = p.getNDConf().shape();</span>
+<span class="fc" id="L36">            _payloadReferenceVersion = p.getVersion();</span>
+<span class="fc" id="L37">            _payloadDataType = p.getDataType();</span>
+        }
+<span class="fc" id="L39">    }</span>
+
+<span class="nc" id="L41">    public DataType&lt;V&gt; payloadDataType() { return _payloadDataType; }</span>
+
+<span class="fc" id="L43">    public int payloadReferenceVersion() { return _payloadReferenceVersion; }</span>
+
+    /**
+     *  The value of a graph node is the tensor to which it belongs (is a component of).  &lt;br&gt;&lt;br&gt;
+     *  Meaning it is the tensor owning this {@link GraphNode} component.
+     *  It is referenced weakly because it might not be needed any more (Not referenced inside AD-Agent for example)
+     *  and can therefore be garbage collected.
+     *
+     *  Warning: This method might return null because
+     *           the payload is weakly referenced!
+     *           Meaning that it might get garbage collected.
+     *
+     * @return The tensor payload of this graph-node.
+     */
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">    public Tsr&lt;V&gt; getPayload() { return ( _payload == null ? null : _payload.get() ); }</span>
+
+    /**
+     *  Note: This method will never return null even if the actual payload tensor was garbage collected.
+     *  This is because the {@link GraphNode} will remember the shape of the tensor.
+     *
+     *  @return The shape of the payload tensor represented by this {@link GraphNode}.
+     */
+    public List&lt;Integer&gt; getPayloadShape() {
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        return _payloadShape == null ? null : Arrays.stream(_payloadShape).boxed().collect(Collectors.toList());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

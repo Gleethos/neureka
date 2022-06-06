@@ -1,0 +1,944 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatMul.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.linear.internal.blas</a> &gt; <span class="el_source">MatMul.java</span></div><h1>MatMul.java</h1><pre class="source lang-java linenums">/*&lt;#LICENSE#&gt;*/
+package neureka.backend.main.operations.linear.internal.blas;
+
+import neureka.devices.host.CPU;
+
+/**
+ *  A collection of primitive sub-routines for matrix multiplication performed on
+ *  continuous arrays which are designed so that they can be vectorized by the
+ *  JVMs JIT compiler (AVX instructions).
+ */
+<span class="nc" id="L11">public class MatMul {</span>
+
+    @FunctionalInterface
+    public interface VectorOperationF32 {
+        void invoke(
+                float[] product,
+                float[] left,
+                int complexity,
+                float[] right
+        );
+    }
+
+    @FunctionalInterface
+    public interface VectorOperationF64 {
+        void invoke(
+                double[] product,
+                double[] left,
+                int complexity,
+                double[] right
+        );
+    }
+
+    public static VectorOperationF32 operationForF32(
+            boolean rowMajor, final long rows, final long columns
+    ) {
+<span class="pc bpc" id="L36" title="1 of 4 branches missed.">        if ( rows &gt; CPU.PARALLELIZATION_THRESHOLD &amp;&amp; columns &gt; CPU.PARALLELIZATION_THRESHOLD) {</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            return ( rowMajor</span>
+<span class="fc" id="L38">                    ? MatMul::threaded_F32_MxN_RM</span>
+<span class="fc" id="L39">                    : MatMul::threaded_F32_MxN_CM</span>
+                );
+        }
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if ( columns == 1 ) {</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            return ( rowMajor</span>
+<span class="fc" id="L44">                    ? MatMul::full_F32_Mx1_RM</span>
+<span class="fc" id="L45">                    : MatMul::full_F32_Mx1_CM</span>
+                );
+        }
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        if ( rows == 1 )</span>
+<span class="fc" id="L49">            return (</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">                    rowMajor</span>
+<span class="nc" id="L51">                            ? MatMul::full_F32_1xN_RM</span>
+<span class="fc" id="L52">                            : MatMul::full_F32_1xN_CM</span>
+            );
+<span class="fc" id="L54">        return (</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">                rowMajor</span>
+<span class="fc" id="L56">                        ? MatMul::full_F32_MxN_RM</span>
+<span class="fc" id="L57">                        : MatMul::full_F32_MxN_CM</span>
+            );
+    }
+
+    public static VectorOperationF64 operationForF64(
+            boolean rowMajor, final long rows, final long columns
+    ) {
+<span class="pc bpc" id="L64" title="1 of 4 branches missed.">        if ( rows &gt; CPU.PARALLELIZATION_THRESHOLD &amp;&amp; columns &gt; CPU.PARALLELIZATION_THRESHOLD )</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            return ( rowMajor</span>
+<span class="fc" id="L66">                ? MatMul::threaded_F64_MxN_RM</span>
+<span class="fc" id="L67">                : MatMul::threaded_F64_MxN_CM</span>
+            );
+
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if ( !rowMajor ) { // Supported in column major only!</span>
+<span class="fc bfc" id="L71" title="All 4 branches covered.">            if (rows == 5 &amp;&amp; columns == 5) return MatMul::full_F64_5x5_CM;</span>
+<span class="fc bfc" id="L72" title="All 4 branches covered.">            if (rows == 4 &amp;&amp; columns == 4) return MatMul::full_F64_4x4_CM;</span>
+<span class="fc bfc" id="L73" title="All 4 branches covered.">            if (rows == 3 &amp;&amp; columns == 3) return MatMul::full_F64_3x3_CM;</span>
+<span class="fc bfc" id="L74" title="All 4 branches covered.">            if (rows == 2 &amp;&amp; columns == 2) return MatMul::full_F64_2x2_CM;</span>
+<span class="fc bfc" id="L75" title="All 4 branches covered.">            if (rows == 1 &amp;&amp; columns == 1) return MatMul::full_F64_1x1_CM;</span>
+        }
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if ( columns == 1 )</span>
+<span class="fc" id="L78">            return (</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                rowMajor</span>
+<span class="fc" id="L80">                    ? MatMul::full_F64_Mx1_RM</span>
+<span class="fc" id="L81">                    : MatMul::full_F64_Mx1_CM</span>
+            );
+
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        if ( !rowMajor ) { // Supported in column major only!</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">            if ( rows == 10) return MatMul::full_F64_0xN_CM;</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">            if ( rows == 9 ) return MatMul::full_F64_9xN_CM;</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            if ( rows == 8 ) return MatMul::full_F64_8xN_CM;</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">            if ( rows == 7 ) return MatMul::full_F64_7xN_CM;</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            if ( rows == 6 ) return MatMul::full_F64_6xN_CM;</span>
+        }
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if ( rows == 1 )</span>
+<span class="fc" id="L92">            return (</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                    rowMajor</span>
+<span class="fc" id="L94">                            ? MatMul::full_F64_1xN_RM</span>
+<span class="fc" id="L95">                            : MatMul::full_F64_1xN_CM</span>
+                );
+
+<span class="fc" id="L98">        return (</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">                rowMajor</span>
+<span class="fc" id="L100">                        ? MatMul::full_F64_MxN_RM</span>
+<span class="fc" id="L101">                        : MatMul::full_F64_MxN_CM</span>
+            );
+    }
+
+    static void full_F64_Mx1_CM(
+            final double[] product,
+            final double[] left,
+            final int colCount,
+            final double[] right
+    ) {
+<span class="fc" id="L111">        int rowCount = product.length;</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        for ( int c = 0; c &lt; colCount; c++ ) {</span>
+<span class="fc" id="L113">            AXPY.invoke(</span>
+                    product,
+                    0,
+                    right[c],
+                    left,
+                    c * rowCount,
+                    0,
+                    rowCount
+            );
+        }
+<span class="fc" id="L123">    }</span>
+
+    static void full_F64_Mx1_RM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+<span class="fc" id="L131">        int colCount = right.length;</span>
+<span class="fc" id="L132">        int leftRowCount = left.length / complexity;</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        for (int ri = 0; ri &lt; leftRowCount; ri++) {</span>
+<span class="fc" id="L134">            product[ri] =</span>
+<span class="fc" id="L135">                 DOT.invoke(</span>
+                         left,
+                         ri * complexity,
+                         right,
+                         0,
+                         0,
+                         colCount
+                 );
+        }
+<span class="fc" id="L144">    }</span>
+
+    static void full_F32_Mx1_CM(
+            final float[] product,
+            final float[] left,
+            final int complexity,
+            final float[] right
+    ) {
+<span class="fc" id="L152">        int nbRows = product.length;</span>
+
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        for (int c = 0; c &lt; complexity; c++) {</span>
+<span class="fc" id="L155">            AXPY.invoke(</span>
+                    product,
+                    0,
+                    right[c],
+                    left,
+                    c * nbRows,
+                    0, nbRows
+            );
+        }
+<span class="fc" id="L164">    }</span>
+
+    static void full_F32_Mx1_RM(
+            final float[] product,
+            final float[] left,
+            final int complexity,
+            final float[] right
+    ) {
+<span class="fc" id="L172">            int colCount = right.length;</span>
+<span class="fc" id="L173">            int leftRowCount = left.length / complexity;</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">            for ( int ri = 0; ri &lt; leftRowCount; ri++ ) {</span>
+<span class="fc" id="L175">                product[ri] =</span>
+<span class="fc" id="L176">                        DOT.invoke(</span>
+                                left,
+                                ri * complexity,
+                                right,
+                                0,
+                                0,
+                                colCount
+                        );
+            }
+<span class="fc" id="L185">    }</span>
+
+    static void partial_F64_MxN_CM(
+            final double[] product,
+            final int firstColumn,
+            final int columnLimit,
+            final double[] left,
+            final int commonColumnCount,
+            final double[] right
+    ) {
+<span class="fc" id="L195">        int leftRowCount = left.length / commonColumnCount;</span>
+
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        for ( int ci = 0; ci &lt; commonColumnCount; ci++ ) {</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">            for ( int j = firstColumn; j &lt; columnLimit; j++ ) {</span>
+<span class="fc" id="L199">                AXPY.invoke(</span>
+                        product,
+                        j * leftRowCount,
+                        right[ci + j * commonColumnCount],
+                        left,
+                        ci * leftRowCount,
+                        0,
+                        leftRowCount
+                );
+            }
+        }
+<span class="fc" id="L210">    }</span>
+
+    static void partial_F64_MxN_RM(
+        final double[] product,
+        final int firstRow,
+        final int rowLimit,
+        final double[] left,
+        final int complexity,
+        final double[] right
+    ) {
+<span class="fc" id="L220">        int rightCols = right.length / complexity;</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        for ( int c = 0; c &lt; complexity; c++ ) {</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">            for ( int j = firstRow; j &lt; rowLimit; j++ ) {</span>
+<span class="fc" id="L223">                AXPY.invoke(</span>
+                        product,
+                        j * rightCols,
+                        left[c + j * complexity],
+                        right,
+                        c * rightCols,
+                        0,
+                        rightCols
+                );
+            }
+        }
+<span class="fc" id="L234">    }</span>
+
+    static void partial_F32_MxN_CM(
+            final float[] product,
+            final int firstColumn, // right column
+            final int columnLimit,
+            final float[] left,
+            final int complexity,
+            final float[] right
+    ) {
+<span class="fc" id="L244">        int nbRows = left.length / complexity;</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">        for ( int c = 0; c &lt; complexity; c++ ) {</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">            for ( int j = firstColumn; j &lt; columnLimit; j++ ) {</span>
+<span class="fc" id="L247">                AXPY.invoke(</span>
+                        product,
+                        j * nbRows,
+                        right[c + j * complexity],
+                        left,
+                        c * nbRows,
+                        0,
+                        nbRows
+                );
+            }
+        }
+<span class="fc" id="L258">    }</span>
+
+    static void partial_F32_MxN_RM(
+        final float[] product,
+        final int firstRow, // left row
+        final int rowLimit,
+        final float[] left,
+        final int complexity,
+        final float[] right
+    ) {
+<span class="fc" id="L268">        int rightCols = right.length / complexity;</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        for ( int c = 0; c &lt; complexity; c++ ) {</span>
+<span class="fc bfc" id="L270" title="All 2 branches covered.">            for ( int j = firstRow; j &lt; rowLimit; j++ ) {</span>
+<span class="fc" id="L271">                AXPY.invoke(</span>
+                        product,
+                        j * rightCols,
+                        left[c + j * complexity],
+                        right,
+                        c * rightCols,
+                        0,
+                        rightCols
+                );
+            }
+        }
+<span class="fc" id="L282">    }</span>
+
+
+    static void threaded_F64_MxN_CM(final double[] product, final double[] left, final int complexity, final double[] right) {
+<span class="fc" id="L286">        CPU.get()</span>
+<span class="fc" id="L287">           .getExecutor()</span>
+<span class="fc" id="L288">           .threaded(</span>
+                0,
+                right.length / complexity,
+<span class="fc" id="L291">                (f, l) -&gt; MatMul.partial_F64_MxN_CM(product, f, l, left, complexity, right)</span>
+            );
+<span class="fc" id="L293">    }</span>
+
+    static void threaded_F32_MxN_CM(final float[] product, final float[] left, final int complexity, final float[] right) {
+<span class="fc" id="L296">        CPU.get()</span>
+<span class="fc" id="L297">           .getExecutor()</span>
+<span class="fc" id="L298">           .threaded(</span>
+                0,
+                right.length / complexity,
+<span class="fc" id="L301">                (f, l) -&gt; MatMul.partial_F32_MxN_CM(product, f, l, left, complexity, right)</span>
+            );
+<span class="fc" id="L303">    }</span>
+
+    static void threaded_F32_MxN_RM(final float[] product, final float[] left, final int complexity, final float[] right) {
+<span class="fc" id="L306">        CPU.get()</span>
+<span class="fc" id="L307">           .getExecutor()</span>
+<span class="fc" id="L308">           .threaded(</span>
+                0,
+                left.length / complexity,
+<span class="fc" id="L311">                (f, l) -&gt; MatMul.partial_F32_MxN_RM(product, f, l, left, complexity, right)</span>
+            );
+<span class="fc" id="L313">    }</span>
+
+    static void threaded_F64_MxN_RM(final double[] product, final double[] left, final int complexity, final double[] right) {
+<span class="fc" id="L316">        CPU.get()</span>
+<span class="fc" id="L317">           .getExecutor()</span>
+<span class="fc" id="L318">           .threaded(</span>
+                0,
+                left.length / complexity,
+<span class="fc" id="L321">                (f, l) -&gt; MatMul.partial_F64_MxN_RM(product, f, l, left, complexity, right)</span>
+            );
+<span class="fc" id="L323">    }</span>
+
+    static void full_F64_0xN_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+
+<span class="fc" id="L332">        int tmpRowDim = 10;</span>
+<span class="fc" id="L333">        int tmpColDim = right.length / complexity;</span>
+
+<span class="fc bfc" id="L335" title="All 2 branches covered.">        for ( int j = 0; j &lt; tmpColDim; j++ ) {</span>
+
+<span class="fc" id="L337">            double tmp0J = 0.0;</span>
+<span class="fc" id="L338">            double tmp1J = 0.0;</span>
+<span class="fc" id="L339">            double tmp2J = 0.0;</span>
+<span class="fc" id="L340">            double tmp3J = 0.0;</span>
+<span class="fc" id="L341">            double tmp4J = 0.0;</span>
+<span class="fc" id="L342">            double tmp5J = 0.0;</span>
+<span class="fc" id="L343">            double tmp6J = 0.0;</span>
+<span class="fc" id="L344">            double tmp7J = 0.0;</span>
+<span class="fc" id="L345">            double tmp8J = 0.0;</span>
+<span class="fc" id="L346">            double tmp9J = 0.0;</span>
+
+<span class="fc" id="L348">            int tmpIndex = 0;</span>
+<span class="fc bfc" id="L349" title="All 2 branches covered.">            for ( int c = 0; c &lt; complexity; c++ ) {</span>
+<span class="fc" id="L350">                double tmpRightCJ = right[c + j * complexity];</span>
+<span class="fc" id="L351">                tmp0J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L352">                tmp1J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L353">                tmp2J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L354">                tmp3J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L355">                tmp4J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L356">                tmp5J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L357">                tmp6J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L358">                tmp7J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L359">                tmp8J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L360">                tmp9J += left[tmpIndex++] * tmpRightCJ;</span>
+            }
+
+<span class="fc" id="L363">            product[tmpIndex = j * tmpRowDim] = tmp0J;</span>
+<span class="fc" id="L364">            product[++tmpIndex] = tmp1J;</span>
+<span class="fc" id="L365">            product[++tmpIndex] = tmp2J;</span>
+<span class="fc" id="L366">            product[++tmpIndex] = tmp3J;</span>
+<span class="fc" id="L367">            product[++tmpIndex] = tmp4J;</span>
+<span class="fc" id="L368">            product[++tmpIndex] = tmp5J;</span>
+<span class="fc" id="L369">            product[++tmpIndex] = tmp6J;</span>
+<span class="fc" id="L370">            product[++tmpIndex] = tmp7J;</span>
+<span class="fc" id="L371">            product[++tmpIndex] = tmp8J;</span>
+<span class="fc" id="L372">            product[++tmpIndex] = tmp9J;</span>
+        }
+<span class="fc" id="L374">    }</span>
+
+    static void full_F64_1x1_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+<span class="fc" id="L382">        double tmp00 = 0.0;</span>
+
+<span class="fc" id="L384">        int nbRows = left.length / complexity;</span>
+
+<span class="fc bfc" id="L386" title="All 2 branches covered.">        for ( int c = 0; c &lt; complexity; c++ )</span>
+<span class="fc" id="L387">            tmp00 += left[c * nbRows] * right[c];</span>
+
+<span class="fc" id="L389">        product[0] = tmp00;</span>
+<span class="fc" id="L390">    }</span>
+
+    static void full_F64_1xN_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+<span class="fc bfc" id="L398" title="All 2 branches covered.">        for ( int j = 0, nbCols = product.length; j &lt; nbCols; j++ )</span>
+<span class="fc" id="L399">            product[j] = DOT.invoke(left, 0, right, j * complexity, 0, complexity);</span>
+<span class="fc" id="L400">    }</span>
+
+    static void full_F64_1xN_RM(
+            final double[] product,
+            final double[] left,
+            final int rowCount,
+            final double[] right
+    ) {//...
+<span class="fc" id="L408">        int colCount = product.length;</span>
+<span class="fc bfc" id="L409" title="All 2 branches covered.">        for ( int ci = 0; ci &lt; colCount; ci++ ) {</span>
+<span class="fc" id="L410">            AXPY.invoke(</span>
+                    product,
+                    0,
+                    left[ci],
+                    right,
+                    ci * rowCount,
+                    0,
+                    rowCount
+            );
+        }
+<span class="fc" id="L420">    }</span>
+
+    static void full_F32_1xN_CM(
+            final float[] product,
+            final float[] left,
+            final int complexity,
+            final float[] right
+    ) {
+<span class="fc bfc" id="L428" title="All 2 branches covered.">        for (int j = 0, nbCols = product.length; j &lt; nbCols; j++) {</span>
+<span class="fc" id="L429">            product[j] = DOT.invoke(left, 0, right, j * complexity, 0, complexity);</span>
+        }
+<span class="fc" id="L431">    }</span>
+
+
+    static void full_F32_1xN_RM(
+            final float[] product,
+            final float[] left,
+            final int rowCount,
+            final float[] right
+    ) {//...
+<span class="nc" id="L440">        int colCount = product.length;</span>
+<span class="nc bnc" id="L441" title="All 2 branches missed.">        for (int ci = 0; ci &lt; colCount; ci++) {</span>
+<span class="nc" id="L442">            AXPY.invoke(</span>
+                    product,
+                    0,
+                    left[ci],
+                    right,
+                    ci * rowCount,
+                    0,
+                    rowCount
+            );
+        }
+<span class="nc" id="L452">    }</span>
+
+
+    static void full_F64_2x2_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+<span class="fc" id="L461">        double tmp00 = 0.0;</span>
+<span class="fc" id="L462">        double tmp10 = 0.0;</span>
+<span class="fc" id="L463">        double tmp01 = 0.0;</span>
+<span class="fc" id="L464">        double tmp11 = 0.0;</span>
+
+        int tmpIndex;
+<span class="fc bfc" id="L467" title="All 2 branches covered.">        for (int c = 0; c &lt; complexity; c++) {</span>
+
+<span class="fc" id="L469">            tmpIndex = c * 2;</span>
+<span class="fc" id="L470">            double tmpLeft0 = left[tmpIndex];</span>
+<span class="fc" id="L471">            tmpIndex++;</span>
+<span class="fc" id="L472">            double tmpLeft1 = left[tmpIndex];</span>
+<span class="fc" id="L473">            tmpIndex = c;</span>
+<span class="fc" id="L474">            double tmpRight0 = right[tmpIndex];</span>
+<span class="fc" id="L475">            tmpIndex += complexity;</span>
+<span class="fc" id="L476">            double tmpRight1 = right[tmpIndex];</span>
+
+<span class="fc" id="L478">            tmp00 += tmpLeft0 * tmpRight0;</span>
+<span class="fc" id="L479">            tmp10 += tmpLeft1 * tmpRight0;</span>
+<span class="fc" id="L480">            tmp01 += tmpLeft0 * tmpRight1;</span>
+<span class="fc" id="L481">            tmp11 += tmpLeft1 * tmpRight1;</span>
+        }
+
+<span class="fc" id="L484">        product[0] = tmp00;</span>
+<span class="fc" id="L485">        product[1] = tmp10;</span>
+<span class="fc" id="L486">        product[2] = tmp01;</span>
+<span class="fc" id="L487">        product[3] = tmp11;</span>
+<span class="fc" id="L488">    }</span>
+
+    static void full_F64_3x3_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+<span class="fc" id="L496">        double tmp00 = 0.0;</span>
+<span class="fc" id="L497">        double tmp10 = 0.0;</span>
+<span class="fc" id="L498">        double tmp20 = 0.0;</span>
+<span class="fc" id="L499">        double tmp01 = 0.0;</span>
+<span class="fc" id="L500">        double tmp11 = 0.0;</span>
+<span class="fc" id="L501">        double tmp21 = 0.0;</span>
+<span class="fc" id="L502">        double tmp02 = 0.0;</span>
+<span class="fc" id="L503">        double tmp12 = 0.0;</span>
+<span class="fc" id="L504">        double tmp22 = 0.0;</span>
+
+        int tmpIndex;
+<span class="fc bfc" id="L507" title="All 2 branches covered.">        for (int c = 0; c &lt; complexity; c++) {</span>
+
+<span class="fc" id="L509">            tmpIndex = c * 3;</span>
+<span class="fc" id="L510">            double tmpLeft0 = left[tmpIndex];</span>
+<span class="fc" id="L511">            tmpIndex++;</span>
+<span class="fc" id="L512">            double tmpLeft1 = left[tmpIndex];</span>
+<span class="fc" id="L513">            tmpIndex++;</span>
+<span class="fc" id="L514">            double tmpLeft2 = left[tmpIndex];</span>
+<span class="fc" id="L515">            tmpIndex = c;</span>
+<span class="fc" id="L516">            double tmpRight0 = right[tmpIndex];</span>
+<span class="fc" id="L517">            tmpIndex += complexity;</span>
+<span class="fc" id="L518">            double tmpRight1 = right[tmpIndex];</span>
+<span class="fc" id="L519">            tmpIndex += complexity;</span>
+<span class="fc" id="L520">            double tmpRight2 = right[tmpIndex];</span>
+
+<span class="fc" id="L522">            tmp00 += tmpLeft0 * tmpRight0;</span>
+<span class="fc" id="L523">            tmp10 += tmpLeft1 * tmpRight0;</span>
+<span class="fc" id="L524">            tmp20 += tmpLeft2 * tmpRight0;</span>
+<span class="fc" id="L525">            tmp01 += tmpLeft0 * tmpRight1;</span>
+<span class="fc" id="L526">            tmp11 += tmpLeft1 * tmpRight1;</span>
+<span class="fc" id="L527">            tmp21 += tmpLeft2 * tmpRight1;</span>
+<span class="fc" id="L528">            tmp02 += tmpLeft0 * tmpRight2;</span>
+<span class="fc" id="L529">            tmp12 += tmpLeft1 * tmpRight2;</span>
+<span class="fc" id="L530">            tmp22 += tmpLeft2 * tmpRight2;</span>
+        }
+
+<span class="fc" id="L533">        product[0] = tmp00;</span>
+<span class="fc" id="L534">        product[1] = tmp10;</span>
+<span class="fc" id="L535">        product[2] = tmp20;</span>
+<span class="fc" id="L536">        product[3] = tmp01;</span>
+<span class="fc" id="L537">        product[4] = tmp11;</span>
+<span class="fc" id="L538">        product[5] = tmp21;</span>
+<span class="fc" id="L539">        product[6] = tmp02;</span>
+<span class="fc" id="L540">        product[7] = tmp12;</span>
+<span class="fc" id="L541">        product[8] = tmp22;</span>
+<span class="fc" id="L542">    }</span>
+
+    static void full_F64_4x4_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+<span class="fc" id="L550">        double tmp00 = 0.0;</span>
+<span class="fc" id="L551">        double tmp10 = 0.0;</span>
+<span class="fc" id="L552">        double tmp20 = 0.0;</span>
+<span class="fc" id="L553">        double tmp30 = 0.0;</span>
+<span class="fc" id="L554">        double tmp01 = 0.0;</span>
+<span class="fc" id="L555">        double tmp11 = 0.0;</span>
+<span class="fc" id="L556">        double tmp21 = 0.0;</span>
+<span class="fc" id="L557">        double tmp31 = 0.0;</span>
+<span class="fc" id="L558">        double tmp02 = 0.0;</span>
+<span class="fc" id="L559">        double tmp12 = 0.0;</span>
+<span class="fc" id="L560">        double tmp22 = 0.0;</span>
+<span class="fc" id="L561">        double tmp32 = 0.0;</span>
+<span class="fc" id="L562">        double tmp03 = 0.0;</span>
+<span class="fc" id="L563">        double tmp13 = 0.0;</span>
+<span class="fc" id="L564">        double tmp23 = 0.0;</span>
+<span class="fc" id="L565">        double tmp33 = 0.0;</span>
+
+        int tmpIndex;
+<span class="fc bfc" id="L568" title="All 2 branches covered.">        for (int c = 0; c &lt; complexity; c++) {</span>
+
+<span class="fc" id="L570">            tmpIndex = c * 4;</span>
+<span class="fc" id="L571">            double tmpLeft0 = left[tmpIndex];</span>
+<span class="fc" id="L572">            tmpIndex++;</span>
+<span class="fc" id="L573">            double tmpLeft1 = left[tmpIndex];</span>
+<span class="fc" id="L574">            tmpIndex++;</span>
+<span class="fc" id="L575">            double tmpLeft2 = left[tmpIndex];</span>
+<span class="fc" id="L576">            tmpIndex++;</span>
+<span class="fc" id="L577">            double tmpLeft3 = left[tmpIndex];</span>
+<span class="fc" id="L578">            tmpIndex = c;</span>
+<span class="fc" id="L579">            double tmpRight0 = right[tmpIndex];</span>
+<span class="fc" id="L580">            tmpIndex += complexity;</span>
+<span class="fc" id="L581">            double tmpRight1 = right[tmpIndex];</span>
+<span class="fc" id="L582">            tmpIndex += complexity;</span>
+<span class="fc" id="L583">            double tmpRight2 = right[tmpIndex];</span>
+<span class="fc" id="L584">            tmpIndex += complexity;</span>
+<span class="fc" id="L585">            double tmpRight3 = right[tmpIndex];</span>
+
+<span class="fc" id="L587">            tmp00 += tmpLeft0 * tmpRight0;</span>
+<span class="fc" id="L588">            tmp10 += tmpLeft1 * tmpRight0;</span>
+<span class="fc" id="L589">            tmp20 += tmpLeft2 * tmpRight0;</span>
+<span class="fc" id="L590">            tmp30 += tmpLeft3 * tmpRight0;</span>
+<span class="fc" id="L591">            tmp01 += tmpLeft0 * tmpRight1;</span>
+<span class="fc" id="L592">            tmp11 += tmpLeft1 * tmpRight1;</span>
+<span class="fc" id="L593">            tmp21 += tmpLeft2 * tmpRight1;</span>
+<span class="fc" id="L594">            tmp31 += tmpLeft3 * tmpRight1;</span>
+<span class="fc" id="L595">            tmp02 += tmpLeft0 * tmpRight2;</span>
+<span class="fc" id="L596">            tmp12 += tmpLeft1 * tmpRight2;</span>
+<span class="fc" id="L597">            tmp22 += tmpLeft2 * tmpRight2;</span>
+<span class="fc" id="L598">            tmp32 += tmpLeft3 * tmpRight2;</span>
+<span class="fc" id="L599">            tmp03 += tmpLeft0 * tmpRight3;</span>
+<span class="fc" id="L600">            tmp13 += tmpLeft1 * tmpRight3;</span>
+<span class="fc" id="L601">            tmp23 += tmpLeft2 * tmpRight3;</span>
+<span class="fc" id="L602">            tmp33 += tmpLeft3 * tmpRight3;</span>
+        }
+
+<span class="fc" id="L605">        product[0] = tmp00;</span>
+<span class="fc" id="L606">        product[1] = tmp10;</span>
+<span class="fc" id="L607">        product[2] = tmp20;</span>
+<span class="fc" id="L608">        product[3] = tmp30;</span>
+<span class="fc" id="L609">        product[4] = tmp01;</span>
+<span class="fc" id="L610">        product[5] = tmp11;</span>
+<span class="fc" id="L611">        product[6] = tmp21;</span>
+<span class="fc" id="L612">        product[7] = tmp31;</span>
+<span class="fc" id="L613">        product[8] = tmp02;</span>
+<span class="fc" id="L614">        product[9] = tmp12;</span>
+<span class="fc" id="L615">        product[10] = tmp22;</span>
+<span class="fc" id="L616">        product[11] = tmp32;</span>
+<span class="fc" id="L617">        product[12] = tmp03;</span>
+<span class="fc" id="L618">        product[13] = tmp13;</span>
+<span class="fc" id="L619">        product[14] = tmp23;</span>
+<span class="fc" id="L620">        product[15] = tmp33;</span>
+<span class="fc" id="L621">    }</span>
+
+    static void full_F64_5x5_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+<span class="fc" id="L629">        double tmp00 = 0.0;</span>
+<span class="fc" id="L630">        double tmp10 = 0.0;</span>
+<span class="fc" id="L631">        double tmp20 = 0.0;</span>
+<span class="fc" id="L632">        double tmp30 = 0.0;</span>
+<span class="fc" id="L633">        double tmp40 = 0.0;</span>
+<span class="fc" id="L634">        double tmp01 = 0.0;</span>
+<span class="fc" id="L635">        double tmp11 = 0.0;</span>
+<span class="fc" id="L636">        double tmp21 = 0.0;</span>
+<span class="fc" id="L637">        double tmp31 = 0.0;</span>
+<span class="fc" id="L638">        double tmp41 = 0.0;</span>
+<span class="fc" id="L639">        double tmp02 = 0.0;</span>
+<span class="fc" id="L640">        double tmp12 = 0.0;</span>
+<span class="fc" id="L641">        double tmp22 = 0.0;</span>
+<span class="fc" id="L642">        double tmp32 = 0.0;</span>
+<span class="fc" id="L643">        double tmp42 = 0.0;</span>
+<span class="fc" id="L644">        double tmp03 = 0.0;</span>
+<span class="fc" id="L645">        double tmp13 = 0.0;</span>
+<span class="fc" id="L646">        double tmp23 = 0.0;</span>
+<span class="fc" id="L647">        double tmp33 = 0.0;</span>
+<span class="fc" id="L648">        double tmp43 = 0.0;</span>
+<span class="fc" id="L649">        double tmp04 = 0.0;</span>
+<span class="fc" id="L650">        double tmp14 = 0.0;</span>
+<span class="fc" id="L651">        double tmp24 = 0.0;</span>
+<span class="fc" id="L652">        double tmp34 = 0.0;</span>
+<span class="fc" id="L653">        double tmp44 = 0.0;</span>
+
+        int tmpIndex;
+<span class="fc bfc" id="L656" title="All 2 branches covered.">        for (int c = 0; c &lt; complexity; c++) {</span>
+
+<span class="fc" id="L658">            tmpIndex = c * 5;</span>
+<span class="fc" id="L659">            double tmpLeft0 = left[tmpIndex];</span>
+<span class="fc" id="L660">            tmpIndex++;</span>
+<span class="fc" id="L661">            double tmpLeft1 = left[tmpIndex];</span>
+<span class="fc" id="L662">            tmpIndex++;</span>
+<span class="fc" id="L663">            double tmpLeft2 = left[tmpIndex];</span>
+<span class="fc" id="L664">            tmpIndex++;</span>
+<span class="fc" id="L665">            double tmpLeft3 = left[tmpIndex];</span>
+<span class="fc" id="L666">            tmpIndex++;</span>
+<span class="fc" id="L667">            double tmpLeft4 = left[tmpIndex];</span>
+<span class="fc" id="L668">            tmpIndex = c;</span>
+<span class="fc" id="L669">            double tmpRight0 = right[tmpIndex];</span>
+<span class="fc" id="L670">            tmpIndex += complexity;</span>
+<span class="fc" id="L671">            double tmpRight1 = right[tmpIndex];</span>
+<span class="fc" id="L672">            tmpIndex += complexity;</span>
+<span class="fc" id="L673">            double tmpRight2 = right[tmpIndex];</span>
+<span class="fc" id="L674">            tmpIndex += complexity;</span>
+<span class="fc" id="L675">            double tmpRight3 = right[tmpIndex];</span>
+<span class="fc" id="L676">            tmpIndex += complexity;</span>
+<span class="fc" id="L677">            double tmpRight4 = right[tmpIndex];</span>
+
+<span class="fc" id="L679">            tmp00 += tmpLeft0 * tmpRight0;</span>
+<span class="fc" id="L680">            tmp10 += tmpLeft1 * tmpRight0;</span>
+<span class="fc" id="L681">            tmp20 += tmpLeft2 * tmpRight0;</span>
+<span class="fc" id="L682">            tmp30 += tmpLeft3 * tmpRight0;</span>
+<span class="fc" id="L683">            tmp40 += tmpLeft4 * tmpRight0;</span>
+<span class="fc" id="L684">            tmp01 += tmpLeft0 * tmpRight1;</span>
+<span class="fc" id="L685">            tmp11 += tmpLeft1 * tmpRight1;</span>
+<span class="fc" id="L686">            tmp21 += tmpLeft2 * tmpRight1;</span>
+<span class="fc" id="L687">            tmp31 += tmpLeft3 * tmpRight1;</span>
+<span class="fc" id="L688">            tmp41 += tmpLeft4 * tmpRight1;</span>
+<span class="fc" id="L689">            tmp02 += tmpLeft0 * tmpRight2;</span>
+<span class="fc" id="L690">            tmp12 += tmpLeft1 * tmpRight2;</span>
+<span class="fc" id="L691">            tmp22 += tmpLeft2 * tmpRight2;</span>
+<span class="fc" id="L692">            tmp32 += tmpLeft3 * tmpRight2;</span>
+<span class="fc" id="L693">            tmp42 += tmpLeft4 * tmpRight2;</span>
+<span class="fc" id="L694">            tmp03 += tmpLeft0 * tmpRight3;</span>
+<span class="fc" id="L695">            tmp13 += tmpLeft1 * tmpRight3;</span>
+<span class="fc" id="L696">            tmp23 += tmpLeft2 * tmpRight3;</span>
+<span class="fc" id="L697">            tmp33 += tmpLeft3 * tmpRight3;</span>
+<span class="fc" id="L698">            tmp43 += tmpLeft4 * tmpRight3;</span>
+<span class="fc" id="L699">            tmp04 += tmpLeft0 * tmpRight4;</span>
+<span class="fc" id="L700">            tmp14 += tmpLeft1 * tmpRight4;</span>
+<span class="fc" id="L701">            tmp24 += tmpLeft2 * tmpRight4;</span>
+<span class="fc" id="L702">            tmp34 += tmpLeft3 * tmpRight4;</span>
+<span class="fc" id="L703">            tmp44 += tmpLeft4 * tmpRight4;</span>
+        }
+
+<span class="fc" id="L706">        product[0] = tmp00;</span>
+<span class="fc" id="L707">        product[1] = tmp10;</span>
+<span class="fc" id="L708">        product[2] = tmp20;</span>
+<span class="fc" id="L709">        product[3] = tmp30;</span>
+<span class="fc" id="L710">        product[4] = tmp40;</span>
+<span class="fc" id="L711">        product[5] = tmp01;</span>
+<span class="fc" id="L712">        product[6] = tmp11;</span>
+<span class="fc" id="L713">        product[7] = tmp21;</span>
+<span class="fc" id="L714">        product[8] = tmp31;</span>
+<span class="fc" id="L715">        product[9] = tmp41;</span>
+<span class="fc" id="L716">        product[10] = tmp02;</span>
+<span class="fc" id="L717">        product[11] = tmp12;</span>
+<span class="fc" id="L718">        product[12] = tmp22;</span>
+<span class="fc" id="L719">        product[13] = tmp32;</span>
+<span class="fc" id="L720">        product[14] = tmp42;</span>
+<span class="fc" id="L721">        product[15] = tmp03;</span>
+<span class="fc" id="L722">        product[16] = tmp13;</span>
+<span class="fc" id="L723">        product[17] = tmp23;</span>
+<span class="fc" id="L724">        product[18] = tmp33;</span>
+<span class="fc" id="L725">        product[19] = tmp43;</span>
+<span class="fc" id="L726">        product[20] = tmp04;</span>
+<span class="fc" id="L727">        product[21] = tmp14;</span>
+<span class="fc" id="L728">        product[22] = tmp24;</span>
+<span class="fc" id="L729">        product[23] = tmp34;</span>
+<span class="fc" id="L730">        product[24] = tmp44;</span>
+<span class="fc" id="L731">    }</span>
+
+    static void full_F64_6xN_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+
+<span class="fc" id="L740">        int tmpRowDim = 6;</span>
+<span class="fc" id="L741">        int tmpColDim = right.length / complexity;</span>
+
+<span class="fc bfc" id="L743" title="All 2 branches covered.">        for (int j = 0; j &lt; tmpColDim; j++) {</span>
+
+<span class="fc" id="L745">            double tmp0J = 0.0;</span>
+<span class="fc" id="L746">            double tmp1J = 0.0;</span>
+<span class="fc" id="L747">            double tmp2J = 0.0;</span>
+<span class="fc" id="L748">            double tmp3J = 0.0;</span>
+<span class="fc" id="L749">            double tmp4J = 0.0;</span>
+<span class="fc" id="L750">            double tmp5J = 0.0;</span>
+
+<span class="fc" id="L752">            int tmpIndex = 0;</span>
+<span class="fc bfc" id="L753" title="All 2 branches covered.">            for (int c = 0; c &lt; complexity; c++) {</span>
+<span class="fc" id="L754">                double tmpRightCJ = right[c + j * complexity];</span>
+<span class="fc" id="L755">                tmp0J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L756">                tmp1J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L757">                tmp2J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L758">                tmp3J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L759">                tmp4J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L760">                tmp5J += left[tmpIndex++] * tmpRightCJ;</span>
+            }
+
+<span class="fc" id="L763">            product[tmpIndex = j * tmpRowDim] = tmp0J;</span>
+<span class="fc" id="L764">            product[++tmpIndex] = tmp1J;</span>
+<span class="fc" id="L765">            product[++tmpIndex] = tmp2J;</span>
+<span class="fc" id="L766">            product[++tmpIndex] = tmp3J;</span>
+<span class="fc" id="L767">            product[++tmpIndex] = tmp4J;</span>
+<span class="fc" id="L768">            product[++tmpIndex] = tmp5J;</span>
+        }
+<span class="fc" id="L770">    }</span>
+
+    static void full_F64_7xN_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+
+<span class="fc" id="L779">        int tmpRowDim = 7;</span>
+<span class="fc" id="L780">        int tmpColDim = right.length / complexity;</span>
+
+<span class="fc bfc" id="L782" title="All 2 branches covered.">        for (int j = 0; j &lt; tmpColDim; j++) {</span>
+
+<span class="fc" id="L784">            double tmp0J = 0.0;</span>
+<span class="fc" id="L785">            double tmp1J = 0.0;</span>
+<span class="fc" id="L786">            double tmp2J = 0.0;</span>
+<span class="fc" id="L787">            double tmp3J = 0.0;</span>
+<span class="fc" id="L788">            double tmp4J = 0.0;</span>
+<span class="fc" id="L789">            double tmp5J = 0.0;</span>
+<span class="fc" id="L790">            double tmp6J = 0.0;</span>
+
+<span class="fc" id="L792">            int tmpIndex = 0;</span>
+<span class="fc bfc" id="L793" title="All 2 branches covered.">            for (int c = 0; c &lt; complexity; c++) {</span>
+<span class="fc" id="L794">                double tmpRightCJ = right[c + j * complexity];</span>
+<span class="fc" id="L795">                tmp0J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L796">                tmp1J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L797">                tmp2J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L798">                tmp3J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L799">                tmp4J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L800">                tmp5J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L801">                tmp6J += left[tmpIndex++] * tmpRightCJ;</span>
+            }
+
+<span class="fc" id="L804">            product[tmpIndex = j * tmpRowDim] = tmp0J;</span>
+<span class="fc" id="L805">            product[++tmpIndex] = tmp1J;</span>
+<span class="fc" id="L806">            product[++tmpIndex] = tmp2J;</span>
+<span class="fc" id="L807">            product[++tmpIndex] = tmp3J;</span>
+<span class="fc" id="L808">            product[++tmpIndex] = tmp4J;</span>
+<span class="fc" id="L809">            product[++tmpIndex] = tmp5J;</span>
+<span class="fc" id="L810">            product[++tmpIndex] = tmp6J;</span>
+        }
+<span class="fc" id="L812">    }</span>
+
+    static void full_F64_8xN_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+
+<span class="fc" id="L821">        int tmpRowDim = 8;</span>
+<span class="fc" id="L822">        int tmpColDim = right.length / complexity;</span>
+
+<span class="fc bfc" id="L824" title="All 2 branches covered.">        for (int j = 0; j &lt; tmpColDim; j++) {</span>
+
+<span class="fc" id="L826">            double tmp0J = 0.0;</span>
+<span class="fc" id="L827">            double tmp1J = 0.0;</span>
+<span class="fc" id="L828">            double tmp2J = 0.0;</span>
+<span class="fc" id="L829">            double tmp3J = 0.0;</span>
+<span class="fc" id="L830">            double tmp4J = 0.0;</span>
+<span class="fc" id="L831">            double tmp5J = 0.0;</span>
+<span class="fc" id="L832">            double tmp6J = 0.0;</span>
+<span class="fc" id="L833">            double tmp7J = 0.0;</span>
+
+<span class="fc" id="L835">            int tmpIndex = 0;</span>
+<span class="fc bfc" id="L836" title="All 2 branches covered.">            for (int c = 0; c &lt; complexity; c++) {</span>
+<span class="fc" id="L837">                double tmpRightCJ = right[c + j * complexity];</span>
+<span class="fc" id="L838">                tmp0J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L839">                tmp1J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L840">                tmp2J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L841">                tmp3J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L842">                tmp4J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L843">                tmp5J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L844">                tmp6J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L845">                tmp7J += left[tmpIndex++] * tmpRightCJ;</span>
+            }
+
+<span class="fc" id="L848">            product[tmpIndex = j * tmpRowDim] = tmp0J;</span>
+<span class="fc" id="L849">            product[++tmpIndex] = tmp1J;</span>
+<span class="fc" id="L850">            product[++tmpIndex] = tmp2J;</span>
+<span class="fc" id="L851">            product[++tmpIndex] = tmp3J;</span>
+<span class="fc" id="L852">            product[++tmpIndex] = tmp4J;</span>
+<span class="fc" id="L853">            product[++tmpIndex] = tmp5J;</span>
+<span class="fc" id="L854">            product[++tmpIndex] = tmp6J;</span>
+<span class="fc" id="L855">            product[++tmpIndex] = tmp7J;</span>
+        }
+<span class="fc" id="L857">    }</span>
+
+    static void full_F64_9xN_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+
+<span class="fc" id="L866">        int tmpRowDim = 9;</span>
+<span class="fc" id="L867">        int tmpColDim = right.length / complexity;</span>
+
+<span class="fc bfc" id="L869" title="All 2 branches covered.">        for (int j = 0; j &lt; tmpColDim; j++) {</span>
+
+<span class="fc" id="L871">            double tmp0J = 0.0;</span>
+<span class="fc" id="L872">            double tmp1J = 0.0;</span>
+<span class="fc" id="L873">            double tmp2J = 0.0;</span>
+<span class="fc" id="L874">            double tmp3J = 0.0;</span>
+<span class="fc" id="L875">            double tmp4J = 0.0;</span>
+<span class="fc" id="L876">            double tmp5J = 0.0;</span>
+<span class="fc" id="L877">            double tmp6J = 0.0;</span>
+<span class="fc" id="L878">            double tmp7J = 0.0;</span>
+<span class="fc" id="L879">            double tmp8J = 0.0;</span>
+
+<span class="fc" id="L881">            int tmpIndex = 0;</span>
+<span class="fc bfc" id="L882" title="All 2 branches covered.">            for (int c = 0; c &lt; complexity; c++) {</span>
+<span class="fc" id="L883">                double tmpRightCJ = right[c + j * complexity];</span>
+<span class="fc" id="L884">                tmp0J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L885">                tmp1J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L886">                tmp2J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L887">                tmp3J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L888">                tmp4J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L889">                tmp5J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L890">                tmp6J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L891">                tmp7J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L892">                tmp8J += left[tmpIndex++] * tmpRightCJ;</span>
+            }
+
+<span class="fc" id="L895">            product[tmpIndex = j * tmpRowDim] = tmp0J;</span>
+<span class="fc" id="L896">            product[++tmpIndex] = tmp1J;</span>
+<span class="fc" id="L897">            product[++tmpIndex] = tmp2J;</span>
+<span class="fc" id="L898">            product[++tmpIndex] = tmp3J;</span>
+<span class="fc" id="L899">            product[++tmpIndex] = tmp4J;</span>
+<span class="fc" id="L900">            product[++tmpIndex] = tmp5J;</span>
+<span class="fc" id="L901">            product[++tmpIndex] = tmp6J;</span>
+<span class="fc" id="L902">            product[++tmpIndex] = tmp7J;</span>
+<span class="fc" id="L903">            product[++tmpIndex] = tmp8J;</span>
+        }
+<span class="fc" id="L905">    }</span>
+
+    static void full_F64_MxN_CM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+<span class="fc" id="L913">        MatMul.partial_F64_MxN_CM(product, 0, right.length / complexity, left, complexity, right);</span>
+<span class="fc" id="L914">    }</span>
+
+    static void full_F64_MxN_RM(
+            final double[] product,
+            final double[] left,
+            final int complexity,
+            final double[] right
+    ) {
+<span class="fc" id="L922">        MatMul.partial_F64_MxN_RM(product, 0, left.length / complexity, left, complexity, right);</span>
+<span class="fc" id="L923">    }</span>
+
+    static void full_F32_MxN_CM(
+            final float[] product,
+            final float[] left,
+            final int complexity,
+            final float[] right
+    ) {
+<span class="fc" id="L931">        MatMul.partial_F32_MxN_CM(product, 0, right.length / complexity, left, complexity, right);</span>
+<span class="fc" id="L932">    }</span>
+
+    static void full_F32_MxN_RM(
+            final float[] product,
+            final float[] left,
+            final int complexity,
+            final float[] right
+    ) {
+<span class="fc" id="L940">        MatMul.partial_F32_MxN_RM(product, 0, left.length / complexity, left, complexity, right);</span>
+<span class="fc" id="L941">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

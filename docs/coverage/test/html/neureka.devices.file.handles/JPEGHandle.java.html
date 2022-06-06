@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JPEGHandle.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.file.handles</a> &gt; <span class="el_source">JPEGHandle.java</span></div><h1>JPEGHandle.java</h1><pre class="source lang-java linenums">package neureka.devices.file.handles;
+
+import neureka.Tsr;
+import neureka.devices.Storage;
+import neureka.devices.file.FileHandle;
+import neureka.devices.host.CPU;
+import neureka.dtype.DataType;
+import neureka.dtype.custom.I16;
+import neureka.dtype.custom.UI8;
+import org.slf4j.LoggerFactory;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
+import java.io.File;
+import java.io.IOException;
+
+/**
+ *  This class is one of many extensions of the {@link AbstractFileHandle} which
+ *  is therefore ultimately an implementation of the {@link FileHandle} interface.
+ *  Like other {@link FileHandle} implementations of this class represents a file
+ *  of a given type, in this case it represents a JPEG file.
+ */
+public final class JPEGHandle extends AbstractImageFileHandle&lt;JPEGHandle&gt;
+{
+
+<span class="fc" id="L28">    public JPEGHandle( String fileName) { this( null, fileName ); }</span>
+
+    public JPEGHandle(Tsr&lt;Number&gt; t, String filename) {
+<span class="fc" id="L31">        super(t, filename, new ImageFileType() {</span>
+<span class="fc" id="L32">            @Override public Tsr.ImageType imageType() { return Tsr.ImageType.BGR_3BYTE; }</span>
+
+<span class="nc" id="L34">            @Override public String imageTypeName() { return &quot;jpeg&quot;; }</span>
+
+<span class="fc" id="L36">            @Override public String defaultExtension() { return &quot;jpg&quot;; }</span>
+        });
+<span class="fc" id="L38">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

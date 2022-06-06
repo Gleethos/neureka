@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AXPY.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.linear.internal.blas</a> &gt; <span class="el_source">AXPY.java</span></div><h1>AXPY.java</h1><pre class="source lang-java linenums">/*&lt;#LICENSE#&gt;*/
+package neureka.backend.main.operations.linear.internal.blas;
+
+/**
+ * The ?axpy routines perform a vector-vector operation defined as y := a*x + y where: a is a scalar x and y
+ * are vectors each with a number of elements that equals n. &lt;code&gt;y[] += a * x[]&lt;/code&gt;
+ *
+ */
+<span class="nc" id="L9">public final class AXPY {</span>
+
+    public static void invoke(
+            final double[] y,
+            final int yOffset,
+            final double multiplier,
+            final double[] x,
+            final int xOffset,
+            final int start,
+            final int limit
+    ) {
+<span class="fc bfc" id="L20" title="All 2 branches covered.">        for (int i = start; i &lt; limit; i++) {</span>
+<span class="fc" id="L21">            y[yOffset + i] += multiplier * x[xOffset + i];</span>
+        }
+<span class="fc" id="L23">    }</span>
+
+    public static void invoke(
+            final float[] y,
+            final int basey,
+            final float a,
+            final float[] x,
+            final int basex,
+            final int first,
+            final int limit
+    ) {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        for (int i = first; i &lt; limit; i++) {</span>
+<span class="fc" id="L35">            y[basey + i] += a * x[basex + i];</span>
+        }
+<span class="fc" id="L37">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

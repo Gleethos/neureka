@@ -100,7 +100,7 @@ public final class JITProp&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 
     @Override
     public boolean update( OwnerChangeRequest&lt;Tsr&lt;V&gt;&gt; changeRequest ) {
-<span class="fc" id="L103">        changeRequest.executeChange();</span>
+<span class="fc" id="L103">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
 <span class="fc" id="L104">        return true;</span>
     }
 }

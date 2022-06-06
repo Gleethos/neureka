@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Apr 03 14:55:37 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Jun 06 11:40:04 CEST 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,12 +335,12 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.304 seconds</td>
+<td>0.079 seconds</td>
 </tr>
 </tbody>
 </table>
 </div>
-<pre class='title'>A Function as such!.</pre>
+<pre class='title'>A Function as such!</pre>
 <pre class='narrative'>This specification defines the expected behaviour of the Function API
     with respect to receiving simple scalar values as arguments.</pre>
 <h3>Features:</h3>
@@ -374,8 +374,9 @@ div.footer {
 <td colspan='10'>
 <div class='feature-description' id='2122191447'>
 <span>Function "1/I[0]" instance returns expected scalar results.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0)</div>
 </span>
 </div>
 </td>
@@ -391,7 +392,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Function f = new FunctionBuilder( Neureka.get().backend() ).build("1/I[0]", false)</pre>
+<pre class='block-source'>Function f = new FunctionParser( Neureka.get().backend() ).parse("1/I[0]", false)</pre>
 </td>
 </tr>
 <tr>
@@ -436,13 +437,19 @@ else assert f.call( inputs ) == expected</pre>
 <td class='ex-value'>[2.0]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>-0.25</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>0.5</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -456,8 +463,9 @@ else assert f.call( inputs ) == expected</pre>
 <td colspan='10'>
 <div class='feature-description' id='-2091315233'>
 <span>Function "I[0]+1/I[0]" instance returns expected scalar results.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0)</div>
 </span>
 </div>
 </td>
@@ -473,7 +481,7 @@ else assert f.call( inputs ) == expected</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Function f = new FunctionBuilder( Neureka.get().backend() ).build("I[0]+1/I[0]", false)</pre>
+<pre class='block-source'>Function f = new FunctionParser( Neureka.get().backend() ).parse("I[0]+1/I[0]", false)</pre>
 </td>
 </tr>
 <tr>
@@ -518,25 +526,37 @@ else assert f.call( inputs ) == expected</pre>
 <td class='ex-value'>[2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>2.5</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[-1.0]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>0.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[-3.0]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>0.8888888888888888</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[0.2]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>-23.999999999999996</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -550,8 +570,9 @@ else assert f.call( inputs ) == expected</pre>
 <td colspan='10'>
 <div class='feature-description' id='-2120026697'>
 <span>Function "(I[0]+1/I[0])^-I[0]" instance returns expected scalar result.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0)</div>
 </span>
 </div>
 </td>
@@ -567,7 +588,7 @@ else assert f.call( inputs ) == expected</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Function f = new FunctionBuilder( Neureka.get().backend() ).build("(I[0]+1/I[0])^-I[0]", false)</pre>
+<pre class='block-source'>Function f = new FunctionParser( Neureka.get().backend() ).parse("(I[0]+1/I[0])^-I[0]", false)</pre>
 </td>
 </tr>
 <tr>
@@ -612,13 +633,19 @@ else assert f.call( inputs ) == expected</pre>
 <td class='ex-value'>[1.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>0.5</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[0.2]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>-0.5217778675999797</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -632,8 +659,9 @@ else assert f.call( inputs ) == expected</pre>
 <td colspan='10'>
 <div class='feature-description' id='-1287697122'>
 <span>Function "(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)" instance returns expected scalars.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0)</div>
 </span>
 </div>
 </td>
@@ -643,7 +671,7 @@ else assert f.call( inputs ) == expected</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Function f = new FunctionBuilder( Neureka.get().backend() ).build("(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)", false)</pre>
+<pre class='block-source'>Function f = new FunctionParser( Neureka.get().backend() ).parse("(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)", false)</pre>
 </td>
 </tr>
 <tr>
@@ -682,43 +710,64 @@ else assert f.call( inputs )==expected</pre>
 <td class='ex-value'>[3.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>3.049021713079475</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[2.5]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>3.507365283517986</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[0.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>0.2</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[0.0]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>1.1</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[0.5]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>0.646867884000033</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[1.6]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>-0.00697440343353687</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[-4.0]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>3.9174193383745917</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -732,8 +781,9 @@ else assert f.call( inputs )==expected</pre>
 <td colspan='10'>
 <div class='feature-description' id='173700498'>
 <span>Test scalar results of Function "sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))" instance.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.001 seconds)</div>
 </span>
 </div>
 </td>
@@ -743,7 +793,7 @@ else assert f.call( inputs )==expected</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Function f = new FunctionBuilder( Neureka.get().backend() ).build("sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))", false)</pre>
+<pre class='block-source'>Function f = new FunctionParser( Neureka.get().backend() ).parse("sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))", false)</pre>
 </td>
 </tr>
 <tr>
@@ -782,25 +832,37 @@ else assert f.call( inputs )==expected</pre>
 <td class='ex-value'>[0.0, 0.5, 1.6, -4.0]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>1.1</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[0.0, 0.5, 1.6, -4.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>0.646867884000033</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[0.0, 0.5, 1.6, -4.0]</td>
 <td class='ex-value'>2</td>
 <td class='ex-value'>-0.00697440343353687</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>[0.0, 0.5, 1.6, -4.0]</td>
 <td class='ex-value'>3</td>
 <td class='ex-value'>3.9174193383745917</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -814,8 +876,9 @@ else assert f.call( inputs )==expected</pre>
 <td colspan='10'>
 <div class='feature-description' id='-960676022'>
 <span>Test scalar results of various Function instances.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0)</div>
 </span>
 </div>
 </td>
@@ -831,7 +894,7 @@ else assert f.call( inputs )==expected</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Function f = new FunctionBuilder( Neureka.get().backend() ).build(equation, false)</pre>
+<pre class='block-source'>Function f = new FunctionParser( Neureka.get().backend() ).parse(equation, false)</pre>
 </td>
 </tr>
 <tr>
@@ -878,329 +941,470 @@ else assert f.call( inputs )==expected</pre>
 <td class='ex-value'>[]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>9.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sumJs(Ij)</td>
 <td class='ex-value'>[2.0, 3.2, 6.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>11.2</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>prod(Ij)</td>
 <td class='ex-value'>[0.5, 0.5, 100.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>25.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>prod(prod(Ij))</td>
 <td class='ex-value'>[0.5, 0.5, 10.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>15.625</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>I3/i[1]-I0+2+i2</td>
 <td class='ex-value'>[5.0, 4.0, 3.0, 12.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>3.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>i3*i1/(i4-i0-2)-sig(0)+tanh(0)</td>
 <td class='ex-value'>[-4.0, -2.0, 6.0, -3.0, -8.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>-1.5</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>(i0*i1)*i2</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>-6.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>softplus(i0*i1)*i2</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>-5.985164261060192</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>prod(ij)</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>-4.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>relu(prod(ij))</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>-0.12</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>relu(prod(ij))</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>-0.04</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>quad(prod(ij)+6)</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>36.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>quad(prod(ij)+6)</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>48.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>quad(abs(prod(ij))-6)</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>36.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>quad(abs(prod(ij))-6)</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>48.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sumJs(ij)</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>3.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sumJs(ij)</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>1.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sumJs(ij^1)</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>3.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sumJs(ij^1)</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>1.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>I[1]^2</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>9.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>I[1]^2</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>6.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sumJs(ij^2)</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>17.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sumJs(ij^2)</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>6.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>2^I[1]</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>8.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>2^I[0]</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>4.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>2^I[2]</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>0.25</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>2^I[1]</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>5.545177444479562</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sumJs(2^I[j])</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>12.25</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sumJs(2^I[j])</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>5.545177444479562</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>I[1]%2</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>1.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>I[1]%2</td>
 <td class='ex-value'>[2.0, 3.0, -2.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>1.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>I[2]%2</td>
 <td class='ex-value'>[2.0, 3.0, -5.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>-1.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>I[2]%2</td>
 <td class='ex-value'>[2.0, 3.0, -5.0]</td>
 <td class='ex-value'>2</td>
 <td class='ex-value'>1.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>I[2]%2</td>
 <td class='ex-value'>[2.0, 3.0, -5.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>0.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>7%I[1]</td>
 <td class='ex-value'>[2.0, 4.0, -5.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>3.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>7%I[1]</td>
 <td class='ex-value'>[2.0, 4.0, -5.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>0.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sum(7%i0)</td>
 <td class='ex-value'>[2.0, 3.0, 4.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>3.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sum(7%ij)</td>
 <td class='ex-value'>[2.0, 3.0, 4.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>5.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sum(7%i0)</td>
 <td class='ex-value'>[2.0, 3.0, 4.0]</td>
 <td class='ex-value'>2</td>
 <td class='ex-value'>0.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sum(7%ij)</td>
 <td class='ex-value'>[2.0, 3.0, 4.0]</td>
 <td class='ex-value'>2</td>
 <td class='ex-value'>0.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sum(i0%3)</td>
 <td class='ex-value'>[2.0, 3.0, 4.0]</td>
 <td class='ex-value'>0</td>
 <td class='ex-value'>1.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sum(ij%3)</td>
 <td class='ex-value'>[2.0, 3.0, 4.0]</td>
 <td class='ex-value'>2</td>
 <td class='ex-value'>1.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sum(ij-3)</td>
 <td class='ex-value'>[1.0, 2.0, 4.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>-2.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sum(ij-3)</td>
 <td class='ex-value'>[1.0, 2.0, 4.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>1.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sum(3-ij)</td>
 <td class='ex-value'>[1.0, 2.0, 4.0]</td>
 <td class='ex-value'>&lt;null&gt;</td>
 <td class='ex-value'>2.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sum(3-ij)</td>
 <td class='ex-value'>[1.0, 2.0, 4.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>-1.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sum(3-ij-ij)</td>
 <td class='ex-value'>[1.0, 2.0, 4.0]</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>-2.0</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 </tbody>
 </table>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FunTuple.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.algorithms.internal</a> &gt; <span class="el_source">FunTuple.java</span></div><h1>FunTuple.java</h1><pre class="source lang-java linenums">package neureka.backend.main.algorithms.internal;
+
+import neureka.backend.api.Call;
+import neureka.calculus.args.Arg;
+
+/**
+ *  Implementations of this are tuples of scalar functions
+ *  where the functions at index 1, 2... are derivatives of the
+ *  first function stored at position 0.
+ *
+ * @param &lt;T&gt; The type of scalar function stored by this tuple.
+ */
+public interface FunTuple&lt;T extends Fun&gt; {
+
+    T get( int derivativeIndex );
+
+    Class&lt;T&gt; getType();
+
+    default T get( Arg.DerivIdx index ) {
+<span class="fc" id="L20">        return this.get( index.get() );</span>
+    }
+
+    /**
+     * @param call The execution call for which a suitable scalar function ought to be selected.
+     * @return An appropriate scalar function for thr provided call.
+     */
+    default T getFor( Call&lt;?&gt; call ) {
+<span class="fc" id="L28">        return this.get( call.get( Arg.DerivIdx.class ).get() );</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

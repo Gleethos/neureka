@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScalarActivation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.algorithms</a> &gt; <span class="el_source">ScalarActivation.java</span></div><h1>ScalarActivation.java</h1><pre class="source lang-java linenums">package neureka.backend.main.algorithms;
+
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.fun.SuitabilityPredicate;
+import neureka.backend.main.algorithms.internal.Fun;
+import neureka.backend.main.algorithms.internal.FunTuple;
+import neureka.calculus.args.Arg;
+import neureka.devices.Device;
+import neureka.devices.host.CPU;
+import neureka.devices.opencl.OpenCLDevice;
+import neureka.dtype.NumericType;
+import org.jetbrains.annotations.Contract;
+
+<span class="pc bpc" id="L17" title="1 of 2 branches missed.">public class ScalarActivation extends AbstractFunDeviceAlgorithm&lt;ScalarActivation&gt;</span>
+{
+    public ScalarActivation(FunTuple&lt;Fun.F64ToF64&gt; funs) {
+<span class="fc" id="L20">        super(&quot;scalar activation&quot;);</span>
+<span class="pc" id="L21">        setAutogradModeFor( call -&gt; AutoDiffMode.FORWARD_AND_BACKWARD );</span>
+<span class="fc" id="L22">        setIsSuitableFor( call -&gt;</span>
+<span class="fc" id="L23">            call.validate()</span>
+<span class="fc" id="L24">                .allNotNull( t -&gt; t.getDataType().typeClassImplements(NumericType.class) )</span>
+<span class="fc" id="L25">                .tensors( tensors -&gt;  {</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">                    if ( tensors.length != 2 ) return false;</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">                    if ( !tensors[1].isVirtual() ) return false;</span>
+<span class="pc bpc" id="L28" title="1 of 4 branches missed.">                    if ( tensors[0] != null &amp;&amp; !tensors[0].isVirtual() ) return false;</span>
+<span class="pc bpc" id="L29" title="1 of 6 branches missed.">                    return tensors[0] == null &amp;&amp; tensors[1] != null || tensors[0].shape().equals(tensors[1].shape());</span>
+                })
+<span class="fc" id="L31">                .suitabilityIfValid( SuitabilityPredicate.EXCELLENT )</span>
+        );
+<span class="fc" id="L33">        setCallPreparation(</span>
+            call -&gt; {
+<span class="fc" id="L35">                Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
+<span class="pc bpc" id="L36" title="2 of 4 branches missed.">                assert call.input( 0 ) == null;  // Creating a new tensor:</span>
+<span class="fc" id="L37">                int[] outShape = call.input( 1 ).getNDConf().shape();</span>
+<span class="fc" id="L38">                Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input( 1 ).getValueClass();</span>
+<span class="fc" id="L39">                Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );</span>
+                try {
+<span class="fc" id="L41">                    device.store( output );</span>
+<span class="nc" id="L42">                } catch( Exception e ) {</span>
+<span class="nc" id="L43">                    e.printStackTrace();</span>
+<span class="fc" id="L44">                }</span>
+<span class="fc" id="L45">                call.setInput( 0, output );</span>
+<span class="fc" id="L46">                return call;</span>
+            }
+        );
+<span class="fc" id="L49">        setImplementationFor(</span>
+            OpenCLDevice.class,
+            call -&gt; {
+<span class="fc" id="L52">                Number value =  funs.getFor( call ).invoke(call.input( Number.class, 1 ).getValueAt(0).doubleValue());</span>
+<span class="fc" id="L53">                Tsr&lt;Number&gt; out = call.input( Number.class, 0 );</span>
+<span class="fc" id="L54">                out.getUnsafe().setDataAt(0, value);</span>
+<span class="fc" id="L55">            }</span>
+        );
+<span class="fc" id="L57">    }</span>
+
+    public static Functions.Builder&lt;Fun&gt; implementationForCPU() {
+<span class="fc" id="L60">        return Functions.implementation( 2, call -&gt; 1, ScalarActivation::_workloadFor );</span>
+    }
+
+    @Contract(pure = true)
+    private static CPU.RangeWorkload _workloadFor(
+            ExecutionCall&lt;CPU&gt; call,
+            Functions&lt;Fun&gt; functions
+    ) {
+<span class="fc" id="L68">        CPU.RangeWorkload workload = (i,end) -&gt; {</span>
+<span class="fc" id="L69">            Number value =  functions.get(Fun.F64ToF64.class).get( call.get( Arg.DerivIdx.class ) ).invoke(call.input( Number.class, 1 ).getValueAt(0).doubleValue());</span>
+<span class="fc" id="L70">            Tsr&lt;Number&gt; out = call.input( Number.class, 0 );</span>
+<span class="fc" id="L71">            out.getUnsafe().setDataAt(0, value);</span>
+<span class="fc" id="L72">        };</span>
+<span class="fc" id="L73">        return workload;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

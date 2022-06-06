@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Apr 03 14:55:58 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Jun 06 11:39:50 CEST 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.137 seconds</td>
+<td>1.607 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -359,10 +359,10 @@ div.footer {
 <tbody>
 <ul id='toc'>
 <li>
-<a href='#-1490789273' class='feature-toc-pass'>GraphNode throws exception when trying to instantiate with the wrong context.</a>
+<a href='#-1810110387' class='feature-toc-pass'>GraphNode throws an exception when trying to instantiate it with the wrong context.</a>
 </li>
 <li>
-<a href='#1843082245' class='feature-toc-pass'>GraphNode throws exception when trying to instantiate with Function argument being null.</a>
+<a href='#-1229485501' class='feature-toc-pass'>GraphNode throws exception when trying to instantiate it with the Function argument being null.</a>
 </li>
 <li>
 <a href='#323273333' class='feature-toc-pass'>GraphNode throws exception when payload is null.</a>
@@ -379,10 +379,11 @@ div.footer {
 </ul>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-1490789273'>
-<span>GraphNode throws exception when trying to instantiate with the wrong context.</span>
-<span style='float: right; font-size: 60%;'>
+<div class='feature-description' id='-1810110387'>
+<span>GraphNode throws an exception when trying to instantiate it with the wrong context.</span>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.054 seconds)</div>
 </span>
 </div>
 </td>
@@ -392,15 +393,28 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>Arguments used to call the GraphNode constructor where the context variable contains the wrong type.</div>
+<div class='block-text'>Mocked arguments used to call the GraphNode constructor...</div>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>
 <pre class='block-source'>Function function = Mock(Function)
-Supplier&lt;Tsr&gt; supplier = () -&gt; Mock(Tsr)
-Object context = new Integer(3)</pre>
+Supplier&lt;Tsr&gt; supplier = () -&gt; Mock(Tsr)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Also a nonsensical context object which is of type "Integer".</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Object context = new Integer(3)</pre>
 </td>
 </tr>
 <tr>
@@ -408,13 +422,13 @@ Object context = new Integer(3)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<div class='block-text'>We try to instantiate a GraphNode...</div>
+<div class='block-text'>We try to instantiate a GraphNode using the above variables...</div>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>new GraphNode(function, context, supplier)</pre>
+<pre class='block-source'>new GraphNode&lt;Object&gt;(function, context, supplier)</pre>
 </td>
 </tr>
 <tr>
@@ -438,7 +452,7 @@ exception.message == "The passed context object for the GraphNode constructor is
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<div class='block-text'>The function has not been called.</div>
+<div class='block-text'>The node will check if autograd is enabled upon construction...</div>
 </td>
 </tr>
 <tr>
@@ -449,10 +463,11 @@ exception.message == "The passed context object for the GraphNode constructor is
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='1843082245'>
-<span>GraphNode throws exception when trying to instantiate with Function argument being null.</span>
-<span style='float: right; font-size: 60%;'>
+<div class='feature-description' id='-1229485501'>
+<span>GraphNode throws exception when trying to instantiate it with the Function argument being null.</span>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.115 seconds)</div>
 </span>
 </div>
 </td>
@@ -506,8 +521,9 @@ exception.message == "Passed constructor argument of type Function must not be n
 <td colspan='10'>
 <div class='feature-description' id='323273333'>
 <span>GraphNode throws exception when payload is null.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.014 seconds)</div>
 </span>
 </div>
 </td>
@@ -561,8 +577,9 @@ exception.message == "The supplied payload Tsr must no be null!"</pre>
 <td colspan='10'>
 <div class='feature-description' id='-1737158464'>
 <span>GraphNode instantiation throws exception because tensors of ExecutionCall do not return GraphNode instances.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(1.277 seconds)</div>
 </span>
 </div>
 </td>
@@ -649,8 +666,9 @@ exception.message ==
 <td colspan='10'>
 <div class='feature-description' id='-1772875211'>
 <span>GraphNode instantiation throws exception because GraphNode instances of input tensors do not share the same GraphLock.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.009 seconds)</div>
 </span>
 </div>
 </td>
@@ -739,8 +757,9 @@ exception.message ==
 <td colspan='10'>
 <div class='feature-description' id='-935311534'>
 <span>GraphNode throws an exception when trying to execute an inline operation on inputs with active autograd.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.120 seconds)</div>
 </span>
 </div>
 </td>

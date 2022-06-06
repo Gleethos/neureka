@@ -62,7 +62,7 @@ plugins {
 compileJava { options.encoding = "UTF-8" } // Allows for '"' characters in comments for example...
 
 String PROJECT = "neureka"
-String VERSION = "0.16.0"
+String VERSION = "0.17.0"
 String GROUP_ID = "com.github.gleethos"
 String BASENAME = "neureka"
 
@@ -245,7 +245,7 @@ task deploy() {
 
     dependsOn 'check'
     dependsOn 'jar'
-    dependsOn 'proguard'
+    //dependsOn 'proguard'
     dependsOn 'javadoc'
     dependsOn 'releaseJDocs'
     dependsOn 'releaseSpockReports'

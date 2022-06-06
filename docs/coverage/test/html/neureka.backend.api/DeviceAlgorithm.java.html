@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DeviceAlgorithm.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api</a> &gt; <span class="el_source">DeviceAlgorithm.java</span></div><h1>DeviceAlgorithm.java</h1><pre class="source lang-java linenums">package neureka.backend.api;
+
+import neureka.backend.api.template.algorithms.FunDeviceAlgorithm;
+import neureka.common.utility.LogUtil;
+import neureka.devices.Device;
+
+/**
+ *  A {@link DeviceAlgorithm} is an advanced form of {@link Algorithm} which
+ *  delegates the execution to implementations of {@link ImplementationFor} specific {@link Device} types.
+ *
+ * @param &lt;C&gt; The type parameter defining the concrete type of implementations of this.
+ */
+public interface DeviceAlgorithm&lt;C extends DeviceAlgorithm&lt;C&gt;&gt; extends Algorithm
+{
+    /**
+     * This is a factory method for creating a new instance of this {@link FunDeviceAlgorithm} class.
+     *
+     * @param name The name of the functional algorithm.
+     * @return A new {@link FunDeviceAlgorithm} with the provided name.
+     */
+    static FunDeviceAlgorithm withName(String name ) {
+<span class="fc" id="L22">        LogUtil.nullArgCheck( name, &quot;name&quot;, String.class );</span>
+<span class="fc" id="L23">        return new FunDeviceAlgorithm( name );</span>
+    }
+
+    /**
+     * Implementations of the {@link DeviceAlgorithm} interface ought to express a compositional design pattern. &lt;br&gt;
+     * This means that concrete implementations of an algorithm for a device are not extending
+     * an Algorithm, they are components of it instead. &lt;br&gt;
+     * These components can be stored on an Algorithm by passing
+     * a Device class as key and an ImplementationFor instance as value.
+     *
+     * @param deviceClass    The class of the {@link Device} for which an implementation should be set.
+     * @param implementation The {@link ImplementationFor} the provided {@link Device} type.
+     * @param &lt;D&gt;            The type parameter of the {@link Device} type for which
+     *                       an implementation should be set in this {@link Device}.
+     * @param &lt;I&gt;            The type of the {@link ImplementationFor} the provided {@link Device} type.
+     * @return This very {@link Algorithm} instance to allow for method chaining.
+     */
+    &lt;D extends Device&lt;?&gt;, I extends ImplementationFor&lt;D&gt;&gt; C setImplementationFor( Class&lt;D&gt; deviceClass, I implementation );
+
+    /**
+     * An {@link ImplementationFor} a specific {@link Device} can be accessed by passing the class of
+     * the {@link Device} for which an implementation should be returned.
+     * An Algorithm instance ought to contain a collection of these {@link Device} specific
+     * implementations...
+     *
+     * @param deviceClass The class of the device for which the stored algorithm implementation should be returned.
+     * @param &lt;D&gt;         The type parameter which has to be a class extending the Device interface.
+     * @return The implementation for the passed device type class.
+     */
+    &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( Class&lt;D&gt; deviceClass );
+
+    /**
+     * An {@link ImplementationFor} a specific {@link Device} can be accessed by passing
+     * the {@link Device} for which an implementation should be returned.
+     * An Algorithm instance ought to contain a collection of these {@link Device} specific
+     * implementations...
+     *
+     * @param device The device for which the stored algorithm implementation should be returned.
+     * @param &lt;D&gt;    type parameter which has to be a class extending the Device interface.
+     * @return The implementation for the passed device type class.
+     */
+    default &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( D device ) {
+<span class="fc" id="L65">        return (ImplementationFor&lt;D&gt;) getImplementationFor(device.getClass());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

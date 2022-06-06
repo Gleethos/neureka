@@ -64,7 +64,7 @@ import static org.jocl.CL.*;
 
     /**
      * This method passes 1 argument to the kernel.
-     * Namely the data of the tensor!
+     * Namely, the data of the tensor!
      * @param tensor The tensor whose data ought to be passed to the kernel.
      * @return This very KernelCaller instance (factory patter).
      */
@@ -127,7 +127,7 @@ import static org.jocl.CL.*;
 <span class="nc" id="L127">            clWaitForEvents( events.length, events );</span>
 <span class="nc" id="L128">            _releaseEvents( _inputs.toArray( new Tsr[ 0 ] ) );</span>
         }
-<span class="pc bpc" id="L130" title="2 of 6 branches missed.">        if ( localWorkSizes != null ) assert globalWorkSizes.length == localWorkSizes.length;</span>
+<span class="pc bpc" id="L130" title="2 of 6 branches missed.">        assert localWorkSizes == null || globalWorkSizes.length == localWorkSizes.length;</span>
 <span class="fc" id="L131">        clEnqueueNDRangeKernel(</span>
                 _queue, _kernel,
                 globalWorkSizes.length,

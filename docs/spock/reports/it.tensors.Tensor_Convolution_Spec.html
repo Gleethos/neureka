@@ -1,0 +1,1022 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
+}
+
+h3 {
+    font-weight: 200;
+}
+
+table {
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+}
+
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+table.features-table {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table {
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table th {
+    background: lightblue;
+    padding: 6px;
+}
+
+table.summary-table td {
+    background: #E0E0E0;
+    padding: 6px;
+}
+
+pre.title {
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+pre.narrative {
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+.feature-description {
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
+}
+
+.feature-toc-error {
+    color: #F89A4F;
+}
+
+.feature-toc-failure {
+    color: #FF8080;
+}
+
+.feature-toc-ignored {
+    color: lightgray;
+}
+
+.feature-toc-pass {
+    color: green;
+}
+
+.feature-description.error {
+    background: #F89A4F;
+}
+
+.feature-description.failure {
+    background: #FF8080;
+}
+
+.feature-description.ignored {
+    background: lightgray;
+}
+
+.feature-description.ignored .reason {
+    color: black;
+    font-style: italic;
+    font-size: small;
+}
+
+div.extra-info {
+    font-size: small;
+}
+
+div.spec-headers {
+    margin: 4px;
+    font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
+}
+
+div.pending-feature {
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
+}
+
+div.problem-description {
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
+}
+
+div.problem-header {
+    font-weight: bold;
+    color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table{
+    width: 98%;
+}
+
+table.ex-table th {
+    background: lightblue;
+    padding: 5px;
+}
+
+table.ex-table td {
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
+}
+
+table td {
+    min-width: 50px;
+}
+
+col.block-kind-col {
+    width: 70px;
+}
+
+span.spec-header {
+    font-weight: bold;
+}
+
+div.spec-text {
+    /*color: green;*/
+}
+
+div.spec-status {
+    font-style: italic;
+}
+
+.ignored {
+    color: gray;
+}
+
+td.ex-result {
+    text-align: center;
+    background: white !important;
+}
+
+.ex-pass {
+    color: darkgreen;
+}
+
+.ex-fail {
+    color: red;
+    font-weight: bold;
+}
+
+div.block-kind {
+    margin: 2px;
+    font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+pre.block-source.error {
+    background-color: pink;
+    color: red;
+    font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+    margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+    color: gray;
+    margin-top: -14px;
+}
+
+pre.block-source.post-error {
+    color: gray;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}</style>
+</head>
+<body>
+<h2>Report for it.tensors.Tensor_Convolution_Spec</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Mon Jun 06 11:39:39 CEST 2022 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td>
+<td>6</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>5.391 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#205813806' class='feature-toc-pass'>The "x" (convolution) operator produces expected results (On the CPU).</a>
+</li>
+<li>
+<a href='#141960180' class='feature-toc-pass'>Manual convolution produces expected result.</a>
+</li>
+<li>
+<a href='#-726362696' class='feature-toc-pass'>Very simple manual convolution produces expected result.</a>
+</li>
+<li>
+<a href='#-785175953' class='feature-toc-pass'>Autograd works with simple 2D convolution.</a>
+</li>
+<li>
+<a href='#-914885893' class='feature-toc-pass'>Sime convolution works as expected eith autograd.</a>
+</li>
+<li>
+<a href='#822646777' class='feature-toc-pass'>Tensors have the correct layout after convolution.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='205813806'>
+<span>The "x" (convolution) operator produces expected results (On the CPU).</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(1.868 seconds)</div>
+</span>
+<div class='extra-info'>
+<ul>
+<li>
+<div>
+            The 'x' operator performs convolution on the provided operands.
+            The meaning of the operands is not defined, so one the kernel tensor
+            can be the first and second operand. 
+        </div>
+</li>
+<li>
+<div>
+            The 'x' operator performs convolution on the provided operands.
+            The meaning of the operands is not defined, so one the kernel tensor
+            can be the first and second operand. 
+        </div>
+</li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Gradient auto apply for tensors in ue is set to false.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Tensor legacy view is set to true.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Two new 3D tensor instances with the shapes: [2x3x1] &amp; [1x3x2].</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var x = Tsr.of(new int[]{2, 3, 1},
+    new double[]{
+        3,  2, -1,
+        -2,  2,  4
+    }
+)
+.unsafe.toType(type)
+var y = Tsr.of(new int[]{1, 3, 2},
+    new double[]{
+        4, -1,
+        3,  2,
+        3, -1
+    }
+)
+.unsafe.toType(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The x-mul result is being instantiated by passing a simple equation to the tensor constructor.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var z = Tsr.of("I0xi1", x, y)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The result contains the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>z.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>z = Tsr.of(new Object[]{x, "x", y})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The result contains the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>z.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>[2x1x2]:(15.0, 2.0, 10.0, 2.0)</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(1.306 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>[2x1x2]:(15.0, 2.0, 10.0, 2.0)</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.562 seconds)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='141960180'>
+<span>Manual convolution produces expected result.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.728 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
+Tsr a = Tsr.of([100, 100], 3d..19d)
+Tsr x = a[1..-2,0..-1]
+Tsr y = a[0..-3,0..-1]
+Tsr z = a[2..-1,0..-1]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr rowconvol = x + y + z
+Tsr k = rowconvol[0..-1,1..-2]
+Tsr v = rowconvol[0..-1,0..-3]
+Tsr j = rowconvol[0..-1,2..-1]
+Tsr u = a[1..-2,1..-2]
+Tsr colconvol = k + v + j - 9 * u
+String xAsStr = x.toString()
+String yAsStr = y.toString()
+String zAsStr = z.toString()
+String rcAsStr = rowconvol.toString()
+String kAsStr = k.toString()
+String vAsStr = v.toString()
+String jAsStr = j.toString()
+String uAsStr = u.toString()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>xAsStr.contains("(98x100):[18.0, 19.0, 3.0, 4.0, 5.0")
+yAsStr.contains("(98x100):[3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0")
+zAsStr.contains("(98x100):[16.0, 17.0, 18.0, 19.0, 3.0")
+rcAsStr.contains("(98x100):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0")
+kAsStr.contains("(98x98):[40.0, 26.0, 29.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0")
+vAsStr.contains("(98x98):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0, 21.0")
+jAsStr.contains("(98x98):[26.0, 29.0, 15.0, 18.0, 21.0, 24.0")
+uAsStr.contains("(98x98):[19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, ")
+colconvol.toString().contains("(98x98):[-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, " +
+"-34.0, -68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, -34.0, " +
+"-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, ... + 9554 more]")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-726362696'>
+<span>Very simple manual convolution produces expected result.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(1.035 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>----</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used for tensor instantiation :</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>device</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.450 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x1388db96a40],platform=OpenCLPlatform@2953bba6[pid=cl_platform_id[0x1388db96810],context=cl_context[0x1388af30c10],kernels=[..46..]]]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.585 seconds)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-785175953'>
+<span>Autograd works with simple 2D convolution.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.461 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The following library configuration is being used.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The following calculations are being executed...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr&lt;Double&gt; i_a = Tsr.of([2, 1], [
+    1d,
+    2d
+])
+Tsr&lt;Double&gt; w_a = Tsr.of([2, 2], [
+        1d, 3d,
+        4d, -1d
+]).setRqsGradient(true)
+Tsr&lt;Double&gt; o_a = Tsr.of(i_a, "x", w_a)
+Tsr&lt;Double&gt; w_b = Tsr.of([2, 2], [
+        -2d, 1d,  // 9, 1 -&gt; -17
+        2d, -1d   // ... -&gt; 17
+]).setRqsGradient(true)
+Tsr o_b = Tsr.of(o_a, "x", w_b)
+Tsr w_c = Tsr.of([2, 2], [
+        0.5d, 3d,
+        -2d, -0.5d
+]).setRqsGradient(true)
+Tsr o_c = Tsr.of(o_a, "x", w_c)
+Tsr out = o_b * o_c</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The results are as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>o_a.toString().contains("(9.0, 1.0)")
+out.toString().contains("(-127.5, -314.5)")
+o_b.toString().contains("(-17.0, 17.0)")
+o_c.toString().contains("(7.5, -18.5)")
+w_a.toString().contains("g:(null)")
+w_b.toString().contains("g:(null)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The "backward" method is being called on the "out" tensor...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>out.backward(Tsr.of([2, 1], 1d))</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The autograd system produces the expected results.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>w_a.toString().contains("g:(null)")
+!w_b.toString().contains("g:(null)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Neureka is being configured to apply tensors when host tensor is being used...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+w_a * 3
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The tensors change their states as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>w_a.toString().contains("g:(null)")
+w_a.toString().contains("(-93.5, -30.5, -185.0, -68.0):g:(null)")
+!w_b.toString().contains("g:(null)")
+w_b.toString().contains("g:(67.5, 7.5, -166.5, -18.5)")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-914885893'>
+<span>Sime convolution works as expected eith autograd.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.576 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr i_a = Tsr.of([2, 1], [1d, 2d])
+Tsr w_a = Tsr.of([2, 2], [1d, 3d, 4d, -1d]).setRqsGradient(true)
+Tsr o_a = Tsr.of(i_a,"x", w_a)
+Tsr w_b = Tsr.of([2, 2], [-2d, 1d, 2d, -1d]).setRqsGradient(true)
+Tsr o_b = Tsr.of(o_a,"x", w_b)
+Tsr w_c = Tsr.of([2, 2], [0.5d, 3d, -2d, -0.5d]).setRqsGradient(true)
+Tsr o_c = Tsr.of(o_a, "x", w_c)
+Tsr out = o_b*o_c</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>o_a.toString().contains("(9.0, 1.0)")
+out.toString().contains("(-127.5, -314.5)")
+o_b.toString().contains("(-17.0, 17.0)")
+o_c.toString().contains("(7.5, -18.5)")
+w_a.toString().contains("g:(null)")
+w_b.toString().contains("g:(null)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>out.backward(Tsr.of([2, 1], 1))</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>w_a.toString().contains("g:(null)")
+!w_b.toString().contains("g:(null)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+w_a * 3
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>w_a.toString().contains("g:(null)")
+!w_a.toString().contains("1.0, 3.0, 4.0, -1.0")
+!w_b.toString().contains("g:(null)")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='822646777'>
+<span>Tensors have the correct layout after convolution.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.584 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr&lt;Double&gt; t0 = Tsr.of([3, 2, 1], [
+        1d, 2d,
+        3d, 4d,
+        5d, 6d
+])
+Tsr&lt;Double&gt; x0 = Tsr.of([1, 2, 3], [
+        1d, 2d, 3d,
+        4d, 5d, 6d
+])</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>t0.unsafe.data == [1, 2, 3, 4, 5, 6] as double[]
+x0.unsafe.data == [1, 2, 3, 4, 5, 6] as double[]
+t0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR
+x0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr&lt;Double&gt; out0 = Tsr.of("i0xi1", [t0, x0] )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>out0.toString() == "(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t0.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+x0.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR
+x0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR
+t0.unsafe.data == [1, 3, 5, 2, 4, 6] as double[]
+x0.unsafe.data == [1, 4, 2, 5, 3, 6] as double[]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>t0.toString() == "(3x2x1):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]"
+x0.toString() == "(1x2x3):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>out0 = Tsr.of("i0xi1", [t0, x0])</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>out0.toString() == "(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]"</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>

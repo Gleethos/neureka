@@ -42,52 +42,40 @@ package neureka.autograd;
 
 import neureka.Tsr;
 
+import java.util.Optional;
+
 /**
  *  {@link ADAgent} stands for &quot;Auto-Differentiation-Agent&quot;, meaning
  *  that implementations of this class are responsible for managing
  *  forward- and reverse- mode differentiation actions.
- *  These actions are accessible through the &quot;{@link ADAgent#forward(GraphNode, Tsr)}&quot;
- *  and &quot;{@link ADAgent#backward(GraphNode, Tsr)}&quot; method which are being triggered
+ *  These differentiation actions are performed through the &quot;{@link ADAgent#act(ADTarget)}&quot;
+ *  method which are being called
  *  by instances of the {@link GraphNode} class during propagation.
+ *  An {@link ADAgent} may also wrap and expose a partial derivative
+ *  which may or may not be present for certain operations.
+ *  Said derivative must be tracked and flagged as derivative by a {@link GraphNode}
+ *  to make sure that it will not be deleted after a forward pass.
  */
 public interface ADAgent
 {
-    static DefaultADAgent of( Tsr&lt;?&gt; derivative ) {
-<span class="fc" id="L56">        return DefaultADAgent.ofDerivative( derivative );</span>
-    }
-    
+<span class="fc" id="L61">    static WithADAction of( Tsr&lt;?&gt; derivative ) { return DefaultADAgent.ofDerivative( derivative ); }</span>
+
+<span class="fc" id="L63">    static ADAgent withAD( ADAction action ) { return of( null ).withAD( action ); }</span>
+
     /**
-     *  The auto-differentiation forward pass of an ADAgent
+     *  The auto-differentiation forward or backward pass of an ADAgent
      *  propagate partial differentiations forward along the computation graph.
      *
-     * @param target The node which is targeted to hold the partial derivative.
-     * @param derivative The partial derivative which ought to be propagated forward.
+     * @param target A wrapper for the node which is targeted to hold the partial derivative and the error.
      * @param &lt;T&gt; The type argument of the tensor that is being used.
-     * @return The result of a forward mode auto differentiation.
+     * @return The result of a forward or backward mode auto differentiation.
      */
-    &lt;T&gt; Tsr&lt;T&gt; forward( GraphNode&lt;T&gt; target, Tsr&lt;T&gt; derivative );
+    &lt;T&gt; Tsr&lt;T&gt; act( ADTarget&lt;T&gt; target );
 
     /**
-     *  The auto-differentiation backward pass of an ADAgent
-     *  propagates error values backward along the computation graph.
-     *
-     * @param target The node which is targeted to hold the new error.
-     * @param error The error which ought to be propagated backward.
-     * @param &lt;T&gt; The type argument of the tensor that is being used.
-     * @return The result of a backward mode auto differentiation, and new error for the targeted graph node.
+     * @return An optional partial derivative which may not be present if the agent does not wrap a partial derivative...
      */
-    &lt;T&gt; Tsr&lt;T&gt; backward( GraphNode&lt;T&gt; target, Tsr&lt;T&gt; error );
-
-    /**
-     * @return A partial derivative or null if the agent does not contain a partial derivative...
-     */
-    Tsr&lt;?&gt; derivative();
-
-    boolean hasForward();
-
-    boolean hasBackward();
-
-    String toString();
+    Optional&lt;Tsr&lt;?&gt;&gt; partialDerivative();
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

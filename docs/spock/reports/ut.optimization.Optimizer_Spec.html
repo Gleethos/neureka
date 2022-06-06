@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Apr 03 14:56:05 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Jun 06 11:40:04 CEST 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>1</td>
 <td>100.0%</td>
-<td>0</td>
+<td>0.002 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -349,14 +349,14 @@ div.footer {
 <tbody>
 <ul id='toc'>
 <li>
-<a href='#2131378091' class='feature-toc-ignored'>Dot product operation based weight feed forwarded calculation is being optimized</a>
+<a href='#-1060475198' class='feature-toc-ignored'>Conv dot based feed forward and activation produces expected result.</a>
 </li>
 </ul>
 <tr>
 <td colspan='10'>
-<div class='feature-description ignored' id='2131378091'>
-<span>Dot product operation based weight feed forwarded calculation is being optimized</span>
-<span style='float: right; font-size: 60%;'>
+<div class='feature-description ignored' id='-1060475198'>
+<span>Conv dot based feed forward and activation produces expected result.</span>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
 </span>
 </div>
@@ -368,17 +368,26 @@ div.footer {
 </td>
 <td>
 <pre class='block-source'>def data = Tsr.of([8, 4], [ // a-b*c
-                                          1d,  2d,  2d, -3d,
-                                          3d, -1d, -1d,  4d,
-                                         -1d, -2d, -3d, -7d,
-                                         -2d, -3d,  4d,  10d,
-                                          4d,  5d, -1d,  9d,
-                                          6d,  2d,  3d,  0d,
-                                          7d,  3d,  2d,  1d,
-                                         -4d, -4d,  2d,  4d
-
-            ])
-def X = data[0..-1, 0..2].T()</pre>
+      1d,  2d,  2d, -3d,
+      3d, -1d, -1d,  4d,
+     -1d, -2d, -3d, -7d,
+     -2d, -3d,  4d,  10d,
+      4d,  5d, -1d,  9d,
+      6d,  2d,  3d,  0d,
+      7d,  3d,  2d,  1d,
+     -4d, -4d,  2d,  4d
+])
+var X = data[0..-1, 0..2].T()</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>var w1 = Tsr.of([8, 3], ":-)").setRqsGradient(true)
+var w2 = Tsr.of([7, 8], "O.o").setRqsGradient(true)
+var w3 = Tsr.of([1, 7], ":P").setRqsGradient(true)</pre>
 </td>
 </tr>
 <tr class='ignored'>
@@ -396,30 +405,29 @@ X.NDConf.shape()       == [ 3, 8 ] as int[]</pre>
 </tr>
 <tr class='ignored'>
 <td>
-<div class='block-kind'>When:</div>
+<div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>def w1 = Tsr.of([8, 3], ":-)").setRqsGradient(true)
-def w2 = Tsr.of([7, 8], "O.o").setRqsGradient(true)
-def w3 = Tsr.of([1, 7], ":P").setRqsGradient(true)</pre>
-</td>
-</tr>
-<tr class='ignored'>
-<td>
-<div class='block-kind'>Then:</div>
-</td>
-<td>
-<pre class='block-source'>w1.toString() == "(8x3):[-0.97380E0, -0.07925E0, 1.78121E0, -1.39653E0, -2.01835E0, -0.41131E0, 0.64522E0, -2.5104E0, 1.40632E0, -0.51236E0, -0.62507E0, -0.09238E0, -0.52655E0, 0.57702E0, -1.37303E0, -1.27665E0, 0.63007E0, -2.15027E0, -1.12862E0, 1.48548E0, -0.37397E0, -0.51683E0, 1.14686E0, 0.87993E0]:g:[null]"
-w2.toString() == "(7x8):[-0.24678E0, 0.81013E0, 0.23709E0, -0.63630E0, 0.96606E0, 1.48405E0, 0.02693E0, 0.21423E0, -1.29268E0, 0.62331E0, -2.10922E0, 0.11949E0, -1.68853E0, 0.61275E0, 0.24238E0, 0.18039E0, -1.06208E0, 2.36855E0, -0.17225E0, -0.01213E0, 0.80261E0, -1.2896E0, -0.00226E0, -0.04938E0, 0.76502E0, 0.21277E0, -0.09264E0, 0.86399E0, -0.27399E0, -0.56845E0, -0.40595E0, -0.89906E0, -0.32320E0, 0.54387E0, -0.26504E0, -0.43978E0, 1.58936E0, 1.00546E0, 0.03889E0, 0.16153E0, -0.27125E0, -0.63222E0, 3.87467E0, 0.31497E0, -0.47855E0, -0.01106E0, -1.39322E0, 0.23283E0, 0.36686E0, 0.25312E0, ... + 6 more]:g:[null]"
-w3.toString() == "(1x7):[-0.68675E0, 1.09107E0, 0.20312E0, -1.18979E0, 0.53206E0, 2.11926E0, 1.15821E0]:g:[null]"</pre>
+<pre class='block-source'>w1.toString() == "(8x3):[-0.97380, -0.07925, 1.78121, -1.39653, -2.01835, -0.41131, 0.64522, -2.5104, 1.40632, -0.51236, -0.62507, -0.09238, -0.52655, 0.57702, -1.37303, -1.27665, 0.63007, -2.15027, -1.12862, 1.48548, -0.37397, -0.51683, 1.14686, 0.87993]:g:[null]"
+w2.toString() == "(7x8):[-0.24678, 0.81013, 0.23709, -0.63630, 0.96606, 1.48405, 0.02693, 0.21423, -1.29268, 0.62331, -2.10922, 0.11949, -1.68853, 0.61275, 0.24238, 0.18039, -1.06208, 2.36855, -0.17225, -0.01213, 0.80261, -1.2896, -0.00226, -0.04938, 0.76502, 0.21277, -0.09264, 0.86399, -0.27399, -0.56845, -0.40595, -0.89906, -0.32320, 0.54387, -0.26504, -0.43978, 1.58936, 1.00546, 0.03889, 0.16153, -0.27125, -0.63222, 3.87467, 0.31497, -0.47855, -0.01106, -1.39322, 0.23283, 0.36686, 0.25312, ... + 6 more]:g:[null]"
+w3.toString() == "(1x7):[-0.68675, 1.09107, 0.20312, -1.18979, 0.53206, 2.11926, 1.15821]:g:[null]"</pre>
 </td>
 </tr>
 <tr class='ignored'>
 <td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>w1.set(new ADAM&lt;&gt;(w1))
+w2.set(new SGD&lt;&gt;(0.01))</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>def f = Function.of("softplus(I[0])")</pre>
+<pre class='block-source'>var f = Function.of("softplus(I[0])")</pre>
 </td>
 </tr>
 <tr class='ignored'>
@@ -438,7 +446,7 @@ w3.toString() == "(1x7):[-0.68675E0, 1.09107E0, 0.20312E0, -1.18979E0, 0.53206E0
 <pre class='block-source'>Tsr s = w1.convDot(X)
 Tsr a = f(s)
 Tsr b = f(w2.convDot(a))
-def y = w3.convDot(b)</pre>
+var y = w3.convDot(b)</pre>
 </td>
 </tr>
 <tr class='ignored'>
@@ -446,10 +454,49 @@ def y = w3.convDot(b)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>ParseUtil.similarity(
-        y.toString(),
-        "(8):[0.31170E0, 26.1058E0, -0.76121E0, 82.0447E0, 0.22348E0, 26.5363E0, 6.02289E0, 57.1377E0]; -&gt;d({ends=[I@e0530f4}), "
-) &gt; 0.8</pre>
+<pre class='block-source'>0.9 &lt; ParseUtil.similarity(y.toString(), "(8):[0.31170, 26.1058, -0.76121, 82.0447, 0.22348, 26.5363, 6.02289, 57.1377]; -&gt;d({Derivative=Derivative[null], Ends=Ends[[I@137855df]})")</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>y.backward(-4)
+w1.applyGradient()
+w2.applyGradient()
+w3.applyGradient()</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>w1.gradient.toString() == "(8x3):[-0.97380, -0.07925, 1.78121, -1.39653, -2.01835, -0.41131, 0.64522, -2.5104, 1.40632, -0.51236, -0.62507, -0.09238, -0.52655, 0.57702, -1.37303, -1.27665, 0.63007, -2.15027, -1.12862, 1.48548, -0.37397, -0.51683, 1.14686, 0.87993]:g:[-22.2834, -28.5797, 31.7585, -25.9093, -31.9633, 37.8158, -176.346, 175.956, -321.819, -50.9334, -68.3452, 54.9529, -1.40994, -10.1392, -11.3331, 3.39221, 3.06355, -2.62521, -0.99570, -0.63634, 8.29206, -3.4819, -3.20387, -0.94523]"
+w2.gradient.toString() == "(7x8):[-0.24678, 0.81013, 0.23709, -0.63630, 0.96606, 1.48405, 0.02693, 0.21423, -1.29268, 0.62331, -2.10922, 0.11949, -1.68853, 0.61275, 0.24238, 0.18039, -1.06208, 2.36855, -0.17225, -0.01213, 0.80261, -1.2896, -0.00226, -0.04938, 0.76502, 0.21277, -0.09264, 0.86399, -0.27399, -0.56845, -0.40595, -0.89906, -0.32320, 0.54387, -0.26504, -0.43978, 1.58936, 1.00546, 0.03889, 0.16153, -0.27125, -0.63222, 3.87467, 0.31497, -0.47855, -0.01106, -1.39322, 0.23283, 0.36686, 0.25312, ... + 6 more]:g:[null]"
+w3.gradient.toString() == "(1x7):[-0.68675, 1.09107, 0.20312, -1.18979, 0.53206, 2.11926, 1.15821]:g:[null]"</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>y.backward(-2)
+w1.applyGradient()
+w2.applyGradient()
+w3.applyGradient()</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>w1.gradient.toString() == "(8x3):[-0.97380, -0.07925, 1.78121, -1.39653, -2.01835, -0.41131, 0.64522, -2.5104, 1.40632, -0.51236, -0.62507, -0.09238, -0.52655, 0.57702, -1.37303, -1.27665, 0.63007, -2.15027, -1.12862, 1.48548, -0.37397, -0.51683, 1.14686, 0.87993]:g:[null]"
+w2.gradient.toString() == "(7x8):[-0.24678, 0.81013, 0.23709, -0.63630, 0.96606, 1.48405, 0.02693, 0.21423, -1.29268, 0.62331, -2.10922, 0.11949, -1.68853, 0.61275, 0.24238, 0.18039, -1.06208, 2.36855, -0.17225, -0.01213, 0.80261, -1.2896, -0.00226, -0.04938, 0.76502, 0.21277, -0.09264, 0.86399, -0.27399, -0.56845, -0.40595, -0.89906, -0.32320, 0.54387, -0.26504, -0.43978, 1.58936, 1.00546, 0.03889, 0.16153, -0.27125, -0.63222, 3.87467, 0.31497, -0.47855, -0.01106, -1.39322, 0.23283, 0.36686, 0.25312, ... + 6 more]:g:[null]"
+w3.gradient.toString() == "(1x7):[-0.68675, 1.09107, 0.20312, -1.18979, 0.53206, 2.11926, 1.15821]:g:[null]"</pre>
 </td>
 </tr>
 </tbody>

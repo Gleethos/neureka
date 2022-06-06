@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PNGHandle.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.file.handles</a> &gt; <span class="el_source">PNGHandle.java</span></div><h1>PNGHandle.java</h1><pre class="source lang-java linenums">package neureka.devices.file.handles;
+
+import neureka.Tsr;
+
+public class PNGHandle extends AbstractImageFileHandle&lt;PNGHandle&gt;
+{
+<span class="fc" id="L7">    public PNGHandle( String fileName ) { this(null, fileName); }</span>
+
+    public PNGHandle( Tsr&lt;Number&gt; t, String filename ) {
+<span class="fc" id="L10">        super(t, filename, new ImageFileType() {</span>
+<span class="fc" id="L11">            @Override public Tsr.ImageType imageType() { return Tsr.ImageType.ABGR_4BYTE; }</span>
+
+<span class="nc" id="L13">            @Override public String imageTypeName() { return &quot;png&quot;; }</span>
+
+<span class="fc" id="L15">            @Override public String defaultExtension() { return &quot;png&quot;; }</span>
+        });
+<span class="fc" id="L17">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

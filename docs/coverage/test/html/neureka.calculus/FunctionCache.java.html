@@ -42,7 +42,7 @@ import java.util.Map;
 <span class="fc" id="L42">public final class FunctionCache</span>
 {
     private final static int CAPACITY = 1024;
-<span class="fc" id="L45">    private Logger _log = LoggerFactory.getLogger( FunctionCache.class );</span>
+<span class="fc" id="L45">    private final Logger _LOG = LoggerFactory.getLogger( FunctionCache.class );</span>
 
 <span class="fc" id="L47">    private final Map&lt;String, Function&gt; _functionCache = new LinkedHashMap&lt;String, Function&gt;() {</span>
         @Override
@@ -53,7 +53,7 @@ import java.util.Map;
 
     public void put( Function function ) {
 <span class="pc bpc" id="L55" title="1 of 2 branches missed.">        if ( function == null ) {</span>
-<span class="nc" id="L56">            _log.error(&quot;Null reference passed to '&quot;+getClass().getSimpleName()+&quot;'!&quot;);</span>
+<span class="nc" id="L56">            _LOG.error(&quot;Null reference passed to '&quot;+getClass().getSimpleName()+&quot;'!&quot;);</span>
 <span class="nc" id="L57">            return;</span>
         }
 <span class="fc" id="L59">        boolean doAD = function.isDoingAD();</span>
@@ -73,9 +73,7 @@ import java.util.Map;
 <span class="fc" id="L73">        return _functionCache.containsKey( k );</span>
     }
 
-    public String toString() {
-<span class="fc" id="L77">        return this.getClass().getSimpleName()+&quot;[size=&quot;+_functionCache.size()+&quot;]&quot;;</span>
-    }
+<span class="fc" id="L76">    public String toString() { return this.getClass().getSimpleName()+&quot;[size=&quot;+_functionCache.size()+&quot;]&quot;; }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

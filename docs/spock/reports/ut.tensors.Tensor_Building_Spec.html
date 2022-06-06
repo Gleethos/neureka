@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Apr 03 14:56:06 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Jun 06 11:40:04 CEST 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.088 seconds</td>
+<td>0.101 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -374,8 +374,9 @@ div.footer {
 <td colspan='10'>
 <div class='feature-description' id='-1428332698'>
 <span>Tensors can be created fluently.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.002 seconds)</div>
 </span>
 </div>
 </td>
@@ -499,37 +500,55 @@ t.value.length == 6</pre>
 <td class='ex-value'>class java.lang.Integer</td>
 <td class='ex-value'>4</td>
 <td class='ex-value'>[4]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>4.0</td>
 <td class='ex-value'>[4.0]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>4.0</td>
 <td class='ex-value'>[4.0]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Long</td>
 <td class='ex-value'>42</td>
 <td class='ex-value'>[42]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Boolean</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[false]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Character</td>
 <td class='ex-value'>°</td>
 <td class='ex-value'>°</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -543,8 +562,9 @@ t.value.length == 6</pre>
 <td colspan='10'>
 <div class='feature-description' id='1523077750'>
 <span>Range based tensors can be created fluently.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.007 seconds)</div>
 </span>
 </div>
 </td>
@@ -562,7 +582,7 @@ t.value.length == 6</pre>
 <td>
 <pre class='block-source'>Tsr&lt;?&gt; t = Tsr.of( type )
 .withShape( 3, 2 )
-.iterativelyFilledFrom( from ).to( to ).step( step )</pre>
+.andFillFrom( from ).to( to ).step( step )</pre>
 </td>
 </tr>
 <tr>
@@ -672,7 +692,10 @@ t.data == data</pre>
 <td class='ex-value'>18</td>
 <td class='ex-value'>2.0</td>
 <td class='ex-value'>[-9, -7, -5, -3, -1, 1]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.003 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Integer</td>
@@ -680,7 +703,10 @@ t.data == data</pre>
 <td class='ex-value'>4</td>
 <td class='ex-value'>2.0</td>
 <td class='ex-value'>[-2, 0, 2, 4, -2, 0]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Double</td>
@@ -688,7 +714,10 @@ t.data == data</pre>
 <td class='ex-value'>45.0</td>
 <td class='ex-value'>3.0</td>
 <td class='ex-value'>[2.7, 5.7, 8.7, 11.7, 14.7, 17.7]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Double</td>
@@ -696,7 +725,10 @@ t.data == data</pre>
 <td class='ex-value'>3.0</td>
 <td class='ex-value'>0.5</td>
 <td class='ex-value'>[-3.0, -2.5, -2.0, -1.5, -1.0, -0.5]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Float</td>
@@ -704,7 +736,10 @@ t.data == data</pre>
 <td class='ex-value'>78.3</td>
 <td class='ex-value'>4.0</td>
 <td class='ex-value'>[6.4, 10.4, 14.4, 18.4, 22.4, 26.4]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Float</td>
@@ -712,7 +747,10 @@ t.data == data</pre>
 <td class='ex-value'>1.0</td>
 <td class='ex-value'>0.2</td>
 <td class='ex-value'>[0.0, 0.2, 0.4, 0.6, 0.8, 1.0]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Byte</td>
@@ -720,7 +758,10 @@ t.data == data</pre>
 <td class='ex-value'>6</td>
 <td class='ex-value'>2.0</td>
 <td class='ex-value'>[-5, -3, -1, 1, 3, 5]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Long</td>
@@ -728,7 +769,10 @@ t.data == data</pre>
 <td class='ex-value'>45</td>
 <td class='ex-value'>5.0</td>
 <td class='ex-value'>[-65, -60, -55, -50, -45, -40]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -742,8 +786,9 @@ t.data == data</pre>
 <td colspan='10'>
 <div class='feature-description' id='141682626'>
 <span>Value based tensors can be created fluently.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.001 seconds)</div>
 </span>
 </div>
 </td>
@@ -867,49 +912,73 @@ t.data == expected</pre>
 <td class='ex-value'>class java.lang.Integer</td>
 <td class='ex-value'>[2, 3, 4]</td>
 <td class='ex-value'>[2, 3, 4, 2, 3, 4]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>[-5.0, 6.5, 7.0]</td>
 <td class='ex-value'>[-5.0, 6.5, 7.0, -5.0, 6.5, 7.0]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Short</td>
 <td class='ex-value'>[6, -1, -2]</td>
 <td class='ex-value'>[6, -1, -2, 6, -1, -2]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>[22.4, 26.4]</td>
 <td class='ex-value'>[22.4, 26.4, 22.4, 26.4, 22.4, 26.4]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Byte</td>
 <td class='ex-value'>[-20, 3, 4, -3]</td>
 <td class='ex-value'>[-20, 3, 4, -3, -20, 3]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Long</td>
 <td class='ex-value'>[23, 199]</td>
 <td class='ex-value'>[23, 199, 23, 199, 23, 199]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Boolean</td>
 <td class='ex-value'>[true, false]</td>
 <td class='ex-value'>[true, false, true, false, true, false]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Character</td>
 <td class='ex-value'>[x, y]</td>
 <td class='ex-value'>xyxyxy</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -923,8 +992,9 @@ t.data == expected</pre>
 <td colspan='10'>
 <div class='feature-description' id='-1366466942'>
 <span>Seed based tensors can be created fluently.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.001 seconds)</div>
 </span>
 </div>
 </td>
@@ -1056,49 +1126,73 @@ t.data == expected</pre>
 <td class='ex-value'>class java.lang.Integer</td>
 <td class='ex-value'>a</td>
 <td class='ex-value'>[1339394550, -1833393546, -856828099, -757072988, 2102900152, 1199451677]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>b</td>
 <td class='ex-value'>[-0.7129147576473633, -0.021739959992013475, 0.0688712696353899, -0.06398972167241564, 0.8226821091309379, 2.530713285361827]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Short</td>
 <td class='ex-value'>c</td>
 <td class='ex-value'>[18384, 2870, 20818, -5635, -20565, -25424]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>d</td>
 <td class='ex-value'>[-1.4496698, 1.0095189, -0.22373904, 0.18774746, -1.1156114, 1.4588006]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Byte</td>
 <td class='ex-value'>e</td>
 <td class='ex-value'>[-91, -11, -71, 103, -103, -63]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Long</td>
 <td class='ex-value'>f</td>
 <td class='ex-value'>[5691513877775159445, 1358544122458653242, -7551650784545132424, -6481055261550539775, 3561520525539920014, 7097824773375655256]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Boolean</td>
 <td class='ex-value'>g</td>
 <td class='ex-value'>[false, true, true, false, true, false]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Character</td>
 <td class='ex-value'>h</td>
 <td class='ex-value'>ྒ凌ﻄ낓ᾒ鼋</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1112,8 +1206,9 @@ t.data == expected</pre>
 <td colspan='10'>
 <div class='feature-description' id='-1301895892'>
 <span>Initialization lambda based tensors can be created fluently.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.005 seconds)</div>
 </span>
 </div>
 </td>
@@ -1235,51 +1330,75 @@ t.data == expected</pre>
 <tbody>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Integer</td>
-<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure1@113249dc</td>
+<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure1@d014278</td>
 <td class='ex-value'>[0, 2, 3, 5, 6, 8]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Double</td>
-<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure2@6266ec88</td>
+<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure2@1209c01</td>
 <td class='ex-value'>[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Short</td>
-<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure3@6b07747</td>
+<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure3@596dd88d</td>
 <td class='ex-value'>[0, 2, 3, 5, 6, 8]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Float</td>
-<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure4@5288794</td>
+<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure4@107a2d41</td>
 <td class='ex-value'>[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Byte</td>
-<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure5@6de089e9</td>
+<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure5@305698cc</td>
 <td class='ex-value'>[0, 2, 3, 5, 6, 8]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Long</td>
-<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure6@8290747</td>
+<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure6@20087f94</td>
 <td class='ex-value'>[0, 2, 3, 5, 6, 8]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Character</td>
-<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure7@9b80896</td>
+<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure7@297f6bc1</td>
 <td class='ex-value'> </td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Boolean</td>
-<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure8@3a817870</td>
+<td class='ex-value'>ut.tensors.Tensor_Building_Spec$__spock_feature_0_4prov1_closure8@31a95292</td>
 <td class='ex-value'>[true, false, true, false, true, false]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1293,8 +1412,9 @@ t.data == expected</pre>
 <td colspan='10'>
 <div class='feature-description' id='-584948784'>
 <span>Vectors can be created fluently.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0)</div>
 </span>
 </div>
 </td>
@@ -1416,25 +1536,37 @@ t.data == data</pre>
 <td class='ex-value'>class java.lang.Integer</td>
 <td class='ex-value'>[4, 5, -2]</td>
 <td class='ex-value'>[4, 5, -2]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>[-1.0, 7.5]</td>
 <td class='ex-value'>[-1.0, 7.5]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>[0.6, -32.7]</td>
 <td class='ex-value'>[0.6, -32.7]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Long</td>
 <td class='ex-value'>[1, 3, 2, 4]</td>
 <td class='ex-value'>[1, 3, 2, 4]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1448,8 +1580,9 @@ t.data == data</pre>
 <td colspan='10'>
 <div class='feature-description' id='-1552338631'>
 <span>Scalars can be created fluently.</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.001 seconds)</div>
 </span>
 </div>
 </td>
@@ -1552,25 +1685,37 @@ t.data == data</pre>
 <td class='ex-value'>class java.lang.Integer</td>
 <td class='ex-value'>3</td>
 <td class='ex-value'>[3]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>5.7</td>
 <td class='ex-value'>[5.7]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>9.4</td>
 <td class='ex-value'>[9.4]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>class java.lang.Long</td>
 <td class='ex-value'>42</td>
 <td class='ex-value'>[42]</td>
-<td class='ex-result'>OK</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
 </tr>
 </tbody>
 </table>

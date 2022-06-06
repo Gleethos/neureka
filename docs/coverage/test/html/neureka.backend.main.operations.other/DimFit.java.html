@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DimFit.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.other</a> &gt; <span class="el_source">DimFit.java</span></div><h1>DimFit.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.other;
+
+import neureka.Tsr;
+import neureka.backend.api.Algorithm;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Result;
+import neureka.backend.api.fun.SuitabilityPredicate;
+import neureka.backend.api.template.operations.AbstractOperation;
+import neureka.backend.api.template.operations.OperationBuilder;
+import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
+import neureka.calculus.internal.CalcUtil;
+import org.jetbrains.annotations.Contract;
+
+<span class="nc bnc" id="L15" title="All 2 branches missed.">public class DimFit extends AbstractOperation</span>
+{
+    public DimFit()
+    {
+<span class="nc" id="L19">        super(</span>
+            new OperationBuilder()
+<span class="nc" id="L21">                    .setIdentifier(       &quot;dimfit&quot;    )</span>
+<span class="nc" id="L22">                    .setOperator(         &quot;dimfit&quot;    )</span>
+<span class="nc" id="L23">                    .setArity(            -1          )</span>
+<span class="nc" id="L24">                    .setIsOperator(       false       )</span>
+<span class="nc" id="L25">                    .setIsIndexer(        false       )</span>
+<span class="nc" id="L26">                    .setIsDifferentiable( true        )</span>
+<span class="nc" id="L27">                    .setIsInline(         false       )</span>
+        );
+
+<span class="nc" id="L30">        setAlgorithm(</span>
+            Algorithm
+<span class="nc" id="L32">            .withName(&quot;reshape&quot;)</span>
+<span class="nc" id="L33">            .setIsSuitableFor( call -&gt; SuitabilityPredicate.GOOD )</span>
+<span class="nc" id="L34">            .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
+<span class="nc" id="L35">            .setExecution(</span>
+                ( caller, call ) -&gt;
+                {
+<span class="nc" id="L38">                    Tsr&lt;?&gt;[] inputs = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]));</span>
+<span class="nc bnc" id="L39" title="All 4 branches missed.">                    assert call.getValOf( Arg.DerivIdx.class ) &lt; 0;</span>
+
+<span class="nc" id="L41">                    int largest = -1;</span>
+<span class="nc" id="L42">                    int[] shape = null;</span>
+<span class="nc bnc" id="L43" title="All 4 branches missed.">                    for ( Tsr&lt;?&gt; t : inputs ) if ( t.rank() &gt; largest ) {</span>
+<span class="nc" id="L44">                        largest = t.rank();</span>
+<span class="nc" id="L45">                        shape = t.getNDConf().shape();</span>
+                    }
+<span class="nc" id="L47">                    int prefix = 0;</span>
+<span class="nc bnc" id="L48" title="All 4 branches missed.">                    for ( int s : shape ) if ( s == 1 ) prefix++; else break;</span>
+<span class="nc" id="L49">                    int postfix = 0;</span>
+<span class="nc bnc" id="L50" title="All 4 branches missed.">                    for ( int i = shape.length-1; i&gt;=0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;</span>
+
+<span class="nc" id="L52">                    int[][] change = new int[inputs.length][];</span>
+
+<span class="nc bnc" id="L54" title="All 2 branches missed.">                    for ( int i=0; i&lt;inputs.length; i++)</span>
+                    {
+<span class="nc bnc" id="L56" title="All 2 branches missed.">                        if ( inputs[ i ].rank()!=largest)</span>
+                        {
+<span class="nc" id="L58">                            int[] oldShape = inputs[ i ].getNDConf().shape();</span>
+<span class="nc" id="L59">                            int[] newReshape = new int[largest];</span>
+<span class="nc" id="L60">                            int padding = largest-oldShape.length;</span>
+
+<span class="nc bnc" id="L62" title="All 2 branches missed.">                            int handle = ( postfix &lt;= prefix )? padding : largest-padding;</span>
+<span class="nc bnc" id="L63" title="All 4 branches missed.">                            for ( int ii=0; ii&lt;handle; ii++) newReshape[ ii ]       = ( postfix &lt;= prefix )? -1 : ii;</span>
+<span class="nc bnc" id="L64" title="All 4 branches missed.">                            for ( int ii=handle; ii&lt;largest; ii++) newReshape[ ii ] = ( postfix &lt;= prefix )? ii-padding : -1;</span>
+
+<span class="nc" id="L66">                            change[ i ] = newReshape;</span>
+                        }
+                    }
+<span class="nc" id="L69">                    return Result.of(null).withADAction(null);</span>
+                }
+            )
+<span class="nc" id="L72">            .buildFunAlgorithm()</span>
+        );
+<span class="nc" id="L74">    }</span>
+
+    @Contract( pure = true )
+    @Override
+    public String stringify( String[] children ) {
+<span class="nc" id="L79">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="nc bnc" id="L80" title="All 4 branches missed.">        if (expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')') {</span>
+<span class="nc" id="L81">            return &quot;dimfit&quot; + expression;</span>
+        }
+<span class="nc" id="L83">        return &quot;dimfit&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+    }
+
+    @Override
+    public String asDerivative( Function[] children, int derivationIndex) {
+<span class="nc" id="L88">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
+<span class="nc" id="L93">        return src[ 0 ].call( inputs, j );</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

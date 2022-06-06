@@ -112,11 +112,11 @@ public final class SettingsLoader
 <span class="nc" id="L112">                _LOG.warn(&quot;Illegal value '&quot;+value+&quot;' found for property name '&quot;+key+&quot;' in library settings.&quot;);</span>
 <span class="nc" id="L113">                return this;</span>
             }
-<span class="fc" id="L115">            String asString = (String) value;</span>
+<span class="fc" id="L115">            String asString = value.toString();</span>
 <span class="fc" id="L116">            T toBeAssigned = null;</span>
 <span class="fc bfc" id="L117" title="All 2 branches covered.">            if ( typeClass == Class.class ) {</span>
                 try {
-<span class="pc" id="L119">                    try { getClass().getClassLoader().loadClass(&quot;neureka.dtype.custom.&quot;+asString); } catch (Exception e) {}</span>
+<span class="pc" id="L119">                    try { getClass().getClassLoader().loadClass(&quot;neureka.dtype.custom.&quot;+asString); } catch (Exception ignored) {}</span>
 <span class="fc" id="L120">                    toBeAssigned = (T) Class.forName(&quot;neureka.dtype.custom.&quot;+asString);</span>
                 }
 <span class="nc" id="L122">                catch ( ClassNotFoundException e ) {</span>
@@ -174,21 +174,13 @@ public final class SettingsLoader
 <span class="fc" id="L174">            _setup_source = instance.utility().readResource(&quot;scripting_setup.groovy&quot;);</span>
         }
         try {
-            /*
-            String version = GroovySystem.getVersion();
-            if (Integer.parseInt(version.split(&quot;\\.&quot;)[ 0 ]) &lt; 2) {
-                throw new IllegalStateException(
-                        &quot;Wrong groovy version &quot;+version+&quot; found! Version 2.0.0 or greater required.&quot;
-                );
-            }
-            */
-<span class="fc" id="L185">            scriptConsumer.accept(_settings_source);</span>
-<span class="fc" id="L186">            scriptConsumer.accept(_setup_source);</span>
-<span class="nc" id="L187">        } catch (Exception e) {</span>
-<span class="nc" id="L188">            _LOG.error(&quot;Failed to load settings from Groovy script!&quot;, e);</span>
-<span class="fc" id="L189">        }</span>
+<span class="fc" id="L177">            scriptConsumer.accept(_settings_source);</span>
+<span class="fc" id="L178">            scriptConsumer.accept(_setup_source);</span>
+<span class="nc" id="L179">        } catch (Exception e) {</span>
+<span class="nc" id="L180">            _LOG.error(&quot;Failed to load settings from Groovy script!&quot;, e);</span>
+<span class="fc" id="L181">        }</span>
 
-<span class="fc" id="L191">    }</span>
+<span class="fc" id="L183">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

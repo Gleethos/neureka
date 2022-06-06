@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Randomization.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.other</a> &gt; <span class="el_source">Randomization.java</span></div><h1>Randomization.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.other;
+
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Result;
+import neureka.backend.api.template.operations.AbstractOperation;
+import neureka.backend.api.template.operations.OperationBuilder;
+import neureka.backend.main.algorithms.Activation;
+import neureka.backend.main.implementations.CPUImplementation;
+import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
+import neureka.calculus.internal.CalcUtil;
+import neureka.devices.host.CPU;
+import neureka.devices.opencl.OpenCLDevice;
+import neureka.ndim.iterator.NDIterator;
+
+import java.util.Arrays;
+
+/**
+ *  This {@link neureka.backend.api.Operation} takes an optional user seed,
+ *  the shape of its input tensor, and
+ *  the indices of individual elements within said tensor to generate
+ *  floats or doubles with a gaussian distribution where the mean
+ *  is 0 and the standard deviation is 1.
+ *  This operation is very fast because it generates numbers in parallel unlike
+ *  the JDKs random number generator class {@link java.util.Random}.
+ */
+public class Randomization extends AbstractOperation
+{
+    private static final long   MULTIPLIER = 0x5DEECE66DL;
+    private static final long   ADDEND = 0xBL;
+    private static final long   MASK = (1L &lt;&lt; 48) - 1;
+    private static final double DOUBLE_UNIT = 0x1.0p-53; // 1.0 / (1L &lt;&lt; 53)
+
+    public Randomization()
+    {
+<span class="fc" id="L38">        super(</span>
+            new OperationBuilder()
+<span class="fc" id="L40">                .setIdentifier(       &quot;random&quot;   )</span>
+<span class="fc" id="L41">                .setOperator(         &quot;rand&quot;     )</span>
+<span class="fc" id="L42">                .setArity(            1          )</span>
+<span class="fc" id="L43">                .setIsOperator(       true       )</span>
+<span class="fc" id="L44">                .setIsIndexer(        false      )</span>
+<span class="fc" id="L45">                .setIsDifferentiable( false      )</span>
+<span class="fc" id="L46">                .setIsInline(         true       )</span>
+        );
+
+<span class="fc" id="L49">        setAlgorithm(</span>
+            new Activation()
+<span class="fc" id="L51">                .setAutogradModeFor( call -&gt; AutoDiffMode.NOT_SUPPORTED)</span>
+<span class="fc" id="L52">                .setExecution(</span>
+                   (caller, call) -&gt;
+<span class="fc" id="L54">                       Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withAutoDiff(getDefaultAlgorithm())</span>
+                )
+<span class="fc" id="L56">                .setCallPreparation( call -&gt;</span>
+                {
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">                    if ( call.input( 0 ) == null )</span>
+<span class="fc" id="L59">                        call.setInput( 0, call.input( 1 ) );</span>
+
+<span class="fc" id="L61">                    call.input( 0 ).getUnsafe().incrementVersion(call);</span>
+
+<span class="fc" id="L63">                    int hash = Arrays.hashCode( call.input( 0 ).getNDConf().shape() );</span>
+<span class="fc" id="L64">                    Arg.Seed seed = call.get(Arg.Seed.class);</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">                    if ( seed != null ) seed = Arg.Seed.of( initialScramble(seed.get() + hash) );</span>
+<span class="fc" id="L66">                    else seed = Arg.Seed.of( initialScramble(hash) );</span>
+
+<span class="fc" id="L68">                    return call.withArgs(seed);</span>
+                })
+<span class="fc" id="L70">                .buildFunAlgorithm()</span>
+<span class="fc" id="L71">                .setImplementationFor(</span>
+                    CPU.class,
+                    CPUImplementation
+<span class="fc" id="L74">                        .withArity(1)</span>
+<span class="fc" id="L75">                        .andImplementation(</span>
+                            call -&gt;
+                                call
+<span class="fc" id="L78">                                .getDevice()</span>
+<span class="fc" id="L79">                                .getExecutor()</span>
+<span class="fc" id="L80">                                .threaded(</span>
+<span class="fc" id="L81">                                    call.input( Number.class, 0 ).size(),</span>
+<span class="fc" id="L82">                                    _newWorkloadFor( call )</span>
+                                )
+                        )
+                )
+<span class="fc" id="L86">                .setImplementationFor(</span>
+                    OpenCLDevice.class,
+                    call -&gt; {
+<span class="nc" id="L89">                        throw new IllegalStateException(&quot;Not yet implemented&quot;);</span>
+                    }
+                )
+        );
+
+<span class="fc" id="L94">    }</span>
+
+    private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall&lt;?&gt; call )
+    {
+<span class="fc" id="L98">        Tsr&lt;?&gt; tensor = call.input( 0 );</span>
+<span class="fc" id="L99">        tensor.setIsVirtual(false);</span>
+<span class="fc" id="L100">        Class&lt;?&gt; type = tensor.getValueClass();</span>
+<span class="fc" id="L101">        boolean isSimple = tensor.getNDConf().isSimple();</span>
+<span class="fc" id="L102">        long seed = call.getValOf(Arg.Seed.class);</span>
+
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if ( type == Double.class ) {</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            if ( isSimple )</span>
+<span class="fc" id="L106">                return (i, end) -&gt; {</span>
+<span class="fc" id="L107">                    double[] t0_value = tensor.getUnsafe().getDataForWriting(double[].class);</span>
+<span class="fc" id="L108">                    double[] gaussian = {0, 0};</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">                    if ( i % 2 == 1 ) {</span>
+<span class="fc" id="L110">                        gaussianFrom(seed + i - 1, gaussian);</span>
+<span class="fc" id="L111">                        t0_value[i] = gaussian[1];</span>
+<span class="fc" id="L112">                        i++;</span>
+                    }
+<span class="fc bfc" id="L114" title="All 2 branches covered.">                    for ( ; i &lt; end; i += 2 ) // increment on drain accordingly:</span>
+                    {
+<span class="fc" id="L116">                        gaussianFrom(seed + i, gaussian);</span>
+<span class="fc" id="L117">                        t0_value[i + 0] = gaussian[0];</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">                        if ( i + 1 &lt; end ) t0_value[i + 1] = gaussian[1];</span>
+                    }
+<span class="fc" id="L120">                };</span>
+            else
+<span class="fc" id="L122">                return (i, end) -&gt; {</span>
+<span class="fc" id="L123">                    NDIterator t0Idx = NDIterator.of(tensor);</span>
+<span class="fc" id="L124">                    t0Idx.set(tensor.indicesOfIndex(i));</span>
+<span class="fc" id="L125">                    double[] t0_value = tensor.getUnsafe().getDataForWriting(double[].class);</span>
+<span class="fc" id="L126">                    double[] gaussian = {0, 0};</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">                    if ( i % 2 == 1 ) {</span>
+<span class="fc" id="L128">                        gaussianFrom(seed + i - 1, gaussian);</span>
+<span class="fc" id="L129">                        t0_value[t0Idx.getIndexAndIncrement()] = gaussian[1];</span>
+<span class="fc" id="L130">                        i++;</span>
+                    }
+<span class="fc bfc" id="L132" title="All 2 branches covered.">                    for ( ; i &lt; end; i += 2 ) // increment on drain accordingly:</span>
+                    {
+<span class="fc" id="L134">                        gaussianFrom(seed + i, gaussian);</span>
+<span class="fc" id="L135">                        t0_value[t0Idx.getIndexAndIncrement()] = gaussian[0];</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">                        if ( i + 1 &lt; end ) t0_value[t0Idx.getIndexAndIncrement()] = gaussian[1];</span>
+                    }
+<span class="fc" id="L138">                };</span>
+        } else {
+<span class="fc bfc" id="L140" title="All 2 branches covered.">            if ( isSimple )</span>
+<span class="fc" id="L141">                return (i, end) -&gt; {</span>
+<span class="fc" id="L142">                    float[] t0_value = tensor.getUnsafe().getDataForWriting(float[].class);</span>
+<span class="fc" id="L143">                    double[] gaussian = {0, 0};</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                    if ( i % 2 == 1 ) {</span>
+<span class="fc" id="L145">                        gaussianFrom(seed + i - 1, gaussian);</span>
+<span class="fc" id="L146">                        t0_value[i] = (float) gaussian[1];</span>
+<span class="fc" id="L147">                        i++;</span>
+                    }
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                    for ( ; i &lt; end; i += 2 ) // increment on drain accordingly:</span>
+                    {
+<span class="fc" id="L151">                        gaussianFrom(seed + i, gaussian);</span>
+<span class="fc" id="L152">                        t0_value[i + 0] = (float) gaussian[0];</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">                        if ( i + 1 &lt; end ) t0_value[i + 1] = (float) gaussian[1];</span>
+                    }
+<span class="fc" id="L155">                };</span>
+            else
+<span class="fc" id="L157">                return (i, end) -&gt; {</span>
+<span class="fc" id="L158">                    NDIterator t0Idx = NDIterator.of(tensor);</span>
+<span class="fc" id="L159">                    t0Idx.set(tensor.indicesOfIndex(i));</span>
+<span class="fc" id="L160">                    float[] t0_value = tensor.getUnsafe().getDataForWriting(float[].class);</span>
+<span class="fc" id="L161">                    double[] gaussian = {0, 0};</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">                    if ( i % 2 == 1 ) {</span>
+<span class="fc" id="L163">                        gaussianFrom(seed + i - 1, gaussian);</span>
+<span class="fc" id="L164">                        t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[1];</span>
+<span class="fc" id="L165">                        i++;</span>
+                    }
+<span class="fc bfc" id="L167" title="All 2 branches covered.">                    for ( ; i &lt; end; i += 2 ) // increment on drain accordingly:</span>
+                    {
+<span class="fc" id="L169">                        gaussianFrom(seed + i, gaussian);</span>
+<span class="fc" id="L170">                        t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[0];</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">                        if ( i + 1 &lt; end ) t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[1];</span>
+                    }
+<span class="fc" id="L173">                };</span>
+        }
+    }
+
+    @Override
+    public String stringify( String[] children ) {
+<span class="fc" id="L179">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L180" title="3 of 4 branches missed.">        if ( expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')' ) {</span>
+<span class="nc" id="L181">            return &quot;rand&quot; + expression;</span>
+        }
+<span class="fc" id="L183">        return &quot;rand&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+    }
+
+    @Override
+    public String asDerivative( Function[] children, int derivationIndex) {
+<span class="nc" id="L188">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
+<span class="nc" id="L193">        return src[ 0 ].call( inputs, j );</span>
+    }
+
+<span class="fc" id="L196">    public static long initialScramble( long seed ) { return (seed ^ MULTIPLIER) &amp; MASK; }</span>
+
+    public static void gaussianFrom( long seed, double[] out )
+    {
+        // See Knuth, ACP, Section 3.4.1 Algorithm C.
+        double v1, v2, s;
+        do {
+<span class="fc" id="L203">            long seed1 = _next(seed );</span>
+<span class="fc" id="L204">            long seed2 = _next(seed1);</span>
+<span class="fc" id="L205">            long seed3 = _next(seed2);</span>
+<span class="fc" id="L206">            long seed4 = _next(seed3);</span>
+<span class="fc" id="L207">            v1 = 2 * _doubleFrom( seed1, seed2 ) - 1; // between -1 and 1</span>
+<span class="fc" id="L208">            v2 = 2 * _doubleFrom( seed3, seed4 ) - 1; // between -1 and 1</span>
+<span class="fc" id="L209">            s = v1 * v1 + v2 * v2;</span>
+<span class="fc" id="L210">            seed = seed4;</span>
+        }
+<span class="pc bpc" id="L212" title="1 of 4 branches missed.">        while ( s &gt;= 1 || s == 0 );</span>
+
+<span class="fc" id="L214">        double multiplier = StrictMath.sqrt( -2 * StrictMath.log(s) / s );</span>
+
+<span class="fc" id="L216">        out[0] = v1 * multiplier;</span>
+<span class="fc" id="L217">        out[1] = v2 * multiplier;</span>
+<span class="fc" id="L218">    }</span>
+
+    private static long _next( long currentSeed )
+    {
+        long oldseed, nextseed;
+        do {
+<span class="fc" id="L224">            oldseed = currentSeed;</span>
+<span class="fc" id="L225">            nextseed = (oldseed * MULTIPLIER + ADDEND) &amp; MASK;</span>
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">        } while ( oldseed == (currentSeed = nextseed) );</span>
+<span class="fc" id="L227">        return nextseed;</span>
+    }
+
+    private static double _doubleFrom( long seed1, long seed2 )
+    {
+<span class="fc" id="L232">        return (((long)(_intFrom(26, seed1)) &lt;&lt; 27) + _intFrom(27, seed2)) * DOUBLE_UNIT;</span>
+    }
+
+<span class="fc" id="L235">    private static int _intFrom( int bits, long seed ) { return (int)(seed &gt;&gt;&gt; (48 - bits)); }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

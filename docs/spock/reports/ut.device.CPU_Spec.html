@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Apr 03 14:55:38 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Jun 06 11:40:04 CEST 2022 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,13 +329,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>2</td>
-<td>2</td>
+<td>3</td>
+<td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.040 seconds</td>
+<td>0.013 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -346,9 +346,7 @@ div.footer {
     Contrary to other types of device, the CPU will host tensor data by default, simply
     because the tensors will be stored in RAM if no device was specified.</pre>
 <div class='spec-headers'>
-<div class='spec-header'>
-                <h2> class neureka.devices.host.CPU Behavior </h2>
-                <br> 
+<div class='spec-header'> 
                 <p>
                     The thread pool of the class neureka.devices.host.CPU executor becomes
                     more active when receiving larger workloads which
@@ -370,13 +368,17 @@ div.footer {
 <li>
 <a href='#772315146' class='feature-toc-pass'>CPU knows the current number of available processor cores!</a>
 </li>
+<li>
+<a href='#1657528554' class='feature-toc-pass'>The CPU exposes a non null API for executing workloads in parallel.</a>
+</li>
 </ul>
 <tr>
 <td colspan='10'>
 <div class='feature-description' id='-548966096'>
 <span>Thread pool executes given workload in parallel</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.005 seconds)</div>
 </span>
 <div class='extra-info'>
 <ul>
@@ -460,8 +462,7 @@ cpu instanceof CPU</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>exec != null
-exec.getPool() != null</pre>
+<pre class='block-source'>exec != null</pre>
 </td>
 </tr>
 <tr>
@@ -469,13 +470,13 @@ exec.getPool() != null</pre>
 <div class='block-kind'>Expect:</div>
 </td>
 <td>
-<pre class='block-source'>if ( exec.getPool().getCorePoolSize() &lt;= 2 ) true
+<pre class='block-source'>if ( exec.getCorePoolSize() &lt;= 2 ) true
 else {
-    int[] min = new int[]{ exec.getPool().getCorePoolSize() }
+    int[] min = new int[]{ exec.getCorePoolSize() }
     assert min[0] &gt; 0 &amp;&amp; min[0] &lt;= Runtime.getRuntime().availableProcessors()
     Thread t = new Thread(() -&gt; {
         while ( min[0] &gt; 0 ) {
-            int current = exec.getPool().getCorePoolSize() - exec.getPool().getActiveCount()
+            int current = exec.getCorePoolSize() - exec.getActiveThreadCount()
             if ( current &lt; min[0] ) min[0] = current
         }
     })
@@ -489,7 +490,7 @@ else {
     } catch (InterruptedException e) {
         e.printStackTrace()
     }
-    assert result &lt;= (exec.getPool().getCorePoolSize() / 2)
+    assert result &lt;= (exec.getCorePoolSize() / 2)
 }</pre>
 </td>
 </tr>
@@ -497,8 +498,9 @@ else {
 <td colspan='10'>
 <div class='feature-description' id='772315146'>
 <span>CPU knows the current number of available processor cores!</span>
-<span style='float: right; font-size: 60%;'>
+<span class='return-toc'>
 <a href='#toc'>Return</a>
+<div class='ex-time'>(0.001 seconds)</div>
 </span>
 </div>
 </td>
@@ -509,6 +511,35 @@ else {
 </td>
 <td>
 <pre class='block-source'>CPU.get().coreCount == Runtime.getRuntime().availableProcessors()</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1657528554'>
+<span>The CPU exposes a non null API for executing workloads in parallel.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>CPU.get().executor != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>CPU.get().executor.activeThreadCount &gt;= 0
+CPU.get().executor.corePoolSize &gt;= 0
+CPU.get().executor.completedTaskCount &gt;= 0</pre>
 </td>
 </tr>
 </tbody>

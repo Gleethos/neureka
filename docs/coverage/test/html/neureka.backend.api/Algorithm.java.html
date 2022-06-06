@@ -39,14 +39,17 @@ SOFTWARE.
 package neureka.backend.api;
 
 import neureka.Tsr;
-import neureka.backend.api.algorithms.fun.*;
-import neureka.backend.standard.algorithms.FunAlgorithm;
-import neureka.devices.Device;
+import neureka.backend.api.fun.ADSupportPredicate;
+import neureka.backend.api.fun.Execution;
+import neureka.backend.api.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.FunAlgorithm;
+import neureka.common.utility.LogUtil;
 
 
 /**
- *   This class is the middle layer of the 3 tier compositional abstraction architecture of this backend, which
- *   consists of {@link Operation}s, {@link Algorithm}s and {@link ImplementationFor}. &lt;br&gt;
+ *   This class is the middle layer of the 3 tier compositional architecture of this backend, which
+ *   consists of {@link Operation}s, {@link Algorithm}s and
+ *   in case of a {@link DeviceAlgorithm} also {@link ImplementationFor}. &lt;br&gt;
  *
  *   Conceptually an implementation of the {@link Algorithm} interface represents &quot;a sub-kind of operation&quot; for
  *   an instance of an implementation of the {@link Operation} interface. &lt;br&gt;
@@ -54,11 +57,11 @@ import neureka.devices.Device;
  *   originating from different {@link ExecutionCall} instances with unique arguments.
  *   {@link Tsr} instances within an execution call having the same shape would
  *   cause the {@link Operation} instance to choose an {@link Algorithm} instance which is responsible
- *   for performing element-wise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
+ *   for performing element-wise operations, whereas otherwise the {@link neureka.backend.main.algorithms.Broadcast}
  *   algorithm might be called to perform the operation.
  */
-public interface Algorithm&lt;C extends Algorithm&lt;C&gt;&gt;
-extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSupplier, ExecutionPreparation, ExecutionDispatcher
+public interface Algorithm
+extends SuitabilityPredicate, ADSupportPredicate, Execution
 {
     /**
      * This is a factory method for creating a new instance of this {@link FunAlgorithm} class.
@@ -66,9 +69,11 @@ extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSu
      * @param name The name of the functional algorithm.
      * @return A new {@link FunAlgorithm} with the provided name.
      */
-    static FunAlgorithm withName(String name) {
-<span class="fc" id="L70">        return new FunAlgorithm(name);</span>
+    static FunAlgorithm withName( String name ) {
+<span class="fc" id="L73">        LogUtil.nullArgCheck( name, &quot;name&quot;, String.class );</span>
+<span class="fc" id="L74">        return new FunAlgorithm( name );</span>
     }
+
 
     /**
      *  The name of an {@link Algorithm} may be used for OpenCL kernel compilation or simply
@@ -78,49 +83,6 @@ extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSu
      * @return The name of this {@link Algorithm}.
      */
     String getName();
-
-    /**
-     * Implementations of the Algorithm interface ought to express a compositional design pattern. &lt;br&gt;
-     * This means that concrete implementations of an algorithm for a device are not extending
-     * an Algorithm, they are components of it instead. &lt;br&gt;
-     * These components can be stored on an Algorithm by passing
-     * a Device class as key and an ImplementationFor instance as value.
-     *
-     * @param deviceClass    The class of the {@link Device} for which an implementation should be set.
-     * @param implementation The {@link ImplementationFor} the provided {@link Device} type.
-     * @param &lt;D&gt;            The type parameter of the {@link Device} type for which
-     *                       an implementation should be set in this {@link Device}.
-     * @param &lt;I&gt;            The type of the {@link ImplementationFor} the provided {@link Device} type.
-     * @return This very {@link Algorithm} instance to allow for method chaining.
-     */
-    &lt;D extends Device&lt;?&gt;, I extends ImplementationFor&lt;D&gt;&gt; C setImplementationFor(Class&lt;D&gt; deviceClass, I implementation );
-
-    /**
-     * An {@link ImplementationFor} a specific {@link Device} can be accessed by passing the class of
-     * the {@link Device} for which an implementation should be returned.
-     * An Algorithm instance ought to contain a collection of these {@link Device} specific
-     * implementations...
-     *
-     * @param deviceClass The class of the device for which the stored algorithm implementation should be returned.
-     * @param &lt;D&gt;         The type parameter which has to be a class extending the Device interface.
-     * @return The implementation for the passed device type class.
-     */
-    &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( Class&lt;D&gt; deviceClass );
-
-    /**
-     * An {@link ImplementationFor} a specific {@link Device} can be accessed by passing the
-     * the {@link Device} for which an implementation should be returned.
-     * An Algorithm instance ought to contain a collection of these {@link Device} specific
-     * implementations...
-     *
-     * @param device The device for which the stored algorithm implementation should be returned.
-     * @param &lt;D&gt;    type parameter which has to be a class extending the Device interface.
-     * @return The implementation for the passed device type class.
-     */
-    default &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( D device ) {
-<span class="fc" id="L121">        return (ImplementationFor&lt;D&gt;) getImplementationFor(device.getClass());</span>
-    }
-
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
