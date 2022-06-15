@@ -27,6 +27,7 @@ public final class FunctionConstant implements Function
 
 	public FunctionConstant(String expression)
 	{
+		expression = expression.toLowerCase();
 		StringBuilder number = new StringBuilder();
 		for ( int i = 0; i < expression.length(); i++ )
 		{
@@ -35,6 +36,7 @@ public final class FunctionConstant implements Function
 							|| expression.charAt( i ) == '.'
 							|| expression.charAt( i ) == '-'
 							|| expression.charAt( i ) == '+'
+							|| expression.charAt( i ) == 'e'
 			) {
 				number.append( expression.charAt( i ) );
 			}

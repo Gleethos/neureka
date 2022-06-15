@@ -51,33 +51,42 @@ import neureka.optimization.Optimizer;
 public class ADAM<V> implements Optimizer<V> {
 
     // Constants:
-    private final Tsr<V> a;
-    private final Tsr<V> b1;
-    private final Tsr<V> b2;
-    private final Tsr<V> e;
+
+    private static final double B1 = 0.9;
+
+    private static final double B2 = 0.999;
+
+    private static final double E = 1e-8;
+
+    // parameter
+    private final double a; // learning rate
 
     // Variables:
     private Tsr<V> m; // Momentum
     private Tsr<V> v; // Velocity
+
+    private long t = 0;
 
     public ADAM(Tsr<V> target) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
         int[] shape = target.getNDConf().shape();
         m  = Tsr.of(target.getValueClass(), shape, 0);
         v  = Tsr.of(target.getValueClass(), shape, 0);
-        a  = Tsr.of(target.getValueClass(), shape, 0.01); // Step size!
-        b1 = Tsr.of(target.getValueClass(), shape, 0.9);
-        b2 = Tsr.of(target.getValueClass(), shape, 0.999);
-        e  = Tsr.of(target.getValueClass(), shape, 1e-7);
+        a  = 0.01; // Step size!
     }
 
     private Tsr<V> _optimize( Tsr<V> w ) {
+        t++;
         Tsr<V> g = w.getGradient();
-        m = Tsr.of(b1, "*", m, " + ( 1-", b1, ") *", g);
-        v = Tsr.of(b2, "*", v, " + ( 1-", b2, ") * (", g,"^2 )");
-        Tsr<V> mh = Tsr.of(m, "/(1-", b1, ")");
-        Tsr<V> vh = Tsr.of(v, "/(1-", b2, ")");
-        Tsr<V> newg = Tsr.of("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
+        double b1Inverse = ( 1 - B1 );
+        double b2Inverse = ( 1 - B2 );
+        double b1hat = ( 1 - Math.pow( B1, t ) );
+        double b2hat = ( 1 - Math.pow( B2, t ) );
+        m = Tsr.of(B1+" * ", m, " + "+b1Inverse+" * ", g);
+        v = Tsr.of(B2+" * ", v, " + "+b2Inverse+" * (", g,"^2 )");
+        Tsr<V> mh = Tsr.of(m, "/"+b1hat);
+        Tsr<V> vh = Tsr.of(v, "/"+b2hat);
+        Tsr<V> newg = Tsr.of("-"+a+" * ",mh," / (",vh,"^0.5 + "+E+")");
         Neureka.get().backend().getFunction().idy().call(g, newg);
         mh.getUnsafe().delete();
         vh.getUnsafe().delete();

@@ -30,7 +30,7 @@ public class FunctionParser
 
     private static final Pattern _variablePattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)");
     private static final Pattern _inputPattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)");
-    private static final Pattern _constantPattern = Pattern.compile("^((-?[0-9]*|[0-9]*)[.]?[0-9]*(e[-]?[0-9]+)?)");
+    private static final Pattern _constantPattern = Pattern.compile("^((-?[0-9]*|[0-9]*)[.]?[0-9]*((e|E)[-]?[0-9]+)?)");
 
     private static final Pattern _reshapePattern = Pattern.compile("^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))");
     private static final Pattern _nodePattern = Pattern.compile("^([\\(]{1}.+[\\)]{1})");
@@ -67,8 +67,8 @@ public class FunctionParser
      * @param doAD       is used to turn autograd on or off for this function
      * @return the function which has been built from the expression
      */
-    public Function parse( String expression, boolean doAD ) {
-
+    public Function parse( String expression, boolean doAD )
+    {
         if (
             expression.length() > 0 &&
             (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')')
