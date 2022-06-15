@@ -35,7 +35,6 @@ SOFTWARE.
 
 package neureka.optimization.implementations;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
@@ -48,34 +47,32 @@ import neureka.optimization.Optimizer;
  *
  * @param <V> The value type parameter of the tensor whose gradients are being optimized.
  */
-public class ADAM<V> implements Optimizer<V> {
-
+public class ADAM<V> implements Optimizer<V>
+{
     // Constants:
-
     private static final double B1 = 0.9;
-
     private static final double B2 = 0.999;
-
     private static final double E = 1e-8;
 
-    // parameter
+    // Parameter
     private final double a; // learning rate
 
     // Variables:
     private Tsr<V> m; // Momentum
     private Tsr<V> v; // Velocity
-
-    private long t = 0;
+    private long t = 0; // time
 
     public ADAM(Tsr<V> target) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
         int[] shape = target.getNDConf().shape();
         m  = Tsr.of(target.getValueClass(), shape, 0);
         v  = Tsr.of(target.getValueClass(), shape, 0);
-        a  = 0.01; // Step size!
+        a  = 0.01; // Step size/learning rate is 0.01 by default!
     }
 
-    private Tsr<V> _optimize( Tsr<V> w ) {
+    @Override
+    public Tsr<V> optimize( Tsr<V> w ) {
+        LogUtil.nullArgCheck( w, "w", Tsr.class ); // The input must not be null!
         t++;
         Tsr<V> g = w.getGradient();
         double b1Inverse = ( 1 - B1 );
@@ -87,22 +84,9 @@ public class ADAM<V> implements Optimizer<V> {
         Tsr<V> mh = Tsr.of(m, "/"+b1hat);
         Tsr<V> vh = Tsr.of(v, "/"+b2hat);
         Tsr<V> newg = Tsr.of("-"+a+" * ",mh," / (",vh,"^0.5 + "+E+")");
-        Neureka.get().backend().getFunction().idy().call(g, newg);
         mh.getUnsafe().delete();
         vh.getUnsafe().delete();
-        newg.getUnsafe().delete();
-        return g;
+        return newg;
     }
 
-    @Override
-    public Tsr<V> optimize( Tsr<V> w ) {
-        LogUtil.nullArgCheck( w, "w", Tsr.class );
-        return _optimize(w);
-    }
-
-    @Override
-    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
-        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
-        return true;
-    }
 }

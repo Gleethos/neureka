@@ -71,9 +71,4 @@ public class SGD<V> implements Optimizer<V>
 
     public double learningRate() { return _learningRate; }
 
-    @Override
-    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
-        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
-        return true;
-    }
 }

@@ -87,6 +87,8 @@ public interface Component<O>
      * @param changeRequest An {@link OwnerChangeRequest} implementation instance used to communicate the type of change, context information and the ability to execute the change directly.
      * @return The truth value determining if the state change should be aborted or not.
      */
-    boolean update( OwnerChangeRequest<O> changeRequest );
-
+    default boolean update( OwnerChangeRequest<O> changeRequest ) {
+        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
+        return true;
+    }
 }

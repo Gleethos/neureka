@@ -97,10 +97,4 @@ public final class JITProp<V> implements Component<Tsr<V>>
         return this.getClass().getSimpleName()+"@"+hashCode()+"[finished="+finished+",pending="+pending+",isDone="+isDone()+"]";
     }
 
-
-    @Override
-    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
-        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
-        return true;
-    }
 }

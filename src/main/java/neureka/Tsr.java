@@ -2274,7 +2274,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     public final Tsr<V> power( double value ) {
-        return power( _of( this.shape(), value ) );
+        return power( Tsr.of( this.valueClass(), this.shape(), value ) );
     }
 
     /**
@@ -2288,7 +2288,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     /**
      *  This method is synonymous to the {@link #power(Tsr)} method.
      */
-    public final Tsr<V> xor( double value ) { return xor( _of( this.shape(), value ) ); }
+    public final Tsr<V> xor( double value ) { return xor( Tsr.of( this.valueClass(), this.shape(), value ) ); }
 
     /*
         -----------------------------
