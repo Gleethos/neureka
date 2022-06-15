@@ -47,12 +47,12 @@ class ADAM_Spec extends Specification
 
 
     def 'ADAM optimizes according to expected inputs' (
-            int input, double gradient
+            int gradient, double expectedWeight
     ) {
         given : 'A new scalar gradient tensor is being created.'
-            Tsr g = Tsr.of(gradient)
+            Tsr g = Tsr.of(expectedWeight)
         and : 'The following input is being applied to the tensor (and internal optimizer)...'
-            w.set( Tsr.of( input ) )
+            w.set( Tsr.of( gradient ) )
             w.applyGradient()
 
         expect : 'The following state emerges:'
@@ -64,17 +64,17 @@ class ADAM_Spec extends Specification
             w.offset().hashCode()==g.offset().hashCode()
 
         where :
-            input | gradient
-             -3   | 0.009999999666666677
-             -3   | 0.01999
-              2   | 0.02426
-             -3   | 0.03034
-              2   | 0.03332
-              2   | 0.03409
-             -4   | 0.03738
-             -3   | 0.04194
-             -3   | 0.04744
-              2   | 0.05112
+            gradient | expectedWeight
+             -3      | 0.009999999666666677
+             -3      | 0.01999
+              2      | 0.02426
+             -3      | 0.03034
+              2      | 0.03332
+              2      | 0.03409
+             -4      | 0.03738
+             -3      | 0.04194
+             -3      | 0.04744
+              2      | 0.05112
     }
 
 
