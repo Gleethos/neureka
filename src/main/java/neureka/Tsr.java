@@ -1205,22 +1205,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     */
 
     /**
-     *  This flag works alongside two autograd features which can be enables inside the library settings.
-     *  They will come into effect when flipping their feature flags, <br>
-     *  namely: <i>'isApplyingGradientWhenRequested'</i> and <i>'isApplyingGradientWhenTensorIsUsed'</i><br>
-     *  As the first flag name suggests gradients will be applied to their tensors when it is set to true,
-     *  however this will only happened when the second flag is set to true as well, because otherwise gradients
-     *  wouldn't be applied to their tensors automatically in the first place... <br>
-     *  <br>
-     *  Setting both flags to true will inhibit effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
-     *  unless a form of "permission" is being signaled to the autograd system.
-     *  This signal comes in the form of a "request" flag which marks a tensor as <b>allowed to
-     *  be updated by its gradient</b>.<br>
-     *  <br>
-     * @param applyRequested The truth value determining if the application of the gradient of this tensor is requested.
-     * @return This very tensor instance in order to enable method chaining.
+     *  {@inheritDoc}
      */
-    public final Tsr<V> setGradientApplyRequested(boolean applyRequested ) {
+    @Override
+    public final Tsr<V> setGradientApplyRequested( boolean applyRequested ) {
         if ( gradientApplyRequested() != applyRequested ) {
             if ( applyRequested ) {
                 if (
@@ -1237,20 +1225,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This flag works alongside two autograd features which can be enables inside the library settings.
-     *  They will come into effect when flipping their feature flags, <br>
-     *  namely: <i>'isApplyingGradientWhenRequested'</i> and <i>'isApplyingGradientWhenTensorIsUsed'</i><br>
-     *  As the first flag name suggests gradients will be applied to their tensors when it is set to true,
-     *  however this will only happened when the second flag is set to true as well, because otherwise gradients
-     *  wouldn't be applied to their tensors automatically in the first place... <br>
-     *  <br>
-     *  Setting both flags to true will inhibit the effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
-     *  unless a form of "permission" is being signaled to the autograd system.
-     *  This signal comes in the form of a "request" flag which marks a tensor as <b>allowed to
-     *  be updated by its gradient</b>.<br>
-     *  <br>
-     * @return The truth value determining if the application of the gradient of this tensor is requested.
+     * {@inheritDoc}
      */
+     @Override
     public boolean gradientApplyRequested() { return ( _flags & GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK; }
 
     /*
@@ -1260,14 +1237,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     */
 
     /**
-     *  This will check if the {@link #_delete()} method was previously called on this tensor.
-     *  This means that any references inside the tensor will be null
-     *  as well as that the tensor data was freed on every device,
-     *  meaning that what was previously referenced was most likely garbage collected...
-     *
-     * @return The truth value which determines if {@link #_delete()} was called on this tensor,
-     *         making it in essence an empty shell void of any references to data.
+     *  {@inheritDoc}
      */
+    @Override
     public boolean isDeleted() { return ( _flags & IS_DELETED_MASK ) == IS_DELETED_MASK; }
 
     /**
@@ -1376,7 +1348,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     */
     /**
      *  Important : Components of type {@link Tsr} are simply gradients!
-     *  Currently this method is used only to catch illegal arguments which
+     *  Currently, this method is used only to catch illegal arguments which
      *  is for example the case when trying to attach a gradient with a different shape...
      *  (Otherwise the gradient tensor "does not mind" an owner change...)
      */
@@ -1401,14 +1373,15 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     * This method taked a {@link Device} and tries to migrate the contents of this {@link Tsr}
-     * instance to that {@link Device}!
-     *
-     * @param device The {@link Device} which should host this {@link Tsr} as well as be added to its components list.
-     * @return This very class to enable method chaining.
+     *  {@inheritDoc}
      */
+    @Override
     public final Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final Tsr<V> to( String deviceType ) { return this.to(Device.get(deviceType)); }
 
     /*==================================================================================================================
@@ -1423,100 +1396,53 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     */
 
     /**
-     *  A tensor is empty if there is neither data referenced within the tensor directly
-     *  or within any given device to which the tensor might belong.
-     *
-     * @return The truth value determining if this tensor has data.
+     *  {@inheritDoc}
      */
+    @Override
     public boolean isEmpty() { return _getData() == null && !this.isOutsourced(); }
 
     /**
-     *  A tensor is "undefined" if it has either no {@link NDConfiguration} implementation instance
-     *  or this instance does not have a shape set for this {@link Tsr} which is needed for
-     *  a tensor to also have a rank and dimensionality...
-     *
-     * @return The truth value determining if this tensor has an {@link NDConfiguration} stored internally.
+     *  {@inheritDoc}
      */
+    @Override
     public boolean isUndefined() { return getNDConf() == null || getNDConf().shape() == null; }
 
     /**
-     *  If this tensor is a slice of a parent tensor then this method will yield true.
-     *  Slices can be created by calling the variations of the "{@link Tsr#getAt}" method.
-     *
-     * @return The truth value determining if this tensor is a slice of another tensor.
+     *  {@inheritDoc}
      */
+    @Override
     public boolean isSlice() {
         Relation<V> child = get( Relation.class );
         return ( child != null && child.hasParent() );
     }
 
     /**
-     *  This method returns the number of slices which have been
-     *  created from this very tensor.
-     *  It does so by accessing the {@link Relation} component if present
-     *  which internally keeps track of slices via weak references.
-     *
-     * @return The number of slices derived from this tensor.
+     *  {@inheritDoc}
      */
+    @Override
     public int sliceCount() {
         Relation<V> child = this.get( Relation.class );
         return ( child != null ) ? child.childCount() : 0;
     }
 
     /**
-     *  If slices have been derived from this tensor then it is a "slice parent".
-     *  This is what this method will determine, in which case, it will return true.
-     *
-     * @return The truth value determining if slices have been derived from this tensor.
+     *  {@inheritDoc}
      */
+    @Override
     public boolean isSliceParent() {
         Relation<V> parent = this.get( Relation.class );
         return ( parent != null && parent.hasChildren() );
     }
 
     /**
-     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
-     *  This is because autograd requires recording a computation graph for back-prop traversal.
-     *  This autograd system however, will only be triggered by {@link Function} implementations which
-     *  are not "detached", meaning they have their "{@link Function#isDoingAD()}" flags set to true! <br>
-     *  Detached functions (like those pre-instantiated in Function.Detached.*) will not attach {@link GraphNode}
-     *  instances to involved tensors which will prevent the formation of a computation graph.
-     *
-     * @return The truth value determining if this tensor belongs to a recorded computation graph.
+     *  {@inheritDoc}
      */
-    public boolean belongsToGraph() { return this.has( GraphNode.class ); }
+    @Override public boolean belongsToGraph() { return this.has( GraphNode.class ); }
 
     /**
-     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
-     *  This is because autograd requires recording a computation graph for back-prop traversal.
-     *  This autograd system however, will only be triggered by {@link Function} implementations which
-     *  are not "detached", meaning they have their "{@link Function#isDoingAD()}" flags set to true! <br>
-     *  A tensor is a leave if it is attached to a computation graph in which it is not an intermediate / branch node
-     *  but input / branch node.
-     *
-     * @return The truth value determining if this tensor is attached to a computation graph as leave node.
+     *  {@inheritDoc}
      */
-    public boolean isLeave() { return (!this.has( GraphNode.class )) || this.get( GraphNode.class ).isLeave(); }
-
-    /**
-     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
-     *  This is because autograd requires recording a computation graph for back-prop traversal.
-     *  This autograd system however, will only be triggered by {@link Function} implementations which
-     *  are not "detached", meaning they have their "{@link Function#isDoingAD()}" flags set to true! <br>
-     *  A tensor is a branch if it is attached to a computation graph in which it is not an input / leave node
-     *  but intermediate / branch node.
-     *
-     * @return The truth value determining if this tensor is attached to a computation graph as branch node.
-     */
-    public boolean isBranch() { return !this.isLeave(); }
-
-    /**
-     *  Tensors can be components of other tensors which makes the
-     *  implicitly their gradients.
-     *
-     * @return The truth value determining if this tensor has another tensor attached to it (which is its gradient).
-     */
-    public boolean hasGradient() { return this.has( Tsr.class ); }
+    @Override public boolean hasGradient() { return this.has( Tsr.class ); }
 
     /*
         ----------------------------------------------
@@ -1525,26 +1451,30 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
 
     /**
-     * @return The gradient of this tensor which is internally stored as component.
+     * {@inheritDoc}
      */
+     @Override
     public final Tsr<V> getGradient() { return this.get( Tsr.class ); }
 
     /**
-     * @return The device on which this tensor is stored or {@link CPU} if it is not outsourced.
+     * {@inheritDoc}
      */
+    @Override
     public Device<V> getDevice() {
         if ( this.isOutsourced() ) return this.get( Device.class );
         return (Device<V>) _CPU;
     }
 
     /**
-     * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
+     * {@inheritDoc}
      */
+    @Override
     public GraphNode<V> getGraphNode() { _guardGet("graph node"); return get( GraphNode.class ); }
 
     /**
-     * @return An instance of the {@link NDFrame} component if present.
+     * {@inheritDoc}
      */
+    @Override
     public NDFrame<V> frame() { _guardGet("graph node"); return get( NDFrame.class ); }
 
 
@@ -1733,15 +1663,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
 
     /**
-     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
-     *  This is because autograd requires recording a computation graph for back-prop traversal.
-     *  If this tensor is part of a computation graph then this method
-     *  will traverse an error backward in the recorded history towards tensors which require
-     *  the accumulation of gradients.
-     *
-     * @param error A tensor which is back-propagated to gradients. Must match the size og this tensor.
-     * @return The tensor on which this method was called. (factory pattern)
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> backward( Tsr<V> error ) {
         LogUtil.nullArgCheck(error, "error", Tsr.class, "Cannot back-propagate 'null'!");
         if ( this.isOutsourced() )
@@ -1755,49 +1679,27 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
-     *  This is because autograd requires recording a computation graph for back-prop traversal.
-     *  If this tensor is part of a computation graph then this method
-     *  will traverse an error backward in the recorded history towards tensors which require
-     *  the accumulation of gradients.<br>
-     *  <br>
-     *  This method turns the given scalar value and
-     *  turns it into a matching tensor ( with the same shape)
-     *  which will then be back-propagated through the
-     *  recorded computation graph.
-     *
-     * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
-     * @return The tensor on which this method was called. (factory pattern)
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> backward( double value ) {
         backward( Tsr.of( this.getValueClass(), getNDConf().shape(), value ) );
         return this;
     }
 
     /**
-     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
-     *  This is because autograd requires recording a computation graph for back-prop traversal.
-     *  If this tensor is part of a computation graph then this method
-     *  will traverse an error backward in the recorded history towards tensors which require
-     *  the accumulation of gradients. <br>
-     *  <br>
-     *  This method assumes that the user wants to back-propagate
-     *  an error of "1" having the same shape as
-     *  this tensor.
-     *
-     * @return The tensor on which this method was called. (factory pattern)
+     * {@inheritDoc}
      */
-    public final Tsr<V> backward()
-    {
+    @Override
+    public final Tsr<V> backward() {
         backward( 1 ); // By default we back-propagate a base factor of 1.
         return this;
     }
 
     /**
-     *  If this tensor owns a gradient tensor as component, then it can be applied by this method. <br>
-     *  "Applying" a gradient to a tensor simply means adding the values inside the gradient element-wise
-     *  to the owning host tensor via an inline operation. <br>
+     * {@inheritDoc}
      */
+    @Override
     public final void applyGradient()
     {
         /*
@@ -1830,14 +1732,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  <b>This method detaches this tensor from its underlying computation-graph
-     *  or simply does nothing if no graph is present.</b> <br>
-     *  Nodes within a computation graph are instances of the "{@link GraphNode}" class which are also
-     *  simple components of the tensors they represent in the graph. <br>
-     *  Therefore, "detaching" this tensor from the graph simply means removing its {@link GraphNode} component.
-     *
-     * @return This very instance in order to allows for a more streamline usage of this method.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> detach() { this.remove( GraphNode.class ); return this; }
 
     /*
@@ -1848,47 +1745,18 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
 
     /**
-     *  This method receives a nested {@link String} array which
-     *  ought to contain a label for the index of this tensor.
-     *  The index for a single element of this tensor would be an array
-     *  of numbers as long as the rank where every number is
-     *  in the range of the corresponding shape dimension...
-     *  Labeling an index means that for every dimension there
-     *  must be a label for elements in this range array! <br>
-     *  For example the shape (2,3) could be labeled as follows:    <br>
-     *                                                              <br>
-     *      dim 0 : ["A", "B"]                                      <br>
-     *      dim 1 : ["1", "2", "3"]                                 <br>
-     *                                                              <br>
-     *
-     * @param labels A nested String array containing labels for indexes of the tensor dimensions.
-     * @return This tensor (method chaining).
+     * {@inheritDoc}
      */
-    public final Tsr<V> label( String[][] labels )
-    {
+    @Override
+    public final Tsr<V> label( String[][] labels ) {
         _label( null, labels );
         return this;
     }
 
     /**
-     *  This method receives a label for this tensor and a
-     *  nested {@link String} array which ought to contain a
-     *  label for the index of this tensor.
-     *  The index for a single element of this tensor would be an array
-     *  of numbers as long as the rank where every number is
-     *  in the range of the corresponding shape dimension...
-     *  Labeling an index means that for every dimension there
-     *  must be a label for elements in this range array! <br>
-     *  For example the shape (2,3) could be labeled as follows:    <br>
-     *                                                              <br>
-     *      dim 0 : ["A", "B"]                                      <br>
-     *      dim 1 : ["1", "2", "3"]                                 <br>
-     *                                                              <br>
-     *
-     * @param tensorName A label for this tensor itself.
-     * @param labels A nested String array containing labels for indexes of the tensor dimensions.
-     * @return This tensor (method chaining).
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> label( String tensorName, String[][] labels )
     {
         _label( tensorName, labels );
@@ -1923,23 +1791,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This method receives a nested {@link String} list which
-     *  ought to contain a label for the index of this tensor.
-     *  The index for a single element of this tensor would be an array
-     *  of numbers as long as the rank where every number is
-     *  in the range of the corresponding shape dimension...
-     *  Labeling an index means that for every dimension there
-     *  must be a label for elements in this range array! <br>
-     *  For example the shape (2,3) could be labeled as follows: <br>
-     *                                                           <br>
-     *      dim 0 : ["A", "B"]                                   <br>
-     *      dim 1 : ["1", "2", "3"]                              <br>
-     *                                                           <br>
-     * @param labels A nested String list containing labels for indexes of the tensor dimensions.
-     * @return This tensor (method chaining).
+     * {@inheritDoc}
      */
-    public final Tsr<V> label( List<List<Object>> labels )
-    {
+    @Override
+    public final Tsr<V> label( List<List<Object>> labels ) {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) set( new NDFrame( labels, null ) );
@@ -1947,24 +1802,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This method receives a label for this tensor and a nested
-     *  {@link String} list which ought to contain a label for the index of
-     *  this tensor The index for a single element of this tensor would
-     *  be an array of numbers as long as the rank where every number is
-     *  in the range of the corresponding shape dimension...
-     *  Labeling an index means that for every dimension there
-     *  must be a label for elements in this range array! <br>
-     *  For example the shape (2,3) could be labeled as follows: <br>
-     *                                                           <br>
-     *      dim 0 : ["A", "B"]                                   <br>
-     *      dim 1 : ["1", "2", "3"]                              <br>
-     *                                                           <br>
-     * @param tensorName A label for this tensor itself.
-     * @param labels A nested String list containing labels for indexes of the tensor dimensions.
-     * @return This tensor (method chaining).
+     * {@inheritDoc}
      */
-    public final Tsr<V> label( String tensorName, List<List<Object>> labels )
-    {
+    @Override
+    public final Tsr<V> label( String tensorName, List<List<Object>> labels ) {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) set( new NDFrame<>( labels, tensorName ) );
@@ -1972,21 +1813,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This method provides the ability to
-     *  label not only the indices of the shape of this tensor, but also
-     *  the dimension of the shape.
-     *  The first and only argument of the method expects a map instance
-     *  where keys are the objects which ought to act as dimension labels
-     *  and the values are lists of labels for the indices of said dimensions.
-     *  For example the shape (2,3) could be labeled as follows:            <br>
-     *  [                                                                   <br>
-     *      "dim 0" : ["A", "B"],                                           <br>
-     *      "dim 1" : ["1", "2", "3"]                                       <br>
-     *  ]                                                                   <br>
-     *                                                                      <br>
-     * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
-     * @return This tensor (method chaining).
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> label( Map<Object, List<Object>> labels )
     {
         LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
@@ -1994,6 +1823,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final Tsr<V> label( String tensorName, Map<Object, List<Object>> labels )
     {
         LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
@@ -2014,26 +1847,18 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
 
     /**
-     *  This method will produce the sum of
-     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
-     *  where the left operand is this {@link Tsr}
-     *  instance and the right operand is the tensor passed to the method.
-     *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular element-wise addition.
-     *  Otherwise, the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
-     *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
-     *
-     * @param other The right operand of the addition.
-     * @return The sum of this instance as the left and the passed {@link Tsr} instance as right operand.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> plus( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add 'null' to a tensor!");
         return Neureka.get().backend().getAutogradFunction().plus().call( this, other );
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final Tsr<V> plusAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add-assign 'null' to a tensor!");
         return Neureka.get().backend().getFunction().plusAssign().call( this, other );
@@ -2049,7 +1874,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The right operand of the addition.
      * @return The sum between this instance as the left and the passed double as right operand.
      */
-    public final Tsr<V> plus( double value ) { return plus( _of( this.shape(), value ) ); }
+    public final Tsr<V> plus( V value ) { return plus( _of( this.shape(), value ) ); }
 
     /**
      *  This method will perform subtraction on
