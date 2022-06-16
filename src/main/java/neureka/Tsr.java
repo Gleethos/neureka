@@ -216,17 +216,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public static Tsr<Object> newInstance() { return new Tsr<>(); }
 
     /**
-     *  This constructor creates a completely empty tensor which is void of any contents and meaning.
-     *  The use case for this would be to use the produced {@link Tsr}
-     *  instance as a target for an inline operation which fills this instance with an actual value. <br>
-     *  An example of this approach would be to call the {@link #putAt(List, Tsr)} method with an empty list as key.
-     *  This will be interpreted as an inline copy of the contents of the
-     *  second parameter into this {@link Tsr} instance.
-     *  This constructor will be called by the {@link Tsr#newInstance()} factory method.
-     */
-    private Tsr() {}
-
-    /**
      *  Use this to conveniently operate on 2 tensors.
      *  A simple example would be: {@code Tsr.of(a,'*',b)}.
      *
@@ -475,17 +464,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
     public static <T> Tsr<T> of( Class<T> targetType, List<Object> conf ) {
-        boolean isDoubleMatrix = 
-                            conf.stream()
-                                .allMatch( e ->
-                                    e instanceof List
-                                            &&
-                                    ((List<Object>) e).stream().allMatch( v -> v instanceof Double )
-                                );
-
-        if ( isDoubleMatrix )
-            return new Tsr<>( conf );
-
         ListReader.Result result = ListReader.read( conf, o -> ( o instanceof Number ? ((Number)o).doubleValue() : o ) );
         Class<T> resultType;
         Object[] resultData;
@@ -499,13 +477,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             resultData = result.getData().parallelStream().map( v -> converter.convert(v, targetType) ).toArray();
         }
         return Tsr.of( DataType.of(resultType), shape, resultData );
-    }
-
-    /**
-     *  See {@link #of(List)}.
-     */
-    private Tsr( List<Object> conf ) {
-        createConstructionAPI().constructFor( conf.stream().map(e -> (List<Object>) e ).collect( Collectors.toList() ) );
     }
 
     /*
@@ -653,13 +624,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new Tsr<>( valueType, shape, seed ); }
 
-    /**
-     *  See {@link #of(Class, int[], String)} and {@link #of(List, String)}
-     */
-    private Tsr( Class<V> valueType, int[] shape, String seed ) {
-        createConstructionAPI().constructSeeded( valueType, shape, seed );
-    }
-
     public static Tsr<Double> of( int[] shape, double value ) { return Tsr.of( Double.class, shape, value ); }
 
     public static Tsr<Double> of( int[] shape, double[] value ) { return Tsr.of( Double.class, shape, value ); }
@@ -677,12 +641,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public static Tsr<Boolean> of( int[] shape, boolean[] value ) { return Tsr.of( Boolean.class, shape, value ); }
 
     public static <V> Tsr<V> of( DataType<V> type, int[] shape ) { return new Tsr<>( shape, type ); }
-
-    private Tsr( int[] shape, DataType<?> type )
-    {
-        _setDataType( DataType.of( type.getRepresentativeType() ) );
-        _constructAndAllocate( shape, true );
-    }
 
     public static <V> Tsr<V> of( Class<V> typeClass, int[] shape, Object data ) {
         return of( DataType.of(typeClass), shape, data );
@@ -713,8 +671,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
     public static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new Tsr<>( shape, dataType, data ); }
-
-    private Tsr( int[] shape, DataType<?> dataType, Object data ) { createConstructionAPI().tryConstructing( shape, dataType, data ); }
 
     // Inner construction layer:
 
@@ -766,19 +722,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public static <T> Tsr<T> of( DataType<T> type, int[] shape, Filler<T> filler) {
         return new Tsr<>( shape, type, filler);
-    }
-
-    /**
-     *  see {@link #of(DataType, int[], Filler)}
-     *
-     * @param shape The shape of this new tensor ought to have.
-     * @param type The data type this tensor ought to have.
-     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
-     * @param <T> The type parameter for the actual data array items.
-     */
-    private <T> Tsr( int[] shape, DataType<T> type, Filler<T> filler)
-    {
-        _constructFromInitializer( shape, type, filler);
     }
 
     /**
@@ -945,6 +888,78 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public static <V> Tsr<V> of( String expression, boolean doAD, Tsr<V>... tensors ) {
         return Function.of( expression, doAD ).call( tensors );
     }
+
+    /**
+     *  This factory method produces a randomly populated tensor of the provided
+     *  type and shape using a hard coded default seed.
+     *  If the provided type class is representing a
+     *  floating point number type (like {@link Double} or {@link Float}) then the random numbers will
+     *  be gaussian ("normally") distributed values with mean {@code 0.0} and standard
+     *  deviation {@code 1.0}.
+     *
+     * @param valueTypeClass The type class of the values stored by the returned tensor.
+     * @param shape The shape of the tensor produced by this factory method.
+     * @param <V> The type parameter of the values stored by the returned tensor.
+     * @return A randomly filled tensor of the provided type.
+     */
+    public static <V> Tsr<V> ofRandom( Class<V> valueTypeClass, int... shape ) {
+        return Tsr.of( valueTypeClass )
+                .withShape( shape )
+                .andSeed( 8701252152903546L );// If the user does not provide a seed, we use this.
+    }
+
+    /**
+     *  Use this factory method to instantiate a new tensor with the same data type, shape
+     *  and memory location ({@link Device} instance) as the provided template tensor.
+     *
+     * @param template The template tensor whose type, shape and location should be taken to construct a new tensor.
+     * @param <V> The type parameter defining the value type of the provided as well as returned tensor.
+     * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
+     */
+    public static <V> IterByOrIterFromOrAll<V> like( Tsr<V> template ) {
+        return Tsr.of( template.getDataType().getValueTypeClass() )
+                .on( template.getDevice() )
+                .withShape( template.getNDConf().shape() );
+    }
+
+    // Constructors:
+
+    /**
+     *  This constructor creates a completely empty tensor which is void of any contents and meaning.
+     *  The use case for this would be to use the produced {@link Tsr}
+     *  instance as a target for an inline operation which fills this instance with an actual value. <br>
+     *  An example of this approach would be to call the {@link #putAt(List, Tsr)} method with an empty list as key.
+     *  This will be interpreted as an inline copy of the contents of the
+     *  second parameter into this {@link Tsr} instance.
+     *  This constructor will be called by the {@link Tsr#newInstance()} factory method.
+     */
+    private Tsr() {}
+
+    private Tsr( int[] shape, DataType<?> dataType, Object data ) { createConstructionAPI().tryConstructing( shape, dataType, data ); }
+
+    /**
+     *  see {@link #of(DataType, int[], Filler)}
+     *
+     */
+    private <T> Tsr( int[] shape, DataType<T> type, Filler<T> filler)
+    {
+        _constructFromInitializer( shape, type, filler);
+    }
+
+    /**
+     *  See {@link #of(Class, int[], String)} and {@link #of(List, String)}
+     */
+    private Tsr( Class<V> valueType, int[] shape, String seed ) {
+        createConstructionAPI().constructSeeded( valueType, shape, seed );
+    }
+
+    private Tsr( int[] shape, DataType<?> type )
+    {
+        _setDataType( DataType.of( type.getRepresentativeType() ) );
+        _constructAndAllocate( shape, true );
+    }
+
+
 
     /*==================================================================================================================
     |
@@ -2798,39 +2813,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  This is especially useful for checking the correcting of autp-grad!
      */
     public final int getVersion() { return _version; }
-
-    /**
-     *  Use this factory method to instantiate a new tensor with the same data type, shape
-     *  and memory location ({@link Device} instance) as the provided template tensor.
-     *
-     * @param template The template tensor whose type, shape and location should be taken to construct a new tensor.
-     * @param <V> The type parameter defining the value type of the provided as well as returned tensor.
-     * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
-     */
-    public static <V> IterByOrIterFromOrAll<V> like( Tsr<V> template ) {
-        return Tsr.of( template.getDataType().getValueTypeClass() )
-                    .on( template.getDevice() )
-                    .withShape( template.getNDConf().shape() );
-    }
-
-    /**
-     *  This factory method produces a randomly populated tensor of the provided
-     *  type and shape using a hard coded default seed.
-     *  If the provided type class is representing a
-     *  floating point number type (like {@link Double} or {@link Float}) then the random numbers will
-     *  be gaussian ("normally") distributed values with mean {@code 0.0} and standard
-     *  deviation {@code 1.0}.
-     *
-     * @param valueTypeClass The type class of the values stored by the returned tensor.
-     * @param shape The shape of the tensor produced by this factory method.
-     * @param <V> The type parameter of the values stored by the returned tensor.
-     * @return A randomly filled tensor of the provided type.
-     */
-    public static <V> Tsr<V> ofRandom( Class<V> valueTypeClass, int... shape ) {
-        return Tsr.of( valueTypeClass )
-                    .withShape( shape )
-                    .andSeed( 8701252152903546L );// If the user does not provide a seed, we use this.
-    }
 
     /**
      *  This method exposes an API for mutating the state of this tensor.

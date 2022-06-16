@@ -203,38 +203,6 @@ public final class TsrConstructor {
         configureFromNewShape( shape, size > 1, true );
     }
 
-    /**
-     *  This method receives a list of lists which represent a matrix of objects.
-     *  It parses this matrix into a 2D shape array and a double array.<br>
-     *  <br>
-     *
-     * @param matrix A list of lists which ought to resemble a matrix.
-     */
-    public void constructFor( List<List<Object>> matrix ) {
-        boolean isNumeric = matrix.stream().allMatch( e -> e.stream().allMatch( ie -> ie instanceof Number ) );
-        if ( isNumeric ) {
-            int n = matrix.get( 0 ).size();
-            boolean isHomogenous = matrix.stream().allMatch( e -> e.size() == n );
-            if ( isHomogenous ) {
-                int m = matrix.size();
-                double[] value = new double[ m * n ];
-                int[] shape = new int[]{ m, n };
-
-                for ( int mi = 0; mi < m; mi++ ) {
-                    for ( int ni = 0; ni < n; ni++ ) {
-                        int i = n * mi + ni;
-                        value[ i ] = DataConverter.get().convert( matrix.get( mi ).get( ni ), Double.class );
-                    }
-                }
-                _constructForDoubles( shape, value );
-            } else {
-                String message = "Provided nested list(s) do not form a regular matrix.";
-                _LOG.error( message );
-                throw new IllegalArgumentException( message );
-            }
-        }
-    }
-
     private void _constructForDoubles(int[] shape, double[] value )
     {
         int size = NDConfiguration.Utility.sizeOfShape( shape );
