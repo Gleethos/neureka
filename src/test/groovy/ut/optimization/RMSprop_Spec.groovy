@@ -3,23 +3,23 @@ package ut.optimization
 import neureka.Neureka
 import neureka.Tsr
 import neureka.optimization.Optimizer
-import neureka.optimization.implementations.AdaGrad
+import neureka.optimization.implementations.RMSprop
 import neureka.view.TsrStringSettings
 import spock.lang.Shared
 import spock.lang.Specification
 
-class AdaGrad_Spec extends Specification
+class RMSprop_Spec extends Specification
 {
     @Shared Tsr<?> w = Tsr.of(0)
-    @Shared Optimizer<?> o = new AdaGrad<>(w)
+    @Shared Optimizer<?> o = new RMSprop<>(w)
 
     def setupSpec()
     {
         reportHeader """
-                <h2> AdaGrad Optimizer Behavior </h2>
+                <h2> RMSprop Optimizer Behavior </h2>
                 <br> 
                 <p>
-                    This specification check the behavior of the AdaGrad class.        
+                    This specification check the behavior of the RMSprop class.        
                 </p>
             """
     }
@@ -45,7 +45,7 @@ class AdaGrad_Spec extends Specification
     }
 
 
-    def 'AdaGrad optimizes according to expected inputs' (
+    def 'RMSprop optimizes according to expected inputs' (
             int gradient, double expectedWeight
     ) {
         given : 'A new scalar gradient tensor is being created.'
@@ -64,16 +64,16 @@ class AdaGrad_Spec extends Specification
 
         where :
             gradient | expectedWeight
-             -3      | 0.00999
-             -3      | 0.01707
-              2      | 0.01280001
-             -3      | 0.01819
-              2      | 0.01481
-              2      | 0.01161
-             -4      | 0.0170001
-             -3      | 0.02075
-             -3      | 0.02426
-              2      | 0.02198
+             -3      | 0.00316
+             -3      | 0.00545
+              2      | 0.00402
+             -3      | 0.00586
+              2      | 0.00466
+              2      | 0.00349
+             -4      | 0.00544
+             -3      | 0.00682
+             -3      | 0.00815
+              2      | 0.00725
     }
 
 }

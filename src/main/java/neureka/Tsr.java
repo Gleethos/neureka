@@ -2273,7 +2273,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return Neureka.get().backend().getAutogradFunction().pow().call( this, other );
     }
 
-    public final Tsr<V> power( double value ) {
+    public final Tsr<V> power( V value ) {
         return power( Tsr.of( this.valueClass(), this.shape(), value ) );
     }
 
@@ -3291,6 +3291,15 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             public Tsr<V> setNDConf(NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return Tsr.this; }
             @Override
             public <V> Tsr<V> toType( Class<V> typeClass ) { return Tsr.this._toType( typeClass ); }
+
+            @Override
+            public <U> Tsr<U> upcast(Class<U> superType) {
+                if ( superType.isAssignableFrom(Tsr.this.valueClass()) )
+                    return (Tsr<U>) Tsr.this;
+                else
+                    throw new IllegalArgumentException("Provided type '"+superType+"' is not a super type of '"+Tsr.this.valueClass()+"'.");
+            }
+
             @Override
             public <V> Tsr<V> setDataType( DataType<V> dataType ) { return (Tsr<V>) Tsr.this._setDataType(dataType); }
             @Override

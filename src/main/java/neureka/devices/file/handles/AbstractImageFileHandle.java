@@ -82,12 +82,12 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
     @Override
     public Tsr<Number> load() throws IOException {
         Object value = _loadData();
-        Tsr t = Tsr.of(
+        Tsr<?> t = Tsr.of(
                     _type.targetedValueType(),
                     new int[]{_height, _width, _type.numberOfChannels()},
                     value
                 );
-        return (Tsr<Number>) t;
+        return t.getUnsafe().upcast(Number.class);
     }
 
     @Override

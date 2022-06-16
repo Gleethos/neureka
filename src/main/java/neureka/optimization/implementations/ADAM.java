@@ -47,7 +47,7 @@ import neureka.optimization.Optimizer;
  *
  * @param <V> The value type parameter of the tensor whose gradients are being optimized.
  */
-public class ADAM<V> implements Optimizer<V>
+public class ADAM<V extends Number> implements Optimizer<V>
 {
     // Constants:
     private static final double B1 = 0.9;
@@ -55,11 +55,11 @@ public class ADAM<V> implements Optimizer<V>
     private static final double E = 1e-8;
 
     // Parameter
-    private final double a; // learning rate
+    private final double lr; // learning rate
 
     // Variables:
-    private Tsr<V> m; // Momentum
-    private Tsr<V> v; // Velocity
+    private Tsr<V> m; // momentum
+    private Tsr<V> v; // velocity
     private long t = 0; // time
 
     public ADAM(Tsr<V> target) {
@@ -67,7 +67,7 @@ public class ADAM<V> implements Optimizer<V>
         int[] shape = target.getNDConf().shape();
         m  = Tsr.of(target.getValueClass(), shape, 0);
         v  = Tsr.of(target.getValueClass(), shape, 0);
-        a  = 0.01; // Step size/learning rate is 0.01 by default!
+        lr = 0.01; // Step size/learning rate is 0.01 by default!
     }
 
     @Override
@@ -83,7 +83,7 @@ public class ADAM<V> implements Optimizer<V>
         v = Tsr.of(B2+" * ", v, " + "+b2Inverse+" * (", g,"^2 )");
         Tsr<V> mh = Tsr.of(m, "/"+b1hat);
         Tsr<V> vh = Tsr.of(v, "/"+b2hat);
-        Tsr<V> newg = Tsr.of("-"+a+" * ",mh," / (",vh,"^0.5 + "+E+")");
+        Tsr<V> newg = Tsr.of("-"+ lr +" * ",mh," / (",vh,"^0.5 + "+E+")");
         mh.getUnsafe().delete();
         vh.getUnsafe().delete();
         return newg;

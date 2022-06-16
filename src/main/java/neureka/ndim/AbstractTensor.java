@@ -448,6 +448,17 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
         <V> Tsr<V> toType( Class<V> typeClass );
 
         /**
+         *  Use this to do a runtime checked upcast of the type parameter of the tensor.
+         *  This is unsafe because it is in conflict with the {@link #valueClass()}
+         *  method.
+         *
+         * @param superType The class of the super type of the tensor's value type.
+         * @return A tensor whose type parameter is upcast.
+         * @param <U> The super type parameter of the value type of the tensor.
+         */
+        <U/*super T*/> Tsr<U> upcast(Class<U> superType );
+
+        /**
          *  This method enables modifying the data-type configuration of this {@link AbstractTensor}.
          *  Warning! The method should not be used unless absolutely necessary.
          *  This is because it can cause unpredictable inconsistencies between the
@@ -493,7 +504,6 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> imp
          * @return The tensor to which this unsafe API belongs.
          */
         Tsr<T> setIsIntermediate( boolean isIntermediate );
-
 
         /**
          *  Although tensors will be garbage collected when they are not strongly referenced,

@@ -371,8 +371,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private <T extends Number> Device<Number> _store( Tsr<T> tensor, Tsr<T> parent, Runnable migration ) {
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
-        _add((Tsr<Number>) tensor, parent.get(cl_tsr.class), migration);
-        _tensors.add((Tsr<Number>) tensor);
+        _add( tensor.getUnsafe().upcast(Number.class), parent.get(cl_tsr.class), migration);
+        _tensors.add( tensor.getUnsafe().upcast(Number.class) );
         return this;
     }
 
@@ -510,18 +510,18 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if (clt == null) return this;
         _tensors.remove(tensor);
         tensor.setIsOutsourced(false);
-        ((Tsr<Number>) tensor).remove(cl_tsr.class);
+        tensor.remove(cl_tsr.class);
         return this;
     }
 
     @Override
     protected <T extends Number> T _readItem( Tsr<T> tensor, int index ) {
-        return (T) Float.valueOf(_value(new float[1], (Tsr<Number>) tensor, index)[0]);
+        return (T) Float.valueOf(_value(new float[1], tensor.getUnsafe().upcast(Number.class), index)[0]);
     }
 
     @Override
     protected <T extends Number, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size ) {
-        return (A) _value(new float[size], (Tsr<Number>) tensor, start);
+        return (A) _value(new float[size], tensor.getUnsafe().upcast(Number.class), start);
     }
 
     @Override
@@ -558,7 +558,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         former.remove(cl_tsr.class);
         replacement.set(clTsr);
         _tensors.remove(former);
-        _tensors.add((Tsr<Number>) replacement);
+        _tensors.add( replacement.getUnsafe().upcast(Number.class) );
     }
 
     @Override

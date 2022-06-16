@@ -101,7 +101,7 @@ public final class CLFunctionCompiler {
     private void _adHocKernelFor( ExecutionCall<?> call ) {
 
         List<Tsr<Number>> args = Arrays.stream( _argPointer )
-                                    .mapToObj( p -> (Tsr<Number>) call.input( p + 1 ) )
+                                    .mapToObj( p -> call.input( p + 1 ).getUnsafe().upcast(Number.class) )
                                     .collect(Collectors.toList());
 
         args.add(0, call.input(Number.class, 0));

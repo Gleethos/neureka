@@ -85,7 +85,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
 
         int typeId = numre.read( new UI8() );
         Class<?> typeClass = TYPE_MAP.get( typeId );
-        _dataType = (DataType<NumericType<?, ?, ?, ?>>) DataType.of( typeClass );
+        _dataType = DataType.of( typeClass );
 
         int rank = numre.read( new UI8() );
         int[] shape = new int[ rank ];
@@ -178,7 +178,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
         DataType<?> type = Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes()
                             ? DataType.of( _dataType.getTypeClassInstance(NumericType.class).getNumericTypeTarget() )
                             : _dataType;
-        return (Tsr<Number>) Tsr.of( type, _shape, value );
+        return Tsr.of( type, _shape, value ).getUnsafe().upcast(Number.class);
     }
 
     @Override

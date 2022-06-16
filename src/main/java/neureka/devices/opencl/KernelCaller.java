@@ -69,7 +69,7 @@ public class KernelCaller
      * @return This very KernelCaller instance (factory patter).
      */
     public <T extends Number> KernelCaller pass( @NotNull Tsr<T> tensor ) {
-        _inputs.add( (Tsr<Number>) tensor );
+        _inputs.add( tensor.getUnsafe().upcast(Number.class) );
         clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.get( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
         return this;
