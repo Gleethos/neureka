@@ -124,21 +124,11 @@ import java.util.stream.Collectors;
 
 
 /**
- *  This class name {@link Tsr} is a 3 letter abbreviation of the word "tensor", a mathematical concept.
- *  A tensor is a type of multidimensional data-structure with certain transformation properties.
- *  Technically however, it is mostly a simple container / data-structure which can house data indexed by N dimensions.
- *  Therefore it is often also described as a nd-array.
- *  Elements of a tensor are also mostly numeric.<br>
- *  This means that: <br>
- *  <i><b>...a tensor of rank 0 is a scalar, a tensor of rank 1 is a vector and a tensor of rank 2 is a matrix, etc...</b></i>
- *  <br><br>
- *  Consequently, tensors are a perfect fit for applying various operations on them.
- *  Such operations might be simple elementwise operations or more complex linear operations like
- *  the dot-product, matrix- or even tensor multiplications. <br>
- *  <br>
+ *  The implementation for the {@link Tsr} API.
+ *
  * @param <V> The type parameter for the individual value items within this tensor.
  */
-public class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
+final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
 {
     static {
         _CPU = CPU.get();

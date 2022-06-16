@@ -35,13 +35,19 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- *  This interface is part of the {@link Tsr} API, and it defines
- *  how data can be read from and written to a tensor.
- *  In essence, this interface exists to expand
- *  the tensor API through default methods without littering the
- *  already large {@link Tsr} and {@link AbstractTensor} classes.
- *
- * @param <V> The value type parameter of the items stored by this tensor.
+ *  {@link Tsr} is a 3 letter abbreviation of the word "tensor", a mathematical concept.
+ *  A tensor is a type of multidimensional data-structure with certain transformation properties.
+ *  Technically however, it is mostly a simple container / data-structure which can house data indexed by N dimensions.
+ *  Therefore, it is often also described as a nd-array.
+ *  Elements of a tensor are also mostly numeric.<br>
+ *  This means that: <br>
+ *  <i><b>...a tensor of rank 0 is a scalar, a tensor of rank 1 is a vector and a tensor of rank 2 is a matrix, etc...</b></i>
+ *  <br><br>
+ *  Consequently, tensors are a perfect fit for applying various operations on them.
+ *  Such operations might be simple element-wise operations or more complex linear operations like
+ *  the dot-product, matrix- or even tensor multiplications. <br>
+ *  <br>
+ * @param <V> The type parameter for the individual value items within this tensor.
  */
 public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>>
 {
