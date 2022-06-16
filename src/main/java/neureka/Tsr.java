@@ -301,75 +301,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public static <T> Tsr<T> of( Object... args ) { return _of( args ); }
 
-    private static <T> Tsr<T> _of( Object... args )
-    {
-        if ( args == null || args.length == 0 ) return new Tsr<>();
-        if ( args.length == 1 ) {
-            Tsr<T> t = new Tsr<>();
-            boolean success = t.createConstructionAPI().constructAllFromOne( new int[]{ 1 }, args[ 0 ] );
-            if ( !success ) {
-                String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
-                _LOG.error( message );
-                throw new IllegalArgumentException( message );
-            }
-            return t;
-        }
-        args[ 0 ] = ( args[ 0 ] instanceof ArrayList ) ? ( (List<?>) args[ 0 ] ).toArray() : args[ 0 ];
-        args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (List<?>) args[ 1 ] ).toArray() : args[ 1 ];
-        if ( args[ 0 ] instanceof Object[] ) {
-            if ( ( (Object[]) args[ 0 ] )[ 0 ] instanceof Integer || ((Object[])args[ 0 ])[ 0 ] instanceof Double) {
-                args[ 0 ] = DataConverter.get().convert( args[ 0 ], int[].class );
-            }
-        }
-        //CASES:
-        if ( args[ 0 ] instanceof int[] ) {
-            if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
-                Tsr<T> t = new Tsr<>();
-                args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
-                t.createConstructionAPI().constructAllFromOne( (int[]) args[ 0 ], args[ 1 ] );
-                return t;
-            } else {
-                Tsr<T> t = new Tsr<>();
-                t._setDataType( DataType.of( args[1].getClass() ) );
-                t._constructAndAllocate( (int[]) args[0], true );
-                ((Object[])t._getData())[0] = args[1];
-                return t;
-            }
-        }
-        /* EXPRESSION BASED CONSTRUCTION: 
-            The following allows the creation of tensors based on passing an expression
-            alongside input tensors to the constructor.
-            An example would be:
-            
-                Tsr<?> t = Tsr.of( "tanh(", x, ") * 7 ^", y );  
-        */
-        boolean containsString = false;
-        int numberOfTensors = 0;
-        for ( Object o : args ) {
-            containsString = ( o instanceof String ) || containsString;
-            if ( o instanceof Tsr )
-                numberOfTensors++;
-        }
-        Tsr<T>[] tensors = new Tsr[ numberOfTensors ];
-        StringBuilder f = new StringBuilder();
-        int ti = 0;
-        for ( Object o : args ) {
-            if ( o instanceof Tsr ) {
-                tensors[ ti ] = ( (Tsr<T>) o );
-                f.append( "I[" ).append( ti ).append( "]" );
-                ti++;
-            }
-            else if ( o instanceof String ) f.append( (String) o );
-            else
-                _LOG.debug(
-                    "Unexpected tensor construction argument of type '"+o.getClass().getSimpleName()+"'"
-                );
-        }
-        if ( tensors.length == 0 || tensors[0] == null) return new Tsr<>();
-        return Function.of( f.toString(), true ).call( tensors );
-    }
-
-
     /*
         -------------------------------------------
             §(1.1) : SHAPE LIST BASED CONSTRUCTION
@@ -894,6 +825,74 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return Tsr.of( template.getDataType().getValueTypeClass() )
                 .on( template.getDevice() )
                 .withShape( template.getNDConf().shape() );
+    }
+
+    private static <T> Tsr<T> _of( Object... args )
+    {
+        if ( args == null || args.length == 0 ) return new Tsr<>();
+        if ( args.length == 1 ) {
+            Tsr<T> t = new Tsr<>();
+            boolean success = t.createConstructionAPI().constructAllFromOne( new int[]{ 1 }, args[ 0 ] );
+            if ( !success ) {
+                String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
+                _LOG.error( message );
+                throw new IllegalArgumentException( message );
+            }
+            return t;
+        }
+        args[ 0 ] = ( args[ 0 ] instanceof ArrayList ) ? ( (List<?>) args[ 0 ] ).toArray() : args[ 0 ];
+        args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (List<?>) args[ 1 ] ).toArray() : args[ 1 ];
+        if ( args[ 0 ] instanceof Object[] ) {
+            if ( ( (Object[]) args[ 0 ] )[ 0 ] instanceof Integer || ((Object[])args[ 0 ])[ 0 ] instanceof Double) {
+                args[ 0 ] = DataConverter.get().convert( args[ 0 ], int[].class );
+            }
+        }
+        //CASES:
+        if ( args[ 0 ] instanceof int[] ) {
+            if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
+                Tsr<T> t = new Tsr<>();
+                args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
+                t.createConstructionAPI().constructAllFromOne( (int[]) args[ 0 ], args[ 1 ] );
+                return t;
+            } else {
+                Tsr<T> t = new Tsr<>();
+                t._setDataType( DataType.of( args[1].getClass() ) );
+                t._constructAndAllocate( (int[]) args[0], true );
+                ((Object[])t._getData())[0] = args[1];
+                return t;
+            }
+        }
+        /* EXPRESSION BASED CONSTRUCTION:
+            The following allows the creation of tensors based on passing an expression
+            alongside input tensors to the constructor.
+            An example would be:
+
+                Tsr<?> t = Tsr.of( "tanh(", x, ") * 7 ^", y );
+        */
+        boolean containsString = false;
+        int numberOfTensors = 0;
+        for ( Object o : args ) {
+            containsString = ( o instanceof String ) || containsString;
+            if ( o instanceof Tsr )
+                numberOfTensors++;
+        }
+        Tsr<T>[] tensors = new Tsr[ numberOfTensors ];
+        StringBuilder f = new StringBuilder();
+        int ti = 0;
+        for ( Object o : args ) {
+            if ( o instanceof Tsr ) {
+                tensors[ ti ] = ( (Tsr<T>) o );
+                f.append( "I[" ).append( ti ).append( "]" );
+                ti++;
+            }
+            else if ( o instanceof String ) f.append( (String) o );
+            else
+                _LOG.debug(
+                        "Unexpected tensor construction argument of type '"+o.getClass().getSimpleName()+"'"
+                );
+        }
+        if ( tensors.length == 0 || tensors[0] == null) return new Tsr<>();
+        return Function.of( f.toString(), true ).call( tensors );
     }
 
     // Constructors:
