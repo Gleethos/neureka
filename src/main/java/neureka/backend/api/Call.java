@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
+import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 
 import java.util.Arrays;
@@ -44,6 +45,9 @@ public class Call<D>
 
 
     protected Call( Tsr<?>[] tensors, D device, List<Arg> arguments ) {
+        LogUtil.nullArgCheck( tensors, "tensors", Tsr[].class );
+        LogUtil.nullArgCheck( arguments, "arguments", List.class );
+        LogUtil.nullArgCheck( device, "device", Device.class );
         _inputs = tensors.clone();
         _device = device;
         for ( Arg<?> arg : arguments ) _arguments.set(arg);
@@ -71,6 +75,7 @@ public class Call<D>
     public Tsr<?> input( int i ) { return _inputs[ i ]; }
 
     public void rearrangeInputs( int... indices ) {
+        LogUtil.nullArgCheck( indices, "indices", int[].class );
         Tsr<?>[] tensors = _inputs.clone();
         for ( int i = 0; i < indices.length; i++ ) {
             _inputs[i] = tensors[indices[i]];
@@ -78,6 +83,7 @@ public class Call<D>
     }
 
     public <T> Device<T> getDeviceFor( Class<T> supportCheck ) {
+        LogUtil.nullArgCheck( supportCheck, "supportCheck", Class.class );
         // TODO: Make it possible to query device for type support!
         return (Device<T>) this.getDevice();
     }
@@ -87,10 +93,12 @@ public class Call<D>
     }
 
     public <V, T extends Arg<V>> T get( Class<T> argumentClass ) {
+        LogUtil.nullArgCheck( argumentClass, "argumentClass", Class.class );
         return _arguments.get(argumentClass);
     }
 
     public <V, T extends Arg<V>> V getValOf( Class<T> argumentClass ) {
+        LogUtil.nullArgCheck( argumentClass, "argumentClass", Class.class );
         return _arguments.valOf(argumentClass);
     }
 
@@ -119,26 +127,31 @@ public class Call<D>
 
     public Validator validate() { return new Validator(); }
 
+
     public static class Builder<V, T extends Device<V>>
     {
         private final T _device;
         private Tsr<V>[] _tensors;
         private final Args _arguments = Args.of( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) );
 
+
         private Builder( T device ) { _device = device; }
 
         @SafeVarargs
         public final <N extends V> Builder<V,T> with( Tsr<N>... tensors ) {
+            LogUtil.nullArgCheck( tensors, "tensors", Tsr[].class );
             _tensors = (Tsr<V>[]) tensors;
             return this;
         }
 
         public Builder<V,T> andArgs( List<Arg> arguments ) {
+            LogUtil.nullArgCheck( arguments, "arguments", List.class );
             for ( Arg<?> argument : arguments ) _arguments.set(argument);
             return this;
         }
 
         public Builder<V,T> andArgs( Arg<?>... arguments ) {
+            LogUtil.nullArgCheck( arguments, "arguments", Arg[].class );
             return andArgs(Arrays.stream(arguments).collect(Collectors.toList()));
         }
 
@@ -177,66 +190,69 @@ public class Call<D>
          */
         public float basicSuitability() { return suitabilityIfValid( SuitabilityPredicate.GOOD ); }
 
-        public float suitabilityIfValid(float estimationIfValid ) {
+        public float suitabilityIfValid( float estimationIfValid ) {
             return ( _isValid ? estimationIfValid : SuitabilityPredicate.UNSUITABLE );
         }
 
         public Estimator getEstimator() { return new Estimator( _isValid ); }
 
         public Validator first( TensorCondition condition ) {
+            LogUtil.nullArgCheck( condition, "condition", TensorCondition.class );
             if ( _isValid && !condition.check( input( 0 ) ) ) _isValid = false;
             return this;
         }
 
         public Validator last( TensorCondition condition ) {
+            LogUtil.nullArgCheck( condition, "condition", TensorCondition.class );
             if ( _isValid && !condition.check( input( arity() - 1 ) ) ) _isValid = false;
             return this;
         }
 
         public Validator tensors( TensorsCondition condition ) {
+            LogUtil.nullArgCheck( condition, "condition", TensorCondition.class );
             if ( _isValid && !condition.check(_inputs) ) _isValid = false;
             return this;
         }
 
-        public Validator any( TensorCondition condition )
-        {
+        public Validator any( TensorCondition condition ) {
+            LogUtil.nullArgCheck( condition, "condition", TensorCondition.class );
             if ( _isValid && !_anyMatch( condition ) ) _isValid = false;
             return this;
         }
 
-        private boolean _anyMatch( TensorCondition condition )
-        {
+        private boolean _anyMatch( TensorCondition condition ) {
             boolean any = false;
             for ( Tsr<?> t : _inputs) any = condition.check( t ) || any;
             return any;
         }
 
-        public Validator anyNotNull( TensorCondition condition )
-        {
+        public Validator anyNotNull( TensorCondition condition ) {
+            LogUtil.nullArgCheck( condition, "condition", TensorCondition.class );
             if ( !_anyNotNullMatch( condition ) ) _isValid = false;
             return this;
         }
 
-        private boolean _anyNotNullMatch( TensorCondition condition )
-        {
+        private boolean _anyNotNullMatch( TensorCondition condition ) {
             boolean any = false;
             for ( Tsr<?> t : _inputs)
                 if ( t != null ) any = condition.check( t ) || any;
             return any;
         }
 
-        public Validator all( TensorCondition condition )
-        {
+        public Validator all( TensorCondition condition ) {
+            LogUtil.nullArgCheck( condition, "condition", TensorCondition.class );
             if ( !_allMatch( condition ) ) _isValid = false;
             return this;
         }
 
         public Validator allNotNullHaveSame( TensorProperty propertySource ) {
+            LogUtil.nullArgCheck( propertySource, "propertySource", TensorProperty.class );
             if ( !_allHaveSame( propertySource ) ) _isValid = false;
             return this;
         }
 
         private boolean _allHaveSame( TensorProperty propertySource ) {
+            LogUtil.nullArgCheck( propertySource, "propertySource", TensorProperty.class );
             Object last = null;
             boolean firstWasSet = false;
             for ( Tsr<?> t : inputs() ) {
@@ -257,8 +273,8 @@ public class Call<D>
             return all;
         }
 
-        public Validator allNotNull( TensorCondition condition )
-        {
+        public Validator allNotNull( TensorCondition condition ) {
+            LogUtil.nullArgCheck( condition, "condition", TensorCondition.class );
             if ( _isValid && !_allNotNullMatch( condition ) ) _isValid = false;
             return this;
         }
@@ -271,8 +287,8 @@ public class Call<D>
             return all;
         }
 
-        public Validator all( TensorCompare compare )
-        {
+        public Validator all( TensorCompare compare ) {
+            LogUtil.nullArgCheck( compare, "compare", TensorCompare.class );
             if ( _isValid && !_allMatch( compare ) ) _isValid = false;
             return this;
         }
@@ -288,6 +304,7 @@ public class Call<D>
         }
 
         public <T> Validator allShare( Function<Tsr<?>, T> propertyProvider ) {
+            LogUtil.nullArgCheck( propertyProvider, "propertyProvider", Function.class );
             T first = null;
             for ( Tsr<?> t : _inputs) {
                 if ( t != null ) {
