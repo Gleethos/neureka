@@ -5,19 +5,26 @@ import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.calculus.Function;
+import neureka.calculus.Functions;
+import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
+import neureka.dtype.custom.UI16;
+import neureka.dtype.custom.UI32;
+import neureka.dtype.custom.UI8;
+import neureka.fluent.slicing.SliceBuilder;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.ndim.config.NDConfiguration;
+import neureka.view.TsrAsString;
+import neureka.view.TsrStringSettings;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.awt.image.BufferedImage;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  *  This interface is part of the {@link Tsr} API, and it defines
@@ -45,6 +52,8 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
      *  This only makes sense for homogeneously populated tensors.
      *  An example of such a tensor would be: <br>
      *  {@code Tsr.ofInts().withShape(x,y).all(n)}                           <br><br>
+     *  The reasons for this feature is that it greatly improves performance in certain cases.
+     *  In essence this feature is a form of lazy loading.
      *
      *  Use {@link #setIsVirtual(boolean)} to "actualize" a "virtual" tensor, and vise versa.
      *
@@ -140,6 +149,16 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
     boolean hasGradient();
 
     /**
+     *  Virtualizing is the opposite to actualizing a tensor.
+     *  A tensor is virtual if the size of the underlying data is not actually equal to
+     *  the number of elements which the tensor claims to store, aka its size.
+     *  This is for example the case when initializing a tensor filled with a single
+     *  value continuously. In that case the tensor will flag itself as virtual and only allocate the
+     *  underlying data array to hold a single item even though the tensor might actually hold
+     *  many more items.
+     *  The reasons for this feature is that it greatly improves performance in certain cases.
+     *  In essence this feature is a form of lazy loading.
+     *  <br><br>
      *  WARNING! Virtualizing is the process of compacting the underlying data array
      *  down to an array holding a single value.
      *  This only makes sense for homogeneously populated tensors.
@@ -509,6 +528,196 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
     default Tsr<V> negative() { return Neureka.get().backend().getAutogradFunction().neg().call( (Tsr<V>) this ); }
 
     /**
+     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
+     *
+     * @return A new transposed tensor with the same underlying data as this tensor.
+     */
+    default Tsr<V> T() {
+        if ( this.rank() == 1 ) return (Tsr<V>) this;
+        else if ( this.rank() == 2 ) {
+            boolean wasIntermediate = this.isIntermediate();
+            this.getUnsafe().setIsIntermediate(false);
+            Tsr<V> result = Neureka.get().backend().getFunction().transpose2D().call( (Tsr<V>) this );
+            this.getUnsafe().setIsIntermediate(wasIntermediate);
+            return result;
+        }
+        StringBuilder operation = new StringBuilder();
+        for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( i == 0 ? "" : ", " );
+        operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
+        return Function.of( operation.toString(), true ).call( (Tsr<V>) this );
+    }
+
+    /**
+     *  This method performs various operations by calling {@link Function} instances
+     *  in order to ultimately calculate the mean value of all values
+     *  of this very tensor!
+     *  This scalar tensor is then returned.
+     *
+     * @return A scalar tensor which is the mean value of all values of this very tensor.
+     */
+    default Tsr<V> mean() {
+        Functions functions = Neureka.get().backend().getAutogradFunction();
+        Tsr<V> sum = sum();
+        Tsr<V> result = functions.div().call( sum, Tsr.of( this.getValueClass(), new int[]{1}, this.size() ) );
+        sum.getUnsafe().delete();
+        return result;
+    }
+
+    default Tsr<V> sum() {
+        Functions functions = Neureka.get().backend().getAutogradFunction();
+        Tsr<V> ones = Tsr.of( this.getValueClass(), this.getNDConf().shape(), 1 );
+        Tsr<V> sum = functions.conv().call( (Tsr<V>) this, ones );
+        if ( !ones.has(GraphNode.class) || !ones.getGraphNode().isUsedAsDerivative() )
+            ones.getUnsafe().delete();
+        if ( sum == null )
+            throw new IllegalStateException(
+                    "Failed to calculate sum using convolution! Shapes: "+
+                            Arrays.toString(this.getNDConf().shape())+"x"+Arrays.toString(ones.getNDConf().shape())
+            );
+        return sum;
+    }
+
+    /**
+     *  This method performs a convolutional based dot product between the last dimension of this tensor
+     *  and the first dimension of the passed tensor.
+     *
+     * @param other The tensor which is the right part of the dot product operation.
+     * @return A new tensor which is the dot product of this tensor and the passed one.
+     */
+    default Tsr<V> convDot( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class);
+        Tsr<V> a = (Tsr<V>) this;
+        int[][] fitter = AbstractTensor.Utility.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );
+        boolean doReshape = false;
+        for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
+        for ( int i = 0; i < fitter[ 1 ].length && !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;
+        if ( doReshape ) {
+            a = Function.of( AbstractTensor.Utility.shapeString( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
+            other = Function.of( AbstractTensor.Utility.shapeString( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( other );
+        }
+        return Neureka.get()
+                .backend()
+                .getAutogradFunction()
+                .conv()
+                .call( a, other )
+                .dimtrim();
+    }
+
+    /**
+     *  This method performs a dot product between the last dimension of this tensor
+     *  and the first dimension of the passed tensor.
+     *  However, currently this method can only handle matrices which means
+     *  that it is functionally completely identical to the {@link #matMul(Tsr)} method.
+     *
+     * @param other The tensor which is the right part of the dot product operation.
+     * @return A new tensor which is the dot product of this tensor and the passed one.
+     */
+    default Tsr<V> dot( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform dot operation when second operand is 'null'!");
+        if ( this.rank() != 2 && other.rank() != 2 )
+            throw new IllegalStateException("Not yet implemented!"); // This is not yet available in the backend!
+        return this.matMul( other );
+    }
+
+    /**
+     *  The {@link #matMul(Tsr)} method will produce the matrix product of
+     *  two 2 dimensional arrays, where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *
+     * @param other The right operand of the matrix multiplication.
+     * @return The matrix product of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    default Tsr<V> matMul( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform matrix multiplication operation when second operand is 'null'!");
+        if ( this.rank() != 2 || other.rank() != 2 )
+            throw new IllegalArgumentException(
+                    "Cannot perform matrix multiplication for tensors whose ranks are not both 2!\n" +
+                    "Encountered ranks: " + this.rank() + ", " + other.rank() + ";"
+                );
+
+        return Neureka.get().backend().getAutogradFunction().matMul().call( (Tsr<V>) this, other );
+    }
+
+    /**
+     *  This method creates a new tensor sharing the same data and whose shape is trimmed.
+     *  A trimmed shape is simply a shape without preceding and trailing ones. <br>
+     *  For example the shape (1x4x1x2x1) would be trimmed to (4x1x2).
+     *  The underlying operation does not perform a removal of redundant ones all together.
+     *  Only ones at the start and the beginning will be removed.
+     *  A scalar tensor will not be affected by this operation.
+     *
+     * @return A tensor with the same underlying data but possibly trimmed shape without preceding or trailing ones.
+     */
+    default Tsr<V> dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( (Tsr<V>) this ); }
+
+    /**
+     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
+     *  It is and alias method to the {@link #T()} method...
+     *
+     * @return A new transposed tensor with the same underlying data as this tensor.
+     */
+    default Tsr<V> getT() { return this.T(); } // Transposed
+
+    /**
+     *  This method name translates to the "in" keyword in Groovy!
+     *  The same is true for the "contains" method in Kotlin.
+     *  Both methods do the exact same thing, however they exist
+     *  for better language support.
+     *
+     * @param other The tensor which will be checked.
+     * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
+     */
+    boolean isCase( Tsr<V> other );
+
+    /**
+     *  This method name translates to the "in" keyword in Kotlin!
+     *  The same is true for the "isCase" method in Groovy.
+     *  Both methods do the exact same thing, however they exist
+     *  for better language support.
+     *
+     * @param other The tensor which will be checked.
+     * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
+     */
+    default boolean contains( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform 'contains' operation when second operand is 'null'!");
+        return this.isCase( other );
+    }
+
+    /**
+     *  This is technically the equivalent to a full slice.
+     *
+     * @return A shallow copy where the underlying data is shared with this tensor.
+     */
+    default Tsr<V> shallowCopy() {
+        if ( this.isEmpty() || this.isUndefined() ) return (Tsr<V>) this;
+        List<List<Integer>> ranges = new ArrayList<>();
+        for ( int e : this.shape() ) {
+            List<Integer> rangeAsList = new ArrayList<>();
+            for ( int i = 0; i < e; i++ ) rangeAsList.add( i );
+            ranges.add( rangeAsList);
+        }
+        return getAt( ranges.toArray() );
+    }
+
+    /**
+     *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
+     *  which enables the configuration of a slice of the current tensor via method chaining.    <br>
+     *  The following code snippet slices a 3-dimensional tensor into a tensor of shape (2x1x3)  <br>
+     * <pre>{@code
+     *  myTensor.slice()
+     *          .axis(0).from(0).to(1)
+     *          .then()
+     *          .axis(1).at(5) // equivalent to '.from(5).to(5)'
+     *          .then()
+     *          .axis().from(0).to(2)
+     *          .get();
+     * }</pre>
+     *
+     * @return An instance of the {@link SliceBuilder} class exposing a readable builder API for creating slices.
+     */
+    SliceBuilder<V> slice();
+
+    /**
      *  This method is synonymous to the {@link #times(Tsr)} method.
      *  Both of which will produce the product of
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
@@ -694,6 +903,60 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
      */
     default Tsr<V> xor( double value ) { return xor( Tsr.of( this.valueClass(), this.shape(), value ) ); }
 
+    /**
+     *  Settings this flag via this setter will indirectly trigger the activation of
+     *  the autograd / auto-differentiation system of this library!
+     *  If the flag is set to 'true' and the tensor is used for computation then
+     *  it will also receive gradients when the {@link #backward()} method is being called
+     *  on any descendant tensor within the computation graph.
+     *
+     * @param rqsGradient The truth value determining if this tensor ought to receive gradients via
+     *                     the built-in automatic backpropagation system.
+     * @return This very {@link Tsr} instance in order to enable method chaining.
+     */
+    Tsr<V> setRqsGradient( boolean rqsGradient );
+
+    /**
+     *  This flag will indirectly trigger the activation of the autograd / auto-differentiation system of this library!
+     *  If the flag is set to 'true' and the tensor is used for computation then
+     *  it will also receive gradients when the {@link #backward()} method is being called
+     *  on any descendant tensor within the computation graph.
+     *
+     * @return The truth value determining if this tensor ought to receive gradients via
+     *         the built-in automatic backpropagation system.
+     */
+    boolean rqsGradient();
+
+    /**
+     *  Intermediate tensors are internal non-user tensors which may be eligible
+     *  for deletion when further consumed by a {@link Function}.
+     *  For the casual user of Neureka, this flag should always be false!
+     *
+     * @return The truth value determining if this tensor is not a user tensor but an internal
+     *         tensor which may be eligible for deletion by {@link Function}s consuming it.
+     */
+    boolean isIntermediate();
+
+    /**
+     *  This method informs this tensor if it's data is supposed to be kept in RAM
+     *  or if it has already been migrated somewhere else.
+     *  In the latter case, the tensor will nullify the reference to it's
+     *  underlying data array to make it elegable for garbage collection.
+     *  Otherwise, if {@code isOutsourced} is set to true, the method might
+     *  allocate a new data array if none is present.
+     *
+     * @param isOutsourced The truth value which determines if this tensor should live in RAM or somewhere else.
+     * @return This very instance to allow for method chaining.
+     */
+    Tsr<V> setIsOutsourced( boolean isOutsourced );
+
+    /**
+     *  Outsourced means that the tensor is stored on a {@link Device} implementation instance.
+     *
+     * @return The truth value determining if the data of this tensor is not actually stored inside of it
+     *         in the form of of a traditional primitive JVM array!
+     */
+    boolean isOutsourced();
 
     /**
      *  This method exposes an API for mutating the state of this tensor.
@@ -973,6 +1236,109 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
         return getDataAt( getNDConf().indexOfIndices( indices ) );
     }
 
+    /**
+     *  This method will receive an object an try to interpret
+     *  it or its contents to be set as value for this tensor.
+     *  It will not necessarily replace the underlying data array object of this
+     *  tensor itself, but also try to convert and copy the provided value
+     *  into the data array of this tensor.
+     *
+     * @param value The value which may be a scalar or array and will be used to populate this tensor.
+     * @return This very tensor to enable method chaining.
+     */
+    Tsr<V> setValue( Object value );
+
+    Object getValue();
+
+    /**
+     *  This returns an unprocessed version of the underlying data of this tensor.
+     *  If this tensor is outsourced (stored on a device), then the data will be loaded
+     *  into an array and returned by this method.
+     *  Do not expect the returned array to be actually stored within the tensor itself!
+     *  Contrary to the {@link Tsr#getValue()} method, this one will
+     *  return the data in an unbiased form, where for example a virtual (see {@link #isVirtual()})
+     *  tensor will have this method return an array of length 1.
+     *
+     * @return An unbiased copy of the underlying data of this tensor.
+     */
+    Object getData();
+
+    <T> Tsr<T> mapTo(
+            Class<T> typeClass,
+            java.util.function.Function<V,T> mapper
+    );
+
+    /**
+     *  Turns this tensor into a {@link BufferedImage} based on the provided
+     *  {@link Tsr.ImageType} formatting choice.
+     *
+     * @param type The type of format used to create the buffered image.
+     * @return A {@link BufferedImage} populated with the contents of this tensor.
+     */
+    BufferedImage asImage( Tsr.ImageType type );
+
+    /**
+     *  This method takes the provided {@link Tsr} instance and adds its
+     *  contents to the contents of the {@link Tsr} which is set as gradient of this very {@link Tsr}.
+     *
+     * @param error The error gradient which ought to be added to the gradient of this tensor.
+     * @return This very tensor instance to enable method chaining.
+     */
+    Tsr<V> addToGradient( Tsr<V> error );
+
+    /**
+     * @param typeClass The class which is the target of the type conversion.
+     * @param <T> The type parameter of the type that will be returned.
+     * @return An instance of the supplied type class.
+     */
+    public <T> T asType( Class<T> typeClass );
+
+    default  <A> A getValueAs( Class<A> arrayTypeClass ) {
+        return DataConverter.get().convert( getValue(), arrayTypeClass );
+    }
+
+    default  <A> A getDataAs( Class<A> arrayTypeClass ) {
+        return DataConverter.get().convert( getData(), arrayTypeClass );
+    }
+
+    default String toString( String conf ) {
+        if ( this.isDeleted() ) return "deleted";
+        else if ( this.isEmpty() ) return "empty";
+        else if ( this.isUndefined() ) return "undefined";
+        return TsrAsString.representing( (Tsr<?>) this ).withConfig( conf ).toString();
+    }
+
+    default String toString( TsrStringSettings config ) {
+        if ( this.isDeleted() ) return "deleted";
+        else if ( this.isEmpty() ) return "empty";
+        else if ( this.isUndefined() ) return "undefined";
+        return TsrAsString.representing( (Tsr<?>) this ).withConfig( config ).toString();
+    }
+
+    /**
+     *  This allows you to provide a lambda to configure how this tensor should be
+     *  converted to {@link String} instances.
+     *  The provided {@link Consumer} will receive a {@link TsrStringSettings} instance
+     *  which allows you to change various settings with the help of method chaining.
+     *
+     * @param config A consumer of the {@link TsrStringSettings} ready to be configured.
+     * @return The {@link String} representation of this tensor.
+     */
+    default String toString( Consumer<TsrStringSettings> config ) {
+        if ( this.isDeleted() ) return "deleted";
+        TsrStringSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();
+        config.accept(defaults);
+        return TsrAsString.representing( (Tsr<?>) this ).withConfig( defaults ).toString();
+    }
+
+    String toString();
+
+    /**
+     *  The version number is tracking how often this tensor has been mutated.
+     *  This is especially useful for checking the correcting of autp-grad!
+     */
+    int getVersion();
+
     default Access<V> at( int... indices ) {
         return new Access<V>() {
             @Override public V get() { return getValueAt( indices ); }
@@ -987,6 +1353,31 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
 
         void set( V value );
 
+    }
+
+    enum ImageType
+    {
+        RGB_1INT(1, UI32.class, 1),
+        ARGB_1INT(2, UI32.class, 1),
+        ARGB_PRE_1INT(3, UI32.class, 1),
+        BGR_1INT(4, UI32.class, 1),
+        BGR_3BYTE(5, UI8.class, 3),
+        ABGR_4BYTE(6, UI8.class, 4),
+        ABGR_PRE_4BYTE(7, UI8.class, 4),
+        RGB_565_USHORT(8, UI16.class, 1),
+        RGB_555_USHORT(9, UI16.class, 1),
+        GRAY_BYTE(0, UI8.class, 1),
+        GRAY_USHORT(1, UI16.class, 1);
+
+        public final int bufferType;
+        public final DataType<?> dataType;
+        public final int numberOfChannels;
+
+        ImageType( int bufferType, Class<?> valueTypeClass, int numberOfChannels ) {
+            this.bufferType = bufferType;
+            this.dataType = DataType.of( valueTypeClass );
+            this.numberOfChannels = numberOfChannels;
+        }
     }
 
     /**

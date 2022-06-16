@@ -973,16 +973,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     */
 
     /**
-     *  Settings this flag via this setter will indirectly trigger the activation of
-     *  the autograd / auto-differentiation system of this library!
-     *  If the flag is set to 'true' and the tensor is used for computation then
-     *  it will also receive gradients when the {@link #backward()} method is being called
-     *  on any descendant tensor within the computation graph.
-     *
-     * @param rqsGradient The truth value determining if this tensor ought to receive gradients via
-     *                     the built-in automatic backpropagation system.
-     * @return This very {@link Tsr} instance in order to enable method chaining.
+     *  {@inheritDoc}
      */
+    @Override
     public final Tsr<V> setRqsGradient( boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( Tsr.class );
         _setRqsGradient( rqsGradient );
@@ -990,14 +983,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This flag will indirectly trigger the activation of the autograd / auto-differentiation system of this library!
-     *  If the flag is set to 'true' and the tensor is used for computation then
-     *  it will also receive gradients when the {@link #backward()} method is being called
-     *  on any descendant tensor within the computation graph.
-     *
-     * @return The truth value determining if this tensor ought to receive gradients via
-     *         the built in automatic backpropagation system.
+     *  {@inheritDoc}
      */
+    @Override
     public boolean rqsGradient() { return ( _flags & RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK; }
 
     protected void _setRqsGradient( boolean rqsGradient ) {
@@ -1008,13 +996,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  Intermediate tensors are internal non-user tensors which may be eligible
-     *  for deletion when further consumed by a {@link Function}.
-     *  For the casual user of Neureka, this flag should always be false!
-     *
-     * @return The truth value determining if this tensor is not a user tensor but an internal
-     *         tensor which may be eligible for deletion by {@link Function}s consuming it.
+     *  {@inheritDoc}
      */
+    @Override
     public boolean isIntermediate() { return ( _flags & IS_INTERMEDIATE_MASK ) == IS_INTERMEDIATE_MASK; }
 
     /**
@@ -1039,16 +1023,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     */
 
     /**
-     *  This method informs this tensor if it's data is supposed to be kept in RAM
-     *  or if it has already been migrated somewhere else.
-     *  In the latter case, the tensor will nullify the reference to it's
-     *  underlying data array to make it elegable for garbage collection.
-     *  Otherwise, if {@code isOutsourced} is set to true, the method might
-     *  allocate a new data array if none is present.
-     *
-     * @param isOutsourced The truth value which determines if this tensor should live in RAM or somewhere else.
-     * @return This very instance to allow for method chaining.
+     *  {@inheritDoc}
      */
+    @Override
     public final Tsr<V> setIsOutsourced( boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
         if ( isOutsourced )
@@ -1096,11 +1073,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  Outsourced means that the tensor is stored on a {@link Device} implementation instance.
-     *
-     * @return The truth value determining if the data of this tensor is not actually stored inside of it
-     *         in the form of of a traditional primitive JVM array!
+     *  {@inheritDoc}
      */
+    @Override
     public boolean isOutsourced() { return ( _flags & IS_OUTSOURCED_MASK ) == IS_OUTSOURCED_MASK; }
 
     protected void _setIsOutsourced( boolean isOutsourced ) {
@@ -1117,19 +1092,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     */
 
     /**
-     *  Virtualizing is the opposite to actualizing a tensor.
-     *  A tensor is virtual if the size of the underlying data is not actually equal to
-     *  the number of elements which the tensor claims to store, aka its size.
-     *  This is for example the case when initializing a tensor filled with a single
-     *  value continuously. In that case the tensor will flag itself as virtual and only allocate the
-     *  underlying data array to hold a single item even though the tensor might actually hold
-     *  many more items.
-     *  The reasons for this feature is that it greatly improves performance in certain cases.
-     *  In essence this feature is a form of lazy loading.
-     *  <br><br>
-     *
-     * @param isVirtual The truth value determining if this tensor ought to be virtualized.
-     * @return This very tensor to enable method chaining.
+     *  {@inheritDoc}
      */
     @Override
     public final Tsr<V> setIsVirtual( boolean isVirtual ) {
@@ -1185,16 +1148,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  A tensor is virtual if the size of the underlying data is not actually equal to
-     *  the number of elements which the tensor claims to store, aka its size.
-     *  This is for example the case when initializing a tensor filled with a single
-     *  value continuously. In that case the tensor will flag itself as virtual and only allocate the
-     *  underlying data array to hold a single item even though the tensor might actually hold
-     *  many more items.
-     *  The reasons for this feature is that it greatly improves performance in certain cases.
-     *  In essence this feature is a form of lazy loading.
-     *  <br><br>
-     * @return The truth value determining if this tensor is virtual (and therefore not "actual").
+     *  {@inheritDoc}
      */
     @Override
     public boolean isVirtual() { return ( _flags & IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK; }
@@ -1868,146 +1822,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
 
     /**
-     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
-     *
-     * @return A new transposed tensor with the same underlying data as this tensor.
+     * {@inheritDoc}
      */
-    public final Tsr<V> T() // Transposed!
-    {
-        if ( this.rank() == 1 ) return this;
-        else if ( this.rank() == 2 ) {
-            boolean wasIntermediate = this.isIntermediate();
-            this.getUnsafe().setIsIntermediate(false);
-            Tsr<V> result = Neureka.get().backend().getFunction().transpose2D().call(this);
-            this.getUnsafe().setIsIntermediate(wasIntermediate);
-            return result;
-        }
-        StringBuilder operation = new StringBuilder();
-        for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( i == 0 ? "" : ", " );
-        operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
-        return Function.of( operation.toString(), true ).call( this );
-    }
-
-    /**
-     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
-     *  It is and alias method to the {@link #T()} method...
-     *
-     * @return A new transposed tensor with the same underlying data as this tensor.
-     */
-    public final Tsr<V> getT() { return this.T(); } // Transposed
-
-    /**
-     *  This method performs various operations by calling {@link Function} instances
-     *  in order to ultimately calculate the mean value of all values
-     *  of this very tensor!
-     *  This scalar tensor is then returned.
-     *
-     * @return A scalar tensor which is the mean value of all values of this very tensor.
-     */
-    public final Tsr<V> mean() {
-        Functions functions = Neureka.get().backend().getAutogradFunction();
-        Tsr<V> sum = sum();
-        Tsr<V> result = functions.div().call( sum, Tsr.of( this.getValueClass(), new int[]{1}, this.size() ) );
-        sum.getUnsafe().delete();
-        return result;
-    }
-
-    public final Tsr<V> sum() {
-        Functions functions = Neureka.get().backend().getAutogradFunction();
-        Tsr<V> ones = Tsr.of( this.getValueClass(), this.getNDConf().shape(), 1 );
-        Tsr<V> sum = functions.conv().call( this, ones );
-        if ( !ones.has(GraphNode.class) || !ones.getGraphNode().isUsedAsDerivative() )
-            ones.getUnsafe().delete();
-        if ( sum == null )
-            throw new IllegalStateException(
-                    "Failed to calculate sum using convolution! Shapes: "+
-                            Arrays.toString(this.getNDConf().shape())+"x"+Arrays.toString(ones.getNDConf().shape())
-            );
-        return sum;
-    }
-
-    /**
-     *  This method performs a convolutional based dot product between the last dimension of this tensor
-     *  and the first dimension of the passed tensor.
-     *
-     * @param other The tensor which is the right part of the dot product operation.
-     * @return A new tensor which is the dot product of this tensor and the passed one.
-     */
-    public final Tsr<V> convDot( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class);
-        Tsr<V> a = this;
-        int[][] fitter = AbstractTensor.Utility.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );
-        boolean doReshape = false;
-        for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
-        for ( int i = 0; i < fitter[ 1 ].length && !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;
-        if ( doReshape ) {
-            a = Function.of( AbstractTensor.Utility.shapeString( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
-            other = Function.of( AbstractTensor.Utility.shapeString( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( other );
-        }
-        return Neureka.get()
-                        .backend()
-                        .getAutogradFunction()
-                        .conv()
-                        .call( a, other )
-                        .dimtrim();
-    }
-
-    /**
-     *  This method performs a dot product between the last dimension of this tensor
-     *  and the first dimension of the passed tensor.
-     *  However, currently this method can only handle matrices which means
-     *  that it is functionally completely identical to the {@link #matMul(Tsr)} method.
-     *
-     * @param other The tensor which is the right part of the dot product operation.
-     * @return A new tensor which is the dot product of this tensor and the passed one.
-     */
-    public final Tsr<V> dot( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform dot operation when second operand is 'null'!");
-        if ( this.rank() != 2 && other.rank() != 2 )
-            throw new IllegalStateException("Not yet implemented!"); // This is not yet available in the backend!
-        return this.matMul( other );
-    }
-
-    /**
-     *  The {@link #matMul(Tsr)} method will produce the matrix product of
-     *  two 2 dimensional arrays, where the left operand is this {@link Tsr}
-     *  instance and the right operand is the tensor passed to the method.
-     *
-     * @param other The right operand of the matrix multiplication.
-     * @return The matrix product of this instance as the left and the passed {@link Tsr} instance as right operand.
-     */
-    public final Tsr<V> matMul( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform matrix multiplication operation when second operand is 'null'!");
-        if ( this.rank() != 2 || other.rank() != 2 ) {
-            String message = "Cannot perform matrix multiplication for tensors whose ranks are not both 2!\n" +
-                             "Encountered ranks: " + this.rank() + ", " + other.rank() + ";";
-            _LOG.error( message );
-            throw new IllegalArgumentException( message );
-        }
-        return Neureka.get().backend().getAutogradFunction().matMul().call( this, other );
-    }
-
-    /**
-     *  This method creates a new tensor sharing the same data and whose shape is trimmed.
-     *  A trimmed shape is simply a shape without preceding and trailing ones. <br>
-     *  For example the shape (1x4x1x2x1) would be trimmed to (4x1x2).
-     *  The underlying operation does not perform a removal of redundant ones all together.
-     *  Only ones at the start and the beginning will be removed.
-     *  A scalar tensor will not be affected by this operation.
-     *
-     * @return A tensor with the same underlying data but possibly trimmed shape without preceding or trailing ones.
-     */
-    public final Tsr<V> dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( this ); }
-
-    /**
-     *  This method name translates to the "in" keyword in Groovy!
-     *  The same is true for the "contains" method in Kotlin.
-     *  Both methods do the exact same thing, however they exist
-     *  for better language support.
-     *
-     * @param other The tensor which will be checked.
-     * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
-     */
+    @Override
     public boolean isCase( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform 'is case' operation when second oprand is 'null'!");
         boolean[] found = { false };
@@ -2016,21 +1833,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             }));
         return found[ 0 ];
     }
-
-    /**
-     *  This method name translates to the "in" keyword in Kotlin!
-     *  The same is true for the "isCase" method in Groovy.
-     *  Both methods do the exact same thing, however they exist
-     *  for better language support.
-     *
-     * @param other The tensor which will be checked.
-     * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
-     */
-    public boolean contains( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform 'contains' operation when second oprand is 'null'!");
-        return isCase( other );
-    }
-
 
     /*==================================================================================================================
     |
@@ -2045,11 +1847,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
 
     /**
-     *  The following method enables access to specific scalar elements within the tensor.
-     *  The method name also translates to the subscript operator in Groovy.
-     *
-     * @param indices The index array of the element which should be returned.
-     * @return An element located at the provided index.
+     * {@inheritDoc}
      */
     @Override
     public final Tsr<V> getAt( int... indices ) {
@@ -2058,21 +1856,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This method is most useful when used in Groovy
-     *  where defining maps is done through square brackets,
-     *  making it possible to slice tensors like so: <br>
-     *  <pre>{@code
-     *      var b = a[[[0..0]:1, [0..0]:1, [0..3]:2]]
-     *  }</pre>
-     *  Here a single argument with the format '[i..j]:k' is equivalent
-     *  to Pythons 'i:j:k' syntax for indexing! (numpy)                            <br>
-     *  i... start indexAlias.                                                      <br>
-     *  j... end indexAlias. (inclusive!)                                           <br>
-     *  k... step size.
-     *
-     * @param rankToStrides A map where the keys define where axes should be sliced and values which define the strides for the specific axis.
-     * @return A tensor slice with an offset based on the provided map keys and
-     *         strides based on the provided map values.
+     * {@inheritDoc}
      */
     @Override
     public final Tsr<V> getAt( Map<?,Integer> rankToStrides )
@@ -2087,29 +1871,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This is technically the equivalent to a full slice.
-     *
-     * @return A shallow copy where the underlying data is shared with this tensor.
-     */
-    public final Tsr<V> shallowCopy()
-    {
-        if ( this.isEmpty() || this.isUndefined() ) return this;
-        List<List<Integer>> ranges = new ArrayList<>();
-        for ( int e : this.shape() ) {
-            List<Integer> rangeAsList = new ArrayList<>();
-            for ( int i = 0; i < e; i++ ) rangeAsList.add( i );
-            ranges.add( rangeAsList);
-        }
-        return getAt( ranges.toArray() );
-    }
-
-    /**
-     *  This method enables tensor slicing!
-     *  It takes a key of various types and configures a slice
-     *  tensor which shares the same underlying data as the original tensor.
-     *
-     * @param key This object might be a wide range of objects including maps, lists or arrays...
-     * @return A slice tensor or scalar value.
+     *  {@inheritDoc}
      */
     @Override
     public final Tsr<V> getAt( List<?> key ) {
@@ -2173,21 +1935,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
-     *  which enables the configuration of a slice of the current tensor via method chaining.    <br>
-     *  The following code snippet slices a 3-dimensional tensor into a tensor of shape (2x1x3)  <br>
-     * <pre>{@code
-     *  myTensor.slice()
-     *          .axis(0).from(0).to(1)
-     *          .then()
-     *          .axis(1).at(5) // equivalent to '.from(5).to(5)'
-     *          .then()
-     *          .axis().from(0).to(2)
-     *          .get();
-     * }</pre>
-     *
-     * @return An instance of the {@link SliceBuilder} class exposing a readable builder API for creating slices.
+     *  {@inheritDoc}
      */
+    @Override
     public SliceBuilder<V> slice() { return new SliceBuilder<>( this, this::_sliceOf ); }
 
     /**
@@ -2300,14 +2050,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
 
     /**
-     *  This method enables injecting slices of tensor to be assigned into this tensor!
-     *  It takes a key of various types which is used to configure a slice
-     *  tensor sharing the same underlying data as the original tensor.
-     *  This slice is then used to assign the second argument to it, namely
-     *  the "value" argument.
-     *
-     * @param key This object is a list defining a targeted index or range of indices...
-     * @return A slice tensor or scalar value.
+     *  {@inheritDoc}
      */
     @Override
     public final Tsr<V> putAt( List<?> key, Tsr<V> value ) {
@@ -2317,12 +2060,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  Use this to place an element at a particular position
-     *  within this tensor by providing a array of axis indices and said element.
-     *
-     * @param indices The array of axis indices defining the position for the provided item.
-     * @param item The element which ought to be placed at the indexed position.
-     * @return This tensor instance to allow for method chaining.
+     *  {@inheritDoc}
      */
     @Override
     public final Tsr<V> putAt( int[] indices, V item ) {
@@ -2340,23 +2078,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This method enables assigning a provided tensor to be a subset of this tensor!
-     *  It takes a key which is used to configure a slice
-     *  sharing the same underlying data as the original tensor.
-     *  This slice is then used to assign the second argument {@code value} to it.
-     *  The usage of this method is especially powerful when used in Groovy. <br>
-     *  The following code illustrates this very well:
-     *  <pre>{@code
-     *      a[[[0..0]:1, [0..0]:1, [0..3]:2]] = b
-     *  }</pre>
-     *  Here a single argument with the format '[i..j]:k' is equivalent
-     *  to pythons 'i:j:k' syntax for indexing! (numpy)                            <br>
-     *  i... start indexAlias.                                                      <br>
-     *  j... end indexAlias. (inclusive!)                                           <br>
-     *  k... step size.                                                             <br>
-     *
-     * @param key This object is a map defining a stride and a targeted index or range of indices...
-     * @return A slice tensor or scalar value.
+     *  {@inheritDoc}
      */
     @Override
     public final Tsr<V> putAt( Map<?,Integer> key, Tsr<V> value ) {
@@ -2398,20 +2120,13 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  A tensor ought to have some way to access its underlying data array.
-     *  This method simple returns an element within this data array sitting at position "i".
-     * @param i The position of the targeted item within the raw data array of the tensor.
-     * @return The found object sitting at the specified index position.
+     *  {@inheritDoc}
      */
     @Override
     public V getDataAt( int i ) { return getDevice().access( this ).readAt( i ); }
 
     /**
-     *  A tensor ought to have some way to selectively modify its underlying value array.
-     *  This method simply overrides an element within this value array sitting at position "i".
-     * @param i The index of the value array entry which ought to be addressed.
-     * @param o The object which ought to be placed at the requested position.
-     * @return This very tensor in order to enable method chaining.
+     *  {@inheritDoc}
      */
     @Override
     public final Tsr<V> setValueAt( int i, V o ) {
@@ -2429,15 +2144,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This method will receive an object an try to interpret
-     *  it or its contents to be set as value for this tensor.
-     *  It will not necessarily replace the underlying data array object of this
-     *  tensor itself, but also try to convert and copy the provided value
-     *  into the data array of this tensor.
-     *
-     * @param value The value which may be a scalar or array and will be used to populate this tensor.
-     * @return This very tensor to enable method chaining.
+     *  {@inheritDoc}
      */
+    @Override
     public final Tsr<V> setValue( Object value )
     {
         LogUtil.nullArgCheck( value, "value", Object.class );
@@ -2469,16 +2178,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This returns an unprocessed version of the underlying data of this tensor.
-     *  If this tensor is outsourced (stored on a device), then the data will be loaded
-     *  into an array and returned by this method.
-     *  Do not expect the returned array to be actually stored within the tensor itself!
-     *  Contrary to the {@link Tsr#getValue()} method, this one will
-     *  return the data in an unbiased form, where for example a virtual (see {@link #isVirtual()})
-     *  tensor will have this method return an array of length 1.
-     *
-     * @return An unbiased copy of the underlying data of this tensor.
+     *  {@inheritDoc}
      */
+    @Override
     public Object getData() {
         _guardGet("data object");
         return _getData( true );
@@ -2490,7 +2192,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         else return device.access( this ).readAll( clone );
     }
 
-    public Object getValue() { // TODO : Make this what it is supposed to be!!! (returning a copy of the targeted data)
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
+    public Object getValue() {
         _guardGet("value object");
         if ( this.isOutsourced() ) {
             Device<V> device = get( Device.class );
@@ -2518,6 +2224,10 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     |       ...transformation and modification...
     */
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public <T> Tsr<T> mapTo(
             Class<T> typeClass,
             java.util.function.Function<V,T> mapper
@@ -2597,12 +2307,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  Turns this tensor into a {@link BufferedImage} based on the provided
-     *  {@link ImageType} formatting choice.
-     *
-     * @param type The type of format used to create the buffered image.
-     * @return A {@link BufferedImage} populated with the contents of this tensor.
+     *  {@inheritDoc}
      */
+    @Override
     public BufferedImage asImage( ImageType type )
     {
         switch ( type.bufferType )
@@ -2669,12 +2376,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This method takes the provided {@link Tsr} instance and adds its
-     *  contents to the contents of the {@link Tsr} which is set as gradient of this very {@link Tsr}.
-     *
-     * @param error The error gradient which ought to be added to the gradient of this tensor.
-     * @return This very tensor instance to enable method chaining.
+     *  {@inheritDoc}
      */
+    @Override
     public final Tsr<V> addToGradient( Tsr<V> error ) {
         _guardSet("gradient");
         if (
@@ -2703,10 +2407,9 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     * @param typeClass The class which is the target of the type conversion.
-     * @param <T> The type parameter of the type that will be returned.
-     * @return An instance of the supplied type class.
+     *  {@inheritDoc}
      */
+    @Override
     public <T> T asType( Class<T> typeClass )
     {
         LogUtil.nullArgCheck( typeClass, "typeClass", Class.class );
@@ -2758,47 +2461,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         return (Tsr<T>) this;
     }
 
-    public <A> A getValueAs( Class<A> arrayTypeClass ) {
-        return DataConverter.get().convert( getValue(), arrayTypeClass );
-    }
-
-    public <A> A getDataAs( Class<A> arrayTypeClass ) {
-        return DataConverter.get().convert( getData(), arrayTypeClass );
-    }
-
-    public String toString( String mode ) { return _toString( mode ); }
-
-    public String toString( TsrStringSettings config ) {
-        if ( this.isDeleted() ) return "deleted";
-        else if ( this.isEmpty() ) return "empty";
-        else if ( this.isUndefined() ) return "undefined";
-        return TsrAsString.representing( this ).withConfig( config ).toString();
-    }
-
-    /**
-     *  This allows you to provide a lambda to configure how this tensor should be
-     *  converted to {@link String} instances.
-     *  The provided {@link Consumer} will receive a {@link TsrStringSettings} instance
-     *  which allows you to change various settings with the help of method chaining.
-     *
-     * @param config A consumer of the {@link TsrStringSettings} ready to be configured.
-     * @return The {@link String} representation of this tensor.
-     */
-    public String toString( Consumer<TsrStringSettings> config ) {
-        if ( this.isDeleted() ) return "deleted";
-        TsrStringSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();
-        config.accept(defaults);
-        return TsrAsString.representing( this ).withConfig( defaults ).toString();
-    }
-
-    private String _toString( String config )
-    {
-        if ( this.isDeleted() ) return "deleted";
-        else if ( this.isEmpty() ) return "empty";
-        else if ( this.isUndefined() ) return "undefined";
-        return TsrAsString.representing( this ).withConfig( config ).toString();
-    }
-
     @Override
     public String toString()
     {
@@ -2809,17 +2471,13 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  The version number is tracking how often this tensor has been mutated.
-     *  This is especially useful for checking the correcting of autp-grad!
+     *  {@inheritDoc}
      */
+    @Override
     public final int getVersion() { return _version; }
 
     /**
-     *  This method exposes an API for mutating the state of this tensor.
-     *  The usage of methods exposed by this API is generally discouraged
-     *  because the exposed state can easily lead to broken tensors and exceptions...<br>
-     *  <br>
-     *  Use this in performance critical situations only.
+     *  {@inheritDoc}
      */
     @Override
     public Unsafe<V> getUnsafe() {
@@ -2865,31 +2523,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
                 return Tsr.this;
             }
         };
-    }
-
-    public enum ImageType
-    {
-        RGB_1INT(1, UI32.class, 1),
-        ARGB_1INT(2, UI32.class, 1),
-        ARGB_PRE_1INT(3, UI32.class, 1),
-        BGR_1INT(4, UI32.class, 1),
-        BGR_3BYTE(5, UI8.class, 3),
-        ABGR_4BYTE(6, UI8.class, 4),
-        ABGR_PRE_4BYTE(7, UI8.class, 4),
-        RGB_565_USHORT(8, UI16.class, 1),
-        RGB_555_USHORT(9, UI16.class, 1),
-        GRAY_BYTE(0, UI8.class, 1),
-        GRAY_USHORT(1, UI16.class, 1);
-
-        public final int bufferType;
-        public final DataType<?> dataType;
-        public final int numberOfChannels;
-
-        ImageType( int bufferType, Class<?> valueTypeClass, int numberOfChannels ) {
-            this.bufferType = bufferType;
-            this.dataType = DataType.of( valueTypeClass );
-            this.numberOfChannels = numberOfChannels;
-        }
     }
 
 }

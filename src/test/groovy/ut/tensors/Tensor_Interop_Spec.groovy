@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Tsr
-import neureka.Tsr.ImageType
+import neureka.ndim.TensorAPI
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
@@ -17,7 +17,7 @@ class Tensor_Interop_Spec extends Specification
 {
 
     def 'Tensor can be converted to buffered images.'(
-            Class<?> type, ImageType image, int... shape
+            Class<?> type, TensorAPI.ImageType image, int... shape
     ) {
         when :
             var asImage = Tsr.of(type).withShape(shape).andFill(42..73).asImage(image)
@@ -28,15 +28,15 @@ class Tensor_Interop_Spec extends Specification
 
         where :
             type    | image                    | shape
-            Byte    | ImageType.BGR_3BYTE      | [3, 5, 3]
-            Integer | ImageType.ARGB_1INT      | [7, 5, 1]
-            Byte    | ImageType.ABGR_4BYTE     | [7, 5, 4]
-            Byte    | ImageType.ABGR_PRE_4BYTE | [7, 5, 4]
+            Byte    | TensorAPI.ImageType.BGR_3BYTE      | [3, 5, 3]
+            Integer | TensorAPI.ImageType.ARGB_1INT      | [7, 5, 1]
+            Byte    | TensorAPI.ImageType.ABGR_4BYTE     | [7, 5, 4]
+            Byte    | TensorAPI.ImageType.ABGR_PRE_4BYTE | [7, 5, 4]
     }
 
 
     def 'Not all tensor can be converted to images.'(
-            Class<?> type, ImageType image, int... shape
+            Class<?> type, TensorAPI.ImageType image, int... shape
     ) {
 
         when :
@@ -49,10 +49,10 @@ class Tensor_Interop_Spec extends Specification
 
         where :
             type    | image                 | shape
-            Byte    | ImageType.BGR_3BYTE   | [3, 5]
-            Integer | ImageType.ARGB_1INT   | [7, 5, 3]
-            String  | ImageType.ARGB_1INT   | [7, 5, 1]
-            Byte    | ImageType.ABGR_4BYTE  | [2, 9, 3]
+            Byte    | TensorAPI.ImageType.BGR_3BYTE   | [3, 5]
+            Integer | TensorAPI.ImageType.ARGB_1INT   | [7, 5, 3]
+            String  | TensorAPI.ImageType.ARGB_1INT   | [7, 5, 1]
+            Byte    | TensorAPI.ImageType.ABGR_4BYTE  | [2, 9, 3]
     }
 
 }
