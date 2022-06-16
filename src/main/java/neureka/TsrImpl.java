@@ -85,6 +85,7 @@ SOFTWARE.
 
 package neureka;
 
+import jdk.internal.net.http.common.Log;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.backend.api.ExecutionCall;
@@ -128,7 +129,7 @@ import java.util.stream.Collectors;
  *
  * @param <V> The type parameter for the individual value items within this tensor.
  */
-final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
+final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
 {
     static {
         _CPU = CPU.get();
@@ -185,7 +186,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
         --------------------------------------------
     */
 
-    static <T> Tsr<T> _of(Object... args )
+    static <T> Tsr<T> _of( Object... args )
     {
         if ( args == null || args.length == 0 ) return new TsrImpl<>();
         if ( args.length == 1 ) {
@@ -326,7 +327,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      *  {@inheritDoc}
      */
     @Override
-    public final Tsr<V> setRqsGradient(boolean rqsGradient ) {
+    public Tsr<V> setRqsGradient(boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( TsrImpl.class );
         _setRqsGradient( rqsGradient );
         return this;
@@ -338,7 +339,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
     @Override
     public boolean rqsGradient() { return ( _flags & RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK; }
 
-    protected void _setRqsGradient( boolean rqsGradient ) {
+    private void _setRqsGradient(boolean rqsGradient) {
         if ( rqsGradient() != rqsGradient ) {
             if ( rqsGradient ) _flags += RQS_GRADIENT_MASK;
             else               _flags -= RQS_GRADIENT_MASK;
@@ -359,11 +360,12 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * @param isIntermediate The truth value determining if this tensor is not a user tensor but an internal
      *                       tensor which may be eligible for deletion by {@link Function}s consuming it.
      */
-    protected void _setIsIntermediate( boolean isIntermediate ) {
+    private Tsr<V> _setIsIntermediate(boolean isIntermediate) {
         if ( isIntermediate() != isIntermediate ) {
             if ( isIntermediate ) _flags += IS_INTERMEDIATE_MASK;
             else                  _flags -= IS_INTERMEDIATE_MASK;
         }
+        return this;
     }
 
     /*
@@ -376,7 +378,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      *  {@inheritDoc}
      */
     @Override
-    public final Tsr<V> setIsOutsourced(boolean isOutsourced ) {
+    public Tsr<V> setIsOutsourced(boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
         if ( isOutsourced )
             _setData( null );
@@ -428,7 +430,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
     @Override
     public boolean isOutsourced() { return ( _flags & IS_OUTSOURCED_MASK ) == IS_OUTSOURCED_MASK; }
 
-    protected void _setIsOutsourced( boolean isOutsourced ) {
+    private void _setIsOutsourced(boolean isOutsourced) {
         if ( isOutsourced() != isOutsourced ) {
             if ( isOutsourced ) _flags += IS_OUTSOURCED_MASK;
             else                _flags -= IS_OUTSOURCED_MASK;
@@ -445,7 +447,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      *  {@inheritDoc}
      */
     @Override
-    public final Tsr<V> setIsVirtual(boolean isVirtual ) {
+    public Tsr<V> setIsVirtual(boolean isVirtual ) {
 
         assert getNDConf() != null;
 
@@ -527,7 +529,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      *  {@inheritDoc}
      */
     @Override
-    public final Tsr<V> setGradientApplyRequested(boolean applyRequested ) {
+    public Tsr<V> setGradientApplyRequested(boolean applyRequested ) {
         if ( gradientApplyRequested() != applyRequested ) {
             if ( applyRequested ) {
                 if (
@@ -614,10 +616,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * @return The unchanged object or maybe in future versions: null (component rejected)
      */
     @Override
-    protected < T extends Component<Tsr<V>> > T _setOrReject(T newComponent )
-    {
-        return newComponent;
-    }
+    protected < T extends Component<Tsr<V>> > T _setOrReject(T newComponent ) { return newComponent; }
 
     /*
     --------------------------------------------
@@ -665,43 +664,12 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
         §(3.2) : UPDATING  :
     ----------------------------
     */
-    /**
-     *  Important : Components of type {@link Tsr} are simply gradients!
-     *  Currently, this method is used only to catch illegal arguments which
-     *  is for example the case when trying to attach a gradient with a different shape...
-     *  (Otherwise the gradient tensor "does not mind" an owner change...)
-     */
-    @Override
-    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
-        if ( changeRequest.type() == IsBeing.ADDED ) {
-            if (
-                    changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||
-                            Arrays.hashCode(changeRequest.getNewOwner().getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )
-            ) {
-                throw new IllegalArgumentException(
-                        "Trying to attach a tensor as gradient component to a tensor with different shape."
-                );
-            }
-        }
-        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
-        // If the change request type is set to "REPLACED" then
-        // this is means that this tensor is a gradient that is being
-        // transferred to another tensor to serve as gradient...
-        // No update task needs to occur. (This might change in the future...)
-        return true;
-    }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public final Tsr<V> to(Device<?> device ){ super._set( device ); return this; }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> to(String deviceType ) { return this.to(Device.get(deviceType)); }
+    public Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
 
     /*==================================================================================================================
     |
@@ -714,88 +682,21 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
     --------------------------------------------
     */
 
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isEmpty() { return _getData() == null && !this.isOutsourced(); }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isUndefined() { return getNDConf() == null || getNDConf().shape() == null; }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isSlice() {
-        Relation<V> child = get( Relation.class );
-        return ( child != null && child.hasParent() );
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public int sliceCount() {
-        Relation<V> child = this.get( Relation.class );
-        return ( child != null ) ? child.childCount() : 0;
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isSliceParent() {
-        Relation<V> parent = this.get( Relation.class );
-        return ( parent != null && parent.hasChildren() );
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override public boolean belongsToGraph() { return this.has( GraphNode.class ); }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override public boolean hasGradient() { return this.has( TsrImpl.class ); }
-
     /*
         ----------------------------------------------
             §(4.1) : COMPONENT BASED PROPERTIES :
         ----------------------------------------------
      */
 
-    /**
-     * {@inheritDoc}
-     */
-     @Override
-    public final Tsr<V> getGradient() { return this.get( TsrImpl.class ); }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Device<V> getDevice() {
-        if ( this.isOutsourced() ) return this.get( Device.class );
-        return (Device<V>) _CPU;
+    public <T extends Component<?>> T get( Class<T> componentClass ) {
+        LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
+        if ( GraphNode.class.isAssignableFrom(componentClass) )
+            _guardGet(componentClass.getSimpleName());
+        else if ( NDFrame.class.isAssignableFrom(componentClass) )
+            _guardGet(componentClass.getSimpleName());
+        return super.get(componentClass);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public GraphNode<V> getGraphNode() { _guardGet("graph node"); return get( GraphNode.class ); }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NDFrame<V> frame() { _guardGet("graph node"); return get( NDFrame.class ); }
-
 
     /*
         ---------------------------------------
@@ -985,7 +886,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final Tsr<V> backward( Tsr<V> error ) {
+    public Tsr<V> backward( Tsr<V> error ) {
         LogUtil.nullArgCheck(error, "error", TsrImpl.class, "Cannot back-propagate 'null'!");
         if ( this.isOutsourced() )
             error = error.deepCopy().to(this.getDevice());
@@ -1001,7 +902,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final Tsr<V> backward(double value ) {
+    public Tsr<V> backward(double value ) {
         backward( Tsr.of( this.getValueClass(), getNDConf().shape(), value ) );
         return this;
     }
@@ -1010,7 +911,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final Tsr<V> backward() {
+    public Tsr<V> backward() {
         backward( 1 ); // By default we back-propagate a base factor of 1.
         return this;
     }
@@ -1019,7 +920,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final void applyGradient()
+    public void applyGradient()
     {
         /*
            If the tensor has a JITProp component then it will trigger the continuation of the back-propagation which
@@ -1054,7 +955,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final Tsr<V> detach() { this.remove( GraphNode.class ); return this; }
+    public Tsr<V> detach() { this.remove( GraphNode.class ); return this; }
 
     /*
         ----------------------------
@@ -1067,7 +968,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final Tsr<V> label(String[][] labels ) {
+    public Tsr<V> label(String[][] labels ) {
         _label( null, labels );
         return this;
     }
@@ -1076,7 +977,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final Tsr<V> label(String tensorName, String[][] labels )
+    public Tsr<V> label(String tensorName, String[][] labels )
     {
         _label( tensorName, labels );
         return this;
@@ -1113,7 +1014,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final Tsr<V> label(List<List<Object>> labels ) {
+    public Tsr<V> label(List<List<Object>> labels ) {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) set( new NDFrame( labels, null ) );
@@ -1124,7 +1025,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final Tsr<V> label(String tensorName, List<List<Object>> labels ) {
+    public Tsr<V> label(String tensorName, List<List<Object>> labels ) {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) set( new NDFrame<>( labels, tensorName ) );
@@ -1135,7 +1036,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final Tsr<V> label(Map<Object, List<Object>> labels )
+    public Tsr<V> label(Map<Object, List<Object>> labels )
     {
         LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
         this.set( new NDFrame<>( labels, this, null ) );
@@ -1146,7 +1047,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final Tsr<V> label(String tensorName, Map<Object, List<Object>> labels )
+    public Tsr<V> label(String tensorName, Map<Object, List<Object>> labels )
     {
         LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
         this.set( new NDFrame<>( labels, this, tensorName ) );
@@ -1200,7 +1101,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final Tsr<V> getAt(int... indices ) {
+    public Tsr<V> getAt(int... indices ) {
         LogUtil.nullArgCheck(indices, "indices", int[].class, "Indices array must not be 'null'!");
         return getAt( Arrays.stream( indices ).boxed().toArray() );
     }
@@ -1209,7 +1110,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * {@inheritDoc}
      */
     @Override
-    public final Tsr<V> getAt( Map<?,Integer> rankToStrides )
+    public Tsr<V> getAt( Map<?,Integer> rankToStrides )
     {
         if ( rankToStrides == null ) return this;
         // ...not a simple slice... Advanced:
@@ -1224,7 +1125,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      *  {@inheritDoc}
      */
     @Override
-    public final Tsr<V> getAt(List<?> key ) {
+    public Tsr<V> getAt(List<?> key ) {
         LogUtil.nullArgCheck( key, "key", List.class );
         if ( key.stream().anyMatch( i -> i == null ) )
             throw new IllegalArgumentException("List of indices/ranges may not contain entries which are null!");
@@ -1269,7 +1170,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      * @return A deep copy of this tensor.
      */
      @Override
-    public final TsrImpl<V> deepCopy() {
+    public TsrImpl<V> deepCopy() {
         Function cloner = Neureka.get().backend().getFunction().idy();
         boolean thisIsIntermediate = this.isIntermediate();
         _setIsIntermediate( false );
@@ -1403,7 +1304,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      *  {@inheritDoc}
      */
     @Override
-    public final Tsr<V> putAt( List<?> key, Tsr<V> value ) {
+    public Tsr<V> putAt( List<?> key, Tsr<V> value ) {
         _putAtCheckFor( value );
         Tsr<V> slice = ( key == null ) ? this : getAt( key );
         return _putAt( slice, value );
@@ -1413,7 +1314,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      *  {@inheritDoc}
      */
     @Override
-    public final Tsr<V> putAt(int[] indices, V item ) {
+    public Tsr<V> putAt(int[] indices, V item ) {
         if ( indices == null )
             throw new IllegalArgumentException( "Provided indices are null!" );
         if ( indices.length > this.rank() ) {
@@ -1431,7 +1332,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      *  {@inheritDoc}
      */
     @Override
-    public final Tsr<V> putAt( Map<?,Integer> key, Tsr<V> value ) {
+    public Tsr<V> putAt( Map<?,Integer> key, Tsr<V> value ) {
         _putAtCheckFor( value );
         Tsr<V> slice = ( key == null ) ? this : getAt( key );
         return _putAt( slice, value );
@@ -1479,7 +1380,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      *  {@inheritDoc}
      */
     @Override
-    public final Tsr<V> setValueAt(int i, V o ) {
+    public Tsr<V> setValueAt(int i, V o ) {
         _guardMod("data object");
         NDConfiguration ndc = this.getNDConf();
         _setDataAt( ndc.indexOfIndex( i ), o );
@@ -1497,7 +1398,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      *  {@inheritDoc}
      */
     @Override
-    public final Tsr<V> setValue(Object value )
+    public Tsr<V> setValue(Object value )
     {
         LogUtil.nullArgCheck( value, "value", Object.class );
         boolean success = true;
@@ -1574,87 +1475,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
     |       ...transformation and modification...
     */
 
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public <T> Tsr<T> mapTo(
-            Class<T> typeClass,
-            java.util.function.Function<V,T> mapper
-    ) {
-        if ( this.isEmpty() )
-            throw new IllegalArgumentException("Trying to map an empty tensor!");
-        /*
-           The provided lambda cannot be executed anywhere but the CPU (Note: Maybe we should consider Aparapi here)
-           This is a problem if this tensor here lives somewhere other than the JVM.
-           So, therefore, we invite it back home for dinner!
-         */
-        return _CPU // This little API will temporarily migrate this to the JVM.
-                .borrow( (Tsr<Object>) this )
-                .in( () -> {
-                    Object data = _getData();
-                    DataConverter.ForTensor map = new DataConverter.ForTensor( this );
-                    if ( data == null ) {
-                        if ( this.isOutsourced() )
-                            _LOG.error("Encountered an outsourced tensor! Only local tensors stored in RAM can be mapped.");
-                        else
-                            _LOG.error("Invalid tensor state encountered! Cannot map a tensor without data.");
-                    }
-                    Object newData;
-                    String failMessage = "Conversion to type "+typeClass+" not yet supported.";
-                    if ( Number.class.isAssignableFrom(typeClass) ) {
-                        java.util.function.Function<Integer, Number> access;
-                        if ( this.getValueClass() == Integer.class ) {
-                            int[] sourceData = (int[]) _getData();
-                            access = (i -> (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Double.class) {
-                            double[] sourceData = (double[]) _getData();
-                            access = (i -> (Number) mapper.apply((V) Double.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Float.class) {
-                            float[] sourceData = (float[]) _getData();
-                            access = (i -> (Number) mapper.apply((V) Float.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Short.class) {
-                            short[] sourceData = (short[]) _getData();
-                            access = (i -> (Number) mapper.apply((V) Short.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Byte.class) {
-                            byte[] sourceData = (byte[]) _getData();
-                            access = (i -> (Number) mapper.apply((V) Byte.valueOf(sourceData[i])));
-                        } else
-                            throw new IllegalArgumentException(failMessage);
-
-                        if (typeClass == Double.class) newData = map.toDoubleArray(access);
-                        else if ( typeClass == Integer.class ) newData = map.toIntArray(access);
-                        else if ( typeClass == Long.class    ) newData = map.toLongArray(access);
-                        else if ( typeClass == Byte.class    ) newData = map.toByteArray(access);
-                        else if ( typeClass == Float.class   ) newData = map.toFloatArray(access);
-                        else if ( typeClass == Short.class   ) newData = map.toShortArray(access);
-                        else
-                            throw new IllegalArgumentException(failMessage);
-                    } else {
-                        java.util.function.Function<Integer, Object> access = null;
-                        if ( this.getValueClass() == Integer.class ) {
-                            int[] sourceData = (int[]) _getData();
-                            access = (i -> mapper.apply((V) Integer.valueOf(sourceData[i])));
-                        } else if ( this.getValueClass() == Double.class ) {
-                            double[] sourceData = (double[]) _getData();
-                            access = (i -> mapper.apply((V) Double.valueOf(sourceData[i])));
-                        } else if ( this.getValueClass() == Float.class ) {
-                            float[] sourceData = (float[]) _getData();
-                            access = (i -> mapper.apply((V) Float.valueOf(sourceData[i])));
-                        } else if ( this.getValueClass() == Short.class ) {
-                            short[] sourceData = (short[]) _getData();
-                            access = (i -> mapper.apply((V) Short.valueOf(sourceData[i])));
-                        } else if ( this.getValueClass() == Byte.class ) {
-                            byte[] sourceData = (byte[]) _getData();
-                            access = (i -> mapper.apply((V) Byte.valueOf(sourceData[i])));
-                        } else
-                            throw new IllegalArgumentException(failMessage);
-
-                        newData = map.toObjectArray(access);
-                    }
-                    return Tsr.of( typeClass, this.getNDConf().shape(), newData );
-                });
-    }
 
     /**
      *  {@inheritDoc}
@@ -1729,7 +1549,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      *  {@inheritDoc}
      */
     @Override
-    public final Tsr<V> addToGradient( Tsr<V> error ) {
+    public Tsr<V> addToGradient( Tsr<V> error ) {
         _guardSet("gradient");
         if (
                 !forComponent(
@@ -1827,7 +1647,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
      *  {@inheritDoc}
      */
     @Override
-    public final int getVersion() { return _version; }
+    public int getVersion() { return _version; }
 
     /**
      *  {@inheritDoc}
@@ -1859,10 +1679,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V> implements Cloneable
                 return TsrImpl.this;
             }
             @Override
-            public Tsr<V> setIsIntermediate(boolean isIntermediate ) {
-                _setIsIntermediate( isIntermediate );
-                return TsrImpl.this;
-            }
+            public Tsr<V> setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
             @Override public Tsr<V> delete() { return TsrImpl.this._delete(); }
             @Override public Object getData() { return _getData(); }
             @Override

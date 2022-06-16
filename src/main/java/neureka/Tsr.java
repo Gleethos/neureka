@@ -712,7 +712,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The truth value determining if this tensor has data.
      */
-    boolean isEmpty();
+    default boolean isEmpty() { return getUnsafe().getData() == null && !this.isOutsourced(); }
 
     /**
      *  A tensor is "undefined" if it has either no {@link NDConfiguration} implementation instance
@@ -721,7 +721,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The truth value determining if this tensor has an {@link NDConfiguration} stored internally.
      */
-    boolean isUndefined();
+    default boolean isUndefined() { return getNDConf() == null || getNDConf().shape() == null; }
 
     /**
      *  If this tensor is a slice of a parent tensor then this method will yield true.
@@ -729,7 +729,10 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The truth value determining if this tensor is a slice of another tensor.
      */
-    boolean isSlice();
+    default boolean isSlice() {
+        Relation<V> child = get( Relation.class );
+        return ( child != null && child.hasParent() );
+    }
 
     /**
      *  This method returns the number of slices which have been
@@ -739,7 +742,10 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The number of slices derived from this tensor.
      */
-    int sliceCount();
+    default int sliceCount() {
+        Relation<V> child = this.get( Relation.class );
+        return ( child != null ) ? child.childCount() : 0;
+    }
 
     /**
      *  If slices have been derived from this tensor then it is a "slice parent".
@@ -747,7 +753,10 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The truth value determining if slices have been derived from this tensor.
      */
-    boolean isSliceParent();
+    default boolean isSliceParent() {
+        Relation<V> parent = this.get( Relation.class );
+        return ( parent != null && parent.hasChildren() );
+    }
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -759,7 +768,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The truth value determining if this tensor belongs to a recorded computation graph.
      */
-    boolean belongsToGraph();
+    default boolean belongsToGraph() { return this.has( GraphNode.class ); }
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -791,7 +800,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The truth value determining if this tensor has another tensor attached to it (which is its gradient).
      */
-    boolean hasGradient();
+    default boolean hasGradient() { return this.has( Tsr.class ); }
 
     /**
      *  Virtualizing is the opposite to actualizing a tensor.
@@ -904,27 +913,56 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      */
     Tsr<V> to( Device<?> device );
 
-    Tsr<V> to( String deviceType );
+    default Tsr<V> to( String deviceType ) { return this.to(Device.get(deviceType)); }
 
     /**
      * @return The gradient of this tensor which is internally stored as component.
      */
-    Tsr<V> getGradient();
+    default Tsr<V> getGradient() { return this.get( Tsr.class ); }
 
     /**
      * @return The device on which this tensor is stored or {@link CPU} if it is not outsourced.
      */
-    Device<V> getDevice();
+    default Device<V> getDevice() {
+        if ( this.isOutsourced() ) return this.get( Device.class );
+        return (Device<V>) CPU.get();
+    }
 
     /**
      * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
      */
-    GraphNode<V> getGraphNode();
+    default GraphNode<V> getGraphNode() { return get( GraphNode.class ); }
 
     /**
      * @return An instance of the {@link NDFrame} component if present.
      */
-    NDFrame<V> frame();
+    default NDFrame<V> frame() { return get( NDFrame.class ); }
+
+    /**
+     *  Important : Components of type {@link Tsr} are simply gradients!
+     *  Currently, this method is used only to catch illegal arguments which
+     *  is for example the case when trying to attach a gradient with a different shape...
+     *  (Otherwise the gradient tensor "does not mind" an owner change...)
+     */
+    @Override
+    default boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
+        if ( changeRequest.type() == IsBeing.ADDED ) {
+            if (
+                    changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||
+                            Arrays.hashCode(changeRequest.getNewOwner().getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )
+            ) {
+                throw new IllegalArgumentException(
+                        "Trying to attach a tensor as gradient component to a tensor with different shape."
+                );
+            }
+        }
+        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
+        // If the change request type is set to "REPLACED" then
+        // this is means that this tensor is a gradient that is being
+        // transferred to another tensor to serve as gradient...
+        // No update task needs to occur. (This might change in the future...)
+        return true;
+    }
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1908,10 +1946,83 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      */
     Object getData();
 
-    <T> Tsr<T> mapTo(
+    default <T> Tsr<T> mapTo(
             Class<T> typeClass,
             java.util.function.Function<V,T> mapper
-    );
+    ) {
+        if ( this.isEmpty() )
+            throw new IllegalArgumentException("Trying to map an empty tensor!");
+        /*
+           The provided lambda cannot be executed anywhere but the CPU (Note: Maybe we should consider Aparapi here)
+           This is a problem if this tensor here lives somewhere other than the JVM.
+           So, therefore, we invite it back home for dinner!
+         */
+        return CPU.get() // This little API will temporarily migrate this to the JVM.
+                .borrow( (Tsr<Object>) this )
+                .in( () -> {
+                    Object data = getUnsafe().getData();
+                    DataConverter.ForTensor map = new DataConverter.ForTensor( this );
+                    if ( data == null ) {
+                        if ( this.isOutsourced() )
+                            throw new IllegalStateException("Encountered an outsourced tensor! Only local tensors stored in RAM can be mapped.");
+                        else
+                            throw new IllegalStateException("Invalid tensor state encountered! Cannot map a tensor without data.");
+                    }
+                    Object newData;
+                    String failMessage = "Conversion to type "+typeClass+" not yet supported.";
+                    if ( Number.class.isAssignableFrom(typeClass) ) {
+                        java.util.function.Function<Integer, Number> access;
+                        if ( this.getValueClass() == Integer.class ) {
+                            int[] sourceData = (int[]) getUnsafe().getData();
+                            access = (i -> (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));
+                        } else if (this.getValueClass() == Double.class) {
+                            double[] sourceData = (double[]) getUnsafe().getData();
+                            access = (i -> (Number) mapper.apply((V) Double.valueOf(sourceData[i])));
+                        } else if (this.getValueClass() == Float.class) {
+                            float[] sourceData = (float[]) getUnsafe().getData();
+                            access = (i -> (Number) mapper.apply((V) Float.valueOf(sourceData[i])));
+                        } else if (this.getValueClass() == Short.class) {
+                            short[] sourceData = (short[]) getUnsafe().getData();
+                            access = (i -> (Number) mapper.apply((V) Short.valueOf(sourceData[i])));
+                        } else if (this.getValueClass() == Byte.class) {
+                            byte[] sourceData = (byte[]) getUnsafe().getData();
+                            access = (i -> (Number) mapper.apply((V) Byte.valueOf(sourceData[i])));
+                        } else
+                            throw new IllegalArgumentException(failMessage);
+
+                        if (typeClass == Double.class) newData = map.toDoubleArray(access);
+                        else if ( typeClass == Integer.class ) newData = map.toIntArray(access);
+                        else if ( typeClass == Long.class    ) newData = map.toLongArray(access);
+                        else if ( typeClass == Byte.class    ) newData = map.toByteArray(access);
+                        else if ( typeClass == Float.class   ) newData = map.toFloatArray(access);
+                        else if ( typeClass == Short.class   ) newData = map.toShortArray(access);
+                        else
+                            throw new IllegalArgumentException(failMessage);
+                    } else {
+                        java.util.function.Function<Integer, Object> access = null;
+                        if ( this.getValueClass() == Integer.class ) {
+                            int[] sourceData = (int[]) getUnsafe().getData();
+                            access = (i -> mapper.apply((V) Integer.valueOf(sourceData[i])));
+                        } else if ( this.getValueClass() == Double.class ) {
+                            double[] sourceData = (double[]) getUnsafe().getData();
+                            access = (i -> mapper.apply((V) Double.valueOf(sourceData[i])));
+                        } else if ( this.getValueClass() == Float.class ) {
+                            float[] sourceData = (float[]) getUnsafe().getData();
+                            access = (i -> mapper.apply((V) Float.valueOf(sourceData[i])));
+                        } else if ( this.getValueClass() == Short.class ) {
+                            short[] sourceData = (short[]) getUnsafe().getData();
+                            access = (i -> mapper.apply((V) Short.valueOf(sourceData[i])));
+                        } else if ( this.getValueClass() == Byte.class ) {
+                            byte[] sourceData = (byte[]) getUnsafe().getData();
+                            access = (i -> mapper.apply((V) Byte.valueOf(sourceData[i])));
+                        } else
+                            throw new IllegalArgumentException(failMessage);
+
+                        newData = map.toObjectArray(access);
+                    }
+                    return Tsr.of( typeClass, this.getNDConf().shape(), newData );
+                });
+    }
 
     /**
      *  Turns this tensor into a {@link BufferedImage} based on the provided
