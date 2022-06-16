@@ -1865,38 +1865,24 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  This method will create a new {@link Tsr}
-     *  with the provided double scalar added to all elements of this {@link Tsr}.
-     *
-     *  The shapes of this tensor is irrelevant as the provided value will
-     *  simply be broadcast to any possible shape.
-     *
-     * @param value The right operand of the addition.
-     * @return The sum between this instance as the left and the passed double as right operand.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> plus( V value ) { return plus( _of( this.shape(), value ) ); }
 
     /**
-     *  This method will perform subtraction on
-     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
-     *  where the left operand is this {@link Tsr}
-     *  instance and the right operand is the tensor passed to the method.
-     *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular element-wise subtraction.
-     *  Otherwise, the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
-     *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
-     *
-     * @param other The right operand of the subtraction.
-     * @return The difference between this instance as the left and the passed {@link Tsr} instance as right operand.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> minus( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract 'null' from a tensor!");
         return Neureka.get().backend().getAutogradFunction().minus().call( this, other );
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final Tsr<V> minus( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract 'null' from a tensor!");
         return minus(
@@ -1906,11 +1892,19 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final Tsr<V> minusAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract-assign 'null' from a tensor!");
         return Neureka.get().backend().getFunction().minusAssign().call( this, other );
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final Tsr<V> minusAssign( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract-assign 'null' from a tensor!");
         return minusAssign(
@@ -1921,36 +1915,24 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     * @return A clone of this tensor where the signs of all elements are flipped.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> negative() { return Neureka.get().backend().getAutogradFunction().neg().call( this ); }
 
     /**
-     *  This method is synonymous to the {@link #times(Tsr)} method.
-     *  Both of which will produce the product of
-     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
-     *  where the left operand is this {@link Tsr}
-     *  instance and the right operand is the tensor passed to the method.
-     *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular element-wise product.
-     *  Otherwise, the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
-     *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
-     *
-     * @param other The right operand of the multiplication.
-     * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> multiply( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply 'null' with a tensor!");
         return Neureka.get().backend().getAutogradFunction().mul().call( this, other );
     }
 
     /**
-     * @param other The value which should be broadcast to all elements of a clone of this tensor.
-     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> multiply( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
         return multiply(
@@ -1961,116 +1943,85 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
     /**
-     *  The {@link #times(Tsr)} method is synonymous to the {@link #multiply(Tsr)}.
-     *  Both of which will produce the product of
-     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
-     *  where the left operand is this {@link Tsr}
-     *  instance and the right operand is the tensor passed to the method.
-     *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular elementwise product.
-     *  Otherwise the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
-     *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
-     *
-     * @param other The right operand of the multiplication.
-     * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> times( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply 'null' with a tensor!");
         return multiply( other );
     }
 
     /**
-     * @param other The value which should be broadcast to all elements of a clone of this tensor.
-     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> times( V other ) {
         LogUtil.nullArgCheck(other, "other", getValueClass(), "Cannot multiply 'null' with a tensor!");
         return multiply( other );
     }
 
     /**
-     * @param other The tensor whose elements ought to be multiplied and assigned to elements in this tensor.
-     * @return This instance where each value element was multiplied by the corresponding element in the provided tensor.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> timesAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply-assign 'null' to a tensor!");
         return Neureka.get().backend().getFunction().mulAssign().call( this, other );
     }
 
     /**
-     * @param other The value which ought to be multiplied and assigned to each element in this tensor.
-     * @return This instance where each value element was multiplied by the provided element.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> timesAssign( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply-assign 'null' to a tensor!");
         return this.timesAssign( Tsr.of( getValueClass(), getNDConf().shape(), other ) );
     }
 
-
     /**
-     * @param value The value which should be broadcast to all elements of a clone of this tensor.
-     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> multiply( double value ) { return multiply( Tsr.of( getValueClass(), getNDConf().shape(), value ) ); }
 
     /**
-     *  The {@link #div(Tsr)} method will produce the quotient of
-     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
-     *  where the left operand is this {@link Tsr}
-     *  instance and the right operand is the tensor passed to the method.
-     *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular element-wise division.
-     *  Otherwise, the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
-     *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
-     *
-     * @param other The right operand of the division.
-     * @return The quotient of this instance as the left and the passed {@link Tsr} instance as right operand.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> div( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide a tensor by 'null' (In any sense of the word)!");
         return Neureka.get().backend().getAutogradFunction().div().call( this, other );
     }
 
-    public final Tsr<V> div( double value ) { return div( Tsr.of( getValueClass(), getNDConf().shape(), value ) ); }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final Tsr<V> div( V value ) { return div( Tsr.of( getValueClass(), getNDConf().shape(), value ) ); }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final Tsr<V> divAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
         return Neureka.get().backend().getFunction().divAssign().call( this, other );
     }
 
     /**
-     *  The {@link #mod(Tsr)} method will produce the modulus of
-     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
-     *  where the left operand is this {@link Tsr}
-     *  instance and the right operand is the tensor passed to the method.
-     *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular element-wise modulo operation.
-     *  Otherwise, the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
-     *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
-     *
-     * @param other The right operand of the modulo operation.
-     * @return The modulus of this instance as the left and the passed {@link Tsr} instance as right operand.
+     * {@inheritDoc}
      */
+    @Override
     public final Tsr<V> mod( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
         return Neureka.get().backend().getAutogradFunction().mod().call( this, other );
     }
 
-    public final Tsr<V> mod( int other ) { return mod(Tsr.of(getValueClass(), getNDConf().shape(), other)); }
- 
     /**
-     *  This method is synonymous to the {@link #mod(int)} method.
+     * {@inheritDoc}
      */
-    public final Tsr<V> rem( int other ) { return mod(Tsr.of(getValueClass(), getNDConf().shape(), other)); }
+    @Override
+    public final Tsr<V> mod( int other ) { return mod(Tsr.of(getValueClass(), getNDConf().shape(), other)); }
 
     public final Tsr<V> modAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");

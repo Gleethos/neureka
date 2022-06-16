@@ -441,6 +441,162 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
     Tsr<V> plusAssign( Tsr<V> other );
 
     /**
+     *  This method will create a new {@link Tsr}
+     *  with the provided double scalar added to all elements of this {@link Tsr}.
+     *
+     *  The shapes of this tensor is irrelevant as the provided value will
+     *  simply be broadcast to any possible shape.
+     *
+     * @param value The right operand of the addition.
+     * @return The sum between this instance as the left and the passed double as right operand.
+     */
+    Tsr<V> plus( V value );
+
+    /**
+     *  This method will perform subtraction on
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise subtraction.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the subtraction.
+     * @return The difference between this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    Tsr<V> minus( Tsr<V> other );
+
+    Tsr<V> minus( V other );
+
+    Tsr<V> minusAssign( Tsr<V> other );
+
+    Tsr<V> minusAssign( V other );
+
+    /**
+     * @return A clone of this tensor where the signs of all elements are flipped.
+     */
+    Tsr<V> negative();
+
+    /**
+     *  This method is synonymous to the {@link #times(Tsr)} method.
+     *  Both of which will produce the product of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise product.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the multiplication.
+     * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    Tsr<V> multiply( Tsr<V> other );
+
+    /**
+     * @param other The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     */
+    Tsr<V> multiply( V other );
+
+    /**
+     *  The {@link #times(Tsr)} method is synonymous to the {@link #multiply(Tsr)}.
+     *  Both of which will produce the product of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular elementwise product.
+     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the multiplication.
+     * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    Tsr<V> times( Tsr<V> other );
+
+    /**
+     * @param other The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     */
+    Tsr<V> times( V other );
+
+    /**
+     * @param other The tensor whose elements ought to be multiplied and assigned to elements in this tensor.
+     * @return This instance where each value element was multiplied by the corresponding element in the provided tensor.
+     */
+    Tsr<V> timesAssign( Tsr<V> other );
+
+    /**
+     * @param other The value which ought to be multiplied and assigned to each element in this tensor.
+     * @return This instance where each value element was multiplied by the provided element.
+     */
+    Tsr<V> timesAssign( V other );
+
+    /**
+     * @param value The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     */
+    Tsr<V> multiply( double value );
+
+    /**
+     *  The {@link #div(Tsr)} method will produce the quotient of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise division.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the division.
+     * @return The quotient of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    Tsr<V> div( Tsr<V> other );
+
+    Tsr<V> div( V value );
+
+    Tsr<V> divAssign( Tsr<V> other );
+
+    /**
+     *  The {@link #mod(Tsr)} method will produce the modulus of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise modulo operation.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the modulo operation.
+     * @return The modulus of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    Tsr<V> mod( Tsr<V> other );
+
+    Tsr<V> mod( int other );
+
+    /**
+     *  This method is synonymous to the {@link #mod(int)} method.
+     */
+    default Tsr<V> rem( int other ) { return this.mod(other); }
+
+    /**
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
      *  because the exposed state can easily lead to broken tensors and exceptional situations!<br>
