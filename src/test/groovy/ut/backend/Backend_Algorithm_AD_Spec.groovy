@@ -15,6 +15,7 @@ import neureka.backend.main.algorithms.Convolution
 import neureka.backend.main.algorithms.Operator
 import neureka.devices.Device
 import neureka.ndim.AbstractTensor
+import neureka.ndim.TensorAPI
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
@@ -60,7 +61,7 @@ class Backend_Algorithm_AD_Spec extends Specification
         and : 'A mock Function.'
             def function = Mock(Function)
             def derivative = Mock(Tsr)
-            def mutate = Mock(AbstractTensor.Unsafe)
+            def mutate = Mock(TensorAPI.Unsafe)
             function.derive(*_) >> derivative
             function.executeDerive(*_) >> derivative
             derivative.getUnsafe() >> mutate

@@ -1,7 +1,12 @@
 package neureka.ndim;
 
 import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.calculus.Function;
 import neureka.common.utility.LogUtil;
+import neureka.dtype.DataType;
+import neureka.dtype.NumericType;
+import neureka.ndim.config.NDConfiguration;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,6 +25,36 @@ import java.util.Map;
 public interface TensorAPI<V> extends NDimensional, Iterable<V>
 {
     /**
+     * @return The truth value determining if the {@link AbstractTensor.Unsafe#delete()} method has been called oin this instance.
+     */
+    boolean isDeleted();
+
+    /**
+     *  A Virtual tensor is a tensor whose underlying data array is of size 1, holding only a single value. <br>
+     *  This only makes sense for homogeneously populated tensors.
+     *  An example of such a tensor would be: <br>
+     *  {@code Tsr.ofInts().withShape(x,y).all(n)}                           <br><br>
+     *
+     *  Use {@link #setIsVirtual(boolean)} to "actualize" a "virtual" tensor, and vise versa.
+     *
+     * @return The truth value determining if this tensor is "virtual" or "actual".
+     */
+    boolean isVirtual();
+
+    /**
+     *  WARNING! Virtualizing is the process of compacting the underlying data array
+     *  down to an array holding a single value.
+     *  This only makes sense for homogeneously populated tensors.
+     *  Passing {@code false} to this method will "actualize" a "virtual" tensor.
+     *  Meaning the underlying data array will at least become as large as the size of the tensor
+     *  as is defined by {@link #size()}.
+     *
+     * @param isVirtual The truth value determining if this tensor should be "virtual" or "actual".
+     * @return This concrete instance, to allow for method chaining.
+     */
+    Tsr<V> setIsVirtual( boolean isVirtual );
+
+    /**
      * @return The type class of individual value items within this {@link Tsr} instance.
      */
     Class<V> getValueClass();
@@ -28,6 +63,57 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
      * @return The type class of individual value items within this {@link Tsr} instance.
      */
     default Class<V> valueClass() { return getValueClass(); }
+
+    /**
+     *  This method returns the {@link DataType} instance of this {@link Tsr}, which is
+     *  a wrapper object for the actual type class representing the value items stored inside
+     *  the underlying data array of this tensor.
+     *
+     * @return The {@link DataType} instance of this {@link Tsr} storing important type information.
+     */
+    DataType<V> getDataType();
+
+    /**
+     *  The {@link Class} returned by this method is the representative {@link Class} of the
+     *  value items of a concrete {@link AbstractTensor} but not necessarily the actual {@link Class} of
+     *  a given value item, this is especially true for numeric types, which are represented by
+     *  implementations of the {@link NumericType} interface.                                        <br>
+     *  For example in the case of a tensor of type {@link Double}, this method would
+     *  return {@link neureka.dtype.custom.F64} which is the representative class of {@link Double}. <br>
+     *  Calling the {@link #getValueClass()} method instead of this method would return the actual value
+     *  type class, namely: {@link Double}.
+     *
+     * @return The representative type class of individual value items within this concrete {@link AbstractTensor}
+     *         extension instance which might also be sub-classes of the {@link NumericType} interface
+     *         to model unsigned types or other JVM foreign numeric concepts.
+     */
+    Class<?> getRepresentativeValueClass();
+
+    /**
+     *  This method compares the passed class with the underlying data-type of this NDArray.
+     *  If the data-type of this NDArray is equivalent to the passed class then the returned
+     *  boolean will be true, otherwise the method returns false.
+     *
+     * @param typeClass The class which ought to be compared to the underlying data-type of this NDArray.
+     * @return The truth value of the question: Does this NDArray implementation hold the data of the passed type?
+     */
+    boolean is( Class<?> typeClass );
+
+    /**
+     *  This method exposes an API for mutating the state of this tensor.
+     *  The usage of methods exposed by this API is generally discouraged
+     *  because the exposed state can easily lead to broken tensors and exceptional situations!<br>
+     *  <br><b>
+     *
+     *  Only use this if you know what you are doing and
+     *  performance is critical! <br>
+     *  </b>
+     *  (Like custom backend extensions for example)
+     *
+     * @return The unsafe API exposes methods for mutating the state of the tensor.
+     */
+    Unsafe<V> getUnsafe();
+
 
     /**
      *  The following method enables access to specific scalar elements within the tensor.
@@ -304,6 +390,165 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
         V get();
 
         void set( V value );
+
+    }
+
+    /**
+     *  Tensors should be considered immutable, however sometimes it
+     *  is important to mutate their state for performance reasons.
+     *  This interface exposes several methods for mutating the state of this tensor.
+     *  The usage of methods exposed by this API is generally discouraged
+     *  because the exposed state can easily lead to broken tensors and exceptions...<br>
+     *  <br>
+     */
+    interface Unsafe<T> {
+        /**
+         *  This method sets the NDConfiguration of this NDArray.
+         *  Therefore, it should not be used lightly as it can cause major internal inconsistencies.
+         *
+         * @param configuration The new NDConfiguration instance which ought to be set.
+         * @return The final instance type of this class which enables method chaining.
+         */
+        Tsr<T> setNDConf( NDConfiguration configuration );
+        /**
+         *  This method is an inline operation which changes the underlying data of this tensor.
+         *  It converts the data types of the elements of this tensor to the specified type!<br>
+         *  <br>
+         *  <b>WARNING : The usage of this method is discouraged for the following reasons: </b><br>
+         *  <br>
+         *  1. Inline operations are inherently error-prone for most use cases. <br>
+         *  2. This inline operation in particular has no safety net,
+         *     meaning that there is no implementation of version mismatch detection
+         *     like there is for those operations present in the standard operation backend...
+         *     No exceptions will be thrown during backpropagation! <br>
+         *  3. This method has not yet been implemented to also handle instances which
+         *     are slices of parent tensors!
+         *     Therefore, there might be unexpected performance penalties or side effects
+         *     associated with this method.<br>
+         *     <br>
+         *
+         * @param typeClass The target type class for elements of this tensor.
+         * @param <V> The type parameter for the returned tensor.
+         * @return The same tensor instance whose data has been converted to hold a different type.
+         */
+        <V> Tsr<V> toType( Class<V> typeClass );
+
+        /**
+         *  Use this to do a runtime checked upcast of the type parameter of the tensor.
+         *  This is unsafe because it is in conflict with the {@link #valueClass()}
+         *  method.
+         *
+         * @param superType The class of the super type of the tensor's value type.
+         * @return A tensor whose type parameter is upcast.
+         * @param <U> The super type parameter of the value type of the tensor.
+         */
+        <U/*super T*/> Tsr<U> upcast(Class<U> superType );
+
+        /**
+         *  This method enables modifying the data-type configuration of this {@link AbstractTensor}.
+         *  Warning! The method should not be used unless absolutely necessary.
+         *  This is because it can cause unpredictable inconsistencies between the
+         *  underlying {@link DataType} instance of this {@link AbstractTensor} and the actual type of the actual
+         *  data it is wrapping (or it is referencing on a {@link neureka.devices.Device}).<br>
+         *  <br>
+         * @param dataType The new {@link DataType} which ought to be set.
+         * @return The tensor with the new data type set.
+         */
+        <V> Tsr<V> setDataType( DataType<V> dataType );
+
+        /**
+         *  This method allows you to modify the data-layout of this {@link AbstractTensor}.
+         *  Warning! The method should not be used unless absolutely necessary.
+         *  This is because it can cause unpredictable side effects especially for certain
+         *  operations expecting a particular data layout (like for example matrix multiplication).
+         *  <br>
+         *
+         * @param layout The layout of the data array (row or column major).
+         * @return The final instance type of this class which enables method chaining.
+         */
+        Tsr<T> toLayout( NDConfiguration.Layout layout );
+
+        /**
+         *  This method is responsible for incrementing
+         *  the "_version" field variable which represents the version of the data of this tensor.
+         *  Meaning :
+         *  Every time the underlying data (_value) changes this version ought to increment alongside.
+         *  The method is called during the execution procedure.
+         *
+         * @param call The context object containing all relevant information that defines a call for tensor execution.
+         * @return This very tensor instance. (factory pattern)
+         */
+        Tsr<T> incrementVersion( ExecutionCall<?> call );
+
+        /**
+         *  Intermediate tensors are internal non-user tensors which may be eligible
+         *  for deletion when further consumed by a {@link Function}.
+         *  For the casual user of Neureka, this flag should always be false!
+         *
+         * @param isIntermediate The truth value determining if this tensor is not a user tensor but an internal
+         *                       tensor which may be eligible for deletion by {@link Function}s consuming it.
+         * @return The tensor to which this unsafe API belongs.
+         */
+        Tsr<T> setIsIntermediate( boolean isIntermediate );
+
+        /**
+         *  Although tensors will be garbage collected when they are not strongly referenced,
+         *  there is also the option to manually free up the tensor and its associated data in a native environment.
+         *  This is especially useful when tensors are stored on a device like the {@link neureka.devices.opencl.OpenCLDevice}.
+         *  In that case calling this method will free the memory reserved for this tensor on the device.
+         *  This manual memory freeing through this method can be faster than waiting for
+         *  the garbage collector to kick in at a latr point in time... <br>
+         *  <br>
+         *
+         * @return The tensor wo which this unsafe API belongs to allow for method chaining.
+         */
+        Tsr<T> delete();
+
+        /**
+         *  This returns the underlying raw data object of this tensor.
+         *  Contrary to the {@link Tsr#getValue()} ()} method, this one will
+         *  return an unbiased view on the raw data of this tensor.
+         *  Be careful using this, as it exposes mutable state!
+         *
+         * @return The raw data object underlying this tensor.
+         */
+        Object getData();
+
+        <A> A getDataAs( Class<A> arrayTypeClass );
+
+        /**
+         *  A tensor ought to have some way to selectively modify its underlying data array.
+         *  This method simply overrides an element within this data array sitting at position "i".
+         * @param i The index of the data array entry which ought to be addressed.
+         * @param o The object which ought to be placed at the requested position.
+         * @return This very tensor in order to enable method chaining.
+         */
+        Tsr<T> setDataAt( int i, T o );
+
+        /**
+         *  Use this to access the underlying writable data of this tensor if
+         *  you want to modify it.
+         *  This method will ensure that you receive an instance of whatever array type you provide
+         *  or throw descriptive exceptions to make sure that any unwanted behaviour does not
+         *  spread further in the backend.
+         *
+         * @param arrayTypeClass The expected array type underlying the tensor.
+         * @param <A> The type parameter of the provided type class.
+         * @return The underlying data array of this tensor.
+         */
+        default <A> A getDataForWriting( Class<A> arrayTypeClass ) {
+            LogUtil.nullArgCheck( arrayTypeClass, "arrayTypeClass", Class.class, "Array type must not be null!" );
+            if ( !arrayTypeClass.isArray() )
+                throw new IllegalArgumentException("Provided type is not an array type.");
+            Object data = Unsafe.this.getData();
+            if ( data == null )
+                throw new IllegalStateException("Could not find writable tensor data for this tensor (Maybe this tensor is stored on a device?).");
+
+            if ( !arrayTypeClass.isAssignableFrom(data.getClass()) )
+                throw new IllegalStateException("The data of this tensor does not match the expect type! Expected '"+arrayTypeClass+"' but got '"+data.getClass()+"'.");
+
+            return (A) data;
+        }
 
     }
 

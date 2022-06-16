@@ -14,6 +14,7 @@ import neureka.calculus.implementations.FunctionInput
 import neureka.calculus.implementations.FunctionNode
 import neureka.devices.Device
 import neureka.ndim.AbstractTensor
+import neureka.ndim.TensorAPI
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
@@ -39,7 +40,7 @@ class Backend_Extension_Spec extends Specification
 
         and : 'A mock tensor which is the expected output'
             Tsr output = Mock(Tsr)
-            var mutate = Mock(AbstractTensor.Unsafe)
+            var mutate = Mock(TensorAPI.Unsafe)
 
         and : 'A mocked operation implementation.'
             var implementation = Mock(Algorithm)
@@ -89,7 +90,7 @@ class Backend_Extension_Spec extends Specification
             Device device = Mock(Device)
             GraphNode node = Mock(GraphNode)
             var ndc = Mock(NDConfiguration)
-            var mutate = Mock(AbstractTensor.Unsafe)
+            var mutate = Mock(TensorAPI.Unsafe)
 
         and : 'A mocked operation implementation.'
             var implementation = Mock(Algorithm)
