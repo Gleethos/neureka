@@ -1,204 +1,50 @@
-/*
-MIT License
-
-Copyright (c) 2019 Gleethos
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
- __________
- \__    ___\
-    |  |____ _ __
-    | /  ___/ '___\
-    | \___  \ |
-     \/_____/_|         A long yet shallow class.
-
-    This is the the core work-horse class of Neureka. The 'Tsr' class!
-    It is a three-letter abbreviation of the word "Tensor"!
-
-------------------------------------------------------------------------------------------------------------------------
-
-   'Any fool can write code that a computer can understand.
-    Good programmers write code that humans can understand.'
-    – Martin Fowler
-
-    Use the following as search keys :)
-
-    $(1) : CONSTRUCTION
-        $(1.0) : GENERIC CONSTRUCTION
-        $(1.1) : SHAPE LIST BASED CONSTRUCTION
-        $(1.2) : SHAPE ARRAY BASED CONSTRUCTION
-        §(1.3) : LAMBDA BASED CONSTRUCTION
-        §(1.4) : FUNCTION BASED CONSTRUCTION
-
-    §(2) : FLAGS
-        §(2.0) : GRADIENT REQUIREMENT
-        §(2.1) : SOURCE LOCATION (DEVICE)
-        §(2.2) : VIRTUAL / ACTUAL
-        §(2.3) : GRADIENT APPLY REQUIREMENT
-        §(2.4) : DELETION
-
-    §(3) : COMPONENT SYSTEM
-        §(3.0) : SETTING / REJECTING
-        §(3.1) : REMOVING / REJECTING
-        §(3.2) : UPDATING
-
-    §(4) : PROPERTIES
-        $(4.0) : HIGH LEVEL PROPERTIES
-        §(4.1) : COMPONENT PROPERTIES
-        §(4.2) : INNER PROPERTIES
-
-    §(5) : OBJECT STATE MODIFICATION
-
-    §(6) : ND-ITERATOR LOGIC
-
-    §(7) : COMPONENT SPECIFIC
-        §(7.0) : AUTO-GRAD
-        §(7.1) : FRAMING
-
-    §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS
-        §(8.0) : OPERATORS
-        §(8.1) : OPERATIONS
-
-    §(9) : SLICING, INDEXING & INJECTING
-        §(9.0) : SLICING
-        §(9.1) : INJECTING
-
-    §(10) : MAPPING
-*/
-
 package neureka;
 
 import neureka.autograd.GraphNode;
-import neureka.autograd.JITProp;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.main.memory.MemUtil;
-import neureka.backend.main.operations.other.Reshape;
 import neureka.calculus.Function;
-import neureka.common.composition.AbstractComponentOwner;
+import neureka.calculus.Functions;
 import neureka.common.composition.Component;
+import neureka.common.composition.ComponentOwner;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.ListReader;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.F32;
-import neureka.dtype.custom.F64;
+import neureka.dtype.NumericType;
+import neureka.dtype.custom.UI16;
+import neureka.dtype.custom.UI32;
+import neureka.dtype.custom.UI8;
 import neureka.fluent.building.TensorBuilder;
 import neureka.fluent.building.states.IterByOrIterFromOrAll;
 import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 import neureka.fluent.building.states.WithShapeOrScalarOrVectorOnDevice;
 import neureka.fluent.slicing.SliceBuilder;
-import neureka.fluent.slicing.SmartSlicer;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
-import neureka.framing.fluent.AxisFrame;
 import neureka.ndim.AbstractTensor;
 import neureka.ndim.Filler;
-import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.NDimensional;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.iterator.NDIterator;
-import neureka.optimization.Optimizer;
 import neureka.view.TsrAsString;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.LoggerFactory;
+import neureka.view.TsrStringSettings;
 
-import java.awt.*;
-import java.awt.image.*;
-import java.util.List;
+import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
+import java.util.function.Consumer;
 
 /**
- *  This class name {@link Tsr} is a 3 letter abbreviation of the word "tensor", a mathematical concept.
- *  A tensor is a type of multidimensional data-structure with certain transformation properties.
- *  Technically however, it is mostly a simple container / data-structure which can house data indexed by N dimensions.
- *  Therefore it is often also described as a nd-array.
- *  Elements of a tensor are also mostly numeric.<br>
- *  This means that: <br>
- *  <i><b>...a tensor of rank 0 is a scalar, a tensor of rank 1 is a vector and a tensor of rank 2 is a matrix, etc...</b></i>
- *  <br><br>
- *  Consequently, tensors are a perfect fit for applying various operations on them.
- *  Such operations might be simple elementwise operations or more complex linear operations like
- *  the dot-product, matrix- or even tensor multiplications. <br>
- *  <br>
- * @param <V> The type parameter for the individual value items within this tensor.
+ *  This interface is part of the {@link Tsr} API, and it defines
+ *  how data can be read from and written to a tensor.
+ *  In essence, this interface exists to expand
+ *  the tensor API through default methods without littering the
+ *  already large {@link Tsr} and {@link AbstractTensor} classes.
+ *
+ * @param <V> The value type parameter of the items stored by this tensor.
  */
-public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V>>, Cloneable
+public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>>
 {
-    static {
-        _CPU = CPU.get();
-        _LOG = LoggerFactory.getLogger( Tsr.class );
-    }
-
-    /**
-     *  The default device is an instance of the {@link CPU} class. <br>
-     *  This field is a reference to this default device implementation.
-     */
-    private static final Device<Object> _CPU;
-
-    /**
-     *  This field contains multiple flags.
-     *  The bits of this integer are used to encode various states which a tensor can have.
-     *  These bits are flipped by bitmasks which are defined below.
-     */
-    private byte _flags = 0;
-
-    /**
-     *  The following fields are bit masks used to store true / false values
-     *  in a targeted bit inside the {@link #_flags} variable.
-     */
-    private static final byte RQS_GRADIENT_MASK       = 1;
-    private static final byte IS_OUTSOURCED_MASK      = 2;
-    private static final byte IS_VIRTUAL_MASK         = 4;
-    private static final byte GRADIENT_APPLY_RQD_MASK = 8;
-    private static final byte IS_DELETED_MASK         = 16;
-    private static final byte IS_INTERMEDIATE_MASK    = 32;
-
-    /**
-     *  This integer represents the version of the data (accessible through {@link #getData()})
-     *  stored within this tensor.
-     *  It gets incremented every time an inline operation occurs!
-     *  {@link GraphNode} instances tied to this tensor (as component) store
-     *  a reference version which is a copy of this field.
-     *  If this version changes, despite there being a GraphNode which might
-     *  perform auto-differentiation at some point, then an exception will be thrown for debugging.
-     *  <br>
-     *  The corresponding getter returns the version of the data (accessible through {@link #getData()})
-     *  stored within this tensor.
-     */
-    private int _version = 0;
-
-
-    /*==================================================================================================================
-    |
-    |       §(1) : CONSTRUCTION
-    |   ---------------------------
-    */
-    /*
-        -------------------------------------------
-            §(1.0) : GENERIC CONSTRUCTION
-        --------------------------------------------
-    */
 
     /**
      *  This static factory method creates and return a completely empty and undefined tensor
@@ -211,11 +57,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @return A new and completely empty / unitialized {@link Tsr} instance.
      */
-    public static Tsr<Object> newInstance() { return new Tsr<>(); }
+    public static Tsr<Object> newInstance() { return new TsrImpl<>(); }
 
     /**
      *  Use this to conveniently operate on 2 tensors.
-     *  A simple example would be: {@code Tsr.of(a,'*',b)}.
+     *  A simple example would be: {@code of(a,'*',b)}.
      *
      * @param a The left operand.
      * @param o The operator, which may be '+', '-', '*'...
@@ -223,11 +69,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param <T> The value item type parameter for the involved tensors.
      * @return The result of the operation defined by the provided character.
      */
-    public static <T> Tsr<T> of( Tsr<T> a, char o, Tsr<T> b ) { return _of( a, String.valueOf(o), b ); }
+    public static <T> Tsr<T> of( Tsr<T> a, char o, Tsr<T> b ) { return TsrImpl._of( a, String.valueOf(o), b ); }
 
     /**
      *  Use this to conveniently operate on 3 tensors.
-     *  A simple example would be: {@code Tsr.of(a,'*',b,'+',c)}.
+     *  A simple example would be: {@code of(a,'*',b,'+',c)}.
      *
      * @param a The first and left most operand.
      * @param o1 The first operator, which may be '+', '-', '*'...
@@ -238,12 +84,12 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return The result of the operations defined by the 2 provided characters.
      */
     public static <T> Tsr<T> of( Tsr<T> a, char o1, Tsr<T> b, char o2, Tsr<T> c ) {
-        return _of( a, String.valueOf(o1), b, String.valueOf(o2), c );
+        return TsrImpl._of( a, String.valueOf(o1), b, String.valueOf(o2), c );
     }
 
     /**
      *  Use this to conveniently operate on a tensor.
-     *  A simple example would be: {@code Tsr.of("sig(tanh(",a,"))")}.
+     *  A simple example would be: {@code of("sig(tanh(",a,"))")}.
      *
      * @param e1 The first part of the string expression defining how the provided tensor should be processed.
      * @param a The tensor which ought to be sent to whatever is defined by the provided expressions.
@@ -251,11 +97,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param <T> The value item type parameter for the involved tensor.
      * @return The result of the operation(s) defined by the provided strings.
      */
-    public static <T> Tsr<T> of( String e1, Tsr<T> a, String e2 ) { return _of( e1, a, e2 ); }
+    public static <T> Tsr<T> of( String e1, Tsr<T> a, String e2 ) { return TsrImpl._of( e1, a, e2 ); }
 
     /**
      *  Use this to conveniently operate on 2 tensors.
-     *  A simple example would be: {@code Tsr.of("relu(",a,'-',b,")*2")}.
+     *  A simple example would be: {@code of("relu(",a,'-',b,")*2")}.
      *
      * @param e1 The first part of the string expression defining how the provided tensor should be processed.
      * @param a The first tensor which ought to be sent to whatever function is defined by the provided expressions.
@@ -267,13 +113,13 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      */
     public static <T> Tsr<T> of( String e1, Tsr<T> a, char o, Tsr<T> b, String e2 ) {
-        return _of( e1, a, String.valueOf(o), b, e2 );
+        return TsrImpl._of( e1, a, String.valueOf(o), b, e2 );
     }
 
     /**
      *  Use this to conveniently operate on 3 tensors.
      *  A simple example would be:
-     *  {@code Tsr.of("abs((",a,"-",b,") * ",c,")")}.
+     *  {@code of("abs((",a,"-",b,") * ",c,")")}.
      *
      * @param e1 The first part of the expression which would typically be used to define a function name.
      * @param a The first argument.
@@ -288,7 +134,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public static <T> Tsr<T> of(
             String e1, Tsr<T> a, String e2, Tsr<T> b, String e3, Tsr<T> c, String e4
     ) {
-        return _of( e1, a, e2, b, e3, c, e4 );
+        return TsrImpl._of( e1, a, e2, b, e3, c, e4 );
     }
 
 
@@ -299,7 +145,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param args The arguments which ought to be interpreted.
      * @return The result of the interpretation in the form of a {@link Tsr} instance of typ {@link Object}.
      */
-    public static <T> Tsr<T> of( Object... args ) { return _of( args ); }
+    public static <T> Tsr<T> of( Object... args ) { return TsrImpl._of( args ); }
 
     /*
         -------------------------------------------
@@ -351,11 +197,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public static <V> Tsr<V> of( List<? extends Number> shape, List<V> value ) {
         Class<V> typeClass = (Class<V>) Object.class;
         if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
-        return Tsr.of(
-                    DataType.of(typeClass),
-                    shape.stream().mapToInt(Number::intValue).toArray(),
-                    value
-                );
+        return of(
+                DataType.of(typeClass),
+                shape.stream().mapToInt(Number::intValue).toArray(),
+                value
+        );
     }
 
     /**
@@ -370,7 +216,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public static <V> Tsr<V> of( int[] shape, List<V> value ) {
         Class<V> typeClass = (Class<V>) Object.class;
         if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
-        return Tsr.of( DataType.of(typeClass), shape, value );
+        return of( DataType.of(typeClass), shape, value );
     }
 
     /**
@@ -405,7 +251,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
             resultType = targetType;
             resultData = result.getData().parallelStream().map( v -> converter.convert(v, targetType) ).toArray();
         }
-        return Tsr.of( DataType.of(resultType), shape, resultData );
+        return of( DataType.of(resultType), shape, resultData );
     }
 
     /*
@@ -423,11 +269,11 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static <V> WithShapeOrScalarOrVectorOnDevice<V> of( Class<V> typeClass ) { return new TensorBuilder<>( typeClass ); }
+    public static <V> WithShapeOrScalarOrVectorOnDevice<V> of(Class<V> typeClass ) { return new TensorBuilder<>( typeClass ); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
-     *  method like so: {@code Tsr.of(Double.class)}.
+     *  method like so: {@code of(Double.class)}.
      *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
      *  fluent {@link Tsr} builder API which in this case will lead to the creation
      *  of a tensor storing doubles.
@@ -438,7 +284,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
-     *  method like so: {@code Tsr.of(Float.class)}.
+     *  method like so: {@code of(Float.class)}.
      *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
      *  fluent {@link Tsr} builder API which in this case will lead to the creation
      *  of a tensor storing floats.
@@ -449,7 +295,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
-     *  method like so: {@code Tsr.of(Integer.class)}.
+     *  method like so: {@code of(Integer.class)}.
      *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
      *  fluent {@link Tsr} builder API which in this case will lead to the creation
      *  of a tensor storing integers.
@@ -460,7 +306,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
-     *  method like so: {@code Tsr.of(Short.class)}.
+     *  method like so: {@code of(Short.class)}.
      *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
      *  fluent {@link Tsr} builder API which in this case will lead to the creation
      *  of a tensor storing shorts.
@@ -471,7 +317,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
-     *  method like so: {@code Tsr.of(Byte.class)}.
+     *  method like so: {@code of(Byte.class)}.
      *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
      *  fluent {@link Tsr} builder API which in this case will lead to the creation
      *  of a tensor storing bytes.
@@ -484,7 +330,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar double tensor.
      */
-    public static Tsr<Double> of( double value ) { return Tsr.of( Double.class, new int[]{ 1 }, value ); }
+    public static Tsr<Double> of( double value ) { return of( Double.class, new int[]{ 1 }, value ); }
 
     /**
      *  Constructs a vector of floats based on the provided array.
@@ -492,7 +338,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of floats from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of floats.
      */
-    public static Tsr<Float> of( float... value ) { return Tsr.of( Float.class, new int[]{ value.length }, value ); }
+    public static Tsr<Float> of( float... value ) { return of( Float.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of doubles based on the provided array.
@@ -500,7 +346,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of doubles from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of doubles.
      */
-    public static Tsr<Double> of( double... value ) { return Tsr.of( Double.class, new int[]{ value.length }, value ); }
+    public static Tsr<Double> of( double... value ) { return of( Double.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of bytes based on the provided array.
@@ -508,7 +354,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of bytes from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of bytes.
      */
-    public static Tsr<Byte> of( byte... value ) { return Tsr.of( Byte.class, new int[]{ value.length }, value ); }
+    public static Tsr<Byte> of( byte... value ) { return of( Byte.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of ints based on the provided array.
@@ -516,7 +362,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of ints from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of ints.
      */
-    public static Tsr<Integer> of( int... value ) { return Tsr.of( Integer.class, new int[]{ value.length }, value ); }
+    public static Tsr<Integer> of( int... value ) { return of( Integer.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of longs based on the provided array.
@@ -524,7 +370,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of longs from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of longs.
      */
-    public static Tsr<Long> of( long... value ) { return Tsr.of( Long.class, new int[]{ value.length }, value ); }
+    public static Tsr<Long> of( long... value ) { return of( Long.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of shorts based on the provided array.
@@ -532,7 +378,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of shorts from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of shorts.
      */
-    public static Tsr<Short> of( short... value ) { return Tsr.of( Short.class, new int[]{ value.length }, value ); }
+    public static Tsr<Short> of( short... value ) { return of( Short.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of booleans based on the provided array.
@@ -540,7 +386,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param value The array of booleans from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of shorts.
      */
-    public static Tsr<Boolean> of( boolean... value ) { return Tsr.of( Boolean.class, new int[]{ value.length }, value ); }
+    public static Tsr<Boolean> of( boolean... value ) { return of( Boolean.class, new int[]{ value.length }, value ); }
 
     /**
      *  Use this to construct and return a seeded tensor of the specified type.
@@ -551,25 +397,25 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created and seeded tensor of the provided type and shape.
      */
-    public static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new Tsr<>( valueType, shape, seed ); }
+    public static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new TsrImpl<>( valueType, shape, seed ); }
 
-    public static Tsr<Double> of( int[] shape, double value ) { return Tsr.of( Double.class, shape, value ); }
+    public static Tsr<Double> of( int[] shape, double value ) { return of( Double.class, shape, value ); }
 
-    public static Tsr<Double> of( int[] shape, double[] value ) { return Tsr.of( Double.class, shape, value ); }
+    public static Tsr<Double> of( int[] shape, double[] value ) { return of( Double.class, shape, value ); }
 
-    public static Tsr<Integer> of( int[] shape, int[] value ) { return Tsr.of( Integer.class, shape, value ); }
+    public static Tsr<Integer> of( int[] shape, int[] value ) { return of( Integer.class, shape, value ); }
 
-    public static Tsr<Byte> of( int[] shape, byte[] value ) { return Tsr.of( Byte.class, shape, value ); }
+    public static Tsr<Byte> of( int[] shape, byte[] value ) { return of( Byte.class, shape, value ); }
 
-    public static Tsr<Long> of( int[] shape, long[] value ) { return Tsr.of( Long.class, shape, value ); }
+    public static Tsr<Long> of( int[] shape, long[] value ) { return of( Long.class, shape, value ); }
 
-    public static Tsr<Short> of( int[] shape, short[] value ) { return Tsr.of( Short.class, shape, value ); }
+    public static Tsr<Short> of( int[] shape, short[] value ) { return of( Short.class, shape, value ); }
 
-    public static Tsr<Float> of( int[] shape, float[] value ) { return Tsr.of( Float.class, shape, value ); }
+    public static Tsr<Float> of( int[] shape, float[] value ) { return of( Float.class, shape, value ); }
 
-    public static Tsr<Boolean> of( int[] shape, boolean[] value ) { return Tsr.of( Boolean.class, shape, value ); }
+    public static Tsr<Boolean> of( int[] shape, boolean[] value ) { return of( Boolean.class, shape, value ); }
 
-    public static <V> Tsr<V> of( DataType<V> type, int[] shape ) { return new Tsr<>( shape, type ); }
+    public static <V> Tsr<V> of( DataType<V> type, int[] shape ) { return new TsrImpl<>( shape, type ); }
 
     public static <V> Tsr<V> of( Class<V> typeClass, int[] shape, Object data ) {
         return of( DataType.of(typeClass), shape, data );
@@ -599,7 +445,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param data The data for the {@link Tsr} that is about to be created, which can be a list, an array or scalar.
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
-    public static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new Tsr<>( shape, dataType, data ); }
+    public static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( shape, dataType, data ); }
 
     /*
         -------------------------------------------
@@ -624,7 +470,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public static <T> Tsr<T> of( DataType<T> type, List<Integer> shape, Filler<T> filler) {
         LogUtil.nullArgCheck( shape, "shape", List.class );
-        return Tsr.of( type, shape.stream().mapToInt( e -> e ).toArray(), filler );
+        return of( type, shape.stream().mapToInt( e -> e ).toArray(), filler );
     }
 
     /**
@@ -642,8 +488,8 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    public static <T> Tsr<T> of( DataType<T> type, int[] shape, Filler<T> filler) {
-        return new Tsr<>( shape, type, filler);
+    static <T> Tsr<T> of( DataType<T> type, int[] shape, Filler<T> filler) {
+        return new TsrImpl<>( shape, type, filler );
     }
 
     /*
@@ -665,7 +511,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  very instance.                                                                      <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) / I[1]", 12f, -6.34f )'</i></li>
+     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", 12f, -6.34f )'</i></li>
      * </ul>
      *
      * @param expression A String which will be used for parsing a Function AST.
@@ -673,7 +519,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     @SafeVarargs
     public static <V extends Number> Tsr<V> of( String expression, V... inputs ) {
-        return Function.of( expression, true ).call( Arrays.stream(inputs).map(args -> _of(args)).toArray(Tsr[]::new) );
+        return Function.of( expression, true ).call( Arrays.stream(inputs).map(args ->TsrImpl._of(args)).toArray(Tsr[]::new) );
     }
 
     /**
@@ -689,7 +535,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  very instance.                                                                      <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) / I[1]", List.of(b, c) )'</i></li>
+     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", List.of(b, c) )'</i></li>
      * </ul>
      *
      * @param expression A String which will be used for parsing a Function AST.
@@ -708,7 +554,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...                    <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) / I[1]", true, List.of(b, c) )'</i></li>
+     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", true, List.of(b, c) )'</i></li>
      * </ul>
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  element-wise to produce a new tensor 'a'!
@@ -732,7 +578,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  namely : "I[0]" <br>
      *  An example would be the following :
      * <ul>
-     *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) * 2", b )'</i></li>
+     *      <li><i> 'Tsr a = of( "sin( I[0] ) * 2", b )'</i></li>
      * </ul>
      *
      *  Which takes the tensor 'b' and applies the function "f(x) = sin(x) * 2"
@@ -753,7 +599,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ... <br>
      *  An example would be the following :
      * <ul>
-     *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) / I[1]", b, c )'</i></li>
+     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", b, c )'</i></li>
      * </ul>
      *
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
@@ -776,7 +622,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...                    <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) / I[1]", true, b, c )'</i></li>
+     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", true, b, c )'</i></li>
      * </ul>
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  element-wise to produce a new tensor 'a'!
@@ -808,7 +654,7 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @return A randomly filled tensor of the provided type.
      */
     public static <V> Tsr<V> ofRandom( Class<V> valueTypeClass, int... shape ) {
-        return Tsr.of( valueTypeClass )
+        return of( valueTypeClass )
                 .withShape( shape )
                 .andSeed( 8701252152903546L );// If the user does not provide a seed, we use this.
     }
@@ -821,1701 +667,1517 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      * @param <V> The type parameter defining the value type of the provided as well as returned tensor.
      * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
      */
-    public static <V> IterByOrIterFromOrAll<V> like( Tsr<V> template ) {
-        return Tsr.of( template.getDataType().getValueTypeClass() )
+    public static <V> IterByOrIterFromOrAll<V> like(Tsr<V> template ) {
+        return of( template.getDataType().getValueTypeClass() )
                 .on( template.getDevice() )
                 .withShape( template.getNDConf().shape() );
     }
 
-    private static <T> Tsr<T> _of( Object... args )
-    {
-        if ( args == null || args.length == 0 ) return new Tsr<>();
-        if ( args.length == 1 ) {
-            Tsr<T> t = new Tsr<>();
-            boolean success = t.createConstructionAPI().constructAllFromOne( new int[]{ 1 }, args[ 0 ] );
-            if ( !success ) {
-                String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
-                _LOG.error( message );
-                throw new IllegalArgumentException( message );
-            }
-            return t;
-        }
-        args[ 0 ] = ( args[ 0 ] instanceof ArrayList ) ? ( (List<?>) args[ 0 ] ).toArray() : args[ 0 ];
-        args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (List<?>) args[ 1 ] ).toArray() : args[ 1 ];
-        if ( args[ 0 ] instanceof Object[] ) {
-            if ( ( (Object[]) args[ 0 ] )[ 0 ] instanceof Integer || ((Object[])args[ 0 ])[ 0 ] instanceof Double) {
-                args[ 0 ] = DataConverter.get().convert( args[ 0 ], int[].class );
-            }
-        }
-        //CASES:
-        if ( args[ 0 ] instanceof int[] ) {
-            if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
-                Tsr<T> t = new Tsr<>();
-                args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
-                t.createConstructionAPI().constructAllFromOne( (int[]) args[ 0 ], args[ 1 ] );
-                return t;
-            } else {
-                Tsr<T> t = new Tsr<>();
-                t._setDataType( DataType.of( args[1].getClass() ) );
-                t._constructAndAllocate( (int[]) args[0], true );
-                ((Object[])t._getData())[0] = args[1];
-                return t;
-            }
-        }
-        /* EXPRESSION BASED CONSTRUCTION:
-            The following allows the creation of tensors based on passing an expression
-            alongside input tensors to the constructor.
-            An example would be:
 
-                Tsr<?> t = Tsr.of( "tanh(", x, ") * 7 ^", y );
-        */
-        boolean containsString = false;
-        int numberOfTensors = 0;
-        for ( Object o : args ) {
-            containsString = ( o instanceof String ) || containsString;
-            if ( o instanceof Tsr )
-                numberOfTensors++;
-        }
-        Tsr<T>[] tensors = new Tsr[ numberOfTensors ];
-        StringBuilder f = new StringBuilder();
-        int ti = 0;
-        for ( Object o : args ) {
-            if ( o instanceof Tsr ) {
-                tensors[ ti ] = ( (Tsr<T>) o );
-                f.append( "I[" ).append( ti ).append( "]" );
-                ti++;
-            }
-            else if ( o instanceof String ) f.append( (String) o );
-            else
-                _LOG.debug(
-                        "Unexpected tensor construction argument of type '"+o.getClass().getSimpleName()+"'"
-                );
-        }
-        if ( tensors.length == 0 || tensors[0] == null) return new Tsr<>();
-        return Function.of( f.toString(), true ).call( tensors );
-    }
 
-    // Constructors:
 
     /**
-     *  This constructor creates a completely empty tensor which is void of any contents and meaning.
-     *  The use case for this would be to use the produced {@link Tsr}
-     *  instance as a target for an inline operation which fills this instance with an actual value. <br>
-     *  An example of this approach would be to call the {@link #putAt(List, Tsr)} method with an empty list as key.
-     *  This will be interpreted as an inline copy of the contents of the
-     *  second parameter into this {@link Tsr} instance.
-     *  This constructor will be called by the {@link Tsr#newInstance()} factory method.
-     */
-    private Tsr() {}
-
-    private Tsr( int[] shape, DataType<?> dataType, Object data ) { createConstructionAPI().tryConstructing( shape, dataType, data ); }
-
-    /**
-     *  see {@link #of(DataType, int[], Filler)}
+     *  This will check if the {@link Unsafe#delete()} method was previously called on this tensor.
+     *  This means that any references inside the tensor will be null
+     *  as well as that the tensor data was freed on every device,
+     *  meaning that what was previously referenced was most likely garbage collected...
      *
+     * @return The truth value determining if the {@link Unsafe#delete()} method has been called oin this instance.
      */
-    private <T> Tsr( int[] shape, DataType<T> type, Filler<T> filler)
-    {
-        _constructFromInitializer( shape, type, filler);
+    boolean isDeleted();
+
+    /**
+     *  A Virtual tensor is a tensor whose underlying data array is of size 1, holding only a single value. <br>
+     *  This only makes sense for homogeneously populated tensors.
+     *  An example of such a tensor would be: <br>
+     *  {@code Tsr.ofInts().withShape(x,y).all(n)}                           <br><br>
+     *  The reasons for this feature is that it greatly improves performance in certain cases.
+     *  In essence this feature is a form of lazy loading.
+     *
+     *  Use {@link #setIsVirtual(boolean)} to "actualize" a "virtual" tensor, and vise versa.
+     *
+     * @return The truth value determining if this tensor is "virtual" or "actual".
+     */
+    boolean isVirtual();
+
+    /**
+     *  A tensor is empty if there is neither data referenced within the tensor directly
+     *  nor within any given device to which the tensor might belong.
+     *
+     * @return The truth value determining if this tensor has data.
+     */
+    boolean isEmpty();
+
+    /**
+     *  A tensor is "undefined" if it has either no {@link NDConfiguration} implementation instance
+     *  or this instance does not have a shape set for this {@link Tsr} which is needed for
+     *  a tensor to also have a rank and dimensionality...
+     *
+     * @return The truth value determining if this tensor has an {@link NDConfiguration} stored internally.
+     */
+    boolean isUndefined();
+
+    /**
+     *  If this tensor is a slice of a parent tensor then this method will yield true.
+     *  Slices can be created by calling the variations of the "{@link Tsr#getAt}" method.
+     *
+     * @return The truth value determining if this tensor is a slice of another tensor.
+     */
+    boolean isSlice();
+
+    /**
+     *  This method returns the number of slices which have been
+     *  created from this very tensor.
+     *  It does so by accessing the {@link Relation} component if present
+     *  which internally keeps track of slices via weak references.
+     *
+     * @return The number of slices derived from this tensor.
+     */
+    int sliceCount();
+
+    /**
+     *  If slices have been derived from this tensor then it is a "slice parent".
+     *  This is what this method will determine, in which case, it will return true.
+     *
+     * @return The truth value determining if slices have been derived from this tensor.
+     */
+    boolean isSliceParent();
+
+    /**
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  This autograd system however, will only be triggered by {@link Function} implementations which
+     *  are not "detached", meaning they have their "{@link Function#isDoingAD()}" flags set to true! <br>
+     *  Detached functions (like those pre-instantiated in Function.Detached.*) will not attach {@link GraphNode}
+     *  instances to involved tensors which will prevent the formation of a computation graph.
+     *
+     * @return The truth value determining if this tensor belongs to a recorded computation graph.
+     */
+    boolean belongsToGraph();
+
+    /**
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  This autograd system however, will only be triggered by {@link Function} implementations which
+     *  are not "detached", meaning they have their "{@link Function#isDoingAD()}" flags set to true! <br>
+     *  A tensor is a leave if it is attached to a computation graph in which it is not an intermediate / branch node
+     *  but input / branch node.
+     *
+     * @return The truth value determining if this tensor is attached to a computation graph as leave node.
+     */
+    default boolean isLeave() { return (!this.belongsToGraph() || getGraphNode().isLeave()); }
+
+    /**
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  This autograd system however, will only be triggered by {@link Function} implementations which
+     *  are not "detached", meaning they have their "{@link Function#isDoingAD()}" flags set to true! <br>
+     *  A tensor is a branch if it is attached to a computation graph in which it is not an input / leave node
+     *  but intermediate / branch node.
+     *
+     * @return The truth value determining if this tensor is attached to a computation graph as branch node.
+     */
+     default boolean isBranch() { return !this.isLeave(); }
+
+    /**
+     *  Tensors can be components of other tensors which makes the
+     *  implicitly their gradients.
+     *
+     * @return The truth value determining if this tensor has another tensor attached to it (which is its gradient).
+     */
+    boolean hasGradient();
+
+    /**
+     *  Virtualizing is the opposite to actualizing a tensor.
+     *  A tensor is virtual if the size of the underlying data is not actually equal to
+     *  the number of elements which the tensor claims to store, aka its size.
+     *  This is for example the case when initializing a tensor filled with a single
+     *  value continuously. In that case the tensor will flag itself as virtual and only allocate the
+     *  underlying data array to hold a single item even though the tensor might actually hold
+     *  many more items.
+     *  The reasons for this feature is that it greatly improves performance in certain cases.
+     *  In essence this feature is a form of lazy loading.
+     *  <br><br>
+     *  WARNING! Virtualizing is the process of compacting the underlying data array
+     *  down to an array holding a single value.
+     *  This only makes sense for homogeneously populated tensors.
+     *  Passing {@code false} to this method will "actualize" a "virtual" tensor.
+     *  Meaning the underlying data array will at least become as large as the size of the tensor
+     *  as is defined by {@link #size()}.
+     *
+     * @param isVirtual The truth value determining if this tensor should be "virtual" or "actual".
+     * @return This concrete instance, to allow for method chaining.
+     */
+    Tsr<V> setIsVirtual( boolean isVirtual );
+
+    /**
+     *  This flag works alongside two autograd features which can be enables inside the library settings.
+     *  They will come into effect when flipping their feature flags, <br>
+     *  namely: <i>'isApplyingGradientWhenRequested'</i> and <i>'isApplyingGradientWhenTensorIsUsed'</i><br>
+     *  As the first flag name suggests gradients will be applied to their tensors when it is set to true,
+     *  however this will only happened when the second flag is set to true as well, because otherwise gradients
+     *  wouldn't be applied to their tensors automatically in the first place... <br>
+     *  <br>
+     *  Setting both flags to true will inhibit the effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
+     *  unless a form of "permission" is being signaled to the autograd system.
+     *  This signal comes in the form of a "request" flag which marks a tensor as <b>allowed to
+     *  be updated by its gradient</b>.<br>
+     *  <br>
+     * @return The truth value determining if the application of the gradient of this tensor is requested.
+     */
+    boolean gradientApplyRequested();
+
+    /**
+     *  This flag works alongside two autograd features which can be enables inside the library settings.
+     *  They will come into effect when flipping their feature flags, <br>
+     *  namely: <i>'isApplyingGradientWhenRequested'</i> and <i>'isApplyingGradientWhenTensorIsUsed'</i><br>
+     *  As the first flag name suggests gradients will be applied to their tensors when it is set to true,
+     *  however this will only happen when the second flag is set to true as well, because otherwise gradients
+     *  wouldn't be applied to their tensors automatically in the first place... <br>
+     *  <br>
+     *  Setting both flags to true will inhibit effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
+     *  unless a form of "permission" is being signaled to the autograd system.
+     *  This signal comes in the form of a "request" flag which marks a tensor as <b>allowed to
+     *  be updated by its gradient</b>.<br>
+     *  <br>
+     * @param applyRequested The truth value determining if the application of the gradient of this tensor is requested.
+     * @return This very tensor instance in order to enable method chaining.
+     */
+    Tsr<V> setGradientApplyRequested( boolean applyRequested );
+    /**
+     * @return The type class of individual value items within this {@link Tsr} instance.
+     */
+    Class<V> getValueClass();
+
+    /**
+     * @return The type class of individual value items within this {@link Tsr} instance.
+     */
+    default Class<V> valueClass() { return getValueClass(); }
+
+    /**
+     *  This method returns the {@link DataType} instance of this {@link Tsr}, which is
+     *  a wrapper object for the actual type class representing the value items stored inside
+     *  the underlying data array of this tensor.
+     *
+     * @return The {@link DataType} instance of this {@link Tsr} storing important type information.
+     */
+    DataType<V> getDataType();
+
+    /**
+     *  The {@link Class} returned by this method is the representative {@link Class} of the
+     *  value items of a concrete {@link AbstractTensor} but not necessarily the actual {@link Class} of
+     *  a given value item, this is especially true for numeric types, which are represented by
+     *  implementations of the {@link NumericType} interface.                                        <br>
+     *  For example in the case of a tensor of type {@link Double}, this method would
+     *  return {@link neureka.dtype.custom.F64} which is the representative class of {@link Double}. <br>
+     *  Calling the {@link #getValueClass()} method instead of this method would return the actual value
+     *  type class, namely: {@link Double}.
+     *
+     * @return The representative type class of individual value items within this concrete {@link AbstractTensor}
+     *         extension instance which might also be sub-classes of the {@link NumericType} interface
+     *         to model unsigned types or other JVM foreign numeric concepts.
+     */
+    Class<?> getRepresentativeValueClass();
+
+    /**
+     *  This method compares the passed class with the underlying data-type of this NDArray.
+     *  If the data-type of this NDArray is equivalent to the passed class then the returned
+     *  boolean will be true, otherwise the method returns false.
+     *
+     * @param typeClass The class which ought to be compared to the underlying data-type of this NDArray.
+     * @return The truth value of the question: Does this NDArray implementation hold the data of the passed type?
+     */
+    boolean is( Class<?> typeClass );
+
+    /**
+     * This method takes a {@link Device} and tries to migrate the contents of this {@link Tsr}
+     * instance to that {@link Device}!
+     *
+     * @param device The {@link Device} which should host this {@link Tsr} as well as be added to its components list.
+     * @return This very class to enable method chaining.
+     */
+    Tsr<V> to( Device<?> device );
+
+    Tsr<V> to( String deviceType );
+
+    /**
+     * @return The gradient of this tensor which is internally stored as component.
+     */
+    Tsr<V> getGradient();
+
+    /**
+     * @return The device on which this tensor is stored or {@link CPU} if it is not outsourced.
+     */
+    Device<V> getDevice();
+
+    /**
+     * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
+     */
+    GraphNode<V> getGraphNode();
+
+    /**
+     * @return An instance of the {@link NDFrame} component if present.
+     */
+    NDFrame<V> frame();
+
+    /**
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  If this tensor is part of a computation graph then this method
+     *  will traverse an error backward in the recorded history towards tensors which require
+     *  the accumulation of gradients.
+     *
+     * @param error A tensor which is back-propagated to gradients. Must match the size og this tensor.
+     * @return The tensor on which this method was called. (factory pattern)
+     */
+    Tsr<V> backward( Tsr<V> error );
+
+    /**
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  If this tensor is part of a computation graph then this method
+     *  will traverse an error backward in the recorded history towards tensors which require
+     *  the accumulation of gradients.<br>
+     *  <br>
+     *  This method turns the given scalar value and
+     *  turns it into a matching tensor ( with the same shape)
+     *  which will then be back-propagated through the
+     *  recorded computation graph.
+     *
+     * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
+     * @return The tensor on which this method was called. (factory pattern)
+     */
+    Tsr<V> backward( double value );
+
+    /**
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  If this tensor is part of a computation graph then this method
+     *  will traverse an error backward in the recorded history towards tensors which require
+     *  the accumulation of gradients. <br>
+     *  <br>
+     *  This method assumes that the user wants to back-propagate
+     *  an error of "1" having the same shape as
+     *  this tensor.
+     *
+     * @return The tensor on which this method was called. (factory pattern)
+     */
+    Tsr<V> backward();
+
+    /**
+     *  If this tensor owns a gradient tensor as component, then it can be applied by this method. <br>
+     *  "Applying" a gradient to a tensor simply means adding the values inside the gradient element-wise
+     *  to the owning host tensor via an inline operation. <br>
+     */
+    void applyGradient();
+
+    /**
+     *  <b>This method detaches this tensor from its underlying computation-graph
+     *  or simply does nothing if no graph is present.</b> <br>
+     *  Nodes within a computation graph are instances of the "{@link GraphNode}" class which are also
+     *  simple components of the tensors they represent in the graph. <br>
+     *  Therefore, "detaching" this tensor from the graph simply means removing its {@link GraphNode} component.
+     *
+     * @return This very instance in order to allows for a more streamline usage of this method.
+     */
+    Tsr<V> detach();
+
+    /**
+     *  This method receives a nested {@link String} array which
+     *  ought to contain a label for the index of this tensor.
+     *  The index for a single element of this tensor would be an array
+     *  of numbers as long as the rank where every number is
+     *  in the range of the corresponding shape dimension...
+     *  Labeling an index means that for every dimension there
+     *  must be a label for elements in this range array! <br>
+     *  For example the shape (2,3) could be labeled as follows:    <br>
+     *                                                              <br>
+     *      dim 0 : ["A", "B"]                                      <br>
+     *      dim 1 : ["1", "2", "3"]                                 <br>
+     *                                                              <br>
+     *
+     * @param labels A nested String array containing labels for indexes of the tensor dimensions.
+     * @return This tensor (method chaining).
+     */
+    Tsr<V> label( String[][] labels );
+
+    /**
+     *  This method receives a label for this tensor and a
+     *  nested {@link String} array which ought to contain a
+     *  label for the index of this tensor.
+     *  The index for a single element of this tensor would be an array
+     *  of numbers as long as the rank where every number is
+     *  in the range of the corresponding shape dimension...
+     *  Labeling an index means that for every dimension there
+     *  must be a label for elements in this range array! <br>
+     *  For example the shape (2,3) could be labeled as follows:    <br>
+     *                                                              <br>
+     *      dim 0 : ["A", "B"]                                      <br>
+     *      dim 1 : ["1", "2", "3"]                                 <br>
+     *                                                              <br>
+     *
+     * @param tensorName A label for this tensor itself.
+     * @param labels A nested String array containing labels for indexes of the tensor dimensions.
+     * @return This tensor (method chaining).
+     */
+    Tsr<V> label( String tensorName, String[][] labels );
+
+    /**
+     *  This method receives a nested {@link String} list which
+     *  ought to contain a label for the index of this tensor.
+     *  The index for a single element of this tensor would be an array
+     *  of numbers as long as the rank where every number is
+     *  in the range of the corresponding shape dimension...
+     *  Labeling an index means that for every dimension there
+     *  must be a label for elements in this range array! <br>
+     *  For example the shape (2,3) could be labeled as follows: <br>
+     *                                                           <br>
+     *      dim 0 : ["A", "B"]                                   <br>
+     *      dim 1 : ["1", "2", "3"]                              <br>
+     *                                                           <br>
+     * @param labels A nested String list containing labels for indexes of the tensor dimensions.
+     * @return This tensor (method chaining).
+     */
+    Tsr<V> label( List<List<Object>> labels );
+
+    /**
+     *  This method receives a label for this tensor and a nested
+     *  {@link String} list which ought to contain a label for the index of
+     *  this tensor The index for a single element of this tensor would
+     *  be an array of numbers as long as the rank where every number is
+     *  in the range of the corresponding shape dimension...
+     *  Labeling an index means that for every dimension there
+     *  must be a label for elements in this range array! <br>
+     *  For example the shape (2,3) could be labeled as follows: <br>
+     *                                                           <br>
+     *      dim 0 : ["A", "B"]                                   <br>
+     *      dim 1 : ["1", "2", "3"]                              <br>
+     *                                                           <br>
+     * @param tensorName A label for this tensor itself.
+     * @param labels A nested String list containing labels for indexes of the tensor dimensions.
+     * @return This tensor (method chaining).
+     */
+    Tsr<V> label( String tensorName, List<List<Object>> labels );
+
+    /**
+     *  This method provides the ability to
+     *  label not only the indices of the shape of this tensor, but also
+     *  the dimension of the shape.
+     *  The first and only argument of the method expects a map instance
+     *  where keys are the objects which ought to act as dimension labels
+     *  and the values are lists of labels for the indices of said dimensions.
+     *  For example the shape (2,3) could be labeled as follows:            <br>
+     *  [                                                                   <br>
+     *      "dim 0" : ["A", "B"],                                           <br>
+     *      "dim 1" : ["1", "2", "3"]                                       <br>
+     *  ]                                                                   <br>
+     *                                                                      <br>
+     * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
+     * @return This tensor (method chaining).
+     */
+    Tsr<V> label( Map<Object, List<Object>> labels );
+
+    Tsr<V> label( String tensorName, Map<Object, List<Object>> labels );
+
+    /**
+     *  This method will produce the sum of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise addition.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the addition.
+     * @return The sum of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    default Tsr<V> plus( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add 'null' to a tensor!");
+        return Neureka.get().backend().getAutogradFunction().plus().call( (Tsr<V>) this, other );
+    }
+
+    default Tsr<V> plusAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add-assign 'null' to a tensor!");
+        return Neureka.get().backend().getFunction().plusAssign().call( (Tsr<V>) this, other );
     }
 
     /**
-     *  See {@link #of(Class, int[], String)} and {@link #of(List, String)}
+     *  This method will create a new {@link Tsr}
+     *  with the provided double scalar added to all elements of this {@link Tsr}.
+     *
+     *  The shapes of this tensor is irrelevant as the provided value will
+     *  simply be broadcast to any possible shape.
+     *
+     * @param value The right operand of the addition.
+     * @return The sum between this instance as the left and the passed double as right operand.
      */
-    private Tsr( Class<V> valueType, int[] shape, String seed ) {
-        createConstructionAPI().constructSeeded( valueType, shape, seed );
-    }
-
-    private Tsr( int[] shape, DataType<?> type )
-    {
-        _setDataType( DataType.of( type.getRepresentativeType() ) );
-        _constructAndAllocate( shape, true );
-    }
+    default Tsr<V> plus( V value ) { return plus( of( valueClass(), this.shape(), value ) ); }
 
 
     /**
-     * @param shape The shape of that this new tensor ought to have.
-     * @param type The data type that this tensor ought to have.
-     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
-     * @param <T> The type parameter for the actual data array items.
+     *  This method will perform subtraction on
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise subtraction.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the subtraction.
+     * @return The difference between this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Filler<T> filler)
-    {
-        LogUtil.nullArgCheck( shape, "shape", int[].class );
-        LogUtil.nullArgCheck( type, "type", DataType.class );
-        LogUtil.nullArgCheck( type, "filler", Filler.class );
-        _setDataType( type );
-        _constructAndAllocate( shape, false );
-        _initData(filler);
+    default Tsr<V> minus( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract 'null' from a tensor!");
+        return Neureka.get().backend().getAutogradFunction().minus().call( (Tsr<V>) this, other );
     }
 
-    private void _constructAndAllocate(int[] shape, boolean virtual )
-    {
-        createConstructionAPI().configureFromNewShape( shape, virtual, true );
+    default Tsr<V> minus( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract 'null' from a tensor!");
+        return minus(
+                of( this.getDataType().getValueTypeClass() )
+                        .withShape(this.getNDConf().shape())
+                        .all(other)
+        );
+    }
+    default Tsr<V> minusAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract-assign 'null' from a tensor!");
+        return Neureka.get().backend().getFunction().minusAssign().call( (Tsr<V>) this, other );
     }
 
-    /*==================================================================================================================
-    |
-    |       §(2) : FLAGS
-    |   ----------------------
-    */
-    /*
-        --------------------------------------------
-            §(2.0) : GRADIENT REQUIREMENT  :
-        --------------------------------------------
-    */
+
+    default Tsr<V> minusAssign( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract-assign 'null' from a tensor!");
+        return minusAssign(
+                of( this.getDataType().getValueTypeClass() )
+                        .withShape(this.getNDConf().shape())
+                        .all(other)
+        );
+    }
+    /**
+     * @return A clone of this tensor where the signs of all elements are flipped.
+     */
+    default Tsr<V> negative() { return Neureka.get().backend().getAutogradFunction().neg().call( (Tsr<V>) this ); }
 
     /**
-     *  {@inheritDoc}
+     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
+     *
+     * @return A new transposed tensor with the same underlying data as this tensor.
      */
-    @Override
-    public final Tsr<V> setRqsGradient( boolean rqsGradient ) {
-        if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( Tsr.class );
-        _setRqsGradient( rqsGradient );
-        return this;
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean rqsGradient() { return ( _flags & RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK; }
-
-    protected void _setRqsGradient( boolean rqsGradient ) {
-        if ( rqsGradient() != rqsGradient ) {
-            if ( rqsGradient ) _flags += RQS_GRADIENT_MASK;
-            else               _flags -= RQS_GRADIENT_MASK;
+    default Tsr<V> T() {
+        if ( this.rank() == 1 ) return (Tsr<V>) this;
+        else if ( this.rank() == 2 ) {
+            boolean wasIntermediate = this.isIntermediate();
+            this.getUnsafe().setIsIntermediate(false);
+            Tsr<V> result = Neureka.get().backend().getFunction().transpose2D().call( (Tsr<V>) this );
+            this.getUnsafe().setIsIntermediate(wasIntermediate);
+            return result;
         }
+        StringBuilder operation = new StringBuilder();
+        for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( i == 0 ? "" : ", " );
+        operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
+        return Function.of( operation.toString(), true ).call( (Tsr<V>) this );
     }
 
     /**
-     *  {@inheritDoc}
+     *  This method performs various operations by calling {@link Function} instances
+     *  in order to ultimately calculate the mean value of all values
+     *  of this very tensor!
+     *  This scalar tensor is then returned.
+     *
+     * @return A scalar tensor which is the mean value of all values of this very tensor.
      */
-    @Override
-    public boolean isIntermediate() { return ( _flags & IS_INTERMEDIATE_MASK ) == IS_INTERMEDIATE_MASK; }
+    default Tsr<V> mean() {
+        Functions functions = Neureka.get().backend().getAutogradFunction();
+        Tsr<V> sum = sum();
+        Tsr<V> result = functions.div().call( sum, of( this.getValueClass(), new int[]{1}, this.size() ) );
+        sum.getUnsafe().delete();
+        return result;
+    }
+
+    default Tsr<V> sum() {
+        Functions functions = Neureka.get().backend().getAutogradFunction();
+        Tsr<V> ones = of( this.getValueClass(), this.getNDConf().shape(), 1 );
+        Tsr<V> sum = functions.conv().call( (Tsr<V>) this, ones );
+        if ( !ones.belongsToGraph() || !ones.getGraphNode().isUsedAsDerivative() )
+            ones.getUnsafe().delete();
+        if ( sum == null )
+            throw new IllegalStateException(
+                    "Failed to calculate sum using convolution! Shapes: "+
+                            Arrays.toString(this.getNDConf().shape())+"x"+Arrays.toString(ones.getNDConf().shape())
+            );
+        return sum;
+    }
+
+    /**
+     *  This method performs a convolutional based dot product between the last dimension of this tensor
+     *  and the first dimension of the passed tensor.
+     *
+     * @param other The tensor which is the right part of the dot product operation.
+     * @return A new tensor which is the dot product of this tensor and the passed one.
+     */
+    default Tsr<V> convDot( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class);
+        Tsr<V> a = (Tsr<V>) this;
+        int[][] fitter = AbstractTensor.Utility.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );
+        boolean doReshape = false;
+        for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
+        for ( int i = 0; i < fitter[ 1 ].length && !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;
+        if ( doReshape ) {
+            a = Function.of( AbstractTensor.Utility.shapeString( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
+            other = Function.of( AbstractTensor.Utility.shapeString( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( other );
+        }
+        return Neureka.get()
+                .backend()
+                .getAutogradFunction()
+                .conv()
+                .call( a, other )
+                .dimtrim();
+    }
+
+    /**
+     *  This method performs a dot product between the last dimension of this tensor
+     *  and the first dimension of the passed tensor.
+     *  However, currently this method can only handle matrices which means
+     *  that it is functionally completely identical to the {@link #matMul(Tsr)} method.
+     *
+     * @param other The tensor which is the right part of the dot product operation.
+     * @return A new tensor which is the dot product of this tensor and the passed one.
+     */
+    default Tsr<V> dot( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform dot operation when second operand is 'null'!");
+        if ( this.rank() != 2 && other.rank() != 2 )
+            throw new IllegalStateException("Not yet implemented!"); // This is not yet available in the backend!
+        return this.matMul( other );
+    }
+
+    /**
+     *  The {@link #matMul(Tsr)} method will produce the matrix product of
+     *  two 2 dimensional arrays, where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *
+     * @param other The right operand of the matrix multiplication.
+     * @return The matrix product of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    default Tsr<V> matMul( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform matrix multiplication operation when second operand is 'null'!");
+        if ( this.rank() != 2 || other.rank() != 2 )
+            throw new IllegalArgumentException(
+                    "Cannot perform matrix multiplication for tensors whose ranks are not both 2!\n" +
+                    "Encountered ranks: " + this.rank() + ", " + other.rank() + ";"
+                );
+
+        return Neureka.get().backend().getAutogradFunction().matMul().call( (Tsr<V>) this, other );
+    }
+
+    /**
+     *  This method creates a new tensor sharing the same data and whose shape is trimmed.
+     *  A trimmed shape is simply a shape without preceding and trailing ones. <br>
+     *  For example the shape (1x4x1x2x1) would be trimmed to (4x1x2).
+     *  The underlying operation does not perform a removal of redundant ones all together.
+     *  Only ones at the start and the beginning will be removed.
+     *  A scalar tensor will not be affected by this operation.
+     *
+     * @return A tensor with the same underlying data but possibly trimmed shape without preceding or trailing ones.
+     */
+    default Tsr<V> dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( (Tsr<V>) this ); }
+
+    /**
+     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
+     *  It is and alias method to the {@link #T()} method...
+     *
+     * @return A new transposed tensor with the same underlying data as this tensor.
+     */
+    default Tsr<V> getT() { return this.T(); } // Transposed
+
+    /**
+     *  This method name translates to the "in" keyword in Groovy!
+     *  The same is true for the "contains" method in Kotlin.
+     *  Both methods do the exact same thing, however they exist
+     *  for better language support.
+     *
+     * @param other The tensor which will be checked.
+     * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
+     */
+    boolean isCase( Tsr<V> other );
+
+    /**
+     *  This method name translates to the "in" keyword in Kotlin!
+     *  The same is true for the "isCase" method in Groovy.
+     *  Both methods do the exact same thing, however they exist
+     *  for better language support.
+     *
+     * @param other The tensor which will be checked.
+     * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
+     */
+    default boolean contains( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform 'contains' operation when second operand is 'null'!");
+        return this.isCase( other );
+    }
+
+    /**
+     *  This is technically the equivalent to a full slice.
+     *
+     * @return A shallow copy where the underlying data is shared with this tensor.
+     */
+    default Tsr<V> shallowCopy() {
+        if ( this.isEmpty() || this.isUndefined() ) return (Tsr<V>) this;
+        List<List<Integer>> ranges = new ArrayList<>();
+        for ( int e : this.shape() ) {
+            List<Integer> rangeAsList = new ArrayList<>();
+            for ( int i = 0; i < e; i++ ) rangeAsList.add( i );
+            ranges.add( rangeAsList);
+        }
+        return getAt( ranges.toArray() );
+    }
+
+    /**
+     *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
+     *  which enables the configuration of a slice of the current tensor via method chaining.    <br>
+     *  The following code snippet slices a 3-dimensional tensor into a tensor of shape (2x1x3)  <br>
+     * <pre>{@code
+     *  myTensor.slice()
+     *          .axis(0).from(0).to(1)
+     *          .then()
+     *          .axis(1).at(5) // equivalent to '.from(5).to(5)'
+     *          .then()
+     *          .axis().from(0).to(2)
+     *          .get();
+     * }</pre>
+     *
+     * @return An instance of the {@link SliceBuilder} class exposing a readable builder API for creating slices.
+     */
+    SliceBuilder<V> slice();
+
+    /**
+     *  This method is synonymous to the {@link #times(Tsr)} method.
+     *  Both of which will produce the product of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise product.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the multiplication.
+     * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    default Tsr<V> multiply( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply 'null' with a tensor!");
+        return Neureka.get().backend().getAutogradFunction().mul().call( (Tsr<V>) this, other );
+    }
+
+    /**
+     * @param other The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     */
+    default Tsr<V> multiply( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
+        return multiply(
+                of( this.getDataType().getValueTypeClass() )
+                        .withShape( this.getNDConf().shape() )
+                        .all( other )
+        );
+    }
+
+    /**
+     *  The {@link #times(Tsr)} method is synonymous to the {@link #multiply(Tsr)}.
+     *  Both of which will produce the product of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise product.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the multiplication.
+     * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    default Tsr<V> times( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply 'null' with a tensor!");
+        return multiply( other );
+    }
+
+    /**
+     * @param other The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     */
+    default Tsr<V> times( V other ) {
+        LogUtil.nullArgCheck(other, "other", getValueClass(), "Cannot multiply 'null' with a tensor!");
+        return multiply( other );
+    }
+    /**
+     * @param other The tensor whose elements ought to be multiplied and assigned to elements in this tensor.
+     * @return This instance where each value element was multiplied by the corresponding element in the provided tensor.
+     */
+    default Tsr<V> timesAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply-assign 'null' to a tensor!");
+        return Neureka.get().backend().getFunction().mulAssign().call( (Tsr<V>) this, other );
+    }
+
+    /**
+     * @param other The value which ought to be multiplied and assigned to each element in this tensor.
+     * @return This instance where each value element was multiplied by the provided element.
+     */
+    default Tsr<V> timesAssign( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply-assign 'null' to a tensor!");
+        return this.timesAssign( of( getValueClass(), getNDConf().shape(), other ) );
+    }
+    /**
+     * @param value The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     */
+    default Tsr<V> multiply( double value ) { return multiply( of( getValueClass(), getNDConf().shape(), value ) ); }
+
+    /**
+     *  The {@link #div(Tsr)} method will produce the quotient of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise division.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the division.
+     * @return The quotient of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    default Tsr<V> div( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide a tensor by 'null' (In any sense of the word)!");
+        return Neureka.get().backend().getAutogradFunction().div().call( (Tsr<V>) this, other );
+    }
+    default Tsr<V> div( V value ) { return div( of( getValueClass(), getNDConf().shape(), value ) ); }
+
+    default Tsr<V> divAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
+        return Neureka.get().backend().getFunction().divAssign().call( (Tsr<V>) this, other );
+    }
+
+    /**
+     *  The {@link #mod(Tsr)} method will produce the modulus of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise modulo operation.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the modulo operation.
+     * @return The modulus of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    default Tsr<V> mod( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
+        return Neureka.get().backend().getAutogradFunction().mod().call( (Tsr<V>) this, other );
+    }
+
+    default Tsr<V> mod( int other ) { return mod(of(getValueClass(), getNDConf().shape(), other)); }
+
+    /**
+     *  This method is synonymous to the {@link #mod(int)} method.
+     */
+    default Tsr<V> rem( int other ) { return this.mod(other); }
+
+    default Tsr<V> modAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
+        return Neureka.get().backend().getFunction().modAssign().call( (Tsr<V>) this, other );
+    }
+
+    /**
+     *  The {@link #power(Tsr)} (Tsr)} method will produce the power of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise exponentiation.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand, also known as exponent, of the exponentiation.
+     * @return The power of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    default Tsr<V> power( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot raise a tensor to the power of 'null'!");
+        return Neureka.get().backend().getAutogradFunction().pow().call( (Tsr<V>) this, other );
+    }
+
+    default Tsr<V> power( V value ) {
+        return power( of( this.valueClass(), this.shape(), value ) );
+    }
+
+    /**
+     *  This method is synonymous to the {@link #power(Tsr)} method.
+     */
+    default Tsr<V> xor( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot raise a tensor to the power of 'null'!");
+        return Neureka.get().backend().getAutogradFunction().pow().call( (Tsr<V>) this, other );
+    }
+
+    /**
+     *  This method is synonymous to the {@link #power(Tsr)} method.
+     */
+    default Tsr<V> xor( double value ) { return xor( of( this.valueClass(), this.shape(), value ) ); }
+
+    /**
+     *  Settings this flag via this setter will indirectly trigger the activation of
+     *  the autograd / auto-differentiation system of this library!
+     *  If the flag is set to 'true' and the tensor is used for computation then
+     *  it will also receive gradients when the {@link #backward()} method is being called
+     *  on any descendant tensor within the computation graph.
+     *
+     * @param rqsGradient The truth value determining if this tensor ought to receive gradients via
+     *                     the built-in automatic backpropagation system.
+     * @return This very {@link Tsr} instance in order to enable method chaining.
+     */
+    Tsr<V> setRqsGradient( boolean rqsGradient );
+
+    /**
+     *  This flag will indirectly trigger the activation of the autograd / auto-differentiation system of this library!
+     *  If the flag is set to 'true' and the tensor is used for computation then
+     *  it will also receive gradients when the {@link #backward()} method is being called
+     *  on any descendant tensor within the computation graph.
+     *
+     * @return The truth value determining if this tensor ought to receive gradients via
+     *         the built-in automatic backpropagation system.
+     */
+    boolean rqsGradient();
 
     /**
      *  Intermediate tensors are internal non-user tensors which may be eligible
      *  for deletion when further consumed by a {@link Function}.
      *  For the casual user of Neureka, this flag should always be false!
      *
-     * @param isIntermediate The truth value determining if this tensor is not a user tensor but an internal
-     *                       tensor which may be eligible for deletion by {@link Function}s consuming it.
+     * @return The truth value determining if this tensor is not a user tensor but an internal
+     *         tensor which may be eligible for deletion by {@link Function}s consuming it.
      */
-    protected void _setIsIntermediate( boolean isIntermediate ) {
-        if ( isIntermediate() != isIntermediate ) {
-            if ( isIntermediate ) _flags += IS_INTERMEDIATE_MASK;
-            else                  _flags -= IS_INTERMEDIATE_MASK;
-        }
-    }
-
-    /*
-    ---------------------------------------------
-        §(2.1) : SOURCE LOCATION (DEVICE)  :
-    ---------------------------------------------
-    */
+    boolean isIntermediate();
 
     /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> setIsOutsourced( boolean isOutsourced ) {
-        _setIsOutsourced( isOutsourced );
-        if ( isOutsourced )
-            _setData( null );
-        else if (
-            !forComponent(
-                Device.class,
-                device -> {
-                    try {
-                        if ( device.has( this ) ) device.restore( this );
-                    } catch ( Exception exception ) {
-                        _LOG.error(
-                            "Tensor could not be restored from device component when trying to migrate it back to RAM.",
-                            exception
-                        );
-                        throw exception;
-                    }
-                    this.remove( Device.class );
-                    forComponent(
-                        Tsr.class,
-                        gradient ->
-                            ( (Tsr<V>) gradient ).forComponent(
-                                Device.class,
-                                gradDevice -> {
-                                    try {
-                                        if ( gradDevice.has( gradient ) ) gradDevice.restore( gradient );
-                                    }
-                                    catch ( Exception exception ) {
-                                        _LOG.error(
-                                                "Gradient could not be restored from device component when trying to migrate it back to RAM.",
-                                                exception
-                                        );
-                                        throw exception;
-                                    }
-                                    gradient.remove( Device.class );
-                                })
-                    );
-                }
-            ) && _getData() == null
-        ) {
-            _setIsVirtual( true );
-            _allocate( 1 ); // Only a single value representing the rest.
-        }
-        return this;
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isOutsourced() { return ( _flags & IS_OUTSOURCED_MASK ) == IS_OUTSOURCED_MASK; }
-
-    protected void _setIsOutsourced( boolean isOutsourced ) {
-        if ( isOutsourced() != isOutsourced ) {
-            if ( isOutsourced ) _flags += IS_OUTSOURCED_MASK;
-            else                _flags -= IS_OUTSOURCED_MASK;
-        }
-    }
-
-    /*
-    --------------------------------------------
-        §(2.2) : VIRTUAL / ACTUAL  :
-    --------------------------------------------
-    */
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> setIsVirtual( boolean isVirtual ) {
-
-        assert getNDConf() != null;
-
-        if ( isVirtual() != isVirtual ) {
-            // Currently, we avoid offloading the virtualization by restoring outsourced tensors into RAM...
-            Device<V> device = this.get( Device.class );
-            try {
-                // TODO: Fix this imperformant mess below:
-                if ( device != null ) device.restore( this );
-            } catch ( Exception exception ) {
-                _LOG.error(
-                        "Tensor could not be restored from device component when changing flag 'isVirtual' to " + isVirtual + ".",
-                        exception
-                );
-                throw exception;
-            }
-            if ( isVirtual ) {
-                if ( _getData() != null ) _virtualize();
-            }
-            else _actualize();
-            // Virtual and actual tensors require a different mapping from a given index to the underlying data..
-            // Therefore, we need to re-initialize the NDConfiguration object:
-            createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, _getData() == null );
-            if ( isVirtual ) {
-                Relation<V> relation = get( Relation.class );
-                if ( relation!=null )
-                    relation.foreachChild( c -> {
-                                c._setData( _getData());
-                                c.setIsVirtual( true );
-                            });
-            } else {
-                Tsr<?> parentTensor = ( this.isSlice() ) ? get(Relation.class).getParent() : null;
-                if ( parentTensor != null ) parentTensor.get( Relation.class ).remove( this );
-            }
-
-            try {
-                if ( device != null ) device.store( this );
-            } catch ( Exception exception ) {
-                String message =
-                        "Tensor could not be migrated back to host device after changing flag 'isVirtual' to "+isVirtual+".";
-                _LOG.error(
-                        message,
-                        exception
-                );
-                throw new IllegalStateException( message );
-            }
-        }
-        else if ( isVirtual && _getData() == null ) _allocate( 1 ); //> Only a single value representing the rest.
-        return this;
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isVirtual() { return ( _flags & IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK; }
-
-    /**
-     *  This method is the inner counterpart to the public "{@link Tsr#setIsVirtual}" method.
-     *  It actually performs the bit flipping by applying the corresponding bit mask. <br>
-     *  <br>
-     * @param isVirtual The truth value which ought to be applied.
-     */
-    @Override
-    protected void _setIsVirtual( boolean isVirtual ) {
-        if ( isVirtual() != isVirtual ) {
-            if ( isVirtual ) _flags += IS_VIRTUAL_MASK;
-            else             _flags -= IS_VIRTUAL_MASK;
-        }
-    }
-
-    /*
-    --------------------------------------------
-        §(2.3) : GRADIENT APPLY REQUIREMENT  :
-    --------------------------------------------
-    */
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> setGradientApplyRequested( boolean applyRequested ) {
-        if ( gradientApplyRequested() != applyRequested ) {
-            if ( applyRequested ) {
-                if (
-                        Neureka.get().settings().autograd().isApplyingGradientWhenRequested() &&
-                                !Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
-                )
-                    this.applyGradient();
-                else
-                    _flags += GRADIENT_APPLY_RQD_MASK;
-            }
-            else _flags -= GRADIENT_APPLY_RQD_MASK;
-        }
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-     @Override
-    public boolean gradientApplyRequested() { return ( _flags & GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK; }
-
-    /*
-    --------------------------------------------
-        §(2.4) : DELETION  :
-    --------------------------------------------
-    */
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isDeleted() { return ( _flags & IS_DELETED_MASK ) == IS_DELETED_MASK; }
-
-    /**
-     *  Although tensors will be garbage collected when they are not strongly referenced,
-     *  there is also the option to manually free up the tensor and its associated data.
-     *  This is especially useful when tensors are stored on a device like the OpenCLDevice.
-     *  In that case calling the "{@link Tsr#_delete()}" method will free the memory reserved for this tensor.
-     *  This manual memory freeing through this method can be faster than waiting for
-     *  the garbage collector to kick in... <br>
-     *  <br>
+     *  This method informs this tensor if it's data is supposed to be kept in RAM
+     *  or if it has already been migrated somewhere else.
+     *  In the latter case, the tensor will nullify the reference to it's
+     *  underlying data array to make it elegable for garbage collection.
+     *  Otherwise, if {@code isOutsourced} is set to true, the method might
+     *  allocate a new data array if none is present.
      *
-     * @return This very tensor instance to allow for method chaining.
+     * @param isOutsourced The truth value which determines if this tensor should live in RAM or somewhere else.
+     * @return This very instance to allow for method chaining.
      */
-    private Tsr<V> _delete()
-    {
-        if ( isDeleted() ) return this;
-        forComponent( GraphNode.class, n -> {
-            if ( n.isUsedAsDerivative() ) {
-                String message = "Cannot delete a tensor which is used as derivative by the AD computation graph!";
-                _LOG.error( message );
-                throw new IllegalStateException( message );
-            }
-        });
-        forComponent( Device.class, device -> device.free( this ) );
-        _setData( null );
-        _setNDConf( null );
-        _flags = 0;
-        forComponent( Tsr.class, t -> t.getUnsafe().delete() );
-        _deleteComponents();
-        _flags += IS_DELETED_MASK;
-
-        return this;
-    }
-
-    /*==================================================================================================================
-    |
-    |       §(3) : COMPONENT SYSTEM
-    |   --------------------------------
-    */
-    /*
-    --------------------------------------------
-        §(3.0) : SETTING / REJECTING  :
-    --------------------------------------------
-    */
+    Tsr<V> setIsOutsourced( boolean isOutsourced );
 
     /**
-     * This method is executed when a new Component is added to the tensor.
-     * The public add method is implemented in the super class
-     * '{@link AbstractComponentOwner}' from which this class inherits.
-     * In this super class the component logic is implemented.
+     *  Outsourced means that the tensor is stored on a {@link Device} implementation instance.
      *
-     * @param newComponent A component used to access features. ({@link GraphNode}, {@link NDFrame}, {@link Relation}, int[], ...)
-     * @return The unchanged object or maybe in future versions: null (component rejected)
+     * @return The truth value determining if the data of this tensor is not actually stored inside of it
+     *         in the form of of a traditional primitive JVM array!
      */
-    @Override
-    protected < T extends Component<Tsr<V>> > T _setOrReject( T newComponent )
-    {
-        return newComponent;
-    }
+    boolean isOutsourced();
 
-    /*
-    --------------------------------------------
-        §(3.1) : REMOVING / REJECTING  :
-    --------------------------------------------
-    */
     /**
-     * This method is executed when a component is being removed from the tensor.
-     * The public remove method is implemented in the super class
-     * '{@link AbstractComponentOwner}' from which this class inherits.
-     * In this super class the component logic is implemented.
+     *  This method exposes an API for mutating the state of this tensor.
+     *  The usage of methods exposed by this API is generally discouraged
+     *  because the exposed state can easily lead to broken tensors and exceptional situations!<br>
+     *  <br><b>
      *
-     * @param newComponent A component used to access features. ({@link GraphNode}, {@link NDFrame}, {@link Relation}, int[], ...)
-     * @return The unchanged object or when rejected: null (component rejected)
-     */
-    @Override
-    protected <T extends Component<Tsr<V>>> T _removeOrReject(T newComponent )
-    {
-        if ( newComponent instanceof Device ) {
-            Device<V> device = (Device<V>) newComponent;
-            /*
-                The following seems like a redundant check, however often times a tensor
-                will be removed from a Device implementation inside the "restore" method
-                when the tensor has already been removed from the device...
-                With out the condition below a stack overflow would occur!
-             */
-            if ( device.has( this ) ) {
-                try {
-                    device.restore( this );
-                } catch ( Exception exception ) {
-                    _LOG.error(
-                            "Removing device from tensor / tensor from device failed.\n" +
-                            "Restoring tensor from device threw exception.\n",
-                            exception
-                    );
-                    throw exception;
-                }
-            }
-        }
-        return newComponent;
-    }
-
-    /*
-    ----------------------------
-        §(3.2) : UPDATING  :
-    ----------------------------
-    */
-    /**
-     *  Important : Components of type {@link Tsr} are simply gradients!
-     *  Currently, this method is used only to catch illegal arguments which
-     *  is for example the case when trying to attach a gradient with a different shape...
-     *  (Otherwise the gradient tensor "does not mind" an owner change...)
-     */
-    @Override
-    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
-        if ( changeRequest.type() == IsBeing.ADDED ) {
-            if (
-                    changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||
-                            Arrays.hashCode(changeRequest.getNewOwner().getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )
-            ) {
-                throw new IllegalArgumentException(
-                        "Trying to attach a tensor as gradient component to a tensor with different shape."
-                );
-            }
-        }
-        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
-        // If the change request type is set to "REPLACED" then
-        // this is means that this tensor is a gradient that is being
-        // transferred to another tensor to serve as gradient...
-        // No update task needs to occur. (This might change in the future...)
-        return true;
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> to( String deviceType ) { return this.to(Device.get(deviceType)); }
-
-    /*==================================================================================================================
-    |
-    |       §(4) : PROPERTIES :
-    |   ---------------------------------------
-    */
-    /*
-    --------------------------------------------
-        §(4.0) : HIGH LEVEL PROPERTIES  :
-    --------------------------------------------
-    */
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isEmpty() { return _getData() == null && !this.isOutsourced(); }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isUndefined() { return getNDConf() == null || getNDConf().shape() == null; }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isSlice() {
-        Relation<V> child = get( Relation.class );
-        return ( child != null && child.hasParent() );
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public int sliceCount() {
-        Relation<V> child = this.get( Relation.class );
-        return ( child != null ) ? child.childCount() : 0;
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isSliceParent() {
-        Relation<V> parent = this.get( Relation.class );
-        return ( parent != null && parent.hasChildren() );
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override public boolean belongsToGraph() { return this.has( GraphNode.class ); }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override public boolean hasGradient() { return this.has( Tsr.class ); }
-
-    /*
-        ----------------------------------------------
-            §(4.1) : COMPONENT BASED PROPERTIES :
-        ----------------------------------------------
-     */
-
-    /**
-     * {@inheritDoc}
-     */
-     @Override
-    public final Tsr<V> getGradient() { return this.get( Tsr.class ); }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Device<V> getDevice() {
-        if ( this.isOutsourced() ) return this.get( Device.class );
-        return (Device<V>) _CPU;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public GraphNode<V> getGraphNode() { _guardGet("graph node"); return get( GraphNode.class ); }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NDFrame<V> frame() { _guardGet("graph node"); return get( NDFrame.class ); }
-
-
-    /*
-        ---------------------------------------
-            §(4.2) : INNER PROPERTIES :
-        ---------------------------------------
-     */
-
-
-    /*==================================================================================================================
-    |
-    |       §(5) : OBJECT STATE MODIFICATION :
-    |   ------------------------------------------
-    */
-
-    private void _toLayout( NDConfiguration.Layout target )
-    {
-        if ( target == this.getNDConf().getLayout() ) return;
-
-        NDConfiguration old = this.getNDConf();
-
-        if ( target == NDConfiguration.Layout.ROW_MAJOR )
-            _fromCMToRM();
-        else
-            _fromRMToCM();
-
-        _checkLayoutConversion( this.getNDConf(), old, target );
-    }
-
-    /**
-     *  Converts this tensor from column major to column major layout.
-     */
-    private void _fromCMToRM() {
-        if ( this.getNDConf().isVirtual() ) {
-            this.setIsVirtual( false ); // We actualized the tensor before conversion!
-            if ( this.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR )
-                return;
-        }
-        Tsr<V> clone = clone(); // A clone will have by default a row major layout.
-        _setNDConf( clone.getNDConf() );
-        _assignIfActual( () -> clone );
-    }
-
-    /**
-     *  Converts this tensor from row major to column major layout.
-     */
-    private void _fromRMToCM() {
-        _assignIfActual( () -> Tsr.this.T().clone().detach() );
-        NDConfiguration old = this.getNDConf();
-        int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor(old.shape());
-        if ( old.isVirtual() ) {
-            this.setIsVirtual(false);
-            old = this.getNDConf();
-        }
-        _setNDConf( _createNewNDCFrom( old, newTranslation, old.translation() ) );
-    }
-
-    /**
-     *  This will only call the supplier and copy its result into this tensor
-     *  if this tensor is not virtual (meaning this is an actual tensor).
-     */
-    private void _assignIfActual( Supplier<Tsr<?>> provider ) {
-        if ( !this.isVirtual() ) {
-            Tsr<?> toBeAssigned = provider.get();
-            MemUtil.keep(this, toBeAssigned,
-                () -> Neureka.get().backend().getFunction().idy().execute( this, toBeAssigned )
-            );
-        }
-    }
-
-    private static NDConfiguration _createNewNDCFrom(
-            NDConfiguration old, int[] newTranslation, int[] indicesMap
-    ) {
-        assert !old.isVirtual();
-        return AbstractNDC.construct(
-            old.shape(), newTranslation, indicesMap, old.spread(), old.offset()
-        );
-    }
-
-    private static void _checkLayoutConversion(
-            NDConfiguration newConf,
-            NDConfiguration oldConf,
-            NDConfiguration.Layout targetLayout
-    ) {
-        if ( newConf.isVirtual() )
-            throw new IllegalStateException("Layout conversion produced a virtual nd-configuration!");
-        if ( !newConf.getLayout().isCompatible(targetLayout) )
-            throw new IllegalArgumentException(
-                    "Failed to convert this tensor from its original layout '"+oldConf.getLayout()+"' " +
-                    "to target layout '"+targetLayout+"'. Instead this tensor has layout '"+newConf.getLayout()+"'."
-            );
-    }
-
-    /**
-     * This method is responsible for incrementing
-     * the "_version" field variable which represents the version of the data of this tensor.
-     * Meaning :
-     * Every time the underlying data (_value) changes this version ought to increment alongside.
-     * The method is called during the execution procedure.
+     *  Only use this if you know what you are doing and
+     *  performance is critical! <br>
+     *  </b>
+     *  (Like custom backend extensions for example)
      *
-     * @param call The context object containing all relevant information that defines a call for tensor execution.
+     * @return The unsafe API exposes methods for mutating the state of the tensor.
      */
-    private void _incrementVersionBecauseOf( ExecutionCall<?> call ) {
-        if ( Neureka.get().settings().autograd().isPreventingInlineOperations() ) {
-            _version++;
-            GraphNode<?> node = get( GraphNode.class );
-            if ( node != null && node.getPayloadReferenceVersion() != _version ) {
-                if ( node.usesAD() || node.isUsedAsDerivative() ) {
-                    String error = "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\n" +
-                                   "The following OperationType caused an internal version mismatch: '"+call.getOperation().getIdentifier()+"'";
-                    _LOG.error( error );
-                    throw new IllegalStateException( error );
-                }
-            }
-        }
-    }
+    Unsafe<V> getUnsafe();
+
 
     /**
-     *  In essence tensors are merely fancy wrapper for some form of array of any type... 
-     *  This wrapper usually stays the same of a given data array.
-     *  However, sometimes a tensor changes its identity, or rather the underlying
-     *  data changes the wrapping tensor instance. <br>
-     *  <br>
-     * @param tensor The tensor whose identity should be stolen.
-     */
-    protected void _become(Tsr<V> tensor )
-    {
-        if ( tensor == null ) return;
-        _setDataType( tensor.getDataType() );
-        _setData( tensor._getData() );
-        _setNDConf( tensor.getNDConf() );
-        _flags = tensor._flags;
-        _transferFrom( tensor );
-        tensor._setData( null );
-        tensor._setDataType( null );
-        tensor._setNDConf( null );
-        tensor._flags = 0;
-    }
-
-
-    /*==================================================================================================================
-    |
-    |       §(6) : ND-ITERATOR LOGIC :
-    |   ---------------------------------------
-    */
-
-    /**
-     * This method returns an iterator over the elements of this tensor. <br>
+     *  The following method enables access to specific scalar elements within the tensor.
+     *  The method name also translates to the subscript operator in Groovy.
      *
-     * @return An iterator over elements of type ValType.
+     * @param indices The index array of the element which should be returned.
+     * @return An element located at the provided index.
      */
-    @NotNull
-    @Override
-    public Iterator<V> iterator()
-    {
-        NDIterator _ndi = NDIterator.of( this );
-        return new Iterator<V>()
-        {
-            private int _count = 0;
-            private final int _size = Tsr.this.size();
-
-            @Override public boolean hasNext() { return _count != _size; }
-
-            @Override
-            public V next() {
-                V value = Tsr.this.getDataAt( _ndi.i() );
-                _ndi.increment();
-                _count ++;
-                return value;
-            }
-        };
-    }
-
-
-    /*==================================================================================================================
-    |
-    |       §(7) : COMPONENT SPECIFIC :
-    |   ---------------------------------------
-    */
-    /*
-        -------------------------------
-            §(7.0) : AUTO-GRAD :
-        -------------------------------
-        ... for more context see package 'autograd' ...
-     */
+    Tsr<V> getAt( int... indices );
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> backward( Tsr<V> error ) {
-        LogUtil.nullArgCheck(error, "error", Tsr.class, "Cannot back-propagate 'null'!");
-        if ( this.isOutsourced() )
-            error = error.clone().to(this.getDevice());
-
-        Tsr<V> finalError = error;
-        if ( !forComponent( GraphNode.class, node -> node.backward(finalError) ) && this.rqsGradient() ) {
-            addToGradient( error );
-        }
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> backward( double value ) {
-        backward( Tsr.of( this.getValueClass(), getNDConf().shape(), value ) );
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> backward() {
-        backward( 1 ); // By default we back-propagate a base factor of 1.
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void applyGradient()
-    {
-        /*
-           If the tensor has a JITProp component then it will trigger the continuation of the back-propagation which
-           has been put on hold by saving the pending graph nodes inside the component. <br>
-           This is because the gradient most likely has not yet been fully calculated.
-         */
-        forComponent( JITProp.class, JITProp::execute );
-        // Afterwards the JITProp component is not needed anymore! So we remove it.
-        remove( JITProp.class );
-        // Now the gradient can be applied (Gradients are also tensors, which is why we provide its class as key).
-        forComponent(
-                Tsr.class,
-                g -> {
-                    // If an optimizer is present then we also optimize the gradient first!
-                    if ( this.has( Optimizer.class ) )
-                        g = this.get(Optimizer.class).optimize( this );
-                    // And then we remove the gradient because it is no longer needed.
-                    remove( Tsr.class );
-                    // We are now ready to apply the gradient to the tensor. This is an inline operation!
-                    // Therefore we need to turn off the inline operation safety net:
-                    boolean inlineSafety = Neureka.get().settings().autograd().isPreventingInlineOperations();
-                    if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( false );
-                    // INLINE OPERATION :
-                    Neureka.get().backend().getFunction().plusAssign().call( this, g ); //-> Finally applying the gradient!
-                    // INLINE END ! -> We can now revert to the previous setting:
-                    if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( true );
-                }
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> detach() { this.remove( GraphNode.class ); return this; }
-
-    /*
-        ----------------------------
-            §(7.1) : FRAMING :
-        ----------------------------
-        ... for more context see package 'framing'...
-     */
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> label( String[][] labels ) {
-        _label( null, labels );
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> label( String tensorName, String[][] labels )
-    {
-        _label( tensorName, labels );
-        return this;
-    }
-
-    /**
-     *  This private method is used by public {@link Tsr#label} methods as a single source of
-     *  responsibility for performing the actual labeling based on the user input...
+     *  This getter method creates and returns a slice of the original tensor.
+     *  The returned slice is a scalar tensor wrapping a single value element which
+     *  is being targeted by the provided integer index.
      *
-     * @param tensorName The name of this tensor which will be stored in an {@link NDFrame} component.
-     * @param labels The label / alias information which will also be stored in an {@link NDFrame} component.
+     * @param i The index of the value item which should be returned as a tensor instance.
+     * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
-    private void _label( String tensorName, String[][] labels )
-    {
-        LogUtil.nullArgCheck(labels, "labels", String[][].class, "Tensors cannot be labeled 'null'!");
-        NDFrame<V> frame = get( NDFrame.class );
-        if ( frame == null ) {
-            frame = new NDFrame( this.rank(), tensorName );
-            set(frame);
-        }
-        assert labels.length <= this.rank();
-        for( int i = 0; i < labels.length; i++ ) {
-            if ( labels[ i ] != null ) {
-                AxisFrame<Integer, V> atAxis = frame.atAxis( i );
-                for ( int ii = 0; ii < labels[ i ].length; ii++ ) {
-                    if ( labels[ i ][ ii ] != null )
-                        atAxis.atIndexAlias( labels[ i ][ ii ] ).setIndex( ii );
-                }
-            }
-        }
+    default Tsr<V> getAt( Number i ) {
+        return getAt( Collections.singletonList( getNDConf().indicesOfIndex( (i).intValue() ) ).toArray() );
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> label( List<List<Object>> labels ) {
-        LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
-        NDFrame<V> frame = get( NDFrame.class );
-        if ( frame == null ) set( new NDFrame( labels, null ) );
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> label( String tensorName, List<List<Object>> labels ) {
-        LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
-        NDFrame<V> frame = get( NDFrame.class );
-        if ( frame == null ) set( new NDFrame<>( labels, tensorName ) );
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> label( Map<Object, List<Object>> labels )
-    {
-        LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
-        this.set( new NDFrame<>( labels, this, null ) );
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> label( String tensorName, Map<Object, List<Object>> labels )
-    {
-        LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
-        this.set( new NDFrame<>( labels, this, tensorName ) );
-        return this;
-    }
-
-    /*==================================================================================================================
-    |
-    |       §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS :
-    |   -----------------------------------------------------
-    |       ...for more context see package 'calculus'...
-    |*/
-    /*
-        -----------------------------
-            §(8.0) : OPERATORS :
-        -----------------------------
-     */
-
-    /*
-        -----------------------------
-            §(8.1) : OPERATIONS :
-        -----------------------------
-     */
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isCase( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform 'is case' operation when second oprand is 'null'!");
-        boolean[] found = { false };
-        this.forComponent( Relation.class, r -> r.foreachChild( c -> {
-                if ( c.equals( other ) ) found[ 0 ] = true;
-            }));
-        return found[ 0 ];
-    }
-
-    /*==================================================================================================================
-    |
-    |       §(9) : SLICING, INDEXING & INJECTING :
-    |   -----------------------------------------------------
-    |       ...for more context see package 'ndim.config'...
-    */
-    /*
-        -----------------------------
-            §(9.0) : SLICING :
-        -----------------------------
-     */
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> getAt( int... indices ) {
-        LogUtil.nullArgCheck(indices, "indices", int[].class, "Indices array must not be 'null'!");
-        return getAt( Arrays.stream( indices ).boxed().toArray() );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> getAt( Map<?,Integer> rankToStrides )
-    {
-        if ( rankToStrides == null ) return this;
-        // ...not a simple slice... Advanced:
-        return SmartSlicer.slice(
-                        new Object[]{rankToStrides},
-                        this,
-                        this::_sliceOf
-                    );
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> getAt( List<?> key ) {
-        LogUtil.nullArgCheck( key, "key", List.class );
-        if ( key.stream().anyMatch( i -> i == null ) )
-            throw new IllegalArgumentException("List of indices/ranges may not contain entries which are null!");
-        if ( key.isEmpty() ) {
-            /*
-                An empty List instance is being interpreted as
-                the request to create an identical slice, meaning that the
-                resulting tensor views the same data as its parent while not
-                being the same instance. (In a sense, its a shallow copy!)
-             */
-            return shallowCopy();
-        }
-
-        Object[] indices = key.toArray();
-
-        boolean allInt = true;
-        for ( Object o : indices ) allInt = allInt && o instanceof Integer;
-        if ( allInt && indices.length == rank() ) {
-            int[] newOffset = DataConverter.get().convert(indices, int[].class);
-            for ( int i = 0; i < this.rank(); i++ )
-                newOffset[ i ] = ( newOffset[ i ] < 0 ) ? getNDConf().shape( i ) + newOffset[ i ] : newOffset[ i ];
-            for ( int i = 0; i < this.rank(); i++ )
-                indices[ i ] = newOffset[ i ];
-            allInt = false;
-        }
-        boolean hasScale = false;
-        for ( Object o : indices ) hasScale = hasScale || o instanceof Map;
-        return SmartSlicer.slice(
-                ( allInt ? new Object[]{ DataConverter.get().convert(indices, int[].class) } : indices ),
-                this,
-                this::_sliceOf
-        );
-    }
-
-    /**
-     *  If this tensor stores value types then this method will
-     *  essentially produce a deep copy of this tensor.
-     *  If the stored elements are reference types on the other hand,
-     *  then the resulting clone may not be treated as a deep copy,
-     *  especially if elements are mutable objects.
+     *  The following method enables access to specific scalar elements within the tensor.
+     *  The method name also translates to the subscript operator in Groovy.
      *
-     * @return A deep copy of this tensor.
+     * @param indices The index array of the element which should be returned.
+     * @return An element located at the provided index.
      */
-    @Override
-    public final Tsr<V> clone() {
-        Function cloner = Neureka.get().backend().getFunction().idy();
-        boolean thisIsIntermediate = this.isIntermediate();
-        _setIsIntermediate( false );
-        Tsr<V> clone = Tsr.of( this.getValueClass() )
-                            .on(this.getDevice())
-                            .withShape( this.getNDConf().shape() )
-                            .all( (V) Double.valueOf(0.0) );
-
-        clone = cloner.call(clone, this);
-        clone.getUnsafe().setIsIntermediate( thisIsIntermediate );
-        _setIsIntermediate( thisIsIntermediate );
-        return clone;
-    }
+    default Tsr<V> get( int... indices ) { return getAt( indices ); }
 
     /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public SliceBuilder<V> slice() { return new SliceBuilder<>( this, this::_sliceOf ); }
-
-    /**
-     *  This method is where the creation of a slice occurs.
-     *  When creating a slice via the {@link SliceBuilder} or simply by passing ranges in the form of
-     *  arrays, lists or maps to a {@link Tsr#getAt}(...) method, then this method will be called eventually.
-     *  The creation of a slice always requires information about the shape of the new slice
-     *  its position within the original tensor and also the strides / steps.
+     *  The following method enables the creation of tensor slices which access
+     *  the same underlying data (possibly from a different view).
+     *  The method name also translates to the subscript operator in Groovy.
      *
-     * @param newShape The of the slice which ought to be created.
-     * @param newOffset The position of the new slice within this tensor.
-     * @param newSpread The spread / steps / strides of the slice within this tensor.
-     * @return The newly created slice.
+     * @param args An arbitrary number of arguments which can be used for slicing.
+     * @return A slice tensor created based on the passed keys.
      */
-    private Tsr<V> _sliceOf( int[] newShape, int[] newOffset, int[] newSpread )
-    {
-        this.setIsVirtual( false );
-        Tsr<V> subset = new Tsr<>();
-        subset._setDataType( this.getDataType() );
-        subset._setData( _getData() );
-        int[] newTranslation = getNDConf().translation();
-        int[] newIndicesMap = this.getNDConf().getLayout().newTranslationFor( newShape );
-
-        for ( int i = 0; i < this.rank(); i++ )
-            newSpread[ i ] = ( newSpread[i] == 0 ) ? 1 : newSpread[ i ];
-
-        for ( int i = 0; i < newOffset.length; i++ )
-            newOffset[ i ] = newOffset[ i ] + getNDConf().offset( i ); // Offset is being inherited!
-
-        Tsr<?> rootTensor   = ( this.isSlice() ? get( Relation.class ).findRootTensor() : this );
-        Tsr<?> parentTensor = ( this.isSlice() ? get( Relation.class ).getParent()      : this );
-        /*
-            The following code check the validity of the slice shape ranges with
-            respect to the 'parentTensor' of this new slice.
-         */
-        if ( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
-            // TODO! This requires some more thought about how to check this!
-            // THIS CASE HAS NOT YET BEEN THOUGHT TROUGH!
-            _LOG.warn(
-                    "Exceptional slice request detected. " +
-                    "This type of tensor cannot yet be sliced. " +
-                    "Please copy this tensor before slicing."
-            );
-        } else {
-            /*
-                1. We know that inside this else branch 'this' tensor is a first order slice!
-                (So it is not a slice of a slice... reason : 'rootTensor == parentTensor' )
-
-                2. There is however uncertainty about the 'true shape' of this parent tensor!
-                Meaning : It might have been reshaped and could therefore be distorted with
-                respect to the slice that is currently being prepared!
-                -> This means we have to take this possible reshaping into account!
-                Like so:
-
-                The following uses an int array also called 'reshapeRelation'.
-                This is simply the 'reshape array' which has been recorded inside the 'Relation' component
-                by the 'Reshape' operation! ( Hopefully! :) ... custom shape operations need to consider this as well! )
-
-                The following would occur when : "Tsr.of(...).T().getAt(...);"
-                Transposing a tensor performs an inline reshaping of an identical
-                slice of the original tensor! Then again slicing this tensor
-                via the 'getAt(...)' method leads us to a situation where
-                the following variable is NOT NULL! :
-             */
-            int[] reshaped = ( this.isSlice() ) ? parentTensor.get( Relation.class ).getReshapeRelationFor( this ) : null;
-            reshaped = ( reshaped != null ) ? Reshape.invert( reshaped ) : null;
-            for ( int i = 0; i < parentTensor.rank(); i++ ) {
-                int ii = ( reshaped != null ) ? reshaped[ i ] : i;
-                int top = newOffset[ i ] + newShape[ i ];
-                if ( top > parentTensor.shape( ii ) ) {
-                    String message =
-                            "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
-                            "At index '" + i + "' : offset '" + newOffset[ i ] + "' + shape '" + newShape[ i ] + "' = '" + top + "',\n" +
-                            "which is larger than the target shape '" + parentTensor.shape( ii ) + "' at the same index!";
-                    Exception exception = new IllegalArgumentException( message );
-                    _LOG.error( message, exception );
-                    throw new IllegalArgumentException( exception );
-                }
-            }
-        }
-        subset._setNDConf(
-            AbstractNDC.construct(
-                newShape,
-                newTranslation,
-                newIndicesMap,
-                newSpread,
-                newOffset
-            )
-        );
-
-        if ( this.isOutsourced() ) {
-            Device<V> device = this.get( Device.class );
-            device.store( subset, this );
-            subset.setIsOutsourced( true );
-        }
-        if ( this.isVirtual() ) subset.setIsVirtual( true );
-        subset.set( new Relation().addParent( this ) );
-        Relation<V> parent = get( Relation.class );
-        parent = ( parent != null ) ? parent : new Relation<>();
-        parent.addChild( subset );
-        this.set( parent );
-        return subset;
-    }
-
-
-    /*
-        -----------------------------
-            §(9.1) : INJECTING :
-        -----------------------------
-     */
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> putAt( List<?> key, Tsr<V> value ) {
-        _putAtCheckFor( value );
-        Tsr<V> slice = ( key == null ) ? this : getAt( key );
-        return _putAt( slice, value );
+    default Tsr<V> getAt( Object... args ) {
+        List<Object> argsList = Arrays.asList( args );
+        return getAt( argsList );
     }
 
     /**
-     *  {@inheritDoc}
+     *  The following method enables the creation of tensor slices which access
+     *  the same underlying data (possibly from a different view).
+     *  The method name also translates to the subscript operator in Groovy.
+     *
+     * @param args An arbitrary number of arguments which can be used for slicing.
+     * @return A slice tensor created based on the passed keys.
      */
-    @Override
-    public final Tsr<V> putAt( int[] indices, V item ) {
-        if ( indices == null )
-            throw new IllegalArgumentException( "Provided indices are null!" );
-        if ( indices.length > this.rank() ) {
-            int[] correct = new int[rank()];
-            System.arraycopy( indices, 0, correct, 0, indices.length );
-            indices = correct;
-        }
-        if ( this.isVirtual() ) this.setIsVirtual( false );
-        int i = getNDConf().indexOfIndices(indices);
-        getUnsafe().setDataAt( i, item );
-        return this;
+    default Tsr<V> get( Object... args ) {
+        return getAt( args );
     }
 
     /**
-     *  {@inheritDoc}
+     *  This getter method creates and returns a slice of the original tensor.
+     *  The returned slice is a scalar tensor wrapping a single value element which
+     *  is being targeted by the provided integer index.
+     *
+     * @param i The index of the value item which should be returned as a tensor instance.
+     * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
-    @Override
-    public final Tsr<V> putAt( Map<?,Integer> key, Tsr<V> value ) {
-        _putAtCheckFor( value );
-        Tsr<V> slice = ( key == null ) ? this : getAt( key );
-        return _putAt( slice, value );
+    default Tsr<V> getAt( int i ) { return getAt( indicesOfIndex(i) ); }
+
+    /**
+     *  This getter method creates and returns a slice of the original tensor.
+     *  The returned slice is a scalar tensor wrapping a single value element which
+     *  is being targeted by the provided integer index.
+     *
+     * @param i The index of the value item which should be returned as a tensor instance.
+     * @return A tensor holding a single value element which is internally still residing in the original tensor.
+     */
+    default Tsr<V> get( int i ) { return getAt( i ); }
+
+    /**
+     *  This getter method creates and returns a slice of the original tensor.
+     *  The returned slice is a scalar tensor wrapping a single value element which
+     *  is being targeted by the provided integer index.
+     *
+     * @param i The index of the value item which should be returned as a tensor instance.
+     * @return A tensor holding a single value element which is internally still residing in the original tensor.
+     */
+    default Tsr<V> get( Number i ) { return getAt( i ); }
+
+    /**
+     *  This method enables tensor slicing!
+     *  It takes a key of various types and configures a slice
+     *  tensor which shares the same underlying data as the original tensor.
+     *
+     * @param key This object might be a wide range of objects including maps, lists or arrays...
+     * @return A slice tensor or scalar value.
+     */
+    default Tsr<V> get( Object key ) { return getAt( key ); }
+
+    /**
+     *  This method is most useful when used in Groovy
+     *  where defining maps is done through square brackets,
+     *  making it possible to slice tensors like so: <br>
+     *  <pre>{@code
+     *      var b = a[[[0..0]:1, [0..0]:1, [0..3]:2]]
+     *  }</pre>
+     *  Here a single argument with the format '[i..j]:k' is equivalent
+     *  to Pythons 'i:j:k' syntax for indexing! (numpy)                            <br>
+     *  i... start indexAlias.                                                      <br>
+     *  j... end indexAlias. (inclusive!)                                           <br>
+     *  k... step size.
+     *
+     * @param rangToStrides A map where the keys define where axes should be sliced and values which define the strides for the specific axis.
+     * @return A tensor slice with an offset based on the provided map keys and
+     *         strides based on the provided map values.
+     */
+    Tsr<V> getAt( Map<?,Integer> rangToStrides );
+
+    /**
+     *  This method enables tensor slicing!
+     *  It takes a key of various types and configures a slice
+     *  tensor which shares the same underlying data as the original tensor.
+     *
+     * @param key This object might be a wide range of objects including maps, lists or arrays...
+     * @return A slice tensor or scalar value.
+     */
+    Tsr<V> getAt( List<?> key );
+
+    /**
+     *  This method enables assigning a provided tensor to be a subset/slice of this tensor!
+     *  It takes a key which is used to configure a slice
+     *  sharing the same underlying data as the original tensor.
+     *  This slice is then used to assign the second argument {@code value} to it.
+     *  The usage of this method is especially powerful when used in Groovy. <br>
+     *  The following code illustrates this very well:
+     *  <pre>{@code
+     *      a[[[0..0]:1, [0..0]:1, [0..3]:2]] = b
+     *  }</pre>
+     *  Here a single argument with the format '[i..j]:k' is equivalent
+     *  to pythons 'i:j:k' syntax for indexing! (numpy)                            <br>
+     *  i... start indexAlias.                                                      <br>
+     *  j... end indexAlias. (inclusive!)                                           <br>
+     *  k... step size.                                                             <br>
+     *
+     * @param key This object is a map defining a stride and a targeted index or range of indices...
+     * @param value The tensor which ought to be assigned into a slice of this tensor.
+     * @return A slice tensor or scalar value.
+     */
+    Tsr<V> putAt( Map<?,Integer> key, Tsr<V> value );
+
+
+    Tsr<V> putAt( int[] indices, V value );
+
+    /**
+     *  Use this to place a single item at a particular position within this tensor!
+     *
+     * @param indices An array of indices targeting a particular position in this tensor...
+     * @param value the value which ought to be placed at the targeted position.
+     * @return This very tensor in order to enable method chaining...
+     */
+    default Tsr<V> set( int[] indices, V value ) {
+        return putAt( indices, value );
     }
 
-    private void _putAtCheckFor( Tsr<?> value ) {
-        if ( value.isEmpty() ) {
-            String message = "Provided tensor is empty! Empty tensors cannot be injected.";
-            _LOG.error( message );
-            throw new IllegalArgumentException( message );
-        }
-    }
 
-    private Tsr<V> _putAt( Tsr<V> slice, Tsr<V> value )
-    {
-        boolean valueIsDeviceVisitor = false;
-        if ( slice.isOutsourced() && !value.isOutsourced() ) {
-            Device<V> device = slice.get( Device.class );
-            try {
-                device.store( value );
-            } catch ( Exception e ) {
-                _LOG.error( "Trying to migrate target slice tensor to device failed.", e );
-                throw e;
-            }
-            valueIsDeviceVisitor = true;
-        }
-        if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become( value ); // TODO: Rethink this a little
-        else Neureka.get().backend().getFunction().idy().call(  slice, value  );
-        try {
-            if ( valueIsDeviceVisitor ) value.get( Device.class ).restore( value );
-        } catch ( Exception exception ) {
-            _LOG.error( "Trying to migrate source tensor back to original location failed.", exception );
-            throw exception;
-        }
-        return this;
+    /**
+     *  Individual entries for value items in this tensor can be set
+     *  via this method.
+     *
+     * @param index The scalar index targeting a specific value position within this tensor
+     *          which ought to be replaced by the one provided by the second parameter
+     *          of this method.
+     *
+     * @param value The item which ought to be placed at the targeted position.
+     * @return This very tensor in order to enable method chaining...
+     */
+    default Tsr<V> putAt( int index, V value ) { return putAt( indicesOfIndex(index), value ); }
+
+
+    /**
+     *  Individual entries for value items in this tensor can be set
+     *  via this method.
+     *
+     * @param index The scalar index targeting a specific value position within this tensor
+     *          which ought to be replaced by the one provided by the second parameter
+     *          of this method.
+     *
+     * @param value The item which ought to be placed at the targeted position.
+     * @return This very tensor in order to enable method chaining...
+     */
+    default Tsr<V> set( int index, V value ) { return putAt( index, value ); }
+
+    /**
+     *  This method enables injecting slices of tensor to be assigned into this tensor!
+     *  It takes a key of various types which is used to configure a slice
+     *  tensor sharing the same underlying data as the original tensor.
+     *  This slice is then used to assign the second argument to it, namely
+     *  the "value" argument.
+     *
+     * @param key This object is a list defining a targeted index or range of indices...
+     * @param value the tensor which ought to be assigned to a slice of this tensor.
+     * @return This very tensor in order to enable method chaining...
+     */
+    Tsr<V> putAt( List<?> key, Tsr<V> value );
+
+    /**
+     *  Use this to place a single item at a particular position within this tensor!
+     *
+     * @param indices A list of indices targeting a particular position in this tensor...
+     * @param value the value which ought to be placed at the targeted position.
+     * @return This very tensor in order to enable method chaining...
+     */
+    default Tsr<V> putAt( List<?> indices, V value ) {
+        return this.putAt( indices, of( this.getValueClass(), shape(), value ) );
     }
 
     /**
-     *  {@inheritDoc}
+     *  An NDArray implementation ought to have some way to access its underlying data array.
+     *  This method simple returns an element within this data array sitting at position "i".
+     * @param i The position of the targeted item within the raw data array of an NDArray implementation.
+     * @return The found object sitting at the specified index position.
      */
-    @Override
-    public V getDataAt( int i ) { return getDevice().access( this ).readAt( i ); }
+    V getDataAt( int i );
 
     /**
-     *  {@inheritDoc}
+     *  An NDArray implementation ought to have some way to selectively modify its underlying value.
+     *  This method simply overrides an element within this data array sitting at position "i".
+     * @param i The index of the value array entry which ought to be addressed.
+     * @param o The object which ought to be placed at the requested position.
+     * @return This very tensor in order to enable method chaining.
      */
-    @Override
-    public final Tsr<V> setValueAt( int i, V o ) {
-        _guardMod("data object");
-        NDConfiguration ndc = this.getNDConf();
-        _setDataAt( ndc.indexOfIndex( i ), o );
-        return this;
-    }
-
-    private void _setDataAt( int i, V o ) {
-        if ( this.isVirtual() && i > 0 )
-            throw new IllegalArgumentException("There is no data item at index "+i+" for this virtual tensor!");
-
-        getDevice().access( this ).write( o ).at( i );
-    }
+    Tsr<V> setValueAt( int i, V o );
 
     /**
-     *  {@inheritDoc}
+     *  The following method returns a raw value item within this tensor
+     *  targeted by a scalar index.
+     *
+     * @param i The scalar index of the value item which should be returned by the method.
+     * @return The value item found at the targeted index.
      */
-    @Override
-    public final Tsr<V> setValue( Object value )
-    {
-        LogUtil.nullArgCheck( value, "value", Object.class );
-        boolean success = true;
-        if ( Number.class.isAssignableFrom(value.getClass()) ) { // A virtual tensor!
-            this.setIsVirtual( true );
-            value = DataConverter.get().convert( value, this.valueClass() );
-            this.getUnsafe().setDataAt( 0, (V) value );
-        } else if ( value.getClass().isArray() ) {
-            if ( this.isOutsourced() ) getDevice().access(this).writeFrom(value);
+    default V getValueAt( int i ) { return getDataAt( indexOfIndex( i ) ); }
+
+    /**
+     *  This method returns a raw value item within this tensor
+     *  targeted by an index array which is expect to hold an index for
+     *  every dimension of the shape of this tensor.
+     *  So the provided array must have the same length as the
+     *  rank of this tensor!
+     *
+     * @param indices The index array which targets a single value item within this tensor.
+     * @return The found raw value item targeted by the provided index array.
+     */
+    default V getValueAt( int... indices ) {
+        LogUtil.nullArgCheck( indices, "indices", int[].class, "Cannot find tensor value without indices!" );
+        if ( indices.length == 0 ) throw new IllegalArgumentException("Index array may not be empty!");
+        if ( indices.length < this.rank() ) {
+            if ( indices.length == 1 ) return getDataAt( getNDConf().indexOfIndex( indices[0] ) );
             else {
-                if ( _getData() == null ) {
-                    if      ( value instanceof float[]  ) _setDataType( DataType.of( F32.class ) );
-                    else if ( value instanceof double[] ) _setDataType( DataType.of( F64.class ) );
-                    _setData( value );
-                    return this;
-                } else {
-                    getDevice().access(this).writeFrom(value);
-                    setIsVirtual(false);
-                }
+                int[] allIndices = new int[this.rank()];
+                System.arraycopy( indices, 0, allIndices, 0, indices.length );
+                return getDataAt( getNDConf().indexOfIndices( allIndices ) );
             }
         }
-        else success = false;
-
-        if ( !success )
-            _LOG.warn( "Failed to set value of type '"+value.getClass().getSimpleName()+"'!" );
-
-        return this;
+        return getDataAt( getNDConf().indexOfIndices( indices ) );
     }
 
     /**
-     *  {@inheritDoc}
+     *  This method will receive an object an try to interpret
+     *  it or its contents to be set as value for this tensor.
+     *  It will not necessarily replace the underlying data array object of this
+     *  tensor itself, but also try to convert and copy the provided value
+     *  into the data array of this tensor.
+     *
+     * @param value The value which may be a scalar or array and will be used to populate this tensor.
+     * @return This very tensor to enable method chaining.
      */
-    @Override
-    public Object getData() {
-        _guardGet("data object");
-        return _getData( true );
-    }
+    Tsr<V> setValue( Object value );
 
-    private Object _getData( boolean clone ) {
-        Device<V> device = this.getDevice();
-        if ( device == null ) return null;
-        else return device.access( this ).readAll( clone );
-    }
+    Object getValue();
 
     /**
-     *  {@inheritDoc}
+     *  This returns an unprocessed version of the underlying data of this tensor.
+     *  If this tensor is outsourced (stored on a device), then the data will be loaded
+     *  into an array and returned by this method.
+     *  Do not expect the returned array to be actually stored within the tensor itself!
+     *  Contrary to the {@link Tsr#getValue()} method, this one will
+     *  return the data in an unbiased form, where for example a virtual (see {@link #isVirtual()})
+     *  tensor will have this method return an array of length 1.
+     *
+     * @return An unbiased copy of the underlying data of this tensor.
      */
-    @Override
-    public Object getValue() {
-        _guardGet("value object");
-        if ( this.isOutsourced() ) {
-            Device<V> device = get( Device.class );
-            if ( device != null ) {
-                if ( this.getNDConf().isSimple() && !this.isSlice() )
-                    return device.access(this).readAll(false);
-                else
-                    return device.access( this.clone().setIsVirtual( false ) ).readAll(false);
-            }
-        }
-        if ( this.isVirtual() ) {
-            if ( _getData() == null ) return null;
-            else return getDataType().actualize( _getData(), this.size() );
-        }
-        else if ( this.getNDConf().isSimple() && !this.isSlice() )
-            return getData();
-        else
-            return this.clone()._getData();
-    }
+    Object getData();
 
-    /*==================================================================================================================
-    |
-    |       §(10) : Mapping :
-    |   -----------------------------------------------------
-    |       ...transformation and modification...
-    */
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public <T> Tsr<T> mapTo(
+    <T> Tsr<T> mapTo(
             Class<T> typeClass,
             java.util.function.Function<V,T> mapper
-    ) {
-        if ( this.isEmpty() )
-            throw new IllegalArgumentException("Trying to map an empty tensor!");
-        /*
-           The provided lambda cannot be executed anywhere but the CPU (Note: Maybe we should consider Aparapi here)
-           This is a problem if this tensor here lives somewhere other than the JVM.
-           So, therefore, we invite it back home for dinner!
-         */
-        return _CPU // This little API will temporarily migrate this to the JVM.
-                .borrow( (Tsr<Object>) this )
-                .in( () -> {
-                    Object data = _getData();
-                    DataConverter.ForTensor map = new DataConverter.ForTensor( this );
-                    if ( data == null ) {
-                        if ( this.isOutsourced() )
-                            _LOG.error("Encountered an outsourced tensor! Only local tensors stored in RAM can be mapped.");
-                        else
-                            _LOG.error("Invalid tensor state encountered! Cannot map a tensor without data.");
-                    }
-                    Object newData;
-                    String failMessage = "Conversion to type "+typeClass+" not yet supported.";
-                    if ( Number.class.isAssignableFrom(typeClass) ) {
-                        java.util.function.Function<Integer, Number> access;
-                        if ( this.getValueClass() == Integer.class ) {
-                            int[] sourceData = (int[]) _getData();
-                            access = (i -> (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Double.class) {
-                            double[] sourceData = (double[]) _getData();
-                            access = (i -> (Number) mapper.apply((V) Double.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Float.class) {
-                            float[] sourceData = (float[]) _getData();
-                            access = (i -> (Number) mapper.apply((V) Float.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Short.class) {
-                            short[] sourceData = (short[]) _getData();
-                            access = (i -> (Number) mapper.apply((V) Short.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Byte.class) {
-                            byte[] sourceData = (byte[]) _getData();
-                            access = (i -> (Number) mapper.apply((V) Byte.valueOf(sourceData[i])));
-                        } else
-                            throw new IllegalArgumentException(failMessage);
-
-                        if (typeClass == Double.class) newData = map.toDoubleArray(access);
-                        else if ( typeClass == Integer.class ) newData = map.toIntArray(access);
-                        else if ( typeClass == Long.class    ) newData = map.toLongArray(access);
-                        else if ( typeClass == Byte.class    ) newData = map.toByteArray(access);
-                        else if ( typeClass == Float.class   ) newData = map.toFloatArray(access);
-                        else if ( typeClass == Short.class   ) newData = map.toShortArray(access);
-                        else
-                            throw new IllegalArgumentException(failMessage);
-                    } else {
-                        java.util.function.Function<Integer, Object> access = null;
-                        if ( this.getValueClass() == Integer.class ) {
-                            int[] sourceData = (int[]) _getData();
-                            access = (i -> mapper.apply((V) Integer.valueOf(sourceData[i])));
-                        } else if ( this.getValueClass() == Double.class ) {
-                            double[] sourceData = (double[]) _getData();
-                            access = (i -> mapper.apply((V) Double.valueOf(sourceData[i])));
-                        } else if ( this.getValueClass() == Float.class ) {
-                            float[] sourceData = (float[]) _getData();
-                            access = (i -> mapper.apply((V) Float.valueOf(sourceData[i])));
-                        } else if ( this.getValueClass() == Short.class ) {
-                            short[] sourceData = (short[]) _getData();
-                            access = (i -> mapper.apply((V) Short.valueOf(sourceData[i])));
-                        } else if ( this.getValueClass() == Byte.class ) {
-                            byte[] sourceData = (byte[]) _getData();
-                            access = (i -> mapper.apply((V) Byte.valueOf(sourceData[i])));
-                        } else
-                            throw new IllegalArgumentException(failMessage);
-
-                        newData = map.toObjectArray(access);
-                    }
-                    return Tsr.of( typeClass, this.getNDConf().shape(), newData );
-                });
-    }
+    );
 
     /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public BufferedImage asImage( ImageType type )
-    {
-        switch ( type.bufferType )
-        {
-            case BufferedImage.TYPE_3BYTE_BGR: {
-                _checkRankForImageConversion(type, Number.class, 0, 0, 3);
-                // We expect a tensor of shape (height x width x 3)!
-                BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
-                byte[] data = DataConverter.get().convert( _getData(), byte[].class);
-                _writeImgData(new DataBufferByte(data, data.length), image);
-                return image;
-            }
-            case BufferedImage.TYPE_4BYTE_ABGR:
-            case BufferedImage.TYPE_4BYTE_ABGR_PRE:
-            {
-                _checkRankForImageConversion(type, Number.class, 0, 0, 4);
-                BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
-                byte[] data = DataConverter.get().convert( _getData(), byte[].class);
-                _writeImgData(new DataBufferByte(data, data.length), image);
-                return image;
-            }
-            case BufferedImage.TYPE_INT_ARGB: {
-                _checkRankForImageConversion(type, Number.class, 0, 0, 1);
-                BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
-                int[] data = DataConverter.get().convert( _getData(), int[].class);
-                _writeImgData(new DataBufferInt(data, data.length), image);
-                return image;
-            }
-        }
-        throw new IllegalArgumentException("Image type '"+type+"' not supported.");
-    }
-
-    private void _checkRankForImageConversion( ImageType type, Class<?> dataType, int... pattern ) {
-        int rank = pattern.length; // The expected rank!
-        if ( this.rank() != rank ) {
-            throw new IllegalArgumentException(
-                    "Cannot create image of type '" + type.name() + "' from tensor of rank " + this.rank() + ". " +
-                    "Expected to receive tensor of rank " + rank + "."
-                );
-        }
-        for ( int i = 0; i < pattern.length; i++ ) {
-            int axisSize = pattern[ i ]; // The expected axis size!
-            if ( axisSize > 0 ) {
-                if ( axisSize != this.shape(i) ) {
-                    String shape = this.shape().stream().map( a -> a.toString() ).collect(Collectors.joining("x"));
-                    throw new IllegalArgumentException(
-                        "Cannot create image of type '" + type.name() + "' from tensor with shape (" + shape + "). " +
-                        "Axis " + i + " is expected to be of size " + axisSize + "."
-                    );
-                }
-            }
-        }
-        if ( !dataType.isAssignableFrom(this.getValueClass()) )
-            throw new IllegalArgumentException(
-                    "Cannot create image of type '" + type.name() + "' from tensor of type '" + this.getValueClass().getSimpleName() + ". " +
-                    "Expected to receive a tensor whose type is at least a sub-type of '" + dataType.getSimpleName() + "'."
-            );
-    }
-
-    private static void _writeImgData(DataBuffer data, BufferedImage target ) {
-        target.setData(
-            Raster.createRaster( target.getSampleModel(), data, new Point() )
-        );
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public final Tsr<V> addToGradient( Tsr<V> error ) {
-        _guardSet("gradient");
-        if (
-                !forComponent(
-                    Tsr.class,
-                        gradient ->
-                        this.set(
-                            MemUtil.keep( gradient, error, () ->
-                                Neureka.get()
-                                        .backend()
-                                        .getFunction()
-                                        .plusAssign()
-                                        .call(gradient, error)
-                            )
-                        )
-                )
-        ) set( error ).forComponent( Device.class, device -> {
-            try {
-                device.store( error ) ;
-            } catch ( Exception exception ) {
-                _LOG.error( "Failed trying to store a given error to a device for gradient accumulation.", exception );
-                throw exception;
-            }
-        });
-        return this;
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public <T> T asType( Class<T> typeClass )
-    {
-        LogUtil.nullArgCheck( typeClass, "typeClass", Class.class );
-        if ( typeClass == Tsr.class ) return (T) this;
-        if ( Number.class.isAssignableFrom(this.valueClass()) && Number.class.isAssignableFrom(typeClass) ) {
-            DataConverter converter = DataConverter.get();
-            return converter.convert( mean().at(0).get(), typeClass );
-        }
-        if ( typeClass == String.class )
-            return (T) this.toString();
-
-        throw new IllegalArgumentException("Failed to convert this tensor of type '"+getDataType()+"' to '"+typeClass+"'!");
-    }
-
-    /**
-     *  This method is an inline operation which changes the underlying data of this tensor.
-     *  It converts the data types of the elements of this tensor to the specified type!<br>
-     *  <br>
-     *  <b>WARNING : The use of this method is discouraged for the following reasons: </b><br>
-     *  <br>
-     *  1. Inline operations are inherently error-prone for most use cases. <br>
-     *  2. This inline operation in particular has no safety net,
-     *     meaning that there is no implementation of version mismatch detection
-     *     like there is for those operations present in the standard operation backend...
-     *     No exceptions will be thrown during backpropagation! <br>
-     *  3. This method has not yet been implemented to also handle instances which
-     *     are slices of parent tensors!
-     *     Therefore, there might be unexpected performance penalties or side effects
-     *     associated with this method.<br>
-     *     <br>
+     *  Turns this tensor into a {@link BufferedImage} based on the provided
+     *  {@link Tsr.ImageType} formatting choice.
      *
-     * @param typeClass The target type class for elements of this tensor.
-     * @param <T> The type parameter for the returned tensor.
-     * @return The same tensor instance whose data has been converted to hold a different type.
+     * @param type The type of format used to create the buffered image.
+     * @return A {@link BufferedImage} populated with the contents of this tensor.
      */
-    private <T> Tsr<T> _toType(Class<T> typeClass )
-    {
-        if ( this.isOutsourced() ) {
-            _setDataType( DataType.of( typeClass ) );
-            return (Tsr<T>) this;
-        }
-        else {
-            Object newData = _convertedDataOfType( typeClass );
-            _setData( null );
-            _setDataType( DataType.of( typeClass ) );
-            _setData( newData );
-        }
-        forComponent( Tsr.class, gradient -> gradient._toType( typeClass ) );
-        return (Tsr<T>) this;
+    BufferedImage asImage( Tsr.ImageType type );
+
+    /**
+     *  This method takes the provided {@link Tsr} instance and adds its
+     *  contents to the contents of the {@link Tsr} which is set as gradient of this very {@link Tsr}.
+     *
+     * @param error The error gradient which ought to be added to the gradient of this tensor.
+     * @return This very tensor instance to enable method chaining.
+     */
+    Tsr<V> addToGradient( Tsr<V> error );
+
+    /**
+     * @param typeClass The class which is the target of the type conversion.
+     * @param <T> The type parameter of the type that will be returned.
+     * @return An instance of the supplied type class.
+     */
+    public <T> T asType( Class<T> typeClass );
+
+    default  <A> A getValueAs( Class<A> arrayTypeClass ) {
+        return DataConverter.get().convert( getValue(), arrayTypeClass );
     }
 
-    @Override
-    public String toString()
-    {
+    default  <A> A getDataAs( Class<A> arrayTypeClass ) {
+        return DataConverter.get().convert( getData(), arrayTypeClass );
+    }
+
+    default String toString( String conf ) {
         if ( this.isDeleted() ) return "deleted";
         else if ( this.isEmpty() ) return "empty";
         else if ( this.isUndefined() ) return "undefined";
-        return TsrAsString.representing( this ).byDefaults().toString();
+        return TsrAsString.representing( (Tsr<?>) this ).withConfig( conf ).toString();
+    }
+
+    default String toString( TsrStringSettings config ) {
+        if ( this.isDeleted() ) return "deleted";
+        else if ( this.isEmpty() ) return "empty";
+        else if ( this.isUndefined() ) return "undefined";
+        return TsrAsString.representing( (Tsr<?>) this ).withConfig( config ).toString();
     }
 
     /**
-     *  {@inheritDoc}
+     *  This allows you to provide a lambda to configure how this tensor should be
+     *  converted to {@link String} instances.
+     *  The provided {@link Consumer} will receive a {@link TsrStringSettings} instance
+     *  which allows you to change various settings with the help of method chaining.
+     *
+     * @param config A consumer of the {@link TsrStringSettings} ready to be configured.
+     * @return The {@link String} representation of this tensor.
      */
-    @Override
-    public final int getVersion() { return _version; }
+    default String toString( Consumer<TsrStringSettings> config ) {
+        if ( this.isDeleted() ) return "deleted";
+        TsrStringSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();
+        config.accept(defaults);
+        return TsrAsString.representing( (Tsr<?>) this ).withConfig( defaults ).toString();
+    }
+
+    String toString();
+
+    Tsr<V> deepCopy();
 
     /**
-     *  {@inheritDoc}
+     *  The version number is tracking how often this tensor has been mutated.
+     *  This is especially useful for checking the correcting of autp-grad!
      */
-    @Override
-    public Unsafe<V> getUnsafe() {
-        _guardGet("unsafe API");
-        return new Unsafe<V>() {
-            @Override
-            public Tsr<V> setNDConf(NDConfiguration configuration ) { Tsr.this._setNDConf( configuration ); return Tsr.this; }
-            @Override
-            public <V> Tsr<V> toType( Class<V> typeClass ) { return Tsr.this._toType( typeClass ); }
+    int getVersion();
 
-            @Override
-            public <U> Tsr<U> upcast(Class<U> superType) {
-                if ( superType.isAssignableFrom(Tsr.this.valueClass()) )
-                    return (Tsr<U>) Tsr.this;
-                else
-                    throw new IllegalArgumentException("Provided type '"+superType+"' is not a super type of '"+Tsr.this.valueClass()+"'.");
-            }
+    default Access<V> at( int... indices ) {
+        return new Access<V>() {
+            @Override public V get() { return getValueAt( indices ); }
 
-            @Override
-            public <V> Tsr<V> setDataType( DataType<V> dataType ) { return (Tsr<V>) Tsr.this._setDataType(dataType); }
-            @Override
-            public Tsr<V> toLayout(NDConfiguration.Layout layout) { Tsr.this._toLayout( layout ); return Tsr.this; }
-            @Override
-            public Tsr<V> incrementVersion(ExecutionCall<?> call ) {
-                _incrementVersionBecauseOf( call );
-                return Tsr.this;
-            }
-            @Override
-            public Tsr<V> setIsIntermediate(boolean isIntermediate ) {
-                _setIsIntermediate( isIntermediate );
-                return Tsr.this;
-            }
-            @Override public Tsr<V> delete() { return Tsr.this._delete(); }
-            @Override public Object getData() { return _getData(); }
-            @Override
-            public <A> A getDataAs( Class<A> arrayTypeClass ) {
-                return DataConverter.get().convert( _getData(false), arrayTypeClass );
-            }
-            @Override
-            public Tsr<V> setDataAt( int i, V o ) {
-                _guardMod("data object");
-                _setDataAt( i, o );
-                return Tsr.this;
-            }
+            @Override public void set( V value ) { putAt( indices, value ); }
         };
+    }
+
+    interface Access<V> {
+
+        V get();
+
+        void set( V value );
+
+    }
+
+    enum ImageType
+    {
+        RGB_1INT(1, UI32.class, 1),
+        ARGB_1INT(2, UI32.class, 1),
+        ARGB_PRE_1INT(3, UI32.class, 1),
+        BGR_1INT(4, UI32.class, 1),
+        BGR_3BYTE(5, UI8.class, 3),
+        ABGR_4BYTE(6, UI8.class, 4),
+        ABGR_PRE_4BYTE(7, UI8.class, 4),
+        RGB_565_USHORT(8, UI16.class, 1),
+        RGB_555_USHORT(9, UI16.class, 1),
+        GRAY_BYTE(0, UI8.class, 1),
+        GRAY_USHORT(1, UI16.class, 1);
+
+        public final int bufferType;
+        public final DataType<?> dataType;
+        public final int numberOfChannels;
+
+        ImageType( int bufferType, Class<?> valueTypeClass, int numberOfChannels ) {
+            this.bufferType = bufferType;
+            this.dataType = DataType.of( valueTypeClass );
+            this.numberOfChannels = numberOfChannels;
+        }
+    }
+
+    /**
+     *  Tensors should be considered immutable, however sometimes it
+     *  is important to mutate their state for performance reasons.
+     *  This interface exposes several methods for mutating the state of this tensor.
+     *  The usage of methods exposed by this API is generally discouraged
+     *  because the exposed state can easily lead to broken tensors and exceptions...<br>
+     *  <br>
+     */
+    interface Unsafe<T> {
+        /**
+         *  This method sets the NDConfiguration of this NDArray.
+         *  Therefore, it should not be used lightly as it can cause major internal inconsistencies.
+         *
+         * @param configuration The new NDConfiguration instance which ought to be set.
+         * @return The final instance type of this class which enables method chaining.
+         */
+        Tsr<T> setNDConf( NDConfiguration configuration );
+        /**
+         *  This method is an inline operation which changes the underlying data of this tensor.
+         *  It converts the data types of the elements of this tensor to the specified type!<br>
+         *  <br>
+         *  <b>WARNING : The usage of this method is discouraged for the following reasons: </b><br>
+         *  <br>
+         *  1. Inline operations are inherently error-prone for most use cases. <br>
+         *  2. This inline operation in particular has no safety net,
+         *     meaning that there is no implementation of version mismatch detection
+         *     like there is for those operations present in the standard operation backend...
+         *     No exceptions will be thrown during backpropagation! <br>
+         *  3. This method has not yet been implemented to also handle instances which
+         *     are slices of parent tensors!
+         *     Therefore, there might be unexpected performance penalties or side effects
+         *     associated with this method.<br>
+         *     <br>
+         *
+         * @param typeClass The target type class for elements of this tensor.
+         * @param <V> The type parameter for the returned tensor.
+         * @return The same tensor instance whose data has been converted to hold a different type.
+         */
+        <V> Tsr<V> toType( Class<V> typeClass );
+
+        /**
+         *  Use this to do a runtime checked upcast of the type parameter of the tensor.
+         *  This is unsafe because it is in conflict with the {@link #valueClass()}
+         *  method.
+         *
+         * @param superType The class of the super type of the tensor's value type.
+         * @return A tensor whose type parameter is upcast.
+         * @param <U> The super type parameter of the value type of the tensor.
+         */
+        <U/*super T*/> Tsr<U> upcast(Class<U> superType );
+
+        /**
+         *  This method enables modifying the data-type configuration of this {@link AbstractTensor}.
+         *  Warning! The method should not be used unless absolutely necessary.
+         *  This is because it can cause unpredictable inconsistencies between the
+         *  underlying {@link DataType} instance of this {@link AbstractTensor} and the actual type of the actual
+         *  data it is wrapping (or it is referencing on a {@link neureka.devices.Device}).<br>
+         *  <br>
+         * @param dataType The new {@link DataType} which ought to be set.
+         * @return The tensor with the new data type set.
+         */
+        <V> Tsr<V> setDataType( DataType<V> dataType );
+
+        /**
+         *  This method allows you to modify the data-layout of this {@link AbstractTensor}.
+         *  Warning! The method should not be used unless absolutely necessary.
+         *  This is because it can cause unpredictable side effects especially for certain
+         *  operations expecting a particular data layout (like for example matrix multiplication).
+         *  <br>
+         *
+         * @param layout The layout of the data array (row or column major).
+         * @return The final instance type of this class which enables method chaining.
+         */
+        Tsr<T> toLayout( NDConfiguration.Layout layout );
+
+        /**
+         *  This method is responsible for incrementing
+         *  the "_version" field variable which represents the version of the data of this tensor.
+         *  Meaning :
+         *  Every time the underlying data (_value) changes this version ought to increment alongside.
+         *  The method is called during the execution procedure.
+         *
+         * @param call The context object containing all relevant information that defines a call for tensor execution.
+         * @return This very tensor instance. (factory pattern)
+         */
+        Tsr<T> incrementVersion( ExecutionCall<?> call );
+
+        /**
+         *  Intermediate tensors are internal non-user tensors which may be eligible
+         *  for deletion when further consumed by a {@link Function}.
+         *  For the casual user of Neureka, this flag should always be false!
+         *
+         * @param isIntermediate The truth value determining if this tensor is not a user tensor but an internal
+         *                       tensor which may be eligible for deletion by {@link Function}s consuming it.
+         * @return The tensor to which this unsafe API belongs.
+         */
+        Tsr<T> setIsIntermediate( boolean isIntermediate );
+
+        /**
+         *  Although tensors will be garbage collected when they are not strongly referenced,
+         *  there is also the option to manually free up the tensor and its associated data in a native environment.
+         *  This is especially useful when tensors are stored on a device like the {@link neureka.devices.opencl.OpenCLDevice}.
+         *  In that case calling this method will free the memory reserved for this tensor on the device.
+         *  This manual memory freeing through this method can be faster than waiting for
+         *  the garbage collector to kick in at a latr point in time... <br>
+         *  <br>
+         *
+         * @return The tensor wo which this unsafe API belongs to allow for method chaining.
+         */
+        Tsr<T> delete();
+
+        /**
+         *  This returns the underlying raw data object of this tensor.
+         *  Contrary to the {@link Tsr#getValue()} ()} method, this one will
+         *  return an unbiased view on the raw data of this tensor.
+         *  Be careful using this, as it exposes mutable state!
+         *
+         * @return The raw data object underlying this tensor.
+         */
+        Object getData();
+
+        <A> A getDataAs( Class<A> arrayTypeClass );
+
+        /**
+         *  A tensor ought to have some way to selectively modify its underlying data array.
+         *  This method simply overrides an element within this data array sitting at position "i".
+         * @param i The index of the data array entry which ought to be addressed.
+         * @param o The object which ought to be placed at the requested position.
+         * @return This very tensor in order to enable method chaining.
+         */
+        Tsr<T> setDataAt( int i, T o );
+
+        /**
+         *  Use this to access the underlying writable data of this tensor if
+         *  you want to modify it.
+         *  This method will ensure that you receive an instance of whatever array type you provide
+         *  or throw descriptive exceptions to make sure that any unwanted behaviour does not
+         *  spread further in the backend.
+         *
+         * @param arrayTypeClass The expected array type underlying the tensor.
+         * @param <A> The type parameter of the provided type class.
+         * @return The underlying data array of this tensor.
+         */
+        default <A> A getDataForWriting( Class<A> arrayTypeClass ) {
+            LogUtil.nullArgCheck( arrayTypeClass, "arrayTypeClass", Class.class, "Array type must not be null!" );
+            if ( !arrayTypeClass.isArray() )
+                throw new IllegalArgumentException("Provided type is not an array type.");
+            Object data = Unsafe.this.getData();
+            if ( data == null )
+                throw new IllegalStateException("Could not find writable tensor data for this tensor (Maybe this tensor is stored on a device?).");
+
+            if ( !arrayTypeClass.isAssignableFrom(data.getClass()) )
+                throw new IllegalStateException("The data of this tensor does not match the expect type! Expected '"+arrayTypeClass+"' but got '"+data.getClass()+"'.");
+
+            return (A) data;
+        }
+
     }
 
 }

@@ -3,6 +3,7 @@ package ut.tensors.exceptions
 import groovy.transform.CompileDynamic
 import neureka.Neureka
 import neureka.Tsr
+import neureka.TsrImpl
 import spock.lang.Narrative
 import spock.lang.Shared
 import spock.lang.Specification
@@ -131,11 +132,11 @@ class Tensor_Exception_Spec extends Specification
                     "which is larger than the target shape '3' at the same index!"
 
         and : 'The logger logs the exception message!'
-            1 * System.err.println(
-                    "[Test worker] ERROR neureka.Tsr - Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
-                    "At index '1' : offset '1' + shape '3' = '4',\n" +
-                    "which is larger than the target shape '3' at the same index!"
-            )
+            1 * System.err.println({it.endsWith(
+                        "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
+                        "At index '1' : offset '1' + shape '3' = '4',\n" +
+                        "which is larger than the target shape '3' at the same index!")
+                    })
     }
 
     def 'Building a tensor with 0 shape arguments throws an exception.'() {
@@ -145,7 +146,6 @@ class Tensor_Exception_Spec extends Specification
 
         then :
             thrown(IllegalArgumentException)
-
     }
 
     def 'Casting a tensor as something unusual will cuas an exception to be thrown.'()
@@ -156,7 +156,7 @@ class Tensor_Exception_Spec extends Specification
         when : 'We try to convert the tensor to an instance of type "Random"...'
             t as Random
 
-        then : 'This will obviously leat to an exception being thrown.'
+        then : 'This will obviously least to an exception being thrown.'
             thrown(IllegalArgumentException)
     }
 

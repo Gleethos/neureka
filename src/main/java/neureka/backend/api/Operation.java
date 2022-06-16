@@ -247,7 +247,7 @@ public interface Operation
 
         public static Tsr<?>[] offsetted( Tsr<?>[] tensors, int offset ) {
             Tsr<?>[] newTensors = new Tsr[ tensors.length - offset ];
-            newTensors[ 0 ] = tensors[ 1 ].clone().getUnsafe().setIsIntermediate( true );
+            newTensors[ 0 ] = tensors[ 1 ].deepCopy().getUnsafe().setIsIntermediate( true );
             if ( !tensors[ 1 ].has( GraphNode.class ) && tensors[ 1 ] != tensors[ 0 ] ) {//Deleting intermediate results!
                 tensors[ 1 ].getUnsafe().delete();
                 tensors[ 1 ] = null;

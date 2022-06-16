@@ -9,7 +9,6 @@ import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Algorithm
 import neureka.backend.main.algorithms.Activation
 import neureka.backend.main.algorithms.Operator
-import neureka.TensorAPI
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
@@ -84,7 +83,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             var call = Mock( ExecutionCall )
             var device = Mock( CPU )
             var tensor = Mock( Tsr )
-            var unsafe = Mock(TensorAPI.Unsafe)
+            var unsafe = Mock(Tsr.Unsafe)
             var ndConf = Mock(NDConfiguration)
             var hostExecutor = imp.getImplementationFor( CPU.class )
             var nativeExecutor = Mock( CPU.JVMExecutor )

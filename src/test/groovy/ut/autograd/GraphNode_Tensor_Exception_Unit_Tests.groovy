@@ -2,6 +2,7 @@ package ut.autograd
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.TsrImpl
 import neureka.autograd.GraphNode
 import org.slf4j.Logger
 import spock.lang.Shared
@@ -55,7 +56,7 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
             def exception = thrown(IllegalStateException)
             exception.message == "Cannot delete a tensor which is used as derivative by the AD computation graph!"
         and : 'The exception message is also being thrown.'
-            1 * System.err.println( "[Test worker] ERROR neureka.Tsr - Cannot delete a tensor which is used as derivative by the AD computation graph!" )
+            1 * System.err.println({it.endsWith("Cannot delete a tensor which is used as derivative by the AD computation graph!")})
     }
 
 }

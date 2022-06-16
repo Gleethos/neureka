@@ -18,6 +18,7 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
+import neureka.ndim.AbstractTensor;
 import neureka.ndim.NDimensional;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -132,7 +133,7 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     public int testTensorUtility_makeFit( int[] a, int[] b, int[][] expected ){
-        int [][] result =  Tsr.Utility.makeFit( a, b );
+        int [][] result =  AbstractTensor.Utility.makeFit( a, b );
         printSessionStart("Testing Tsr.indexing: dimension _translation!");
         if ( result.length != 2 ) throw new AssertionError("Invalid result!");
         assertIsEqual(

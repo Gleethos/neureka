@@ -37,7 +37,6 @@ SOFTWARE.
 package neureka.ndim;
 
 import neureka.Neureka;
-import neureka.TensorAPI;
 import neureka.Tsr;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.utility.DataConverter;
@@ -59,14 +58,14 @@ import java.util.Arrays;
  *  {@link Tsr} inherits from {@link AbstractTensor} which inherits from {@link AbstractComponentOwner}
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
- *  This class also implements the {@link TensorAPI} interface, which uses
+ *  This class also implements the {@link Tsr} interface, which uses
  *  default methods to expose a rich API with good interoperability with
  *  different JVM languages...
  *
  * @param <C> The type of the concrete class extending this abstract class (currently the {@link Tsr} class).
  * @param <V> The value type of the individual items stored within this nd-array.
  */
-public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<C> implements TensorAPI<V>
+public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<Tsr<V>> implements Tsr<V>
 {
     protected static Logger _LOG;
 

@@ -92,7 +92,7 @@ public class JunctionUtil
             } else {
                 Tsr<?>[] reduction = Operation.Utility.without(call.inputs(), 1+d);
                 if ( reduction.length > 2 ) {
-                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? call.input( 1 ).clone().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];
+                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? call.input( 1 ).deepCopy().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];
                     result = recursiveExecutor.execute(
                             ExecutionCall.of( reduction )
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
@@ -136,7 +136,7 @@ public class JunctionUtil
                 Tsr<?> a;
                 if ( d > 1 ) {
                     Tsr<?>[] reduction = Operation.Utility.subset(call.inputs(), 1, 1, d+1);
-                    reduction[ 0 ] = call.input( 1 ).clone().getUnsafe().setIsIntermediate( true );
+                    reduction[ 0 ] = call.input( 1 ).deepCopy().getUnsafe().setIsIntermediate( true );
                     result = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction )
                                                         .andArgs(Arg.DerivIdx.of(-1))
@@ -230,7 +230,7 @@ public class JunctionUtil
             }
             else
                 call.setInput( 0,
-                        call.input( 1 ).clone()
+                        call.input( 1 ).deepCopy()
                            .getUnsafe()
                            .setIsIntermediate( true )
                            .setValue( d == 0 || thisIsForAddition ? 1f : -1f )

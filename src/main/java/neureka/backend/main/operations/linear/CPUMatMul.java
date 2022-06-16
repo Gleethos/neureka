@@ -1,11 +1,11 @@
 package neureka.backend.main.operations.linear;
 
+import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.operations.linear.internal.M32;
 import neureka.backend.main.operations.linear.internal.M64;
 import neureka.devices.host.CPU;
-import neureka.ndim.AbstractTensor;
 import neureka.ndim.config.NDConfiguration;
 
 /**
@@ -47,7 +47,7 @@ public class CPUMatMul implements ImplementationFor<CPU> {
                         "All tensors must be of the same layout."
                     );
 
-        if ( !call.validate().allShare(AbstractTensor::getDataType).isValid() )
+        if ( !call.validate().allShare(Tsr::getDataType).isValid() )
             throw new IllegalArgumentException(
                        "Type inconsistency between provided tensors encountered. " +
                        "All tensors must be of the same type."

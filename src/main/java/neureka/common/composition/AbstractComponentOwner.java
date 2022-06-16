@@ -72,8 +72,7 @@ import java.util.function.Consumer;
  *
  * @param <C> The concrete class at the bottom end of the inheritance hierarchy. (Used to allow for method chaining)
  */
-public abstract class AbstractComponentOwner<C>
-{
+public abstract class AbstractComponentOwner<C> implements ComponentOwner<C> {
     /**
      *  An array of (type) unique components.
      */
@@ -223,7 +222,8 @@ public abstract class AbstractComponentOwner<C>
      * @param <T> The type parameter defining the component class.
      * @return The correct component or null if nothing has been found.
      */
-    public <T extends Component<?>> T get( Class<T> componentClass )
+    @Override
+    public <T extends Component<?>> T get(Class<T> componentClass)
     {
         LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
         if ( _components != null ) {
@@ -244,7 +244,8 @@ public abstract class AbstractComponentOwner<C>
      * @param <T> The type parameter defining the component class.
      * @return The correct component or null if nothing has been found.
      */
-    public <T extends Component<?>> List<T> getAll( Class<T> componentClass ) {
+    @Override
+    public <T extends Component<?>> List<T> getAll(Class<T> componentClass) {
         LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
         List<T> found = new ArrayList<>();
         if ( _components != null ) {
@@ -267,7 +268,8 @@ public abstract class AbstractComponentOwner<C>
      * @param <T> The type parameter of the component which will be removed by this method.
      * @return This very class.
      */
-    public <T extends Component<C>> C remove( Class<T> componentClass )
+    @Override
+    public <T extends Component<C>> C remove(Class<T> componentClass)
     {
         LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
         T oldComponent = get( componentClass );
@@ -283,7 +285,8 @@ public abstract class AbstractComponentOwner<C>
      * @param componentClass The class/type of component that might exist in components.
      * @return True if the component of the given type/class has been found.
      */
-    public <T extends Component<C>> boolean has( Class<T> componentClass ) {
+    @Override
+    public <T extends Component<C>> boolean has(Class<T> componentClass) {
         LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
         return get( componentClass ) != null;
     }
@@ -298,7 +301,8 @@ public abstract class AbstractComponentOwner<C>
      * @param newComponent The new component which should be added to the components list.
      * @return This very class.
      */
-    public <T extends Component<C>> C set( T newComponent )
+    @Override
+    public <T extends Component<C>> C set(T newComponent)
     {
         LogUtil.nullArgCheck( newComponent, "newComponent", Component.class );
         Component<C> oldCompartment;
@@ -355,7 +359,8 @@ public abstract class AbstractComponentOwner<C>
      * @param action An action applied on the requested component if found.
      * @return True if a component could be found, false otherwise.
      */
-    public <T extends Component<C>> boolean forComponent( Class<T> cc, Consumer<T> action ) {
+    @Override
+    public <T extends Component<C>> boolean forComponent(Class<T> cc, Consumer<T> action) {
         T component = this.get( cc );
         if ( component != null ) {
             action.accept( component );

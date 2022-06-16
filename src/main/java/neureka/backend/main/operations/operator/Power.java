@@ -63,7 +63,7 @@ public class Power extends AbstractOperation
                 } else {
 
                     Tsr<?>[] reduction = Utility.subset(call.inputs(), 1,  2, call.arity()-2);
-                    reduction[ 0 ] = call.input( 1 ).clone().getUnsafe().setIsIntermediate( true );
+                    reduction[ 0 ] = call.input( 1 ).deepCopy().getUnsafe().setIsIntermediate( true );
 
                     if ( d==0 ) {
                         Tsr<?> exp = traverse.execute(
@@ -89,7 +89,7 @@ public class Power extends AbstractOperation
                                                                 .on(device)
                                         );
 
-                        reduction = new Tsr[]{ call.input( 1 ).clone().getUnsafe().setIsIntermediate( true ), inner, call.input( d ) };
+                        reduction = new Tsr[]{ call.input( 1 ).deepCopy().getUnsafe().setIsIntermediate( true ), inner, call.input( d ) };
                         Tsr<?> exp = traverse.execute(
                                                 ExecutionCall.of( reduction )
                                                                 .andArgs( Arg.DerivIdx.of(-1) )

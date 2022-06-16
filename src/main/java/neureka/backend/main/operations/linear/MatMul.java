@@ -64,7 +64,7 @@ public class MatMul extends AbstractOperation
                                 throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
                             Function matMul = Neureka.get().backend().getFunction().matMul();
                             int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
-                            Tsr<?> derivative = adCall.input( d ).T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                            Tsr<?> derivative = adCall.input( d ).T().deepCopy().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                             derivative.to(adCall.getDevice());
                             return ADAgent.of( derivative )
                                     .withAD( target ->
@@ -185,7 +185,7 @@ public class MatMul extends AbstractOperation
                     !_isSimpleColumnMajorMatrix( call.input( i ) )
             ) {
                 _LOG.debug("Auto cloning a tensor which does not have a simple ND configuration...");
-                call.setInput( i, call.input( i ).clone().getUnsafe().setIsIntermediate( true ) );
+                call.setInput( i, call.input( i ).deepCopy().getUnsafe().setIsIntermediate( true ) );
                 /*
                     The user should do cloning explicitly because using slices
                     will cause the backend to perform auto cloning every time the
