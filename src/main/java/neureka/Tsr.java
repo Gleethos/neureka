@@ -63,7 +63,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return A new and completely empty / unitialized {@link Tsr} instance.
      */
-    public static Tsr<Object> newInstance() { return new TsrImpl<>(); }
+    static Tsr<Object> newInstance() { return new TsrImpl<>(); }
 
     /**
      *  Use this to conveniently operate on 2 tensors.
@@ -75,7 +75,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <T> The value item type parameter for the involved tensors.
      * @return The result of the operation defined by the provided character.
      */
-    public static <T> Tsr<T> of( Tsr<T> a, char o, Tsr<T> b ) { return TsrImpl._of( a, String.valueOf(o), b ); }
+    static <T> Tsr<T> of( Tsr<T> a, char o, Tsr<T> b ) { return TsrImpl._of( a, String.valueOf(o), b ); }
 
     /**
      *  Use this to conveniently operate on 3 tensors.
@@ -89,7 +89,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <T> The value item type parameter for the involved tensors.
      * @return The result of the operations defined by the 2 provided characters.
      */
-    public static <T> Tsr<T> of( Tsr<T> a, char o1, Tsr<T> b, char o2, Tsr<T> c ) {
+    static <T> Tsr<T> of( Tsr<T> a, char o1, Tsr<T> b, char o2, Tsr<T> c ) {
         return TsrImpl._of( a, String.valueOf(o1), b, String.valueOf(o2), c );
     }
 
@@ -103,7 +103,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <T> The value item type parameter for the involved tensor.
      * @return The result of the operation(s) defined by the provided strings.
      */
-    public static <T> Tsr<T> of( String e1, Tsr<T> a, String e2 ) { return TsrImpl._of( e1, a, e2 ); }
+    static <T> Tsr<T> of( String e1, Tsr<T> a, String e2 ) { return TsrImpl._of( e1, a, e2 ); }
 
     /**
      *  Use this to conveniently operate on 2 tensors.
@@ -118,7 +118,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return The result of the operation(s) defined by the provided strings.
      *
      */
-    public static <T> Tsr<T> of( String e1, Tsr<T> a, char o, Tsr<T> b, String e2 ) {
+    static <T> Tsr<T> of( String e1, Tsr<T> a, char o, Tsr<T> b, String e2 ) {
         return TsrImpl._of( e1, a, String.valueOf(o), b, e2 );
     }
 
@@ -137,7 +137,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <T> The type parameter for the involved tensors.
      * @return The result of the calculation defined by the provided expressions and arguments.
      */
-    public static <T> Tsr<T> of(
+    static <T> Tsr<T> of(
             String e1, Tsr<T> a, String e2, Tsr<T> b, String e3, Tsr<T> c, String e4
     ) {
         return TsrImpl._of( e1, a, e2, b, e3, c, e4 );
@@ -151,7 +151,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param args The arguments which ought to be interpreted.
      * @return The result of the interpretation in the form of a {@link Tsr} instance of typ {@link Object}.
      */
-    public static <T> Tsr<T> of( Object... args ) { return TsrImpl._of( args ); }
+    static <T> Tsr<T> of( Object... args ) { return TsrImpl._of( args ); }
 
     /*
         -------------------------------------------
@@ -169,7 +169,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param value An object of type {@link T} which will populate the data array of the new instance.
      * @return A new {@link Tsr} instance for the generic type {@link T}.
      */
-    public static <T> Tsr<T> of( List<Integer> shape, T value ) {
+    static <T> Tsr<T> of( List<Integer> shape, T value ) {
         LogUtil.nullArgCheck( shape, "shape", List.class );
         LogUtil.nullArgCheck( value, "value", Object.class );
         return of( (Class<T>) value.getClass(), shape, value );
@@ -185,7 +185,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param seed A source of pseudo randomness for the {@link Tsr} instance created by this method.
      * @return A new {@link Tsr} instance created based on a shape and a seed.
      */
-    public static Tsr<Double> of( List<? extends Number> shape, String seed ) {
+    static Tsr<Double> of( List<? extends Number> shape, String seed ) {
         int[] shapeArray = new int[ shape.size() ];
         for ( int i = 0; i < shapeArray.length; i++ ) shapeArray[ i ] = shape.get( i ).intValue();
         return of( Double.class, shapeArray, seed );
@@ -200,7 +200,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <V> The type parameter of the value list and returned tensor.
      * @return A new {@link Tsr} instance constructed based on the provided shape and value list.
      */
-    public static <V> Tsr<V> of( List<? extends Number> shape, List<V> value ) {
+    static <V> Tsr<V> of( List<? extends Number> shape, List<V> value ) {
         Class<V> typeClass = (Class<V>) Object.class;
         if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
         return of(
@@ -219,7 +219,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <V> The type parameter of the value list and returned tensor.
      * @return A new {@link Tsr} instance constructed based on the provided shape and value list.
      */
-    public static <V> Tsr<V> of( int[] shape, List<V> value ) {
+    static <V> Tsr<V> of( int[] shape, List<V> value ) {
         Class<V> typeClass = (Class<V>) Object.class;
         if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
         return of( DataType.of(typeClass), shape, value );
@@ -232,7 +232,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param conf A list of either values or nested lists which are themselves either or.
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
-    public static Tsr<Object> of( List<Object> conf ) { return of( (Class<Object>) null, conf ); }
+    static Tsr<Object> of( List<Object> conf ) { return of( (Class<Object>) null, conf ); }
 
     /**
      *  This factory method will turn a list of values or nested lists of values into a {@link Tsr}
@@ -244,7 +244,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <T> The type parameter of the tensor returned by this factoy method.
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
-    public static <T> Tsr<T> of( Class<T> targetType, List<Object> conf ) {
+    static <T> Tsr<T> of( Class<T> targetType, List<Object> conf ) {
         ListReader.Result result = ListReader.read( conf, o -> ( o instanceof Number ? ((Number)o).doubleValue() : o ) );
         Class<T> resultType;
         Object[] resultData;
@@ -275,7 +275,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static <V> WithShapeOrScalarOrVectorOnDevice<V> of(Class<V> typeClass ) { return new TensorBuilder<>( typeClass ); }
+    static <V> WithShapeOrScalarOrVectorOnDevice<V> of(Class<V> typeClass ) { return new TensorBuilder<>( typeClass ); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -286,7 +286,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static WithShapeOrScalarOrVectorOnDevice<Double> ofDoubles() { return of(Double.class); }
+    static WithShapeOrScalarOrVectorOnDevice<Double> ofDoubles() { return of(Double.class); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -297,7 +297,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static WithShapeOrScalarOrVectorOnDevice<Float> ofFloats() { return of(Float.class); }
+    static WithShapeOrScalarOrVectorOnDevice<Float> ofFloats() { return of(Float.class); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -308,7 +308,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static WithShapeOrScalarOrVectorOnDevice<Integer> ofInts() { return of(Integer.class); }
+    static WithShapeOrScalarOrVectorOnDevice<Integer> ofInts() { return of(Integer.class); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -319,7 +319,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static WithShapeOrScalarOrVectorOnDevice<Short> ofShorts() { return of(Short.class); }
+    static WithShapeOrScalarOrVectorOnDevice<Short> ofShorts() { return of(Short.class); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -330,13 +330,13 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    public static WithShapeOrScalarOrVectorOnDevice<Byte> ofBytes() { return of(Byte.class); }
+    static WithShapeOrScalarOrVectorOnDevice<Byte> ofBytes() { return of(Byte.class); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar double tensor.
      */
-    public static Tsr<Double> of( double value ) { return of( Double.class, new int[]{ 1 }, value ); }
+    static Tsr<Double> of( double value ) { return of( Double.class, new int[]{ 1 }, value ); }
 
     /**
      *  Constructs a vector of floats based on the provided array.
@@ -344,7 +344,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param value The array of floats from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of floats.
      */
-    public static Tsr<Float> of( float... value ) { return of( Float.class, new int[]{ value.length }, value ); }
+    static Tsr<Float> of( float... value ) { return of( Float.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of doubles based on the provided array.
@@ -352,7 +352,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param value The array of doubles from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of doubles.
      */
-    public static Tsr<Double> of( double... value ) { return of( Double.class, new int[]{ value.length }, value ); }
+    static Tsr<Double> of( double... value ) { return of( Double.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of bytes based on the provided array.
@@ -360,7 +360,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param value The array of bytes from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of bytes.
      */
-    public static Tsr<Byte> of( byte... value ) { return of( Byte.class, new int[]{ value.length }, value ); }
+    static Tsr<Byte> of( byte... value ) { return of( Byte.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of ints based on the provided array.
@@ -368,7 +368,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param value The array of ints from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of ints.
      */
-    public static Tsr<Integer> of( int... value ) { return of( Integer.class, new int[]{ value.length }, value ); }
+    static Tsr<Integer> of( int... value ) { return of( Integer.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of longs based on the provided array.
@@ -376,7 +376,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param value The array of longs from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of longs.
      */
-    public static Tsr<Long> of( long... value ) { return of( Long.class, new int[]{ value.length }, value ); }
+    static Tsr<Long> of( long... value ) { return of( Long.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of shorts based on the provided array.
@@ -384,7 +384,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param value The array of shorts from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of shorts.
      */
-    public static Tsr<Short> of( short... value ) { return of( Short.class, new int[]{ value.length }, value ); }
+    static Tsr<Short> of( short... value ) { return of( Short.class, new int[]{ value.length }, value ); }
 
     /**
      *  Constructs a vector of booleans based on the provided array.
@@ -392,7 +392,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param value The array of booleans from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of shorts.
      */
-    public static Tsr<Boolean> of( boolean... value ) { return of( Boolean.class, new int[]{ value.length }, value ); }
+    static Tsr<Boolean> of( boolean... value ) { return of( Boolean.class, new int[]{ value.length }, value ); }
 
     /**
      *  Use this to construct and return a seeded tensor of the specified type.
@@ -403,39 +403,39 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created and seeded tensor of the provided type and shape.
      */
-    public static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new TsrImpl<>( valueType, shape, seed ); }
+    static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new TsrImpl<>( valueType, shape, seed ); }
 
-    public static Tsr<Double> of( int[] shape, double value ) { return of( Double.class, shape, value ); }
+    static Tsr<Double> of( int[] shape, double value ) { return of( Double.class, shape, value ); }
 
-    public static Tsr<Double> of( int[] shape, double[] value ) { return of( Double.class, shape, value ); }
+    static Tsr<Double> of( int[] shape, double[] value ) { return of( Double.class, shape, value ); }
 
-    public static Tsr<Integer> of( int[] shape, int[] value ) { return of( Integer.class, shape, value ); }
+    static Tsr<Integer> of( int[] shape, int[] value ) { return of( Integer.class, shape, value ); }
 
-    public static Tsr<Byte> of( int[] shape, byte[] value ) { return of( Byte.class, shape, value ); }
+    static Tsr<Byte> of( int[] shape, byte[] value ) { return of( Byte.class, shape, value ); }
 
-    public static Tsr<Long> of( int[] shape, long[] value ) { return of( Long.class, shape, value ); }
+    static Tsr<Long> of( int[] shape, long[] value ) { return of( Long.class, shape, value ); }
 
-    public static Tsr<Short> of( int[] shape, short[] value ) { return of( Short.class, shape, value ); }
+    static Tsr<Short> of( int[] shape, short[] value ) { return of( Short.class, shape, value ); }
 
-    public static Tsr<Float> of( int[] shape, float[] value ) { return of( Float.class, shape, value ); }
+    static Tsr<Float> of( int[] shape, float[] value ) { return of( Float.class, shape, value ); }
 
-    public static Tsr<Boolean> of( int[] shape, boolean[] value ) { return of( Boolean.class, shape, value ); }
+    static Tsr<Boolean> of( int[] shape, boolean[] value ) { return of( Boolean.class, shape, value ); }
 
-    public static <V> Tsr<V> of( DataType<V> type, int[] shape ) { return new TsrImpl<>( shape, type ); }
+    static <V> Tsr<V> of( DataType<V> type, int[] shape ) { return new TsrImpl<>( shape, type ); }
 
-    public static <V> Tsr<V> of( Class<V> typeClass, int[] shape, Object data ) {
+    static <V> Tsr<V> of( Class<V> typeClass, int[] shape, Object data ) {
         return of( DataType.of(typeClass), shape, data );
     }
 
-    public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, Object data ) {
+    static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, Object data ) {
         return of( DataType.of(typeClass), shape.stream().mapToInt(i -> i).toArray(), data );
     }
 
-    public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, List<V> data ) {
+    static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, List<V> data ) {
         return of( DataType.of( typeClass ), shape.stream().mapToInt( e -> e ).toArray(), data );
     }
 
-    public static <V> Tsr<V> of( DataType<V> dataType, List<Integer> shape,  List<V> data ) {
+    static <V> Tsr<V> of( DataType<V> dataType, List<Integer> shape,  List<V> data ) {
         return of( dataType, shape.stream().mapToInt( i -> i ).toArray(), data.toArray() );
     }
 
@@ -451,7 +451,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param data The data for the {@link Tsr} that is about to be created, which can be a list, an array or scalar.
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
-    public static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( shape, dataType, data ); }
+    static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( shape, dataType, data ); }
 
     /*
         -------------------------------------------
@@ -474,7 +474,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    public static <T> Tsr<T> of( DataType<T> type, List<Integer> shape, Filler<T> filler) {
+    static <T> Tsr<T> of( DataType<T> type, List<Integer> shape, Filler<T> filler) {
         LogUtil.nullArgCheck( shape, "shape", List.class );
         return of( type, shape.stream().mapToInt( e -> e ).toArray(), filler );
     }
@@ -524,8 +524,8 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param inputs An array of inputs which can be tensors or numeric types.
      */
     @SafeVarargs
-    public static <V extends Number> Tsr<V> of( String expression, V... inputs ) {
-        return Function.of( expression, true ).call( Arrays.stream(inputs).map(args ->TsrImpl._of(args)).toArray(Tsr[]::new) );
+    static <V extends Number> Tsr<V> of( String expression, V... inputs ) {
+        return Function.of( expression, true ).call( Arrays.stream(inputs).map(args -> TsrImpl._of(args)).toArray(Tsr[]::new) );
     }
 
     /**
@@ -547,7 +547,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param expression A String which will be used for parsing a Function AST.
      * @param inputs A list of inputs which can be tensors or numeric types.
      */
-    public static <V> Tsr<V> of( String expression, List<Tsr<V>> inputs ) {
+    static <V> Tsr<V> of( String expression, List<Tsr<V>> inputs ) {
         return Function.of( expression, true ).call( inputs );
     }
 
@@ -573,7 +573,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
      * @param tensors A list of tensors used as inputs to the Function instance parsed from the provided expression.
      */
-    public static <V> Tsr<V> of( String expression, boolean doAD, List<Tsr<V>> tensors ) {
+    static <V> Tsr<V> of( String expression, boolean doAD, List<Tsr<V>> tensors ) {
         return Function.of( expression, doAD ).call( tensors );
     }
 
@@ -594,7 +594,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
      * @param expression The expression describing operations applied to the provided tensor.
      */
-    public static <V> Tsr<V> of( String expression, Tsr<V> tensor ) {
+    static <V> Tsr<V> of( String expression, Tsr<V> tensor ) {
         return Function.of( expression, true ).call( tensor );
     }
 
@@ -615,7 +615,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      */
     @SafeVarargs
-    public static <V> Tsr<V> of( String expression, Tsr<V>... tensors ) {
+    static <V> Tsr<V> of( String expression, Tsr<V>... tensors ) {
         return Function.of( expression, true ).call( tensors );
     }
 
@@ -642,7 +642,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      */
     @SafeVarargs
-    public static <V> Tsr<V> of( String expression, boolean doAD, Tsr<V>... tensors ) {
+    static <V> Tsr<V> of( String expression, boolean doAD, Tsr<V>... tensors ) {
         return Function.of( expression, doAD ).call( tensors );
     }
 
@@ -659,7 +659,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <V> The type parameter of the values stored by the returned tensor.
      * @return A randomly filled tensor of the provided type.
      */
-    public static <V> Tsr<V> ofRandom( Class<V> valueTypeClass, int... shape ) {
+    static <V> Tsr<V> ofRandom( Class<V> valueTypeClass, int... shape ) {
         return of( valueTypeClass )
                 .withShape( shape )
                 .andSeed( 8701252152903546L );// If the user does not provide a seed, we use this.
@@ -673,7 +673,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <V> The type parameter defining the value type of the provided as well as returned tensor.
      * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
      */
-    public static <V> IterByOrIterFromOrAll<V> like(Tsr<V> template ) {
+    static <V> IterByOrIterFromOrAll<V> like(Tsr<V> template ) {
         return of( template.getDataType().getValueTypeClass() )
                 .on( template.getDevice() )
                 .withShape( template.getNDConf().shape() );
@@ -2047,7 +2047,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <T> The type parameter of the type that will be returned.
      * @return An instance of the supplied type class.
      */
-    public <T> T asType( Class<T> typeClass );
+    <T> T asType( Class<T> typeClass );
 
     default  <A> A getValueAs( Class<A> arrayTypeClass ) {
         return DataConverter.get().convert( getValue(), arrayTypeClass );
@@ -2061,14 +2061,14 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
         if ( this.isDeleted() ) return "deleted";
         else if ( this.isEmpty() ) return "empty";
         else if ( this.isUndefined() ) return "undefined";
-        return TsrAsString.representing( (Tsr<?>) this ).withConfig( conf ).toString();
+        return TsrAsString.representing( this ).withConfig( conf ).toString();
     }
 
     default String toString( TsrStringSettings config ) {
         if ( this.isDeleted() ) return "deleted";
         else if ( this.isEmpty() ) return "empty";
         else if ( this.isUndefined() ) return "undefined";
-        return TsrAsString.representing( (Tsr<?>) this ).withConfig( config ).toString();
+        return TsrAsString.representing( this ).withConfig( config ).toString();
     }
 
     /**
@@ -2084,7 +2084,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
         if ( this.isDeleted() ) return "deleted";
         TsrStringSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();
         config.accept(defaults);
-        return TsrAsString.representing( (Tsr<?>) this ).withConfig( defaults ).toString();
+        return TsrAsString.representing( this ).withConfig( defaults ).toString();
     }
 
     String toString();
@@ -2099,8 +2099,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
 
     default Access<V> at( int... indices ) {
         return new Access<V>() {
-            @Override public V get() { return getValueAt( indices ); }
-
+            @Override public V    get()          { return getValueAt( indices ); }
             @Override public void set( V value ) { putAt( indices, value ); }
         };
     }
@@ -2146,7 +2145,8 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *  because the exposed state can easily lead to broken tensors and exceptions...<br>
      *  <br>
      */
-    interface Unsafe<T> {
+    interface Unsafe<T>
+    {
         /**
          *  This method sets the NDConfiguration of this NDArray.
          *  Therefore, it should not be used lightly as it can cause major internal inconsistencies.
@@ -2155,6 +2155,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
          * @return The final instance type of this class which enables method chaining.
          */
         Tsr<T> setNDConf( NDConfiguration configuration );
+
         /**
          *  This method is an inline operation which changes the underlying data of this tensor.
          *  It converts the data types of the elements of this tensor to the specified type!<br>

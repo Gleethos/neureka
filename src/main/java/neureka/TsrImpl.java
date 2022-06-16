@@ -85,7 +85,6 @@ SOFTWARE.
 
 package neureka;
 
-import jdk.internal.net.http.common.Log;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.backend.api.ExecutionCall;
@@ -97,7 +96,6 @@ import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.F32;
 import neureka.dtype.custom.F64;
@@ -132,15 +130,8 @@ import java.util.stream.Collectors;
 final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
 {
     static {
-        _CPU = CPU.get();
         _LOG = LoggerFactory.getLogger( TsrImpl.class );
     }
-
-    /**
-     *  The default device is an instance of the {@link CPU} class. <br>
-     *  This field is a reference to this default device implementation.
-     */
-    private static final Device<Object> _CPU;
 
     /**
      *  This field contains multiple flags.
@@ -574,7 +565,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *
      * @return This very tensor instance to allow for method chaining.
      */
-    private TsrImpl<V> _delete()
+    private Tsr<V> _delete()
     {
         if ( isDeleted() ) return this;
         forComponent( GraphNode.class, n -> {
@@ -821,7 +812,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  <br>
      * @param tensor The tensor whose identity should be stolen.
      */
-    protected void _become( TsrImpl<V> tensor )
+    private void _become(TsrImpl<V> tensor)
     {
         if ( tensor == null ) return;
         _setDataType( tensor.getDataType() );
@@ -1662,15 +1653,15 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             public <V> Tsr<V> toType(Class<V> typeClass ) { return TsrImpl.this._toType( typeClass ); }
 
             @Override
-            public <U> TsrImpl<U> upcast(Class<U> superType) {
+            public <U> Tsr<U> upcast(Class<U> superType) {
                 if ( superType.isAssignableFrom(TsrImpl.this.valueClass()) )
-                    return (TsrImpl<U>) TsrImpl.this;
+                    return (Tsr<U>) TsrImpl.this;
                 else
                     throw new IllegalArgumentException("Provided type '"+superType+"' is not a super type of '"+ TsrImpl.this.valueClass()+"'.");
             }
 
             @Override
-            public <V> Tsr<V> setDataType(DataType<V> dataType ) { return (TsrImpl<V>) TsrImpl.this._setDataType(dataType); }
+            public <T> Tsr<T> setDataType(DataType<T> dataType ) { return (TsrImpl<T>) TsrImpl.this._setDataType(dataType); }
             @Override
             public Tsr<V> toLayout(NDConfiguration.Layout layout) { TsrImpl.this._toLayout( layout ); return TsrImpl.this; }
             @Override
