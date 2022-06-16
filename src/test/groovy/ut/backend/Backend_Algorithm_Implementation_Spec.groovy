@@ -9,8 +9,7 @@ import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Algorithm
 import neureka.backend.main.algorithms.Activation
 import neureka.backend.main.algorithms.Operator
-import neureka.ndim.AbstractTensor
-import neureka.ndim.TensorAPI
+import neureka.TensorAPI
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 

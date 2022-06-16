@@ -37,12 +37,10 @@ SOFTWARE.
 package neureka.ndim;
 
 import neureka.Neureka;
+import neureka.TensorAPI;
 import neureka.Tsr;
-import neureka.backend.api.ExecutionCall;
-import neureka.calculus.Function;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.utility.DataConverter;
-import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;

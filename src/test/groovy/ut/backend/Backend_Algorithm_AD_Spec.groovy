@@ -14,8 +14,7 @@ import neureka.backend.main.algorithms.Broadcast
 import neureka.backend.main.algorithms.Convolution
 import neureka.backend.main.algorithms.Operator
 import neureka.devices.Device
-import neureka.ndim.AbstractTensor
-import neureka.ndim.TensorAPI
+import neureka.TensorAPI
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 

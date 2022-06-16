@@ -13,8 +13,7 @@ import neureka.backend.api.Result
 import neureka.calculus.implementations.FunctionInput
 import neureka.calculus.implementations.FunctionNode
 import neureka.devices.Device
-import neureka.ndim.AbstractTensor
-import neureka.ndim.TensorAPI
+import neureka.TensorAPI
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 

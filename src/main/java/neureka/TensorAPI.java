@@ -1,4 +1,4 @@
-package neureka.ndim;
+package neureka;
 
 import neureka.Neureka;
 import neureka.Tsr;
@@ -18,6 +18,8 @@ import neureka.dtype.custom.UI8;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
+import neureka.ndim.AbstractTensor;
+import neureka.ndim.NDimensional;
 import neureka.ndim.config.NDConfiguration;
 import neureka.view.TsrAsString;
 import neureka.view.TsrStringSettings;

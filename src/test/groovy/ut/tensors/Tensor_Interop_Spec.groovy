@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Tsr
-import neureka.ndim.TensorAPI
+import neureka.TensorAPI
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
