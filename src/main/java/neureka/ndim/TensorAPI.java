@@ -1,5 +1,6 @@
 package neureka.ndim;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
@@ -436,9 +437,15 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
      * @param other The right operand of the addition.
      * @return The sum of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    Tsr<V> plus( Tsr<V> other );
+    default Tsr<V> plus( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add 'null' to a tensor!");
+        return Neureka.get().backend().getAutogradFunction().plus().call( (Tsr<V>) this, other );
+    }
 
-    Tsr<V> plusAssign( Tsr<V> other );
+    default Tsr<V> plusAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add-assign 'null' to a tensor!");
+        return Neureka.get().backend().getFunction().plusAssign().call( (Tsr<V>) this, other );
+    }
 
     /**
      *  This method will create a new {@link Tsr}
@@ -450,7 +457,8 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
      * @param value The right operand of the addition.
      * @return The sum between this instance as the left and the passed double as right operand.
      */
-    Tsr<V> plus( V value );
+    default Tsr<V> plus( V value ) { return plus( Tsr.of( valueClass(), this.shape(), value ) ); }
+
 
     /**
      *  This method will perform subtraction on
@@ -468,18 +476,37 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
      * @param other The right operand of the subtraction.
      * @return The difference between this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    Tsr<V> minus( Tsr<V> other );
+    default Tsr<V> minus( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract 'null' from a tensor!");
+        return Neureka.get().backend().getAutogradFunction().minus().call( (Tsr<V>) this, other );
+    }
 
-    Tsr<V> minus( V other );
+    default Tsr<V> minus( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract 'null' from a tensor!");
+        return minus(
+                Tsr.of( this.getDataType().getValueTypeClass() )
+                        .withShape(this.getNDConf().shape())
+                        .all(other)
+        );
+    }
+    default Tsr<V> minusAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract-assign 'null' from a tensor!");
+        return Neureka.get().backend().getFunction().minusAssign().call( (Tsr<V>) this, other );
+    }
 
-    Tsr<V> minusAssign( Tsr<V> other );
 
-    Tsr<V> minusAssign( V other );
-
+    default Tsr<V> minusAssign( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract-assign 'null' from a tensor!");
+        return minusAssign(
+                Tsr.of( this.getDataType().getValueTypeClass() )
+                        .withShape(this.getNDConf().shape())
+                        .all(other)
+        );
+    }
     /**
      * @return A clone of this tensor where the signs of all elements are flipped.
      */
-    Tsr<V> negative();
+    default Tsr<V> negative() { return Neureka.get().backend().getAutogradFunction().neg().call( (Tsr<V>) this ); }
 
     /**
      *  This method is synonymous to the {@link #times(Tsr)} method.
@@ -498,13 +525,23 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
      * @param other The right operand of the multiplication.
      * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    Tsr<V> multiply( Tsr<V> other );
+    default Tsr<V> multiply( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply 'null' with a tensor!");
+        return Neureka.get().backend().getAutogradFunction().mul().call( (Tsr<V>) this, other );
+    }
 
     /**
      * @param other The value which should be broadcast to all elements of a clone of this tensor.
      * @return A new clone of this tensor where all elements are multiplied by the provided value.
      */
-    Tsr<V> multiply( V other );
+    default Tsr<V> multiply( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
+        return multiply(
+                Tsr.of( this.getDataType().getValueTypeClass() )
+                        .withShape( this.getNDConf().shape() )
+                        .all( other )
+        );
+    }
 
     /**
      *  The {@link #times(Tsr)} method is synonymous to the {@link #multiply(Tsr)}.
@@ -513,8 +550,8 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
-     *  the result will be a regular elementwise product.
-     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  the result will be a regular element-wise product.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
@@ -523,31 +560,41 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
      * @param other The right operand of the multiplication.
      * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    Tsr<V> times( Tsr<V> other );
+    default Tsr<V> times( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply 'null' with a tensor!");
+        return multiply( other );
+    }
 
     /**
      * @param other The value which should be broadcast to all elements of a clone of this tensor.
      * @return A new clone of this tensor where all elements are multiplied by the provided value.
      */
-    Tsr<V> times( V other );
-
+    default Tsr<V> times( V other ) {
+        LogUtil.nullArgCheck(other, "other", getValueClass(), "Cannot multiply 'null' with a tensor!");
+        return multiply( other );
+    }
     /**
      * @param other The tensor whose elements ought to be multiplied and assigned to elements in this tensor.
      * @return This instance where each value element was multiplied by the corresponding element in the provided tensor.
      */
-    Tsr<V> timesAssign( Tsr<V> other );
+    default Tsr<V> timesAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply-assign 'null' to a tensor!");
+        return Neureka.get().backend().getFunction().mulAssign().call( (Tsr<V>) this, other );
+    }
 
     /**
      * @param other The value which ought to be multiplied and assigned to each element in this tensor.
      * @return This instance where each value element was multiplied by the provided element.
      */
-    Tsr<V> timesAssign( V other );
-
+    default Tsr<V> timesAssign( V other ) {
+        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply-assign 'null' to a tensor!");
+        return this.timesAssign( Tsr.of( getValueClass(), getNDConf().shape(), other ) );
+    }
     /**
      * @param value The value which should be broadcast to all elements of a clone of this tensor.
      * @return A new clone of this tensor where all elements are multiplied by the provided value.
      */
-    Tsr<V> multiply( double value );
+    default Tsr<V> multiply( double value ) { return multiply( Tsr.of( getValueClass(), getNDConf().shape(), value ) ); }
 
     /**
      *  The {@link #div(Tsr)} method will produce the quotient of
@@ -565,11 +612,16 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
      * @param other The right operand of the division.
      * @return The quotient of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    Tsr<V> div( Tsr<V> other );
+    default Tsr<V> div( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide a tensor by 'null' (In any sense of the word)!");
+        return Neureka.get().backend().getAutogradFunction().div().call( (Tsr<V>) this, other );
+    }
+    default Tsr<V> div( V value ) { return div( Tsr.of( getValueClass(), getNDConf().shape(), value ) ); }
 
-    Tsr<V> div( V value );
-
-    Tsr<V> divAssign( Tsr<V> other );
+    default Tsr<V> divAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
+        return Neureka.get().backend().getFunction().divAssign().call( (Tsr<V>) this, other );
+    }
 
     /**
      *  The {@link #mod(Tsr)} method will produce the modulus of
@@ -587,14 +639,61 @@ public interface TensorAPI<V> extends NDimensional, Iterable<V>
      * @param other The right operand of the modulo operation.
      * @return The modulus of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
-    Tsr<V> mod( Tsr<V> other );
+    default Tsr<V> mod( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
+        return Neureka.get().backend().getAutogradFunction().mod().call( (Tsr<V>) this, other );
+    }
 
-    Tsr<V> mod( int other );
+    default Tsr<V> mod( int other ) { return mod(Tsr.of(getValueClass(), getNDConf().shape(), other)); }
 
     /**
      *  This method is synonymous to the {@link #mod(int)} method.
      */
     default Tsr<V> rem( int other ) { return this.mod(other); }
+
+    default Tsr<V> modAssign( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
+        return Neureka.get().backend().getFunction().modAssign().call( (Tsr<V>) this, other );
+    }
+
+    /**
+     *  The {@link #power(Tsr)} (Tsr)} method will produce the power of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise exponentiation.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *
+     * @param other The right operand, also known as exponent, of the exponentiation.
+     * @return The power of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    default Tsr<V> power( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot raise a tensor to the power of 'null'!");
+        return Neureka.get().backend().getAutogradFunction().pow().call( (Tsr<V>) this, other );
+    }
+
+    default Tsr<V> power( V value ) {
+        return power( Tsr.of( this.valueClass(), this.shape(), value ) );
+    }
+
+    /**
+     *  This method is synonymous to the {@link #power(Tsr)} method.
+     */
+    default Tsr<V> xor( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot raise a tensor to the power of 'null'!");
+        return Neureka.get().backend().getAutogradFunction().pow().call( (Tsr<V>) this, other );
+    }
+
+    /**
+     *  This method is synonymous to the {@link #power(Tsr)} method.
+     */
+    default Tsr<V> xor( double value ) { return xor( Tsr.of( this.valueClass(), this.shape(), value ) ); }
+
 
     /**
      *  This method exposes an API for mutating the state of this tensor.
