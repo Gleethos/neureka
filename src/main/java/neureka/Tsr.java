@@ -670,13 +670,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
      */
     public static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new Tsr<>( shape, dataType, data ); }
 
-    // Inner construction layer:
-
-    private void _constructAndAllocate(int[] shape, boolean virtual )
-    {
-        createConstructionAPI().configureFromNewShape( shape, virtual, true );
-    }
-
     /*
         -------------------------------------------
             §(1.3) : LAMBDA BASED CONSTRUCTION
@@ -721,23 +714,6 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     public static <T> Tsr<T> of( DataType<T> type, int[] shape, Filler<T> filler) {
         return new Tsr<>( shape, type, filler);
     }
-
-    /**
-     * @param shape The shape of that this new tensor ought to have.
-     * @param type The data type that this tensor ought to have.
-     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
-     * @param <T> The type parameter for the actual data array items.
-     */
-    private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Filler<T> filler)
-    {
-        LogUtil.nullArgCheck( shape, "shape", int[].class );
-        LogUtil.nullArgCheck( type, "type", DataType.class );
-        LogUtil.nullArgCheck( type, "filler", Filler.class );
-        _setDataType( type );
-        _constructAndAllocate( shape, false );
-        _initData(filler);
-    }
-
 
     /*
         -------------------------------------------
@@ -958,6 +934,26 @@ public class Tsr<V> extends AbstractTensor<Tsr<V>, V> implements Component<Tsr<V
     }
 
 
+    /**
+     * @param shape The shape of that this new tensor ought to have.
+     * @param type The data type that this tensor ought to have.
+     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param <T> The type parameter for the actual data array items.
+     */
+    private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Filler<T> filler)
+    {
+        LogUtil.nullArgCheck( shape, "shape", int[].class );
+        LogUtil.nullArgCheck( type, "type", DataType.class );
+        LogUtil.nullArgCheck( type, "filler", Filler.class );
+        _setDataType( type );
+        _constructAndAllocate( shape, false );
+        _initData(filler);
+    }
+
+    private void _constructAndAllocate(int[] shape, boolean virtual )
+    {
+        createConstructionAPI().configureFromNewShape( shape, virtual, true );
+    }
 
     /*==================================================================================================================
     |
