@@ -10,8 +10,8 @@ import spock.lang.Specification
 
 class Momentum_Spec extends Specification
 {
-    @Shared Tsr<?> w = Tsr.of(0)
-    @Shared Optimizer<?> o = new Momentum<>(w)
+    @Shared Tsr<Double> w = Tsr.of(0)
+    @Shared Optimizer<Double> o = new Momentum<>(w)
 
     def setupSpec()
     {
