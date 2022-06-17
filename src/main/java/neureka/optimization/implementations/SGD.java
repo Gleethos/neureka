@@ -35,9 +35,8 @@ SOFTWARE.
 
 package neureka.optimization.implementations;
 
-import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.Function;
+import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
 
 /**
@@ -53,22 +52,19 @@ import neureka.optimization.Optimizer;
  */
 public class SGD<V> implements Optimizer<V>
 {
-    private final double _learningRate;
-    private final Function _function;
+    private final double _lr; // learning rate
 
-    public SGD( double leaningRate )
-    {
-        _learningRate = leaningRate;
-        _function = Function.of("(-1 * (I[ 0 ] - "+leaningRate+"))", false);
+    public SGD( double learningRate ) {
+        _lr = learningRate; // Step size/learning rate is 0.01 by default!
     }
 
     @Override
     public Tsr<V> optimize( Tsr<V> w ) {
+        LogUtil.nullArgCheck( w, "w", Tsr.class ); // The input must not be null!
         Tsr<V> g = w.getGradient();
-        Neureka.get().backend().getFunction().idy().call( g, _function.call( g ) );
-        return g;
+        return Tsr.of("-" + _lr + " * ", g);
     }
 
-    public double learningRate() { return _learningRate; }
+    public double learningRate() { return _lr; }
 
 }

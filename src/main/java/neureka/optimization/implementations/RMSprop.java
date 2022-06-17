@@ -4,6 +4,16 @@ import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
 
+/**
+ * Root Mean Squared Propagation, or RMSProp,
+ * is an extension of gradient descent and the AdaGrad version of gradient
+ * descent that uses a decaying average of partial gradients in the adaptation of the
+ * step size for each parameter.
+ * It is similar to {@link AdaGrad} in that it uses a moving average of
+ * the squared gradients to scale the learning rate.
+ *
+ * @param <V> The super type of the value item type for the tensors whose gradients can be optimized by this.
+ */
 public class RMSprop<V extends Number> implements Optimizer<V>
 {
     private final double lr; // learning rate
