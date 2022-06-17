@@ -385,6 +385,12 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
+    public boolean isVirtual() { return ( _flags & IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK; }
+
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public Tsr<V> setIsVirtual(boolean isVirtual ) {
 
         assert getNDConf() != null;
@@ -438,12 +444,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     }
 
     /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isVirtual() { return ( _flags & IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK; }
-
-    /**
      *  This method is the inner counterpart to the public "{@link Tsr#setIsVirtual}" method.
      *  It actually performs the bit flipping by applying the corresponding bit mask. <br>
      *  <br>
@@ -456,6 +456,18 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             else             _flags -= IS_VIRTUAL_MASK;
         }
     }
+
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
+    public boolean isDeleted() { return ( _flags & IS_DELETED_MASK ) == IS_DELETED_MASK; }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean gradientApplyRequested() { return ( _flags & GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK; }
 
     /**
      *  {@inheritDoc}
@@ -476,18 +488,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         }
         return this;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-     @Override
-    public boolean gradientApplyRequested() { return ( _flags & GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK; }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isDeleted() { return ( _flags & IS_DELETED_MASK ) == IS_DELETED_MASK; }
 
     /**
      *  Although tensors will be garbage collected when they are not strongly referenced,
@@ -727,6 +727,52 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         tensor._flags = 0;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
+    public Unsafe<V> getUnsafe() {
+        _guardGet("unsafe API");
+        return new Unsafe<V>() {
+            @Override
+            public Tsr<V> setNDConf(NDConfiguration configuration ) { TsrImpl.this._setNDConf( configuration ); return TsrImpl.this; }
+            @Override
+            public <V> Tsr<V> toType(Class<V> typeClass ) { return TsrImpl.this._toType( typeClass ); }
+
+            @Override
+            public <U> Tsr<U> upcast(Class<U> superType) {
+                if ( superType.isAssignableFrom(TsrImpl.this.valueClass()) )
+                    return (Tsr<U>) TsrImpl.this;
+                else
+                    throw new IllegalArgumentException("Provided type '"+superType+"' is not a super type of '"+ TsrImpl.this.valueClass()+"'.");
+            }
+
+            @Override
+            public <T> Tsr<T> setDataType(DataType<T> dataType ) { return (TsrImpl<T>) TsrImpl.this._setDataType(dataType); }
+            @Override
+            public Tsr<V> toLayout(NDConfiguration.Layout layout) { TsrImpl.this._toLayout( layout ); return TsrImpl.this; }
+            @Override
+            public Tsr<V> incrementVersion(ExecutionCall<?> call ) {
+                _incrementVersionBecauseOf( call );
+                return TsrImpl.this;
+            }
+            @Override
+            public Tsr<V> setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
+            @Override public Tsr<V> delete() { return TsrImpl.this._delete(); }
+            @Override public Object getData() { return _getData(); }
+            @Override
+            public <A> A getDataAs( Class<A> arrayTypeClass ) {
+                return DataConverter.get().convert( _getData(false), arrayTypeClass );
+            }
+            @Override
+            public Tsr<V> setDataAt(int i, V o ) {
+                _guardMod("data object");
+                _setDataAt( i, o );
+                return TsrImpl.this;
+            }
+        };
+    }
+
     /*==================================================================================================================
     |
     |       §(6) : ND-ITERATOR LOGIC :
@@ -777,104 +823,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      * {@inheritDoc}
      */
     @Override
-    public Tsr<V> backward( Tsr<V> error ) {
-        LogUtil.nullArgCheck(error, "error", TsrImpl.class, "Cannot back-propagate 'null'!");
-        if ( this.isOutsourced() )
-            error = error.deepCopy().to(this.getDevice());
-
-        Tsr<V> finalError = error;
-        if ( !forComponent( GraphNode.class, node -> node.backward(finalError) ) && this.rqsGradient() ) {
-            addToGradient( error );
-        }
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Tsr<V> backward(double value ) {
-        backward( Tsr.of( this.getValueClass(), getNDConf().shape(), value ) );
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Tsr<V> backward() {
-        backward( 1 ); // By default we back-propagate a base factor of 1.
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void applyGradient()
-    {
-        /*
-           If the tensor has a JITProp component then it will trigger the continuation of the back-propagation which
-           has been put on hold by saving the pending graph nodes inside the component. <br>
-           This is because the gradient most likely has not yet been fully calculated.
-         */
-        forComponent( JITProp.class, JITProp::execute );
-        // Afterwards the JITProp component is not needed anymore! So we remove it.
-        remove( JITProp.class );
-        // Now the gradient can be applied (Gradients are also tensors, which is why we provide its class as key).
-        forComponent(
-                Tsr.class,
-                g -> {
-                    // If an optimizer is present then we also optimize the gradient first!
-                    if ( this.has( Optimizer.class ) )
-                        g = this.get(Optimizer.class).optimize( this );
-                    // And then we remove the gradient because it is no longer needed.
-                    remove( Tsr.class );
-                    // We are now ready to apply the gradient to the tensor. This is an inline operation!
-                    // Therefore we need to turn off the inline operation safety net:
-                    boolean inlineSafety = Neureka.get().settings().autograd().isPreventingInlineOperations();
-                    if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( false );
-                    // INLINE OPERATION :
-                    Neureka.get().backend().getFunction().plusAssign().call( this, g ); //-> Finally applying the gradient!
-                    // INLINE END ! -> We can now revert to the previous setting:
-                    if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( true );
-                }
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Tsr<V> detach() { this.remove( GraphNode.class ); return this; }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Tsr<V> label(String[][] labels ) {
-        _label( null, labels );
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Tsr<V> label(String tensorName, String[][] labels )
-    {
-        _label( tensorName, labels );
-        return this;
-    }
-
-    /**
-     *  This private method is used by public {@link Tsr#label} methods as a single source of
-     *  responsibility for performing the actual labeling based on the user input...
-     *
-     * @param tensorName The name of this tensor which will be stored in an {@link NDFrame} component.
-     * @param labels The label / alias information which will also be stored in an {@link NDFrame} component.
-     */
-    private void _label( String tensorName, String[][] labels )
+    public Tsr<V> label( String tensorName, String[][] labels )
     {
         LogUtil.nullArgCheck(labels, "labels", String[][].class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
@@ -892,6 +841,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
                 }
             }
         }
+        return this;
     }
 
     /**
@@ -1096,9 +1046,9 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             // TODO! This requires some more thought about how to check this!
             // THIS CASE HAS NOT YET BEEN THOUGHT TROUGH!
             _LOG.warn(
-                    "Exceptional slice request detected. " +
-                    "This type of tensor cannot yet be sliced. " +
-                    "Please copy this tensor before slicing."
+                "Exceptional slice request detected. " +
+                "This type of tensor cannot yet be sliced. " +
+                "Please copy this tensor before slicing."
             );
         } else {
             /*
@@ -1336,7 +1286,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     |       ...transformation and modification...
     */
 
-
     /**
      *  {@inheritDoc}
      */
@@ -1395,8 +1344,8 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         }
         if ( !dataType.isAssignableFrom(this.getValueClass()) )
             throw new IllegalArgumentException(
-                    "Cannot create image of type '" + type.name() + "' from tensor of type '" + this.getValueClass().getSimpleName() + ". " +
-                    "Expected to receive a tensor whose type is at least a sub-type of '" + dataType.getSimpleName() + "'."
+                "Cannot create image of type '" + type.name() + "' from tensor of type '" + this.getValueClass().getSimpleName() + ". " +
+                "Expected to receive a tensor whose type is at least a sub-type of '" + dataType.getSimpleName() + "'."
             );
     }
 
@@ -1413,19 +1362,19 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     public Tsr<V> addToGradient( Tsr<V> error ) {
         _guardSet("gradient");
         if (
-                !forComponent(
-                    Tsr.class,
-                        gradient ->
-                        this.set(
-                            MemUtil.keep( gradient, error, () ->
-                                Neureka.get()
-                                        .backend()
-                                        .getFunction()
-                                        .plusAssign()
-                                        .call(gradient, error)
-                            )
+            !forComponent(
+                Tsr.class,
+                    gradient ->
+                    this.set(
+                        MemUtil.keep( gradient, error, () ->
+                            Neureka.get()
+                                    .backend()
+                                    .getFunction()
+                                    .plusAssign()
+                                    .call(gradient, error)
                         )
-                )
+                    )
+            )
         ) {
             this.set( error );
             this.forComponent( Device.class, device -> {
@@ -1502,52 +1451,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         else if ( this.isEmpty() ) return "empty";
         else if ( this.isUndefined() ) return "undefined";
         return TsrAsString.representing( this ).byDefaults().toString();
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public Unsafe<V> getUnsafe() {
-        _guardGet("unsafe API");
-        return new Unsafe<V>() {
-            @Override
-            public Tsr<V> setNDConf(NDConfiguration configuration ) { TsrImpl.this._setNDConf( configuration ); return TsrImpl.this; }
-            @Override
-            public <V> Tsr<V> toType(Class<V> typeClass ) { return TsrImpl.this._toType( typeClass ); }
-
-            @Override
-            public <U> Tsr<U> upcast(Class<U> superType) {
-                if ( superType.isAssignableFrom(TsrImpl.this.valueClass()) )
-                    return (Tsr<U>) TsrImpl.this;
-                else
-                    throw new IllegalArgumentException("Provided type '"+superType+"' is not a super type of '"+ TsrImpl.this.valueClass()+"'.");
-            }
-
-            @Override
-            public <T> Tsr<T> setDataType(DataType<T> dataType ) { return (TsrImpl<T>) TsrImpl.this._setDataType(dataType); }
-            @Override
-            public Tsr<V> toLayout(NDConfiguration.Layout layout) { TsrImpl.this._toLayout( layout ); return TsrImpl.this; }
-            @Override
-            public Tsr<V> incrementVersion(ExecutionCall<?> call ) {
-                _incrementVersionBecauseOf( call );
-                return TsrImpl.this;
-            }
-            @Override
-            public Tsr<V> setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
-            @Override public Tsr<V> delete() { return TsrImpl.this._delete(); }
-            @Override public Object getData() { return _getData(); }
-            @Override
-            public <A> A getDataAs( Class<A> arrayTypeClass ) {
-                return DataConverter.get().convert( _getData(false), arrayTypeClass );
-            }
-            @Override
-            public Tsr<V> setDataAt(int i, V o ) {
-                _guardMod("data object");
-                _setDataAt( i, o );
-                return TsrImpl.this;
-            }
-        };
     }
 
 }

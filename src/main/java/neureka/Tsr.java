@@ -57,6 +57,7 @@ SOFTWARE.
 package neureka;
 
 import neureka.autograd.GraphNode;
+import neureka.autograd.JITProp;
 import neureka.backend.api.ExecutionCall;
 import neureka.calculus.Function;
 import neureka.calculus.Functions;
@@ -83,6 +84,7 @@ import neureka.ndim.AbstractTensor;
 import neureka.ndim.Filler;
 import neureka.ndim.NDimensional;
 import neureka.ndim.config.NDConfiguration;
+import neureka.optimization.Optimizer;
 import neureka.view.TsrAsString;
 import neureka.view.TsrStringSettings;
 
@@ -782,16 +784,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     boolean isOutsourced();
 
     /**
-     *  This will check if the {@link Unsafe#delete()} method was previously called on this tensor.
-     *  This means that any references inside the tensor will be null
-     *  as well as that the tensor data was freed on every device,
-     *  meaning that what was previously referenced was most likely garbage collected...
-     *
-     * @return The truth value determining if the {@link Unsafe#delete()} method has been called oin this instance.
-     */
-    boolean isDeleted();
-
-    /**
      *  A Virtual tensor is a tensor whose underlying data array is of size 1, holding only a single value. <br>
      *  This only makes sense for homogeneously populated tensors.
      *  An example of such a tensor would be: <br>
@@ -804,6 +796,39 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return The truth value determining if this tensor is "virtual" or "actual".
      */
     boolean isVirtual();
+
+    /**
+     *  Virtualizing is the opposite to actualizing a tensor.
+     *  A tensor is virtual if the size of the underlying data is not actually equal to
+     *  the number of elements which the tensor claims to store, aka its size.
+     *  This is for example the case when initializing a tensor filled with a single
+     *  value continuously. In that case the tensor will flag itself as virtual and only allocate the
+     *  underlying data array to hold a single item even though the tensor might actually hold
+     *  many more items.
+     *  The reasons for this feature is that it greatly improves performance in certain cases.
+     *  In essence this feature is a form of lazy loading.
+     *  <br><br>
+     *  WARNING! Virtualizing is the process of compacting the underlying data array
+     *  down to an array holding a single value.
+     *  This only makes sense for homogeneously populated tensors.
+     *  Passing {@code false} to this method will "actualize" a "virtual" tensor.
+     *  Meaning the underlying data array will at least become as large as the size of the tensor
+     *  as is defined by {@link #size()}.
+     *
+     * @param isVirtual The truth value determining if this tensor should be "virtual" or "actual".
+     * @return This concrete instance, to allow for method chaining.
+     */
+    Tsr<V> setIsVirtual( boolean isVirtual );
+
+    /**
+     *  This will check if the {@link Unsafe#delete()} method was previously called on this tensor.
+     *  This means that any references inside the tensor will be null
+     *  as well as that the tensor data was freed on every device,
+     *  meaning that what was previously referenced was most likely garbage collected...
+     *
+     * @return The truth value determining if the {@link Unsafe#delete()} method has been called oin this instance.
+     */
+    boolean isDeleted();
 
     /**
      *  A tensor is empty if there is neither data referenced within the tensor directly
@@ -900,29 +925,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return The truth value determining if this tensor has another tensor attached to it (which is its gradient).
      */
     default boolean hasGradient() { return this.has( Tsr.class ); }
-
-    /**
-     *  Virtualizing is the opposite to actualizing a tensor.
-     *  A tensor is virtual if the size of the underlying data is not actually equal to
-     *  the number of elements which the tensor claims to store, aka its size.
-     *  This is for example the case when initializing a tensor filled with a single
-     *  value continuously. In that case the tensor will flag itself as virtual and only allocate the
-     *  underlying data array to hold a single item even though the tensor might actually hold
-     *  many more items.
-     *  The reasons for this feature is that it greatly improves performance in certain cases.
-     *  In essence this feature is a form of lazy loading.
-     *  <br><br>
-     *  WARNING! Virtualizing is the process of compacting the underlying data array
-     *  down to an array holding a single value.
-     *  This only makes sense for homogeneously populated tensors.
-     *  Passing {@code false} to this method will "actualize" a "virtual" tensor.
-     *  Meaning the underlying data array will at least become as large as the size of the tensor
-     *  as is defined by {@link #size()}.
-     *
-     * @param isVirtual The truth value determining if this tensor should be "virtual" or "actual".
-     * @return This concrete instance, to allow for method chaining.
-     */
-    Tsr<V> setIsVirtual( boolean isVirtual );
 
     /**
      *  This flag works alongside two autograd features which can be enables inside the library settings.
@@ -1108,7 +1110,18 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param error A tensor which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-    Tsr<V> backward( Tsr<V> error );
+    default Tsr<V> backward( Tsr<V> error ) {
+        LogUtil.nullArgCheck(error, "error", Tsr.class, "Cannot back-propagate 'null'!");
+        if ( this.isOutsourced() )
+            error = error.deepCopy().to(this.getDevice());
+
+        Tsr<V> finalError = error;
+        if ( !forComponent( GraphNode.class, node -> node.backward(finalError) ) && this.rqsGradient() ) {
+            addToGradient( error );
+        }
+        return this;
+    }
+
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1125,7 +1138,11 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-    Tsr<V> backward( double value );
+
+    default Tsr<V> backward( double value ) {
+        backward( Tsr.of( this.getValueClass(), getNDConf().shape(), value ) );
+        return this;
+    }
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1140,7 +1157,10 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The tensor on which this method was called. (factory pattern)
      */
-    Tsr<V> backward();
+    default Tsr<V> backward() {
+        backward( 1 ); // By default we back-propagate a base factor of 1.
+        return this;
+    }
 
     /**
      * @return The gradient of this tensor which is internally stored as component.
@@ -1152,7 +1172,35 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *  "Applying" a gradient to a tensor simply means adding the values inside the gradient element-wise
      *  to the owning host tensor via an inline operation. <br>
      */
-    void applyGradient();
+    default void applyGradient(){
+        /*
+           If the tensor has a JITProp component then it will trigger the continuation of the back-propagation which
+           has been put on hold by saving the pending graph nodes inside the component. <br>
+           This is because the gradient most likely has not yet been fully calculated.
+         */
+        forComponent( JITProp.class, JITProp::execute );
+        // Afterwards the JITProp component is not needed anymore! So we remove it.
+        remove( JITProp.class );
+        // Now the gradient can be applied (Gradients are also tensors, which is why we provide its class as key).
+        forComponent(
+                Tsr.class,
+                g -> {
+                    // If an optimizer is present then we also optimize the gradient first!
+                    if ( this.has( Optimizer.class ) )
+                        g = this.get(Optimizer.class).optimize( this );
+                    // And then we remove the gradient because it is no longer needed.
+                    remove( Tsr.class );
+                    // We are now ready to apply the gradient to the tensor. This is an inline operation!
+                    // Therefore we need to turn off the inline operation safety net:
+                    boolean inlineSafety = Neureka.get().settings().autograd().isPreventingInlineOperations();
+                    if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( false );
+                    // INLINE OPERATION :
+                    Neureka.get().backend().getFunction().plusAssign().call( this, g ); //-> Finally applying the gradient!
+                    // INLINE END ! -> We can now revert to the previous setting:
+                    if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( true );
+                }
+        );
+    }
 
     /**
      * @return The device on which this tensor is stored or {@link CPU} if it is not outsourced.
@@ -1181,7 +1229,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return This very instance in order to allows for a more streamline usage of this method.
      */
-    Tsr<V> detach();
+    default Tsr<V> detach() { this.remove( GraphNode.class ); return this; }
 
     /**
      *  This method receives a nested {@link String} array which
@@ -1200,7 +1248,10 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param labels A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    Tsr<V> label( String[][] labels );
+    default Tsr<V> label( String[][] labels ) {
+        label( null, labels );
+        return this;
+    }
 
     /**
      *  This method receives a label for this tensor and a
