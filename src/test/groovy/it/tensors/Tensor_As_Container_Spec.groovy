@@ -112,6 +112,29 @@ class Tensor_As_Container_Spec extends Specification
             (a*b).toString() == "(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]"
     }
 
+    def 'We can apply predicates on the values of a tensor.'()
+    {
+        given : 'We create 3 different kinds of tensors.'
+            var a = Tsr.of(Character).withShape(2, 3).andFill('x' as char, 'y' as char, 'z' as char)
+            var b = Tsr.of(String).withShape(3, 2).andFill("Hey", "how", "are", "you", "?")
+            var c = Tsr.ofDoubles().vector(42, 0.53, -2.5, 9, -12.92, 73)
+
+        expect :
+            a.every( item -> item instanceof Character )
+            !a.every( item -> item == 'x' as char )
+            a.any( item -> item == 'x' as char )
+            !a.any( item -> item == '?' as char )
+        and :
+            b.every( item -> item instanceof String )
+            !b.every( item -> item == "Hey" )
+            b.any( item -> item == "how" )
+            !b.any( item -> item == "is" )
+        and :
+            c.every( item -> item instanceof Double )
+            !c.every( item -> item == 42 )
+            c.any( item -> item == 42 )
+            !c.any( item -> item == 666 )
+    }
 
     /**
      *  A class modeling a complex number which we can use as
