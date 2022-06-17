@@ -119,20 +119,21 @@ class Tensor_As_Container_Spec extends Specification
             var b = Tsr.of(String).withShape(3, 2).andFill("Hey", "how", "are", "you", "?")
             var c = Tsr.ofDoubles().vector(42, 0.53, -2.5, 9, -12.92, 73)
 
-        expect :
+        expect : 'We can check if every value of a tensor satisfies a condition.'
             a.every( item -> item instanceof Character )
-            !a.every( item -> item == 'x' as char )
-            a.any( item -> item == 'x' as char )
-            !a.any( item -> item == '?' as char )
-        and :
             b.every( item -> item instanceof String )
-            !b.every( item -> item == "Hey" )
-            b.any( item -> item == "how" )
-            !b.any( item -> item == "is" )
-        and :
             c.every( item -> item instanceof Double )
+        and : 'We can see that this is only true of it applies to every value.'
+            !a.every( item -> item == 'x' as char )
+            !b.every( item -> item == "Hey" )
             !c.every( item -> item == 42 )
+        and : 'When we want to check if at least one item meets the condition we can use the following:'
+            a.any( item -> item == 'x' as char )
             c.any( item -> item == 42 )
+            b.any( item -> item == "how" )
+        and : 'As expected the negation will ensure that there is no item matching the provided condition.'
+            !a.any( item -> item == '?' as char )
+            !b.any( item -> item == "is" )
             !c.any( item -> item == 666 )
     }
 
