@@ -1,3 +1,59 @@
+/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ __________
+ \__    ___\
+    |  |____ _ __
+    | /  ___/ '___\
+    | \___  \ |
+     \/_____/_|      A long yet shallow class.
+
+    This is the the core work-horse class of Neureka. The 'Tsr' class!
+    It is a three-letter abbreviation of the word "Tensor"!
+
+------------------------------------------------------------------------------------------------------------------------
+
+   'Any fool can write code that a computer can understand.
+    Good programmers write code that humans can understand.'
+    – Martin Fowler
+
+    Use the following as search keys :)
+
+    §(1) : CONSTRUCTION
+    §(2) : FLAGS
+    §(3) : COMPONENT SYSTEM
+    §(4) : PROPERTIES
+    §(5) : OBJECT STATE MODIFICATION
+    §(6) : ND-ITERATOR LOGIC
+    §(7) : COMPONENT SPECIFIC
+    §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS
+    §(9) : SLICING, INDEXING & INJECTING
+    §(10) : MAPPING
+
+*/
+
+
 package neureka;
 
 import neureka.autograd.GraphNode;
@@ -33,6 +89,8 @@ import neureka.view.TsrStringSettings;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
 
 /**
  *  {@link Tsr} is a 3 letter abbreviation of the word "tensor", a mathematical concept.
@@ -51,6 +109,13 @@ import java.util.function.Consumer;
  */
 public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>>
 {
+
+
+    /*==================================================================================================================
+    |
+    |       §(1) : CONSTRUCTION
+    |   ---------------------------
+    */
 
     /**
      *  This static factory method creates and return a completely empty and undefined tensor
@@ -153,12 +218,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      */
     static <T> Tsr<T> of( Object... args ) { return TsrImpl._of( args ); }
 
-    /*
-        -------------------------------------------
-            §(1.1) : SHAPE LIST BASED CONSTRUCTION
-        --------------------------------------------
-    */
-
     /**
      *  This is a convenient factory method for creating {@link Tsr} instances for
      *  values of type {@link T} based on a list of integers
@@ -259,12 +318,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
         }
         return of( DataType.of(resultType), shape, resultData );
     }
-
-    /*
-        -------------------------------------------
-            §(1.2) : SHAPE ARRAY BASED CONSTRUCTION
-        --------------------------------------------
-    */
 
     /**
      *  This is the entry point to the fluent tensor builder API for building
@@ -453,12 +506,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      */
     static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( shape, dataType, data ); }
 
-    /*
-        -------------------------------------------
-            §(1.3) : LAMBDA BASED CONSTRUCTION
-        --------------------------------------------
-    */
-
     /**
      *  This factory method allows the creation of tensors with an additional initialization
      *  lambda for filling the underlying data array with desired values.
@@ -497,12 +544,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     static <T> Tsr<T> of( DataType<T> type, int[] shape, Filler<T> filler) {
         return new TsrImpl<>( shape, type, filler );
     }
-
-    /*
-        -------------------------------------------
-            §(1.4) : FUNCTION BASED CONSTRUCTION
-        --------------------------------------------
-     */
 
     /**
      *  This factory method allows for the creation and execution of {@link Function} instances
@@ -679,8 +720,66 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
                 .withShape( template.getNDConf().shape() );
     }
 
+    /*==================================================================================================================
+    |
+    |       §(2) : FLAGS
+    |   ----------------------
+    */
 
+    /**
+     *  Settings this flag via this setter will indirectly trigger the activation of
+     *  the autograd / auto-differentiation system of this library!
+     *  If the flag is set to 'true' and the tensor is used for computation then
+     *  it will also receive gradients when the {@link #backward()} method is being called
+     *  on any descendant tensor within the computation graph.
+     *
+     * @param rqsGradient The truth value determining if this tensor ought to receive gradients via
+     *                     the built-in automatic backpropagation system.
+     * @return This very {@link Tsr} instance in order to enable method chaining.
+     */
+    Tsr<V> setRqsGradient( boolean rqsGradient );
 
+    /**
+     *  This flag will indirectly trigger the activation of the autograd / auto-differentiation system of this library!
+     *  If the flag is set to 'true' and the tensor is used for computation then
+     *  it will also receive gradients when the {@link #backward()} method is being called
+     *  on any descendant tensor within the computation graph.
+     *
+     * @return The truth value determining if this tensor ought to receive gradients via
+     *         the built-in automatic backpropagation system.
+     */
+    boolean rqsGradient();
+
+    /**
+     *  Intermediate tensors are internal non-user tensors which may be eligible
+     *  for deletion when further consumed by a {@link Function}.
+     *  For the casual user of Neureka, this flag should always be false!
+     *
+     * @return The truth value determining if this tensor is not a user tensor but an internal
+     *         tensor which may be eligible for deletion by {@link Function}s consuming it.
+     */
+    boolean isIntermediate();
+
+    /**
+     *  This method informs this tensor if it's data is supposed to be kept in RAM
+     *  or if it has already been migrated somewhere else.
+     *  In the latter case, the tensor will nullify the reference to it's
+     *  underlying data array to make it elegable for garbage collection.
+     *  Otherwise, if {@code isOutsourced} is set to true, the method might
+     *  allocate a new data array if none is present.
+     *
+     * @param isOutsourced The truth value which determines if this tensor should live in RAM or somewhere else.
+     * @return This very instance to allow for method chaining.
+     */
+    Tsr<V> setIsOutsourced( boolean isOutsourced );
+
+    /**
+     *  Outsourced means that the tensor is stored on a {@link Device} implementation instance.
+     *
+     * @return The truth value determining if the data of this tensor is not actually stored inside of it
+     *         in the form of of a traditional primitive JVM array!
+     */
+    boolean isOutsourced();
 
     /**
      *  This will check if the {@link Unsafe#delete()} method was previously called on this tensor.
@@ -859,6 +958,51 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return This very tensor instance in order to enable method chaining.
      */
     Tsr<V> setGradientApplyRequested( boolean applyRequested );
+
+    /*==================================================================================================================
+    |
+    |       §(3) : COMPONENT SYSTEM
+    |   --------------------------------
+    */
+
+    /**
+     *  Important : Components of type {@link Tsr} are simply gradients!
+     *  Currently, this method is used only to catch illegal arguments which
+     *  is for example the case when trying to attach a gradient with a different shape...
+     *  (Otherwise the gradient tensor "does not mind" an owner change...)
+     */
+    @Override
+    default boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
+        if ( changeRequest.type() == IsBeing.ADDED ) {
+            if (
+                    changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||
+                            Arrays.hashCode(changeRequest.getNewOwner().getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )
+            ) {
+                throw new IllegalArgumentException(
+                        "Trying to attach a tensor as gradient component to a tensor with different shape."
+                );
+            }
+        }
+        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
+        // If the change request type is set to "REPLACED" then
+        // this is means that this tensor is a gradient that is being
+        // transferred to another tensor to serve as gradient...
+        // No update task needs to occur. (This might change in the future...)
+        return true;
+    }
+
+    /*==================================================================================================================
+    |
+    |       §(4) : PROPERTIES :
+    |   ---------------------------------------
+    */
+
+    /**
+     *  The version number is tracking how often this tensor has been mutated.
+     *  This is especially useful for checking the correcting of autp-grad!
+     */
+    int getVersion();
+
     /**
      * @return The type class of individual value items within this {@link Tsr} instance.
      */
@@ -894,15 +1038,54 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      */
     Class<?> getRepresentativeValueClass();
 
+    /*==================================================================================================================
+    |
+    |       §(5) : OBJECT STATE MODIFICATION :
+    |   ------------------------------------------
+    */
+
     /**
-     *  This method compares the passed class with the underlying data-type of this NDArray.
-     *  If the data-type of this NDArray is equivalent to the passed class then the returned
-     *  boolean will be true, otherwise the method returns false.
+     *  This method exposes an API for mutating the state of this tensor.
+     *  The usage of methods exposed by this API is generally discouraged
+     *  because the exposed state can easily lead to broken tensors and exceptional situations!<br>
+     *  <br><b>
      *
-     * @param typeClass The class which ought to be compared to the underlying data-type of this NDArray.
-     * @return The truth value of the question: Does this NDArray implementation hold the data of the passed type?
+     *  Only use this if you know what you are doing and
+     *  performance is critical! <br>
+     *  </b>
+     *  (Like custom backend extensions for example)
+     *
+     * @return The unsafe API exposes methods for mutating the state of the tensor.
      */
-    boolean is( Class<?> typeClass );
+    Unsafe<V> getUnsafe();
+
+    /*==================================================================================================================
+    |
+    |       §(6) : ND-ITERATOR LOGIC :
+    |   ---------------------------------------
+    */
+
+    default boolean every( Predicate<V> predicate ) {
+        return StreamSupport.stream(
+                    Spliterators.spliteratorUnknownSize(this.iterator(), Spliterator.ORDERED),
+                    true
+                )
+                .allMatch(predicate);
+    }
+
+    default boolean any( Predicate<V> predicate ) {
+        return StreamSupport.stream(
+                        Spliterators.spliteratorUnknownSize(this.iterator(), Spliterator.ORDERED),
+                        true
+                )
+                .anyMatch(predicate);
+    }
+
+    /*==================================================================================================================
+    |
+    |       §(7) : COMPONENT SPECIFIC :
+    |   ---------------------------------------
+    */
 
     /**
      * This method takes a {@link Device} and tries to migrate the contents of this {@link Tsr}
@@ -914,55 +1097,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     Tsr<V> to( Device<?> device );
 
     default Tsr<V> to( String deviceType ) { return this.to(Device.get(deviceType)); }
-
-    /**
-     * @return The gradient of this tensor which is internally stored as component.
-     */
-    default Tsr<V> getGradient() { return this.get( Tsr.class ); }
-
-    /**
-     * @return The device on which this tensor is stored or {@link CPU} if it is not outsourced.
-     */
-    default Device<V> getDevice() {
-        if ( this.isOutsourced() ) return this.get( Device.class );
-        return (Device<V>) CPU.get();
-    }
-
-    /**
-     * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
-     */
-    default GraphNode<V> getGraphNode() { return get( GraphNode.class ); }
-
-    /**
-     * @return An instance of the {@link NDFrame} component if present.
-     */
-    default NDFrame<V> frame() { return get( NDFrame.class ); }
-
-    /**
-     *  Important : Components of type {@link Tsr} are simply gradients!
-     *  Currently, this method is used only to catch illegal arguments which
-     *  is for example the case when trying to attach a gradient with a different shape...
-     *  (Otherwise the gradient tensor "does not mind" an owner change...)
-     */
-    @Override
-    default boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
-        if ( changeRequest.type() == IsBeing.ADDED ) {
-            if (
-                    changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||
-                            Arrays.hashCode(changeRequest.getNewOwner().getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )
-            ) {
-                throw new IllegalArgumentException(
-                        "Trying to attach a tensor as gradient component to a tensor with different shape."
-                );
-            }
-        }
-        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
-        // If the change request type is set to "REPLACED" then
-        // this is means that this tensor is a gradient that is being
-        // transferred to another tensor to serve as gradient...
-        // No update task needs to occur. (This might change in the future...)
-        return true;
-    }
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1009,11 +1143,34 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     Tsr<V> backward();
 
     /**
+     * @return The gradient of this tensor which is internally stored as component.
+     */
+    default Tsr<V> getGradient() { return this.get( Tsr.class ); }
+
+    /**
      *  If this tensor owns a gradient tensor as component, then it can be applied by this method. <br>
      *  "Applying" a gradient to a tensor simply means adding the values inside the gradient element-wise
      *  to the owning host tensor via an inline operation. <br>
      */
     void applyGradient();
+
+    /**
+     * @return The device on which this tensor is stored or {@link CPU} if it is not outsourced.
+     */
+    default Device<V> getDevice() {
+        if ( this.isOutsourced() ) return this.get( Device.class );
+        return (Device<V>) CPU.get();
+    }
+
+    /**
+     * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
+     */
+    default GraphNode<V> getGraphNode() { return get( GraphNode.class ); }
+
+    /**
+     * @return An instance of the {@link NDFrame} component if present.
+     */
+    default NDFrame<V> frame() { return get( NDFrame.class ); }
 
     /**
      *  <b>This method detaches this tensor from its underlying computation-graph
@@ -1123,6 +1280,23 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
 
     Tsr<V> label( String tensorName, Map<Object, List<Object>> labels );
 
+    /*==================================================================================================================
+    |
+    |       §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS :
+    |   -----------------------------------------------------
+    |       ...for more context see package 'calculus'...
+    |*/
+
+    /**
+     *  This method compares the passed class with the underlying data-type of this NDArray.
+     *  If the data-type of this NDArray is equivalent to the passed class then the returned
+     *  boolean will be true, otherwise the method returns false.
+     *
+     * @param typeClass The class which ought to be compared to the underlying data-type of this NDArray.
+     * @return The truth value of the question: Does this NDArray implementation hold the data of the passed type?
+     */
+    boolean is( Class<?> typeClass );
+
     /**
      *  This method will produce the sum of
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
@@ -1160,7 +1334,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return The sum between this instance as the left and the passed double as right operand.
      */
     default Tsr<V> plus( V value ) { return plus( of( valueClass(), this.shape(), value ) ); }
-
 
     /**
      *  This method will perform subtraction on
@@ -1216,7 +1389,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
     default Tsr<V> T() {
-        if ( this.rank() == 1 ) return (Tsr<V>) this;
+        if ( this.rank() == 1 ) return this;
         else if ( this.rank() == 2 ) {
             boolean wasIntermediate = this.isIntermediate();
             this.getUnsafe().setIsIntermediate(false);
@@ -1269,7 +1442,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      */
     default Tsr<V> convDot( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class);
-        Tsr<V> a = (Tsr<V>) this;
+        Tsr<V> a = this;
         int[][] fitter = AbstractTensor.Utility.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );
         boolean doReshape = false;
         for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
@@ -1381,24 +1554,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
         }
         return getAt( ranges.toArray() );
     }
-
-    /**
-     *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
-     *  which enables the configuration of a slice of the current tensor via method chaining.    <br>
-     *  The following code snippet slices a 3-dimensional tensor into a tensor of shape (2x1x3)  <br>
-     * <pre>{@code
-     *  myTensor.slice()
-     *          .axis(0).from(0).to(1)
-     *          .then()
-     *          .axis(1).at(5) // equivalent to '.from(5).to(5)'
-     *          .then()
-     *          .axis().from(0).to(2)
-     *          .get();
-     * }</pre>
-     *
-     * @return An instance of the {@link SliceBuilder} class exposing a readable builder API for creating slices.
-     */
-    SliceBuilder<V> slice();
 
     /**
      *  This method is synonymous to the {@link #times(Tsr)} method.
@@ -1586,76 +1741,30 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      */
     default Tsr<V> xor( double value ) { return xor( of( this.valueClass(), this.shape(), value ) ); }
 
-    /**
-     *  Settings this flag via this setter will indirectly trigger the activation of
-     *  the autograd / auto-differentiation system of this library!
-     *  If the flag is set to 'true' and the tensor is used for computation then
-     *  it will also receive gradients when the {@link #backward()} method is being called
-     *  on any descendant tensor within the computation graph.
-     *
-     * @param rqsGradient The truth value determining if this tensor ought to receive gradients via
-     *                     the built-in automatic backpropagation system.
-     * @return This very {@link Tsr} instance in order to enable method chaining.
-     */
-    Tsr<V> setRqsGradient( boolean rqsGradient );
+    /*==================================================================================================================
+    |
+    |       §(9) : SLICING, INDEXING & INJECTING :
+    |   -----------------------------------------------------
+    |       ...for more context see package 'ndim.config'...
+    */
 
     /**
-     *  This flag will indirectly trigger the activation of the autograd / auto-differentiation system of this library!
-     *  If the flag is set to 'true' and the tensor is used for computation then
-     *  it will also receive gradients when the {@link #backward()} method is being called
-     *  on any descendant tensor within the computation graph.
+     *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
+     *  which enables the configuration of a slice of the current tensor via method chaining.    <br>
+     *  The following code snippet slices a 3-dimensional tensor into a tensor of shape (2x1x3)  <br>
+     * <pre>{@code
+     *  myTensor.slice()
+     *          .axis(0).from(0).to(1)
+     *          .then()
+     *          .axis(1).at(5) // equivalent to '.from(5).to(5)'
+     *          .then()
+     *          .axis().from(0).to(2)
+     *          .get();
+     * }</pre>
      *
-     * @return The truth value determining if this tensor ought to receive gradients via
-     *         the built-in automatic backpropagation system.
+     * @return An instance of the {@link SliceBuilder} class exposing a readable builder API for creating slices.
      */
-    boolean rqsGradient();
-
-    /**
-     *  Intermediate tensors are internal non-user tensors which may be eligible
-     *  for deletion when further consumed by a {@link Function}.
-     *  For the casual user of Neureka, this flag should always be false!
-     *
-     * @return The truth value determining if this tensor is not a user tensor but an internal
-     *         tensor which may be eligible for deletion by {@link Function}s consuming it.
-     */
-    boolean isIntermediate();
-
-    /**
-     *  This method informs this tensor if it's data is supposed to be kept in RAM
-     *  or if it has already been migrated somewhere else.
-     *  In the latter case, the tensor will nullify the reference to it's
-     *  underlying data array to make it elegable for garbage collection.
-     *  Otherwise, if {@code isOutsourced} is set to true, the method might
-     *  allocate a new data array if none is present.
-     *
-     * @param isOutsourced The truth value which determines if this tensor should live in RAM or somewhere else.
-     * @return This very instance to allow for method chaining.
-     */
-    Tsr<V> setIsOutsourced( boolean isOutsourced );
-
-    /**
-     *  Outsourced means that the tensor is stored on a {@link Device} implementation instance.
-     *
-     * @return The truth value determining if the data of this tensor is not actually stored inside of it
-     *         in the form of of a traditional primitive JVM array!
-     */
-    boolean isOutsourced();
-
-    /**
-     *  This method exposes an API for mutating the state of this tensor.
-     *  The usage of methods exposed by this API is generally discouraged
-     *  because the exposed state can easily lead to broken tensors and exceptional situations!<br>
-     *  <br><b>
-     *
-     *  Only use this if you know what you are doing and
-     *  performance is critical! <br>
-     *  </b>
-     *  (Like custom backend extensions for example)
-     *
-     * @return The unsafe API exposes methods for mutating the state of the tensor.
-     */
-    Unsafe<V> getUnsafe();
-
+    SliceBuilder<V> slice();
 
     /**
      *  The following method enables access to specific scalar elements within the tensor.
@@ -1946,6 +2055,13 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      */
     Object getData();
 
+    /*==================================================================================================================
+    |
+    |       §(10) : Mapping :
+    |   -----------------------------------------------------
+    |       ...transformation and modification...
+    */
+
     default <T> Tsr<T> mapTo(
             Class<T> typeClass,
             java.util.function.Function<V,T> mapper
@@ -2090,12 +2206,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     String toString();
 
     Tsr<V> deepCopy();
-
-    /**
-     *  The version number is tracking how often this tensor has been mutated.
-     *  This is especially useful for checking the correcting of autp-grad!
-     */
-    int getVersion();
 
     default Access<V> at( int... indices ) {
         return new Access<V>() {

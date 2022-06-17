@@ -27,7 +27,7 @@ SOFTWARE.
     |  |____ _ __
     | /  ___/ '___\
     | \___  \ |
-     \/_____/_|         A long yet shallow class.
+     \/_____/_|Impl      A long yet shallow class.
 
     This is the the core work-horse class of Neureka. The 'Tsr' class!
     It is a three-letter abbreviation of the word "Tensor"!
@@ -40,46 +40,15 @@ SOFTWARE.
 
     Use the following as search keys :)
 
-    $(1) : CONSTRUCTION
-        $(1.0) : GENERIC CONSTRUCTION
-        $(1.1) : SHAPE LIST BASED CONSTRUCTION
-        $(1.2) : SHAPE ARRAY BASED CONSTRUCTION
-        §(1.3) : LAMBDA BASED CONSTRUCTION
-        §(1.4) : FUNCTION BASED CONSTRUCTION
-
+    §(1) : CONSTRUCTION
     §(2) : FLAGS
-        §(2.0) : GRADIENT REQUIREMENT
-        §(2.1) : SOURCE LOCATION (DEVICE)
-        §(2.2) : VIRTUAL / ACTUAL
-        §(2.3) : GRADIENT APPLY REQUIREMENT
-        §(2.4) : DELETION
-
     §(3) : COMPONENT SYSTEM
-        §(3.0) : SETTING / REJECTING
-        §(3.1) : REMOVING / REJECTING
-        §(3.2) : UPDATING
-
     §(4) : PROPERTIES
-        $(4.0) : HIGH LEVEL PROPERTIES
-        §(4.1) : COMPONENT PROPERTIES
-        §(4.2) : INNER PROPERTIES
-
     §(5) : OBJECT STATE MODIFICATION
-
     §(6) : ND-ITERATOR LOGIC
-
     §(7) : COMPONENT SPECIFIC
-        §(7.0) : AUTO-GRAD
-        §(7.1) : FRAMING
-
     §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS
-        §(8.0) : OPERATORS
-        §(8.1) : OPERATIONS
-
     §(9) : SLICING, INDEXING & INJECTING
-        §(9.0) : SLICING
-        §(9.1) : INJECTING
-
     §(10) : MAPPING
 */
 
@@ -170,11 +139,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     |
     |       §(1) : CONSTRUCTION
     |   ---------------------------
-    */
-    /*
-        -------------------------------------------
-            §(1.0) : GENERIC CONSTRUCTION
-        --------------------------------------------
     */
 
     static <T> Tsr<T> _of( Object... args )
@@ -308,11 +272,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     |       §(2) : FLAGS
     |   ----------------------
     */
-    /*
-        --------------------------------------------
-            §(2.0) : GRADIENT REQUIREMENT  :
-        --------------------------------------------
-    */
 
     /**
      *  {@inheritDoc}
@@ -358,12 +317,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         }
         return this;
     }
-
-    /*
-    ---------------------------------------------
-        §(2.1) : SOURCE LOCATION (DEVICE)  :
-    ---------------------------------------------
-    */
 
     /**
      *  {@inheritDoc}
@@ -427,12 +380,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             else                _flags -= IS_OUTSOURCED_MASK;
         }
     }
-
-    /*
-    --------------------------------------------
-        §(2.2) : VIRTUAL / ACTUAL  :
-    --------------------------------------------
-    */
 
     /**
      *  {@inheritDoc}
@@ -510,12 +457,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         }
     }
 
-    /*
-    --------------------------------------------
-        §(2.3) : GRADIENT APPLY REQUIREMENT  :
-    --------------------------------------------
-    */
-
     /**
      *  {@inheritDoc}
      */
@@ -541,12 +482,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      */
      @Override
     public boolean gradientApplyRequested() { return ( _flags & GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK; }
-
-    /*
-    --------------------------------------------
-        §(2.4) : DELETION  :
-    --------------------------------------------
-    */
 
     /**
      *  {@inheritDoc}
@@ -591,11 +526,16 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     |       §(3) : COMPONENT SYSTEM
     |   --------------------------------
     */
-    /*
-    --------------------------------------------
-        §(3.0) : SETTING / REJECTING  :
-    --------------------------------------------
-    */
+
+    @Override
+    public <T extends Component<?>> T get( Class<T> componentClass ) {
+        LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
+        if ( GraphNode.class.isAssignableFrom(componentClass) )
+            _guardGet(componentClass.getSimpleName());
+        else if ( NDFrame.class.isAssignableFrom(componentClass) )
+            _guardGet(componentClass.getSimpleName());
+        return super.get(componentClass);
+    }
 
     /**
      * This method is executed when a new Component is added to the tensor.
@@ -609,11 +549,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     @Override
     protected < T extends Component<Tsr<V>> > T _setOrReject(T newComponent ) { return newComponent; }
 
-    /*
-    --------------------------------------------
-        §(3.1) : REMOVING / REJECTING  :
-    --------------------------------------------
-    */
     /**
      * This method is executed when a component is being removed from the tensor.
      * The public remove method is implemented in the super class
@@ -650,51 +585,17 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         return newComponent;
     }
 
-    /*
-    ----------------------------
-        §(3.2) : UPDATING  :
-    ----------------------------
+    /*==================================================================================================================
+    |
+    |       §(4) : PROPERTIES :
+    |   ---------------------------------------
     */
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
-
-    /*==================================================================================================================
-    |
-    |       §(4) : PROPERTIES :
-    |   ---------------------------------------
-    */
-    /*
-    --------------------------------------------
-        §(4.0) : HIGH LEVEL PROPERTIES  :
-    --------------------------------------------
-    */
-
-    /*
-        ----------------------------------------------
-            §(4.1) : COMPONENT BASED PROPERTIES :
-        ----------------------------------------------
-     */
-
-    @Override
-    public <T extends Component<?>> T get( Class<T> componentClass ) {
-        LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
-        if ( GraphNode.class.isAssignableFrom(componentClass) )
-            _guardGet(componentClass.getSimpleName());
-        else if ( NDFrame.class.isAssignableFrom(componentClass) )
-            _guardGet(componentClass.getSimpleName());
-        return super.get(componentClass);
-    }
-
-    /*
-        ---------------------------------------
-            §(4.2) : INNER PROPERTIES :
-        ---------------------------------------
-     */
-
+    public int getVersion() { return _version; }
 
     /*==================================================================================================================
     |
@@ -826,7 +727,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         tensor._flags = 0;
     }
 
-
     /*==================================================================================================================
     |
     |       §(6) : ND-ITERATOR LOGIC :
@@ -866,12 +766,12 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     |       §(7) : COMPONENT SPECIFIC :
     |   ---------------------------------------
     */
-    /*
-        -------------------------------
-            §(7.0) : AUTO-GRAD :
-        -------------------------------
-        ... for more context see package 'autograd' ...
+
+    /**
+     *  {@inheritDoc}
      */
+    @Override
+    public Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
 
     /**
      * {@inheritDoc}
@@ -947,13 +847,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      */
     @Override
     public Tsr<V> detach() { this.remove( GraphNode.class ); return this; }
-
-    /*
-        ----------------------------
-            §(7.1) : FRAMING :
-        ----------------------------
-        ... for more context see package 'framing'...
-     */
 
     /**
      * {@inheritDoc}
@@ -1051,17 +944,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     |   -----------------------------------------------------
     |       ...for more context see package 'calculus'...
     |*/
-    /*
-        -----------------------------
-            §(8.0) : OPERATORS :
-        -----------------------------
-     */
-
-    /*
-        -----------------------------
-            §(8.1) : OPERATIONS :
-        -----------------------------
-     */
 
     /**
      * {@inheritDoc}
@@ -1082,11 +964,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     |   -----------------------------------------------------
     |       ...for more context see package 'ndim.config'...
     */
-    /*
-        -----------------------------
-            §(9.0) : SLICING :
-        -----------------------------
-     */
 
     /**
      * {@inheritDoc}
@@ -1283,13 +1160,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         this.set( parent );
         return subset;
     }
-
-
-    /*
-        -----------------------------
-            §(9.1) : INJECTING :
-        -----------------------------
-     */
 
     /**
      *  {@inheritDoc}
@@ -1633,12 +1503,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         else if ( this.isUndefined() ) return "undefined";
         return TsrAsString.representing( this ).byDefaults().toString();
     }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public int getVersion() { return _version; }
 
     /**
      *  {@inheritDoc}

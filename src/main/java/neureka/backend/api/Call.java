@@ -306,7 +306,7 @@ public class Call<D>
         public <T> Validator allShare( Function<Tsr<?>, T> propertyProvider ) {
             LogUtil.nullArgCheck( propertyProvider, "propertyProvider", Function.class );
             T first = null;
-            for ( Tsr<?> t : _inputs) {
+            for ( Tsr<?> t : _inputs ) {
                 if ( t != null ) {
                     T found = propertyProvider.apply( t );
                     if ( first == null && found != null ) first = found;
