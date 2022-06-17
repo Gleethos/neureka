@@ -4,6 +4,13 @@ import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
 
+/**
+ * Adaptive Gradients, or AdaGrad for short, is an extension of the gradient descent optimization
+ * algorithm that adjusts the step size for each parameter based on the squared gradients
+ * seen over the course of previous optimization steps.
+ *
+ * @param <V> The super type of the value item type for the tensors whose gradients can be optimized by this.
+ */
 public class AdaGrad<V extends Number> implements Optimizer<V>
 {
     private static final double E = 1e-8;
