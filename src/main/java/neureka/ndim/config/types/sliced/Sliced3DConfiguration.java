@@ -70,61 +70,41 @@ public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
         return _cached( new Sliced3DConfiguration(shape, translation, indicesMap, spread, offset) );
     }
 
-    @Override
-    public final int rank() {
-        return 3;
-    }
+    /** {@inheritDoc} */
+    @Override public final int rank() { return 3; }
 
-    @Override
-    public final int[] shape() {
-        return new int[]{_shape1, _shape2, _shape3};
-    }
+    /** {@inheritDoc} */
+    @Override public final int[] shape() { return new int[]{ _shape1, _shape2, _shape3 }; }
 
-    @Override
-    public final int shape( int i ) {
-        return (i==0)?_shape1:(i==1)?_shape2:_shape3;
-    }
+    /** {@inheritDoc} */
+    @Override public final int shape( int i ) { return ( i==0 ? _shape1 : ( i==1 ? _shape2 : _shape3 ) ); }
 
-    @Override
-    public final int[] indicesMap() {
-        return new int[]{_indicesMap1, _indicesMap2, _indicesMap3};
-    }
+    /** {@inheritDoc} */
+    @Override public final int[] indicesMap() { return new int[]{ _indicesMap1, _indicesMap2, _indicesMap3 }; }
 
-    @Override
-    public final int indicesMap(int i ) {
-        return (i==0)?_indicesMap1:(i==1)?_indicesMap2:_indicesMap3;
-    }
+    /** {@inheritDoc} */
+    @Override public final int indicesMap( int i ) { return ( i == 0 ? _indicesMap1 : ( i==1 ? _indicesMap2 : _indicesMap3 ) ); }
 
+    /** {@inheritDoc} */
     @Override
-    public final int[] translation() {
-        return new int[]{_translation1, _translation2, _translation3};
-    }
+    public final int[] translation() { return new int[]{ _translation1, _translation2, _translation3 }; }
 
-    @Override
-    public final int translation( int i ) {
-        return (i==0)?_translation1:(i==1)?_translation2:_translation3;
-    }
+    /** {@inheritDoc} */
+    @Override public final int translation( int i ) { return ( i == 0 ? _translation1: ( i == 1 ? _translation2 : _translation3 ) ); }
 
-    @Override
-    public final int[] spread() {
-        return new int[]{_spread1, _spread2, _spread3};
-    }
+    /** {@inheritDoc} */
+    @Override public final int[] spread() { return new int[]{ _spread1, _spread2, _spread3 }; }
 
-    @Override
-    public final int spread( int i ) {
-        return (i==0)?_spread1:(i==1)?_spread2:_spread3;
-    }
+    /** {@inheritDoc} */
+    @Override public final int spread( int i ) { return ( i == 0 ? _spread1 : ( i == 1 ? _spread2 : _spread3 ) ); }
 
-    @Override
-    public final int[] offset() {
-        return new int[]{_offset1, _offset2, _offset3};
-    }
+    /** {@inheritDoc} */
+    @Override public final int[] offset() { return new int[]{ _offset1, _offset2, _offset3 }; }
 
-    @Override
-    public final int offset( int i ) {
-        return (i==0)?_offset1:(i==1)?_offset2:_offset3;
-    }
+    /** {@inheritDoc} */
+    @Override public final int offset( int i ) { return ( i == 0 ? _offset1 : ( i == 1 ? _offset2 : _offset3 ) ); }
 
+    /** {@inheritDoc} */
     @Override
     public final int indexOfIndex(int index) {
         int indices1, indices2, indices3;
@@ -138,6 +118,7 @@ public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
                 (indices3 * _spread3 + _offset3) * _translation3;
     }
 
+    /** {@inheritDoc} */
     @Override
     public final int[] indicesOfIndex(int index) {
         int indices1, indices2, indices3;
@@ -149,6 +130,7 @@ public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
         return new int[]{indices1, indices2, indices3};
     }
 
+    /** {@inheritDoc} */
     @Override
     public final int indexOfIndices(int[] indices) {
         return (indices[ 0 ] * _spread1 + _offset1) * _translation1 +
@@ -156,6 +138,7 @@ public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
                         (indices[ 2 ] * _spread3 + _offset3) * _translation3;
     }
 
+    /** {@inheritDoc} */
     @Override
     public final int indexOfIndices(int d1, int d2, int d3 ) {
         return (d1 * _spread1 + _offset1) * _translation1 +

@@ -463,9 +463,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     @Override
     public boolean isDeleted() { return ( _flags & IS_DELETED_MASK ) == IS_DELETED_MASK; }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean gradientApplyRequested() { return ( _flags & GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK; }
 
@@ -819,9 +817,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     @Override
     public Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Tsr<V> label( String tensorName, String[][] labels )
     {
@@ -844,9 +840,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Tsr<V> label(List<List<Object>> labels ) {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
@@ -855,9 +849,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Tsr<V> label(String tensorName, List<List<Object>> labels ) {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
@@ -866,9 +858,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Tsr<V> label(Map<Object, List<Object>> labels )
     {
@@ -877,9 +867,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Tsr<V> label(String tensorName, Map<Object, List<Object>> labels )
     {
@@ -895,9 +883,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     |       ...for more context see package 'calculus'...
     |*/
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean isCase( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform 'is case' operation when second oprand is 'null'!");
@@ -915,18 +901,14 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     |       ...for more context see package 'ndim.config'...
     */
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Tsr<V> getAt(int... indices ) {
         LogUtil.nullArgCheck(indices, "indices", int[].class, "Indices array must not be 'null'!");
         return getAt( Arrays.stream( indices ).boxed().toArray() );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Tsr<V> getAt( Map<?,Integer> rankToStrides )
     {

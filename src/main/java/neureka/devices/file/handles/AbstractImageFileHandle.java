@@ -78,9 +78,7 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Tsr<Number> load() throws IOException {
         Object value = _loadData(); // This is simply some kind of primitive array.
@@ -122,34 +120,22 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override public int getValueSize() { return _width * _height * _type.numberOfChannels(); }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override public int getDataSize() { return _width * _height * _type.numberOfChannels(); }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override public int getTotalSize() { return _width * _height * _type.numberOfChannels(); }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override public DataType<?> getDataType() { return DataType.of( UI8.class ); }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override public int[] getShape() { return new int[]{ _height, _width, _type.numberOfChannels() }; }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public <T extends Number> Storage<Number> store( Tsr<T> tensor )
     {

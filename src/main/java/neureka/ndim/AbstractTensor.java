@@ -102,32 +102,24 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<Tsr<V>
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public NDConfiguration getNDConf() { _guardGet("ND-Configuration"); return _NDConf; }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
      @Override
     public DataType<V> getDataType() { _guardGet("data type"); return (DataType<V>) _dataType; }
 
     protected Object _getData() { _guardGet("data object"); return _data; }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Class<V> getValueClass() {
         _guardGet("data type class"); return ( _dataType != null ? (Class<V>) _dataType.getValueTypeClass() : null );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
      @Override
     public Class<?> getRepresentativeValueClass() {
         _guardGet("representative data type class"); return ( _dataType != null ? _dataType.getRepresentativeType() : null );

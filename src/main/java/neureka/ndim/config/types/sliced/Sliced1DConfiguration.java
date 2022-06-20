@@ -53,49 +53,49 @@ public class Sliced1DConfiguration extends D1C //:= IMMUTABLE
         assert spread != 0;
     }
 
-    @Override
-    public final int rank() { return 1; }
+    /** {@inheritDoc} */
+    @Override public final int rank() { return 1; }
 
-    @Override
-    public final int[] shape() { return new int[]{_shape}; }
+    /** {@inheritDoc} */
+    @Override public final int[] shape() { return new int[]{_shape}; }
 
-    @Override
-    public final int shape( int i ) { return _shape; }
+    /** {@inheritDoc} */
+    @Override public final int shape( int i ) { return _shape; }
 
-    @Override
-    public final int[] indicesMap() { return new int[]{_indicesMap}; }
+    /** {@inheritDoc} */
+    @Override public final int[] indicesMap() { return new int[]{_indicesMap}; }
 
-    @Override
-    public final int indicesMap(int i ) { return _indicesMap; }
+    /** {@inheritDoc} */
+    @Override public final int indicesMap(int i ) { return _indicesMap; }
 
-    @Override
-    public final int[] translation() { return new int[]{_translation}; }
+    /** {@inheritDoc} */
+    @Override public final int[] translation() { return new int[]{_translation}; }
 
-    @Override
-    public final int translation( int i ) { return _translation; }
+    /** {@inheritDoc} */
+    @Override public final int translation( int i ) { return _translation; }
 
-    @Override
-    public final int[] spread() { return new int[]{_spread}; }
+    /** {@inheritDoc} */
+    @Override public final int[] spread() { return new int[]{_spread}; }
 
-    @Override
-    public final int spread( int i ) { return _spread; }
+    /** {@inheritDoc} */
+    @Override public final int spread( int i ) { return _spread; }
 
-    @Override
-    public final int[] offset() { return new int[]{_offset}; }
+    /** {@inheritDoc} */
+    @Override public final int[] offset() { return new int[]{_offset}; }
 
-    @Override
-    public final int offset( int i ) { return _offset; }
+    /** {@inheritDoc} */
+    @Override public final int offset( int i ) { return _offset; }
 
-    @Override
-    public final int indexOfIndex( int index ) { return ( ( index / _indicesMap ) * _spread + _offset ) * _translation; }
+    /** {@inheritDoc} */
+    @Override public final int indexOfIndex( int index ) { return ( ( index / _indicesMap ) * _spread + _offset ) * _translation; }
 
-    @Override
-    public final int[] indicesOfIndex( int index ) { return new int[]{index / _indicesMap}; }
+    /** {@inheritDoc} */
+    @Override public final int[] indicesOfIndex( int index ) { return new int[]{index / _indicesMap}; }
 
-    @Override
-    public final int indexOfIndices( int[] indices ) { return ( indices[ 0 ] * _spread + _offset ) * _translation; }
+    /** {@inheritDoc} */
+    @Override public final int indexOfIndices( int[] indices ) { return ( indices[ 0 ] * _spread + _offset ) * _translation; }
 
-    @Override
-    public final int indexOfIndices( int d1 ) { return ( d1 * _spread + _offset ) * _translation; }
+    /** {@inheritDoc} */
+    @Override public final int indexOfIndices( int d1 ) { return ( d1 * _spread + _offset ) * _translation; }
 
 }
