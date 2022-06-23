@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- *  This Device implementation is responsible for reading and or writing
+ *  This {@link Device} implementation is responsible for reading and or writing
  *  tensors to a given directory.
  *  The directory which ought to be governed by an instance of this
  *  class has to be passed to the constructor (as relative path) after which the device
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  *  Therefore, an implementation might also represent a simple
  *  storage device like your local SSD ord HDD...
 */
-public class FileDevice extends AbstractBaseDevice<Object>
+public final class FileDevice extends AbstractBaseDevice<Object>
 {
     private static final Logger _LOG = LoggerFactory.getLogger(FileDevice.class);
 
@@ -260,7 +260,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
         return true;
     }
 
-
+    @Override
     public String toString() {
         return this.getClass().getSimpleName()+"[directory=" + _directory + ",stored=" + _stored + ",loadable=" + _loadable + ",loaded=" + _loaded + "]";
     }
