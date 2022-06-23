@@ -66,12 +66,12 @@ public final class Sliced0DConfiguration extends AbstractNDC //:= IMMUTABLE
     @Override public int offset( int i ) { return _offset; }
 
     /** {@inheritDoc} */
-    @Override public int indexOfIndex(int index) {
+    @Override public int indexOfIndex( int index ) {
         return index + _offset;
     }
 
     /** {@inheritDoc} */
-    @Override public int[] indicesOfIndex(int index) { return new int[]{ index }; }
+    @Override public int[] indicesOfIndex( int index ) { return new int[]{ index }; }
 
     /** {@inheritDoc} */
     @Override public int indexOfIndices(int[] indices) { return indices[ 0 ] + _offset; }

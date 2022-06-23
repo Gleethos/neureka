@@ -10,74 +10,47 @@ public final class Simple0DConfiguration extends AbstractNDC //:= IMMUTABLE
 
     private Simple0DConfiguration() {}
 
-    @Override
-    public final int rank() {
-        return 1;
-    }
 
-    @Override
-    public final int[] shape() {
-        return new int[]{1};
-    }
+    /** {@inheritDoc} */
+    @Override public int rank() { return 1; }
 
-    @Override
-    public final int shape( int i ) {
-        return 1;
-    }
+    /** {@inheritDoc} */
+    @Override public int[] shape() { return new int[]{1}; }
 
-    @Override
-    public final int[] indicesMap() {
-        return new int[]{1};
-    }
+    /** {@inheritDoc} */
+    @Override public int shape( int i ) { return 1; }
 
-    @Override
-    public final int indicesMap(int i ) {
-        return 1;
-    }
+    /** {@inheritDoc} */
+    @Override public int[] indicesMap() { return new int[]{1}; }
 
-    @Override
-    public final int[] translation() {
-        return new int[]{1};
-    }
+    /** {@inheritDoc} */
+    @Override public int indicesMap( int i ) { return 1; }
 
-    @Override
-    public final int translation( int i ) {
-        return 1;
-    }
+    /** {@inheritDoc} */
+    @Override public int[] translation() { return new int[]{1}; }
 
-    @Override
-    public final int[] spread() {
-        return new int[]{1};
-    }
+    /** {@inheritDoc} */
+    @Override public int translation( int i ) { return 1; }
 
-    @Override
-    public final int spread( int i ) {
-        return 1;
-    }
+    /** {@inheritDoc} */
+    @Override public int[] spread() { return new int[]{1}; }
 
-    @Override
-    public final int[] offset() {
-        return new int[]{0};
-    }
+    /** {@inheritDoc} */
+    @Override public int spread( int i ) { return 1; }
 
-    @Override
-    public final int offset( int i ) {
-        return 0;
-    }
+    /** {@inheritDoc} */
+    @Override public int[] offset() { return new int[]{0}; }
 
-    @Override
-    public final int indexOfIndex(int index) {
-        return index;
-    }
+    /** {@inheritDoc} */
+    @Override public int offset( int i ) { return 0; }
 
-    @Override
-    public final int[] indicesOfIndex(int index) {
-        return new int[]{index};
-    }
+    /** {@inheritDoc} */
+    @Override public int indexOfIndex( int index ) { return index; }
 
-    @Override
-    public final int indexOfIndices(int[] indices) {
-        return indices[ 0 ];
-    }
+    /** {@inheritDoc} */
+    @Override public int[] indicesOfIndex( int index ) { return new int[]{index}; }
+
+    /** {@inheritDoc} */
+    @Override public int indexOfIndices(int[] indices) { return indices[ 0 ]; }
 
 }

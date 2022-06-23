@@ -21,50 +21,50 @@ public class VirtualNDConfiguration extends AbstractNDC
         return _cached( new VirtualNDConfiguration( shape ) );
     }
 
-    @Override
-    public final int rank() { return _shape.length; }
+    /** {@inheritDoc} */
+    @Override public final int rank() { return _shape.length; }
 
-    @Override
-    public final int[] shape() { return _shape; }
+    /** {@inheritDoc} */
+    @Override public final int[] shape() { return _shape; }
 
-    @Override
-    public final int shape( int i ) { return _shape[ i ]; }
+    /** {@inheritDoc} */
+    @Override public final int shape( int i ) { return _shape[ i ]; }
 
-    @Override
-    public final int[] indicesMap() { return new int[rank()]; }
+    /** {@inheritDoc} */
+    @Override public final int[] indicesMap() { return new int[rank()]; }
 
-    @Override
-    public final int indicesMap( int i ) { return 0; }
+    /** {@inheritDoc} */
+    @Override public final int indicesMap( int i ) { return 0; }
 
-    @Override
-    public final int[] translation() { return new int[rank()]; }
+    /** {@inheritDoc} */
+    @Override public final int[] translation() { return new int[rank()]; }
 
-    @Override
-    public final int translation( int i ) { return 0; }
+    /** {@inheritDoc} */
+    @Override public final int translation( int i ) { return 0; }
 
-    @Override
-    public final int[] spread() { return new int[rank()]; }
+    /** {@inheritDoc} */
+    @Override public final int[] spread() { return new int[rank()]; }
 
-    @Override
-    public final int spread( int i ) { return 0; }
+    /** {@inheritDoc} */
+    @Override public final int spread( int i ) { return 0; }
 
-    @Override
-    public final int[] offset() { return new int[rank()]; }
+    /** {@inheritDoc} */
+    @Override public final int[] offset() { return new int[rank()]; }
 
-    @Override
-    public final int offset( int i ) { return 0; }
+    /** {@inheritDoc} */
+    @Override public final int offset( int i ) { return 0; }
 
-    @Override
-    public final int indexOfIndex(int index) { return 0; }
+    /** {@inheritDoc} */
+    @Override public final int indexOfIndex( int index ) { return 0; }
 
-    @Override
-    public final int[] indicesOfIndex(int index) { return new int[rank()]; }
+    /** {@inheritDoc} */
+    @Override public final int[] indicesOfIndex( int index ) { return new int[rank()]; }
 
-    @Override
-    public final int indexOfIndices(int[] indices) { return 0; }
+    /** {@inheritDoc} */
+    @Override public final int indexOfIndices(int[] indices) { return 0; }
 
-    @Override
-    public final boolean isVirtual() { return true; }
+    /** {@inheritDoc} */
+    @Override public final boolean isVirtual() { return true; }
 
 
 }

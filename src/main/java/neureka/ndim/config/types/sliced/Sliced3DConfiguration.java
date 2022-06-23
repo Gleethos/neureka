@@ -106,7 +106,7 @@ public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
 
     /** {@inheritDoc} */
     @Override
-    public final int indexOfIndex(int index) {
+    public final int indexOfIndex( int index ) {
         int indices1, indices2, indices3;
         indices1 = index / _indicesMap1;
         index %= _indicesMap1;
@@ -120,7 +120,7 @@ public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
 
     /** {@inheritDoc} */
     @Override
-    public final int[] indicesOfIndex(int index) {
+    public final int[] indicesOfIndex( int index ) {
         int indices1, indices2, indices3;
         indices1 = index / _indicesMap1;
         index %= _indicesMap1;

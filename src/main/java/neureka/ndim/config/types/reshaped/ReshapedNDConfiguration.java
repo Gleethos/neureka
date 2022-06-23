@@ -42,72 +42,53 @@ public class ReshapedNDConfiguration extends AbstractNDC
         return _cached( new ReshapedNDConfiguration(shape, translation, indicesMap) );
     }
 
-    @Override
-    public final int rank() {
-        return _shape.length;
-    }
 
-    @Override
-    public final int[] shape() {
-        return _shape;
-    }
+    /** {@inheritDoc} */
+    @Override public final int rank() { return _shape.length; }
 
-    @Override
-    public final int shape( int i ) {
-        return _shape[ i ];
-    }
+    /** {@inheritDoc} */
+    @Override public final int[] shape() { return _shape; }
 
-    @Override
-    public final int[] indicesMap() {
-        return _indicesMap;
-    }
+    /** {@inheritDoc} */
+    @Override public final int shape( int i ) { return _shape[ i ]; }
 
-    @Override
-    public final int indicesMap(int i ) {
-        return _indicesMap[ i ];
-    }
+    /** {@inheritDoc} */
+    @Override public final int[] indicesMap() { return _indicesMap; }
 
-    @Override
-    public final int[] translation() {
-        return _translation;
-    }
+    /** {@inheritDoc} */
+    @Override public final int indicesMap(int i ) { return _indicesMap[ i ]; }
 
-    @Override
-    public final int translation( int i ) {
-        return _translation[ i ];
-    }
+    /** {@inheritDoc} */
+    @Override public final int[] translation() { return _translation; }
 
-    @Override
-    public final int[] spread() {
+    /** {@inheritDoc} */
+    @Override public final int translation( int i ) { return _translation[ i ]; }
+
+    /** {@inheritDoc} */
+    @Override public final int[] spread() {
         int[] spread = new int[rank()];
         Arrays.fill(spread, 1);
         return spread;
     }
 
-    @Override
-    public final int spread( int i ) {
-        return 1;
-    }
+    /** {@inheritDoc} */
+    @Override public final int spread( int i ) { return 1; }
 
-    @Override
-    public final int[] offset() {
+    /** {@inheritDoc} */
+    @Override public final int[] offset() {
         int[] offset = new int[rank()];
         Arrays.fill(offset, 0);
         return offset;
     }
 
-    @Override
-    public final int offset( int i ) {
-        return 0;
-    }
+    /** {@inheritDoc} */
+    @Override public final int offset( int i ) { return 0; }
 
-    @Override
-    public final int indexOfIndex( int index ) {
-        return indexOfIndices( indicesOfIndex( index ) );
-    }
+    /** {@inheritDoc} */
+    @Override public final int indexOfIndex( int index ) { return indexOfIndices( indicesOfIndex( index ) ); }
 
-    @Override
-    public final int[] indicesOfIndex( int index ) {
+    /** {@inheritDoc} */
+    @Override public final int[] indicesOfIndex( int index ) {
         int[] indices = new int[ _shape.length ];
         for ( int ii = 0; ii < rank(); ii++ ) {
             indices[ ii ] += index / _indicesMap[ ii ];
@@ -116,8 +97,8 @@ public class ReshapedNDConfiguration extends AbstractNDC
         return indices;
     }
 
-    @Override
-    public final int indexOfIndices( int[] indices ) {
+    /** {@inheritDoc} */
+    @Override public final int indexOfIndices( int[] indices ) {
         int i = 0;
         for ( int ii = 0; ii < _shape.length; ii++ )
             i += indices[ ii ] * _translation[ ii ];
