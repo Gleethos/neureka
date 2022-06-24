@@ -8,11 +8,13 @@ public class Simple2DConfiguration extends D2C //:= IMMUTABLE
     /**
      *  The shape of the NDArray.
      */
-    protected final int _shape1, _shape2;
+    protected final int _shape1;
+    protected final int _shape2;
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation1, _translation2;
+    private final int _translation1;
+    private final int _translation2;
 
 
     protected Simple2DConfiguration(

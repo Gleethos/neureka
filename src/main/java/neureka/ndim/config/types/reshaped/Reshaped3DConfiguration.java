@@ -6,15 +6,21 @@ public class Reshaped3DConfiguration extends D3C {
     /**
      *  The shape of the NDArray.
      */
-    protected final int _shape1, _shape2, _shape3;
+    protected final int _shape1;
+    protected final int _shape2;
+    protected final int _shape3;
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation1, _translation2, _translation3;
+    private final int _translation1;
+    private final int _translation2;
+    private final int _translation3;
     /**
      *  The mapping of idx array.
      */
-    private final int _indicesMap1, _indicesMap2, _indicesMap3; // Maps index integer to array like translation. Used to avoid distortion when slicing!
+    private final int _indicesMap1;
+    private final int _indicesMap2;
+    private final int _indicesMap3; // Maps index integer to array like translation. Used to avoid distortion when slicing!
 
 
     protected Reshaped3DConfiguration(

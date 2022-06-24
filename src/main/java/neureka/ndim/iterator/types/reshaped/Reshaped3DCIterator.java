@@ -3,7 +3,7 @@ package neureka.ndim.iterator.types.reshaped;
 import neureka.ndim.config.types.reshaped.Reshaped3DConfiguration;
 import neureka.ndim.iterator.NDIterator;
 
-public class Reshaped3DCIterator extends Reshaped3DConfiguration implements NDIterator
+public final class Reshaped3DCIterator extends Reshaped3DConfiguration implements NDIterator
 {
     private int _d1 = 0;
     private int _d2 = 0;
@@ -14,8 +14,8 @@ public class Reshaped3DCIterator extends Reshaped3DConfiguration implements NDIt
     }
 
 
-    @Override
-    public final void increment() {
+    /** {@inheritDoc} */
+    @Override public final void increment() {
         _d3++;
         if ( _d3 == _shape3 ) {
             _d3 = 0;
@@ -27,8 +27,8 @@ public class Reshaped3DCIterator extends Reshaped3DConfiguration implements NDIt
         }
     }
 
-    @Override
-    public final void decrement() {
+    /** {@inheritDoc} */
+    @Override public final void decrement() {
         _d3--;
         if ( _d3 == -1 ) {
             _d3 = _shape3 - 1;
@@ -40,30 +40,24 @@ public class Reshaped3DCIterator extends Reshaped3DConfiguration implements NDIt
         }
     }
 
-    @Override
-    public final int i() {
-        return this.indexOfIndices( _d1, _d2, _d3 );
-    }
+    /** {@inheritDoc} */
+    @Override public final int i() { return this.indexOfIndices( _d1, _d2, _d3 ); }
 
-    @Override
-    public final int get( int axis ) {
-        return ( axis == 0 ) ? _d1 : ( axis == 1 ) ? _d2 : _d3;
-    }
+    /** {@inheritDoc} */
+    @Override public final int get( int axis ) { return ( axis == 0 ? _d1 : ( axis == 1 ? _d2 : _d3 ) ); }
 
-    @Override
-    public final int[] get() {
-        return new int[]{ _d1, _d2, _d3 };
-    }
+    /** {@inheritDoc} */
+    @Override public final int[] get() { return new int[]{ _d1, _d2, _d3 }; }
 
-    @Override
-    public final void set( int axis, int position ) {
+    /** {@inheritDoc} */
+    @Override public final void set( int axis, int position ) {
         if ( axis == 0 ) _d1 = position;
         else if ( axis == 1 ) _d2 = position;
         else _d3 = position;
     }
 
-    @Override
-    public final void set( int[] indices ) {
+    /** {@inheritDoc} */
+    @Override public final void set( int[] indices ) {
         _d1 = indices[0];
         _d2 = indices[1];
         _d3 = indices[2];

@@ -15,55 +15,35 @@ public final class SlicedNDIterator implements NDIterator
         _conf = ndc;
     }
 
-    @Override
-    public final int shape( int i ) {
-        return _shape[i];
-    }
+    /** {@inheritDoc} */
+    @Override public final int shape( int i ) { return _shape[i]; }
+
+    /** {@inheritDoc} */
+    @Override public final int[] shape() { return _shape; }
+
+    /** {@inheritDoc} */
+    @Override public final void increment() { NDConfiguration.Utility.increment( _indices, _shape ); }
+
+    /** {@inheritDoc} */
+    @Override public final void decrement() { NDConfiguration.Utility.decrement( _indices, _shape ); }
+
+    /** {@inheritDoc} */
+    @Override public final int i() { return _conf.indexOfIndices(_indices); }
+
+    /** {@inheritDoc} */
+    @Override public final int get( int axis ) { return _indices[ axis ]; }
 
     @Override
-    public final int[] shape() {
-        return _shape;
-    }
+    public final int[] get() { return _indices; }
 
     @Override
-    public final void increment() {
-        NDConfiguration.Utility.increment( _indices, _shape );
-    }
+    public final void set( int axis, int position ) { _indices[ axis ] = position; }
 
     @Override
-    public final void decrement() {
-        NDConfiguration.Utility.decrement( _indices, _shape );
-    }
+    public final void set( int[] indices ) { System.arraycopy( indices, 0, _indices, 0, indices.length ); }
 
     @Override
-    public final int i() {
-        return _conf.indexOfIndices(_indices);
-    }
-
-    @Override
-    public final int get( int axis ) {
-        return _indices[ axis ];
-    }
-
-    @Override
-    public final int[] get() {
-        return _indices;
-    }
-
-    @Override
-    public final void set( int axis, int position ) {
-        _indices[ axis ] = position;
-    }
-
-    @Override
-    public final void set( int[] indices ) {
-        System.arraycopy( indices, 0, _indices, 0, indices.length );
-    }
-
-    @Override
-    public final int rank() {
-        return _shape.length;
-    }
+    public final int rank() { return _shape.length; }
 
 
 

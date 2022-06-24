@@ -31,7 +31,7 @@ public abstract class AbstractNDC implements NDConfiguration
      *  Implementations of {@link NDConfiguration} are expected to be immutable which allows us to have them be
      *  shared between tensors (because they are read only, meaning no side-effects).
      */
-    private static final Cache<NDConfiguration> _CACHED_NDCS;
+    private static final Cache<NDConfiguration> _CACHED_NDCS; // Cached ND-Configurations.
     static
     {
         _CACHED_NDCS = new Cache<>(512);
@@ -42,7 +42,7 @@ public abstract class AbstractNDC implements NDConfiguration
      *  Warning! This can of course become dangerous when these arrays are being shared and modified.
      *  Please copy them when exposing them to the user.
      */
-    private static final Cache<int[]> _CACHED_INT_ARRAYS;
+    private static final Cache<int[]> _CACHED_INT_ARRAYS; // ND-Configurations are often based on integer arrays representing things like shape, strides, etc...
     static
     {
         _CACHED_INT_ARRAYS = new Cache<>(512);

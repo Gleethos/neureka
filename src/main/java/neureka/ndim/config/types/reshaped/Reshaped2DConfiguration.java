@@ -7,15 +7,18 @@ public class Reshaped2DConfiguration extends D2C
     /**
      *  The shape of the NDArray.
      */
-    protected final int _shape1, _shape2;
+    protected final int _shape1;
+    protected final int _shape2;
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation1, _translation2;
+    private final int _translation1;
+    private final int _translation2;
     /**
      *  The mapping for the indices array.
      */
-    private final int _indicesMap1, _indicesMap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
+    private final int _indicesMap1;
+    private final int _indicesMap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
 
 
     protected Reshaped2DConfiguration(

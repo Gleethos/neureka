@@ -7,11 +7,15 @@ public class Simple3DConfiguration extends D3C //:= IMMUTABLE
     /**
      *  The shape of the NDArray.
      */
-    protected final int _shape1, _shape2, _shape3;
+    protected final int _shape1;
+    protected final int _shape2;
+    protected final int _shape3;
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation1, _translation2, _translation3;
+    private final int _translation1;
+    private final int _translation2;
+    private final int _translation3;
 
     protected Simple3DConfiguration(
             int[] shape,
