@@ -64,6 +64,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 
     protected Logger _log;
 
+
     protected AbstractDevice() { _log = LoggerFactory.getLogger( getClass() ); }
 
     /**
@@ -128,18 +129,15 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     }
 
     @Override
-    public <T extends V> Access<T> access( Tsr<T> tensor )
-    {
+    public <T extends V> Access<T> access( Tsr<T> tensor ) {
         return new Access<T>() {
-            @Override
-            public Writer write(T item) {
+            @Override public Writer write(T item) {
                 return new Writer() {
                     @Override public void intoRange(int start, int limit) { _writeItem( tensor, item, start, limit-start ); }
                     @Override public void fully() { _writeItem( tensor, item, 0, tensor.size() ); }
                 };
             }
-            @Override
-            public Writer writeFrom(Object array, int offset) {
+            @Override public Writer writeFrom( Object array, int offset ) {
                 return new Writer() {
                     @Override public void intoRange( int start, int limit ) { _writeArray( tensor, array, offset, start, limit-start ); }
                     @Override public void fully() { _writeArray( tensor, array, offset, 0, tensor.size() ); }
@@ -153,8 +151,6 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             @Override public void updateNDConf() { _updateNDConf( tensor ); }
         };
     }
-
-
 
     /**
      *  This method is used internally mostly and should not be used in most cases.    <br><br>

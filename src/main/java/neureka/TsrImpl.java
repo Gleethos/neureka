@@ -1191,7 +1191,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setValue(Object value )
+    public Tsr<V> setValue( Object value )
     {
         LogUtil.nullArgCheck( value, "value", Object.class );
         boolean success = true;
@@ -1200,7 +1200,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             value = DataConverter.get().convert( value, this.valueClass() );
             this.getUnsafe().setDataAt( 0, (V) value );
         } else if ( value.getClass().isArray() ) {
-            if ( this.isOutsourced() ) getDevice().access(this).writeFrom(value);
+            if ( this.isOutsourced() ) getDevice().access(this).writeFrom( value );
             else {
                 if ( _getData() == null ) {
                     if      ( value instanceof float[]  ) _setDataType( DataType.of( F32.class ) );
