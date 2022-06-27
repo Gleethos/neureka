@@ -10,5 +10,4 @@ in a BDD like structure
 instead of plain old unit tests.
 Read more about it [here](https://spockframework.org/) or visit the test suite
 of this project to see Neureka in action.
-(Also, there is a plugin for IntelliJ which does some nice syntax highlighting!)
 
