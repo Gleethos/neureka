@@ -807,12 +807,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         "shape=" + (getPayloadShape() != null ? getPayloadShape().stream().map(Object::toString).collect(Collectors.joining("x")) : "?" ) +
                     "]";
         }
-        if ( m.contains( "g" ) ) {
-            String flags = m.replace( "g", "" );
-            return "]> LOCK: " + getLock() + " |> GRAPH:\n]\n" + _toString( "]    0", true, flags ) + "\n]\n]|END|>";
-        }
-        String nid = this.getClass().getSimpleName() + ( m.contains( "n" ) ? "#" + Long.toHexString( getNodeID() ) : "" );
-        if ( m.contains( "v" ) ) {
+        if ( m.contains( "g" ) )
+            return "]> LOCK: " + getLock() + " |> GRAPH:\n]\n" + _toString( "]    0", true, "v" ) + "\n]\n]|END|>";
+
+        String nid = this.getClass().getSimpleName();// + ( m.contains( "n" ) ? "#" + Long.toHexString( getNodeID() ) : "" );
+
+        if ( m.contains( "v" ) )
             return " " + nid + "[ "
                     + ( _function == null ? "" : _function + " => " )
                     + (
@@ -834,30 +834,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                                 .setPrefix(  ""      )
                                                 .setHasSlimNumbers(  false      )
                                 )
-                    ) + ", type='" + this.type() + "'" +
+                    ) +
+                    ", type='" + this.type() + "'" +
                     "] ";
-        } else
-            return
-                    "[" + nid + "]:( " + (
-                            ( payload == null )
-                                    ? "NULL"
-                                    : payload.toString(
-                                        settings -> settings
-                                             .setRowLimit(  3  )
-                                             .setIsScientific(  true   )
-                                             .setIsMultiline(  false  )
-                                             .setHasGradient(  false    )
-                                             .setCellSize(  1  )
-                                             .setHasValue( true )
-                                             .setHasRecursiveGraph( false   )
-                                             .setHasDerivatives(  false      )
-                                             .setHasShape( true            )
-                                             .setIsCellBound(  false       )
-                                             .setPostfix(  ""      )
-                                             .setPrefix(  ""      )
-                                             .setHasSlimNumbers(  false      )
-                                    )
-                    ) + " )";
+
+        throw new IllegalStateException();
     }
 
     /**
