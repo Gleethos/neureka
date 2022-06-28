@@ -47,6 +47,7 @@ import neureka.backend.api.Result;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.common.composition.Component;
+import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.dtype.DataType;
 
@@ -792,51 +793,55 @@ public class GraphNode<V> implements Component<Tsr<V>>
     }
 
     @Override
-    public String toString() { return toString( "" ); }
+    public String toString() { return toString( Print.SIMPLE ); }
+
+    public enum Print { SIMPLE, COMPACT, FANCY }
 
     /**
-     * @param m Stands for 'mode' and is expected to contain certain letters which are used as settings.
+     * @param mode The format of the string representation.
      * @return Returns a String representation of this node.
      */
-    public String toString( String m ) {
+    public String toString( Print mode ) {
+        LogUtil.nullArgCheck( mode, "mode", Print.class );
         Tsr<?> payload = getPayload();
-        if ( m.equals("") ) {
-            return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
+        switch ( mode ) {
+            case SIMPLE:
+                return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
                         "parents=[" + (_parents == null ? "?" : Arrays.stream(_parents).map(GraphNode::getPayload).map(t -> (t==null ? "?" : t.shape().stream().map(Object::toString).collect(Collectors.joining("x")))).collect(Collectors.joining(", "))) + "]," +
                         "function=" +_function + "," +
                         "shape=" + (getPayloadShape() != null ? getPayloadShape().stream().map(Object::toString).collect(Collectors.joining("x")) : "?" ) +
-                    "]";
-        }
-        if ( m.contains( "g" ) )
-            return "]> LOCK: " + getLock() + " |> GRAPH:\n]\n" + _toString( "]    0", true, "v" ) + "\n]\n]|END|>";
+                        "]";
 
-        String nid = this.getClass().getSimpleName();// + ( m.contains( "n" ) ? "#" + Long.toHexString( getNodeID() ) : "" );
+            case FANCY:
+                return "]> LOCK: " + getLock() + " |> GRAPH:\n]\n" + _toString( "]    0", true, Print.COMPACT ) + "\n]\n]|END|>";
 
-        if ( m.contains( "v" ) )
-            return " " + nid + "[ "
-                    + ( _function == null ? "" : _function + " => " )
-                    + (
-                            payload == null
+            case COMPACT:
+                String nid = this.getClass().getSimpleName();// + ( m.contains( "n" ) ? "#" + Long.toHexString( getNodeID() ) : "" );
+                return " " + nid + "[ "
+                        + ( _function == null ? "" : _function + " => " )
+                        + (
+                        payload == null
                                 ? "?"
                                 : payload.toString(
-                                    settings -> settings
-                                                .setRowLimit(  3  )
-                                                .setIsScientific(  true   )
-                                                .setIsMultiline(  false  )
-                                                .setHasGradient(  false    )
-                                                .setCellSize(  1  )
-                                                .setHasValue( true )
-                                                .setHasRecursiveGraph( false   )
-                                                .setHasDerivatives(  false      )
-                                                .setHasShape( true            )
-                                                .setIsCellBound(  false       )
-                                                .setPostfix(  ""      )
-                                                .setPrefix(  ""      )
-                                                .setHasSlimNumbers(  false      )
-                                )
-                    ) +
-                    ", type='" + this.type() + "'" +
-                    "] ";
+                                settings -> settings
+                                        .setRowLimit(  3  )
+                                        .setIsScientific(  true   )
+                                        .setIsMultiline(  false  )
+                                        .setHasGradient(  false    )
+                                        .setCellSize(  1  )
+                                        .setHasValue( true )
+                                        .setHasRecursiveGraph( false   )
+                                        .setHasDerivatives(  false      )
+                                        .setHasShape( true            )
+                                        .setIsCellBound(  false       )
+                                        .setPostfix(  ""      )
+                                        .setPrefix(  ""      )
+                                        .setHasSlimNumbers(  false      )
+                        )
+                ) +
+                ", type='" + this.type() + "'" +
+                "] ";
+        }
 
         throw new IllegalStateException();
     }
@@ -851,17 +856,17 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param isLast Tells if this is the last parent node of this child.
      * @return A indented multi-line tree-like String representation of the computation graph.
      */
-    private String _toString( String deep, boolean isLast, String flags ) {
+    private String _toString( String deep, boolean isLast, Print mode ) {
         String delimiter = ( isLast ? ("    ") : ("|   ") );
         String arrow = ( (char) 187 ) + "" + ( _parents != null ? String.valueOf( _parents.length ) : "0" ) + ( (char) 187 );
-        StringBuilder asString = new StringBuilder( deep + arrow + toString( flags ) );
+        StringBuilder asString = new StringBuilder( deep + arrow + toString( mode ) );
         deep = deep.substring( 0, deep.length() - 1 );
         if ( _parents != null ) {
             asString.append( "\n" ).append( deep ).append( isLast ? "   \\\n" : "|  \\\n" );
             for ( int i = 0; i < _parents.length; i++ ) {
                 boolean last = ( i == _parents.length - 1 );
                 asString.append( i != 0 ? deep + delimiter + "|\n" : "" );
-                asString.append( _parents[ i ]._toString(deep + delimiter + i, last, flags) ).append( "\n" );
+                asString.append( _parents[ i ]._toString(deep + delimiter + i, last, mode) ).append( "\n" );
             }
             asString = new StringBuilder( asString.substring( 0, asString.length() - 1 ) );
         }

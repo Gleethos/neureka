@@ -2,6 +2,7 @@ package it.autograd
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.autograd.GraphNode
 import neureka.calculus.Function
 import neureka.devices.Device
 import neureka.devices.host.CPU
@@ -109,7 +110,7 @@ class Autograd_NN_Spec extends Specification
             def graph
             6.times {
                 def node = forwardAndBackward(X).graphNode
-                graph = node.toString("gv")
+                graph = node.toString(GraphNode.Print.FANCY)
             }
 
         then :
@@ -225,7 +226,7 @@ class Autograd_NN_Spec extends Specification
                 def graph
                 6.times {
                     def node = forwardAndBackward(X).graphNode
-                    graph = node.toString("gv")
+                    graph = node.toString(GraphNode.Print.FANCY)
                 }
 
             then :
@@ -353,7 +354,7 @@ class Autograd_NN_Spec extends Specification
             def graph
             6.times {
                 def node = forwardAndBackward(X).graphNode
-                graph = node.toString("gv")
+                graph = node.toString(GraphNode.Print.FANCY)
             }
 
         then :
