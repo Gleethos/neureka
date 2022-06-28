@@ -92,7 +92,8 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.StreamSupport;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  *  {@link Tsr} is a 3 letter abbreviation of the word "tensor", a mathematical concept.
@@ -977,8 +978,8 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     default boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
         if ( changeRequest.type() == IsBeing.ADDED ) {
             if (
-                    changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||
-                            Arrays.hashCode(changeRequest.getNewOwner().getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )
+                changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||
+                Arrays.hashCode(changeRequest.getNewOwner().getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )
             ) {
                 throw new IllegalArgumentException(
                         "Trying to attach a tensor as gradient component to a tensor with different shape."
@@ -1067,20 +1068,22 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     |   ---------------------------------------
     */
 
+    default Stream<V> stream() {
+        boolean executeInParallel = ( this.size() > 1_000 );
+        IntStream indices = IntStream.range(0,size());
+        return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::getValueAt);
+    }
+
     default boolean every( Predicate<V> predicate ) {
-        return StreamSupport.stream(
-                    Spliterators.spliteratorUnknownSize(this.iterator(), Spliterator.ORDERED),
-                    true
-                )
-                .allMatch(predicate);
+        return stream().allMatch(predicate);
     }
 
     default boolean any( Predicate<V> predicate ) {
-        return StreamSupport.stream(
-                        Spliterators.spliteratorUnknownSize(this.iterator(), Spliterator.ORDERED),
-                        true
-                )
-                .anyMatch(predicate);
+        return stream().anyMatch(predicate);
+    }
+
+    default int count( Predicate<V> predicate ) {
+        return (int) stream().filter(predicate).count();
     }
 
     /*==================================================================================================================
