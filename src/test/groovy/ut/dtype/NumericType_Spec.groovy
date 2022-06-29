@@ -20,7 +20,7 @@ import spock.lang.Title
 
     This specification covers the behavior of the NumericType interface
     which is responsible for modelling numeric data types which may or may not be native to the JVM. 
-    These implementations however do not model in the traditional OO style
+    These implementations however do not model them in the traditional OO style
     but merely expose useful utility method for converting and representing 
     these numeric data types using JVM types.
 
@@ -188,7 +188,6 @@ class NumericType_Spec extends Specification
 
         and :
             num.holderArrayType() == holderArrayType
-
 
         where :
             num        |  from             ||  expected        | holderType     |  holderArrayType

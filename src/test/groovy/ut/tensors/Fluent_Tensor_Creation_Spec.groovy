@@ -5,7 +5,7 @@ import neureka.dtype.DataType
 import neureka.ndim.Filler
 import spock.lang.Specification
 
-class Tensor_Building_Spec extends Specification
+class Fluent_Tensor_Creation_Spec extends Specification
 {
     def 'Tensors can be created fluently.'(
             Class<Object> type, Object value, Object data
