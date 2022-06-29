@@ -12,15 +12,27 @@ Spock specifications](Example_Spec.groovy).
 Neureka's testsuite is divided into the following 3 packages : <br>
 
 - `st` : System-Tests : *high level system stress tests/scenarios*
-- `it` : Integration-Tests : *cross component tests/scenarios*
+- `it` : Integration-Tests : *cross component/module tests/scenarios*
 - `ut` : Unit-Tests : *single feature tests/scenarios*
 
-Package divisions within those test packages mirror those found in the <br>
+The package divisions within these three test packages mirror those found in the <br>
 main code base, namely : <br>
  ``devices``, ``autograd``, ``calculus``, ``framing``, ``ndim``, ``optimization``, ...<br>
 Any of these package names might be present in the three test packages, <br>
-however they don't have to be either if a related specification has not yet been implemented <br>
-or simply does not make sense for a given reason. <br>
+however they don't have to be, either because a related specification has not yet been implemented <br>
+or simply does not make sense for whatever reason. <br>
+
+
+## When is Something a Unit? ##
+
+The terms **module** or **component** mentioned earlier
+is commonly what's considered as a testable unit.
+However, this project does not contain
+highly independent modules in the traditional
+sense, which is why the vast majority of tests
+are unit tests. The integration and system tests found
+in this suite on the other hand,
+distinguish themselves merely by being more complex and compute intensive tests.
 
 ---
 
