@@ -282,9 +282,9 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
 
     /**
      *  Implementations of this represent the access to tensors stored on a device
-     *  in order to read from or write to said tensor.
-     *  Warning: This API exposes the true underlying data of a tensor
-     *  which does not take into account slice, reshape or stride information...
+     *  in order to read from or write to said tensor. <br>
+     *  <b>Warning: This API exposes the true underlying data of a tensor
+     *  which does not take into account slice, reshape or stride information...</b>
      *
      * @param <V> The type parameter of the tensor accessed by an instance of this.
      */
@@ -364,17 +364,25 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     interface Writer
     {
         /**
+         *  Writes whatever kind of data was previously specified, to the tensors'
+         *  data at the position targeted by the provided {@code index}.
+         *
          * @param index The position at which data should be written to.
          */
-        default void at(int index) { intoRange(index, index+1); }
+        default void at( int index ) { intoRange( index, index + 1 ); }
         /**
+         *  Writes whatever kind of data was previously specified, to the tensors'
+         *  data into the range targeted by the provided {@code start} and {@code limit}.
+         *
          * @param start The first position of the writing cursor in the accessed tensor.
          * @param limit The exclusive limit of the range which should be written to.
          */
-        void intoRange(int start, int limit);
+        void intoRange( int start, int limit );
         /**
          *  A convenience method for specifying that the entire data array of
          *  the accessed tensor should be written to.
+         *  This is equivalent to calling {@link #intoRange(int, int)} with the arguments
+         *  {@code 0} and {@code tensor.size()}.
          */
         void fully();
     }

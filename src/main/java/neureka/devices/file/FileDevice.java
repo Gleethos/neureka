@@ -19,23 +19,30 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- *  This {@link Device} implementation is responsible for reading and or writing
- *  tensors to a given directory.
+ *  The {@link FileDevice} is a {@link Device} implementation
+ *  responsible for reading tensors from and or writing them to a given directory. <br><br>
+ *
+ *  The abstraction provided by the "{@link Device}" interface
+ *  does not necessitate that concrete implementations
+ *  represent accelerator hardware. <br>
+ *  Generally speaking a device is a thing that stores tensors and optionally
+ *  also expose the {@link neureka.devices.Device.Access} API for
+ *  data access as well as an API useful for implementing operations...
+ *  But, an implementation might also represent a simple
+ *  storage device like your local SSD ord HDD, or in this case, a directory...  <br><br>
+ *
  *  The directory which ought to be governed by an instance of this
- *  class has to be passed to the constructor (as relative path) after which the device
- *  reads the files within this directory making the tensors accessible.
+ *  class has to be passed to the {@link #at(String)} factory method (as relative path),
+ *  after which the files within this directory will be read, making potential tensors accessible.
  *  Tensors on a file device however are not loaded onto memory entirely, instead
  *  a mere file handle for each "file tensor" is being instantiated.
  *  Therefore, tensors that are stored on this device are not fit for computation.
- *  The "get(..)" method has to be called instead.
+ *  The {@link #restore(Tsr)} method has to be called in order to load the provided
+ *  tensor back into RAM. <br><br>
  *
- *  The abstraction provided by the "Device" interface
- *  does not necessitate that concrete implementations
- *  represent accelerator hardware. <br>
- *  Generally speaking a device is a thing that
- *  stores tensors and optionally also handles "ExecutionCall" instances.
- *  Therefore, an implementation might also represent a simple
- *  storage device like your local SSD ord HDD...
+ *  A {@link FileDevice} can load PNG, JPG and IDX files. By default, tensors will
+ *  be stored as IDX files if not explicitly specified otherwise. <br><br>
+ *
 */
 public final class FileDevice extends AbstractBaseDevice<Object>
 {
@@ -136,6 +143,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         _loaded.clear();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Device<Object> restore( Tsr<Object> tensor ) {
         LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);

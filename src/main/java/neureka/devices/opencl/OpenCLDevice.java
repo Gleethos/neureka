@@ -58,6 +58,7 @@ import neureka.common.utility.DataConverter;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.CLFunctionCompiler;
+import neureka.dtype.NumericType;
 import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
 import neureka.ndim.config.NDConfiguration;
@@ -349,17 +350,22 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public Device<Number> restore( Tsr<Number> tensor ) {
         if ( !this.has( tensor ) ) {
             String message = "The passed tensor cannot be restored from this OpenCL device " +
-                    "because the tensor is not stored on the device.\n";
+                                "because the tensor is not stored on the device.\n";
             _log.error(message);
             throw new IllegalArgumentException(message);
         }
-        double[] value = tensor.isVirtual()
-                ? DataConverter.Utility.floatToDouble(_value( new float[1], tensor, 0 ))
-                : DataConverter.Utility.floatToDouble(_value( new float[tensor.size()], tensor, 0 ));
+
+        Object value  = tensor.isVirtual()
+                            ? _value( new float[1], tensor, 0 )
+                            : _value( new float[tensor.size()], tensor, 0 );
+
+        Class<?> arrayType = Objects.requireNonNull(tensor.getDataType().getTypeClassInstance(NumericType.class)).holderArrayType();
+
+        value = DataConverter.get().convert( value, arrayType );
 
         this.free( tensor );
         tensor.forComponent( Tsr.class, this::restore );
-        tensor.setValue(value);
+        tensor.setValue( value );
         return this;
     }
 
@@ -369,11 +375,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return this;
     }
 
-    private <T extends Number> Device<Number> _store( Tsr<T> tensor, Tsr<T> parent, Runnable migration ) {
+    private <T extends Number> void _store(Tsr<T> tensor, Tsr<T> parent, Runnable migration ) {
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
         _add( tensor.getUnsafe().upcast(Number.class), parent.get(cl_tsr.class), migration);
         _tensors.add( tensor.getUnsafe().upcast(Number.class) );
-        return this;
     }
 
     private <T extends Number> void _add( Tsr<Number> tensor, cl_tsr<Number, T> parent, Runnable migration ) {

@@ -5,6 +5,9 @@ import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
 
+import java.util.function.Predicate
+import java.util.stream.Collectors
+
 @Title("Tensors play well with other data structures!")
 @Narrative('''
 

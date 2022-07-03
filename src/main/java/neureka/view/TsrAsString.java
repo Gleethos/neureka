@@ -292,7 +292,7 @@ public final class TsrAsString
                         base + delimiter + agent.partialDerivative().get().toString( _config.clone().setPrefix("").setPostfix("") ) + " " +
                         base + half + "]|:t{ " +
                         base + delimiter + (
-                            ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix("").setPostfix("") ) : t.toString("")
+                            ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix("").setPostfix("") ) : t.toString()
                         ) +
                         " " + base + half + "}, "
                     );

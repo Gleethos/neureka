@@ -66,8 +66,7 @@ import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.F32;
-import neureka.dtype.custom.F64;
+import neureka.dtype.custom.*;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.SmartSlicer;
 import neureka.framing.NDFrame;
@@ -391,7 +390,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setIsVirtual(boolean isVirtual ) {
+    public Tsr<V> setIsVirtual( boolean isVirtual ) {
 
         assert getNDConf() != null;
 
@@ -399,12 +398,12 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             // Currently, we avoid offloading the virtualization by restoring outsourced tensors into RAM...
             Device<V> device = this.get( Device.class );
             try {
-                // TODO: Fix this imperformant mess below:
+                // TODO: Fix this im-performant mess below:
                 if ( device != null ) device.restore( this );
             } catch ( Exception exception ) {
                 _LOG.error(
-                        "Tensor could not be restored from device component when changing flag 'isVirtual' to " + isVirtual + ".",
-                        exception
+                    "Tensor could not be restored from device component when changing flag 'isVirtual' to " + isVirtual + ".",
+                    exception
                 );
                 throw exception;
             }
@@ -1191,7 +1190,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setValue(Object value )
+    public Tsr<V> setValue( Object value )
     {
         LogUtil.nullArgCheck( value, "value", Object.class );
         boolean success = true;
@@ -1200,11 +1199,11 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             value = DataConverter.get().convert( value, this.valueClass() );
             this.getUnsafe().setDataAt( 0, (V) value );
         } else if ( value.getClass().isArray() ) {
-            if ( this.isOutsourced() ) getDevice().access(this).writeFrom(value);
+            if ( this.isOutsourced() ) getDevice().access(this).writeFrom( value );
             else {
                 if ( _getData() == null ) {
-                    if      ( value instanceof float[]  ) _setDataType( DataType.of( F32.class ) );
-                    else if ( value instanceof double[] ) _setDataType( DataType.of( F64.class ) );
+                    // This usually happens when a tensor was just freed from a device.
+                    // We need to set its data again so that it is no longer empty...
                     _setData( value );
                     return this;
                 } else {
