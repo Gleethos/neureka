@@ -60,7 +60,10 @@ public abstract class AbstractNDC implements NDConfiguration
      */
     protected static int[] _cacheArray( int[] data ) { return _CACHED_INT_ARRAYS.process( data ); }
 
-
+    /**
+     *   A factory method which creates and {@link NDConfiguration} instances best suited for the
+     *   provided raw configuration data...
+     */
     public static NDConfiguration construct (
             int[] shape,
             int[] translation,
@@ -196,7 +199,6 @@ public abstract class AbstractNDC implements NDConfiguration
             return _simpleReshape( newForm, this );
         else
             return new SimpleReshapeView( newForm, this );
-            //throw new IllegalStateException("Not ready");
     }
 
     @Override
@@ -208,7 +210,7 @@ public abstract class AbstractNDC implements NDConfiguration
                    Arrays.hashCode( indicesMap() )  * 3L +
                    Arrays.hashCode( spread() )      * 4L +
                    Arrays.hashCode( offset() )      * 5L +
-                   ( getLayout() == Layout.ROW_MAJOR ? 0 : 1 )
+                   getLayout().hashCode()
             )
             .hashCode();
     }
