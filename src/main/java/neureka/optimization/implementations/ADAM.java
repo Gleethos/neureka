@@ -39,6 +39,8 @@ import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
 
+import java.util.List;
+
 /**
  *  ADAM (short for Adaptive Moment Estimation) is an adaptive learning rate optimization algorithm that utilises both
  *  momentum and scaling, combining the benefits of RMSProp and SGD with respect to Momentum.
@@ -64,7 +66,7 @@ public class ADAM<V extends Number> implements Optimizer<V>
 
     public ADAM(Tsr<V> target) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
-        int[] shape = target.getNDConf().shape();
+        List<Integer> shape = target.shape();
         m  = Tsr.of(target.getValueClass(), shape, 0);
         v  = Tsr.of(target.getValueClass(), shape, 0);
         lr = 0.01; // Step size/learning rate is 0.01 by default!

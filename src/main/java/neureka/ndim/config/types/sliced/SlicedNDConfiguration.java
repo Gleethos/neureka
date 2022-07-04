@@ -16,10 +16,10 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
      *  The mapping of an index to an index array.
      *  The index array is created and filled
      *  during iteration and passed to this configuration for element access...
-     *  However, it is also possible to creat an index array from an index integer.
+     *  However, it is also possible to create an index array from an index integer.
      *  This is what the following property does :
      */
-    private final int[] _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
+    private final int[] _indicesMap; // Maps index integer to array similar as translation. Used to avoid distortion when slicing!
     /**
      *  Produces the strides of a tensor subset / slice
      */
