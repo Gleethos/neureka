@@ -58,31 +58,31 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
     @Override public final int rank() { return _shape.length; }
 
     /** {@inheritDoc} */
-    @Override public final int[] shape() { return _shape; }
+    @Override public final int[] shape() { return _shape.clone(); }
 
     /** {@inheritDoc} */
     @Override public final int shape( int i ) { return _shape[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] indicesMap() { return _indicesMap; }
+    @Override public final int[] indicesMap() { return _indicesMap.clone(); }
 
     /** {@inheritDoc} */
     @Override public final int indicesMap( int i ) { return _indicesMap[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] translation() { return _translation; }
+    @Override public final int[] translation() { return _translation.clone(); }
 
     /** {@inheritDoc} */
     @Override public final int translation( int i ) { return _translation[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] spread() { return _spread; }
+    @Override public final int[] spread() { return _spread.clone(); }
 
     /** {@inheritDoc} */
     @Override public final int spread( int i ) { return _spread[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] offset() { return _offset; }
+    @Override public final int[] offset() { return _offset.clone(); }
 
     /** {@inheritDoc} */
     @Override public final int offset( int i ) { return _offset[ i ]; }

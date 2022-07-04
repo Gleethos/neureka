@@ -64,7 +64,7 @@ public abstract class AbstractNDC implements NDConfiguration
      *   A factory method which creates and {@link NDConfiguration} instances best suited for the
      *   provided raw configuration data...
      */
-    public static NDConfiguration construct (
+    static NDConfiguration construct (
             int[] shape,
             int[] translation,
             int[] indicesMap,

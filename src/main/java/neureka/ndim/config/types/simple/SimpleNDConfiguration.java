@@ -34,19 +34,19 @@ public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
     @Override public final int rank() { return _shape.length; }
 
     /** {@inheritDoc} */
-    @Override public final int[] shape() { return _shape; }
+    @Override public final int[] shape() { return _shape.clone(); }
 
     /** {@inheritDoc} */
     @Override public final int shape( int i ) { return _shape[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] indicesMap() { return _translation_and_indicesMap; }
+    @Override public final int[] indicesMap() { return _translation_and_indicesMap.clone(); }
 
     /** {@inheritDoc} */
     @Override public final int indicesMap( int i ) { return _translation_and_indicesMap[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] translation() { return _translation_and_indicesMap; }
+    @Override public final int[] translation() { return _translation_and_indicesMap.clone(); }
 
     /** {@inheritDoc} */
     @Override public final int translation( int i ) { return _translation_and_indicesMap[ i ]; }

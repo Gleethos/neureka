@@ -55,7 +55,6 @@ SOFTWARE.
 package neureka;
 
 import neureka.autograd.GraphNode;
-import neureka.autograd.JITProp;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.memory.MemUtil;
 import neureka.backend.main.operations.other.Reshape;
@@ -66,7 +65,6 @@ import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.*;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.SmartSlicer;
 import neureka.framing.NDFrame;
@@ -74,10 +72,8 @@ import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
 import neureka.ndim.AbstractTensor;
 import neureka.ndim.Filler;
-import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterator.NDIterator;
-import neureka.optimization.Optimizer;
 import neureka.view.TsrAsString;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
@@ -659,7 +655,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             NDConfiguration old, int[] newTranslation, int[] indicesMap
     ) {
         assert !old.isVirtual();
-        return AbstractNDC.construct(
+        return NDConfiguration.of(
             old.shape(), newTranslation, indicesMap, old.spread(), old.offset()
         );
     }
@@ -1069,7 +1065,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             }
         }
         ((TsrImpl)subset)._setNDConf(
-            AbstractNDC.construct(
+            NDConfiguration.of(
                 newShape,
                 newTranslation,
                 newIndicesMap,

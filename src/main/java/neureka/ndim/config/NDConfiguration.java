@@ -42,7 +42,18 @@ import java.util.stream.IntStream;
 /**
  * This interface represents the access pattern configuration for the data array of a tensor.
  */
-public interface NDConfiguration {
+public interface NDConfiguration
+{
+    static NDConfiguration of(
+            int[] shape,
+            int[] translation,
+            int[] indicesMap,
+            int[] spread,
+            int[] offset
+    ) {
+        return AbstractNDC.construct(shape, translation, indicesMap, spread, offset);
+    }
+
     /**
      * Types of common data layouts.
      */
