@@ -109,9 +109,9 @@ public interface NDConfiguration {
             int[] translationCM = Layout.COLUMN_MAJOR.newTranslationFor(this.shape());
             boolean isCM = (Arrays.equals(translationCM, translation()) && hasRMIndices);
 
-            if (isRM && isCM) return Layout.SYMMETRIC;
-            if (isRM) return Layout.ROW_MAJOR;
-            if (isCM) return Layout.COLUMN_MAJOR;
+            if ( isRM && isCM ) return Layout.SYMMETRIC;
+            if ( isRM         ) return Layout.ROW_MAJOR;
+            if (         isCM ) return Layout.COLUMN_MAJOR;
         }
         return Layout.UNSPECIFIC;
     }
@@ -126,9 +126,7 @@ public interface NDConfiguration {
      *
      * @return The truth value determining if this ND-Configuration models a slice index pattern.
      */
-    default boolean isNotSimple() {
-        return !this.isSimple();
-    }
+    default boolean isNotSimple() { return !this.isSimple(); }
 
     /**
      * This method returns the number of axis of
@@ -139,9 +137,7 @@ public interface NDConfiguration {
      */
     int rank();
 
-    default int size() {
-        return Arrays.stream(shape()).reduce(1, (a, b) -> a * b);
-    }
+    default int size() { return Arrays.stream(shape()).reduce(1, (a, b) -> a * b); }
 
     /**
      * This method returns an array of axis sizes.
@@ -194,7 +190,7 @@ public interface NDConfiguration {
      * @param i The dimension / axis index of the dimension / axis whose spread should be returned.
      * @return The spread of the targeted dimension.
      */
-    int spread(int i);
+    int spread( int i );
 
     /**
      * The offset is the position of a slice within the n-dimensional
@@ -213,7 +209,7 @@ public interface NDConfiguration {
      * @param i The dimension / axis index of the dimension / axis whose offset should be returned.
      * @return The offset of the targeted dimension.
      */
-    int offset(int i);
+    int offset( int i );
 
     /**
      * Use this to calculate the true index for an element in the data array (data array index)
@@ -230,7 +226,7 @@ public interface NDConfiguration {
      * @param index The virtual index of the tensor having this configuration.
      * @return The true index which targets the actual data within the underlying data array of an nd-array / tensor.
      */
-    int indexOfIndex(int index);
+    int indexOfIndex( int index );
 
     /**
      * The following method calculates the axis indices for an element in the nd-array array
@@ -240,7 +236,7 @@ public interface NDConfiguration {
      * @param index The virtual index of the tensor having this configuration.
      * @return The position of the (virtually) targeted element represented as an array of axis indices.
      */
-    int[] indicesOfIndex(int index);
+    int[] indicesOfIndex( int index );
 
     /**
      * The following method calculates the true index for an element in the data array
@@ -249,7 +245,7 @@ public interface NDConfiguration {
      * @param indices The indices for every axis of a given nd-array.
      * @return The true index targeting the underlying data array of a given nd-array.
      */
-    int indexOfIndices(int[] indices);
+    int indexOfIndices( int[] indices );
 
     /**
      * This method returns an array of flattened arrays which
@@ -264,17 +260,17 @@ public interface NDConfiguration {
         int rank = rank();
         int[] inline = new int[rank * 5];
         //config format: [ shape | translation | indicesMap | offsets | strides ]
-        System.arraycopy(shape(), 0, inline, rank * 0, rank); //=> SHAPE
+        System.arraycopy(shape(),       0, inline, rank * 0, rank); //=> SHAPE
         System.arraycopy(translation(), 0, inline, rank * 1, rank); //=> TRANSLATION
-        System.arraycopy(indicesMap(), 0, inline, rank * 2, rank); //=> INDICES MAP (translates scalar to n-dimensional index)
-        System.arraycopy(offset(), 0, inline, rank * 3, rank); //=> SPREAD / STRIDES (step size for dimensions in underlying parent tensor)
-        System.arraycopy(spread(), 0, inline, rank * 4, rank); //=> OFFSET (nd-position inside underlying parent tensor)
+        System.arraycopy(indicesMap(),  0, inline, rank * 2, rank); //=> INDICES MAP (translates scalar to n-dimensional index)
+        System.arraycopy(offset(),      0, inline, rank * 3, rank); //=> SPREAD / STRIDES (step size for dimensions in underlying parent tensor)
+        System.arraycopy(spread(),      0, inline, rank * 4, rank); //=> OFFSET (nd-position inside underlying parent tensor)
         return inline;
     }
 
     int hashCode();
 
-    boolean equals(NDConfiguration ndc);
+    boolean equals( NDConfiguration ndc );
 
     /**
      * This method enables reshaping for {@link NDConfiguration} implementation instances.
@@ -285,7 +281,7 @@ public interface NDConfiguration {
      * @param newForm An array of indices which define how the axis ought to be rearranged.
      * @return A new {@link NDConfiguration} which carries the needed information for the reshaped view.
      */
-    NDConfiguration newReshaped(int[] newForm);
+    NDConfiguration newReshaped( int[] newForm );
 
     /**
      * The boolean returned by this method simply reports
@@ -321,24 +317,27 @@ public interface NDConfiguration {
         return
                 IntStream.range(0, this.rank()).allMatch(i -> this.spread(i) == 1)
                         &&
-                        IntStream.range(0, this.rank()).allMatch(i -> this.offset(i) == 0);
+                IntStream.range(0, this.rank()).allMatch(i -> this.offset(i) == 0);
     }
 
     /**
      * @return The truth value determining if this {@link NDConfiguration}
      * represents virtual tensors (see {@link neureka.Tsr#isVirtual()}).
      */
-    default boolean isVirtual() {
-        return false;
-    }
+    default boolean isVirtual() { return false; }
 
-    default IndexToIndexFunction getIndexToIndexAccessPattern() {
-        NDConfiguration nda = this;
-        return nda::indexOfIndex;
-    }
+    /**
+     * @return A function which can map tensor indices to the indices of its data array.
+     */
+    default IndexToIndexFunction getIndexToIndexAccessPattern() { return this::indexOfIndex; }
 
+    /**
+     *  Implementations of this are produced and returned by the {@link #getIndexToIndexAccessPattern()}
+     *  and their purpose is to translate the item index of a tensor to the index of the
+     *  item within the underlying data array of said tensor.
+     */
     interface IndexToIndexFunction {
-        int map(int i);
+        int map( int i );
     }
 
     /**
@@ -347,7 +346,7 @@ public interface NDConfiguration {
      * incrementing or decrementing index arrays...
      */
     class Utility {
-        @Contract(pure = true)
+        @Contract( pure = true )
         public static int[] rearrange(int[] array, int[] pointers) {
             int[] newShp = new int[pointers.length];
             for (int i = 0; i < pointers.length; i++) {
@@ -357,13 +356,13 @@ public interface NDConfiguration {
             return newShp;
         }
 
-        @Contract(pure = true)
+        @Contract( pure = true )
         public static void increment(int[] indices, int[] shape) {
             int i = shape.length - 1;
             while (i >= 0 && i < shape.length) i = _incrementAt(i, indices, shape);
         }
 
-        @Contract(pure = true)
+        @Contract( pure = true )
         private static int _incrementAt(int i, int[] indices, int[] shape) {
             if (indices[i] < shape[i]) {
                 indices[i]++;
@@ -375,13 +374,13 @@ public interface NDConfiguration {
             return i;
         }
 
-        @Contract(pure = true)
+        @Contract( pure = true )
         public static void decrement(int[] indices, int[] shape) {
             int i = shape.length - 1;
             while (i >= 0 && i < shape.length) i = _decrementAt(i, indices, shape);
         }
 
-        @Contract(pure = true)
+        @Contract( pure = true )
         private static int _decrementAt(int i, int[] indices, int[] shape) {
             if (indices[i] >= 0) {
                 indices[i]--;
@@ -395,7 +394,7 @@ public interface NDConfiguration {
 
 
         @Contract(pure = true)
-        public static int sizeOfShape(int[] shape) {
+        public static int sizeOfShape( int[] shape ) {
             int size = 1;
             for (int i : shape) size *= i;
             return size;
