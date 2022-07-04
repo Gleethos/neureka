@@ -155,16 +155,44 @@ public interface NDConfiguration {
      * @param i The index of the axis whose size ought to be returned.
      * @return The axis size targeted by the provided index.
      */
-    int shape(int i);
+    int shape( int i );
 
+    /**
+     *  If one wants to for example access the fourth last item of all items
+     *  within a tensor based on a scalar index <i>x</i> then the {@link #indicesMap()}
+     *  is needed as a basis for translating said scalar index <i>x</i> to an array of indices
+     *  for every axis of the tensor represented by this {@link NDConfiguration}.
+     *
+     * @return An array of values which are used to map an index to an indices array.
+     */
     int[] indicesMap();
 
-    int indicesMap(int i);
+    /**
+     *  This method receives an axis index and return the
+     *  indices mapping value of said axis to enable readable access to the indices map
+     *  of this configuration.
+     *  If one wants to for example access the fourth last item of all items
+     *  within a tensor based on a scalar index <i>x</i> then the {@link #indicesMap()}
+     *  is needed as a basis for translating said scalar index <i>x</i> to an array of indices
+     *  for every axis of the tensor represented by this {@link NDConfiguration}.
+     *
+     * @param i The index of the axis whose indices map value ought to be returned.
+     * @return The indices map value targeted by the provided index.
+     */
+    int indicesMap( int i );
 
+    /**
+     *  The array returned by this method is used to translate an array
+     *  of axis indices to a single ata array index.
+     *  It is used alongside {@link #spread()} and {@link #offset()}
+     *  by the {@link #indexOfIndices(int[])} method.
+     *
+     * @return An array of values used to translate the axes indices to a data array index.
+     */
     int[] translation();
 
     /**
-     * This method receives an axis index and return the
+     * This method receives an axis index and returns the
      * translation value for the targeted axis.
      * It enables readable and fast access to the translation
      * of this configuration.
@@ -261,7 +289,7 @@ public interface NDConfiguration {
         int[] inline = new int[rank * 5];
         //config format: [ shape | translation | indicesMap | offsets | strides ]
         System.arraycopy(shape(),       0, inline, rank * 0, rank); //=> SHAPE
-        System.arraycopy(translation(), 0, inline, rank * 1, rank); //=> TRANSLATION
+        System.arraycopy(translation(), 0, inline, rank * 1, rank); //=> TRANSLATION (translates n-dimensional indices to an index)
         System.arraycopy(indicesMap(),  0, inline, rank * 2, rank); //=> INDICES MAP (translates scalar to n-dimensional index)
         System.arraycopy(offset(),      0, inline, rank * 3, rank); //=> SPREAD / STRIDES (step size for dimensions in underlying parent tensor)
         System.arraycopy(spread(),      0, inline, rank * 4, rank); //=> OFFSET (nd-position inside underlying parent tensor)
