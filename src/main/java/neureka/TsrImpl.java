@@ -158,18 +158,16 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         }
         //CASES:
         if ( args[ 0 ] instanceof int[] ) {
+            TsrImpl<T> t = new TsrImpl<>();
             if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
-                TsrImpl<T> t = new TsrImpl<>();
                 args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
                 t.createConstructionAPI().constructAllFromOne( (int[]) args[ 0 ], args[ 1 ] );
-                return t;
             } else {
-                TsrImpl<T> t = new TsrImpl<>();
                 t._setDataType( DataType.of( args[1].getClass() ) );
                 t._constructAndAllocate( (int[]) args[0], true );
                 ((Object[])t.getUnsafe().getData())[0] = args[1];
-                return t;
             }
+            return t;
         }
         /* EXPRESSION BASED CONSTRUCTION:
             The following allows the creation of tensors based on passing an expression
@@ -197,7 +195,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             else if ( o instanceof String ) f.append( (String) o );
             else
                 _LOG.debug(
-                        "Unexpected tensor construction argument of type '"+o.getClass().getSimpleName()+"'"
+                    "Unexpected tensor construction argument of type '"+o.getClass().getSimpleName()+"'"
                 );
         }
         if ( tensors.length == 0 || tensors[0] == null) return new TsrImpl<>();
@@ -247,8 +245,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Filler<T> filler)
-    {
+    private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Filler<T> filler) {
         LogUtil.nullArgCheck( shape, "shape", int[].class );
         LogUtil.nullArgCheck( type, "type", DataType.class );
         LogUtil.nullArgCheck( type, "filler", Filler.class );
@@ -257,8 +254,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         _initData(filler);
     }
 
-    private void _constructAndAllocate(int[] shape, boolean virtual )
-    {
+    private void _constructAndAllocate(int[] shape, boolean virtual ) {
         createConstructionAPI().configureFromNewShape( shape, virtual, true );
     }
 
@@ -346,8 +342,8 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
                                     }
                                     catch ( Exception exception ) {
                                         _LOG.error(
-                                                "Gradient could not be restored from device component when trying to migrate it back to RAM.",
-                                                exception
+                                            "Gradient could not be restored from device component when trying to migrate it back to RAM.",
+                                            exception
                                         );
                                         throw exception;
                                     }
@@ -419,7 +415,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
                             });
             } else {
                 Tsr<?> parentTensor = ( this.isSlice() ) ? get(Relation.class).getParent() : null;
-                if ( parentTensor != null ) ((TsrImpl<V>)parentTensor).get( Relation.class ).remove( this );
+                if ( parentTensor != null ) parentTensor.get( Relation.class ).remove( this );
             }
 
             try {
@@ -470,8 +466,8 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         if ( gradientApplyRequested() != applyRequested ) {
             if ( applyRequested ) {
                 if (
-                        Neureka.get().settings().autograd().isApplyingGradientWhenRequested() &&
-                                !Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
+                    Neureka.get().settings().autograd().isApplyingGradientWhenRequested() &&
+                    !Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
                 )
                     this.applyGradient();
                 else
@@ -560,16 +556,16 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
                 The following seems like a redundant check, however often times a tensor
                 will be removed from a Device implementation inside the "restore" method
                 when the tensor has already been removed from the device...
-                With out the condition below a stack overflow would occur!
+                Without the condition below a stack overflow would occur!
              */
             if ( device.has( this ) ) {
                 try {
                     device.restore( this );
                 } catch ( Exception exception ) {
                     _LOG.error(
-                            "Removing device from tensor / tensor from device failed.\n" +
-                            "Restoring tensor from device threw exception.\n",
-                            exception
+                        "Removing device from tensor / tensor from device failed.\n" +
+                        "Restoring tensor from device threw exception.\n",
+                        exception
                     );
                     throw exception;
                 }
@@ -652,7 +648,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     }
 
     private static NDConfiguration _createNewNDCFrom(
-            NDConfiguration old, int[] newTranslation, int[] indicesMap
+        NDConfiguration old, int[] newTranslation, int[] indicesMap
     ) {
         assert !old.isVirtual();
         return NDConfiguration.of(
@@ -669,8 +665,8 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             throw new IllegalStateException("Layout conversion produced a virtual nd-configuration!");
         if ( !newConf.getLayout().isCompatible(targetLayout) )
             throw new IllegalArgumentException(
-                    "Failed to convert this tensor from its original layout '"+oldConf.getLayout()+"' " +
-                    "to target layout '"+targetLayout+"'. Instead this tensor has layout '"+newConf.getLayout()+"'."
+                "Failed to convert this tensor from its original layout '"+oldConf.getLayout()+"' " +
+                "to target layout '"+targetLayout+"'. Instead this tensor has layout '"+newConf.getLayout()+"'."
             );
     }
 
@@ -784,8 +780,8 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         NDIterator _ndi = NDIterator.of( this );
         return new Iterator<V>()
         {
-            private int _count = 0;
             private final int _size = TsrImpl.this.size();
+            private int _count = 0;
 
             @Override public boolean hasNext() { return _count != _size; }
 
@@ -846,7 +842,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> label(String tensorName, List<List<Object>> labels ) {
+    public Tsr<V> label( String tensorName, List<List<Object>> labels ) {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) set( new NDFrame<>( labels, tensorName ) );
@@ -855,7 +851,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> label(Map<Object, List<Object>> labels )
+    public Tsr<V> label( Map<Object, List<Object>> labels )
     {
         LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
         this.set( new NDFrame<>( labels, this, null ) );
@@ -898,16 +894,15 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> getAt(int... indices ) {
+    public Tsr<V> getAt( int... indices ) {
         LogUtil.nullArgCheck(indices, "indices", int[].class, "Indices array must not be 'null'!");
         return getAt( Arrays.stream( indices ).boxed().toArray() );
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> getAt( Map<?,Integer> rankToStrides )
-    {
-        if ( rankToStrides == null ) return this;
+    public Tsr<V> getAt( Map<?,Integer> rankToStrides ) {
+        LogUtil.nullArgCheck(rankToStrides, "rankToStrides", Map.class, "Rank-to-strides map must not be 'null'!");
         // ...not a simple slice... Advanced:
         return SmartSlicer.slice(
                         new Object[]{rankToStrides},
