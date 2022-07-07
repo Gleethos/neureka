@@ -14,10 +14,7 @@ import neureka.dtype.custom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntSupplier;
@@ -278,7 +275,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected Object _allocate( DataType<?> dataType, int size ) {
+    protected final Object _allocate( DataType<?> dataType, int size ) {
         Class<?> typeClass = dataType.getRepresentativeType();
         if ( typeClass == F64.class )
             return new double[ size ];
@@ -301,14 +298,61 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <T> CPU store(Tsr<T> tensor, Tsr<T> parent ) {
+    protected final Object _actualize( Tsr<?> tensor ) {
+        Object value = tensor.getUnsafe().getData();
+        DataType<?> dataType = tensor.getDataType();
+        int size = tensor.size();
+        Class<?> typeClass = dataType.getRepresentativeType();
+        Object newValue;
+        if ( typeClass == F64.class ) {
+            if ( ( (double[]) value ).length == size ) return value;
+            newValue = new double[ size ];
+            if ( ( (double[]) value )[ 0 ] != 0d ) Arrays.fill( (double[]) newValue, ( (double[]) value )[ 0 ] );
+        } else if ( typeClass == F32.class ) {
+            if ( ( (float[]) value ).length == size ) return value;
+            newValue = new float[size];
+            if ( ( (float[]) value )[ 0 ] != 0f ) Arrays.fill( (float[]) newValue, ( (float[]) value )[ 0 ] );
+        } else if ( typeClass == I32.class ) {
+            if ( ( (int[]) value ).length == size ) return value;
+            newValue = new int[ size ];
+            if ( ( (int[]) value )[ 0 ] != 0 ) Arrays.fill( (int[]) newValue, ( (int[]) value )[ 0 ] );
+        } else if ( typeClass == I16.class ) {
+            if ( ( (short[]) value ).length == size ) return value;
+            newValue = new short[ size ];
+            if ( ( (short[]) value )[ 0 ] != 0 ) Arrays.fill( (short[]) newValue, ( (short[]) value )[ 0 ] );
+        } else if ( typeClass == I8.class ) {
+            if ( ( (byte[]) value ).length == size ) return value;
+            newValue = new byte[ size ];
+            if ( ( (byte[]) value )[ 0 ] != 0 ) Arrays.fill( (byte[]) newValue, ( (byte[]) value )[ 0 ] );
+        } else if ( typeClass == I64.class ) {
+            if ( ( (long[]) value ).length == size ) return value;
+            newValue = new long[ size ];
+            if ( ( (long[]) value )[ 0 ] != 0 ) Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );
+        } else if ( typeClass == Boolean.class ) {
+            if ( ( (boolean[]) value ).length == size ) return value;
+            newValue = new boolean[ size ];
+            Arrays.fill( (boolean[]) newValue, ( (boolean[]) value )[ 0 ] );
+        } else if ( typeClass == Character.class ) {
+            if ( ( (char[]) value ).length == size ) return value;
+            newValue = new char[ size ];
+            if ( ( (char[]) value )[ 0 ] != (char) 0 ) Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );
+        } else {
+            if ( ( (Object[]) value ).length == size ) return value;
+            newValue = new Object[ size ];
+            if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
+        }
+        return newValue;
+    }
+
+    @Override
+    public final <T> CPU store(Tsr<T> tensor, Tsr<T> parent ) {
         _tensors.add( (Tsr<Object>) tensor);
         _tensors.add( (Tsr<Object>) parent);
         return this;
     }
 
     @Override
-    public <T> boolean has(Tsr<T> tensor ) { return _tensors.contains( tensor ); }
+    public final <T> boolean has(Tsr<T> tensor ) { return _tensors.contains( tensor ); }
 
     @Override
     public <T> CPU free(Tsr<T> tensor ) {

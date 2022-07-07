@@ -511,7 +511,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public <T extends Number> Device<Number> free( Tsr<T> tensor ) {
+    public final <T extends Number> Device<Number> free( Tsr<T> tensor ) {
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
         if (clt == null) return this;
         _tensors.remove(tensor);
@@ -521,34 +521,39 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected <T extends Number> T _readItem( Tsr<T> tensor, int index ) {
+    protected final <T extends Number> T _readItem( Tsr<T> tensor, int index ) {
         return (T) Float.valueOf(_value(new float[1], tensor.getUnsafe().upcast(Number.class), index)[0]);
     }
 
     @Override
-    protected <T extends Number, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size ) {
+    protected final <T extends Number, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size ) {
         return (A) _value(new float[size], tensor.getUnsafe().upcast(Number.class), start);
     }
 
     @Override
-    protected <T extends Number> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
+    protected final <T extends Number> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
         _overwrite( tensor, start, Data.of(item, 0, size) );
     }
 
     @Override
-    protected <T extends Number> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size ) {
+    protected final <T extends Number> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size ) {
         _overwrite( tensor, start, Data.of(array, offset, size) );
     }
 
     @Override
-    protected Object _allocate(DataType<?> dataType, int size) {
-        throw new IllegalStateException("Not implemented yet!");
+    protected Object _allocate( DataType<?> dataType, int size ) {
+        throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
-    private Device<Number> _overwrite(
+    @Override
+    protected Object _actualize( Tsr<?> tensor ) {
+        throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
+    }
+
+    private void _overwrite(
             Tsr<?> tensor, long offset, Data data
     ) {
-        if ( data.getLength() == 0 ) return this;
+        if ( data.getLength() == 0 ) return;
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
         if (clt.value.event != null) clWaitForEvents(1, new cl_event[]{clt.value.event});
         clt.value.event = new cl_event();
@@ -560,7 +565,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 data.getPointer(), 0, null,
                 clt.value.event
         );
-        return this;
     }
 
     @Override
