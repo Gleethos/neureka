@@ -26,21 +26,23 @@ public class SimpleReshapeView extends AbstractNDC
 
         List<Integer> _translator = new ArrayList<>();
 
-        for ( int i=0; i < form.length; i++ )
-                if ( form[ i ] < -1 ) throw new IllegalArgumentException(
+        for ( int j : form )
+            if ( j < -1 )
+                throw new IllegalArgumentException(
                     "SimpleReshapeView may not view a NDConfiguration beyond reshaping and or padding!"
                 );
-            else if ( form[ i ] >= 0 )  _translator.add( form[ i ] );
+            else if ( j >= 0 )
+                _translator.add( j );
 
         _formTranslator = _translator.stream().mapToInt( e -> e ).toArray();
 
 
         NDConfiguration ndc = _simpleReshape( form, toBeViewed );
-        _shape = ndc.shape();
+        _shape       = ndc.shape();
         _translation = ndc.translation();
-        _indicesMap = ndc.indicesMap();
-        _spread = ndc.spread();
-        _offset = ndc.offset();
+        _indicesMap  = ndc.indicesMap();
+        _spread      = ndc.spread();
+        _offset      = ndc.offset();
     }
 
     /** {@inheritDoc} */

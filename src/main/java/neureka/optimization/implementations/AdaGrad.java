@@ -4,6 +4,8 @@ import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
 
+import java.util.List;
+
 /**
  * Adaptive Gradients, or AdaGrad for short, is an extension of the gradient descent optimization
  * algorithm that adjusts the step size for each parameter based on the squared gradients
@@ -21,7 +23,7 @@ public class AdaGrad<V extends Number> implements Optimizer<V>
 
     public AdaGrad( Tsr<V> target ) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
-        int[] shape = target.getNDConf().shape();
+        List<Integer> shape = target.shape();
         h = Tsr.of(target.getValueClass(), shape, 0).getUnsafe().upcast(Number.class);
         lr = 0.01; // Step size/learning rate is 0.01 by default!
     }

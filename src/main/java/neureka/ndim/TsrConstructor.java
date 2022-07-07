@@ -4,7 +4,6 @@ import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
-import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.views.virtual.VirtualNDConfiguration;
 import org.slf4j.Logger;
@@ -77,13 +76,13 @@ public final class TsrConstructor {
             Arrays.fill( newSpread, 1 );
             int[] newOffset = new int[ newShape.length ];
             _API.setConf(
-                    AbstractNDC.construct(
-                            newShape,
-                            newTranslation,
-                            newTranslation, // indicesMap
-                            newSpread,
-                            newOffset
-                    )
+                NDConfiguration.of(
+                    newShape,
+                    newTranslation,
+                    newTranslation, // indicesMap
+                    newSpread,
+                    newOffset
+                )
             );
         }
     }

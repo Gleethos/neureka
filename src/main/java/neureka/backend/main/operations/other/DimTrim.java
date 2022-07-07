@@ -13,7 +13,6 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.internal.CalcUtil;
-import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.ArrayList;
@@ -108,16 +107,17 @@ public class DimTrim extends AbstractOperation
             newSpread.add( 0 );
             newOffset.add( 0 );
         }
-        tensor.getUnsafe()
-              .setNDConf(
-                    AbstractNDC.construct(
-                             newShape.stream().mapToInt( i -> i ).toArray(),
-                             newTranslation.stream().mapToInt( i -> i ).toArray(),
-                             newIndicesMap.stream().mapToInt( i -> i ).toArray(),
-                             newSpread.stream().mapToInt( i -> i ).toArray(),
-                             newOffset.stream().mapToInt( i -> i ).toArray()
-                     )
-              );
+        tensor
+            .getUnsafe()
+            .setNDConf(
+                 NDConfiguration.of(
+                     newShape.stream().mapToInt( i -> i ).toArray(),
+                     newTranslation.stream().mapToInt( i -> i ).toArray(),
+                     newIndicesMap.stream().mapToInt( i -> i ).toArray(),
+                     newSpread.stream().mapToInt( i -> i ).toArray(),
+                     newOffset.stream().mapToInt( i -> i ).toArray()
+                 )
+            );
         return tensor;
     }
 
@@ -144,16 +144,17 @@ public class DimTrim extends AbstractOperation
             newSpread.add( tensor.getNDConf().spread( i ) );
             newOffset.add( tensor.getNDConf().offset( i ) );
         }
-        tensor.getUnsafe()
-                  .setNDConf(
-                     AbstractNDC.construct(
-                         newShape.stream().mapToInt( i -> i ).toArray(),
-                         newTranslation.stream().mapToInt( i -> i ).toArray(),
-                         newIndicesMap.stream().mapToInt( i -> i ).toArray(),
-                         newSpread.stream().mapToInt( i -> i ).toArray(),
-                         newOffset.stream().mapToInt( i -> i ).toArray()
-                     )
-                  );
+        tensor
+            .getUnsafe()
+            .setNDConf(
+                NDConfiguration.of(
+                    newShape.stream().mapToInt( i -> i ).toArray(),
+                    newTranslation.stream().mapToInt( i -> i ).toArray(),
+                    newIndicesMap.stream().mapToInt( i -> i ).toArray(),
+                    newSpread.stream().mapToInt( i -> i ).toArray(),
+                    newOffset.stream().mapToInt( i -> i ).toArray()
+                )
+            );
 
         return tensor;
     }
