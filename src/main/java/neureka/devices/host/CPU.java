@@ -9,6 +9,8 @@ import neureka.devices.Device;
 import neureka.devices.host.concurrent.Parallelism;
 import neureka.devices.host.concurrent.WorkScheduler;
 import neureka.devices.host.machine.ConcreteMachine;
+import neureka.dtype.DataType;
+import neureka.dtype.custom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -273,6 +275,29 @@ public class CPU extends AbstractDevice<Object>
             System.arraycopy(source, offset, target, start, Math.min(size, source.length));
         }
         else throw new IllegalArgumentException("Array type '"+arrayType.getSimpleName()+"' not supported!");
+    }
+
+    @Override
+    protected Object _allocate( DataType<?> dataType, int size ) {
+        Class<?> typeClass = dataType.getRepresentativeType();
+        if ( typeClass == F64.class )
+            return new double[ size ];
+        else if ( typeClass == F32.class )
+            return new float[ size ];
+        else if ( typeClass == I32.class || typeClass == UI32.class )
+            return new int[ size ];
+        else if ( typeClass == I16.class || typeClass == UI16.class )
+            return new short[ size ];
+        else if ( typeClass == I8.class || typeClass == UI8.class )
+            return new byte[ size ];
+        else if ( typeClass == I64.class || typeClass == UI64.class )
+            return new long[ size ];
+        else if ( dataType.getValueTypeClass() == Boolean.class )
+            return new boolean[ size ];
+        else if ( dataType.getValueTypeClass() == Character.class )
+            return new char[ size ];
+        else
+            return new Object[ size ];
     }
 
     @Override

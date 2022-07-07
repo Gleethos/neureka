@@ -17,10 +17,6 @@ import java.io.IOException;
 
 public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, Number>
 {
-    static {
-        _LOG = LoggerFactory.getLogger( AbstractImageFileHandle.class );
-    }
-
     private final ImageFileType _type;
     private int _width;
     private int _height;

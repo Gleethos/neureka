@@ -232,7 +232,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<Tsr<V>
      *
      * @param size The size of the data array which ought to be allocated.
      */
-    protected final void _allocate( int size ) { _data = _dataType.allocate( size ); }
+    protected final void _allocate( int size ) { _data = getDevice().access( this ).allocate( size ); }
 
     /**
      *  The internal implementation handling {@link #setIsVirtual(boolean)}.
@@ -256,10 +256,10 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<Tsr<V>
         return new TsrConstructor(
                     new TsrConstructor.API() {
                         @Override public void setType( DataType<?> type        ) { nda.getUnsafe().setDataType( type ); }
-                        @Override public void setConf( NDConfiguration conf    ) { nda.getUnsafe().setNDConf(   conf ); }
-                        @Override public void setData( Object o                ) { nda._setData(      o  ); }
-                        @Override public void allocate( int size               ) { nda._allocate(   size ); }
-                        @Override public Object getData()                        { return nda._getData();    }
+                        @Override public void setConf( NDConfiguration conf    ) { nda.getUnsafe().setNDConf( conf ); }
+                        @Override public void setData( Object o                ) { nda._setData( o ); }
+                        @Override public void allocate( int size               ) { nda._allocate( size ); }
+                        @Override public Object getData()                        { return nda._getData(); }
                         @Override public void setIsVirtual( boolean isVirtual )  { nda._setIsVirtual( isVirtual ); }
                     }
                 );
@@ -286,7 +286,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<Tsr<V>
      *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
      *  size of the nd-array type... <br>
      */
-    protected final void _actualize() { _data = _dataType.actualize( _data, this.size() ); }
+    protected final void _actualize() { _data = getDevice().access(this).actualize(); }
 
     protected Object _convertedDataOfType( Class<?> typeClass )
     {

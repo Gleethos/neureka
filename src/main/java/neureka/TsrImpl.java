@@ -1252,7 +1252,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         }
         if ( this.isVirtual() ) {
             if ( _getData() == null ) return null;
-            else return getDataType().actualize( _getData(), this.size() );
+            else return getDevice().access(this).actualize();
         }
         else if ( this.getNDConf().isSimple() && !this.isSlice() )
             return getData();

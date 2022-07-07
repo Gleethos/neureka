@@ -24,6 +24,9 @@ import java.io.IOException;
  */
 public final class JPEGHandle extends AbstractImageFileHandle<JPEGHandle>
 {
+    static {
+        _LOG = LoggerFactory.getLogger( JPEGHandle.class );
+    }
 
     public JPEGHandle( String fileName) { this( null, fileName ); }
 

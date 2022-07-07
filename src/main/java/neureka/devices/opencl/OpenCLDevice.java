@@ -58,6 +58,7 @@ import neureka.common.utility.DataConverter;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.CLFunctionCompiler;
+import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
@@ -537,6 +538,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     protected <T extends Number> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size ) {
         _overwrite( tensor, start, Data.of(array, offset, size) );
+    }
+
+    @Override
+    protected Object _allocate(DataType<?> dataType, int size) {
+        throw new IllegalStateException("Not implemented yet!");
     }
 
     private Device<Number> _overwrite(

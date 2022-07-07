@@ -63,6 +63,11 @@ public final class DataType<Type>
         }
     };
 
+    private final Logger _log;
+
+    private final Class<Type> _typeClass;
+
+
     /**
      *  This method finds the corresponding NumericType implementation representing
      *  the passed type class or simply the provided class if no representation has been found.
@@ -97,10 +102,6 @@ public final class DataType<Type>
         _instances.put( realTypeClass, dt );
         return dt;
     }
-
-    private final Logger _log;
-
-    private final Class<Type> _typeClass;
 
     private DataType( Class<Type> type ) {
         _typeClass = type;
@@ -143,14 +144,13 @@ public final class DataType<Type>
     }
 
     public Class<?> dataArrayType() {
-        if ( this.typeClassImplements( NumericType.class ) ) {
+        if ( this.typeClassImplements( NumericType.class ) )
             return ( (NumericType<?,?,?,?>) Objects.requireNonNull( getTypeClassInstance(NumericType.class) ) ).holderArrayType();
-        }
         else
             return Object[].class;
     }
 
-    public <T> T virtualize(T value )
+    public <T> T virtualize( T value )
     {
         Object newValue;
         if ( _typeClass == F64.class )
@@ -171,83 +171,11 @@ public final class DataType<Type>
         return (T) newValue;
     }
 
-    public <T> Object actualize( T value, int size )
-    {
-        Object newValue;
-        if ( _typeClass == F64.class ) {
-            if ( ( (double[]) value ).length == size ) return value;
-            newValue = new double[ size ];
-            if ( ( (double[]) value )[ 0 ] != 0d ) Arrays.fill( (double[]) newValue, ( (double[]) value )[ 0 ] );
-        } else if ( _typeClass == F32.class ) {
-            if ( ( (float[]) value ).length == size ) return value;
-            newValue = new float[size];
-            if ( ( (float[]) value )[ 0 ] != 0f ) Arrays.fill( (float[]) newValue, ( (float[]) value )[ 0 ] );
-        } else if ( _typeClass == I32.class ) {
-            if ( ( (int[]) value ).length == size ) return value;
-            newValue = new int[ size ];
-            if ( ( (int[]) value )[ 0 ] != 0 ) Arrays.fill( (int[]) newValue, ( (int[]) value )[ 0 ] );
-        } else if ( _typeClass == I16.class ) {
-            if ( ( (short[]) value ).length == size ) return value;
-            newValue = new short[ size ];
-            if ( ( (short[]) value )[ 0 ] != 0 ) Arrays.fill( (short[]) newValue, ( (short[]) value )[ 0 ] );
-        } else if ( _typeClass == I8.class ) {
-            if ( ( (byte[]) value ).length == size ) return value;
-            newValue = new byte[ size ];
-            if ( ( (byte[]) value )[ 0 ] != 0 ) Arrays.fill( (byte[]) newValue, ( (byte[]) value )[ 0 ] );
-        } else if ( _typeClass == I64.class ) {
-            if ( ( (long[]) value ).length == size ) return value;
-            newValue = new long[ size ];
-            if ( ( (long[]) value )[ 0 ] != 0 ) Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );
-        } else if ( _typeClass == Boolean.class ) {
-            if ( ( (boolean[]) value ).length == size ) return value;
-            newValue = new boolean[ size ];
-            Arrays.fill( (boolean[]) newValue, ( (boolean[]) value )[ 0 ] );
-        } else if ( _typeClass == Character.class ) {
-            if ( ( (char[]) value ).length == size ) return value;
-            newValue = new char[ size ];
-            if ( ( (char[]) value )[ 0 ] != (char) 0 ) Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );
-        } else {
-            if ( ( (Object[]) value ).length == size ) return value;
-            newValue = new Object[ size ];
-            if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
-        }
-        return newValue;
-    }
-
-    public Object allocate( int size )
-    {
-        if ( _typeClass == F64.class )
-            return new double[ size ];
-        else if ( _typeClass == F32.class )
-            return new float[ size ];
-        else if ( _typeClass == I32.class || _typeClass == UI32.class )
-            return new int[ size ];
-        else if ( _typeClass == I16.class || _typeClass == UI16.class )
-            return new short[ size ];
-        else if ( _typeClass == I8.class || _typeClass == UI8.class )
-            return new byte[ size ];
-        else if ( _typeClass == I64.class || _typeClass == UI64.class )
-            return new long[ size ];
-        else if ( getValueTypeClass() == Boolean.class )
-            return new boolean[ size ];
-        else if ( getValueTypeClass() == Character.class )
-            return new char[ size ];
-        else
-            return new Object[ size ];
-    }
-
-
-    public Logger getLog() {
-        return _log;
-    }
-
     public boolean equals(final Object o) {
         if (o == this) return true;
         if (!(o instanceof DataType)) return false;
         final DataType<?> other = (DataType<?>) o;
-        final Object this$_log = this.getLog();
-        final Object other$_log = other.getLog();
-        if ( !Objects.equals(this$_log, other$_log) ) return false;
+        if ( !Objects.equals(_log, other._log) ) return false;
         final Object this$_typeClass = this.getRepresentativeType();
         final Object other$_typeClass = other.getRepresentativeType();
         if ( !Objects.equals(this$_typeClass, other$_typeClass) )
@@ -258,7 +186,7 @@ public final class DataType<Type>
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
-        final Object $_log = this.getLog();
+        final Object $_log = _log;
         result = result * PRIME + ($_log == null ? 43 : $_log.hashCode());
         final Object $_typeClass = this.getRepresentativeType();
         result = result * PRIME + ($_typeClass == null ? 43 : $_typeClass.hashCode());

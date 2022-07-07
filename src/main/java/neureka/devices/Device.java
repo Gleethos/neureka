@@ -354,6 +354,10 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          *  given {@link Device} implementation... <br><br>
          */
         void updateNDConf();
+
+        Object allocate( int size );
+
+        Object actualize();
     }
 
     /**

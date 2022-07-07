@@ -34,15 +34,19 @@ SOFTWARE.
 
 package neureka.devices;
 
-import neureka.common.composition.Component;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.calculus.args.Arg;
+import neureka.common.composition.Component;
+import neureka.dtype.DataType;
+import neureka.dtype.custom.*;
 import neureka.framing.Relation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 /**
  *  This is the abstract precursor class providing
@@ -149,6 +153,8 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             @Override public int getDataSize() { return _sizeOccupiedBy( tensor ); }
             @Override public void cleanup( Runnable action ) { _cleaning( tensor, action ); }
             @Override public void updateNDConf() { _updateNDConf( tensor ); }
+            @Override public Object allocate( int size ) { return _allocate( tensor.getDataType(), size ); }
+            @Override public Object actualize() { return _actualize( tensor ); }
         };
     }
 
@@ -175,4 +181,51 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 
     protected abstract <T extends V> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size );
 
+    protected abstract Object _allocate( DataType<?> dataType, int size );
+
+    protected Object _actualize( Tsr<?> tensor ) {
+        Object value = tensor.getUnsafe().getData();
+        DataType<?> dataType = tensor.getDataType();
+        int size = tensor.size();
+        Class<?> typeClass = dataType.getRepresentativeType();
+        Object newValue;
+        if ( typeClass == F64.class ) {
+            if ( ( (double[]) value ).length == size ) return value;
+            newValue = new double[ size ];
+            if ( ( (double[]) value )[ 0 ] != 0d ) Arrays.fill( (double[]) newValue, ( (double[]) value )[ 0 ] );
+        } else if ( typeClass == F32.class ) {
+            if ( ( (float[]) value ).length == size ) return value;
+            newValue = new float[size];
+            if ( ( (float[]) value )[ 0 ] != 0f ) Arrays.fill( (float[]) newValue, ( (float[]) value )[ 0 ] );
+        } else if ( typeClass == I32.class ) {
+            if ( ( (int[]) value ).length == size ) return value;
+            newValue = new int[ size ];
+            if ( ( (int[]) value )[ 0 ] != 0 ) Arrays.fill( (int[]) newValue, ( (int[]) value )[ 0 ] );
+        } else if ( typeClass == I16.class ) {
+            if ( ( (short[]) value ).length == size ) return value;
+            newValue = new short[ size ];
+            if ( ( (short[]) value )[ 0 ] != 0 ) Arrays.fill( (short[]) newValue, ( (short[]) value )[ 0 ] );
+        } else if ( typeClass == I8.class ) {
+            if ( ( (byte[]) value ).length == size ) return value;
+            newValue = new byte[ size ];
+            if ( ( (byte[]) value )[ 0 ] != 0 ) Arrays.fill( (byte[]) newValue, ( (byte[]) value )[ 0 ] );
+        } else if ( typeClass == I64.class ) {
+            if ( ( (long[]) value ).length == size ) return value;
+            newValue = new long[ size ];
+            if ( ( (long[]) value )[ 0 ] != 0 ) Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );
+        } else if ( typeClass == Boolean.class ) {
+            if ( ( (boolean[]) value ).length == size ) return value;
+            newValue = new boolean[ size ];
+            Arrays.fill( (boolean[]) newValue, ( (boolean[]) value )[ 0 ] );
+        } else if ( typeClass == Character.class ) {
+            if ( ( (char[]) value ).length == size ) return value;
+            newValue = new char[ size ];
+            if ( ( (char[]) value )[ 0 ] != (char) 0 ) Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );
+        } else {
+            if ( ( (Object[]) value ).length == size ) return value;
+            newValue = new Object[ size ];
+            if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
+        }
+        return newValue;
+    }
 }
