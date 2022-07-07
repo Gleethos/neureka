@@ -132,14 +132,14 @@ public class CPU extends AbstractDevice<Object>
     @Override
     protected final <T> T _readItem( Tsr<T> tensor, int index ) {
         Object data = tensor.getUnsafe().getData();
-        if      ( data instanceof float[] )  return (T)(Float)  ( (float[])   data)[ index ];
-        else if ( data instanceof double[] ) return (T)(Double) ( (double[])  data)[ index ];
-        else if ( data instanceof short[] )  return (T)(Short)  ( (short[])   data)[ index ];
-        else if ( data instanceof int[] )    return (T)(Integer)( (int[])     data)[ index ];
-        else if ( data instanceof byte[] )   return (T)(Byte)   ( (byte[])    data)[ index ];
-        else if ( data instanceof long[] )   return (T)(Long)   ( (long[])    data)[ index ];
-        else if ( data instanceof boolean[] )return (T)(Boolean)( (boolean[]) data)[ index ];
-        else if ( data instanceof char[] )   return (T)(Character)( (char[])  data)[ index ];
+        if      ( data instanceof float[] )  return (T)Float.valueOf( ((float[])   data)[ index ] );
+        else if ( data instanceof double[] ) return (T)Double.valueOf( ((double[])  data)[ index ] );
+        else if ( data instanceof short[] )  return (T)Short.valueOf( ((short[])   data)[ index ] );
+        else if ( data instanceof int[] )    return (T)Integer.valueOf( ((int[])     data)[ index ] );
+        else if ( data instanceof byte[] )   return (T)Byte.valueOf( ((byte[])    data)[ index ] );
+        else if ( data instanceof long[] )   return (T)Long.valueOf( ((long[])    data)[ index ] );
+        else if ( data instanceof boolean[] )return (T)Boolean.valueOf( ((boolean[]) data)[ index ] );
+        else if ( data instanceof char[] )   return (T)Character.valueOf( ((char[])  data)[ index ] );
         else return (T)( (Object[]) data)[ index ];
     }
 
