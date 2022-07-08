@@ -147,7 +147,7 @@ dependencies {
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     //-----------------------------------------------------
     // mandatory dependencies for using Spock
-    testImplementation 'org.codehaus.groovy:groovy:3.0.10'
+    testImplementation 'org.codehaus.groovy:groovy:3.0.11'
     testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0")
     testImplementation 'org.spockframework:spock-core:2.1-groovy-3.0'
     testImplementation 'com.athaydes:spock-reports:2.3.0-groovy-3.0'//, { transitive = false }

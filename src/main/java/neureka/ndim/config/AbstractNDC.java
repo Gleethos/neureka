@@ -204,26 +204,26 @@ public abstract class AbstractNDC implements NDConfiguration
     @Override
     public int hashCode() {
         return Long.valueOf(
-                    this.getClass().hashCode() +
+                   this.getClass().hashCode() +
                    Arrays.hashCode( shape() )       * 1L +
                    Arrays.hashCode( translation() ) * 2L +
                    Arrays.hashCode( indicesMap() )  * 3L +
                    Arrays.hashCode( spread() )      * 4L +
                    Arrays.hashCode( offset() )      * 5L +
                    getLayout().hashCode()
-            )
-            .hashCode();
+                )
+                .hashCode();
     }
 
     @Override
     public boolean equals( NDConfiguration ndc ) {
-        return  this.getClass() == ndc.getClass() &&
-                Arrays.equals(shape(),       ndc.shape()      ) &&
-                Arrays.equals(translation(), ndc.translation()) &&
-                Arrays.equals(indicesMap(),  ndc.indicesMap() ) &&
-                Arrays.equals(spread(),      ndc.spread()     ) &&
-                Arrays.equals(offset(),      ndc.offset()     ) &&
-                this.getLayout() == ndc.getLayout();
+        return this.getClass() == ndc.getClass() &&
+               Arrays.equals(shape(),       ndc.shape()      ) &&
+               Arrays.equals(translation(), ndc.translation()) &&
+               Arrays.equals(indicesMap(),  ndc.indicesMap() ) &&
+               Arrays.equals(spread(),      ndc.spread()     ) &&
+               Arrays.equals(offset(),      ndc.offset()     ) &&
+               this.getLayout() == ndc.getLayout();
     }
 
 
