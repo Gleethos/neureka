@@ -72,7 +72,7 @@ import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
 import neureka.ndim.AbstractTensor;
 import neureka.ndim.Filler;
-import neureka.ndim.TsrConstructor;
+import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterator.NDIterator;
 import neureka.view.TsrAsString;
@@ -142,7 +142,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         if ( args == null || args.length == 0 ) return new TsrImpl<>();
         if ( args.length == 1 ) {
             TsrImpl<T> t = new TsrImpl<>();
-            boolean success = t.createConstructionAPI().constructAllFromOne( TsrConstructor.NDCProducer.of(new int[]{ 1 }), args[ 0 ] );
+            boolean success = t.createConstructionAPI().constructAllFromOne( NDConstructor.of(new int[]{ 1 }), args[ 0 ] );
             if ( !success ) {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
                 _LOG.error( message );
@@ -162,10 +162,10 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             TsrImpl<T> t = new TsrImpl<>();
             if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
                 args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
-                t.createConstructionAPI().constructAllFromOne( TsrConstructor.NDCProducer.of((int[]) args[ 0 ]), args[ 1 ] );
+                t.createConstructionAPI().constructAllFromOne( NDConstructor.of((int[]) args[ 0 ]), args[ 1 ] );
             } else {
                 t._setDataType( DataType.of( args[1].getClass() ) );
-                t._constructAndAllocate( (int[]) args[0], true );
+                t._constructAndAllocate( NDConstructor.of((int[]) args[0]), true );
                 ((Object[])t.getUnsafe().getData())[0] = args[1];
             }
             return t;
@@ -216,47 +216,47 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      */
     TsrImpl() {}
 
-    TsrImpl(int[] shape, DataType<?> dataType, Object data ) { createConstructionAPI().tryConstructing( TsrConstructor.NDCProducer.of(shape), dataType, data ); }
+    TsrImpl(NDConstructor ndConstructor, DataType<?> dataType, Object data ) {
+        createConstructionAPI().tryConstructing(ndConstructor, dataType, data );
+    }
 
     /**
      *  see {@link Tsr#of(DataType, int[], Filler)}
      */
-    <T> TsrImpl(int[] shape, DataType<T> type, Filler<T> filler)
-    {
-        _constructFromInitializer( shape, type, filler);
+    <T> TsrImpl(NDConstructor ndConstructor, DataType<T> type, Filler<T> filler ) {
+        _constructFromInitializer(ndConstructor, type, filler);
     }
 
     /**
      *  See {@link Tsr#of(Class, int[], String)} and {@link #of(List, String)}
      */
-    TsrImpl(Class<V> valueType, int[] shape, String seed ) {
-        createConstructionAPI().constructSeeded( valueType, TsrConstructor.NDCProducer.of(shape), seed );
+    TsrImpl(Class<V> valueType, NDConstructor ndConstructor, String seed ) {
+        createConstructionAPI().constructSeeded( valueType, ndConstructor, seed );
     }
 
-    TsrImpl(int[] shape, DataType<?> type )
-    {
+    TsrImpl(NDConstructor ndConstructor, DataType<?> type ) {
         _setDataType( DataType.of( type.getRepresentativeType() ) );
-        _constructAndAllocate( shape, true );
+        _constructAndAllocate(ndConstructor, true );
     }
 
 
     /**
-     * @param shape The shape of that this new tensor ought to have.
+     * @param ndConstructor The {@link NDConfiguration} producer of that this new tensor ought to have.
      * @param type The data type that this tensor ought to have.
      * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Filler<T> filler) {
-        LogUtil.nullArgCheck( shape, "shape", int[].class );
+    private <T> void _constructFromInitializer(NDConstructor ndConstructor, DataType<T> type, Filler<T> filler ) {
+        LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( type, "type", DataType.class );
         LogUtil.nullArgCheck( type, "filler", Filler.class );
         _setDataType( type );
-        _constructAndAllocate( shape, false );
+        _constructAndAllocate(ndConstructor, false );
         _initData(filler);
     }
 
-    private void _constructAndAllocate(int[] shape, boolean virtual ) {
-        createConstructionAPI().configureFromNewShape( TsrConstructor.NDCProducer.of(shape), virtual, true );
+    private void _constructAndAllocate(NDConstructor ndConstructor, boolean virtual ) {
+        createConstructionAPI().configureFromNewShape(ndConstructor, virtual, true );
     }
 
     /*==================================================================================================================
@@ -406,7 +406,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             else _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-            createConstructionAPI().configureFromNewShape( TsrConstructor.NDCProducer.of(getNDConf().shape()), isVirtual, _getData() == null );
+            createConstructionAPI().configureFromNewShape( NDConstructor.of(getNDConf().shape()), isVirtual, _getData() == null );
             if ( isVirtual ) {
                 Relation<V> relation = get( Relation.class );
                 if ( relation!=null )

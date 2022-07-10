@@ -82,6 +82,7 @@ import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.ndim.AbstractTensor;
 import neureka.ndim.Filler;
+import neureka.ndim.NDConstructor;
 import neureka.ndim.NDimensional;
 import neureka.ndim.config.NDConfiguration;
 import neureka.optimization.Optimizer;
@@ -459,7 +460,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created and seeded tensor of the provided type and shape.
      */
-    static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new TsrImpl<>( valueType, shape, seed ); }
+    static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new TsrImpl<>( valueType, NDConstructor.of(shape), seed ); }
 
     static Tsr<Double> of( int[] shape, double value ) { return of( Double.class, shape, value ); }
 
@@ -477,7 +478,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
 
     static Tsr<Boolean> of( int[] shape, boolean[] value ) { return of( Boolean.class, shape, value ); }
 
-    static <V> Tsr<V> of( DataType<V> type, int[] shape ) { return new TsrImpl<>( shape, type ); }
+    static <V> Tsr<V> of( DataType<V> type, int[] shape ) { return new TsrImpl<>( NDConstructor.of(shape), type ); }
 
     static <V> Tsr<V> of( Class<V> typeClass, int[] shape, Object data ) {
         return of( DataType.of(typeClass), shape, data );
@@ -507,7 +508,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param data The data for the {@link Tsr} that is about to be created, which can be a list, an array or scalar.
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
-    static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( shape, dataType, data ); }
+    static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( NDConstructor.of(shape), dataType, data ); }
 
     /**
      *  This factory method allows the creation of tensors with an additional initialization
@@ -545,7 +546,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param <T> The type parameter for the actual data array items.
      */
     static <T> Tsr<T> of( DataType<T> type, int[] shape, Filler<T> filler) {
-        return new TsrImpl<>( shape, type, filler );
+        return new TsrImpl<>( NDConstructor.of(shape), type, filler );
     }
 
     /**

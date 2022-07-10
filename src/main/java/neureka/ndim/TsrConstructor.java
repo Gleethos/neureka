@@ -5,13 +5,11 @@ import neureka.common.utility.LogUtil;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.types.views.virtual.VirtualNDConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -52,24 +50,24 @@ public final class TsrConstructor {
      *  is a shape array of integers which is being passed to the method... <br>
      *  <br>
      *
-     * @param ndcProducer A producer of the {@link NDConfiguration} interface implementation.
+     * @param ndConstructor A producer of the {@link NDConfiguration} interface implementation.
      * @param makeVirtual A flag determining if the tensor should be actual or virtual (not fully allocated).
      * @param autoAllocate Determines if the underlying data array should be allocated or not.
      */
-    public void configureFromNewShape( NDCProducer ndcProducer, boolean makeVirtual, boolean autoAllocate )
+    public void configureFromNewShape(NDConstructor ndConstructor, boolean makeVirtual, boolean autoAllocate )
     { 
         _API.setIsVirtual( makeVirtual ); 
-        if ( _API.getData() == null && autoAllocate ) _API.allocate( makeVirtual ? 1 : ndcProducer.getSize() );
-        _API.setConf( ndcProducer.produceNDC( makeVirtual ) );
+        if ( _API.getData() == null && autoAllocate ) _API.allocate( makeVirtual ? 1 : ndConstructor.getSize() );
+        _API.setConf( ndConstructor.produceNDC( makeVirtual ) );
     }
 
-    public void tryConstructing( NDCProducer ndcProducer, DataType<?> dataType, Object data )
+    public void tryConstructing(NDConstructor ndConstructor, DataType<?> dataType, Object data )
     {
-        LogUtil.nullArgCheck( ndcProducer.getShape(), "shape", int[].class );
+        LogUtil.nullArgCheck( ndConstructor.getShape(), "shape", int[].class );
         LogUtil.nullArgCheck( dataType, "dataType", DataType.class );
         LogUtil.nullArgCheck( data, "data", Object.class );
 
-        int size = ndcProducer.getSize();
+        int size = ndConstructor.getSize();
         if ( data instanceof List<?> ) {
             List<?> range = (List<?>) data;
             data = range.toArray();// TODO: This is probably wrong!
@@ -85,18 +83,18 @@ public final class TsrConstructor {
         }
 
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
-            if ( constructAllFromOne( ndcProducer, data ) ) return;
+            if ( constructAllFromOne(ndConstructor, data ) ) return;
 
-        if (      data instanceof double[]  ) _constructForDoubles(  ndcProducer, (double[]) data );
-        else if ( data instanceof float[]   ) _constructForFloats(   ndcProducer, (float[]) data );
-        else if ( data instanceof int[]     ) _constructForInts(     ndcProducer, (int[]) data );
-        else if ( data instanceof byte[]    ) _constructForBytes(    ndcProducer, (byte[]) data );
-        else if ( data instanceof short[]   ) _constructForShorts(   ndcProducer, (short[]) data );
-        else if ( data instanceof boolean[] ) _constructForBooleans( ndcProducer, (boolean[]) data );
-        else if ( data instanceof long[]    ) _constructForLongs(    ndcProducer, (long[]) data );
+        if (      data instanceof double[]  ) _constructForDoubles(ndConstructor, (double[]) data );
+        else if ( data instanceof float[]   ) _constructForFloats(ndConstructor, (float[]) data );
+        else if ( data instanceof int[]     ) _constructForInts(ndConstructor, (int[]) data );
+        else if ( data instanceof byte[]    ) _constructForBytes(ndConstructor, (byte[]) data );
+        else if ( data instanceof short[]   ) _constructForShorts(ndConstructor, (short[]) data );
+        else if ( data instanceof boolean[] ) _constructForBooleans(ndConstructor, (boolean[]) data );
+        else if ( data instanceof long[]    ) _constructForLongs(ndConstructor, (long[]) data );
         else {
             _API.setType(dataType);
-            configureFromNewShape(ndcProducer, false, false);
+            configureFromNewShape(ndConstructor, false, false);
             _API.setData(data);
         }
     }
@@ -110,155 +108,155 @@ public final class TsrConstructor {
         return _optimizeObjectArray(dataType, data, size);
     }
 
-    public boolean constructAllFromOne( NDCProducer ndcProducer, Object data ) {
-        if ( data instanceof Double    ) { _constructAllF64(  ndcProducer, (Double)    data ); return true; }
-        if ( data instanceof Float     ) { _constructAllF32(  ndcProducer, (Float)     data ); return true; }
-        if ( data instanceof Integer   ) { _constructAllI32(  ndcProducer, (Integer)   data ); return true; }
-        if ( data instanceof Short     ) { _constructAllI16(  ndcProducer, (Short)     data ); return true; }
-        if ( data instanceof Byte      ) { _constructAllI8(   ndcProducer, (Byte)      data ); return true; }
-        if ( data instanceof Long      ) { _constructAllI64(  ndcProducer, (Long)      data ); return true; }
-        if ( data instanceof Boolean   ) { _constructAllBool( ndcProducer, (Boolean)   data ); return true; }
-        if ( data instanceof Character ) { _constructAllChar( ndcProducer, (Character) data ); return true; }
+    public boolean constructAllFromOne(NDConstructor ndConstructor, Object data ) {
+        if ( data instanceof Double    ) { _constructAllF64(ndConstructor, (Double)    data ); return true; }
+        if ( data instanceof Float     ) { _constructAllF32(ndConstructor, (Float)     data ); return true; }
+        if ( data instanceof Integer   ) { _constructAllI32(ndConstructor, (Integer)   data ); return true; }
+        if ( data instanceof Short     ) { _constructAllI16(ndConstructor, (Short)     data ); return true; }
+        if ( data instanceof Byte      ) { _constructAllI8(ndConstructor, (Byte)      data ); return true; }
+        if ( data instanceof Long      ) { _constructAllI64(ndConstructor, (Long)      data ); return true; }
+        if ( data instanceof Boolean   ) { _constructAllBool(ndConstructor, (Boolean)   data ); return true; }
+        if ( data instanceof Character ) { _constructAllChar(ndConstructor, (Character) data ); return true; }
         if ( Number.class.isAssignableFrom( data.getClass() ) ) {
-            _constructAllF64( ndcProducer, ((Number)data).doubleValue() ); return true;
+            _constructAllF64(ndConstructor, ((Number)data).doubleValue() ); return true;
         } else if ( !data.getClass().isArray() ) {
-            _constructAll( ndcProducer, data ); return true;
+            _constructAll(ndConstructor, data ); return true;
         }
         return false;
     }
 
-    private void _constructAllF64( NDCProducer ndcProducer, double value ) {
-        _constructAll( ndcProducer, F64.class );
+    private void _constructAllF64(NDConstructor ndConstructor, double value ) {
+        _constructAll(ndConstructor, F64.class );
         ( (double[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllF32( NDCProducer ndcProducer, float value ) {
-        _constructAll( ndcProducer, F32.class );
+    private void _constructAllF32(NDConstructor ndConstructor, float value ) {
+        _constructAll(ndConstructor, F32.class );
         ( (float[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllI32( NDCProducer ndcProducer, int value ) {
-        _constructAll( ndcProducer, I32.class );
+    private void _constructAllI32(NDConstructor ndConstructor, int value ) {
+        _constructAll(ndConstructor, I32.class );
         ( (int[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllI16( NDCProducer ndcProducer, short value ) {
-        _constructAll( ndcProducer, I16.class );
+    private void _constructAllI16(NDConstructor ndConstructor, short value ) {
+        _constructAll(ndConstructor, I16.class );
         ( (short[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllI8( NDCProducer ndcProducer, byte value ) {
-        _constructAll( ndcProducer, I8.class );
+    private void _constructAllI8(NDConstructor ndConstructor, byte value ) {
+        _constructAll(ndConstructor, I8.class );
         ( (byte[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllI64( NDCProducer ndcProducer, long value ) {
-        _constructAll( ndcProducer, I64.class );
+    private void _constructAllI64(NDConstructor ndConstructor, long value ) {
+        _constructAll(ndConstructor, I64.class );
         ( (long[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllBool( NDCProducer ndcProducer, boolean value ) {
-        _constructAll( ndcProducer, Boolean.class );
+    private void _constructAllBool(NDConstructor ndConstructor, boolean value ) {
+        _constructAll(ndConstructor, Boolean.class );
         ( (boolean[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllChar( NDCProducer ndcProducer, char value ) {
-        _constructAll( ndcProducer, Character.class );
+    private void _constructAllChar(NDConstructor ndConstructor, char value ) {
+        _constructAll(ndConstructor, Character.class );
         ( (char[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAll( NDCProducer ndcProducer, Object value ) {
-        _constructAll( ndcProducer, value.getClass() );
+    private void _constructAll(NDConstructor ndConstructor, Object value ) {
+        _constructAll(ndConstructor, value.getClass() );
         ( (Object[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAll( NDCProducer ndcProducer, Class<?> typeClass ) {
-        int size = ndcProducer.getSize();
+    private void _constructAll(NDConstructor ndConstructor, Class<?> typeClass ) {
+        int size = ndConstructor.getSize();
         _API.setType( DataType.of( typeClass ) );
-        configureFromNewShape( ndcProducer, size > 1, true );
+        configureFromNewShape(ndConstructor, size > 1, true );
     }
 
-    private void _constructForDoubles( NDCProducer ndcProducer, double[] value )
+    private void _constructForDoubles(NDConstructor ndConstructor, double[] value )
     {
-        int size = ndcProducer.getSize();
+        int size = ndConstructor.getSize();
         _API.setType( DataType.of( F64.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (double[]) _API.getData())[ i ]  = value[ i % value.length ];
         }
         else _API.setData( value );
-        configureFromNewShape( ndcProducer, false, false );
+        configureFromNewShape(ndConstructor, false, false );
     }
 
-    private void _constructForFloats( NDCProducer ndcProducer, float[] value )
+    private void _constructForFloats(NDConstructor ndConstructor, float[] value )
     {
-        int size = ndcProducer.getSize();
+        int size = ndConstructor.getSize();
         _API.setType( DataType.of( F32.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (float[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape( ndcProducer, false, false );
+        configureFromNewShape(ndConstructor, false, false );
     }
 
-    private void _constructForInts( NDCProducer ndcProducer, int[] value )
+    private void _constructForInts(NDConstructor ndConstructor, int[] value )
     {
-        int size = ndcProducer.getSize();
+        int size = ndConstructor.getSize();
         _API.setType( DataType.of( I32.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (int[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape( ndcProducer, false, false );
+        configureFromNewShape(ndConstructor, false, false );
     }
 
-    private void _constructForShorts( NDCProducer ndcProducer, short[] value )
+    private void _constructForShorts(NDConstructor ndConstructor, short[] value )
     {
-        int size = ndcProducer.getSize();
+        int size = ndConstructor.getSize();
         _API.setType( DataType.of( I16.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (short[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape( ndcProducer, false, false );
+        configureFromNewShape(ndConstructor, false, false );
     }
 
-    private void _constructForBooleans( NDCProducer ndcProducer, boolean[] value )
+    private void _constructForBooleans(NDConstructor ndConstructor, boolean[] value )
     {
-        int size = ndcProducer.getSize();
+        int size = ndConstructor.getSize();
         _API.setType( DataType.of( Boolean.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (boolean[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape( ndcProducer, false, false );
+        configureFromNewShape(ndConstructor, false, false );
     }
 
-    private void _constructForBytes( NDCProducer ndcProducer, byte[] value )
+    private void _constructForBytes(NDConstructor ndConstructor, byte[] value )
     {
-        int size = ndcProducer.getSize();
+        int size = ndConstructor.getSize();
         _API.setType( DataType.of( I8.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (byte[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape( ndcProducer, false, false );
+        configureFromNewShape(ndConstructor, false, false );
     }
 
-    private void _constructForLongs( NDCProducer ndcProducer, long[] value )
+    private void _constructForLongs(NDConstructor ndConstructor, long[] value )
     {
-        int size = ndcProducer.getSize();
+        int size = ndConstructor.getSize();
         _API.setType( DataType.of( I64.class ) );
         if ( size != value.length ) {
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (long[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape( ndcProducer, false, false );
+        configureFromNewShape(ndConstructor, false, false );
     }
 
-    public <V> void constructSeeded( Class<V> valueType, NDCProducer ndcProducer, Object seed ) {
+    public <V> void constructSeeded(Class<V> valueType, NDConstructor ndConstructor, Object seed ) {
         _API.setType( DataType.of(valueType) );
-        int size = ndcProducer.getSize();
+        int size = ndConstructor.getSize();
 
         if ( valueType == Double.class )
             _API.setData( DataConverter.Utility.seededDoubleArray( new double[size], seed.toString() ) );
@@ -279,7 +277,7 @@ public final class TsrConstructor {
         else
             throw new IllegalArgumentException("Seeding not supported for value type '"+valueType.getSimpleName()+"'!");
 
-        configureFromNewShape( ndcProducer, false, false  );
+        configureFromNewShape(ndConstructor, false, false  );
     }
 
     /**
@@ -318,48 +316,6 @@ public final class TsrConstructor {
             data = objects;
         }
         return data;
-    }
-    
-    public interface NDCProducer 
-    {
-        int getSize();
-        int[] getShape();
-
-        NDConfiguration produceNDC(boolean makeVirtual);
-
-
-        static NDCProducer of( int[] newShape ) {
-
-            int size = NDConfiguration.Utility.sizeOfShape( newShape );
-            if ( size == 0 ) {
-                String shape = Arrays.stream( newShape ).mapToObj( String::valueOf ).collect( Collectors.joining( "x" ) );
-                String message = "The provided shape '"+shape+"' must not contain zeros. Dimensions lower than 1 are not possible.";
-                _LOG.error( message );
-                throw new IllegalArgumentException( message );
-            }
-            return new NDCProducer() {
-                @Override public int getSize() { return size;}
-                @Override public int[] getShape() { return newShape.clone(); }
-                @Override public NDConfiguration produceNDC(boolean makeVirtual) {
-                    if ( makeVirtual ) return VirtualNDConfiguration.construct( newShape );
-                    else {
-                        int[] newTranslation = NDConfiguration.Layout.ROW_MAJOR.newTranslationFor( newShape );
-                        int[] newSpread = new int[ newShape.length ];
-                        Arrays.fill( newSpread, 1 );
-                        int[] newOffset = new int[ newShape.length ];
-                        return
-                                NDConfiguration.of(
-                                        newShape,
-                                        newTranslation,
-                                        newTranslation, // indicesMap
-                                        newSpread,
-                                        newOffset
-                                );
-                    }
-                }
-            };
-        }
-
     }
 
 
