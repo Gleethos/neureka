@@ -19,6 +19,7 @@ public class SimpleReshapeView extends AbstractNDC
     private final int[] _spread;
     private final int[] _offset;
 
+
     public SimpleReshapeView( int[] form, NDConfiguration toBeViewed )
     {
         _toBeViewed = toBeViewed;

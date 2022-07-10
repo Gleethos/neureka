@@ -273,8 +273,17 @@ public final class Neureka
                 "]";
     }
 
+    /**
+     * @return A context object which is expected to host all the tensor operations...
+     */
     public BackendContext getBackend() { return this.backend(); }
 
+    /**
+     *  Use this method to attach a backend context (for operations)
+     *  to this thread local library context.
+     *
+     * @param backendContext The {@link BackendContext} which should be set for this thread local library context.
+     */
     public void setBackend( BackendContext backendContext ) { _backend = backendContext; }
 
     /**

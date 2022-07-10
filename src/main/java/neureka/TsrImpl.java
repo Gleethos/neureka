@@ -1322,7 +1322,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             );
     }
 
-    private static void _writeImgData(DataBuffer data, BufferedImage target ) {
+    private static void _writeImgData( DataBuffer data, BufferedImage target ) {
         target.setData(
             Raster.createRaster( target.getSampleModel(), data, new Point() )
         );
@@ -1401,7 +1401,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      * @param <T> The type parameter for the returned tensor.
      * @return The same tensor instance whose data has been converted to hold a different type.
      */
-    private <T> Tsr<T> _toType(Class<T> typeClass )
+    private <T> Tsr<T> _toType( Class<T> typeClass )
     {
         if ( this.isOutsourced() ) {
             _setDataType( DataType.of( typeClass ) );
