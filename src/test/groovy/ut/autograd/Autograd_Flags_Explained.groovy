@@ -158,7 +158,7 @@ class Autograd_Flags_Explained extends Specification
             xAsStr.matches( afterAll )
 
         when : 'It is time to free some memory because our history of computation has grown a bit...'
-            result.detach()
+            result.unsafe.detach()
 
         then : 'Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !'
             !result.has( GraphNode.class )
@@ -174,6 +174,25 @@ class Autograd_Flags_Explained extends Specification
             'y*y*3'| false   | true    | true  ||".*1.*null.*"  |".*5\\.5.*null.*"|".*5\\.5.*null.*"|".*5\\.5.*null.*"
             'y*y*3'| true    | true    | true  ||".*1.*null.*"  |".*1.*null.*"    |".*1.*null.*"    |".*5\\.5.*null.*"
 
+    }
+
+    def 'We can create a shallow copy of a tensor detached from the computation graph.'()
+    {
+        given :
+            var a = Tsr.ofFloats().withShape(2).andFill(-3, 1).setRqsGradient(true)
+        when :
+            var b = a * 2
+            var c = b.detached()
+
+        then :
+            c !== b
+            c === c.detached() // c is already detached, so this is a no-op
+        and :
+            b.isBranch()
+            !c.isBranch()
+        and :
+            b.has(GraphNode)
+            !c.has(GraphNode)
     }
 
 }

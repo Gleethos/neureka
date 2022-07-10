@@ -624,7 +624,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  Converts this tensor from row major to column major layout.
      */
     private void _fromRMToCM() {
-        _assignIfActual( () -> TsrImpl.this.T().deepCopy().detach() );
+        _assignIfActual( () -> TsrImpl.this.T().deepCopy().getUnsafe().detach() );
         NDConfiguration old = this.getNDConf();
         int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor(old.shape());
         if ( old.isVirtual() ) {
@@ -759,6 +759,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
                 _setDataAt( i, o );
                 return TsrImpl.this;
             }
+            @Override public Tsr<V> detach() { TsrImpl.this.remove( GraphNode.class ); return TsrImpl.this; }
         };
     }
 
@@ -915,7 +916,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> getAt(List<?> key ) {
+    public Tsr<V> getAt( List<?> key ) {
         LogUtil.nullArgCheck( key, "key", List.class );
         if ( key.stream().anyMatch( i -> i == null ) )
             throw new IllegalArgumentException("List of indices/ranges may not contain entries which are null!");
@@ -947,7 +948,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
                 ( allInt ? new Object[]{ DataConverter.get().convert(indices, int[].class) } : indices ),
                 this,
                 this::_sliceOf
-        );
+            );
     }
 
     /**

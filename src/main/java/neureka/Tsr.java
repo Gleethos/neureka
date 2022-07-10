@@ -1224,15 +1224,20 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     default NDFrame<V> frame() { return get( NDFrame.class ); }
 
     /**
-     *  <b>This method detaches this tensor from its underlying computation-graph
+     *  <b>This method returns a new tensor detached from any underlying computation-graph
      *  or simply does nothing if no graph is present.</b> <br>
      *  Nodes within a computation graph are instances of the "{@link GraphNode}" class which are also
      *  simple components of the tensors they represent in the graph. <br>
-     *  Therefore, "detaching" this tensor from the graph simply means removing its {@link GraphNode} component.
+     *  Therefore, a "detached" clone of this tensor is
+     *  simply a tensor without a {@link GraphNode} component.
      *
      * @return This very instance in order to allows for a more streamline usage of this method.
      */
-    default Tsr<V> detach() { this.remove( GraphNode.class ); return this; }
+    default Tsr<V> detached() {
+        if ( this.has( GraphNode.class ) )
+            return this.shallowCopy().remove( GraphNode.class );
+        return this;
+    }
 
     /**
      *  This method receives a nested {@link String} array which
@@ -1599,7 +1604,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return A shallow copy where the underlying data is shared with this tensor.
      */
     default Tsr<V> shallowCopy() {
-        if ( this.isEmpty() || this.isUndefined() ) return (Tsr<V>) this;
+        if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an excepion here...
         List<List<Integer>> ranges = new ArrayList<>();
         for ( int e : this.shape() ) {
             List<Integer> rangeAsList = new ArrayList<>();
@@ -2265,15 +2270,23 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
         return new Access<V>() {
             @Override public V    get()          { return getValueAt( indices ); }
             @Override public void set( V value ) { putAt( indices, value ); }
+
+            @Override
+            public boolean equals( Object o ) {
+                if ( o == null ) return false;
+                if ( o == this ) return true;
+                if ( o.getClass() != this.getClass() ) return false;
+                Access<V> other = (Access<V>) o;
+                return this.get().equals( other.get() );
+            }
         };
     }
 
-    interface Access<V> {
-
+    interface Access<V>
+    {
         V get();
 
         void set( V value );
-
     }
 
     enum ImageType
@@ -2459,6 +2472,17 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
 
             return (A) data;
         }
+
+        /**
+         *  <b>This method detaches this tensor from its underlying computation-graph
+         *  or simply does nothing if no graph is present.</b> <br>
+         *  Nodes within a computation graph are instances of the "{@link GraphNode}" class which are also
+         *  simple components of the tensors they represent in the graph. <br>
+         *  Therefore, "detaching" this tensor from the graph simply means removing its {@link GraphNode} component.
+         *
+         * @return This very instance in order to allows for a more streamline usage of this method.
+         */
+        Tsr<T> detach();
 
     }
 
