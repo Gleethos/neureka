@@ -72,6 +72,7 @@ import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
 import neureka.ndim.AbstractTensor;
 import neureka.ndim.Filler;
+import neureka.ndim.TsrConstructor;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterator.NDIterator;
 import neureka.view.TsrAsString;
@@ -141,7 +142,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         if ( args == null || args.length == 0 ) return new TsrImpl<>();
         if ( args.length == 1 ) {
             TsrImpl<T> t = new TsrImpl<>();
-            boolean success = t.createConstructionAPI().constructAllFromOne( new int[]{ 1 }, args[ 0 ] );
+            boolean success = t.createConstructionAPI().constructAllFromOne( TsrConstructor.NDCProducer.of(new int[]{ 1 }), args[ 0 ] );
             if ( !success ) {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
                 _LOG.error( message );
@@ -161,7 +162,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             TsrImpl<T> t = new TsrImpl<>();
             if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
                 args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
-                t.createConstructionAPI().constructAllFromOne( (int[]) args[ 0 ], args[ 1 ] );
+                t.createConstructionAPI().constructAllFromOne( TsrConstructor.NDCProducer.of((int[]) args[ 0 ]), args[ 1 ] );
             } else {
                 t._setDataType( DataType.of( args[1].getClass() ) );
                 t._constructAndAllocate( (int[]) args[0], true );
@@ -215,7 +216,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      */
     TsrImpl() {}
 
-    TsrImpl(int[] shape, DataType<?> dataType, Object data ) { createConstructionAPI().tryConstructing( shape, dataType, data ); }
+    TsrImpl(int[] shape, DataType<?> dataType, Object data ) { createConstructionAPI().tryConstructing( TsrConstructor.NDCProducer.of(shape), dataType, data ); }
 
     /**
      *  see {@link Tsr#of(DataType, int[], Filler)}
@@ -229,7 +230,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  See {@link Tsr#of(Class, int[], String)} and {@link #of(List, String)}
      */
     TsrImpl(Class<V> valueType, int[] shape, String seed ) {
-        createConstructionAPI().constructSeeded( valueType, shape, seed );
+        createConstructionAPI().constructSeeded( valueType, TsrConstructor.NDCProducer.of(shape), seed );
     }
 
     TsrImpl(int[] shape, DataType<?> type )
@@ -255,7 +256,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     }
 
     private void _constructAndAllocate(int[] shape, boolean virtual ) {
-        createConstructionAPI().configureFromNewShape( shape, virtual, true );
+        createConstructionAPI().configureFromNewShape( TsrConstructor.NDCProducer.of(shape), virtual, true );
     }
 
     /*==================================================================================================================
@@ -405,7 +406,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             else _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-            createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, _getData() == null );
+            createConstructionAPI().configureFromNewShape( TsrConstructor.NDCProducer.of(getNDConf().shape()), isVirtual, _getData() == null );
             if ( isVirtual ) {
                 Relation<V> relation = get( Relation.class );
                 if ( relation!=null )
