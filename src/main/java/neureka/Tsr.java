@@ -2264,6 +2264,13 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
 
     String toString();
 
+    /**
+     *  This method creates and returns a new tensor instance
+     *  which is not only a copy of the configuration of this tensor but also a copy of
+     *  the underlying data array.
+     *
+     * @return A new tensor instance which is a deep copy of this tensor.
+     */
     Tsr<V> deepCopy();
 
     default Access<V> at( int... indices ) {
