@@ -994,12 +994,9 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      * @param newSpread The spread / steps / strides of the slice within this tensor.
      * @return The newly created slice.
      */
-    private Tsr<V> _sliceOf(int[] newShape, int[] newOffset, int[] newSpread )
+    private Tsr<V> _sliceOf( int[] newShape, int[] newOffset, int[] newSpread )
     {
         this.setIsVirtual( false );
-        Tsr<V> subset = new TsrImpl<>();
-        ((TsrImpl)subset)._setDataType( this.getDataType() );
-        ((TsrImpl)subset)._setData( _getData() );
         int[] newTranslation = getNDConf().translation();
         int[] newIndicesMap = this.getNDConf().getLayout().newTranslationFor( newShape );
 
@@ -1044,7 +1041,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
                 via the 'getAt(...)' method leads us to a situation where
                 the following variable is NOT NULL! :
              */
-            int[] reshaped = ( this.isSlice() ) ? ((TsrImpl<V>)parentTensor).get( Relation.class ).getReshapeRelationFor( this ) : null;
+            int[] reshaped = ( this.isSlice() ) ? parentTensor.get( Relation.class ).getReshapeRelationFor( this ) : null;
             reshaped = ( reshaped != null ) ? Reshape.invert( reshaped ) : null;
             for ( int i = 0; i < parentTensor.rank(); i++ ) {
                 int ii = ( reshaped != null ) ? reshaped[ i ] : i;
@@ -1060,7 +1057,10 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
                 }
             }
         }
-        ((TsrImpl)subset)._setNDConf(
+        Tsr<V> subset = new TsrImpl<>();
+        subset.getUnsafe().setDataType( this.getDataType() );
+        ((TsrImpl)subset)._setData( _getData() );
+        ((TsrImpl<?>)subset)._setNDConf(
             NDConfiguration.of(
                 newShape,
                 newTranslation,
@@ -1076,8 +1076,8 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             subset.setIsOutsourced( true );
         }
         if ( this.isVirtual() ) subset.setIsVirtual( true );
-        ((TsrImpl)subset).set( new Relation().addParent( this ) );
-        Relation<V> parent = get( Relation.class );
+        subset.set( new Relation().addParent( this ) );
+        Relation<V> parent = this.get( Relation.class );
         parent = ( parent != null ) ? parent : new Relation<>();
         parent.addChild( subset );
         this.set( parent );
