@@ -3,6 +3,7 @@ package ut.dtype
 import neureka.dtype.DataType
 import neureka.dtype.NumericType
 import neureka.dtype.custom.F32
+import neureka.dtype.custom.F64
 import neureka.dtype.custom.I16
 import neureka.dtype.custom.I8
 import neureka.dtype.custom.UI8
@@ -26,7 +27,7 @@ class DataType_Spec extends Specification
       Class<?> typeClass, Class<?> targetClass, boolean isNumericType
     ) {
         given : 'A "DataType" instance representing / wrapping the relevant datatype Class passed to "instance(...)."'
-            DataType dt = DataType.of( typeClass )
+            DataType<?> dt = DataType.of( typeClass )
 
         expect : 'The found instance is not null!'
             dt != null
@@ -38,10 +39,13 @@ class DataType_Spec extends Specification
         where : 'The following data is being used :'
             typeClass           ||  targetClass        | isNumericType
             I16.class           ||   I16.class         | true
-            byte[].class        ||   I8.class          | true
             UI8.class           ||   UI8.class         | true
             Float.class         ||   F32.class         | true
+            Double.class        ||   F64.class         | true
+            Short.class         ||   I16.class         | true
+            Byte.class          ||   I8.class          | true
             String.class        ||   String.class      | false
+            Date.class          ||   Date.class        | false
             Object.class        ||   Object.class      | false
             Specification.class || Specification.class | false
     }

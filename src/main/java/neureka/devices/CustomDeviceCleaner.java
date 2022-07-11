@@ -21,7 +21,7 @@ final class CustomDeviceCleaner implements DeviceCleaner, Runnable
 
     static class ReferenceWithCleanup<T> extends PhantomReference<T>
     {
-        private Runnable _action;
+        private final Runnable _action;
 
         ReferenceWithCleanup(T o, Runnable action, ReferenceQueue<T> queue) {
             super( o, queue );

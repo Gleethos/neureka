@@ -83,11 +83,6 @@ public final class DataType<Type>
         else if ( typeClass == Short.class   || typeClass.getSimpleName().equals("short") ) realTypeClass = I16.class;
         else if ( typeClass == Long.class    || typeClass.getSimpleName().equals("long")  ) realTypeClass = I64.class;
         else if ( typeClass == Byte.class    || typeClass.getSimpleName().equals("byte")  ) realTypeClass = I8.class;
-        else if ( typeClass == byte[].class                                               ) realTypeClass = I8.class;
-        else if ( typeClass == int[].class                                                ) realTypeClass = I32.class;
-        else if ( typeClass == float[].class                                              ) realTypeClass = F32.class;
-        else if ( typeClass == double[].class                                             ) realTypeClass = F64.class;
-        else if ( typeClass == long[].class                                               ) realTypeClass = I64.class;
         return realTypeClass;
     }
 

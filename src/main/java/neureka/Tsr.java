@@ -508,7 +508,9 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param data The data for the {@link Tsr} that is about to be created, which can be a list, an array or scalar.
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
-    static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( NDConstructor.of(shape), dataType, data ); }
+    static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( NDConstructor.of(shape), dataType, data, false ); }
+
+    static <V> Tsr<V> of( DataType<V> dataType, NDConstructor ndConstructor, Object data ) { return new TsrImpl<>( ndConstructor, dataType, data, true ); }
 
     /**
      *  This factory method allows the creation of tensors with an additional initialization

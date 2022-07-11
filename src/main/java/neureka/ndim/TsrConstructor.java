@@ -61,10 +61,21 @@ public final class TsrConstructor {
         _API.setConf( ndConstructor.produceNDC( makeVirtual ) );
     }
 
-    public void tryConstructing(NDConstructor ndConstructor, DataType<?> dataType, Object data )
-    {
+    public void tryConstructing(
+        NDConstructor ndConstructor,
+        DataType<?> dataType,
+        Object data,
+        boolean trusted
+    ) {
+        LogUtil.nullArgCheck( ndConstructor, "ndConstructor", NDConstructor.class );
         LogUtil.nullArgCheck( ndConstructor.getShape(), "shape", int[].class );
         LogUtil.nullArgCheck( dataType, "dataType", DataType.class );
+        if ( trusted ) {
+            _API.setType( dataType );
+            _API.setData( data );
+            _API.setConf( ndConstructor.produceNDC( false ) );
+            return;
+        }
         LogUtil.nullArgCheck( data, "data", Object.class );
 
         int size = ndConstructor.getSize();

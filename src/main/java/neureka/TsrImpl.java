@@ -216,25 +216,25 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      */
     TsrImpl() {}
 
-    TsrImpl(NDConstructor ndConstructor, DataType<?> dataType, Object data ) {
-        createConstructionAPI().tryConstructing(ndConstructor, dataType, data );
+    TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Object data, boolean trusted ) {
+        createConstructionAPI().tryConstructing( ndConstructor, dataType, data, trusted );
     }
 
     /**
      *  see {@link Tsr#of(DataType, int[], Filler)}
      */
-    <T> TsrImpl(NDConstructor ndConstructor, DataType<T> type, Filler<T> filler ) {
+    <T> TsrImpl( NDConstructor ndConstructor, DataType<T> type, Filler<T> filler ) {
         _constructFromInitializer(ndConstructor, type, filler);
     }
 
     /**
      *  See {@link Tsr#of(Class, int[], String)} and {@link #of(List, String)}
      */
-    TsrImpl(Class<V> valueType, NDConstructor ndConstructor, String seed ) {
+    TsrImpl( Class<V> valueType, NDConstructor ndConstructor, String seed ) {
         createConstructionAPI().constructSeeded( valueType, ndConstructor, seed );
     }
 
-    TsrImpl(NDConstructor ndConstructor, DataType<?> type ) {
+    TsrImpl( NDConstructor ndConstructor, DataType<?> type ) {
         _setDataType( DataType.of( type.getRepresentativeType() ) );
         _constructAndAllocate(ndConstructor, true );
     }
@@ -1058,18 +1058,13 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
                 }
             }
         }
-        Tsr<V> subset = new TsrImpl<>();
-        subset.getUnsafe().setDataType( this.getDataType() );
-        ((TsrImpl)subset)._setData( _getData() );
-        ((TsrImpl<?>)subset)._setNDConf(
-            NDConfiguration.of(
-                newShape,
-                newTranslation,
-                newIndicesMap,
-                newSpread,
-                newOffset
-            )
-        );
+
+        Tsr<V> subset =
+                Tsr.of(
+                    this.getDataType(),
+                    NDConstructor.of( newShape, newTranslation, newIndicesMap, newSpread, newOffset ),
+                    _getData()
+                );
 
         if ( this.isOutsourced() ) {
             Device<V> device = this.getDevice();
