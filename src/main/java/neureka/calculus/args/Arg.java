@@ -19,7 +19,17 @@ public abstract class Arg<T> implements Component<Args> {
 
     public Arg( T arg ) { _value = arg; }
 
-    public T get() { return _value; }
+    public T get() {
+        if ( _value instanceof int[]     ) return (T) ((int[])_value).clone();
+        if ( _value instanceof float[]   ) return (T) ((float[])_value).clone();
+        if ( _value instanceof double[]  ) return (T) ((double[])_value).clone();
+        if ( _value instanceof long[]    ) return (T) ((long[])_value).clone();
+        if ( _value instanceof short[]   ) return (T) ((short[])_value).clone();
+        if ( _value instanceof byte[]    ) return (T) ((byte[])_value).clone();
+        if ( _value instanceof char[]    ) return (T) ((char[])_value).clone();
+        if ( _value instanceof boolean[] ) return (T) ((boolean[])_value).clone();
+        return _value;
+    }
 
     @Override
     public boolean update(OwnerChangeRequest<Args> changeRequest) { return true; }
@@ -79,6 +89,21 @@ public abstract class Arg<T> implements Component<Args> {
     public static class Seed extends Arg<Long> {
         public static Seed of( long arg ) { return new Seed( arg ); }
         private Seed( long arg ) { super(arg); }
+    }
+
+    public static class Shape extends Arg<int[]> {
+        public static Shape of( int[] arg ) { return new Shape( arg ); }
+        private Shape( int[] arg ) { super(arg); }
+    }
+
+    public static class Offset extends Arg<int[]> {
+        public static Offset of( int[] arg ) { return new Offset( arg ); }
+        private Offset( int[] arg ) { super(arg); }
+    }
+
+    public static class Stride extends Arg<int[]> {
+        public static Stride of( int[] arg ) { return new Stride( arg ); }
+        private Stride( int[] arg ) { super(arg); }
     }
 
     @Override

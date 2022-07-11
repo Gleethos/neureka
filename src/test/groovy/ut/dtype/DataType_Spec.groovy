@@ -23,7 +23,7 @@ class DataType_Spec extends Specification
         """
     }
 
-    def 'DataType multiton instances behave as expected.'(
+    def 'DataType multi-ton instances behave as expected.'(
       Class<?> typeClass, Class<?> targetClass, boolean isNumericType
     ) {
         given : 'A "DataType" instance representing / wrapping the relevant datatype Class passed to "instance(...)."'

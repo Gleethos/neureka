@@ -49,3 +49,4 @@ neureka.backend.main.operations.other.Reshape
 neureka.backend.main.operations.other.AssignLeft
 neureka.backend.main.operations.other.Randomization
 neureka.backend.main.operations.other.Cat
+neureka.backend.main.operations.other.Slice

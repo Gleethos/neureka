@@ -57,8 +57,8 @@ package neureka;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.memory.MemUtil;
-import neureka.backend.main.operations.other.Reshape;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
@@ -997,87 +997,15 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      */
     private Tsr<V> _sliceOf( int[] newShape, int[] newOffset, int[] newSpread )
     {
-        this.setIsVirtual( false );
-        int[] newTranslation = getNDConf().translation();
-        int[] newIndicesMap = this.getNDConf().getLayout().newTranslationFor( newShape );
+        boolean isIntermediate = this.isIntermediate();
+        _setIsIntermediate(false); // To avoid deletion!
+        Tsr<V> slice = Function.of("slice(I[0])", false)
+                        .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))
+                        .call(this);
 
-        for ( int i = 0; i < this.rank(); i++ )
-            newSpread[ i ] = ( newSpread[i] == 0 ) ? 1 : newSpread[ i ];
-
-        for ( int i = 0; i < newOffset.length; i++ )
-            newOffset[ i ] = newOffset[ i ] + getNDConf().offset( i ); // Offset is being inherited!
-
-        Tsr<?> rootTensor   = ( this.isSlice() ? get( Relation.class ).findRootTensor() : this );
-        Tsr<?> parentTensor = ( this.isSlice() ? get( Relation.class ).getParent()      : this );
-        /*
-            The following code check the validity of the slice shape ranges with
-            respect to the 'parentTensor' of this new slice.
-         */
-        if ( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
-            // TODO! This requires some more thought about how to check this!
-            // THIS CASE HAS NOT YET BEEN THOUGHT TROUGH!
-            _LOG.warn(
-                "Exceptional slice request detected. " +
-                "This type of tensor cannot yet be sliced. " +
-                "Please copy this tensor before slicing."
-            );
-        } else {
-            /*
-                1. We know that inside this else branch 'this' tensor is a first order slice!
-                (So it is not a slice of a slice... reason : 'rootTensor == parentTensor' )
-
-                2. There is however uncertainty about the 'true shape' of this parent tensor!
-                Meaning : It might have been reshaped and could therefore be distorted with
-                respect to the slice that is currently being prepared!
-                -> This means we have to take this possible reshaping into account!
-                Like so:
-
-                The following uses an int array also called 'reshapeRelation'.
-                This is simply the 'reshape array' which has been recorded inside the 'Relation' component
-                by the 'Reshape' operation! ( Hopefully! :) ... custom shape operations need to consider this as well! )
-
-                The following would occur when : "Tsr.of(...).T().getAt(...);"
-                Transposing a tensor performs an inline reshaping of an identical
-                slice of the original tensor! Then again slicing this tensor
-                via the 'getAt(...)' method leads us to a situation where
-                the following variable is NOT NULL! :
-             */
-            int[] reshaped = ( this.isSlice() ) ? parentTensor.get( Relation.class ).getReshapeRelationFor( this ) : null;
-            reshaped = ( reshaped != null ) ? Reshape.invert( reshaped ) : null;
-            for ( int i = 0; i < parentTensor.rank(); i++ ) {
-                int ii = ( reshaped != null ) ? reshaped[ i ] : i;
-                int top = newOffset[ i ] + newShape[ i ];
-                if ( top > parentTensor.shape( ii ) ) {
-                    String message =
-                            "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
-                            "At index '" + i + "' : offset '" + newOffset[ i ] + "' + shape '" + newShape[ i ] + "' = '" + top + "',\n" +
-                            "which is larger than the target shape '" + parentTensor.shape( ii ) + "' at the same index!";
-                    Exception exception = new IllegalArgumentException( message );
-                    _LOG.error( message, exception );
-                    throw new IllegalArgumentException( exception );
-                }
-            }
-        }
-
-        Tsr<V> subset =
-                Tsr.of(
-                    this.getDataType(),
-                    NDConstructor.of( newShape, newTranslation, newIndicesMap, newSpread, newOffset ),
-                    _getData()
-                );
-
-        if ( this.isOutsourced() ) {
-            Device<V> device = this.getDevice();
-            device.store( subset, this );
-            subset.setIsOutsourced( true );
-        }
-        if ( this.isVirtual() ) subset.setIsVirtual( true );
-        subset.set( new Relation().addParent( this ) );
-        Relation<V> parent = this.get( Relation.class );
-        parent = ( parent != null ) ? parent : new Relation<>();
-        parent.addChild( subset );
-        this.set( parent );
-        return subset;
+        slice.getUnsafe().setIsIntermediate(false);
+        _setIsIntermediate(isIntermediate);
+        return slice;
     }
 
     /**
