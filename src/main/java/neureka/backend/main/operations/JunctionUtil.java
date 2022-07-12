@@ -241,15 +241,25 @@ public class JunctionUtil
 
 
     public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
-        //Tsr<V> t = (Tsr<V>) Tsr.like( (Tsr<Number>) template ).all( value );
-        //t.setIsVirtual(false);
-        Tsr<V> t = Tsr.of( template.getValueClass(), template.getNDConf().shape(), value )
+        return newTsrLike(
+            template.valueClass(),
+            template.getNDConf().shape(),
+            template.isOutsourced(),
+            template.get( Device.class ),
+            value
+        );
+    }
+
+    public static <V> Tsr<V> newTsrLike(
+        Class<V> type, int[] shape, boolean isOutsourced, Device<Object> device, double value
+    ) {
+        Tsr<V> t = Tsr.of( type, shape, value )
                         .getUnsafe()
                         .setIsIntermediate( true );
         t.setIsVirtual( false );
         t.setValue( value );
         try {
-            if ( template.isOutsourced() ) template.get( Device.class ).store( t );
+            if ( isOutsourced ) device.store( t );
         } catch ( Exception exception ) {
             _LOG.error( "Failed storing a newly created tensor from a template tensor to its host device.", exception );
             throw exception;

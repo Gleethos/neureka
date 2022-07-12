@@ -36,6 +36,7 @@ SOFTWARE.
 package neureka.dtype;
 
 
+import neureka.common.utility.LogUtil;
 import neureka.dtype.custom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +89,7 @@ public final class DataType<Type>
 
     public static <T> DataType<T> of( Class<T> typeClass )
     {
+        LogUtil.nullArgCheck(typeClass, "typeClass", Class.class);
         Class<?> realTypeClass = _numericTypeRepresentationOf( typeClass );
 
         if ( _instances.containsKey( realTypeClass ) ) {
