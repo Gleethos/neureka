@@ -2,6 +2,8 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.calculus.Function
+import neureka.calculus.args.Arg
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
@@ -253,5 +255,20 @@ class Tensor_Slicing_Spec extends Specification
 
     }
 
+/*
+    def 'One can perform slicing through the Function API (because slicing is a regular operation)'(
+            Class<V> type, int[] shape, boolean isOutsourced, Device<Object> device
+    ) {
+        given :
+            var t = Tsr.ofBytes().withShape(4, 4).andFill(-1, 7, 3)
+            boolean isIntermediate = t.isIntermediate();
+            t.getUnsafe().setIsIntermediate(false); // To avoid deletion!
+            Tsr<Object> slice = Function.of("slice(I[0])", false)
+                    .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))
+                    .call(newError);
 
+        newError.getUnsafe().setIsIntermediate(isIntermediate);
+        slice.getUnsafe().setIsIntermediate(false);
+    }
+*/
 }
