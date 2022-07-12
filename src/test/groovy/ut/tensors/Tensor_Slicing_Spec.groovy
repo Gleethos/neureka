@@ -255,20 +255,41 @@ class Tensor_Slicing_Spec extends Specification
 
     }
 
-/*
-    def 'One can perform slicing through the Function API (because slicing is a regular operation)'(
-            Class<V> type, int[] shape, boolean isOutsourced, Device<Object> device
+
+    def 'Slicing is also a Function with autograd support!'(
     ) {
         given :
-            var t = Tsr.ofBytes().withShape(4, 4).andFill(-1, 7, 3)
-            boolean isIntermediate = t.isIntermediate();
-            t.getUnsafe().setIsIntermediate(false); // To avoid deletion!
-            Tsr<Object> slice = Function.of("slice(I[0])", false)
-                    .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))
-                    .call(newError);
+            var t = Tsr.ofBytes().withShape(4, 4).andFill(-1, 7, 3).setRqsGradient(true)
+        and :
+            int[] newShape  = [2, 2]
+            int[] newOffset = [1, 1]
+            int[] newSpread = [1, 1]
 
-        newError.getUnsafe().setIsIntermediate(isIntermediate);
-        slice.getUnsafe().setIsIntermediate(false);
+        when :
+            Tsr<Object> slice = Function.of("slice(I[0])", true)
+                                    .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))
+                                    .call(t)
+        then :
+            slice.toString() == "(2x2):[\n" +
+                                "   [   3.0 ,  -1.0  ],\n" +
+                                "   [  -1.0 ,   7.0  ]\n" +
+                                "]"
+
+        when :
+           slice.backward(-8)
+
+        then :
+           t.toString() == "(4x4):[\n" +
+                           "   [  -1.0 ,   7.0 ,   3.0 ,  -1.0  ],\n" +
+                           "   [   7.0 ,   3.0 ,  -1.0 ,   7.0  ],\n" +
+                           "   [   3.0 ,  -1.0 ,   7.0 ,   3.0  ],\n" +
+                           "   [  -1.0 ,   7.0 ,   3.0 ,  -1.0  ]\n" +
+                           "]:g:[\n" +
+                           "   [   0.0 ,   0.0 ,   0.0 ,   0.0  ],\n" +
+                           "   [   0.0 ,  -8.0 ,  -8.0 ,   0.0  ],\n" +
+                           "   [   0.0 ,  -8.0 ,  -8.0 ,   0.0  ],\n" +
+                           "   [   0.0 ,   0.0 ,   0.0 ,   0.0  ]\n" +
+                           "]"
     }
-*/
+
 }

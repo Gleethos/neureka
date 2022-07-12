@@ -23,8 +23,8 @@ public class Slice extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                .setIdentifier(       "slice"    )
-                .setOperator(         "slice"    )
+                .setIdentifier(       "slice"     )
+                .setOperator(         "slice"     )
                 .setArity(            1           )
                 .setIsOperator(       false       )
                 .setIsIndexer(        false       )
@@ -38,11 +38,11 @@ public class Slice extends AbstractOperation
             .setExecution(
                 ( caller, call ) ->
                 {
-                    int[] newShape  = call.getValOf(Arg.Shape.class);
-                    int[] newOffset = call.getValOf(Arg.Offset.class);
-                    int[] newSpread = call.getValOf(Arg.Stride.class);
+                    int[] newShape    = call.getValOf(Arg.Shape.class);
+                    int[] newOffset   = call.getValOf(Arg.Offset.class);
+                    int[] newSpread   = call.getValOf(Arg.Stride.class);
                     Tsr<Object> input = (Tsr<Object>) call.input(0);
-                    Tsr<?> subset = _slice(newShape, newOffset, newSpread, input);
+                    Tsr<?> subset     = _slice(newShape, newOffset, newSpread, input);
                     //---
                     Class<?>       typeClass = input.itemClass();
                     int[]          shape = input.getNDConf().shape();
@@ -61,7 +61,7 @@ public class Slice extends AbstractOperation
 
                                 newError.getUnsafe().setIsIntermediate(isIntermediate);
                                 slice.getUnsafe().setIsIntermediate(false);
-                                Neureka.get().backend().getFunction().idy().call(slice, (Tsr<Object>) t.error());
+                                Neureka.get().backend().getFunction().idy().execute( slice, t.error().setIsVirtual(false) );
                                 return newError;
                             });
                 }
@@ -88,10 +88,10 @@ public class Slice extends AbstractOperation
 
         Tsr<?> rootTensor   = ( input.isSlice() ? input.get( Relation.class ).findRootTensor() : input );
         Tsr<?> parentTensor = ( input.isSlice() ? input.get( Relation.class ).getParent()      : input );
-                    /*
-                        The following code check the validity of the slice shape ranges with
-                        respect to the 'parentTensor' of this new slice.
-                     */
+        /*
+            The following code check the validity of the slice shape ranges with
+            respect to the 'parentTensor' of this new slice.
+         */
         if ( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
             // TODO! This requires some more thought about how to check this!
             // THIS CASE HAS NOT YET BEEN THOUGHT TROUGH!

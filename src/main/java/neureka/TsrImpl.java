@@ -971,7 +971,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
                             .withShape( this.getNDConf().shape() )
                             .all( (V) Double.valueOf(0.0) );
 
-        clone = cloner.call(clone, this);
+        clone = cloner.call( clone, this );
         clone.getUnsafe().setIsIntermediate( thisIsIntermediate );
         _setIsIntermediate( thisIsIntermediate );
         return (TsrImpl<V>) clone;

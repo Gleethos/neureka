@@ -2,8 +2,8 @@ package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
@@ -68,7 +68,8 @@ public class AssignLeft extends AbstractOperation
                 Scalarization.implementationForCPU()
                     .with(Fun.F64F64ToF64.of( ( a, b ) -> b ))
                     .with(Fun.F32F32ToF32.of( ( a, b ) -> b ))
-                    .with(Fun.F32F32ToF32.of( ( a, b ) -> b ))
+                    .with(Fun.I8I8ToI8.of(    ( a, b ) -> b ))
+                    .with(Fun.I32I32ToI32.of( ( a, b ) -> b ))
                     .with(Fun.ObjObjToObj.of( ( a, b ) -> b ))
                     .get()
             )

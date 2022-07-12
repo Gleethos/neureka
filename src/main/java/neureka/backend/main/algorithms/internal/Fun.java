@@ -114,6 +114,10 @@ public interface Fun
     {
         int invoke( int x, int y );
 
+        static FunTuple<I32I32ToI32> of(I32I32ToI32 activation ) {
+            return new Operator.FunTriple<>(activation, null, null);
+        }
+
         static FunTuple<I32I32ToI32> triple(
                 I32I32ToI32 activation,
                 I32I32ToI32 derivation1,
@@ -123,4 +127,20 @@ public interface Fun
         }
     }
 
+    interface I8I8ToI8 extends Fun
+    {
+        byte invoke( byte x, byte y );
+
+        static FunTuple<I8I8ToI8> of(I8I8ToI8 activation ) {
+            return new Operator.FunTriple<>(activation, null, null);
+        }
+
+        static FunTuple<I8I8ToI8> triple(
+                I8I8ToI8 activation,
+                I8I8ToI8 derivation1,
+                I8I8ToI8 derivation2
+        ) {
+            return new Operator.FunTriple<>( activation, derivation1, derivation2 );
+        }
+    }
 }
