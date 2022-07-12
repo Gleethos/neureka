@@ -45,7 +45,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                 if ( call.input(  0 ) == null ) // Creating a new tensor:
                 {
                     int[] shape = call.input(  1 ).getNDConf().shape();
-                    Class<Object> type = (Class<Object>) call.input(  1 ).getValueClass();
+                    Class<Object> type = (Class<Object>) call.input(  1 ).getItemClass();
                     Tsr<Object> output = Tsr.of(type).withShape(shape).all( 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
                     try {
@@ -103,8 +103,8 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
     ) {
         Tsr<?> t0_drn = call.input( 0 );
         Tsr<?> t1_src = call.input( 1 );
-        Class<?> typeClass = t0_drn.getValueClass();
-        Class<?> rightTypeClass = t1_src.getValueClass();
+        Class<?> typeClass = t0_drn.getItemClass();
+        Class<?> rightTypeClass = t1_src.getItemClass();
 
         assert !t0_drn.isVirtual();
         assert !t1_src.isVirtual();

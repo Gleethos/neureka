@@ -6,7 +6,6 @@ import neureka.Tsr
 import neureka.calculus.Function
 import neureka.devices.Device
 import neureka.devices.host.CPU
-import neureka.dtype.DataType
 import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
@@ -96,7 +95,7 @@ class Tensor_IO_Spec extends Specification
         when : t = Tsr.of([2], [3, 5, 7])
         then :
             t.toString().contains("(2):[3.0, 5.0]")
-            t.getValueAs( double[].class ).length==2
+            t.getItemsAs( double[].class ).length==2
 
         // Now the same with primitive array ! :
         when : t = Tsr.of(new int[]{2, 2}, new double[]{2, 4, 4})
@@ -104,7 +103,7 @@ class Tensor_IO_Spec extends Specification
         when : t = Tsr.of(new int[]{2}, new double[]{3, 5, 7})
         then :
             t.toString().contains("(2):[3.0, 5.0]")
-            t.getValueAs( double[].class ).length==2
+            t.getItemsAs( double[].class ).length==2
     }
 
     def 'Indexing after reshaping works as expected.'()
@@ -163,26 +162,26 @@ class Tensor_IO_Spec extends Specification
         when : 'Setting the value of the tensor...'
             float[] value32 = new float[1]
             value32[0] = 5
-            x.setValue(value32)
+            x.setItems(value32)
 
         then : '...the tensor will change as expected.'
-            !(x.getValue() instanceof float[])
+            !(x.getItems() instanceof float[])
             !(x.unsafe.data instanceof float[])
             !(x.data instanceof float[])
-            x.getValueAs( float[].class )[ 0 ]==5.0f
-            x.getValueAs( double[].class )[0]==5.0d
+            x.getItemsAs( float[].class )[ 0 ]==5.0f
+            x.getItemsAs( double[].class )[0]==5.0d
 
         when : 'Doing the same with double array...'
             double[] value64 = new double[1]
             value64[0] = 4.0
-            x.setValue(value64)
+            x.setItems(value64)
 
         then : '...once again the tensor changes as expected.'
-            x.getValue() instanceof double[]
+            x.getItems() instanceof double[]
             x.unsafe.data instanceof double[]
             x.data instanceof double[]
-            x.getValueAs( float[].class )[ 0 ]==4.0f
-            x.getValueAs( double[].class )[0]==4.0d
+            x.getItemsAs( float[].class )[ 0 ]==4.0f
+            x.getItemsAs( double[].class )[0]==4.0d
 
             x.isLeave()
             !x.isBranch()
@@ -198,19 +197,19 @@ class Tensor_IO_Spec extends Specification
             x.size()==1
 
         when : x.unsafe.toType( Float.class )
-        then : x.value instanceof float[]
+        then : x.items instanceof float[]
 
         when :
             value64 = new double[1]
             value64[0] = 7.0
-            x.setValue(value64)
+            x.setItems(value64)
 
         then :
-            !(x.getValue() instanceof double[])
+            !(x.getItems() instanceof double[])
             !(x.unsafe.data instanceof double[])
             !(x.data instanceof double[])
-            x.getValueAs( float[].class )[ 0 ]==7.0f
-            x.getValueAs( double[].class )[0]==7.0d
+            x.getItemsAs( float[].class )[ 0 ]==7.0f
+            x.getItemsAs( double[].class )[0]==7.0d
     }
 
     def 'We turn a tensor into a scalar value or string through the "as" operator!'()
@@ -238,9 +237,9 @@ class Tensor_IO_Spec extends Specification
             t.to(device)
 
         when : 'We call the "setValue" method with a scalar value passed to it...'
-            t.setValue(5)
+            t.setItems(5)
         then : 'The value of the tensor will be an array of 3.'
-            t.value == [5, 5, 5]
+            t.items == [5, 5, 5]
         and : 'We now expect the tensor to be virtual, because it stores only a single type of value.'
             t.isVirtual()
 
@@ -269,16 +268,16 @@ class Tensor_IO_Spec extends Specification
             var s = t[1]
         then : 'The slice has the expected state!'
             s.isSlice()
-            s.value == [66]
+            s.items == [66]
             s.data  == [42, 66, 73]
 
         when : 'We call the "setData" method with a scalar value passed to it...'
             s.unsafe.setDataAt(1, -9)
 
         then : 'The change will be reflected in the slice...'
-            s.value == [-9]
+            s.items == [-9]
         and : 'Also in the slice parent!'
-            t.value == [42, -9, 73]
+            t.items == [42, -9, 73]
         and : 'Both tensors should have the same data array!'
             s.data  == [42, -9, 73]
             t.data  == [42, -9, 73]
@@ -305,7 +304,7 @@ class Tensor_IO_Spec extends Specification
 
         expect :
             t.isVirtual()
-            t.value == [1, 1, 1]
+            t.items == [1, 1, 1]
             t.data == [1]
 
         when :
@@ -313,7 +312,7 @@ class Tensor_IO_Spec extends Specification
 
         then :
             !t.isVirtual()
-            t.value == [1, 1, 42]
+            t.items == [1, 1, 42]
             t.data == [1, 1, 42]
 
         where :
@@ -336,17 +335,17 @@ class Tensor_IO_Spec extends Specification
 
         when : x.unsafe.toType( Float.class )
         then :
-            x.getValue() instanceof float[]
+            x.getItems() instanceof float[]
             x.unsafe.data instanceof float[]
             x.data instanceof float[]
-            x.getValueAs( float[].class )[ 0 ]==3.0f
+            x.getItemsAs( float[].class )[ 0 ]==3.0f
 
         when : x.unsafe.toType( Double.class )
         then :
-            x.getValue() instanceof double[]
+            x.getItems() instanceof double[]
             x.unsafe.data instanceof double[]
             x.data instanceof double[]
-            x.getValueAs( float[].class )[ 0 ]==3.0f
+            x.getItemsAs( float[].class )[ 0 ]==3.0f
     }
 
     def 'Vector tensors can be instantiated via factory methods.'(
@@ -356,14 +355,14 @@ class Tensor_IO_Spec extends Specification
             Tsr<?> t = Tsr.of(data)
 
         expect :
-            t.valueClass == type
+            t.itemClass == type
         and :
             t.shape() == shape
         and :
             t.unsafe.data == data
             t.data == data
         and :
-            t.value == data
+            t.items == data
 
         where :
             data                        ||  type  | shape
@@ -434,16 +433,16 @@ class Tensor_IO_Spec extends Specification
         when : t += v
         then : t.toString().contains("[2x2]:(2.0, 3.0, 3.0, 6.0)")
 
-        when : t.setValueAt( 2, 6.0 as double )
+        when : t.setItemAt( 2, 6.0 as double )
         then : t.toString().contains("[2x2]:(2.0, 3.0, 6.0, 6.0)")
 
         when :
             int[] indices = new int[2]
             indices[1] = 1
-            t.setValueAt(t.indexOfIndices(indices), -6.0 as double)
+            t.setItemAt(t.indexOfIndices(indices), -6.0 as double)
         then :
             t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 6.0)")
-            t.getValueAt(indices) ==-6.0d
+            t.getItemAt(indices) ==-6.0d
 
         when :
             indices[0] = 1
@@ -490,9 +489,9 @@ class Tensor_IO_Spec extends Specification
         when :
             t = Tsr.of(type).withShape(shape).andFill(data)
         and :
-            t.setValueAt( 1, element )
+            t.setItemAt( 1, element )
         then :
-            t.getValueAt( 1 ) == element
+            t.getItemAt( 1 ) == element
         and :
             t.unsafe.data == expected
             t.data == expected

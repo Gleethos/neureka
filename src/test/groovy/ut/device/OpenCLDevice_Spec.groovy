@@ -104,7 +104,7 @@ class OpenCLDevice_Spec extends Specification
             t.dataType == DataType.of( Float.class )
 
         when : 'The tensor value is being fetched...'
-            def value = t.getValue()
+            def value = t.getItems()
 
         then : 'This value object is an instance of a "float[]" array because the device converted the value.'
             value instanceof float[]
@@ -212,7 +212,7 @@ class OpenCLDevice_Spec extends Specification
             A[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)
             B[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)
 
-            var reference = A.matMul(B).value // CPU execution for reference!
+            var reference = A.matMul(B).items // CPU execution for reference!
 
             A.to( device )
             B.to( device )
@@ -328,7 +328,7 @@ class OpenCLDevice_Spec extends Specification
                     .call( global, local )
 
         then :
-            C.value == reference // GPU should produce the same as CPU!
+            C.items == reference // GPU should produce the same as CPU!
         and :
             expected == null || C.toString({it.setRowLimit(50)}) == expected
 
@@ -360,7 +360,7 @@ class OpenCLDevice_Spec extends Specification
             Tsr B = Tsr.of( [K,N], data2  )
             Tsr C = Tsr.of( [M,N], 0f )
 
-            var reference = A.matMul(B).value // CPU execution for reference!
+            var reference = A.matMul(B).items // CPU execution for reference!
 
             A.to( device )
             B.to( device )
@@ -415,7 +415,7 @@ class OpenCLDevice_Spec extends Specification
                     .call( global, local )
 
         then :
-            C.value == reference // GPU should produce the same as CPU!
+            C.items == reference // GPU should produce the same as CPU!
         and :
             expected == null || C.toString({it.setRowLimit(50)}) == expected
 
@@ -447,7 +447,7 @@ class OpenCLDevice_Spec extends Specification
             Tsr B = Tsr.of( [K,N], data2  )
             Tsr C = Tsr.of( [M,N], 0f )
 
-            var reference = A.matMul(B).value // CPU execution for reference!
+            var reference = A.matMul(B).items // CPU execution for reference!
 
             A.to( device )
             B.to( device )
@@ -488,7 +488,7 @@ class OpenCLDevice_Spec extends Specification
                     .call( global, local )
 
         then :
-            C.value == reference // GPU should produce the same as CPU!
+            C.items == reference // GPU should produce the same as CPU!
         and :
             expected == null || C.toString({it.setRowLimit(50)}) == expected
 

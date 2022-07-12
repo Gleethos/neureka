@@ -86,7 +86,7 @@ implements ExecutionPreparation, ADAgentSupplier
                                             for ( int i = start; i < end; i++ ) {
                                                 StringBuilder b = new StringBuilder();
                                                 for (int ii = 1; ii < call.arity(); ii++ ) {
-                                                    b.append(call.input( Object.class, ii ).getValueAt(i));
+                                                    b.append(call.input( Object.class, ii ).getItemAt(i));
                                                 }
                                                 setAt( call.input( Object.class, 0 ), i, b.toString() );
                                             }
@@ -178,7 +178,7 @@ implements ExecutionPreparation, ADAgentSupplier
                         Object[] inputs = new Object[ call.arity() - 1 ];
                         for ( int i = start; i < end; i++ ) {
                             for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                inputs[ ii ] = call.input( Object.class, 1 + ii ).getValueAt(i);
+                                inputs[ ii ] = call.input( Object.class, 1 + ii ).getItemAt(i);
                             }
                             setAt( call.input( Object.class, 0 ), i, _tryExecute(finalMethod, inputs, 0));
                         }

@@ -101,12 +101,12 @@ public class UnitTester_Tensor extends UnitTester
         for(int i=0; i<source.length; i++){
             double[] gradient;
             if ( source[ i ].hasGradient() && source[ i ].is(Float.class) ) {
-                float[] data = (float[]) source[i].getGradient().getValue();
+                float[] data = (float[]) source[i].getGradient().getItems();
                 gradient = new double[data.length];
                 for ( int ii = 0; ii < data.length; ii++ ) gradient[ii] = data[ii];
             } else
                 gradient = source[ i ].hasGradient()
-                                ? (double[])source[ i ].getGradient().getValue()
+                                ? (double[])source[ i ].getGradient().getItems()
                                 : null;
             this.assertIsEqual(
                     stringified(gradient),

@@ -51,21 +51,21 @@ class Copy_Spec extends Specification
         given :
             var t = Tsr.ofInts().withShape(3, 3).andFill(1, 2, -9, 8, 3, -2)[0..1, 1..2]
         expect :
-            t.value == [2, -9, 3, -2]
+            t.items == [2, -9, 3, -2]
             t.data == [1, 2, -9, 8, 3, -2, 1, 2, -9]
             t.unsafe.data == [1, 2, -9, 8, 3, -2, 1, 2, -9] // It's unsafe because it exposes mutable parts of the tensor!
 
         when :
             var deep = t.deepCopy()
         then :
-            deep.value == [2, -9, 3, -2]
+            deep.items == [2, -9, 3, -2]
             deep.data == [2, -9, 3, -2]
             deep.unsafe.data == [2, -9, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
         and :
             deep !== t // It's not the same instance!
             deep.shape == t.shape
-            deep.value == t.value // The tensors share the same values!
-            deep.value !== t.value // The tensors share the same values!
+            deep.items == t.items // The tensors share the same values!
+            deep.items !== t.items // The tensors share the same values!
             deep.unsafe.data !== t.unsafe.data // The tensors share the same values!
             deep.unsafe.data !== t.unsafe.data // ...but they are not the same array!
         and :

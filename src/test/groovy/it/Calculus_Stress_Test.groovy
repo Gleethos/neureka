@@ -168,16 +168,16 @@ class Calculus_Stress_Test extends Specification
 
         expect : 'The types of both tensors should match what was provided during instantiation.'
             t1.dataType == DataType.of(type)
-            t1.valueClass == type
+            t1.itemClass == type
             t2.dataType == DataType.of(type)
-            t2.valueClass == type
+            t2.itemClass == type
 
         when : 'We apply the function to both tensors...'
             var result1 = func(t1)
             var result2 = func(t2)
         then : 'First we ensure that both tensors have the correct value/element type.'
-            result1.valueClass == type
-            result2.valueClass == type
+            result1.itemClass == type
+            result2.itemClass == type
         and : 'The underlying data object should match the data array type as is defined by the data type!'
             result1.unsafe.data.class == result1.dataType.dataArrayType()
             result2.unsafe.data.class == result2.dataType.dataArrayType()
@@ -228,23 +228,23 @@ class Calculus_Stress_Test extends Specification
 
         expect : 'The types of both tensors should match what was provided during instantiation.'
             t1.dataType   == DataType.of(type)
-            t1.valueClass == type
+            t1.itemClass == type
             t2.dataType   == DataType.of(type)
-            t2.valueClass == type
+            t2.itemClass == type
 
         when : 'We apply the function to both tensors...'
             var result1 = ( !derive ? func(t1) : func.derive([t1], 0) )
             var result2 = ( !derive ? func(t2) : func.derive([t2], 0) )
         then : 'First we ensure that both tensors have the correct value/element type.'
-            result1.valueClass == type
-            result2.valueClass == type
+            result1.itemClass == type
+            result2.itemClass == type
         and : 'The underlying data object should match the data array type as is defined by the data type!'
             result1.unsafe.data.class == result1.dataType.dataArrayType()
             result2.unsafe.data.class == result2.dataType.dataArrayType()
 
         and : 'The data of the first non slice tensor as well as its slice should be as expected.'
-            result1.value == expected
-            result2.value == expected
+            result1.items == expected
+            result2.items == expected
 
         where :
         type   |  funExpression   | derive || expected

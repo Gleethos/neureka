@@ -6,7 +6,6 @@ import neureka.autograd.GraphNode
 import neureka.calculus.Function
 import neureka.devices.Device
 import neureka.devices.host.CPU
-import neureka.devices.opencl.OpenCLDevice
 import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
 import spock.lang.Specification
@@ -425,7 +424,7 @@ class Autograd_NN_Spec extends Specification
         when :
             var c = a.matMul(b)
         then :
-            c.valueClass == type
+            c.itemClass == type
         and :
             a.toString() == "(2x3):[" +
                                 "-1.0, 0.0, 1.0, " +

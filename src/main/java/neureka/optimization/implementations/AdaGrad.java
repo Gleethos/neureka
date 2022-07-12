@@ -24,7 +24,7 @@ public class AdaGrad<V extends Number> implements Optimizer<V>
     public AdaGrad( Tsr<V> target ) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
         List<Integer> shape = target.shape();
-        h = Tsr.of(target.getValueClass(), shape, 0).getUnsafe().upcast(Number.class);
+        h = Tsr.of(target.getItemClass(), shape, 0).getUnsafe().upcast(Number.class);
         lr = 0.01; // Step size/learning rate is 0.01 by default!
     }
 

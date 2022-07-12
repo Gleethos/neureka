@@ -70,7 +70,7 @@ public class CPUMatMul implements ImplementationFor<CPU> {
         if ( aCols != bRows )
             throw new IllegalArgumentException("'A' matrix rows " + aCols + " did not match 'B' matrix columns " + bRows + ".");
 
-        Class<?> type = call.input( 0 ).getDataType().getValueTypeClass();
+        Class<?> type = call.input( 0 ).getDataType().getItemTypeClass();
         if ( type == Double.class ) {
             double[] A = call.input(Double.class, 1).getUnsafe().getDataAs(double[].class);
             double[] B = call.input(Double.class, 2).getUnsafe().getDataAs(double[].class);

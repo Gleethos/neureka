@@ -137,11 +137,11 @@ class Autograd_Tensor_Spec extends Specification
         then : y.toString().contains(":g:(null)")
         when : z = Tsr.of("I0xi1", y, x)
         then : z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)")
-        and : z.valueClass == type
+        and : z.itemClass == type
 
         when : z = Tsr.of(y, "x", x)
         then : z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)")
-        and : z.valueClass == type
+        and : z.itemClass == type
 
         when : z.backward(Tsr.of(new int[]{2, 2}, 1))
         then : y.toString().contains("[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)")
@@ -152,7 +152,7 @@ class Autograd_Tensor_Spec extends Specification
             Tsr w = Tsr.of(new int[]{1}, -2).unsafe.toType(type)
             z = Tsr.of("I0*i1*i2", x, b, w)
         then : z.toString().contains("[1]:(30.0)")
-        and : z.valueClass == type
+        and : z.itemClass == type
 
         when :
             x = Tsr.of(new int[]{1}, 4).setRqsGradient(true).unsafe.toType(type)
@@ -162,7 +162,7 @@ class Autograd_Tensor_Spec extends Specification
         then :
             y.toString().contains("[1]:(4.0);")
             y.toString().contains(" ->d[1]:(1.38629)")
-        and : y.valueClass == type
+        and : y.itemClass == type
             //TODO: add tests using more then 1 function and check if the graph is being built correctly!
         where :
             type << [Double, Float]

@@ -86,7 +86,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
 
         then:
             s.toString() == "(1x1):[2.0]:g:[null]"
-            s.getValueAt(0) == 2.0
+            s.getItemAt(0) == 2.0
             s.rqsGradient()
             b.toString().contains("7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0")
             b.spread() != null
@@ -158,7 +158,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
 
         then:
             s.toString() == "[1x1]:(2.0)"
-            s.getValueAt(0) == 2.0
+            s.getItemAt(0) == 2.0
             b.toString().contains("7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0")
             b.spread() != null
 
@@ -168,7 +168,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
 
         then:
             s.toString() == "[1x1]:(2.0)"
-            s.getValueAt(0) == 2.0
+            s.getItemAt(0) == 2.0
             s.getDataAt(0) == 1.0
             s.getDataAt(1) == 2.0
             b.toString().contains("7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0")

@@ -44,7 +44,7 @@ public class Slice extends AbstractOperation
                     Tsr<Object> input = (Tsr<Object>) call.input(0);
                     Tsr<?> subset = _slice(newShape, newOffset, newSpread, input);
                     //---
-                    Class<?>       typeClass = input.valueClass();
+                    Class<?>       typeClass = input.itemClass();
                     int[]          shape = input.getNDConf().shape();
                     boolean        isOutsourced = input.isOutsourced();
                     Device<Object> device = input.getDevice();

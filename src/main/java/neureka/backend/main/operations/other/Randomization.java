@@ -97,7 +97,7 @@ public class Randomization extends AbstractOperation
     {
         Tsr<?> tensor = call.input( 0 );
         tensor.setIsVirtual(false);
-        Class<?> type = tensor.getValueClass();
+        Class<?> type = tensor.getItemClass();
         boolean isSimple = tensor.getNDConf().isSimple();
         long seed = call.getValOf(Arg.Seed.class);
 

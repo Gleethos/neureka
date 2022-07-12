@@ -233,7 +233,7 @@ public class JunctionUtil
                         call.input( 1 ).deepCopy()
                            .getUnsafe()
                            .setIsIntermediate( true )
-                           .setValue( d == 0 || thisIsForAddition ? 1f : -1f )
+                           .setItems( d == 0 || thisIsForAddition ? 1f : -1f )
                     );
         }
         return result;
@@ -242,7 +242,7 @@ public class JunctionUtil
 
     public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
         return newTsrLike(
-            template.valueClass(),
+            template.itemClass(),
             template.getNDConf().shape(),
             template.isOutsourced(),
             template.get( Device.class ),
@@ -257,7 +257,7 @@ public class JunctionUtil
                         .getUnsafe()
                         .setIsIntermediate( true );
         t.setIsVirtual( false );
-        t.setValue( value );
+        t.setItems( value );
         try {
             if ( isOutsourced ) device.store( t );
         } catch ( Exception exception ) {

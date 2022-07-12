@@ -115,13 +115,13 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<Tsr<V>
 
     /** {@inheritDoc} */
     @Override
-    public Class<V> getValueClass() {
-        _guardGet("data type class"); return ( _dataType != null ? (Class<V>) _dataType.getValueTypeClass() : null );
+    public Class<V> getItemClass() {
+        _guardGet("data type class"); return ( _dataType != null ? (Class<V>) _dataType.getItemTypeClass() : null );
     }
 
     /** {@inheritDoc} */
      @Override
-    public Class<?> getRepresentativeValueClass() {
+    public Class<?> getRepresentativeItemClass() {
         _guardGet("representative data type class"); return ( _dataType != null ? _dataType.getRepresentativeType() : null );
     }
 

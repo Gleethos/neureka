@@ -115,8 +115,8 @@ class ConCat_Spec extends Specification
             y.backward(Tsr.ofFloats().withShape(3,2).andFill(-1, 2, 0.5, 3, -0.1, 4))
 
         then :
-            a.gradient.value == [-0.5, 0.25, -0.05] as float[]
-            b.gradient.value == [1.0, 1.5, 2.0] as float[]
+            a.gradient.items == [-0.5, 0.25, -0.05] as float[]
+            b.gradient.items == [1.0, 1.5, 2.0] as float[]
 
         where :
             device << [CPU.get(), Device.get(OpenCLDevice, 'gpu')]
@@ -146,9 +146,9 @@ class ConCat_Spec extends Specification
             y.backward(Tsr.ofFloats().withShape(3,3).andFill(-1, 2, 0.5, 3, -0.1, 4))
 
         then :
-            a.gradient.value == [-16, -16, 7] as float[]
-            b.gradient.value == [30, 0.2, 16] as float[]
-            c.gradient.value == [0.30829078, -3.1254156, -0.52700233] as float[]
+            a.gradient.items == [-16, -16, 7] as float[]
+            b.gradient.items == [30, 0.2, 16] as float[]
+            c.gradient.items == [0.30829078, -3.1254156, -0.52700233] as float[]
 
         where :
             device << [CPU.get(), Device.get(OpenCLDevice, 'gpu')]

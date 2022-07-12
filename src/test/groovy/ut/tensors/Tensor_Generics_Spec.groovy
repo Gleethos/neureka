@@ -46,9 +46,9 @@ class Tensor_Generics_Spec extends Specification
             Tsr<Double> t = Tsr.newInstance()
 
         expect :
-            t.getRepresentativeValueClass() == Neureka.get().settings().dtype().defaultDataTypeClass
+            t.getRepresentativeItemClass() == Neureka.get().settings().dtype().defaultDataTypeClass
         and :
-            t.getValueClass() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getValueTypeClass()
+            t.getItemClass() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getItemTypeClass()
 
 
     }
@@ -59,10 +59,10 @@ class Tensor_Generics_Spec extends Specification
             Tsr t = Tsr.of([2, 4], ["Hi", "I'm", "a", "String", "list"])
 
         expect :
-            t.getValueClass() == String.class
+            t.getItemClass() == String.class
 
         and :
-            t.getRepresentativeValueClass() == String.class
+            t.getRepresentativeItemClass() == String.class
 
         and :
             t.toString() == "(2x4):[Hi, I'm, a, String, list, Hi, I'm, a]"
@@ -81,7 +81,7 @@ class Tensor_Generics_Spec extends Specification
         and :
             t.size() == size
         and :
-            t.getValueClass() == expected
+            t.getItemClass() == expected
 
 
         where :

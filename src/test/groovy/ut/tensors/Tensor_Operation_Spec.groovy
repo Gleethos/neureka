@@ -60,7 +60,7 @@ class Tensor_Operation_Spec extends Specification
         then : 'The result tensor contains the expected shape.'
             c.toString().contains("(4x2x5x2)")
         and :
-            c.valueClass == type
+            c.itemClass == type
 
         where :
             type << [Double, Float]
@@ -80,7 +80,7 @@ class Tensor_Operation_Spec extends Specification
         then : 'The result tensor contains the expected shape and values.'
             c.toString() == "(${M}x${N}):$expectedC"
         and :
-            c.valueClass == type
+            c.itemClass == type
 
         where : 'We use the following data and matrix dimensions!'
             type   | A            | B                  | M | K | N || expectedC
@@ -100,7 +100,7 @@ class Tensor_Operation_Spec extends Specification
         and :
             var f = Function.of('random(I[0])')
         expect :
-            t.valueClass == type
+            t.itemClass == type
 
         when :
             var r = f(t)
@@ -155,8 +155,8 @@ class Tensor_Operation_Spec extends Specification
             binding.setVariable('b', b)
 
         expect : 'The tensors have the type...'
-            a.valueClass == type
-            b.valueClass == type
+            a.itemClass == type
+            b.itemClass == type
 
         when : 'The groovy code is being evaluated.'
             var c = new GroovyShell(binding).evaluate((code)) as Tsr
@@ -164,7 +164,7 @@ class Tensor_Operation_Spec extends Specification
         then : 'The resulting tensor (toString) will contain the expected String.'
             c.toString().contains(expected)
         and :
-            c.valueClass == type
+            c.itemClass == type
 
         where :
             type   | code                               || expected
@@ -293,8 +293,8 @@ class Tensor_Operation_Spec extends Specification
             Tsr    w      = ( whichGrad ? b      : a      )
 
         expect :
-            a.valueClass == type
-            b.valueClass == type
+            a.itemClass == type
+            b.itemClass == type
 
         when :
             Tsr c = operation.apply(a, b)
@@ -429,21 +429,21 @@ class Tensor_Operation_Spec extends Specification
 
         expect : 'The types of both tensors should match what was provided during instantiation.'
             t1.dataType == DataType.of(type)
-            t1.valueClass == type
+            t1.itemClass == type
             t2.dataType == DataType.of(type)
-            t2.valueClass == type
+            t2.itemClass == type
 
         when : 'We apply the function to both tensors...'
             var result1 = func(t1)
             var result2 = func(t2)
         then :
-            result1.valueClass == type
-            result2.valueClass == type
+            result1.itemClass == type
+            result2.itemClass == type
 
         and : 'The data of the first (non slice) tensor should be as expected.'
             result1.unsafe.data == expected instanceof Map ? expected['r1'] : expected
         and : 'As well the value of the slice tensor (Its data would be a sparse array).'
-            result2.value == expected instanceof Map ? expected['r2'] : expected
+            result2.items == expected instanceof Map ? expected['r2'] : expected
 
         where :
             type   |  funExpression     || expected

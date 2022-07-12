@@ -79,7 +79,7 @@ public class FunctionInput implements Function, GradientProvider
             Tsr<?> gradient = t.getGradient();
             if ( t.rqsGradient() ) {
                 if ( gradient == null ) {
-                    gradient = Tsr.of( t.getValueClass(), t.shape(), 0.0 );
+                    gradient = Tsr.of( t.getItemClass(), t.shape(), 0.0 );
                     t.set( (Tsr) gradient );
                 }
                 return gradient;
@@ -115,8 +115,8 @@ public class FunctionInput implements Function, GradientProvider
         int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );
         if ( d >= 0 )
             return ( d == index() )
-                ? Tsr.of( inputs[ 0 ].getValueClass(), inputs[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true )
-                : Tsr.of( inputs[ 0 ].getValueClass(), inputs[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true );
+                ? Tsr.of( inputs[ 0 ].getItemClass(), inputs[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true )
+                : Tsr.of( inputs[ 0 ].getItemClass(), inputs[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true );
 
         if ( index() >= inputs.length )
             throw new IllegalArgumentException(

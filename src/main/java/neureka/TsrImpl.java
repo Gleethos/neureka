@@ -727,18 +727,18 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             @Override
             public Tsr<V> setNDConf(NDConfiguration configuration ) { TsrImpl.this._setNDConf( configuration ); return TsrImpl.this; }
             @Override
-            public <V> Tsr<V> toType(Class<V> typeClass ) { return TsrImpl.this._toType( typeClass ); }
+            public <V> Tsr<V> toType( Class<V> typeClass ) { return TsrImpl.this._toType( typeClass ); }
 
             @Override
-            public <U> Tsr<U> upcast(Class<U> superType) {
-                if ( superType.isAssignableFrom(TsrImpl.this.valueClass()) )
+            public <U> Tsr<U> upcast( Class<U> superType ) {
+                if ( superType.isAssignableFrom(TsrImpl.this.itemClass()) )
                     return (Tsr<U>) TsrImpl.this;
                 else
-                    throw new IllegalArgumentException("Provided type '"+superType+"' is not a super type of '"+ TsrImpl.this.valueClass()+"'.");
+                    throw new IllegalArgumentException("Provided type '"+superType+"' is not a super type of '"+ TsrImpl.this.itemClass()+"'.");
             }
 
             @Override
-            public <T> Tsr<T> setDataType(DataType<T> dataType ) { return (TsrImpl<T>) TsrImpl.this._setDataType(dataType); }
+            public <T> Tsr<T> setDataType( DataType<T> dataType ) { return (TsrImpl<T>) TsrImpl.this._setDataType(dataType); }
             @Override
             public Tsr<V> toLayout(NDConfiguration.Layout layout) { TsrImpl.this._toLayout( layout ); return TsrImpl.this; }
             @Override
@@ -966,7 +966,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         Function cloner = Neureka.get().backend().getFunction().idy();
         boolean thisIsIntermediate = this.isIntermediate();
         _setIsIntermediate( false );
-        Tsr<V> clone = Tsr.of( this.getValueClass() )
+        Tsr<V> clone = Tsr.of( this.getItemClass() )
                             .on(this.getDevice())
                             .withShape( this.getNDConf().shape() )
                             .all( (V) Double.valueOf(0.0) );
@@ -1088,7 +1088,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setValueAt(int i, V o ) {
+    public Tsr<V> setItemAt( int i, V o ) {
         _guardMod("data object");
         NDConfiguration ndc = this.getNDConf();
         _setDataAt( ndc.indexOfIndex( i ), o );
@@ -1106,13 +1106,13 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setValue( Object value )
+    public Tsr<V> setItems( Object value )
     {
         LogUtil.nullArgCheck( value, "value", Object.class );
         boolean success = true;
         if ( Number.class.isAssignableFrom(value.getClass()) ) { // A virtual tensor!
             this.setIsVirtual( true );
-            value = DataConverter.get().convert( value, this.valueClass() );
+            value = DataConverter.get().convert( value, this.itemClass() );
             this.getUnsafe().setDataAt( 0, (V) value );
         } else if ( value.getClass().isArray() ) {
             if ( this.isOutsourced() ) getDevice().access(this).writeFrom( value );
@@ -1155,7 +1155,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Object getValue() {
+    public Object getItems() {
         _guardGet("value object");
         if ( this.isOutsourced() ) {
             Device<V> device = get( Device.class );
@@ -1239,9 +1239,9 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
                 }
             }
         }
-        if ( !dataType.isAssignableFrom(this.getValueClass()) )
+        if ( !dataType.isAssignableFrom(this.getItemClass()) )
             throw new IllegalArgumentException(
-                "Cannot create image of type '" + type.name() + "' from tensor of type '" + this.getValueClass().getSimpleName() + ". " +
+                "Cannot create image of type '" + type.name() + "' from tensor of type '" + this.getItemClass().getSimpleName() + ". " +
                 "Expected to receive a tensor whose type is at least a sub-type of '" + dataType.getSimpleName() + "'."
             );
     }
@@ -1294,7 +1294,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     {
         LogUtil.nullArgCheck( typeClass, "typeClass", Class.class );
         if ( typeClass == Tsr.class ) return (T) this;
-        if ( Number.class.isAssignableFrom(this.valueClass()) && Number.class.isAssignableFrom(typeClass) ) {
+        if ( Number.class.isAssignableFrom( this.itemClass()) && Number.class.isAssignableFrom(typeClass) ) {
             DataConverter converter = DataConverter.get();
             return converter.convert( mean().at(0).get(), typeClass );
         }

@@ -69,7 +69,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
             if ( _firstColIsIndex ) asCsv.append( index.get( i ).toString() + "," );
             for ( int ii = 0; ii < shape[ 1 ]; ii++ ) {
                 indices[ 1 ] = ii;
-                asCsv.append( tensor.getValueAt( indices ) );
+                asCsv.append( tensor.getItemAt( indices ) );
                 if ( ii < shape[ 1 ] - 1 ) asCsv.append( _delimiter );
             }
             asCsv.append( "\n" );

@@ -84,7 +84,7 @@ class Tensor_Function_Spec extends Specification
 
         and : 'The result is being calculated by invoking the Function instance.'
             Tsr<?> result = ( index != null ? f.derive( inputs, index ) : f.call( inputs ) )
-            List<Double> value = result.getValueAs(double[].class) as List<Double>
+            List<Double> value = result.getItemsAs(double[].class) as List<Double>
 
         expect : "The calculated result ${result} should be (ruffly) equal to expected ${expected}."
             (0..<value.size()).every {equals(value[it], expected.values().first()[it], 1e-6)}
@@ -184,7 +184,7 @@ class Tensor_Function_Spec extends Specification
         and :
             var t = Tsr.of(1f, -5f, -3f, 2f, 8f)
         expect :
-            t.valueClass == Float
+            t.itemClass == Float
             fun.toString() == "((I[0] * relu(I[0])) + 1.0)"
 
         when :

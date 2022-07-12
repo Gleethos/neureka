@@ -5,7 +5,6 @@ import neureka.Tsr
 import neureka.devices.file.FileHandle
 import neureka.devices.file.handles.CSVHandle
 import neureka.devices.file.handles.IDXHandle
-import neureka.devices.file.handles.JPEGHandle
 import neureka.dtype.DataType
 import neureka.dtype.NumericType
 import neureka.dtype.custom.F64
@@ -196,7 +195,7 @@ class FileHandle_Spec extends Specification
             loaded != null
             !loaded.isVirtual()
             loaded.size() == shape.inject( 1, {prod, value -> prod * value} )
-            loaded.getDataType().getValueTypeClass() == String.class // Auto convert! (stored as String)
+            loaded.getDataType().getItemTypeClass() == String.class // Auto convert! (stored as String)
             hash == expected
 
         and :

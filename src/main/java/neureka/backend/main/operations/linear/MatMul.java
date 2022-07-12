@@ -49,7 +49,7 @@ public class MatMul extends AbstractOperation
                 .withName("simple_matmul")
                 .setIsSuitableFor(
                     call -> call.validate()
-                                .allNotNull( t -> Number.class.isAssignableFrom(t.getValueClass()) )
+                                .allNotNull( t -> Number.class.isAssignableFrom(t.getItemClass()) )
                                 .getEstimator()
                                     .goodIfAnyNonNull( t -> t.getNDConf() instanceof Simple2DConfiguration)
                                     .badIfAnyNonNull( t -> !( t.getNDConf() instanceof Simple2DConfiguration) )
@@ -153,7 +153,7 @@ public class MatMul extends AbstractOperation
         Device<Number> device = call.getDeviceFor(Number.class);
         if ( call.input( 0 ) == null ) // Creating a new tensor:
         {
-            Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getValueTypeClass();
+            Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getItemTypeClass();
             int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };
             NDConfiguration.Layout targetLayout = call.input( 1 ).getNDConf().getLayout();
             call.input( 2 ).getUnsafe().toLayout(targetLayout);

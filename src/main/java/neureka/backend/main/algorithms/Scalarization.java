@@ -41,7 +41,7 @@ public class Scalarization extends AbstractFunDeviceAlgorithm< Scalarization >
                 assert call.input( 0 ) == null;  // Creating a new tensor:
 
                 int[] outShape = call.input( 1 ).getNDConf().shape();
-                Class<Object> type = (Class<Object>) call.input( 1 ).getValueClass();
+                Class<Object> type = (Class<Object>) call.input( 1 ).getItemClass();
                 Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );
                 output.setIsVirtual( false );
                 try {
@@ -74,7 +74,7 @@ public class Scalarization extends AbstractFunDeviceAlgorithm< Scalarization >
         Tsr<?> t0_drn = call.input( 0 );
         Tsr<?> src    = call.input( offset );
 
-        Class<?> typeClass = call.input( 1 ).getValueClass();
+        Class<?> typeClass = call.input( 1 ).getItemClass();
 
         CPU.RangeWorkload workload = null;
 

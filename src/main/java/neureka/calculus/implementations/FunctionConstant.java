@@ -69,7 +69,7 @@ public final class FunctionConstant implements Function
 	public Tsr<?> execute( Args arguments, Tsr<?>... inputs ) {
 		if ( arguments.has(Arg.DerivIdx.class) && arguments.valOf(Arg.DerivIdx.class) >= 0 ) {
 			return Tsr.of(
-						inputs[ 0 ].getValueClass(),
+						inputs[ 0 ].getItemClass(),
 						inputs[ 0 ].shape(),
 						0.0
 					)
@@ -77,7 +77,7 @@ public final class FunctionConstant implements Function
 					.setIsIntermediate( true );
 		}
 		return Tsr.of(
-					inputs[ 0 ].getValueClass(),
+					inputs[ 0 ].getItemClass(),
 					inputs[ 0 ].shape(),
 					_value
 				)

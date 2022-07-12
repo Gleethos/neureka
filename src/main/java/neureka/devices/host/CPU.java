@@ -289,9 +289,9 @@ public class CPU extends AbstractDevice<Object>
             return new byte[ size ];
         else if ( typeClass == I64.class || typeClass == UI64.class )
             return new long[ size ];
-        else if ( dataType.getValueTypeClass() == Boolean.class )
+        else if ( dataType.getItemTypeClass() == Boolean.class )
             return new boolean[ size ];
-        else if ( dataType.getValueTypeClass() == Character.class )
+        else if ( dataType.getItemTypeClass() == Character.class )
             return new char[ size ];
         else
             return new Object[ size ];

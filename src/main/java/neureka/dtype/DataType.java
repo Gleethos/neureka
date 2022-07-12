@@ -175,9 +175,7 @@ public final class DataType<Type>
         if ( !Objects.equals(_log, other._log) ) return false;
         final Object this$_typeClass = this.getRepresentativeType();
         final Object other$_typeClass = other.getRepresentativeType();
-        if ( !Objects.equals(this$_typeClass, other$_typeClass) )
-            return false;
-        return true;
+        return Objects.equals(this$_typeClass, other$_typeClass);
     }
 
     public int hashCode() {
@@ -191,12 +189,13 @@ public final class DataType<Type>
     }
 
     public String toString() {
-        return "DataType[class=" + this.getRepresentativeType().getSimpleName() + "]";
+        String representative = (getRepresentativeType() != null ? "("+getRepresentativeType().getSimpleName()+")" : "");
+        return "DataType[class=" + getItemTypeClass().getSimpleName() + representative + "]";
     }
 
     public Class<?> getRepresentativeType() { return _typeClass; }
 
-    public Class<Type> getValueTypeClass() {
+    public Class<Type> getItemTypeClass() {
         if ( this.typeClassImplements(NumericType.class) )
             return (this.getTypeClassInstance(NumericType.class)).holderType();
         else

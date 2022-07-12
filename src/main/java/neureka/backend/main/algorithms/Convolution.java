@@ -40,7 +40,7 @@ public final class Convolution extends AbstractFunDeviceAlgorithm<Convolution>
         Tsr<Number> t1_src = call.input( Number.class, 1 );
         Tsr<Number> t2_src = call.input( Number.class, 2 );
 
-        Class<?> typeClass = t0_drn.getValueClass();
+        Class<?> typeClass = t0_drn.getItemClass();
 
         int d = call.getDerivativeIndex();
         CPU.RangeWorkload workload = null;

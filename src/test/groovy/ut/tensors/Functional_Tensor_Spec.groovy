@@ -78,7 +78,7 @@ class Functional_Tensor_Spec extends Specification
 
         then : 'We expect the returned tensor to be a String container whose Strings are formatted according to our mapping lambda.'
             b.toString() == "(2x3):[<-2>, <-1>, <0>, <1>, <2>, <3>]"
-            b.valueClass == String.class
+            b.itemClass == String.class
         and : 'The original tensor should not have changed because no inline operation occurred.'
             t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"
     }

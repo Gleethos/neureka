@@ -190,7 +190,7 @@ class Cross_Device_Spec extends Specification
         then : 'We expect the String representation of the tensor to be as expected!'
             result.toString() == expected
         and : 'We expect the result to have the expected target class!'
-            result.valueClass == target
+            result.itemClass == target
         and : 'Lastly, the original tensor used as mapping source should be stored on the original device!'
             tensor.isOutsourced() == !(device instanceof CPU)
             tensor.device == device

@@ -721,7 +721,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
      */
     static <V> IterByOrIterFromOrAll<V> like(Tsr<V> template ) {
-        return of( template.getDataType().getValueTypeClass() )
+        return of( template.getDataType().getItemTypeClass() )
                 .on( template.getDevice() )
                 .withShape( template.getNDConf().shape() );
     }
@@ -1012,12 +1012,12 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     /**
      * @return The type class of individual value items within this {@link Tsr} instance.
      */
-    Class<V> getValueClass();
+    Class<V> getItemClass();
 
     /**
      * @return The type class of individual value items within this {@link Tsr} instance.
      */
-    default Class<V> valueClass() { return getValueClass(); }
+    default Class<V> itemClass() { return getItemClass(); }
 
     /**
      *  This method returns the {@link DataType} instance of this {@link Tsr}, which is
@@ -1035,14 +1035,14 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *  implementations of the {@link NumericType} interface.                                        <br>
      *  For example in the case of a tensor of type {@link Double}, this method would
      *  return {@link neureka.dtype.custom.F64} which is the representative class of {@link Double}. <br>
-     *  Calling the {@link #getValueClass()} method instead of this method would return the actual value
+     *  Calling the {@link #getItemClass()} method instead of this method would return the actual value
      *  type class, namely: {@link Double}.
      *
      * @return The representative type class of individual value items within this concrete {@link AbstractTensor}
      *         extension instance which might also be sub-classes of the {@link NumericType} interface
      *         to model unsigned types or other JVM foreign numeric concepts.
      */
-    Class<?> getRepresentativeValueClass();
+    Class<?> getRepresentativeItemClass();
 
     /*==================================================================================================================
     |
@@ -1074,7 +1074,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     default Stream<V> stream() {
         boolean executeInParallel = ( this.size() > 1_000 );
         IntStream indices = IntStream.range(0,size());
-        return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::getValueAt);
+        return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::getItemAt);
     }
 
     default boolean every( Predicate<V> predicate ) {
@@ -1146,7 +1146,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      */
 
     default Tsr<V> backward( double value ) {
-        backward( Tsr.of( this.getValueClass(), getNDConf().shape(), value ) );
+        backward( Tsr.of( this.getItemClass(), getNDConf().shape(), value ) );
         return this;
     }
 
@@ -1395,7 +1395,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param value The right operand of the addition.
      * @return The sum between this instance as the left and the passed double as right operand.
      */
-    default Tsr<V> plus( V value ) { return plus( of( valueClass(), this.shape(), value ) ); }
+    default Tsr<V> plus( V value ) { return plus( of( itemClass(), this.shape(), value ) ); }
 
     /**
      *  This method will perform subtraction on
@@ -1419,9 +1419,9 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     }
 
     default Tsr<V> minus( V other ) {
-        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract 'null' from a tensor!");
+        LogUtil.nullArgCheck(other, "other", this.getItemClass(), "Cannot subtract 'null' from a tensor!");
         return minus(
-                of( this.getDataType().getValueTypeClass() )
+                of( this.getDataType().getItemTypeClass() )
                         .withShape(this.getNDConf().shape())
                         .all(other)
         );
@@ -1433,9 +1433,9 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
 
 
     default Tsr<V> minusAssign( V other ) {
-        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot subtract-assign 'null' from a tensor!");
+        LogUtil.nullArgCheck(other, "other", this.getItemClass(), "Cannot subtract-assign 'null' from a tensor!");
         return minusAssign(
-                of( this.getDataType().getValueTypeClass() )
+                of( this.getDataType().getItemTypeClass() )
                         .withShape(this.getNDConf().shape())
                         .all(other)
         );
@@ -1476,14 +1476,14 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     default Tsr<V> mean() {
         Functions functions = Neureka.get().backend().getAutogradFunction();
         Tsr<V> sum = sum();
-        Tsr<V> result = functions.div().call( sum, of( this.getValueClass(), new int[]{1}, this.size() ) );
+        Tsr<V> result = functions.div().call( sum, of( this.getItemClass(), new int[]{1}, this.size() ) );
         sum.getUnsafe().delete();
         return result;
     }
 
     default Tsr<V> sum() {
         Functions functions = Neureka.get().backend().getAutogradFunction();
-        Tsr<V> ones = of( this.getValueClass(), this.getNDConf().shape(), 1 );
+        Tsr<V> ones = of( this.getItemClass(), this.getNDConf().shape(), 1 );
         Tsr<V> sum = functions.conv().call( (Tsr<V>) this, ones );
         if ( !ones.belongsToGraph() || !ones.getGraphNode().isUsedAsDerivative() )
             ones.getUnsafe().delete();
@@ -1644,9 +1644,9 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return A new clone of this tensor where all elements are multiplied by the provided value.
      */
     default Tsr<V> multiply( V other ) {
-        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply 'null' with a tensor!");
+        LogUtil.nullArgCheck(other, "other", this.getItemClass(), "Cannot multiply 'null' with a tensor!");
         return multiply(
-                of( this.getDataType().getValueTypeClass() )
+                of( this.getDataType().getItemTypeClass() )
                         .withShape( this.getNDConf().shape() )
                         .all( other )
         );
@@ -1679,7 +1679,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return A new clone of this tensor where all elements are multiplied by the provided value.
      */
     default Tsr<V> times( V other ) {
-        LogUtil.nullArgCheck(other, "other", getValueClass(), "Cannot multiply 'null' with a tensor!");
+        LogUtil.nullArgCheck(other, "other", getItemClass(), "Cannot multiply 'null' with a tensor!");
         return multiply( other );
     }
     /**
@@ -1696,14 +1696,14 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return This instance where each value element was multiplied by the provided element.
      */
     default Tsr<V> timesAssign( V other ) {
-        LogUtil.nullArgCheck(other, "other", this.getValueClass(), "Cannot multiply-assign 'null' to a tensor!");
-        return this.timesAssign( of( getValueClass(), getNDConf().shape(), other ) );
+        LogUtil.nullArgCheck(other, "other", this.getItemClass(), "Cannot multiply-assign 'null' to a tensor!");
+        return this.timesAssign( of( getItemClass(), getNDConf().shape(), other ) );
     }
     /**
      * @param value The value which should be broadcast to all elements of a clone of this tensor.
      * @return A new clone of this tensor where all elements are multiplied by the provided value.
      */
-    default Tsr<V> multiply( double value ) { return multiply( of( getValueClass(), getNDConf().shape(), value ) ); }
+    default Tsr<V> multiply( double value ) { return multiply( of( getItemClass(), getNDConf().shape(), value ) ); }
 
     /**
      *  The {@link #div(Tsr)} method will produce the quotient of
@@ -1725,7 +1725,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide a tensor by 'null' (In any sense of the word)!");
         return Neureka.get().backend().getAutogradFunction().div().call( (Tsr<V>) this, other );
     }
-    default Tsr<V> div( V value ) { return div( of( getValueClass(), getNDConf().shape(), value ) ); }
+    default Tsr<V> div( V value ) { return div( of( getItemClass(), getNDConf().shape(), value ) ); }
 
     default Tsr<V> divAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
@@ -1753,7 +1753,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
         return Neureka.get().backend().getAutogradFunction().mod().call( (Tsr<V>) this, other );
     }
 
-    default Tsr<V> mod( int other ) { return mod(of(getValueClass(), getNDConf().shape(), other)); }
+    default Tsr<V> mod( int other ) { return mod(of(getItemClass(), getNDConf().shape(), other)); }
 
     /**
      *  This method is synonymous to the {@link #mod(int)} method.
@@ -1787,7 +1787,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     }
 
     default Tsr<V> power( V value ) {
-        return power( of( this.valueClass(), this.shape(), value ) );
+        return power( of( this.itemClass(), this.shape(), value ) );
     }
 
     /**
@@ -1801,7 +1801,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     /**
      *  This method is synonymous to the {@link #power(Tsr)} method.
      */
-    default Tsr<V> xor( double value ) { return xor( of( this.valueClass(), this.shape(), value ) ); }
+    default Tsr<V> xor( double value ) { return xor( of( this.itemClass(), this.shape(), value ) ); }
 
     /*==================================================================================================================
     |
@@ -2037,7 +2037,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return This very tensor in order to enable method chaining...
      */
     default Tsr<V> putAt( List<?> indices, V value ) {
-        return this.putAt( indices, of( this.getValueClass(), shape(), value ) );
+        return this.putAt( indices, of( this.getItemClass(), shape(), value ) );
     }
 
     /**
@@ -2055,7 +2055,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param o The object which ought to be placed at the requested position.
      * @return This very tensor in order to enable method chaining.
      */
-    Tsr<V> setValueAt( int i, V o );
+    Tsr<V> setItemAt( int i, V o );
 
     /**
      *  The following method returns a raw value item within this tensor
@@ -2064,7 +2064,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param i The scalar index of the value item which should be returned by the method.
      * @return The value item found at the targeted index.
      */
-    default V getValueAt( int i ) { return getDataAt( indexOfIndex( i ) ); }
+    default V getItemAt( int i ) { return getDataAt( indexOfIndex( i ) ); }
 
     /**
      *  This method returns a raw value item within this tensor
@@ -2076,7 +2076,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param indices The index array which targets a single value item within this tensor.
      * @return The found raw value item targeted by the provided index array.
      */
-    default V getValueAt( int... indices ) {
+    default V getItemAt( int... indices ) {
         LogUtil.nullArgCheck( indices, "indices", int[].class, "Cannot find tensor value without indices!" );
         if ( indices.length == 0 ) throw new IllegalArgumentException("Index array may not be empty!");
         if ( indices.length < this.rank() ) {
@@ -2100,16 +2100,16 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param value The value which may be a scalar or array and will be used to populate this tensor.
      * @return This very tensor to enable method chaining.
      */
-    Tsr<V> setValue( Object value );
+    Tsr<V> setItems( Object value );
 
-    Object getValue();
+    Object getItems();
 
     /**
      *  This returns an unprocessed version of the underlying data of this tensor.
      *  If this tensor is outsourced (stored on a device), then the data will be loaded
      *  into an array and returned by this method.
      *  Do not expect the returned array to be actually stored within the tensor itself!
-     *  Contrary to the {@link Tsr#getValue()} method, this one will
+     *  Contrary to the {@link Tsr#getItems()} method, this one will
      *  return the data in an unbiased form, where for example a virtual (see {@link #isVirtual()})
      *  tensor will have this method return an array of length 1.
      *
@@ -2150,19 +2150,19 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
                     String failMessage = "Conversion to type "+typeClass+" not yet supported.";
                     if ( Number.class.isAssignableFrom(typeClass) ) {
                         java.util.function.Function<Integer, Number> access;
-                        if ( this.getValueClass() == Integer.class ) {
+                        if ( this.getItemClass() == Integer.class ) {
                             int[] sourceData = (int[]) getUnsafe().getData();
                             access = (i -> (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Double.class) {
+                        } else if (this.getItemClass() == Double.class) {
                             double[] sourceData = (double[]) getUnsafe().getData();
                             access = (i -> (Number) mapper.apply((V) Double.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Float.class) {
+                        } else if (this.getItemClass() == Float.class) {
                             float[] sourceData = (float[]) getUnsafe().getData();
                             access = (i -> (Number) mapper.apply((V) Float.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Short.class) {
+                        } else if (this.getItemClass() == Short.class) {
                             short[] sourceData = (short[]) getUnsafe().getData();
                             access = (i -> (Number) mapper.apply((V) Short.valueOf(sourceData[i])));
-                        } else if (this.getValueClass() == Byte.class) {
+                        } else if (this.getItemClass() == Byte.class) {
                             byte[] sourceData = (byte[]) getUnsafe().getData();
                             access = (i -> (Number) mapper.apply((V) Byte.valueOf(sourceData[i])));
                         } else
@@ -2178,19 +2178,19 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
                             throw new IllegalArgumentException(failMessage);
                     } else {
                         java.util.function.Function<Integer, Object> access = null;
-                        if ( this.getValueClass() == Integer.class ) {
+                        if ( this.getItemClass() == Integer.class ) {
                             int[] sourceData = (int[]) getUnsafe().getData();
                             access = (i -> mapper.apply((V) Integer.valueOf(sourceData[i])));
-                        } else if ( this.getValueClass() == Double.class ) {
+                        } else if ( this.getItemClass() == Double.class ) {
                             double[] sourceData = (double[]) getUnsafe().getData();
                             access = (i -> mapper.apply((V) Double.valueOf(sourceData[i])));
-                        } else if ( this.getValueClass() == Float.class ) {
+                        } else if ( this.getItemClass() == Float.class ) {
                             float[] sourceData = (float[]) getUnsafe().getData();
                             access = (i -> mapper.apply((V) Float.valueOf(sourceData[i])));
-                        } else if ( this.getValueClass() == Short.class ) {
+                        } else if ( this.getItemClass() == Short.class ) {
                             short[] sourceData = (short[]) getUnsafe().getData();
                             access = (i -> mapper.apply((V) Short.valueOf(sourceData[i])));
-                        } else if ( this.getValueClass() == Byte.class ) {
+                        } else if ( this.getItemClass() == Byte.class ) {
                             byte[] sourceData = (byte[]) getUnsafe().getData();
                             access = (i -> mapper.apply((V) Byte.valueOf(sourceData[i])));
                         } else
@@ -2227,8 +2227,8 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      */
     <T> T asType( Class<T> typeClass );
 
-    default  <A> A getValueAs( Class<A> arrayTypeClass ) {
-        return DataConverter.get().convert( getValue(), arrayTypeClass );
+    default  <A> A getItemsAs(Class<A> arrayTypeClass ) {
+        return DataConverter.get().convert( getItems(), arrayTypeClass );
     }
 
     default  <A> A getDataAs( Class<A> arrayTypeClass ) {
@@ -2278,7 +2278,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
 
     default Access<V> at( int... indices ) {
         return new Access<V>() {
-            @Override public V    get()          { return getValueAt( indices ); }
+            @Override public V    get()          { return getItemAt( indices ); }
             @Override public void set( V value ) { putAt( indices, value ); }
 
             @Override
@@ -2368,7 +2368,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
 
         /**
          *  Use this to do a runtime checked upcast of the type parameter of the tensor.
-         *  This is unsafe because it is in conflict with the {@link #valueClass()}
+         *  This is unsafe because it is in conflict with the {@link #itemClass()}
          *  method.
          *
          * @param superType The class of the super type of the tensor's value type.
@@ -2439,7 +2439,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
 
         /**
          *  This returns the underlying raw data object of this tensor.
-         *  Contrary to the {@link Tsr#getValue()} ()} method, this one will
+         *  Contrary to the {@link Tsr#getItems()} ()} method, this one will
          *  return an unbiased view on the raw data of this tensor.
          *  Be careful using this, as it exposes mutable state!
          *

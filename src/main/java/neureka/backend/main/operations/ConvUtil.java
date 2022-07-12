@@ -68,7 +68,7 @@ public class ConvUtil {
                             tensors[ 0 ] =
                                 (call.getValOf( Arg.DerivIdx.class ) < 0)
                                     ? Tsr.of(
-                                        call.input(0).getValueClass(),
+                                        call.input(0).getItemClass(),
                                             _shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
                                             0
                                         )

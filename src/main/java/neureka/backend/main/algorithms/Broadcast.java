@@ -93,7 +93,7 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                     for ( int i = 0; i < outShape.length; i++ )
                         outShape[ i ] = ( s1[ i ] == 1 ? s2[ i ] : s1[ i ] );
 
-                    Class<Object> type = (Class<Object>) call.input(  1 ).getValueClass();
+                    Class<Object> type = (Class<Object>) call.input(  1 ).getItemClass();
                     Tsr<?> output = Tsr.of(type).withShape(outShape).all( 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
                     try {
@@ -149,7 +149,7 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
 
         t0_drn.setIsVirtual(false);
 
-        Class<?> typeClass = t0_drn.getValueClass();
+        Class<?> typeClass = t0_drn.getItemClass();
 
         int d = call.getDerivativeIndex();
         CPU.RangeWorkload workload = null;

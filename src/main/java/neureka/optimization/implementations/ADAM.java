@@ -67,8 +67,8 @@ public class ADAM<V extends Number> implements Optimizer<V>
     public ADAM(Tsr<V> target) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
         List<Integer> shape = target.shape();
-        m  = Tsr.of(target.getValueClass(), shape, 0);
-        v  = Tsr.of(target.getValueClass(), shape, 0);
+        m  = Tsr.of(target.getItemClass(), shape, 0);
+        v  = Tsr.of(target.getItemClass(), shape, 0);
         lr = 0.01; // Step size/learning rate is 0.01 by default!
     }
 

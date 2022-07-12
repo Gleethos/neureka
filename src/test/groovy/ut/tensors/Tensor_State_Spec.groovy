@@ -59,7 +59,7 @@ class Tensor_State_Spec extends Specification
             var t = Tsr.of(type, list)
 
         expect : 'The tensor has the targeted type, shape and data array!'
-            t.valueClass == type
+            t.itemClass == type
             t.shape() == shape
             t.unsafe.data == expected
 
@@ -205,33 +205,33 @@ class Tensor_State_Spec extends Specification
         expect: 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
         and : 'The tensor contains the expected data.'
-            t.getValueAs( double[].class ) == [6] as double[]
-            t.getValueAs( float[].class  ) == [6] as float[]
+            t.getItemsAs( double[].class ) == [6] as double[]
+            t.getItemsAs( float[].class  ) == [6] as float[]
             t.getDataAs( double[].class ) == [6] as double[]
             t.getDataAs( float[].class  ) == [6] as float[]
             t.unsafe.data == [6] as double[]
-            t.value == [6] as double[]
+            t.items == [6] as double[]
 
         when: 'The flag "isOutsourced" is being set to false...'
             t.setIsOutsourced( true )
         then: 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
             !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
-            t.getValueAs( double[].class ) == null
-            t.getValueAs( float[].class  ) == null
+            t.getItemsAs( double[].class ) == null
+            t.getItemsAs( float[].class  ) == null
             t.getDataAs( double[].class ) == null
             t.getDataAs( float[].class  ) == null
             t.unsafe.data == null
-            t.value == null
+            t.items == null
         when: 'The "isOutsourced" flag is set to its original state...'
             t.setIsOutsourced( false )
         then: 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
-            t.getValueAs( double[].class ) == [0] as double[]
-            t.getValueAs( float[].class  ) == [0] as float[]
+            t.getItemsAs( double[].class ) == [0] as double[]
+            t.getItemsAs( float[].class  ) == [0] as float[]
             t.getDataAs( double[].class ) == [0] as double[]
             t.getDataAs( float[].class  ) == [0] as float[]
             t.unsafe.data == [0] as double[]
-            t.value == [0] as double[]
+            t.items == [0] as double[]
             t.isVirtual()
 
     }
@@ -248,17 +248,17 @@ class Tensor_State_Spec extends Specification
             t.isOutsourced()
             !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
             t.dataType.getRepresentativeType() == Neureka.get().settings().dtype().defaultDataTypeClass
-            t.getValueAs( double[].class ) == null
-            t.getValueAs( float[].class ) == null
+            t.getItemsAs( double[].class ) == null
+            t.getItemsAs( float[].class ) == null
             t.unsafe.data == null
-            t.value == null
+            t.items == null
         when : 'The "isOutsourced" flag is set to its original state...'
             t.setIsOutsourced( false )
         then : 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
-            t.getValueAs( double[].class ) == [0, 0] as double[]
-            t.getValueAs( float[].class ) == [0, 0] as float[]
+            t.getItemsAs( double[].class ) == [0, 0] as double[]
+            t.getItemsAs( float[].class ) == [0, 0] as float[]
             t.unsafe.data == [0] as double[]
-            t.value == [0, 0] as double[]
+            t.items == [0, 0] as double[]
             t.isVirtual()
     }
 
@@ -269,10 +269,10 @@ class Tensor_State_Spec extends Specification
             Tsr t = Tsr.of(  DataType.of(I8.class ), new int[]{ 2 } )
         expect : 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
-            t.getValueAs( double[].class ) == [0, 0] as double[]
-            t.getValueAs( float[].class ) == [0, 0] as float[]
+            t.getItemsAs( double[].class ) == [0, 0] as double[]
+            t.getItemsAs( float[].class ) == [0, 0] as float[]
             t.unsafe.data == [0] as byte[]
-            t.value == [0, 0] as byte[]
+            t.items == [0, 0] as byte[]
             t.isVirtual()
         when : 'The flag "isOutsourced" is being set to false...'
             t.setIsOutsourced( true )
@@ -280,17 +280,17 @@ class Tensor_State_Spec extends Specification
             t.isOutsourced()
             !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
             t.dataType.getRepresentativeType() == I8.class
-            t.getValueAs( double[].class ) == null
-            t.getValueAs( float[].class ) == null
+            t.getItemsAs( double[].class ) == null
+            t.getItemsAs( float[].class ) == null
             t.unsafe.data == null
-            t.value == null
+            t.items == null
         when : 'The "isOutsourced" flag is set to its original state...'
             t.setIsOutsourced( false )
         then : 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
-            t.getValueAs( double[].class ) == [0, 0] as double[]
-            t.getValueAs( float[].class ) == [0, 0] as float[]
+            t.getItemsAs( double[].class ) == [0, 0] as double[]
+            t.getItemsAs( float[].class ) == [0, 0] as float[]
             t.unsafe.data == [0] as byte[]
-            t.value == [0, 0] as byte[]
+            t.items == [0, 0] as byte[]
             t.isVirtual()
     }
 
@@ -310,11 +310,11 @@ class Tensor_State_Spec extends Specification
             v.at(1).get() == s.at(0).get()
 
         and : 'They both do not share the same value array.'
-            v.value != s.value
+            v.items != s.items
         and : 'They so however share the same underlying data.'
             v.unsafe.data == s.unsafe.data
         and :
-            s.value == [4]
+            s.items == [4]
 
         where : 'We test the following devices:'
             device << ['CPU']

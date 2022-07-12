@@ -366,7 +366,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         this.free( tensor );
         tensor.forComponent( Tsr.class, this::restore );
-        tensor.setValue( value );
+        tensor.setItems( value );
         return this;
     }
 

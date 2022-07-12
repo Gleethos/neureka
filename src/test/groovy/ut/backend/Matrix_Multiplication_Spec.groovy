@@ -31,7 +31,7 @@ class Matrix_Multiplication_Spec extends Specification
         then : 'The result will have the expected (M x N) shape.'
             c.shape == [M,N]
         and : 'It should have the expected value array.'
-            c.value == expectedC
+            c.items == expectedC
 
         where : 'We use the following scenario parameters:'
            layout |  type  | M | K | N | A                        | B                              || expectedC

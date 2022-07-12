@@ -35,7 +35,7 @@ public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivatio
                 Device<Number> device = call.getDeviceFor(Number.class);
                 assert call.input( 0 ) == null;  // Creating a new tensor:
                 int[] outShape = call.input( 1 ).getNDConf().shape();
-                Class<Object> type = (Class<Object>) call.input( 1 ).getValueClass();
+                Class<Object> type = (Class<Object>) call.input( 1 ).getItemClass();
                 Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );
                 try {
                     device.store( output );
@@ -49,7 +49,7 @@ public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivatio
         setImplementationFor(
             OpenCLDevice.class,
             call -> {
-                Number value =  funs.getFor( call ).invoke(call.input( Number.class, 1 ).getValueAt(0).doubleValue());
+                Number value =  funs.getFor( call ).invoke(call.input( Number.class, 1 ).getItemAt(0).doubleValue());
                 Tsr<Number> out = call.input( Number.class, 0 );
                 out.getUnsafe().setDataAt(0, value);
             }
@@ -66,7 +66,7 @@ public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivatio
             Functions<Fun> functions
     ) {
         CPU.RangeWorkload workload = (i,end) -> {
-            Number value =  functions.get(Fun.F64ToF64.class).get( call.get( Arg.DerivIdx.class ) ).invoke(call.input( Number.class, 1 ).getValueAt(0).doubleValue());
+            Number value =  functions.get(Fun.F64ToF64.class).get( call.get( Arg.DerivIdx.class ) ).invoke(call.input( Number.class, 1 ).getItemAt(0).doubleValue());
             Tsr<Number> out = call.input( Number.class, 0 );
             out.getUnsafe().setDataAt(0, value);
         };

@@ -22,7 +22,7 @@ public class RMSprop<V extends Number> implements Optimizer<V>
 
     public RMSprop( Tsr<Number> target ) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
-        h = Tsr.of(target.getValueClass(), target.shape(), 0);
+        h = Tsr.of(target.getItemClass(), target.shape(), 0);
         lr = 0.001; // Step size/learning rate is 0.001 by default!
         decay = 0.9; // Decay rate is 0.9 by default!
     }

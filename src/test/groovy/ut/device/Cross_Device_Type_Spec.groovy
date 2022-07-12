@@ -125,8 +125,8 @@ class Cross_Device_Type_Spec extends Specification
             Tsr t = Tsr.of(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).to(device)
 
         when : 'A numeric array is passed to said tensor...'
-            t.setValue(data1)
-            t.setValue(data2)
+            t.setItems(data1)
+            t.setItems(data2)
 
         then : 'The tensor (as String) contains the expected String.'
             t.toString().contains(expected)
@@ -156,7 +156,7 @@ class Cross_Device_Type_Spec extends Specification
             Tsr t = Tsr.of(shape, data).to(device)
 
         then : 'The tensor values (as List) are as expected.'
-            Arrays.equals(t.getValueAs(double[].class), DataConverter.get().convert(expected,double[].class))
+            Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))
 
         when : 'The same underlying data is being queried by calling the device...'
             var result = (0..<t.size()).collect{device.access(t).readAt(it)}
