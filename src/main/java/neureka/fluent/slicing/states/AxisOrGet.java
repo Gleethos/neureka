@@ -32,4 +32,15 @@ public interface AxisOrGet<V>  {
      */
     Tsr<V> get();
 
+    /**
+     *  This method concludes the slicing API by performing the actual slicing and
+     *  returning the resulting {@link Tsr} instance based on the previously
+     *  specified slice configuration...
+     *  Contrary to the {@link #get()} method, this method returns a slice which
+     *  is not part of the computation graph of the original tensor (meaning no autograd).
+     *
+     * @return A new {@link Tsr} instance which is a slice of the original tensor without autograd.
+     */
+    Tsr<V> detached();
+
 }

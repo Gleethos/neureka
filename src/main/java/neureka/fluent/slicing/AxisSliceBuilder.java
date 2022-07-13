@@ -78,7 +78,7 @@ public class AxisSliceBuilder<V> implements FromOrAt<V>, To<V>, StepsOrAxisOrGet
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link AxisOrGet} interface.
      */
     @Override
-    public AxisOrGet<V> at(int index ) {
+    public AxisOrGet<V> at( int index ) {
         _from = index;
         _to = index;
         return this;
@@ -89,13 +89,18 @@ public class AxisSliceBuilder<V> implements FromOrAt<V>, To<V>, StepsOrAxisOrGet
      *  This method returns an instance of the {@link AxisSliceBuilder} targeted by the provided index.
      */
     @Override
-    public FromOrAt<V> axis(int axis) {
+    public FromOrAt<V> axis( int axis ) {
        return _then.resolve(_from, _to, _steps).axis(axis);
     }
 
     @Override
     public Tsr<V> get() {
         return _then.resolve(_from, _to, _steps).get();
+    }
+
+    @Override
+    public Tsr<V> detached() {
+        return _then.resolve(_from, _to, _steps).detached();
     }
 
 

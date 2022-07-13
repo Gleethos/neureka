@@ -23,10 +23,9 @@ public class SmartSlicer {
 
     public static <ValType> Tsr<ValType> slice(
             Object[] ranges,
-            Tsr<ValType> source,
-            SliceBuilder.CreationCallback<ValType> callback
+            Tsr<ValType> source
     ) {
-        AxisOrGet<ValType> sliceBuilder = new SliceBuilder<>(source, callback);
+        AxisOrGet<ValType> sliceBuilder = new SliceBuilder<>(source);
         List<Object> rangeList = new ArrayList<>();
         List<Integer> stepsList = new ArrayList<>();
         for (Object range : ranges ) {

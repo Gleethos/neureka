@@ -1,10 +1,11 @@
 package neureka.fluent.slicing;
 
 import neureka.Tsr;
+import neureka.calculus.args.Arg;
 import neureka.fluent.slicing.states.AxisOrGet;
 import neureka.fluent.slicing.states.FromOrAt;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 
 /**
@@ -21,22 +22,37 @@ import java.util.function.Supplier;
  */
 public class SliceBuilder<V> implements AxisOrGet<V>
 {
-    public interface CreationCallback<V> { Tsr<V> sliceOf(int[] newShape, int[] newOffset, int[] newSpread ); }
+    private interface CreationCallback<V> {
+        Tsr<V> sliceOf(int[] newShape, int[] newOffset, int[] newSpread, boolean autograd);
+    }
 
-    private final Supplier<Tsr<V>> _create;
+    private final Function<Boolean, Tsr<V>> _create;
     private final AxisSliceBuilder<V>[]  _axisSliceBuilders;
 
     /**
      *  An instance of a slice builder does not perform the actual slicing itself!
-     *  Instead it merely serves as a collector of slice configuration data.
+     *  Instead, it merely serves as a collector of slice configuration data.
      *  The actual slicing will be performed by the {@link CreationCallback} passed
      *  to this constructor.
      *
      * @param toBeSliced The {@link Tsr} instance which ought to be sliced.
-     * @param sliceCreator A callback lambda which receives the final slice configuration to perform the actual slicing.
      */
-    public SliceBuilder(Tsr<V> toBeSliced, CreationCallback<V> sliceCreator )
+    public SliceBuilder( Tsr<V> toBeSliced )
     {
+        CreationCallback<V> sliceCreator = // A callback lambda which receives the final slice configuration to perform the actual slicing.
+        ( int[] newShape, int[] newOffset, int[] newSpread, boolean allowAutograd )->
+        {
+            boolean isIntermediate = toBeSliced.isIntermediate();
+            toBeSliced.getUnsafe().setIsIntermediate(false); // To avoid deletion!
+            Tsr<V> slice = neureka.calculus.Function.of("slice(I[0])", false)
+                                .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))
+                                .call(toBeSliced);
+
+            slice.getUnsafe().setIsIntermediate(false);
+            toBeSliced.getUnsafe().setIsIntermediate(isIntermediate);
+            return slice;
+        };
+
         int[] shape = toBeSliced.getNDConf().shape();
         _axisSliceBuilders = new AxisSliceBuilder[ shape.length ];
         int[] newShape = new int[shape.length];
@@ -63,11 +79,11 @@ public class SliceBuilder<V> implements AxisOrGet<V>
                                                     return this;
                                                 });
         }
-        _create = () -> {
+        _create = allowAutograd -> {
             for ( AxisSliceBuilder<V> axis : _axisSliceBuilders ) {
                 if ( axis != null ) axis.resolve();
             }
-            return sliceCreator.sliceOf( newShape, newOffset, newSpread );
+            return sliceCreator.sliceOf( newShape, newOffset, newSpread, allowAutograd );
         };
     }
 
@@ -94,9 +110,13 @@ public class SliceBuilder<V> implements AxisOrGet<V>
      */
     @Override
     public Tsr<V> get() {
-        return _create.get();
+        return _create.apply(true);
     }
 
+    @Override
+    public Tsr<V> detached() {
+        return _create.apply(false);
+    }
 
 
 }

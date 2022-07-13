@@ -906,11 +906,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     public Tsr<V> getAt( Map<?,Integer> rankToStrides ) {
         LogUtil.nullArgCheck(rankToStrides, "rankToStrides", Map.class, "Rank-to-strides map must not be 'null'!");
         // ...not a simple slice... Advanced:
-        return SmartSlicer.slice(
-                        new Object[]{rankToStrides},
-                        this,
-                        this::_sliceOf
-                    );
+        return SmartSlicer.slice(new Object[]{rankToStrides}, this);
     }
 
     /**
@@ -947,8 +943,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
         for ( Object o : indices ) hasScale = hasScale || o instanceof Map;
         return SmartSlicer.slice(
                 ( allInt ? new Object[]{ DataConverter.get().convert(indices, int[].class) } : indices ),
-                this,
-                this::_sliceOf
+                this
             );
     }
 
@@ -981,32 +976,8 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public SliceBuilder<V> slice() { return new SliceBuilder<>( this, this::_sliceOf ); }
+    public SliceBuilder<V> slice() { return new SliceBuilder<>( this ); }
 
-    /**
-     *  This method is where the creation of a slice occurs.
-     *  When creating a slice via the {@link SliceBuilder} or simply by passing ranges in the form of
-     *  arrays, lists or maps to a {@link Tsr#getAt}(...) method, then this method will be called eventually.
-     *  The creation of a slice always requires information about the shape of the new slice
-     *  its position within the original tensor and also the strides / steps.
-     *
-     * @param newShape The of the slice which ought to be created.
-     * @param newOffset The position of the new slice within this tensor.
-     * @param newSpread The spread / steps / strides of the slice within this tensor.
-     * @return The newly created slice.
-     */
-    private Tsr<V> _sliceOf( int[] newShape, int[] newOffset, int[] newSpread )
-    {
-        boolean isIntermediate = this.isIntermediate();
-        _setIsIntermediate(false); // To avoid deletion!
-        Tsr<V> slice = Function.of("slice(I[0])", false)
-                        .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))
-                        .call(this);
-
-        slice.getUnsafe().setIsIntermediate(false);
-        _setIsIntermediate(isIntermediate);
-        return slice;
-    }
 
     /**
      *  {@inheritDoc}
