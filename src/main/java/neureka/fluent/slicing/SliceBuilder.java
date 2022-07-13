@@ -44,7 +44,7 @@ public class SliceBuilder<V> implements AxisOrGet<V>
         {
             boolean isIntermediate = toBeSliced.isIntermediate();
             toBeSliced.getUnsafe().setIsIntermediate(false); // To avoid deletion!
-            Tsr<V> slice = neureka.calculus.Function.of("slice(I[0])", false)
+            Tsr<V> slice = neureka.calculus.Function.of("slice(I[0])", allowAutograd)
                                 .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))
                                 .call(toBeSliced);
 

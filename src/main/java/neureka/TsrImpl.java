@@ -270,7 +270,18 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      */
     @Override
     public Tsr<V> setRqsGradient(boolean rqsGradient ) {
-        if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( TsrImpl.class );
+        if ( rqsGradient() != rqsGradient ) {
+            if ( !rqsGradient ) this.remove( TsrImpl.class );
+            else if ( has(GraphNode.class) ) {
+                if ( getGraphNode().getMode() == 0 )
+                    remove(GraphNode.class);
+                else
+                    throw new IllegalArgumentException(
+                        "This tensor is already part of a gradient dependent graph as " +
+                        "branch node and therefore cannot be removed from it."
+                    );
+            }
+        }
         _setRqsGradient( rqsGradient );
         return this;
     }
