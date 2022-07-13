@@ -84,6 +84,11 @@ public class AxisSliceBuilder<V> implements FromOrAt<V>, To<V>, StepsOrAxisOrGet
         return this;
     }
 
+    @Override
+    public AxisOrGet<V> all() {
+        return from( 0 ).to( _to );
+    }
+
 
     /**
      *  This method returns an instance of the {@link AxisSliceBuilder} targeted by the provided index.

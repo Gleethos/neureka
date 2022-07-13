@@ -96,7 +96,7 @@ public class SliceBuilder<V> implements AxisOrGet<V>
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link FromOrAt} interface.
      */
     @Override
-    public FromOrAt<V> axis(int axis ) {
+    public FromOrAt<V> axis( int axis ) {
         if ( axis >= _axisSliceBuilders.length ) throw new IllegalArgumentException("");
         return _axisSliceBuilders[ axis ];
     }

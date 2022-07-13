@@ -33,4 +33,13 @@ public interface FromOrAt<V>
      *         perform the actual slicing and get the tensor.
      */
     AxisOrGet<V> at( int index );
+
+    /**
+     *  This is a convenience method replacing "{@code from(0).to(axisSize-1)}", meaning that
+     *  it simply slices the whole current axis from the original tensor.
+     *
+     * @return The next step in the slicing API which allows one to slice another axis or simply
+     *         perform the actual slicing and get the tensor.
+     */
+    AxisOrGet<V> all();
 }

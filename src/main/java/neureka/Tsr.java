@@ -1607,14 +1607,8 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return A shallow copy where the underlying data is shared with this tensor.
      */
     default Tsr<V> shallowCopy() {
-        if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an excepion here...
-        List<List<Integer>> ranges = new ArrayList<>();
-        for ( int e : this.shape() ) {
-            List<Integer> rangeAsList = new ArrayList<>();
-            for ( int i = 0; i < e; i++ ) rangeAsList.add( i );
-            ranges.add( rangeAsList);
-        }
-        return getAt( ranges.toArray() );
+        if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an exception here...
+        return slice().detached();
     }
 
     /**

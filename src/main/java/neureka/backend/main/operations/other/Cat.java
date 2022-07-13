@@ -70,7 +70,7 @@ public class Cat extends AbstractOperation
                     for ( int i = 0; i < inputs.length; i++ ) {
                         int start = i == 0 ? 0 : axes.get( i - 1 );
                         int end = ( axes.get( i ) - 1 );
-                        Tsr<?> slice = c.slice().axis( dim ).from( start ).to( end ).get();
+                        Tsr<?> slice = c.slice().axis( dim ).from( start ).to( end ).detached();
                         Neureka.get().backend().getFunction().idy().execute( slice, call.input( i ) );
                     }
                     c.getUnsafe().setIsIntermediate(true);
@@ -80,7 +80,7 @@ public class Cat extends AbstractOperation
                                 int i = target.inputIndex();
                                 int start = i == 0 ? 0 : axes.get( i - 1 );
                                 int end = axes.get( i ) - 1;
-                                return target.error().slice().axis(dim).from(start).to(end).get();
+                                return target.error().slice().axis(dim).from(start).to(end).detached();
                             });
                 }
             )
