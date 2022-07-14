@@ -41,7 +41,7 @@ class Tensor_Slicing_Spec extends Specification
         Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
     }
 
-    def 'When Slicing only one axis using the SliceBuilder API, the other axis will be sliced implicitly.' (
+    def 'When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.' (
             Device device
     ) {
         given : 'A device could be found.'
@@ -290,6 +290,46 @@ class Tensor_Slicing_Spec extends Specification
                            "   [   0.0 ,  -8.0 ,  -8.0 ,   0.0  ],\n" +
                            "   [   0.0 ,   0.0 ,   0.0 ,   0.0  ]\n" +
                            "]"
+    }
+
+
+    def 'Normal slicing will try to do autograd.'()
+    {
+        given :
+            var t = Tsr.ofBytes().withShape(5).andFill(-1, 7, 3).setRqsGradient(true)
+
+        when :
+            var s = t[2..3]
+        and :
+            s.backward(42)
+
+        then :
+            t.toString() == "(5):[  -1.0 ,   7.0 ,   3.0 ,  -1.0 ,   7.0  ]:g:[   0.0 ,   0.0 ,  42.0 ,  42.0 ,   0.0  ]"
+
+    }
+
+    def 'We can avoid autograd when slicing by using the "detached" instead of the "get" method.'()
+    {
+        given :
+            var t = Tsr.ofBytes().withShape(4).andFill(-1, 7, 3).setRqsGradient(true)
+
+        when :
+            t.slice()
+                .axis(0).from(0).to(1)
+                .detached()
+                .backward(73)
+
+        then :
+            t.toString() == "(4):[  -1.0 ,   7.0 ,   3.0 ,  -1.0  ]:g:[null]"
+
+        when :
+            t.slice()
+                .axis(0).from(0).to(1)
+                .get()
+                .backward(73)
+
+        then :
+            t.toString() == "(4):[  -1.0 ,   7.0 ,   3.0 ,  -1.0  ]:g:[  73.0 ,  73.0 ,   0.0 ,   0.0  ]"
     }
 
 }
