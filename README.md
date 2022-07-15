@@ -18,16 +18,36 @@
 
 ## :hammer_and_wrench: Features ##
 
+<style>
+    table {
+        width: 100%;
+    }
+</style>
+<table>
+<tr>
+</tr>
+<tr>
+<td> 
+
 - [tensors & nd-arrays](docs/markdown/tensors_or_nd-arrays.md)
 - dynamic computation graph
 - auto differentiation (forwards/backwards)
 - nd-convolution
 - nd-broadcasting
+ 
+</td>
+<td>
+
 - flexible tensor indexing and slicing
 - seeding
 - labeling
 - loading and saving as jpg/png/idx files
 - [a highly extensible and modular backend](docs/markdown/extending_neureka.md)
+
+</td>
+</tr>
+</table>
+
 
 ### Take a quick look ###
 
