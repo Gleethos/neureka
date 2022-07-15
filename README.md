@@ -18,11 +18,6 @@
 
 ## :hammer_and_wrench: Features ##
 
-<style>
-    table {
-        width: 100%;
-    }
-</style>
 <table>
 <tr>
 </tr>
