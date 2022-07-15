@@ -115,7 +115,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
         if ( indices.length < this.rank() ) {
             if ( indices.length == 1 ) return getDataAt( getNDConf().indexOfIndex( indices[0] ) );
             else {
-                int[] allIndices = new int[this.rank()];
+                int[] allIndices = new int[this.rank()]; // We do some 0 padding to make sure we have the correct number of indices.
                 System.arraycopy( indices, 0, allIndices, 0, indices.length );
                 return getDataAt( getNDConf().indexOfIndices( allIndices ) );
             }

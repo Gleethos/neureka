@@ -332,4 +332,21 @@ class Tensor_Slicing_Spec extends Specification
             t.toString() == "(4):[  -1.0 ,   7.0 ,   3.0 ,  -1.0  ]:g:[  73.0 ,  73.0 ,   0.0 ,   0.0  ]"
     }
 
+    def 'We can slice a scalar tensor from a larger tensor of rank 4.'()
+    {
+        given : 'A 4 dimensional tensor.'
+            var t = Tsr.ofBytes().withShape(4, 2, 3, 2).andFill(-1, 7, 9, 5, 4, 3)
+
+        when : 'Slicing the tensor using lists of integers...'
+            var s = t[1, 1, 2, 0]
+
+        then : 'The slice will contain only a single number, namely: 4.'
+            s.items == [4]
+        and : 'We verify this through the "getItemAt" method.'
+            s.items == [t.getItemAt(1, 1, 2, 0)]
+        and : 'A variation of the previous verification (here we test 0 padding of getItemAt).'
+            s.items == [t.getItemAt(1, 1, 2)] // This is the same as getItemAt(1, 1, 2, 0)
+    }
+
+
 }
