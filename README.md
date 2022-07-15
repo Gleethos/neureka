@@ -18,15 +18,16 @@
 
 ## :hammer_and_wrench: Features ##
 
--   dynamic computation graph
--   auto differentiation (forwards/backwards)
--   nd-convolution
--   nd-broadcasting
--   flexible tensor indexing and slicing
--   seeding
--   labeling
--   loading and saving as jpg/png/idx files
--   [a highly extensible and modular backend](docs/markdown/extending_neureka.md)
+- [tensors & nd-arrays](docs/markdown/tensors_or_nd-arrays.md)
+- dynamic computation graph
+- auto differentiation (forwards/backwards)
+- nd-convolution
+- nd-broadcasting
+- flexible tensor indexing and slicing
+- seeding
+- labeling
+- loading and saving as jpg/png/idx files
+- [a highly extensible and modular backend](docs/markdown/extending_neureka.md)
 
 ### Take a quick look ###
 
