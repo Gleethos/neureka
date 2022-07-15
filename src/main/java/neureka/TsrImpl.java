@@ -58,7 +58,6 @@ import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.memory.MemUtil;
 import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
@@ -70,7 +69,7 @@ import neureka.fluent.slicing.SmartSlicer;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
-import neureka.ndim.AbstractTensor;
+import neureka.ndim.AbstractNda;
 import neureka.ndim.Filler;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
@@ -92,7 +91,7 @@ import java.util.stream.Collectors;
  *
  * @param <V> The type parameter for the individual value items within this tensor.
  */
-final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
+final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
 {
     static {
         _LOG = LoggerFactory.getLogger( TsrImpl.class );

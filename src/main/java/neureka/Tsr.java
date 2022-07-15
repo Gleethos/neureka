@@ -80,10 +80,9 @@ import neureka.fluent.building.states.WithShapeOrScalarOrVectorOnDevice;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
-import neureka.ndim.AbstractTensor;
+import neureka.ndim.AbstractNda;
 import neureka.ndim.Filler;
 import neureka.ndim.NDConstructor;
-import neureka.ndim.NDimensional;
 import neureka.ndim.config.NDConfiguration;
 import neureka.optimization.Optimizer;
 import neureka.view.TsrAsString;
@@ -92,9 +91,6 @@ import neureka.view.TsrStringSettings;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  *  {@link Tsr} is a 3 letter abbreviation of the word "tensor", a mathematical concept.
@@ -1034,7 +1030,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     /**
      *  The {@link Class} returned by this method is the representative {@link Class} of the
-     *  value items of a concrete {@link AbstractTensor} but not necessarily the actual {@link Class} of
+     *  value items of a concrete {@link AbstractNda} but not necessarily the actual {@link Class} of
      *  a given value item, this is especially true for numeric types, which are represented by
      *  implementations of the {@link NumericType} interface.                                        <br>
      *  For example in the case of a tensor of type {@link Double}, this method would
@@ -1042,7 +1038,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  Calling the {@link #getItemClass()} method instead of this method would return the actual value
      *  type class, namely: {@link Double}.
      *
-     * @return The representative type class of individual value items within this concrete {@link AbstractTensor}
+     * @return The representative type class of individual value items within this concrete {@link AbstractNda}
      *         extension instance which might also be sub-classes of the {@link NumericType} interface
      *         to model unsigned types or other JVM foreign numeric concepts.
      */
@@ -1492,13 +1488,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> convDot( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class);
         Tsr<V> a = this;
-        int[][] fitter = AbstractTensor.Utility.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );
+        int[][] fitter = AbstractNda.Utility.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );
         boolean doReshape = false;
         for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
         for ( int i = 0; i < fitter[ 1 ].length && !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;
         if ( doReshape ) {
-            a = Function.of( AbstractTensor.Utility.shapeString( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
-            other = Function.of( AbstractTensor.Utility.shapeString( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( other );
+            a = Function.of( AbstractNda.Utility.shapeString( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
+            other = Function.of( AbstractNda.Utility.shapeString( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( other );
         }
         return Neureka.get()
                 .backend()
@@ -2116,10 +2112,10 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         <U/*super T*/> Tsr<U> upcast(Class<U> superType );
 
         /**
-         *  This method enables modifying the data-type configuration of this {@link AbstractTensor}.
+         *  This method enables modifying the data-type configuration of this {@link AbstractNda}.
          *  Warning! The method should not be used unless absolutely necessary.
          *  This is because it can cause unpredictable inconsistencies between the
-         *  underlying {@link DataType} instance of this {@link AbstractTensor} and the actual type of the actual
+         *  underlying {@link DataType} instance of this {@link AbstractNda} and the actual type of the actual
          *  data it is wrapping (or it is referencing on a {@link neureka.devices.Device}).<br>
          *  <br>
          * @param dataType The new {@link DataType} which ought to be set.
@@ -2128,7 +2124,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         <V> Tsr<V> setDataType( DataType<V> dataType );
 
         /**
-         *  This method allows you to modify the data-layout of this {@link AbstractTensor}.
+         *  This method allows you to modify the data-layout of this {@link AbstractNda}.
          *  Warning! The method should not be used unless absolutely necessary.
          *  This is because it can cause unpredictable side effects especially for certain
          *  operations expecting a particular data layout (like for example matrix multiplication).

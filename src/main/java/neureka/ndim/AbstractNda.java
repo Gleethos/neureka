@@ -56,7 +56,7 @@ import java.util.Arrays;
  *  This is the precursor class to the final {@link Tsr} class from which
  *  tensor instances can be created. <br>
  *  The inheritance model of a tensor is structured as follows: <br>
- *  {@link Tsr} inherits from {@link AbstractTensor} which inherits from {@link AbstractComponentOwner}
+ *  {@link Tsr} inherits from {@link AbstractNda} which inherits from {@link AbstractComponentOwner}
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
  *  This class also implements the {@link Tsr} interface, which uses
@@ -66,13 +66,13 @@ import java.util.Arrays;
  * @param <C> The type of the concrete class extending this abstract class (currently the {@link Tsr} class).
  * @param <V> The value type of the individual items stored within this nd-array.
  */
-public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<Tsr<V>> implements Tsr<V>
+public abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implements Tsr<V>
 {
     protected static Logger _LOG;
 
     /**
      *  An instance of an implementation of the {@link NDConfiguration} interface defining
-     *  the dimensionality of this {@link AbstractTensor} in terms of certain index properties
+     *  the dimensionality of this {@link AbstractNda} in terms of certain index properties
      *  which imply individual access patterns for the underlying {@link #_data}.
      */
     private NDConfiguration _NDConf;
@@ -142,10 +142,10 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<Tsr<V>
     }
 
     /**
-     *  This method enables modifying the data-type configuration of this {@link AbstractTensor}.
+     *  This method enables modifying the data-type configuration of this {@link AbstractNda}.
      *  Warning! The method should not be used unless absolutely necessary.
      *  This is because it can cause unpredictable inconsistencies between the
-     *  underlying {@link DataType} instance of this {@link AbstractTensor} and the actual type of the actual
+     *  underlying {@link DataType} instance of this {@link AbstractNda} and the actual type of the actual
      *  data it is wrapping (or it is referencing on a {@link neureka.devices.Device}).<br>
      *  <br>
      * @param dataType The new {@link DataType} which ought to be set.
@@ -259,7 +259,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<Tsr<V>
     protected abstract void _setIsVirtual( boolean isVirtual );
 
     /**
-     *  The {@link AbstractTensor} is in essence a precursor class to the {@link Tsr} which encapsulates
+     *  The {@link AbstractNda} is in essence a precursor class to the {@link Tsr} which encapsulates
      *  and protects most of its state...
      *  This is especially important during constructing where a wider range of unexpected user input
      *  might lead to a wider variety of exceptions.
@@ -269,7 +269,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<Tsr<V>
      */
     protected TsrConstructor createConstructionAPI()
     {
-        AbstractTensor<C, ?> nda = this;
+        AbstractNda<C, ?> nda = this;
         return new TsrConstructor(
                     new TsrConstructor.API() {
                         @Override public void setType( DataType<?> type        ) { nda.getUnsafe().setDataType( type ); }
