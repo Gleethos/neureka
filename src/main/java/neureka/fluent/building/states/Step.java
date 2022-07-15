@@ -1,5 +1,6 @@
 package neureka.fluent.building.states;
 
+import neureka.Nda;
 import neureka.Tsr;
 
 /**
@@ -27,6 +28,6 @@ public interface Step<V>
      * @param size The size of the step within the range defined by this fluent builder API.
      * @return A new {@link Tsr} instance whose contents are filled based on the provided range.
      */
-    Tsr<V> step( double size );
+    Nda<V> step( double size );
 
 }

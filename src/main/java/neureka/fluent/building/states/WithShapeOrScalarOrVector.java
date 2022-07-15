@@ -1,5 +1,6 @@
 package neureka.fluent.building.states;
 
+import neureka.Nda;
 import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 
@@ -25,12 +26,7 @@ public interface WithShapeOrScalarOrVector<V>
      * @param shape The shape list of the {@link Tsr} that should be built.
      * @return The next step in the call transition graph of this fluent builder API.
      */
-    default <N extends Number> IterByOrIterFromOrAll<V> withShape( List<N> shape ) {
-        LogUtil.nullArgCheck(shape, "shape", List.class, "Cannot create a tensor without shape!");
-        return this.withShape(
-          shape.stream().mapToInt( n -> n.intValue() ).toArray()
-        );
-    }
+    <N extends Number> IterByOrIterFromOrAll<V> withShape( List<N> shape );
 
 
     /**
@@ -40,7 +36,7 @@ public interface WithShapeOrScalarOrVector<V>
      * @param values The values which ought to be wrapped by a new vector {@link Tsr} instance.
      * @return A vector {@link Tsr} instance wrapping the provided values.
      */
-    Tsr<V> vector( V... values );
+    Nda<V> vector( V... values );
 
     /**
      *  This method created and return a scalar {@link Tsr} instance
@@ -49,6 +45,6 @@ public interface WithShapeOrScalarOrVector<V>
      * @param value The value which ought to be wrapped by a new scalar {@link Tsr} instance.
      * @return A scala {@link Tsr} instance wrapping the provided value.
      */
-    Tsr<V> scalar( V value );
+    Nda<V> scalar( V value );
 
 }

@@ -61,7 +61,7 @@ import java.util.stream.IntStream;
  *
  * @param <V> The type of the values which ought to be represented by the {@link Tsr} built by this {@link TensorBuilder}.
  */
-public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, IterByOrIterFromOrAll<V>, To<V>, Step<V>
+public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, IterByOrIterFromOrAllTsr<V>, ToForTsr<V>, StepForTsr<V>
 {
     private static final Logger _LOG = LoggerFactory.getLogger(TensorBuilder.class);
 
@@ -122,7 +122,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
     }
 
     @Override
-    public To<V> andFillFrom( V index ) {
+    public ToForTsr<V> andFillFrom( V index ) {
         LogUtil.nullArgCheck(index, "index", _dataType.getItemTypeClass(), "Cannot create a range where the last index is undefined!");
         _from = _checked(index);
         return this;
@@ -154,7 +154,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
     }
 
     @Override
-    public IterByOrIterFromOrAll<V> withShape( int... shape ) {
+    public IterByOrIterFromOrAllTsr<V> withShape( int... shape ) {
         LogUtil.nullArgCheck(shape, "shape", int[].class, "Cannot create a tensor without shape!");
         if ( shape.length == 0 )
             throw new IllegalArgumentException("Cannot instantiate a tensor without shape arguments.");
@@ -205,7 +205,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
     }
 
     @Override
-    public Step<V> to( V index ) { _to = _checked(index); return this; }
+    public StepForTsr<V> to( V index ) { _to = _checked(index); return this; }
 
     @Override
     public Tsr<V> step( double size ) {
@@ -285,7 +285,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
     }
 
     @Override
-    public WithShapeOrScalarOrVector<V> on( Device<V> device ) {
+    public WithShapeOrScalarOrVectorTsr<V> on( Device<V> device ) {
         LogUtil.nullArgCheck(device, "device", Device.class, "Cannot create a tensor with an undefined device!");
         _device = device;
         return this;

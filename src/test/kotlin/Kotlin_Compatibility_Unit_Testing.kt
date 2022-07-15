@@ -1,4 +1,5 @@
 
+import neureka.Nda
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
@@ -130,7 +131,6 @@ Kotlin_Compatibility_Unit_Testing {
             assert(w.toString() == "(1):["+(expected+weightVal)+"]:g:[null]")
         }
     }
-
 
     @Test
     fun we_can_use_the_subscription_operator_to_slice_tensors()
@@ -407,6 +407,19 @@ Kotlin_Compatibility_Unit_Testing {
                                     ]
                                     END
                                 """.trimIndent())
+    }
+
+
+    @Test
+    fun we_can_create_nd_arrays_with_a_fluent_builder_api()
+    {
+        val nda : Nda<Int> =
+                    Nda.of(Int::class.java)
+                        .withShape(2, 3)
+                        .andWhere { _, indices -> indices.sum()/2  }
+
+        assert((0..5).all { (nda.data as IntArray)[it] == arrayOf(0,0,1,0,1,1)[it] })
+        assert((0..5).all { (nda.items as IntArray)[it] == arrayOf(0,0,1,0,1,1)[it] })
     }
 
 }

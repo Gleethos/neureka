@@ -2,6 +2,8 @@ package neureka;
 
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
+import neureka.fluent.building.TensorBuilder;
+import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.states.AxisOrGet;
 import neureka.ndim.NDimensional;
@@ -14,6 +16,7 @@ import java.util.stream.Stream;
 
 public interface Nda<V> extends NDimensional, Iterable<V>
 {
+    static <V> WithShapeOrScalarOrVector<V> of(Class<V> type) { return new TensorBuilder<>( type ); }
 
     boolean isSlice();
 

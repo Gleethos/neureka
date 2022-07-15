@@ -1,9 +1,9 @@
 package neureka.fluent.building.states;
 
+import neureka.Nda;
 import neureka.Tsr;
 import neureka.ndim.Filler;
 
-import java.util.Arrays;
 import java.util.List;
 
 public interface IterByOrIterFromOrAll<V>
@@ -18,7 +18,7 @@ public interface IterByOrIterFromOrAll<V>
      * @param values The values which will be used to populate the {@link Tsr} instance returned by this method.
      * @return The final result of the fluent tensor builder API having a tensor filled with custom values.
      */
-    Tsr<V> andFill( V... values );
+    Nda<V> andFill( V... values );
 
     /**
      *  Provide a list of values which will be used to fill
@@ -30,9 +30,7 @@ public interface IterByOrIterFromOrAll<V>
      * @param values The values which will be used to populate the {@link Tsr} instance returned by this method.
      * @return The final result of the fluent tensor builder API having a tensor filled with custom values.
      */
-    default Tsr<V> andFill( List<V> values ) {
-        return this.andFill((V[])values.toArray());
-    }
+    Nda<V> andFill( List<V> values );
 
 
     /**
@@ -45,7 +43,7 @@ public interface IterByOrIterFromOrAll<V>
      * @param filler A data element provider lambda mapping the indices to custom values.
      * @return The resulting {@link Tsr} instance populated by the provided {@link Filler}.
      */
-    Tsr<V> andWhere( Filler<V> filler );
+    Nda<V> andWhere( Filler<V> filler );
 
     /**
      *  This part of the builder API allows for specifying a range which starts from the
@@ -68,7 +66,7 @@ public interface IterByOrIterFromOrAll<V>
      * @param value The value which ought to populate the entire {@link Tsr}.
      * @return The homogeneously populated {@link Tsr} instance.
      */
-    Tsr<V> all( V value );
+    Nda<V> all( V value );
 
     /**
      *  This method creates and return a {@link Tsr} instance which
@@ -79,6 +77,6 @@ public interface IterByOrIterFromOrAll<V>
      * @param seed The seed based on which the value for populating the entire {@link Tsr} will be generated.
      * @return The pseudo randomly populated {@link Tsr} instance.
      */
-    Tsr<V> andSeed( Object seed );
+    Nda<V> andSeed( Object seed );
 
 }
