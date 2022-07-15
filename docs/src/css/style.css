@@ -466,7 +466,7 @@ header p {
     font-family: "sans-serif", cursive, serif;
     border-bottom: 0.05em solid black;
     box-shadow: 0 0 0.1em 0.01em #000000;
-    margin-bottom: 0.8em;
+    margin-bottom: 0.01em;
     padding: 0.2em 0.7em 0.2em 0.7em;
     color: #00033d;
     letter-spacing: 2px;
