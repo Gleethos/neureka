@@ -1,8 +1,8 @@
 package neureka.fluent.slicing;
 
 import neureka.Tsr;
+import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.framing.NDFrame;
-import neureka.fluent.slicing.states.AxisOrGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,7 @@ public class SmartSlicer {
             Object[] ranges,
             Tsr<ValType> source
     ) {
-        AxisOrGet<ValType> sliceBuilder = new SliceBuilder<>(source);
+        AxisOrGetTsr<ValType> sliceBuilder = new SliceBuilder<>(source);
         List<Object> rangeList = new ArrayList<>();
         List<Integer> stepsList = new ArrayList<>();
         for (Object range : ranges ) {

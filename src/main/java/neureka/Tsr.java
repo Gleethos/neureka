@@ -78,6 +78,8 @@ import neureka.fluent.building.states.IterByOrIterFromOrAll;
 import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 import neureka.fluent.building.states.WithShapeOrScalarOrVectorOnDevice;
 import neureka.fluent.slicing.SliceBuilder;
+import neureka.fluent.slicing.states.AxisOrGet;
+import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.ndim.AbstractNda;
@@ -1787,23 +1789,8 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     |       ...for more context see package 'ndim.config'...
     */
 
-    /**
-     *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
-     *  which enables the configuration of a slice of the current tensor via method chaining.    <br>
-     *  The following code snippet slices a 3-dimensional tensor into a tensor of shape (2x1x3)  <br>
-     * <pre>{@code
-     *  myTensor.slice()
-     *          .axis(0).from(0).to(1)
-     *          .then()
-     *          .axis(1).at(5) // equivalent to '.from(5).to(5)'
-     *          .then()
-     *          .axis().from(0).to(2)
-     *          .get();
-     * }</pre>
-     *
-     * @return An instance of the {@link SliceBuilder} class exposing a readable builder API for creating slices.
-     */
-    SliceBuilder<V> slice();
+    /** {@inheritDoc} */
+    @Override AxisOrGetTsr<V> slice();
 
     /** {@inheritDoc} */
     @Override

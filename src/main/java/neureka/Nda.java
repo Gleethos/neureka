@@ -2,6 +2,8 @@ package neureka;
 
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
+import neureka.fluent.slicing.SliceBuilder;
+import neureka.fluent.slicing.states.AxisOrGet;
 import neureka.ndim.NDimensional;
 
 import java.util.List;
@@ -134,6 +136,23 @@ public interface Nda<V> extends NDimensional, Iterable<V>
 
     // Slicing:
 
+    /**
+     *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
+     *  which enables the configuration of a slice of the current tensor via method chaining.    <br>
+     *  The following code snippet slices a 3-dimensional tensor into a tensor of shape (2x1x3)  <br>
+     * <pre>{@code
+     *  myTensor.slice()
+     *          .axis(0).from(0).to(1)
+     *          .then()
+     *          .axis(1).at(5) // equivalent to '.from(5).to(5)'
+     *          .then()
+     *          .axis().from(0).to(2)
+     *          .get();
+     * }</pre>
+     *
+     * @return An instance of the {@link SliceBuilder} class exposing a readable builder API for creating slices.
+     */
+    AxisOrGet<V> slice();
 
     /**
      *  The following method enables access to specific scalar elements within the tensor.

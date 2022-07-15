@@ -17,7 +17,7 @@ public interface FromOrAt<V>
     /**
      *  This is the starting point for defining the slice range of a specified axis within
      *  the method chain/graph exposed by the slice builder API.
-     *  I receives the index at which the slice range should start.
+     *  It receives the index at which the slice range should start.
      *
      * @param index A valid index in the current axis from which the slice should start.
      * @return The next step in the slicing API which expects one to specify the end of the slice range.

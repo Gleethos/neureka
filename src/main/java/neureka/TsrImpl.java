@@ -66,6 +66,8 @@ import neureka.devices.Device;
 import neureka.dtype.DataType;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.SmartSlicer;
+import neureka.fluent.slicing.states.AxisOrGet;
+import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
@@ -971,7 +973,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public SliceBuilder<V> slice() { return new SliceBuilder<>( this ); }
+    public AxisOrGetTsr<V> slice() { return new SliceBuilder<>( this ); }
 
 
     /**

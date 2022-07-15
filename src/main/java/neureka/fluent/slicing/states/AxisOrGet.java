@@ -1,6 +1,7 @@
 package neureka.fluent.slicing.states;
 
 
+import neureka.Nda;
 import neureka.Tsr;
 
 /**
@@ -30,7 +31,7 @@ public interface AxisOrGet<V>  {
      *
      * @return A new {@link Tsr} instance which is a slice of the original tensor.
      */
-    Tsr<V> get();
+    Nda<V> get();
 
     /**
      *  This method concludes the slicing API by performing the actual slicing and
@@ -41,6 +42,6 @@ public interface AxisOrGet<V>  {
      *
      * @return A new {@link Tsr} instance which is a slice of the original tensor without autograd.
      */
-    Tsr<V> detached();
+    Nda<V> detached();
 
 }

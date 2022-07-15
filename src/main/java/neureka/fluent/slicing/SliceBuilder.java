@@ -3,7 +3,9 @@ package neureka.fluent.slicing;
 import neureka.Tsr;
 import neureka.calculus.args.Arg;
 import neureka.fluent.slicing.states.AxisOrGet;
+import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.fluent.slicing.states.FromOrAt;
+import neureka.fluent.slicing.states.FromOrAtTsr;
 
 import java.util.function.Function;
 
@@ -20,7 +22,7 @@ import java.util.function.Function;
  *
  * @param <V> The type of the value(s) held by the tensor which ought to be sliced with the help of this builder.
  */
-public class SliceBuilder<V> implements AxisOrGet<V>
+public class SliceBuilder<V> implements AxisOrGetTsr<V>
 {
     private interface CreationCallback<V> {
         Tsr<V> sliceOf(int[] newShape, int[] newOffset, int[] newSpread, boolean autograd);
@@ -96,7 +98,7 @@ public class SliceBuilder<V> implements AxisOrGet<V>
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link FromOrAt} interface.
      */
     @Override
-    public FromOrAt<V> axis( int axis ) {
+    public FromOrAtTsr<V> axis(int axis ) {
         if ( axis >= _axisSliceBuilders.length ) throw new IllegalArgumentException("");
         return _axisSliceBuilders[ axis ];
     }
