@@ -4,8 +4,6 @@ import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.ndim.NDimensional;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -154,9 +152,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param i The index of the value item which should be returned as a tensor instance.
      * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
-    default Nda<V> getAt( Number i ) {
-        return getAt( Collections.singletonList( getNDConf().indicesOfIndex( (i).intValue() ) ).toArray() );
-    }
+    Nda<V> getAt( Number i );
 
     /**
      *  The following method enables access to specific scalar elements within the tensor.
@@ -165,7 +161,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param indices The index array of the element which should be returned.
      * @return An element located at the provided index.
      */
-    default Nda<V> get( int... indices ) { return getAt( indices ); }
+    Nda<V> get(int... indices);
 
     /**
      *  The following method enables the creation of tensor slices which access
@@ -175,10 +171,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param args An arbitrary number of arguments which can be used for slicing.
      * @return A slice tensor created based on the passed keys.
      */
-    default Nda<V> getAt( Object... args ) {
-        List<Object> argsList = Arrays.asList( args );
-        return getAt( argsList );
-    }
+    Nda<V> getAt( Object... args );
 
     /**
      *  The following method enables the creation of tensor slices which access
@@ -188,9 +181,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param args An arbitrary number of arguments which can be used for slicing.
      * @return A slice tensor created based on the passed keys.
      */
-    default Nda<V> get( Object... args ) {
-        return getAt( args );
-    }
+    Nda<V> get( Object... args );
 
     /**
      *  This getter method creates and returns a slice of the original tensor.
@@ -200,7 +191,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param i The index of the value item which should be returned as a tensor instance.
      * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
-    default Nda<V> getAt( int i ) { return getAt( indicesOfIndex(i) ); }
+    Nda<V> getAt( int i );
 
     /**
      *  This getter method creates and returns a slice of the original tensor.
@@ -210,7 +201,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param i The index of the value item which should be returned as a tensor instance.
      * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
-    default Nda<V> get( int i ) { return getAt( i ); }
+    Nda<V> get( int i );
 
     /**
      *  This getter method creates and returns a slice of the original tensor.
@@ -220,7 +211,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param i The index of the value item which should be returned as a tensor instance.
      * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
-    default Nda<V> get( Number i ) { return getAt( i ); }
+    Nda<V> get( Number i );
 
     /**
      *  This method enables tensor slicing!
@@ -230,7 +221,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param key This object might be a wide range of objects including maps, lists or arrays...
      * @return A slice tensor or scalar value.
      */
-    default Nda<V> get( Object key ) { return getAt( key ); }
+    Nda<V> get( Object key );
 
     /**
      *  This method is most useful when used in Groovy
@@ -293,7 +284,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value the value which ought to be placed at the targeted position.
      * @return This very tensor in order to enable method chaining...
      */
-    default Nda<V> set( int[] indices, V value ) { return putAt( indices, value ); }
+    Nda<V> set( int[] indices, V value );
 
     /**
      *  Individual entries for value items in this tensor can be set
@@ -306,7 +297,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The item which ought to be placed at the targeted position.
      * @return This very tensor in order to enable method chaining...
      */
-    default Nda<V> putAt( int index, V value ) { return putAt( indicesOfIndex(index), value ); }
+    Nda<V> putAt( int index, V value );
 
     /**
      *  Individual entries for value items in this tensor can be set
@@ -319,7 +310,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The item which ought to be placed at the targeted position.
      * @return This very tensor in order to enable method chaining...
      */
-    default Nda<V> set( int index, V value ) { return putAt( index, value ); }
+    Nda<V> set( int index, V value );
 
     /**
      *  This method enables injecting slices of tensor to be assigned into this tensor!
@@ -341,15 +332,12 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value the value which ought to be placed at the targeted position.
      * @return This very tensor in order to enable method chaining...
      */
-    default Nda<V> putAt( List<?> indices, V value ) {
-        return this.putAt( indices, Tsr.of( this.getItemClass(), shape(), value ) );
-    }
+    Nda<V> putAt( List<?> indices, V value );
 
     <T> Nda<T> mapTo(
             Class<T> typeClass,
             java.util.function.Function<V,T> mapper
     );
-
 
     default Access<V> at( int... indices ) {
         return new Access<V>() {
