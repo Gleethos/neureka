@@ -1860,7 +1860,10 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     /** {@inheritDoc} */
     @Override default Tsr<V> putAt( List<?> indices, V value ) {
-        return this.putAt( indices, of( this.getItemClass(), shape(), value ) );
+        if ( indices.stream().allMatch( i -> i instanceof Number ) )
+            return setItemAt( indexOfIndices(indices.stream().mapToInt( i -> ((Number)i).intValue() ).toArray()), value );
+        else
+            return this.putAt( indices, of( this.getItemClass(), shape(), value ) );
     }
 
     /** {@inheritDoc} */

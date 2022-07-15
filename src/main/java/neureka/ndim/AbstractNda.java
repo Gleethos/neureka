@@ -184,8 +184,9 @@ public abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> i
                 throw new IllegalStateException( message );
             }
         }
+        // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
+        if ( _data != data && data != null ) _version++; // Autograd must be warned!
         _data = data;
-        _version++; // Autograd must be warned!
     }
 
     protected <T> void _initData( Filler<T> filler )

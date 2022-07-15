@@ -185,5 +185,29 @@ class Tensor_Version_Spec extends Specification
             'a.divAssign(b) ' || "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
     }
 
+    def 'Storing a tensor on a device should not change the version of a tensor (Even though its data changed technically).'()
+    {
+        given :
+            var t = Tsr.ofFloats().withShape(5, 2).andSeed(42)
+        expect :
+            t.version == 1
+
+        when :
+            t.to('GPU')
+        then :
+            t.isOutsourced()
+            t.version == 1
+
+        when :
+            t[0] = 1f
+            t[new int[]{1, 0}] = 6f
+            t[0, 1] = 42f
+            t.set(0, 3f)
+            t.setItemAt(3, 4f)
+            t.set(new int[]{1, 1}, -1f)
+            t.unsafe.setDataAt(3, 5f)
+        then :
+            t.version == 8
+    }
 
 }
