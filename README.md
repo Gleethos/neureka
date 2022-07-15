@@ -25,15 +25,15 @@
 <td> 
 
 - [tensors & nd-arrays](docs/markdown/tensors_or_nd-arrays.md)
+- flexible indexing and slicing
+- convolution
+- broadcasting
 - dynamic computation graph
-- auto differentiation (forwards/backwards)
-- nd-convolution
-- nd-broadcasting
+- autograd
  
 </td>
 <td>
 
-- flexible tensor indexing and slicing
 - seeding
 - labeling
 - loading and saving as jpg/png/idx files
