@@ -14,6 +14,14 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ *  {@link Nda}, which is an abbreviation of <b>'N-Dimensional-Array'</b>, represents
+ *  a multidimensional, homogeneously filled fixed-size array of items.
+ *
+ *  {@link Nda}s should be constructed using the fluent builder API exposed by {@link #of(Class)}.
+ *
+ * @param <V> The type of the items stored in the {@link Nda}.
+ */
 public interface Nda<V> extends NDimensional, Iterable<V>
 {
     static <V> WithShapeOrScalarOrVector<V> of(Class<V> type) { return new TensorBuilder<>( type ); }
