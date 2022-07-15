@@ -111,7 +111,7 @@ import java.util.stream.Stream;
  *  <br>
  * @param <V> The type parameter for the individual value items within this tensor.
  */
-public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>>
+public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>>
 {
 
 
@@ -126,7 +126,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *  which is void of any contents and meaning.
      *  The use case for this would be to use the produced {@link Tsr}
      *  instance as a target for an inline operations which fills the instance with an actual value. <br>
-     *  An example of this approach would be to call the {@link #putAt(List, Tsr)} method with an empty list as key.
+     *  An example of this approach would be to call the {@link #putAt(List, Nda)} method with an empty list as key.
      *  This will be interpreted as an inline copy of the contents of the
      *  second parameter into this {@link Tsr} instance.
      *
@@ -857,6 +857,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The truth value determining if this tensor is a slice of another tensor.
      */
+    @Override
     default boolean isSlice() {
         Relation<V> child = get( Relation.class );
         return ( child != null && child.hasParent() );
@@ -870,6 +871,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The number of slices derived from this tensor.
      */
+    @Override
     default int sliceCount() {
         Relation<V> child = this.get( Relation.class );
         return ( child != null ) ? child.childCount() : 0;
@@ -881,6 +883,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return The truth value determining if slices have been derived from this tensor.
      */
+    @Override
     default boolean isSliceParent() {
         Relation<V> parent = this.get( Relation.class );
         return ( parent != null && parent.hasChildren() );
@@ -1005,13 +1008,14 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
 
     /**
      *  The version number is tracking how often this tensor has been mutated.
-     *  This is especially useful for checking the correcting of autp-grad!
+     *  This is especially useful for checking the correcting of auto-grad!
      */
     int getVersion();
 
     /**
      * @return The type class of individual value items within this {@link Tsr} instance.
      */
+    @Override
     Class<V> getItemClass();
 
     /**
@@ -1071,23 +1075,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     |   ---------------------------------------
     */
 
-    default Stream<V> stream() {
-        boolean executeInParallel = ( this.size() > 1_000 );
-        IntStream indices = IntStream.range(0,size());
-        return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::getItemAt);
-    }
-
-    default boolean every( Predicate<V> predicate ) {
-        return stream().allMatch(predicate);
-    }
-
-    default boolean any( Predicate<V> predicate ) {
-        return stream().anyMatch(predicate);
-    }
-
-    default int count( Predicate<V> predicate ) {
-        return (int) stream().filter(predicate).count();
-    }
+    // See Nda
 
     /*==================================================================================================================
     |
@@ -1144,7 +1132,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-
     default Tsr<V> backward( double value ) {
         backward( Tsr.of( this.getItemClass(), getNDConf().shape(), value ) );
         return this;
@@ -1566,7 +1553,7 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      *
      * @return A tensor with the same underlying data but possibly trimmed shape without preceding or trailing ones.
      */
-    default Tsr<V> dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( (Tsr<V>) this ); }
+    default Tsr<V> dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( this ); }
 
     /**
      *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
@@ -1822,294 +1809,82 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      */
     SliceBuilder<V> slice();
 
-    /**
-     *  The following method enables access to specific scalar elements within the tensor.
-     *  The method name also translates to the subscript operator in Groovy.
-     *
-     * @param indices The index array of the element which should be returned.
-     * @return An element located at the provided index.
-     */
+    /** {@inheritDoc} */
+    @Override
     Tsr<V> getAt( int... indices );
 
-    /**
-     *  This getter method creates and returns a slice of the original tensor.
-     *  The returned slice is a scalar tensor wrapping a single value element which
-     *  is being targeted by the provided integer index.
-     *
-     * @param i The index of the value item which should be returned as a tensor instance.
-     * @return A tensor holding a single value element which is internally still residing in the original tensor.
-     */
+    /** {@inheritDoc} */
+    @Override
     default Tsr<V> getAt( Number i ) {
         return getAt( Collections.singletonList( getNDConf().indicesOfIndex( (i).intValue() ) ).toArray() );
     }
 
-    /**
-     *  The following method enables access to specific scalar elements within the tensor.
-     *  The method name also translates to the subscript operator in Groovy.
-     *
-     * @param indices The index array of the element which should be returned.
-     * @return An element located at the provided index.
-     */
+    /** {@inheritDoc} */
+    @Override
     default Tsr<V> get( int... indices ) { return getAt( indices ); }
 
-    /**
-     *  The following method enables the creation of tensor slices which access
-     *  the same underlying data (possibly from a different view).
-     *  The method name also translates to the subscript operator in Groovy.
-     *
-     * @param args An arbitrary number of arguments which can be used for slicing.
-     * @return A slice tensor created based on the passed keys.
-     */
+    /** {@inheritDoc} */
+    @Override
     default Tsr<V> getAt( Object... args ) {
         List<Object> argsList = Arrays.asList( args );
         return getAt( argsList );
     }
 
-    /**
-     *  The following method enables the creation of tensor slices which access
-     *  the same underlying data (possibly from a different view).
-     *  The method name also translates to the subscript operator in Groovy.
-     *
-     * @param args An arbitrary number of arguments which can be used for slicing.
-     * @return A slice tensor created based on the passed keys.
-     */
-    default Tsr<V> get( Object... args ) {
-        return getAt( args );
-    }
+    /** {@inheritDoc} */
+    @Override
+    default Tsr<V> get( Object... args ) { return getAt( args ); }
 
-    /**
-     *  This getter method creates and returns a slice of the original tensor.
-     *  The returned slice is a scalar tensor wrapping a single value element which
-     *  is being targeted by the provided integer index.
-     *
-     * @param i The index of the value item which should be returned as a tensor instance.
-     * @return A tensor holding a single value element which is internally still residing in the original tensor.
-     */
+    /** {@inheritDoc} */
+    @Override
     default Tsr<V> getAt( int i ) { return getAt( indicesOfIndex(i) ); }
 
-    /**
-     *  This getter method creates and returns a slice of the original tensor.
-     *  The returned slice is a scalar tensor wrapping a single value element which
-     *  is being targeted by the provided integer index.
-     *
-     * @param i The index of the value item which should be returned as a tensor instance.
-     * @return A tensor holding a single value element which is internally still residing in the original tensor.
-     */
+    /** {@inheritDoc} */
+    @Override
     default Tsr<V> get( int i ) { return getAt( i ); }
 
-    /**
-     *  This getter method creates and returns a slice of the original tensor.
-     *  The returned slice is a scalar tensor wrapping a single value element which
-     *  is being targeted by the provided integer index.
-     *
-     * @param i The index of the value item which should be returned as a tensor instance.
-     * @return A tensor holding a single value element which is internally still residing in the original tensor.
-     */
+    /** {@inheritDoc} */
+    @Override
     default Tsr<V> get( Number i ) { return getAt( i ); }
 
-    /**
-     *  This method enables tensor slicing!
-     *  It takes a key of various types and configures a slice
-     *  tensor which shares the same underlying data as the original tensor.
-     *
-     * @param key This object might be a wide range of objects including maps, lists or arrays...
-     * @return A slice tensor or scalar value.
-     */
+    /** {@inheritDoc} */
+    @Override
     default Tsr<V> get( Object key ) { return getAt( key ); }
 
-    /**
-     *  This method is most useful when used in Groovy
-     *  where defining maps is done through square brackets,
-     *  making it possible to slice tensors like so: <br>
-     *  <pre>{@code
-     *      var b = a[[[0..0]:1, [0..0]:1, [0..3]:2]]
-     *  }</pre>
-     *  Here a single argument with the format '[i..j]:k' is equivalent
-     *  to Pythons 'i:j:k' syntax for indexing! (numpy)                            <br>
-     *  i... start indexAlias.                                                      <br>
-     *  j... end indexAlias. (inclusive!)                                           <br>
-     *  k... step size.
-     *
-     * @param rangToStrides A map where the keys define where axes should be sliced and values which define the strides for the specific axis.
-     * @return A tensor slice with an offset based on the provided map keys and
-     *         strides based on the provided map values.
-     */
+    /** {@inheritDoc} */
+    @Override
     Tsr<V> getAt( Map<?,Integer> rangToStrides );
 
-    /**
-     *  This method enables tensor slicing!
-     *  It takes a key of various types and configures a slice
-     *  tensor which shares the same underlying data as the original tensor.
-     *
-     * @param key This object might be a wide range of objects including maps, lists or arrays...
-     * @return A slice tensor or scalar value.
-     */
-    Tsr<V> getAt( List<?> key );
+    /** {@inheritDoc} */
+    @Override Tsr<V> getAt( List<?> key );
 
-    /**
-     *  This method enables assigning a provided tensor to be a subset/slice of this tensor!
-     *  It takes a key which is used to configure a slice
-     *  sharing the same underlying data as the original tensor.
-     *  This slice is then used to assign the second argument {@code value} to it.
-     *  The usage of this method is especially powerful when used in Groovy. <br>
-     *  The following code illustrates this very well:
-     *  <pre>{@code
-     *      a[[[0..0]:1, [0..0]:1, [0..3]:2]] = b
-     *  }</pre>
-     *  Here a single argument with the format '[i..j]:k' is equivalent
-     *  to pythons 'i:j:k' syntax for indexing! (numpy)                            <br>
-     *  i... start indexAlias.                                                      <br>
-     *  j... end indexAlias. (inclusive!)                                           <br>
-     *  k... step size.                                                             <br>
-     *
-     * @param key This object is a map defining a stride and a targeted index or range of indices...
-     * @param value The tensor which ought to be assigned into a slice of this tensor.
-     * @return A slice tensor or scalar value.
-     */
-    Tsr<V> putAt( Map<?,Integer> key, Tsr<V> value );
+    /** {@inheritDoc} */
+    @Override Tsr<V> putAt( Map<?,Integer> key, Nda<V> value );
 
+    @Override Tsr<V> putAt( int[] indices, V value );
 
-    Tsr<V> putAt( int[] indices, V value );
+    /** {@inheritDoc} */
+    @Override
+    default Tsr<V> set( int[] indices, V value ) { return putAt( indices, value ); }
 
-    /**
-     *  Use this to place a single item at a particular position within this tensor!
-     *
-     * @param indices An array of indices targeting a particular position in this tensor...
-     * @param value the value which ought to be placed at the targeted position.
-     * @return This very tensor in order to enable method chaining...
-     */
-    default Tsr<V> set( int[] indices, V value ) {
-        return putAt( indices, value );
-    }
+    /** {@inheritDoc} */
+    @Override default Tsr<V> putAt( int index, V value ) { return putAt( indicesOfIndex(index), value ); }
 
+    /** {@inheritDoc} */
+    @Override default Tsr<V> set( int index, V value ) { return putAt( index, value ); }
 
-    /**
-     *  Individual entries for value items in this tensor can be set
-     *  via this method.
-     *
-     * @param index The scalar index targeting a specific value position within this tensor
-     *          which ought to be replaced by the one provided by the second parameter
-     *          of this method.
-     *
-     * @param value The item which ought to be placed at the targeted position.
-     * @return This very tensor in order to enable method chaining...
-     */
-    default Tsr<V> putAt( int index, V value ) { return putAt( indicesOfIndex(index), value ); }
+    /** {@inheritDoc} */
+    @Override Tsr<V> putAt( List<?> key, Nda<V> value );
 
-
-    /**
-     *  Individual entries for value items in this tensor can be set
-     *  via this method.
-     *
-     * @param index The scalar index targeting a specific value position within this tensor
-     *          which ought to be replaced by the one provided by the second parameter
-     *          of this method.
-     *
-     * @param value The item which ought to be placed at the targeted position.
-     * @return This very tensor in order to enable method chaining...
-     */
-    default Tsr<V> set( int index, V value ) { return putAt( index, value ); }
-
-    /**
-     *  This method enables injecting slices of tensor to be assigned into this tensor!
-     *  It takes a key of various types which is used to configure a slice
-     *  tensor sharing the same underlying data as the original tensor.
-     *  This slice is then used to assign the second argument to it, namely
-     *  the "value" argument.
-     *
-     * @param key This object is a list defining a targeted index or range of indices...
-     * @param value the tensor which ought to be assigned to a slice of this tensor.
-     * @return This very tensor in order to enable method chaining...
-     */
-    Tsr<V> putAt( List<?> key, Tsr<V> value );
-
-    /**
-     *  Use this to place a single item at a particular position within this tensor!
-     *
-     * @param indices A list of indices targeting a particular position in this tensor...
-     * @param value the value which ought to be placed at the targeted position.
-     * @return This very tensor in order to enable method chaining...
-     */
-    default Tsr<V> putAt( List<?> indices, V value ) {
+    /** {@inheritDoc} */
+    @Override default Tsr<V> putAt( List<?> indices, V value ) {
         return this.putAt( indices, of( this.getItemClass(), shape(), value ) );
     }
 
-    /**
-     *  An NDArray implementation ought to have some way to access its underlying data array.
-     *  This method simple returns an element within this data array sitting at position "i".
-     * @param i The position of the targeted item within the raw data array of an NDArray implementation.
-     * @return The found object sitting at the specified index position.
-     */
-    V getDataAt( int i );
+    /** {@inheritDoc} */
+    @Override Tsr<V> setItemAt( int i, V o );
 
-    /**
-     *  An NDArray implementation ought to have some way to selectively modify its underlying value.
-     *  This method simply overrides an element within this data array sitting at position "i".
-     * @param i The index of the value array entry which ought to be addressed.
-     * @param o The object which ought to be placed at the requested position.
-     * @return This very tensor in order to enable method chaining.
-     */
-    Tsr<V> setItemAt( int i, V o );
-
-    /**
-     *  The following method returns a raw value item within this tensor
-     *  targeted by a scalar index.
-     *
-     * @param i The scalar index of the value item which should be returned by the method.
-     * @return The value item found at the targeted index.
-     */
-    default V getItemAt( int i ) { return getDataAt( indexOfIndex( i ) ); }
-
-    /**
-     *  This method returns a raw value item within this tensor
-     *  targeted by an index array which is expect to hold an index for
-     *  every dimension of the shape of this tensor.
-     *  So the provided array must have the same length as the
-     *  rank of this tensor!
-     *
-     * @param indices The index array which targets a single value item within this tensor.
-     * @return The found raw value item targeted by the provided index array.
-     */
-    default V getItemAt( int... indices ) {
-        LogUtil.nullArgCheck( indices, "indices", int[].class, "Cannot find tensor value without indices!" );
-        if ( indices.length == 0 ) throw new IllegalArgumentException("Index array may not be empty!");
-        if ( indices.length < this.rank() ) {
-            if ( indices.length == 1 ) return getDataAt( getNDConf().indexOfIndex( indices[0] ) );
-            else {
-                int[] allIndices = new int[this.rank()];
-                System.arraycopy( indices, 0, allIndices, 0, indices.length );
-                return getDataAt( getNDConf().indexOfIndices( allIndices ) );
-            }
-        }
-        return getDataAt( getNDConf().indexOfIndices( indices ) );
-    }
-
-    /**
-     *  This method will receive an object an try to interpret
-     *  it or its contents to be set as value for this tensor.
-     *  It will not necessarily replace the underlying data array object of this
-     *  tensor itself, but also try to convert and copy the provided value
-     *  into the data array of this tensor.
-     *
-     * @param value The value which may be a scalar or array and will be used to populate this tensor.
-     * @return This very tensor to enable method chaining.
-     */
-    Tsr<V> setItems( Object value );
-
-    Object getItems();
-
-    /**
-     *  This returns an unprocessed version of the underlying data of this tensor.
-     *  If this tensor is outsourced (stored on a device), then the data will be loaded
-     *  into an array and returned by this method.
-     *  Do not expect the returned array to be actually stored within the tensor itself!
-     *  Contrary to the {@link Tsr#getItems()} method, this one will
-     *  return the data in an unbiased form, where for example a virtual (see {@link #isVirtual()})
-     *  tensor will have this method return an array of length 1.
-     *
-     * @return An unbiased copy of the underlying data of this tensor.
-     */
-    Object getData();
+    /** {@inheritDoc} */
+    @Override Tsr<V> setItems( Object value );
 
     /*==================================================================================================================
     |
@@ -2118,9 +1893,9 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
     |       ...transformation and modification...
     */
 
-    default <T> Tsr<T> mapTo(
-            Class<T> typeClass,
-            java.util.function.Function<V,T> mapper
+    @Override default <T> Tsr<T> mapTo(
+        Class<T> typeClass,
+        java.util.function.Function<V,T> mapper
     ) {
         if ( this.isEmpty() )
             throw new IllegalArgumentException("Trying to map an empty tensor!");
@@ -2221,14 +1996,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      */
     <T> T asType( Class<T> typeClass );
 
-    default  <A> A getItemsAs(Class<A> arrayTypeClass ) {
-        return DataConverter.get().convert( getItems(), arrayTypeClass );
-    }
-
-    default  <A> A getDataAs( Class<A> arrayTypeClass ) {
-        return DataConverter.get().convert( getData(), arrayTypeClass );
-    }
-
     default String toString( String conf ) {
         if ( this.isDeleted() ) return "deleted";
         else if ( this.isEmpty() ) return "empty";
@@ -2269,29 +2036,6 @@ public interface Tsr<V> extends NDimensional, Iterable<V>, Component<Tsr<V>>, Co
      * @return A new tensor instance which is a deep copy of this tensor.
      */
     Tsr<V> deepCopy();
-
-    default Access<V> at( int... indices ) {
-        return new Access<V>() {
-            @Override public V    get()          { return getItemAt( indices ); }
-            @Override public void set( V value ) { putAt( indices, value ); }
-
-            @Override
-            public boolean equals( Object o ) {
-                if ( o == null ) return false;
-                if ( o == this ) return true;
-                if ( o.getClass() != this.getClass() ) return false;
-                Access<V> other = (Access<V>) o;
-                return this.get().equals( other.get() );
-            }
-        };
-    }
-
-    interface Access<V>
-    {
-        V get();
-
-        void set( V value );
-    }
 
     enum ImageType
     {

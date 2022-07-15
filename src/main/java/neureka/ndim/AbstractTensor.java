@@ -38,6 +38,7 @@ package neureka.ndim;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.autograd.GraphNode;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.utility.DataConverter;
 import neureka.devices.Device;
@@ -83,6 +84,21 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<Tsr<V>
      *  The heart and sole of the nd-array / tensor: its underlying data array.
      */
     private Object _data;
+
+    /**
+     *  This integer represents the version of the data (accessible through {@link #getData()})
+     *  stored within this tensor.
+     *  It gets incremented every time an inline operation occurs!
+     *  {@link GraphNode} instances tied to this tensor (as component) store
+     *  a reference version which is a copy of this field.
+     *  If this version changes, despite there being a GraphNode which might
+     *  perform auto-differentiation at some point, then an exception will be thrown for debugging.
+     *  <br>
+     *  The corresponding getter returns the version of the data (accessible through {@link #getData()})
+     *  stored within this tensor.
+     */
+    protected int _version = 0;
+
 
     protected final void _guardGet( String varName ) { _guard("Trying to access the "+varName+" of an already deleted tensor." ); }
     protected final void _guardSet( String varName ) { _guard("Trying to set the "+varName+" of an already deleted tensor." ); }
@@ -169,6 +185,7 @@ public abstract class AbstractTensor<C, V> extends AbstractComponentOwner<Tsr<V>
             }
         }
         _data = data;
+        _version++; // Autograd must be warned!
     }
 
     protected <T> void _initData( Filler<T> filler )

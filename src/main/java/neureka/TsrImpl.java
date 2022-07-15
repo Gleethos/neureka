@@ -116,21 +116,6 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
     private static final byte IS_DELETED_MASK         = 16;
     private static final byte IS_INTERMEDIATE_MASK    = 32;
 
-    /**
-     *  This integer represents the version of the data (accessible through {@link #getData()})
-     *  stored within this tensor.
-     *  It gets incremented every time an inline operation occurs!
-     *  {@link GraphNode} instances tied to this tensor (as component) store
-     *  a reference version which is a copy of this field.
-     *  If this version changes, despite there being a GraphNode which might
-     *  perform auto-differentiation at some point, then an exception will be thrown for debugging.
-     *  <br>
-     *  The corresponding getter returns the version of the data (accessible through {@link #getData()})
-     *  stored within this tensor.
-     */
-    private int _version = 0;
-
-
     /*==================================================================================================================
     |
     |       §(1) : CONSTRUCTION
@@ -209,7 +194,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  This constructor creates a completely empty tensor which is void of any contents and meaning.
      *  The use case for this would be to use the produced {@link Tsr}
      *  instance as a target for an inline operation which fills this instance with an actual value. <br>
-     *  An example of this approach would be to call the {@link #putAt(List, Tsr)} method with an empty list as key.
+     *  An example of this approach would be to call the {@link #putAt(List, Nda)} method with an empty list as key.
      *  This will be interpreted as an inline copy of the contents of the
      *  second parameter into this {@link Tsr} instance.
      *  This constructor will be called by the {@link Tsr#newInstance()} factory method.
@@ -766,7 +751,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
                 return DataConverter.get().convert( _getData(false), arrayTypeClass );
             }
             @Override
-            public Tsr<V> setDataAt(int i, V o ) {
+            public Tsr<V> setDataAt( int i, V o ) {
                 _guardMod("data object");
                 _setDataAt( i, o );
                 return TsrImpl.this;
@@ -994,10 +979,10 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> putAt( List<?> key, Tsr<V> value ) {
-        _putAtCheckFor( value );
+    public Tsr<V> putAt( List<?> key, Nda<V> value ) {
+        _putAtCheckFor( (Tsr<?>) value );
         Tsr<V> slice = ( key == null ) ? this : getAt( key );
-        return _putAt( slice, value );
+        return _putAt( slice, (Tsr<V>) value );
     }
 
     /**
@@ -1022,10 +1007,10 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> putAt( Map<?,Integer> key, Tsr<V> value ) {
-        _putAtCheckFor( value );
+    public Tsr<V> putAt( Map<?,Integer> key, Nda<V> value ) {
+        _putAtCheckFor((Tsr<?>) value);
         Tsr<V> slice = ( key == null ) ? this : getAt( key );
-        return _putAt( slice, value );
+        return _putAt( slice, (Tsr<V>) value);
     }
 
     private void _putAtCheckFor( Tsr<?> value ) {
@@ -1082,6 +1067,7 @@ final class TsrImpl<V> extends AbstractTensor<Tsr<V>, V>
             throw new IllegalArgumentException("There is no data item at index "+i+" for this virtual tensor!");
 
         getDevice().access( this ).write( o ).at( i );
+        _version++; // Autograd must be warned!
     }
 
     /**
