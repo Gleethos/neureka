@@ -26,28 +26,7 @@
     <link rel="stylesheet" href="src/css/sunburst.min.css">
     <script src="src/js/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script>
-        let currentTop = 0;
-        let topMode = 'large';
-
-        function updateTopBar( event ) {
-            let top = $('#main_with_parallax').scrollTop();
-            if ( topMode === 'large' && top > 375 ) {
-                animateTop( 1.0 );
-                topMode = 'small';
-            } else if ( topMode === 'small' && top < 100 ) {
-                animateTop( 0.0 )
-                topMode = 'large';
-            }
-        }
-        function animateTop( modifier ) {
-            let sig = 1-modifier;
-            let newTop = sig*65+5;
-            $('#navbar_menu').animate({top:newTop-10}, 300);
-            $('#neureka_title').animate({'font-size':(2+sig/2)+"rem"}, 200);
-            $('#top_most_nav_bar').animate({top: newTop-70}, 555);
-        }
-    </script>
+    <script src="src/js/custom.js"></script>
 </head>
 <body>
 <div id="header" class="">
@@ -132,7 +111,7 @@
         <main id="main_with_parallax" class="Parallax" onscroll="updateTopBar(event);">
             <div class="ParallaxLayer ParallaxLayer--back ">
                 <div>
-                    <img src="src/img/parallax/woods.png" class="InverseDynamicWidth">
+                    <img src="src/img/parallax/woods.png" style="padding-top:6em;" class="InverseDynamicWidth">
                 </div>
             </div>
             <div class="ParallaxLayer">
@@ -147,7 +126,7 @@
                                     <p>
                                         <b>
                                             A lightweight open source platform independent
-                                            tensor library written in Java.
+                                            tensor library written in Java
                                         </b>
                                     </p>
                                 </div>
@@ -161,9 +140,8 @@
                                     <img src="src/img/icons/oil-offshore-rig.png">
                                     <p>
                                         <b>
-                                            Written in Java and compatible with any JVM language,
-                                            such as Groovy, Scala, Clojure or Kotlin.
-                                            100% Platform independent!
+                                            Platform independent, extendable and
+                                            compatible with any JVM language
                                         </b>
                                     </p>
                                 </div>
@@ -171,8 +149,8 @@
                                     <img src="src/img/icons/open-source.png">
                                     <p>
                                         <b>
-                                            The library is completely open-source </br> and free to use, </br>
-                                            MIT-Licenced.
+                                            Completely open-source </br> and free to use, </br>
+                                            MIT-Licenced
                                         </b>
                                     </p>
                                 </div>
@@ -180,8 +158,7 @@
                                     <img src="src/img/icons/video-card.png">
                                     <p>
                                         <b>
-                                            Features GPU acceleration via OpenCl.
-                                            Therefore not tied to any hardware vendor!
+                                            Vendor agnostic GPU acceleration through OpenCl
                                         </b>
                                     </p>
                                 </div>

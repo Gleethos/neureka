@@ -114,8 +114,8 @@
     }
 
     .DynamicSideMargin {
-        margin-right: 10%;
-        margin-left: 10%;
+        margin-right: 15%;
+        margin-left: 15%;
     }
 
     .DynamicWidth {
@@ -147,8 +147,8 @@
     }
 
     .DynamicSideMargin {
-        margin-right: 17%;
-        margin-left: 17%;
+        margin-right: 18%;
+        margin-left: 18%;
     }
 
     .DynamicWidth {
@@ -271,7 +271,7 @@ hr {
 #top_most_nav_bar {
     background-color: black;
     width: 100%;
-    height: 4.0em;
+    height: 3.25em;
     position: fixed;
     top: 0px;
     margin: 0;
@@ -370,10 +370,10 @@ header p {
 }
 
 #main_content_tile {
-    margin-top: 12em;
+    margin-top: 6em;
     margin-bottom: 2em;
     padding-bottom: 1em;
-    padding-top: 2em;
+    padding-top: 1em;
     background: rgba(255, 255, 255, 0.3);
 }
 
@@ -567,6 +567,7 @@ video {
 
 .TopBarGradient h1 {
     color: #d2e9ff;
+    font-size: calc(1rem + 1.5vw);
 }
 
 
