@@ -3,6 +3,7 @@ package ut.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.view.TsrStringSettings
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 class Tensor_Version_Spec extends Specification
@@ -185,6 +186,7 @@ class Tensor_Version_Spec extends Specification
             'a.divAssign(b) ' || "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() })
     def 'Storing a tensor on a device should not change the version of a tensor (Even though its data changed technically).'()
     {
         given :
