@@ -1,4 +1,4 @@
-# Take a Look! #
+# A Neural Network in just a Few Lines of Code #
 
 The following 2 code snippets show the same neural network
 implementation in both Neureka and Numpy!
