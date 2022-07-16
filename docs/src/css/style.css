@@ -147,8 +147,8 @@
     }
 
     .DynamicSideMargin {
-        margin-right: 18%;
-        margin-left: 18%;
+        margin-right: 23%;
+        margin-left: 23%;
     }
 
     .DynamicWidth {
@@ -443,7 +443,7 @@ header p {
     border-radius: 2.0em;
     margin-top: 2em;
     margin-bottom: 2em;
-    padding-bottom: 3.5em;
+    padding-bottom: 2.25em;
     padding-top: 2.25em;
     height: 100%;
     background: rgba(200, 200, 255, 0.3);

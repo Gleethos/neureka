@@ -1460,7 +1460,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> mean() {
         Functions functions = Neureka.get().backend().getAutogradFunction();
-        Tsr<V> sum = sum();
+        Tsr<V> sum = this.sum();
         Tsr<V> result = functions.div().call( sum, of( this.getItemClass(), new int[]{1}, this.size() ) );
         sum.getUnsafe().delete();
         return result;
@@ -1469,13 +1469,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> sum() {
         Functions functions = Neureka.get().backend().getAutogradFunction();
         Tsr<V> ones = of( this.getItemClass(), this.getNDConf().shape(), 1 );
-        Tsr<V> sum = functions.conv().call( (Tsr<V>) this, ones );
+        Tsr<V> sum = functions.conv().call( this, ones );
         if ( !ones.belongsToGraph() || !ones.getGraphNode().isUsedAsDerivative() )
             ones.getUnsafe().delete();
         if ( sum == null )
             throw new IllegalStateException(
-                    "Failed to calculate sum using convolution! Shapes: "+
-                            Arrays.toString(this.getNDConf().shape())+"x"+Arrays.toString(ones.getNDConf().shape())
+                "Failed to calculate sum using convolution! Shapes: "+
+                Arrays.toString(this.getNDConf().shape())+"x"+Arrays.toString(ones.getNDConf().shape())
             );
         return sum;
     }
