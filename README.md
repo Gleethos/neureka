@@ -25,7 +25,6 @@
 <td> 
 
 - [tensors & nd-arrays](docs/markdown/tensors_or_nd-arrays.md)
-- flexible indexing and slicing
 - convolution
 - broadcasting
 - dynamic computation graph
@@ -34,17 +33,18 @@
 </td>
 <td>
 
+- flexible indexing and slicing
 - seeding
 - labeling
-- loading and saving as jpg/png/idx files
-- [a highly extensible and modular backend](docs/markdown/extending_neureka.md)
+- jpg, png, idx support
+- [highly extensible backend](docs/markdown/extending_neureka.md)
 
 </td>
 </tr>
 </table>
 
 
-### Take a quick look ###
+### Take a quick look :eyes: ###
 
 <table>
     <tr>
@@ -55,7 +55,7 @@
     <tr>
 <td> 
 
-- [A Neural Network in 11 Lines of Code!](docs/markdown/impressive.md)
+- [ANN in 11 Lines of Code!](docs/markdown/impressive.md)
 
 </td>
 <td>
@@ -66,6 +66,7 @@
 </td>
 <td>
 
+- [living<br>documentation](https://gleethos.github.io/neureka/spock/reports/index.html)
 - [Javadocs](https://gleethos.github.io/neureka/jdocs/index.html) :book:
 
 </td>
