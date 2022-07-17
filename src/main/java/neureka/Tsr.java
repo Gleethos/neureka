@@ -1879,6 +1879,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     |       ...transformation and modification...
     */
 
+    /** {@inheritDoc} */
     @Override default <T> Tsr<T> mapTo(
         Class<T> typeClass,
         java.util.function.Function<V,T> mapper

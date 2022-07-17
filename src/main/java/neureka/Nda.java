@@ -60,15 +60,15 @@ public interface Nda<V> extends NDimensional, Iterable<V>
 
 
     /**
-     *  This returns an unprocessed version of the underlying data of this tensor.
-     *  If this tensor is outsourced (stored on a device), then the data will be loaded
+     *  This returns an unprocessed version of the underlying data of this nd-array.
+     *  If this nd-array is outsourced (stored on a device), then the data will be loaded
      *  into an array and returned by this method.
-     *  Do not expect the returned array to be actually stored within the tensor itself!
+     *  Do not expect the returned array to be actually stored within the nd-array itself!
      *  Contrary to the {@link #getItems()} method, this one will
      *  return the data in an unbiased form, where for example a virtual (see {@link Tsr#isVirtual()})
-     *  tensor will have this method return an array of length 1.
+     *  nd-array will have this method return an array of length 1.
      *
-     * @return An unbiased copy of the underlying data of this tensor.
+     * @return An unbiased copy of the underlying data of this nd-array.
      */
     Object getData();
 
@@ -87,24 +87,24 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  This method simply overrides an element within this data array sitting at position "i".
      * @param i The index of the value array entry which ought to be addressed.
      * @param o The object which ought to be placed at the requested position.
-     * @return This very tensor in order to enable method chaining.
+     * @return This very nd-array in order to enable method chaining.
      */
     Nda<V> setItemAt( int i, V o );
 
     /**
      *  This method will receive an object an try to interpret
-     *  it or its contents to be set as value for this tensor.
+     *  it or its contents to be set as value for this nd-array.
      *  It will not necessarily replace the underlying data array object of this
-     *  tensor itself, but also try to convert and copy the provided value
-     *  into the data array of this tensor.
+     *  nd-array itself, but also try to convert and copy the provided value
+     *  into the data array of this nd-array.
      *
-     * @param value The value which may be a scalar or array and will be used to populate this tensor.
-     * @return This very tensor to enable method chaining.
+     * @param value The value which may be a scalar or array and will be used to populate this nd-array.
+     * @return This very nd-array to enable method chaining.
      */
     Nda<V> setItems( Object value );
 
     /**
-     *  The following method returns a raw value item within this tensor
+     *  The following method returns a raw value item within this nd-array
      *  targeted by a scalar index.
      *
      * @param i The scalar index of the value item which should be returned by the method.
@@ -113,17 +113,17 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     default V getItemAt( int i ) { return getDataAt( indexOfIndex( i ) ); }
 
     /**
-     *  This method returns a raw value item within this tensor
-     *  targeted by an index array which is expect to hold an index for
-     *  every dimension of the shape of this tensor.
+     *  This method returns a raw value item within this nd-array
+     *  targeted by an index array which is expected to hold an index for
+     *  every dimension of the shape of this nd-array.
      *  So the provided array must have the same length as the
-     *  rank of this tensor!
+     *  rank of this nd-array!
      *
-     * @param indices The index array which targets a single value item within this tensor.
+     * @param indices The index array which targets a single value item within this nd-array.
      * @return The found raw value item targeted by the provided index array.
      */
     default V getItemAt( int... indices ) {
-        LogUtil.nullArgCheck( indices, "indices", int[].class, "Cannot find tensor value without indices!" );
+        LogUtil.nullArgCheck( indices, "indices", int[].class, "Cannot find nd-array value without indices!" );
         if ( indices.length == 0 ) throw new IllegalArgumentException("Index array may not be empty!");
         if ( indices.length < this.rank() ) {
             if ( indices.length == 1 ) return getDataAt( getNDConf().indexOfIndex( indices[0] ) );
@@ -149,8 +149,8 @@ public interface Nda<V> extends NDimensional, Iterable<V>
 
     /**
      *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
-     *  which enables the configuration of a slice of the current tensor via method chaining.    <br>
-     *  The following code snippet slices a 3-dimensional tensor into a tensor of shape (2x1x3)  <br>
+     *  which enables the configuration of a slice of the current nd-array via method chaining.    <br>
+     *  The following code snippet slices a 3-dimensional nd-array into a nd-array of shape (2x1x3)  <br>
      * <pre>{@code
      *  myTensor.slice()
      *          .axis(0).from(0).to(1)
@@ -166,7 +166,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     AxisOrGet<V> slice();
 
     /**
-     *  The following method enables access to specific scalar elements within the tensor.
+     *  The following method enables access to specific scalar elements within the nd-array.
      *  The method name also translates to the subscript operator in Groovy.
      *
      * @param indices The index array of the element which should be returned.
@@ -175,17 +175,17 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     Nda<V> getAt( int... indices );
 
     /**
-     *  This getter method creates and returns a slice of the original tensor.
-     *  The returned slice is a scalar tensor wrapping a single value element which
+     *  This getter method creates and returns a slice of the original nd-array.
+     *  The returned slice is a scalar nd-array wrapping a single value element which
      *  is being targeted by the provided integer index.
      *
-     * @param i The index of the value item which should be returned as a tensor instance.
-     * @return A tensor holding a single value element which is internally still residing in the original tensor.
+     * @param i The index of the value item which should be returned as a nd-array instance.
+     * @return A nd-array holding a single value element which is internally still residing in the original nd-array.
      */
     Nda<V> getAt( Number i );
 
     /**
-     *  The following method enables access to specific scalar elements within the tensor.
+     *  The following method enables access to specific scalar elements within the nd-array.
      *  The method name also translates to the subscript operator in Groovy.
      *
      * @param indices The index array of the element which should be returned.
@@ -194,69 +194,69 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     Nda<V> get(int... indices);
 
     /**
-     *  The following method enables the creation of tensor slices which access
+     *  The following method enables the creation of nd-array slices which access
      *  the same underlying data (possibly from a different view).
      *  The method name also translates to the subscript operator in Groovy.
      *
      * @param args An arbitrary number of arguments which can be used for slicing.
-     * @return A slice tensor created based on the passed keys.
+     * @return A slice nd-array created based on the passed keys.
      */
     Nda<V> getAt( Object... args );
 
     /**
-     *  The following method enables the creation of tensor slices which access
+     *  The following method enables the creation of nd-array slices which access
      *  the same underlying data (possibly from a different view).
      *  The method name also translates to the subscript operator in Groovy.
      *
      * @param args An arbitrary number of arguments which can be used for slicing.
-     * @return A slice tensor created based on the passed keys.
+     * @return A slice nd-array created based on the passed keys.
      */
     Nda<V> get( Object... args );
 
     /**
-     *  This getter method creates and returns a slice of the original tensor.
-     *  The returned slice is a scalar tensor wrapping a single value element which
+     *  This getter method creates and returns a slice of the original nd-array.
+     *  The returned slice is a scalar nd-array wrapping a single value element which
      *  is being targeted by the provided integer index.
      *
-     * @param i The index of the value item which should be returned as a tensor instance.
-     * @return A tensor holding a single value element which is internally still residing in the original tensor.
+     * @param i The index of the value item which should be returned as a nd-array instance.
+     * @return A nd-array holding a single value element which is internally still residing in the original nd-array.
      */
     Nda<V> getAt( int i );
 
     /**
-     *  This getter method creates and returns a slice of the original tensor.
-     *  The returned slice is a scalar tensor wrapping a single value element which
+     *  This getter method creates and returns a slice of the original nd-array.
+     *  The returned slice is a scalar nd-array wrapping a single value element which
      *  is being targeted by the provided integer index.
      *
-     * @param i The index of the value item which should be returned as a tensor instance.
-     * @return A tensor holding a single value element which is internally still residing in the original tensor.
+     * @param i The index of the value item which should be returned as a nd-array instance.
+     * @return A nd-array holding a single value element which is internally still residing in the original nd-array.
      */
     Nda<V> get( int i );
 
     /**
-     *  This getter method creates and returns a slice of the original tensor.
-     *  The returned slice is a scalar tensor wrapping a single value element which
+     *  This getter method creates and returns a slice of the original nd-array.
+     *  The returned slice is a scalar nd-array wrapping a single value element which
      *  is being targeted by the provided integer index.
      *
-     * @param i The index of the value item which should be returned as a tensor instance.
-     * @return A tensor holding a single value element which is internally still residing in the original tensor.
+     * @param i The index of the value item which should be returned as a nd-array instance.
+     * @return A nd-array holding a single value element which is internally still residing in the original nd-array.
      */
     Nda<V> get( Number i );
 
     /**
-     *  This method enables tensor slicing!
+     *  This method enables nd-array slicing!
      *  It takes a key of various types and configures a slice
-     *  tensor which shares the same underlying data as the original tensor.
+     *  nd-array which shares the same underlying data as the original nd-array.
      *
      * @param key This object might be a wide range of objects including maps, lists or arrays...
-     * @return A slice tensor or scalar value.
+     * @return A slice nd-array or scalar value.
      */
     Nda<V> get( Object key );
 
     /**
      *  This method is most useful when used in Groovy
      *  where defining maps is done through square brackets,
-     *  making it possible to slice tensors like so: <br>
+     *  making it possible to slice nd-arrays like so: <br>
      *  <pre>{@code
      *      var b = a[[[0..0]:1, [0..0]:1, [0..3]:2]]
      *  }</pre>
@@ -267,25 +267,25 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  k... step size.
      *
      * @param rangToStrides A map where the keys define where axes should be sliced and values which define the strides for the specific axis.
-     * @return A tensor slice with an offset based on the provided map keys and
+     * @return A nd-array slice with an offset based on the provided map keys and
      *         strides based on the provided map values.
      */
     Nda<V> getAt( Map<?,Integer> rangToStrides );
 
     /**
-     *  This method enables tensor slicing!
+     *  This method enables nd-array slicing!
      *  It takes a key of various types and configures a slice
-     *  tensor which shares the same underlying data as the original tensor.
+     *  nd-array which shares the same underlying data as the original nd-array.
      *
      * @param key This object might be a wide range of objects including maps, lists or arrays...
-     * @return A slice tensor or scalar value.
+     * @return A slice nd-array or scalar value.
      */
     Nda<V> getAt( List<?> key );
 
     /**
-     *  This method enables assigning a provided tensor to be a subset/slice of this tensor!
+     *  This method enables assigning a provided nd-array to be a subset/slice of this nd-array!
      *  It takes a key which is used to configure a slice
-     *  sharing the same underlying data as the original tensor.
+     *  sharing the same underlying data as the original nd-array.
      *  This slice is then used to assign the second argument {@code value} to it.
      *  The usage of this method is especially powerful when used in Groovy. <br>
      *  The following code illustrates this very well:
@@ -299,8 +299,8 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  k... step size.                                                             <br>
      *
      * @param key This object is a map defining a stride and a targeted index or range of indices...
-     * @param value The tensor which ought to be assigned into a slice of this tensor.
-     * @return A slice tensor or scalar value.
+     * @param value The nd-array which ought to be assigned into a slice of this nd-array.
+     * @return A slice nd-array or scalar value.
      */
     Nda<V> putAt( Map<?,Integer> key, Nda<V> value );
 
@@ -308,62 +308,84 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     Nda<V> putAt( int[] indices, V value );
 
     /**
-     *  Use this to place a single item at a particular position within this tensor!
+     *  Use this to place a single item at a particular position within this nd-array!
      *
-     * @param indices An array of indices targeting a particular position in this tensor...
+     * @param indices An array of indices targeting a particular position in this nd-array...
      * @param value the value which ought to be placed at the targeted position.
-     * @return This very tensor in order to enable method chaining...
+     * @return This very nd-array in order to enable method chaining...
      */
     Nda<V> set( int[] indices, V value );
 
     /**
-     *  Individual entries for value items in this tensor can be set
+     *  Individual entries for value items in this nd-array can be set
      *  via this method.
      *
-     * @param index The scalar index targeting a specific value position within this tensor
+     * @param index The scalar index targeting a specific value position within this nd-array
      *          which ought to be replaced by the one provided by the second parameter
      *          of this method.
      *
      * @param value The item which ought to be placed at the targeted position.
-     * @return This very tensor in order to enable method chaining...
+     * @return This very nd-array in order to enable method chaining...
      */
     Nda<V> putAt( int index, V value );
 
     /**
-     *  Individual entries for value items in this tensor can be set
+     *  Individual entries for value items in this nd-array can be set
      *  via this method.
      *
-     * @param index The scalar index targeting a specific value position within this tensor
+     * @param index The scalar index targeting a specific value position within this nd-array
      *          which ought to be replaced by the one provided by the second parameter
      *          of this method.
      *
      * @param value The item which ought to be placed at the targeted position.
-     * @return This very tensor in order to enable method chaining...
+     * @return This very nd-array in order to enable method chaining...
      */
     Nda<V> set( int index, V value );
 
     /**
-     *  This method enables injecting slices of tensor to be assigned into this tensor!
+     *  This method enables injecting slices of nd-array to be assigned into this nd-array!
      *  It takes a key of various types which is used to configure a slice
-     *  tensor sharing the same underlying data as the original tensor.
+     *  nd-array sharing the same underlying data as the original nd-array.
      *  This slice is then used to assign the second argument to it, namely
      *  the "value" argument.
      *
      * @param key This object is a list defining a targeted index or range of indices...
-     * @param value the tensor which ought to be assigned to a slice of this tensor.
-     * @return This very tensor in order to enable method chaining...
+     * @param value the nd-array which ought to be assigned to a slice of this nd-array.
+     * @return This very nd-array in order to enable method chaining...
      */
     Nda<V> putAt( List<?> key, Nda<V> value );
 
     /**
-     *  Use this to place a single item at a particular position within this tensor!
+     *  Use this to place a single item at a particular position within this nd-array!
      *
-     * @param indices A list of indices targeting a particular position in this tensor...
+     * @param indices A list of indices targeting a particular position in this nd-array...
      * @param value the value which ought to be placed at the targeted position.
-     * @return This very tensor in order to enable method chaining...
+     * @return This very nd-array in order to enable method chaining...
      */
     Nda<V> putAt( List<?> indices, V value );
 
+    /**
+     * <p>
+     *     This method is a convenience method for mapping a nd-array to a new type
+     *     based on a provided lambda expression.
+     *     Here a simple example:
+     * </p>
+     * <pre>{@code
+     *     Nda<String>  a = Nda.of(String.class).vector("1", "2", "3");
+     *     Nda<Integer> b = a.mapTo(Integer.class, s -> Integer.parseInt(s));
+     * }</pre>
+     * <p>
+     *     Note: <br>
+     *     The provided lambda cannot be executed anywhere else but the CPU.
+     *     This is a problem if this nd-array here lives somewhere other than the JVM.
+     *     So, therefore, this method will temporally transfer this nd-array from
+     *     where ever it may reside back to the JVM!
+     * </p>
+     * @param typeClass The class of the item type to which the items of this nd-array should be mapped.
+     * @param mapper The lambda which maps the items of this nd-array to a new one.
+     * @param <T> The type parameter of the items of the returned nd-array.
+     * @return A new nd-array of type {@code T}.
+     */
     <T> Nda<T> mapTo(
             Class<T> typeClass,
             java.util.function.Function<V,T> mapper
