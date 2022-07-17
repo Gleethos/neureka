@@ -8,10 +8,10 @@ import java.util.List;
 
 /**
  *  This interface defines the most essential methods
- *  of the tensor API, which describe the tensor
- *  with respect to its dimensionality. <br>
- *  <i>How many dimensions does a tensor have?</i> ({@link #rank()}) <br>
- *  <i>How many elements does a tensor have?</i> ({@link #size()}) <br>
+ *  of the nd-array/tensor API, which describe them
+ *  with respect to their dimensionality. <br>
+ *  <i>How many dimensions does a tensor/nd-array have?</i> ({@link #rank()}) <br>
+ *  <i>How many elements does a tensor/nd-array have?</i> ({@link #size()}) <br>
  *  <i>What are the sizes of the individual dimensions?</i> ({@link #shape(int i)}) <br>
  *  ...
  *
