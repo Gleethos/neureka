@@ -6,6 +6,7 @@ import neureka.fluent.building.TensorBuilder;
 import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.states.AxisOrGet;
+import neureka.framing.Relation;
 import neureka.ndim.NDimensional;
 
 import java.util.List;
@@ -26,13 +27,41 @@ public interface Nda<V> extends NDimensional, Iterable<V>
 {
     static <V> WithShapeOrScalarOrVector<V> of(Class<V> type) { return new TensorBuilder<>( type ); }
 
+    /**
+     *  If this nd-array is a slice of a parent nd-array then this method will yield true.
+     *  Slices can be created by calling the variations of the "{@link Nda#getAt}" method.
+     *
+     * @return The truth value determining if this nd-array is a slice of another nd-array.
+     */
     boolean isSlice();
 
+    /**
+     *  This method returns the number of slices which have been
+     *  created from this nd-array.
+     *  It does so by accessing the {@link Relation} component if present
+     *  which internally keeps track of slices via weak references.
+     *
+     * @return The number of slices derived from this nd-array.
+     */
     int sliceCount();
 
+    /**
+     *  If slices have been derived from this nd-array then it is a "slice parent".
+     *  This is what this method will determine, in which case, it will return true.
+     *
+     * @return The truth value determining if slices have been derived from this nd-array.
+     */
     boolean isSliceParent();
 
+    /**
+     * @return The type class of individual value items within this nd-array.
+     */
     Class<V> getItemClass();
+
+    /**
+     * @return The type class of individual value items within this nd-array.
+     */
+    default Class<V> itemClass() { return getItemClass(); }
 
     /*==================================================================================================================
     |
@@ -40,24 +69,54 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     |   ---------------------------------------
     */
 
+    /**
+     *  @return A {@link Stream} of the items in this {@link Nda}.
+     */
     default Stream<V> stream() {
         boolean executeInParallel = ( this.size() > 1_000 );
         IntStream indices = IntStream.range(0,size());
         return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::getItemAt);
     }
 
+    /**
+     * Iterates over every element of this nd-array, and checks whether all
+     * elements are <code>true</code> according to the provided lambda.
+     * @param predicate The lambda to check each element against.
+     * @return true if every item in the nd-array matches the predicate, false otherwise.
+     */
     default boolean every( Predicate<V> predicate ) {
         return stream().allMatch(predicate);
     }
 
+    /**
+     * Iterates over every element of this nd-array, and checks whether any
+     * element matches the provided lambda.
+     * @param predicate The lambda to check each element against.
+     * @return true if any item in the nd-array matches the predicate, false otherwise.
+     */
     default boolean any( Predicate<V> predicate ) {
         return stream().anyMatch(predicate);
     }
 
+    /**
+     * Iterates over every element of this nd-array, and checks whether none
+     * of the elements match the provided lambda.
+     * @param predicate The lambda to check each element against.
+     * @return true if none of the items in the nd-array match the predicate, false otherwise.
+     */
+    default boolean none( Predicate<V> predicate ) {
+        return stream().noneMatch(predicate);
+    }
+
+    /**
+     *  Iterates over every element of this nd-array, and counts the number of
+     *  times the provided lambda matches the items of this array.
+     * @param predicate The lambda to check each element against.
+     * @return The number of items in the nd-array that match the predicate.
+     */
     default int count( Predicate<V> predicate ) {
         return (int) stream().filter(predicate).count();
     }
-
 
     /**
      *  This returns an unprocessed version of the underlying data of this nd-array.
@@ -154,9 +213,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * <pre>{@code
      *  myTensor.slice()
      *          .axis(0).from(0).to(1)
-     *          .then()
      *          .axis(1).at(5) // equivalent to '.from(5).to(5)'
-     *          .then()
      *          .axis().from(0).to(2)
      *          .get();
      * }</pre>
@@ -304,8 +361,16 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     Nda<V> putAt( Map<?,Integer> key, Nda<V> value );
 
-
+    /**
+     *  Use this to put a single item at a particular
+     *  position within this nd-array.
+     *
+     * @param indices The indices of the nd-position where the provided item should be placed.
+     * @param value The item which should be placed at the position defined by the provided indices.
+     * @return This nd-array itself.
+     */
     Nda<V> putAt( int[] indices, V value );
+
 
     /**
      *  Use this to place a single item at a particular position within this nd-array!
@@ -391,13 +456,17 @@ public interface Nda<V> extends NDimensional, Iterable<V>
             java.util.function.Function<V,T> mapper
     );
 
+    /**
+     *  This method exposes the {@link Access} API which allows you to get or set
+     *  individual items within this nd-array targeted by an array of provided indices.
+     * @param indices An array of indices targeting a particular position in this nd-array...
+     * @return An object which allows you to get or set individual items within this nd-array.
+     */
     default Access<V> at( int... indices ) {
         return new Access<V>() {
             @Override public V    get()          { return getItemAt( indices ); }
             @Override public void set( V value ) { putAt( indices, value ); }
-
-            @Override
-            public boolean equals( Object o ) {
+            @Override public boolean equals( Object o ) {
                 if ( o == null ) return false;
                 if ( o == this ) return true;
                 if ( o.getClass() != this.getClass() ) return false;
@@ -407,12 +476,23 @@ public interface Nda<V> extends NDimensional, Iterable<V>
         };
     }
 
+    /**
+     *  Instances of this are being returned by the {@link #at(int...)} method,
+     *  and they allow you to get or set individual nd-array items
+     * @param <V> The type of the items of this nd-array.
+     */
     interface Access<V>
     {
+        /**
+         *  Get the value at the targeted position.
+         * @return The value at the targeted position.
+         */
         V get();
-
+        /**
+         *  Set the value at the targeted position.
+         * @param value The value to be set at the targeted position.
+         */
         void set( V value );
     }
-
 
 }
