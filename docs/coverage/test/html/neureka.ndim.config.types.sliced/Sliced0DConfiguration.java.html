@@ -32,76 +32,49 @@ public final class Sliced0DConfiguration extends AbstractNDC //:= IMMUTABLE
 <span class="fc" id="L32">        _offset = offset;</span>
 <span class="fc" id="L33">    }</span>
 
-    @Override
-    public final int rank() {
-<span class="fc" id="L37">        return 1;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L36">    @Override public int rank() { return 1; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L39">    @Override public int[] shape() { return new int[]{ _shape }; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L42">    @Override public int shape( int i ) { return _shape; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L45">    @Override public int[] indicesMap() { return new int[]{1}; }</span>
 
     @Override
-    public final int[] shape() {
-<span class="fc" id="L42">        return new int[]{ _shape };</span>
+<span class="fc" id="L48">    public int indicesMap(int i ) { return 1; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L51">    @Override public int[] translation() { return new int[]{1}; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L54">    @Override public int translation( int i ) { return 1; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L57">    @Override public int[] spread() { return new int[]{ 1 }; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L60">    @Override public int spread( int i ) { return 1; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L63">    @Override public int[] offset() { return new int[]{ _offset }; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L66">    @Override public int offset( int i ) { return _offset; }</span>
+
+    /** {@inheritDoc} */
+    @Override public int indexOfIndex( int index ) {
+<span class="nc" id="L70">        return index + _offset;</span>
     }
 
-    @Override
-    public final int shape( int i ) {
-<span class="fc" id="L47">        return _shape;</span>
-    }
+    /** {@inheritDoc} */
+<span class="nc" id="L74">    @Override public int[] indicesOfIndex( int index ) { return new int[]{ index }; }</span>
 
-    @Override
-    public final int[] indicesMap() {
-<span class="fc" id="L52">        return new int[]{1};</span>
-    }
-
-    @Override
-    public final int indicesMap(int i ) {
-<span class="fc" id="L57">        return 1;</span>
-    }
-
-    @Override
-    public final int[] translation() {
-<span class="fc" id="L62">        return new int[]{1};</span>
-    }
-
-    @Override
-    public final int translation( int i ) {
-<span class="fc" id="L67">        return 1;</span>
-    }
-
-    @Override
-    public final int[] spread() {
-<span class="fc" id="L72">        return new int[]{ 1 };</span>
-    }
-
-    @Override
-    public final int spread( int i ) {
-<span class="fc" id="L77">        return 1;</span>
-    }
-
-    @Override
-    public final int[] offset() {
-<span class="fc" id="L82">        return new int[]{ _offset };</span>
-    }
-
-    @Override
-    public final int offset( int i ) {
-<span class="fc" id="L87">        return _offset;</span>
-    }
-
-
-    @Override
-    public final int indexOfIndex(int index) {
-<span class="nc" id="L93">        return index + _offset;</span>
-    }
-
-    @Override
-    public final int[] indicesOfIndex(int index) {
-<span class="nc" id="L98">        return new int[]{ index };</span>
-    }
-
-    @Override
-    public final int indexOfIndices(int[] indices) {
-<span class="fc" id="L103">        return indices[ 0 ] + _offset;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L77">    @Override public int indexOfIndices(int[] indices) { return indices[ 0 ] + _offset; }</span>
 
 
 }

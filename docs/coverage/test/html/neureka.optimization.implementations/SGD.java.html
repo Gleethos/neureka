@@ -35,9 +35,8 @@ SOFTWARE.
 
 package neureka.optimization.implementations;
 
-import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.Function;
+import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
 
 /**
@@ -53,28 +52,20 @@ import neureka.optimization.Optimizer;
  */
 public class SGD&lt;V&gt; implements Optimizer&lt;V&gt;
 {
-    private final double _learningRate;
-    private final Function _function;
+    private final double _lr; // learning rate
 
-    public SGD( double leaningRate )
-<span class="nc" id="L60">    {</span>
-<span class="nc" id="L61">        _learningRate = leaningRate;</span>
-<span class="nc" id="L62">        _function = Function.of(&quot;(-1 * (I[ 0 ] - &quot;+leaningRate+&quot;))&quot;, false);</span>
-<span class="nc" id="L63">    }</span>
+<span class="nc" id="L57">    public SGD( double learningRate ) {</span>
+<span class="nc" id="L58">        _lr = learningRate; // Step size/learning rate is 0.01 by default!</span>
+<span class="nc" id="L59">    }</span>
 
     @Override
     public Tsr&lt;V&gt; optimize( Tsr&lt;V&gt; w ) {
-<span class="nc" id="L67">        Tsr&lt;V&gt; g = w.getGradient();</span>
-<span class="nc" id="L68">        Neureka.get().backend().getFunction().idy().call( g, _function.call( g ) );</span>
-<span class="nc" id="L69">        return g;</span>
+<span class="nc" id="L63">        LogUtil.nullArgCheck( w, &quot;w&quot;, Tsr.class ); // The input must not be null!</span>
+<span class="nc" id="L64">        Tsr&lt;V&gt; g = w.getGradient();</span>
+<span class="nc" id="L65">        return Tsr.of(&quot;-&quot; + _lr + &quot; * &quot;, g);</span>
     }
 
-<span class="nc" id="L72">    public double learningRate() { return _learningRate; }</span>
+<span class="nc" id="L68">    public double learningRate() { return _lr; }</span>
 
-    @Override
-    public boolean update( OwnerChangeRequest&lt;Tsr&lt;V&gt;&gt; changeRequest ) {
-<span class="nc" id="L76">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
-<span class="nc" id="L77">        return true;</span>
-    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

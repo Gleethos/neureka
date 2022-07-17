@@ -37,50 +37,50 @@ import neureka.ndim.config.types.D1C;
 <span class="pc bpc" id="L37" title="2 of 4 branches missed.">        assert indicesMap != 0;</span>
 <span class="fc" id="L38">    }</span>
 
-    @Override
-<span class="fc" id="L41">    public final int rank() { return 1; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L41">    @Override public final int rank() { return 1; }</span>
 
-    @Override
-<span class="fc" id="L44">    public final int[] shape() { return new int[]{_shape}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L44">    @Override public final int[] shape() { return new int[]{_shape}; }</span>
 
-    @Override
-<span class="nc" id="L47">    public final int shape( int i ) { return _shape; }</span>
+    /** {@inheritDoc} */
+<span class="nc" id="L47">    @Override public final int shape( int i ) { return _shape; }</span>
 
-    @Override
-<span class="fc" id="L50">    public final int[] indicesMap() { return new int[]{_indicesMap}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L50">    @Override public final int[] indicesMap() { return new int[]{_indicesMap}; }</span>
 
-    @Override
-<span class="nc" id="L53">    public final int indicesMap(int i ) { return _indicesMap; }</span>
+    /** {@inheritDoc} */
+<span class="nc" id="L53">    @Override public final int indicesMap( int i ) { return _indicesMap; }</span>
 
-    @Override
-<span class="fc" id="L56">    public final int[] translation() { return new int[]{_translation}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L56">    @Override public final int[] translation() { return new int[]{_translation}; }</span>
 
-    @Override
-<span class="nc" id="L59">    public final int translation( int i ) { return _translation; }</span>
+    /** {@inheritDoc} */
+<span class="nc" id="L59">    @Override public final int translation( int i ) { return _translation; }</span>
 
-    @Override
-<span class="fc" id="L62">    public final int[] spread() { return new int[]{1}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L62">    @Override public final int[] spread() { return new int[]{1}; }</span>
 
-    @Override
-<span class="fc" id="L65">    public final int spread( int i ) { return 1; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L65">    @Override public final int spread( int i ) { return 1; }</span>
 
-    @Override
-<span class="fc" id="L68">    public final int[] offset() { return new int[]{0}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L68">    @Override public final int[] offset() { return new int[]{0}; }</span>
 
-    @Override
-<span class="fc" id="L71">    public final int offset( int i ) { return 0; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L71">    @Override public final int offset( int i ) { return 0; }</span>
 
-    @Override
-<span class="fc" id="L74">    public final int indexOfIndex( int index ) { return ( index / _indicesMap ) * _translation; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L74">    @Override public final int indexOfIndex( int index ) { return ( index / _indicesMap ) * _translation; }</span>
 
-    @Override
-<span class="fc" id="L77">    public final int[] indicesOfIndex( int index ) { return new int[]{index / _indicesMap}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L77">    @Override public final int[] indicesOfIndex( int index ) { return new int[]{index / _indicesMap}; }</span>
 
-    @Override
-<span class="fc" id="L80">    public final int indexOfIndices( int[] indices ) { return indices[ 0 ] * _translation; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L80">    @Override public final int indexOfIndices( int[] indices ) { return indices[ 0 ] * _translation; }</span>
 
-    @Override
-<span class="nc" id="L83">    public final int indexOfIndices( int d1 ) { return d1 * _translation; }</span>
+    /** {@inheritDoc} */
+<span class="nc" id="L83">    @Override public final int indexOfIndices( int d1 ) { return d1 * _translation; }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

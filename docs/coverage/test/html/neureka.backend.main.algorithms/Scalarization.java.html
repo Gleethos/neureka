@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Contract;
 <span class="pc bpc" id="L41" title="2 of 4 branches missed.">                assert call.input( 0 ) == null;  // Creating a new tensor:</span>
 
 <span class="fc" id="L43">                int[] outShape = call.input( 1 ).getNDConf().shape();</span>
-<span class="fc" id="L44">                Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input( 1 ).getValueClass();</span>
+<span class="fc" id="L44">                Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input( 1 ).getItemClass();</span>
 <span class="fc" id="L45">                Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );</span>
 <span class="fc" id="L46">                output.setIsVirtual( false );</span>
                 try {
@@ -74,7 +74,7 @@ import org.jetbrains.annotations.Contract;
 <span class="fc" id="L74">        Tsr&lt;?&gt; t0_drn = call.input( 0 );</span>
 <span class="fc" id="L75">        Tsr&lt;?&gt; src    = call.input( offset );</span>
 
-<span class="fc" id="L77">        Class&lt;?&gt; typeClass = call.input( 1 ).getValueClass();</span>
+<span class="fc" id="L77">        Class&lt;?&gt; typeClass = call.input( 1 ).getItemClass();</span>
 
 <span class="fc" id="L79">        CPU.RangeWorkload workload = null;</span>
 

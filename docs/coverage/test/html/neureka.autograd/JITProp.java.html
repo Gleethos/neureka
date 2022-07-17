@@ -97,11 +97,5 @@ public final class JITProp&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 <span class="fc" id="L97">        return this.getClass().getSimpleName()+&quot;@&quot;+hashCode()+&quot;[finished=&quot;+finished+&quot;,pending=&quot;+pending+&quot;,isDone=&quot;+isDone()+&quot;]&quot;;</span>
     }
 
-
-    @Override
-    public boolean update( OwnerChangeRequest&lt;Tsr&lt;V&gt;&gt; changeRequest ) {
-<span class="fc" id="L103">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
-<span class="fc" id="L104">        return true;</span>
-    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

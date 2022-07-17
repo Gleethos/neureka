@@ -49,7 +49,7 @@ public class MatMul extends AbstractOperation
 <span class="fc" id="L49">                .withName(&quot;simple_matmul&quot;)</span>
 <span class="fc" id="L50">                .setIsSuitableFor(</span>
 <span class="fc" id="L51">                    call -&gt; call.validate()</span>
-<span class="fc" id="L52">                                .allNotNull( t -&gt; Number.class.isAssignableFrom(t.getValueClass()) )</span>
+<span class="fc" id="L52">                                .allNotNull( t -&gt; Number.class.isAssignableFrom(t.getItemClass()) )</span>
 <span class="fc" id="L53">                                .getEstimator()</span>
 <span class="fc" id="L54">                                    .goodIfAnyNonNull( t -&gt; t.getNDConf() instanceof Simple2DConfiguration)</span>
 <span class="fc bfc" id="L55" title="All 2 branches covered.">                                    .badIfAnyNonNull( t -&gt; !( t.getNDConf() instanceof Simple2DConfiguration) )</span>
@@ -64,7 +64,7 @@ public class MatMul extends AbstractOperation
 <span class="nc" id="L64">                                throw new IllegalArgumentException(&quot;Matrix multiplication does not support forward-AD!&quot;);</span>
 <span class="fc" id="L65">                            Function matMul = Neureka.get().backend().getFunction().matMul();</span>
 <span class="fc" id="L66">                            int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;</span>
-<span class="fc" id="L67">                            Tsr&lt;?&gt; derivative = adCall.input( d ).T().clone().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...</span>
+<span class="fc" id="L67">                            Tsr&lt;?&gt; derivative = adCall.input( d ).T().deepCopy().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...</span>
 <span class="fc" id="L68">                            derivative.to(adCall.getDevice());</span>
 <span class="fc" id="L69">                            return ADAgent.of( derivative )</span>
 <span class="fc" id="L70">                                    .withAD( target -&gt;</span>
@@ -153,7 +153,7 @@ public class MatMul extends AbstractOperation
 <span class="fc" id="L153">        Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
 <span class="pc bpc" id="L154" title="1 of 2 branches missed.">        if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
         {
-<span class="fc" id="L156">            Class&lt;Number&gt; type = (Class&lt;Number&gt;) call.input(  1 ).getDataType().getValueTypeClass();</span>
+<span class="fc" id="L156">            Class&lt;Number&gt; type = (Class&lt;Number&gt;) call.input(  1 ).getDataType().getItemTypeClass();</span>
 <span class="fc" id="L157">            int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };</span>
 <span class="fc" id="L158">            NDConfiguration.Layout targetLayout = call.input( 1 ).getNDConf().getLayout();</span>
 <span class="fc" id="L159">            call.input( 2 ).getUnsafe().toLayout(targetLayout);</span>
@@ -185,7 +185,7 @@ public class MatMul extends AbstractOperation
 <span class="fc bfc" id="L185" title="All 2 branches covered.">                    !_isSimpleColumnMajorMatrix( call.input( i ) )</span>
             ) {
 <span class="fc" id="L187">                _LOG.debug(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
-<span class="fc" id="L188">                call.setInput( i, call.input( i ).clone().getUnsafe().setIsIntermediate( true ) );</span>
+<span class="fc" id="L188">                call.setInput( i, call.input( i ).deepCopy().getUnsafe().setIsIntermediate( true ) );</span>
                 /*
                     The user should do cloning explicitly because using slices
                     will cause the backend to perform auto cloning every time the

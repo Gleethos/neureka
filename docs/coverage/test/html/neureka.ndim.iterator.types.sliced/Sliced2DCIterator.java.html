@@ -13,8 +13,8 @@ public final class Sliced2DCIterator extends Sliced2DConfiguration implements ND
 <span class="fc" id="L13">    }</span>
 
 
-    @Override
-    public final void increment() {
+    /** {@inheritDoc} */
+    @Override public final void increment() {
 <span class="fc" id="L18">        _d2++;</span>
 <span class="fc bfc" id="L19" title="All 2 branches covered.">        if ( _d2 == _shape2 ) {</span>
 <span class="fc" id="L20">            _d2 = 0;</span>
@@ -22,8 +22,8 @@ public final class Sliced2DCIterator extends Sliced2DConfiguration implements ND
         }
 <span class="fc" id="L23">    }</span>
 
-    @Override
-    public final void decrement() {
+    /** {@inheritDoc} */
+    @Override public final void decrement() {
 <span class="fc" id="L27">        _d2--;</span>
 <span class="fc bfc" id="L28" title="All 2 branches covered.">        if ( _d2 == -1 ) {</span>
 <span class="fc" id="L29">            _d2 = _shape2 - 1;</span>
@@ -31,32 +31,26 @@ public final class Sliced2DCIterator extends Sliced2DConfiguration implements ND
         }
 <span class="fc" id="L32">    }</span>
 
-    @Override
-    public final int i() {
-<span class="fc" id="L36">        return this.indexOfIndices( _d1, _d2 );</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L35">    @Override public final int i() { return this.indexOfIndices( _d1, _d2 ); }</span>
 
-    @Override
-    public final int get( int axis ) {
-<span class="fc bfc" id="L41" title="All 2 branches covered.">        return ( axis == 0 ) ? _d1 : _d2;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc bfc" id="L38" title="All 2 branches covered.">    @Override public final int get( int axis ) { return ( axis == 0 ? _d1 : _d2 ); }</span>
 
-    @Override
-    public final int[] get() {
-<span class="fc" id="L46">        return new int[]{ _d1, _d2 };</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L41">    @Override public final int[] get() { return new int[]{ _d1, _d2 }; }</span>
 
-    @Override
-    public final void set( int axis, int position ) {
-<span class="fc bfc" id="L51" title="All 2 branches covered.">        if ( axis == 0 ) _d1 = position;</span>
-<span class="fc" id="L52">        else _d2 = position;</span>
+    /** {@inheritDoc} */
+    @Override public final void set( int axis, int position ) {
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if ( axis == 0 ) _d1 = position;</span>
+<span class="fc" id="L46">        else _d2 = position;</span>
+<span class="fc" id="L47">    }</span>
+
+    /** {@inheritDoc} */
+    @Override public final void set( int[] indices ) {
+<span class="fc" id="L51">        _d1 = indices[ 0 ];</span>
+<span class="fc" id="L52">        _d2 = indices[ 1 ];</span>
 <span class="fc" id="L53">    }</span>
-
-    @Override
-    public final void set( int[] indices ) {
-<span class="fc" id="L57">        _d1 = indices[ 0 ];</span>
-<span class="fc" id="L58">        _d2 = indices[ 1 ];</span>
-<span class="fc" id="L59">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

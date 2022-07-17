@@ -292,7 +292,7 @@ import java.util.function.Function;
 <span class="fc" id="L292">                        base + delimiter + agent.partialDerivative().get().toString( _config.clone().setPrefix(&quot;&quot;).setPostfix(&quot;&quot;) ) + &quot; &quot; +</span>
                         base + half + &quot;]|:t{ &quot; +
                         base + delimiter + (
-<span class="pc bpc" id="L295" title="1 of 2 branches missed.">                            ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix(&quot;&quot;).setPostfix(&quot;&quot;) ) : t.toString(&quot;&quot;)</span>
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">                            ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix(&quot;&quot;).setPostfix(&quot;&quot;) ) : t.toString()</span>
                         ) +
                         &quot; &quot; + base + half + &quot;}, &quot;
                     );

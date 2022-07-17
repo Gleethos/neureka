@@ -19,8 +19,8 @@ public class Reshaped3DConfiguration extends D3C {
      *  The mapping of idx array.
      */
     private final int _indicesMap1;
-    private final int _indicesMap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
-    private final int _indicesMap3;
+    private final int _indicesMap2;
+    private final int _indicesMap3; // Maps index integer to array like translation. Used to avoid distortion when slicing!
 
 
     protected Reshaped3DConfiguration(
@@ -47,95 +47,73 @@ public class Reshaped3DConfiguration extends D3C {
 <span class="fc" id="L47">        return _cached( new Reshaped3DConfiguration(shape, translation, indicesMap) );</span>
     }
 
-    @Override
-    public final int rank() {
-<span class="fc" id="L52">        return 3;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L51">    @Override public final int rank() { return 3; }</span>
 
-    @Override
-    public final int[] shape() {
-<span class="fc" id="L57">        return new int[]{_shape1, _shape2, _shape3};</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L54">    @Override public final int[] shape() { return new int[]{_shape1, _shape2, _shape3}; }</span>
 
-    @Override
-    public final int shape( int i ) {
-<span class="fc bfc" id="L62" title="All 4 branches covered.">        return (i==0)?_shape1:(i==1)?_shape2:_shape3;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc bfc" id="L57" title="All 4 branches covered.">    @Override public final int shape( int i ) { return (i==0?_shape1:(i==1?_shape2:_shape3)); }</span>
 
-    @Override
-    public final int[] indicesMap() {
-<span class="fc" id="L67">        return new int[]{_indicesMap1, _indicesMap2, _indicesMap3};</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L60">    @Override public final int[] indicesMap() { return new int[]{_indicesMap1, _indicesMap2, _indicesMap3}; }</span>
 
-    @Override
-    public final int indicesMap(int i ) {
-<span class="nc bnc" id="L72" title="All 4 branches missed.">        return (i==0)?_indicesMap1:(i==1)?_indicesMap2:_indicesMap3;</span>
-    }
+    /** {@inheritDoc} */
+<span class="nc bnc" id="L63" title="All 4 branches missed.">    @Override public final int indicesMap(int i ) { return (i==0?_indicesMap1:(i==1?_indicesMap2:_indicesMap3)); }</span>
 
-    @Override
-    public final int[] translation() {
-<span class="fc" id="L77">        return new int[]{_translation1, _translation2, _translation3};</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L66">    @Override public final int[] translation() { return new int[]{_translation1, _translation2, _translation3}; }</span>
 
-    @Override
-    public final int translation( int i ) {
-<span class="nc bnc" id="L82" title="All 4 branches missed.">        return (i==0)?_translation1:(i==1)?_translation2:_translation3;</span>
-    }
+    /** {@inheritDoc} */
+<span class="nc bnc" id="L69" title="All 4 branches missed.">    @Override public final int translation( int i ) { return (i==0?_translation1:(i==1?_translation2:_translation3)); }</span>
 
-    @Override
-    public final int[] spread() {
-<span class="fc" id="L87">        return new int[]{1, 1, 1};</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L72">    @Override public final int[] spread() { return new int[]{1, 1, 1}; }</span>
 
-    @Override
-    public final int spread( int i ) {
-<span class="fc" id="L92">        return 1;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L75">    @Override public final int spread( int i ) { return 1; }</span>
 
-    @Override
-    public final int[] offset() {
-<span class="fc" id="L97">        return new int[]{0, 0, 0};</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L78">    @Override public final int[] offset() { return new int[]{0, 0, 0}; }</span>
 
-    @Override
-    public final int offset( int i ) {
-<span class="fc" id="L102">        return 0;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L81">    @Override public final int offset( int i ) { return 0; }</span>
 
-    @Override
-    public final int indexOfIndex(int index) {
+    /** {@inheritDoc} */
+    @Override public final int indexOfIndex( int index ) {
         int indices1, indices2, indices3;
-<span class="fc" id="L108">        indices1 = index / _indicesMap1;</span>
-<span class="fc" id="L109">        index %= _indicesMap1;</span>
-<span class="fc" id="L110">        indices2 = index / _indicesMap2;</span>
-<span class="fc" id="L111">        index %= _indicesMap2;</span>
-<span class="fc" id="L112">        indices3 = index / _indicesMap3;</span>
-<span class="fc" id="L113">        return indices1 * _translation1 +</span>
+<span class="fc" id="L86">        indices1 = index / _indicesMap1;</span>
+<span class="fc" id="L87">        index %= _indicesMap1;</span>
+<span class="fc" id="L88">        indices2 = index / _indicesMap2;</span>
+<span class="fc" id="L89">        index %= _indicesMap2;</span>
+<span class="fc" id="L90">        indices3 = index / _indicesMap3;</span>
+<span class="fc" id="L91">        return indices1 * _translation1 +</span>
                 indices2 * _translation2 +
                 indices3 * _translation3;
     }
 
-    @Override
-    public final int[] indicesOfIndex(int index) {
+    /** {@inheritDoc} */
+    @Override public final int[] indicesOfIndex( int index ) {
         int indices1, indices2, indices3;
-<span class="fc" id="L121">        indices1 = index / _indicesMap1;</span>
-<span class="fc" id="L122">        index %= _indicesMap1;</span>
-<span class="fc" id="L123">        indices2 = index / _indicesMap2;</span>
-<span class="fc" id="L124">        index %= _indicesMap2;</span>
-<span class="fc" id="L125">        indices3 = index / _indicesMap3;</span>
-<span class="fc" id="L126">        return new int[]{indices1, indices2, indices3};</span>
+<span class="fc" id="L99">        indices1 = index / _indicesMap1;</span>
+<span class="fc" id="L100">        index %= _indicesMap1;</span>
+<span class="fc" id="L101">        indices2 = index / _indicesMap2;</span>
+<span class="fc" id="L102">        index %= _indicesMap2;</span>
+<span class="fc" id="L103">        indices3 = index / _indicesMap3;</span>
+<span class="fc" id="L104">        return new int[]{indices1, indices2, indices3};</span>
     }
 
-    @Override
-    public final int indexOfIndices(int[] indices) {
-<span class="fc" id="L131">        return indices[ 0 ] * _translation1 +</span>
+    /** {@inheritDoc} */
+    @Override public final int indexOfIndices(int[] indices) {
+<span class="fc" id="L109">        return indices[ 0 ] * _translation1 +</span>
                 indices[ 1 ] * _translation2 +
                 indices[ 2 ] * _translation3;
     }
 
-    @Override
-    public final int indexOfIndices(int d1, int d2, int d3 ) {
-<span class="fc" id="L138">        return d1 * _translation1 +</span>
+    /** {@inheritDoc} */
+    @Override public final int indexOfIndices(int d1, int d2, int d3 ) {
+<span class="fc" id="L116">        return d1 * _translation1 +</span>
                d2 * _translation2 +
                d3 * _translation3;
     }

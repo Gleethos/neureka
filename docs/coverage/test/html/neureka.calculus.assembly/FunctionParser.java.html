@@ -30,7 +30,7 @@ import java.util.stream.IntStream;
 
 <span class="fc" id="L31">    private static final Pattern _variablePattern = Pattern.compile(&quot;^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)&quot;);</span>
 <span class="fc" id="L32">    private static final Pattern _inputPattern = Pattern.compile(&quot;^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)&quot;);</span>
-<span class="fc" id="L33">    private static final Pattern _constantPattern = Pattern.compile(&quot;^((-?[0-9]*|[0-9]*)[.]?[0-9]*(e[-]?[0-9]+)?)&quot;);</span>
+<span class="fc" id="L33">    private static final Pattern _constantPattern = Pattern.compile(&quot;^((-?[0-9]*|[0-9]*)[.]?[0-9]*((e|E)[-]?[0-9]+)?)&quot;);</span>
 
 <span class="fc" id="L35">    private static final Pattern _reshapePattern = Pattern.compile(&quot;^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))&quot;);</span>
 <span class="fc" id="L36">    private static final Pattern _nodePattern = Pattern.compile(&quot;^([\\(]{1}.+[\\)]{1})&quot;);</span>
@@ -67,8 +67,8 @@ import java.util.stream.IntStream;
      * @param doAD       is used to turn autograd on or off for this function
      * @return the function which has been built from the expression
      */
-    public Function parse( String expression, boolean doAD ) {
-
+    public Function parse( String expression, boolean doAD )
+    {
 <span class="fc" id="L72">        if (</span>
 <span class="pc bpc" id="L73" title="1 of 2 branches missed.">            expression.length() &gt; 0 &amp;&amp;</span>
 <span class="fc bfc" id="L74" title="All 4 branches covered.">            (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')')</span>

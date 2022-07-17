@@ -21,7 +21,7 @@ import java.util.List;
 
     static class ReferenceWithCleanup&lt;T&gt; extends PhantomReference&lt;T&gt;
     {
-        private Runnable _action;
+        private final Runnable _action;
 
         ReferenceWithCleanup(T o, Runnable action, ReferenceQueue&lt;T&gt; queue) {
 <span class="fc" id="L27">            super( o, queue );</span>
@@ -49,8 +49,8 @@ import java.util.List;
 <span class="pc bpc" id="L49" title="1 of 2 branches missed.">                if ( ref != null ) {</span>
                     try {
 <span class="fc" id="L51">                        ref.cleanup();</span>
-<span class="nc" id="L52">                    } catch ( Throwable e ) {</span>
-<span class="nc" id="L53">                        e.printStackTrace();</span>
+<span class="fc" id="L52">                    } catch ( Throwable e ) {</span>
+<span class="fc" id="L53">                        e.printStackTrace();</span>
                         // ignore exceptions from the cleanup action
                         // (including interruption of cleanup thread)
 <span class="fc" id="L56">                    }</span>

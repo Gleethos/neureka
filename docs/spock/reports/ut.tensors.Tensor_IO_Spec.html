@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Mon Jun 06 11:39:51 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Jul 17 20:20:15 CEST 2022 by danie</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,13 +329,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>18</td>
-<td>18</td>
+<td>16</td>
+<td>16</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.585 seconds</td>
+<td>0.262 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -367,12 +367,6 @@ div.footer {
 <ul id='toc'>
 <li>
 <a href='#-23914743' class='feature-toc-pass'>Tensors can be instantiated with String seed.</a>
-</li>
-<li>
-<a href='#583974159' class='feature-toc-pass'>Tensor initialization lambdas produce expected tensors.</a>
-</li>
-<li>
-<a href='#-1820313073' class='feature-toc-pass'>Tensor mapping lambdas produce expected tensors.</a>
 </li>
 <li>
 <a href='#-856932970' class='feature-toc-pass'>Smart tensor constructors yield expected results.</a>
@@ -426,7 +420,7 @@ div.footer {
 <span>Tensors can be instantiated with String seed.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.007 seconds)</div>
+<div class='ex-time'>(0.004 seconds)</div>
 </span>
 </div>
 </td>
@@ -464,160 +458,11 @@ t1.toString() != t3.toString()</pre>
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='583974159'>
-<span>Tensor initialization lambdas produce expected tensors.</span>
-<span class='return-toc'>
-<a href='#toc'>Return</a>
-<div class='ex-time'>(0.011 seconds)</div>
-</span>
-</div>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>When:</div>
-</td>
-<td>
-<div class='block-text'>Instantiating a tensor using an initializer lambda...</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>Tsr t = Tsr.of(
-        DataType.of( Integer.class ),
-        [ 2, 3 ],
-        ( int i, int[] indices ) -&gt; { i - 2 }
-)</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>Then:</div>
-</td>
-<td>
-<div class='block-text'>The tensor has been initialized with the expected values:</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>When:</div>
-</td>
-<td>
-<pre class='block-source'>t = Tsr.of(
-    DataType.of( String.class ),
-    [ 2, 3 ],
-    ( int i, int[] indices ) -&gt; { i + ':' + indices.toString() }
-)</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>Then:</div>
-</td>
-<td>
-<pre class='block-source'>t.toString() == "(2x3):[0:[0, 0], 1:[0, 1], 2:[0, 2], 3:[1, 0], 4:[1, 1], 5:[1, 2]]"</pre>
-</td>
-</tr>
-<tr>
-<td colspan='10'>
-<div class='feature-description' id='-1820313073'>
-<span>Tensor mapping lambdas produce expected tensors.</span>
-<span class='return-toc'>
-<a href='#toc'>Return</a>
-<div class='ex-time'>(0.010 seconds)</div>
-</span>
-</div>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>When:</div>
-</td>
-<td>
-<div class='block-text'>Instantiating a tensor using an initializer lambda...</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>Tsr t = Tsr.of(
-    DataType.of( Double.class ),
-    [ 2, 3 ],
-    ( int i, int[] indices ) -&gt; { (i - 2) as Double }
-)</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>Then:</div>
-</td>
-<td>
-<div class='block-text'>The tensor has been initialized with the expected values:</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>When:</div>
-</td>
-<td>
-<div class='block-text'>We want to perform an element wise mapping to a new tensor...</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>def b = t.mapTo(String, (it) -&gt; {"&lt;$it&gt;".replace(".0", "")})</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>Then:</div>
-</td>
-<td>
-<div class='block-text'>We expect the returned tensor to be a String container whose Strings are formatted according to our mapping lambda.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>b.toString() == "(2x3):[&lt;-2&gt;, &lt;-1&gt;, &lt;0&gt;, &lt;1&gt;, &lt;2&gt;, &lt;3&gt;]"
-b.valueClass == String.class</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
-<div class='block-text'>The original tensor should not have changed because no inline operation occurred.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"</pre>
-</td>
-</tr>
-<tr>
-<td colspan='10'>
 <div class='feature-description' id='-856932970'>
 <span>Smart tensor constructors yield expected results.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.033 seconds)</div>
+<div class='ex-time'>(0.015 seconds)</div>
 </span>
 </div>
 </td>
@@ -780,7 +625,7 @@ Tsr c = Tsr.of(-1)</pre>
 </td>
 <td>
 <pre class='block-source'>t.toString().contains("(2):[3.0, 5.0]")
-t.getValueAs( double[].class ).length==2</pre>
+t.getItemsAs( double[].class ).length==2</pre>
 </td>
 </tr>
 <tr>
@@ -813,7 +658,7 @@ t.getValueAs( double[].class ).length==2</pre>
 </td>
 <td>
 <pre class='block-source'>t.toString().contains("(2):[3.0, 5.0]")
-t.getValueAs( double[].class ).length==2</pre>
+t.getItemsAs( double[].class ).length==2</pre>
 </td>
 </tr>
 <tr>
@@ -906,7 +751,7 @@ t2.toString().contains("[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.
 <span>Passing String seed to tensor produces expected values.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.001 seconds)</div>
+<div class='ex-time'>(0.002 seconds)</div>
 </span>
 </div>
 </td>
@@ -949,7 +794,7 @@ t2.toString().contains("[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.
 <span>Tensor value type can not be changed by passing float or double arrays to it.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.012 seconds)</div>
+<div class='ex-time'>(0.003 seconds)</div>
 </span>
 </div>
 </td>
@@ -995,7 +840,7 @@ t2.toString().contains("[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.
 <td>
 <pre class='block-source'>float[] value32 = new float[1]
 value32[0] = 5
-x.setValue(value32)</pre>
+x.setItems(value32)</pre>
 </td>
 </tr>
 <tr>
@@ -1009,11 +854,11 @@ x.setValue(value32)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>!(x.getValue() instanceof float[])
+<pre class='block-source'>!(x.getItems() instanceof float[])
 !(x.unsafe.data instanceof float[])
 !(x.data instanceof float[])
-x.getValueAs( float[].class )[ 0 ]==5.0f
-x.getValueAs( double[].class )[0]==5.0d</pre>
+x.getItemsAs( float[].class )[ 0 ]==5.0f
+x.getItemsAs( double[].class )[0]==5.0d</pre>
 </td>
 </tr>
 <tr>
@@ -1029,7 +874,7 @@ x.getValueAs( double[].class )[0]==5.0d</pre>
 <td>
 <pre class='block-source'>double[] value64 = new double[1]
 value64[0] = 4.0
-x.setValue(value64)</pre>
+x.setItems(value64)</pre>
 </td>
 </tr>
 <tr>
@@ -1043,11 +888,11 @@ x.setValue(value64)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>x.getValue() instanceof double[]
+<pre class='block-source'>x.getItems() instanceof double[]
 x.unsafe.data instanceof double[]
 x.data instanceof double[]
-x.getValueAs( float[].class )[ 0 ]==4.0f
-x.getValueAs( double[].class )[0]==4.0d
+x.getItemsAs( float[].class )[ 0 ]==4.0f
+x.getItemsAs( double[].class )[0]==4.0d
 x.isLeave()
 !x.isBranch()
 !x.isOutsourced()
@@ -1075,7 +920,7 @@ x.size()==1</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>x.value instanceof float[]</pre>
+<pre class='block-source'>x.items instanceof float[]</pre>
 </td>
 </tr>
 <tr>
@@ -1085,7 +930,7 @@ x.size()==1</pre>
 <td>
 <pre class='block-source'>value64 = new double[1]
 value64[0] = 7.0
-x.setValue(value64)</pre>
+x.setItems(value64)</pre>
 </td>
 </tr>
 <tr>
@@ -1093,11 +938,11 @@ x.setValue(value64)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>!(x.getValue() instanceof double[])
+<pre class='block-source'>!(x.getItems() instanceof double[])
 !(x.unsafe.data instanceof double[])
 !(x.data instanceof double[])
-x.getValueAs( float[].class )[ 0 ]==7.0f
-x.getValueAs( double[].class )[0]==7.0d</pre>
+x.getItemsAs( float[].class )[ 0 ]==7.0f
+x.getItemsAs( double[].class )[0]==7.0d</pre>
 </td>
 </tr>
 <tr>
@@ -1106,7 +951,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <span>We turn a tensor into a scalar value or string through the "as" operator!</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.085 seconds)</div>
+<div class='ex-time'>(0.006 seconds)</div>
 </span>
 </div>
 </td>
@@ -1163,7 +1008,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <span>We can re-populate a tensor of shorts from a single scalar value!</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.016 seconds)</div>
+<div class='ex-time'>(0.044 seconds)</div>
 </span>
 </div>
 </td>
@@ -1243,7 +1088,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <td class='ex-value'>class java.lang.Integer</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -1251,7 +1096,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <td class='ex-value'>class java.lang.Long</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0.003 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -1275,7 +1120,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0.002 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -1283,7 +1128,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.005 seconds)</span>
+<span class='ex-time'>(0.032 seconds)</span>
 </td>
 </tr>
 </tbody>
@@ -1300,7 +1145,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <span>We can manipulate the underlying data array of a tensor through the unsafe API.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.100 seconds)</div>
+<div class='ex-time'>(0.034 seconds)</div>
 </span>
 </div>
 </td>
@@ -1396,7 +1241,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.007 seconds)</span>
+<span class='ex-time'>(0.006 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -1404,7 +1249,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.006 seconds)</span>
+<span class='ex-time'>(0.003 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -1412,7 +1257,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <td class='ex-value'>class java.lang.Byte</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.024 seconds)</span>
+<span class='ex-time'>(0.021 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -1420,7 +1265,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <td class='ex-value'>class java.lang.Short</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.063 seconds)</span>
+<span class='ex-time'>(0.004 seconds)</span>
 </td>
 </tr>
 </tbody>
@@ -1437,7 +1282,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <span>When we try to manipulate the underlying data array of a virtual tensor then it will become actual.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.018 seconds)</div>
+<div class='ex-time'>(0.011 seconds)</div>
 </span>
 </div>
 </td>
@@ -1509,7 +1354,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.013 seconds)</span>
+<span class='ex-time'>(0.007 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -1533,7 +1378,7 @@ x.getValueAs( double[].class )[0]==7.0d</pre>
 <td class='ex-value'>class java.lang.Short</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 </tbody>
@@ -1583,10 +1428,10 @@ Tsr x = Tsr.of(3)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>x.getValue() instanceof float[]
+<pre class='block-source'>x.getItems() instanceof float[]
 x.unsafe.data instanceof float[]
 x.data instanceof float[]
-x.getValueAs( float[].class )[ 0 ]==3.0f</pre>
+x.getItemsAs( float[].class )[ 0 ]==3.0f</pre>
 </td>
 </tr>
 <tr>
@@ -1602,10 +1447,10 @@ x.getValueAs( float[].class )[ 0 ]==3.0f</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>x.getValue() instanceof double[]
+<pre class='block-source'>x.getItems() instanceof double[]
 x.unsafe.data instanceof double[]
 x.data instanceof double[]
-x.getValueAs( float[].class )[ 0 ]==3.0f</pre>
+x.getItemsAs( float[].class )[ 0 ]==3.0f</pre>
 </td>
 </tr>
 <tr>
@@ -1614,7 +1459,7 @@ x.getValueAs( float[].class )[ 0 ]==3.0f</pre>
 <span>Vector tensors can be instantiated via factory methods.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.012 seconds)</div>
+<div class='ex-time'>(0.009 seconds)</div>
 </span>
 </div>
 </td>
@@ -1632,7 +1477,7 @@ x.getValueAs( float[].class )[ 0 ]==3.0f</pre>
 <div class='block-kind'>Expect:</div>
 </td>
 <td>
-<pre class='block-source'>t.valueClass == type</pre>
+<pre class='block-source'>t.itemClass == type</pre>
 </td>
 </tr>
 <tr>
@@ -1657,7 +1502,7 @@ t.data == data</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>t.value == data</pre>
+<pre class='block-source'>t.items == data</pre>
 </td>
 </tr>
 <tr>
@@ -1699,7 +1544,7 @@ t.data == data</pre>
 <td class='ex-value'>[2]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.003 seconds)</span>
+<span class='ex-time'>(0.002 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -1717,7 +1562,7 @@ t.data == data</pre>
 <td class='ex-value'>[6]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -1726,7 +1571,7 @@ t.data == data</pre>
 <td class='ex-value'>[5]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 </tbody>
@@ -1743,7 +1588,7 @@ t.data == data</pre>
 <span>A tensor produced by a function has expected properties.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.004 seconds)</div>
+<div class='ex-time'>(0.005 seconds)</div>
 </span>
 </div>
 </td>
@@ -1802,7 +1647,7 @@ y.toString().contains("[1]:(0.99932)")</pre>
 <span>A tensor produced by the static "Tsr.Create.newRandom(shape)" has expected "random" value.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.010 seconds)</div>
+<div class='ex-time'>(0.009 seconds)</div>
 </span>
 </div>
 </td>
@@ -1926,7 +1771,7 @@ shape[0] = 4</pre>
 <span>Tensor values can be manipulated via static method calls within the "Tsr.IO" class.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.026 seconds)</div>
+<div class='ex-time'>(0.019 seconds)</div>
 </span>
 </div>
 </td>
@@ -1987,7 +1832,7 @@ var v = Tsr.of([2, 2], [
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t.setValueAt( 2, 6.0 as double )</pre>
+<pre class='block-source'>t.setItemAt( 2, 6.0 as double )</pre>
 </td>
 </tr>
 <tr>
@@ -2005,7 +1850,7 @@ var v = Tsr.of([2, 2], [
 <td>
 <pre class='block-source'>int[] indices = new int[2]
 indices[1] = 1
-t.setValueAt(t.indexOfIndices(indices), -6.0 as double)</pre>
+t.setItemAt(t.indexOfIndices(indices), -6.0 as double)</pre>
 </td>
 </tr>
 <tr>
@@ -2014,7 +1859,7 @@ t.setValueAt(t.indexOfIndices(indices), -6.0 as double)</pre>
 </td>
 <td>
 <pre class='block-source'>t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 6.0)")
-t.getValueAt(indices) ==-6.0d</pre>
+t.getItemAt(indices) ==-6.0d</pre>
 </td>
 </tr>
 <tr>
@@ -2162,7 +2007,7 @@ t[indices].timesAssign(-1d)</pre>
 <span>The tensor data array can be modified by targeting them with an index.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.018 seconds)</div>
+<div class='ex-time'>(0.017 seconds)</div>
 </span>
 </div>
 </td>
@@ -2213,7 +2058,7 @@ t.data == expected</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>t.setValueAt( 1, element )</pre>
+<pre class='block-source'>t.setItemAt( 1, element )</pre>
 </td>
 </tr>
 <tr>
@@ -2221,7 +2066,7 @@ t.data == expected</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>t.getValueAt( 1 ) == element</pre>
+<pre class='block-source'>t.getItemAt( 1 ) == element</pre>
 </td>
 </tr>
 <tr>
@@ -2269,7 +2114,7 @@ t.data == expected</pre>
 <td class='ex-value'>[-42.0, 0.032, 9.0, 3.0]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0.002 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -2280,7 +2125,7 @@ t.data == expected</pre>
 <td class='ex-value'>[-42, 1, 9, 3]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.004 seconds)</span>
+<span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -2313,7 +2158,7 @@ t.data == expected</pre>
 <td class='ex-value'>[-42, 1, 9, 3]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0.003 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -2324,7 +2169,7 @@ t.data == expected</pre>
 <td class='ex-value'>[false, false]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0.002 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -2335,7 +2180,7 @@ t.data == expected</pre>
 <td class='ex-value'>ax</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.006 seconds)</span>
+<span class='ex-time'>(0.004 seconds)</span>
 </td>
 </tr>
 </tbody>

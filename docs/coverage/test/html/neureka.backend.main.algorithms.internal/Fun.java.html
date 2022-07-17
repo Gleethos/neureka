@@ -114,14 +114,34 @@ public interface Fun
     {
         int invoke( int x, int y );
 
+        static FunTuple&lt;I32I32ToI32&gt; of(I32I32ToI32 activation ) {
+<span class="fc" id="L118">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
+        }
+
         static FunTuple&lt;I32I32ToI32&gt; triple(
                 I32I32ToI32 activation,
                 I32I32ToI32 derivation1,
                 I32I32ToI32 derivation2
         ) {
-<span class="fc" id="L122">            return new Operator.FunTriple&lt;&gt;( activation, derivation1, derivation2 );</span>
+<span class="fc" id="L126">            return new Operator.FunTriple&lt;&gt;( activation, derivation1, derivation2 );</span>
         }
     }
 
+    interface I8I8ToI8 extends Fun
+    {
+        byte invoke( byte x, byte y );
+
+        static FunTuple&lt;I8I8ToI8&gt; of(I8I8ToI8 activation ) {
+<span class="fc" id="L135">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
+        }
+
+        static FunTuple&lt;I8I8ToI8&gt; triple(
+                I8I8ToI8 activation,
+                I8I8ToI8 derivation1,
+                I8I8ToI8 derivation2
+        ) {
+<span class="nc" id="L143">            return new Operator.FunTriple&lt;&gt;( activation, derivation1, derivation2 );</span>
+        }
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

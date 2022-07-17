@@ -24,18 +24,25 @@ import java.io.IOException;
  */
 public final class JPEGHandle extends AbstractImageFileHandle&lt;JPEGHandle&gt;
 {
+    static {
+<span class="fc" id="L28">        _LOG = LoggerFactory.getLogger( JPEGHandle.class );</span>
+<span class="fc" id="L29">    }</span>
 
-<span class="fc" id="L28">    public JPEGHandle( String fileName) { this( null, fileName ); }</span>
+<span class="fc" id="L31">    public JPEGHandle( String fileName) { this( null, fileName ); }</span>
 
-    public JPEGHandle(Tsr&lt;Number&gt; t, String filename) {
-<span class="fc" id="L31">        super(t, filename, new ImageFileType() {</span>
-<span class="fc" id="L32">            @Override public Tsr.ImageType imageType() { return Tsr.ImageType.BGR_3BYTE; }</span>
+    public JPEGHandle( Tsr&lt;Number&gt; tensor, String filename ) {
+<span class="fc" id="L34">        super(</span>
+                tensor,
+                filename,
+<span class="fc" id="L37">                new ImageFileType() {</span>
+<span class="fc" id="L38">                    @Override public Tsr.ImageType imageType() { return Tsr.ImageType.BGR_3BYTE; }</span>
 
-<span class="nc" id="L34">            @Override public String imageTypeName() { return &quot;jpeg&quot;; }</span>
+<span class="nc" id="L40">                    @Override public String imageTypeName() { return &quot;jpeg&quot;; }</span>
 
-<span class="fc" id="L36">            @Override public String defaultExtension() { return &quot;jpg&quot;; }</span>
-        });
-<span class="fc" id="L38">    }</span>
+<span class="fc" id="L42">                    @Override public String defaultExtension() { return &quot;jpg&quot;; }</span>
+                }
+            );
+<span class="fc" id="L45">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

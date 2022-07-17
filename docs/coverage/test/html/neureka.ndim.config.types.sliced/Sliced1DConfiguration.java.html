@@ -53,50 +53,50 @@ import neureka.ndim.config.types.D1C;
 <span class="pc bpc" id="L53" title="2 of 4 branches missed.">        assert spread != 0;</span>
 <span class="fc" id="L54">    }</span>
 
-    @Override
-<span class="fc" id="L57">    public final int rank() { return 1; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L57">    @Override public final int rank() { return 1; }</span>
 
-    @Override
-<span class="fc" id="L60">    public final int[] shape() { return new int[]{_shape}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L60">    @Override public final int[] shape() { return new int[]{_shape}; }</span>
 
-    @Override
-<span class="fc" id="L63">    public final int shape( int i ) { return _shape; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L63">    @Override public final int shape( int i ) { return _shape; }</span>
 
-    @Override
-<span class="fc" id="L66">    public final int[] indicesMap() { return new int[]{_indicesMap}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L66">    @Override public final int[] indicesMap() { return new int[]{_indicesMap}; }</span>
 
-    @Override
-<span class="fc" id="L69">    public final int indicesMap(int i ) { return _indicesMap; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L69">    @Override public final int indicesMap(int i ) { return _indicesMap; }</span>
 
-    @Override
-<span class="fc" id="L72">    public final int[] translation() { return new int[]{_translation}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L72">    @Override public final int[] translation() { return new int[]{_translation}; }</span>
 
-    @Override
-<span class="fc" id="L75">    public final int translation( int i ) { return _translation; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L75">    @Override public final int translation( int i ) { return _translation; }</span>
 
-    @Override
-<span class="fc" id="L78">    public final int[] spread() { return new int[]{_spread}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L78">    @Override public final int[] spread() { return new int[]{_spread}; }</span>
 
-    @Override
-<span class="fc" id="L81">    public final int spread( int i ) { return _spread; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L81">    @Override public final int spread( int i ) { return _spread; }</span>
 
-    @Override
-<span class="fc" id="L84">    public final int[] offset() { return new int[]{_offset}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L84">    @Override public final int[] offset() { return new int[]{_offset}; }</span>
 
-    @Override
-<span class="fc" id="L87">    public final int offset( int i ) { return _offset; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L87">    @Override public final int offset( int i ) { return _offset; }</span>
 
-    @Override
-<span class="fc" id="L90">    public final int indexOfIndex( int index ) { return ( ( index / _indicesMap ) * _spread + _offset ) * _translation; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L90">    @Override public final int indexOfIndex( int index ) { return ( ( index / _indicesMap ) * _spread + _offset ) * _translation; }</span>
 
-    @Override
-<span class="fc" id="L93">    public final int[] indicesOfIndex( int index ) { return new int[]{index / _indicesMap}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L93">    @Override public final int[] indicesOfIndex( int index ) { return new int[]{index / _indicesMap}; }</span>
 
-    @Override
-<span class="fc" id="L96">    public final int indexOfIndices( int[] indices ) { return ( indices[ 0 ] * _spread + _offset ) * _translation; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L96">    @Override public final int indexOfIndices( int[] indices ) { return ( indices[ 0 ] * _spread + _offset ) * _translation; }</span>
 
-    @Override
-<span class="fc" id="L99">    public final int indexOfIndices( int d1 ) { return ( d1 * _spread + _offset ) * _translation; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L99">    @Override public final int indexOfIndices( int d1 ) { return ( d1 * _spread + _offset ) * _translation; }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

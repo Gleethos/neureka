@@ -5,17 +5,17 @@ import neureka.ndim.iterator.NDIterator;
 
 public final class Simple3DCIterator extends Simple3DConfiguration implements NDIterator
 {
-<span class="fc" id="L8">    protected int _d1 = 0;</span>
-<span class="fc" id="L9">    protected int _d2 = 0;</span>
-<span class="fc" id="L10">    protected int _d3 = 0;</span>
+<span class="fc" id="L8">    private int _d1 = 0;</span>
+<span class="fc" id="L9">    private int _d2 = 0;</span>
+<span class="fc" id="L10">    private int _d3 = 0;</span>
 
     public Simple3DCIterator(Simple3DConfiguration ndc) {
 <span class="fc" id="L13">        super( ndc.shape(), ndc.translation() );</span>
 <span class="fc" id="L14">    }</span>
 
 
-    @Override
-    public final void increment() {
+    /** {@inheritDoc} */
+    @Override public final void increment() {
 <span class="fc" id="L19">        _d3++;</span>
 <span class="fc bfc" id="L20" title="All 2 branches covered.">        if ( _d3 == _shape3 ) {</span>
 <span class="fc" id="L21">            _d3 = 0;</span>
@@ -27,8 +27,8 @@ public final class Simple3DCIterator extends Simple3DConfiguration implements ND
         }
 <span class="fc" id="L28">    }</span>
 
-    @Override
-    public final void decrement() {
+    /** {@inheritDoc} */
+    @Override public final void decrement() {
 <span class="fc" id="L32">        _d3--;</span>
 <span class="fc bfc" id="L33" title="All 2 branches covered.">        if ( _d3 == -1 ) {</span>
 <span class="fc" id="L34">            _d3 = _shape3 - 1;</span>
@@ -40,30 +40,30 @@ public final class Simple3DCIterator extends Simple3DConfiguration implements ND
         }
 <span class="fc" id="L41">    }</span>
 
-    @Override
-    public final int i() {
+    /** {@inheritDoc} */
+    @Override public final int i() {
 <span class="fc" id="L45">        return this.indexOfIndices( _d1, _d2, _d3 );</span>
     }
 
-    @Override
-    public final int get( int axis ) {
+    /** {@inheritDoc} */
+    @Override public final int get( int axis ) {
 <span class="fc bfc" id="L50" title="All 4 branches covered.">        return ( axis == 0 ) ? _d1 : ( axis == 1 ) ? _d2 : _d3;</span>
     }
 
-    @Override
-    public final int[] get() {
+    /** {@inheritDoc} */
+    @Override public final int[] get() {
 <span class="fc" id="L55">        return new int[]{ _d1, _d2, _d3 };</span>
     }
 
-    @Override
-    public final void set( int axis, int position ) {
+    /** {@inheritDoc} */
+    @Override public final void set( int axis, int position ) {
 <span class="fc bfc" id="L60" title="All 2 branches covered.">        if ( axis == 0 ) _d1 = position;</span>
 <span class="fc bfc" id="L61" title="All 2 branches covered.">        else if ( axis == 1 ) _d2 = position;</span>
 <span class="fc" id="L62">        else _d3 = position;</span>
 <span class="fc" id="L63">    }</span>
 
-    @Override
-    public final void set( int[] indices) {
+    /** {@inheritDoc} */
+    @Override public final void set( int[] indices) {
 <span class="fc" id="L67">        _d1 = indices[0];</span>
 <span class="fc" id="L68">        _d2 = indices[1];</span>
 <span class="fc" id="L69">        _d3 = indices[2];</span>

@@ -42,86 +42,67 @@ public class ReshapedNDConfiguration extends AbstractNDC
 <span class="fc" id="L42">        return _cached( new ReshapedNDConfiguration(shape, translation, indicesMap) );</span>
     }
 
-    @Override
-    public final int rank() {
-<span class="fc" id="L47">        return _shape.length;</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L47">    @Override public final int rank() { return _shape.length; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L50">    @Override public final int[] shape() { return _shape.clone(); }</span>
+
+    /** {@inheritDoc} */
+<span class="nc" id="L53">    @Override public final int shape( int i ) { return _shape[ i ]; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L56">    @Override public final int[] indicesMap() { return _indicesMap.clone(); }</span>
+
+    /** {@inheritDoc} */
+<span class="nc" id="L59">    @Override public final int indicesMap(int i ) { return _indicesMap[ i ]; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L62">    @Override public final int[] translation() { return _translation.clone(); }</span>
+
+    /** {@inheritDoc} */
+<span class="nc" id="L65">    @Override public final int translation( int i ) { return _translation[ i ]; }</span>
+
+    /** {@inheritDoc} */
+    @Override public final int[] spread() {
+<span class="fc" id="L69">        int[] spread = new int[rank()];</span>
+<span class="fc" id="L70">        Arrays.fill(spread, 1);</span>
+<span class="fc" id="L71">        return spread;</span>
     }
 
-    @Override
-    public final int[] shape() {
-<span class="fc" id="L52">        return _shape;</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L75">    @Override public final int spread( int i ) { return 1; }</span>
+
+    /** {@inheritDoc} */
+    @Override public final int[] offset() {
+<span class="fc" id="L79">        int[] offset = new int[rank()];</span>
+<span class="fc" id="L80">        Arrays.fill(offset, 0);</span>
+<span class="fc" id="L81">        return offset;</span>
     }
 
-    @Override
-    public final int shape( int i ) {
-<span class="nc" id="L57">        return _shape[ i ];</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L85">    @Override public final int offset( int i ) { return 0; }</span>
 
-    @Override
-    public final int[] indicesMap() {
-<span class="fc" id="L62">        return _indicesMap;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L88">    @Override public final int indexOfIndex( int index ) { return indexOfIndices( indicesOfIndex( index ) ); }</span>
 
-    @Override
-    public final int indicesMap(int i ) {
-<span class="nc" id="L67">        return _indicesMap[ i ];</span>
-    }
-
-    @Override
-    public final int[] translation() {
-<span class="fc" id="L72">        return _translation;</span>
-    }
-
-    @Override
-    public final int translation( int i ) {
-<span class="nc" id="L77">        return _translation[ i ];</span>
-    }
-
-    @Override
-    public final int[] spread() {
-<span class="fc" id="L82">        int[] spread = new int[rank()];</span>
-<span class="fc" id="L83">        Arrays.fill(spread, 1);</span>
-<span class="fc" id="L84">        return spread;</span>
-    }
-
-    @Override
-    public final int spread( int i ) {
-<span class="fc" id="L89">        return 1;</span>
-    }
-
-    @Override
-    public final int[] offset() {
-<span class="fc" id="L94">        int[] offset = new int[rank()];</span>
-<span class="fc" id="L95">        Arrays.fill(offset, 0);</span>
-<span class="fc" id="L96">        return offset;</span>
-    }
-
-    @Override
-    public final int offset( int i ) {
-<span class="fc" id="L101">        return 0;</span>
-    }
-
-    @Override
-    public final int indexOfIndex( int index ) {
-<span class="fc" id="L106">        return indexOfIndices( indicesOfIndex( index ) );</span>
-    }
-
-    @Override
-    public final int[] indicesOfIndex( int index ) {
-<span class="fc" id="L111">        int[] indices = new int[ _shape.length ];</span>
-<span class="fc bfc" id="L112" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
-<span class="fc" id="L113">            indices[ ii ] += index / _indicesMap[ ii ];</span>
-<span class="fc" id="L114">            index %= _indicesMap[ ii ];</span>
+    /** {@inheritDoc} */
+    @Override public final int[] indicesOfIndex( int index ) {
+<span class="fc" id="L92">        int[] indices = new int[ _shape.length ];</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
+<span class="fc" id="L94">            indices[ ii ] += index / _indicesMap[ ii ];</span>
+<span class="fc" id="L95">            index %= _indicesMap[ ii ];</span>
         }
-<span class="fc" id="L116">        return indices;</span>
+<span class="fc" id="L97">        return indices;</span>
     }
 
-    @Override
-    public final int indexOfIndices( int[] indices ) {
-<span class="fc" id="L121">        int i = 0;</span>
-<span class="fc bfc" id="L122" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ )</span>
-<span class="fc" id="L123">            i += indices[ ii ] * _translation[ ii ];</span>
-<span class="fc" id="L124">        return i;</span>
+    /** {@inheritDoc} */
+    @Override public final int indexOfIndices( int[] indices ) {
+<span class="fc" id="L102">        int i = 0;</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ )</span>
+<span class="fc" id="L104">            i += indices[ ii ] * _translation[ ii ];</span>
+<span class="fc" id="L105">        return i;</span>
     }
 
 }

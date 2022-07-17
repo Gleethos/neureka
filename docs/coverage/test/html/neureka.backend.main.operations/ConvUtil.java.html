@@ -68,7 +68,7 @@ import org.jetbrains.annotations.Contract;
 <span class="fc" id="L68">                            tensors[ 0 ] =</span>
 <span class="fc bfc" id="L69" title="All 2 branches covered.">                                (call.getValOf( Arg.DerivIdx.class ) &lt; 0)</span>
 <span class="fc" id="L70">                                    ? Tsr.of(</span>
-<span class="fc" id="L71">                                        call.input(0).getValueClass(),</span>
+<span class="fc" id="L71">                                        call.input(0).getItemClass(),</span>
 <span class="fc" id="L72">                                            _shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),</span>
 <span class="fc" id="L73">                                            0</span>
                                         )

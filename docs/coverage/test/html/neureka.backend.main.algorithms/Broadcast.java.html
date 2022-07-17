@@ -93,7 +93,7 @@ import org.jetbrains.annotations.Contract;
 <span class="fc bfc" id="L93" title="All 2 branches covered.">                    for ( int i = 0; i &lt; outShape.length; i++ )</span>
 <span class="fc bfc" id="L94" title="All 2 branches covered.">                        outShape[ i ] = ( s1[ i ] == 1 ? s2[ i ] : s1[ i ] );</span>
 
-<span class="fc" id="L96">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getValueClass();</span>
+<span class="fc" id="L96">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getItemClass();</span>
 <span class="fc" id="L97">                    Tsr&lt;?&gt; output = Tsr.of(type).withShape(outShape).all( 0.0 ).getUnsafe().setIsIntermediate( true );</span>
 <span class="fc" id="L98">                    output.setIsVirtual( false );</span>
                     try {
@@ -149,7 +149,7 @@ import org.jetbrains.annotations.Contract;
 
 <span class="fc" id="L150">        t0_drn.setIsVirtual(false);</span>
 
-<span class="fc" id="L152">        Class&lt;?&gt; typeClass = t0_drn.getValueClass();</span>
+<span class="fc" id="L152">        Class&lt;?&gt; typeClass = t0_drn.getItemClass();</span>
 
 <span class="fc" id="L154">        int d = call.getDerivativeIndex();</span>
 <span class="fc" id="L155">        CPU.RangeWorkload workload = null;</span>

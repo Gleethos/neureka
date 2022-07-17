@@ -15,55 +15,35 @@ public final class SlicedNDIterator implements NDIterator
 <span class="fc" id="L15">        _conf = ndc;</span>
 <span class="fc" id="L16">    }</span>
 
-    @Override
-    public final int shape( int i ) {
-<span class="fc" id="L20">        return _shape[i];</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L19">    @Override public final int shape( int i ) { return _shape[i]; }</span>
+
+    /** {@inheritDoc} */
+<span class="nc" id="L22">    @Override public final int[] shape() { return _shape; }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L25">    @Override public final void increment() { NDConfiguration.Utility.increment( _indices, _shape ); }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L28">    @Override public final void decrement() { NDConfiguration.Utility.decrement( _indices, _shape ); }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L31">    @Override public final int i() { return _conf.indexOfIndices(_indices); }</span>
+
+    /** {@inheritDoc} */
+<span class="fc" id="L34">    @Override public final int get( int axis ) { return _indices[ axis ]; }</span>
 
     @Override
-    public final int[] shape() {
-<span class="nc" id="L25">        return _shape;</span>
-    }
+<span class="fc" id="L37">    public final int[] get() { return _indices; }</span>
 
     @Override
-    public final void increment() {
-<span class="fc" id="L30">        NDConfiguration.Utility.increment( _indices, _shape );</span>
-<span class="fc" id="L31">    }</span>
+<span class="fc" id="L40">    public final void set( int axis, int position ) { _indices[ axis ] = position; }</span>
 
     @Override
-    public final void decrement() {
-<span class="fc" id="L35">        NDConfiguration.Utility.decrement( _indices, _shape );</span>
-<span class="fc" id="L36">    }</span>
+<span class="fc" id="L43">    public final void set( int[] indices ) { System.arraycopy( indices, 0, _indices, 0, indices.length ); }</span>
 
     @Override
-    public final int i() {
-<span class="fc" id="L40">        return _conf.indexOfIndices(_indices);</span>
-    }
-
-    @Override
-    public final int get( int axis ) {
-<span class="fc" id="L45">        return _indices[ axis ];</span>
-    }
-
-    @Override
-    public final int[] get() {
-<span class="fc" id="L50">        return _indices;</span>
-    }
-
-    @Override
-    public final void set( int axis, int position ) {
-<span class="fc" id="L55">        _indices[ axis ] = position;</span>
-<span class="fc" id="L56">    }</span>
-
-    @Override
-    public final void set( int[] indices ) {
-<span class="fc" id="L60">        System.arraycopy( indices, 0, _indices, 0, indices.length );</span>
-<span class="fc" id="L61">    }</span>
-
-    @Override
-    public final int rank() {
-<span class="fc" id="L65">        return _shape.length;</span>
-    }
+<span class="fc" id="L46">    public final int rank() { return _shape.length; }</span>
 
 
 

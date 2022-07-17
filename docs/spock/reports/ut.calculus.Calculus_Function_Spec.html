@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Mon Jun 06 11:39:52 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Jul 17 20:20:15 CEST 2022 by danie</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.282 seconds</td>
+<td>0.127 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -367,7 +367,7 @@ div.footer {
 <span>Function implementations ensure that internally created tensors are flagged as "intermediate" initially!</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.023 seconds)</div>
+<div class='ex-time'>(0.019 seconds)</div>
 </span>
 </div>
 </td>
@@ -463,21 +463,21 @@ var b = Tsr.of(-2.5)</pre>
 <td class='ex-value'>&lt;executable&gt;</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.020 seconds)</span>
+<span class='ex-time'>(0.019 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>&lt;executable&gt;</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>&lt;executable&gt;</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 </tbody>
@@ -494,7 +494,7 @@ var b = Tsr.of(-2.5)</pre>
 <span>Function implementations ensure that outputs which are input members are not flagged as "intermediate"!</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.007 seconds)</div>
+<div class='ex-time'>(0.004 seconds)</div>
 </span>
 </div>
 </td>
@@ -584,7 +584,7 @@ var b = Tsr.of(-2.5)</pre>
 <td class='ex-value'>&lt;executable&gt;</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.004 seconds)</span>
+<span class='ex-time'>(0.003 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -598,7 +598,7 @@ var b = Tsr.of(-2.5)</pre>
 <td class='ex-value'>&lt;executable&gt;</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 </tbody>
@@ -615,7 +615,7 @@ var b = Tsr.of(-2.5)</pre>
 <span>Function implementations will ensure the "call" and "invoke" does not return tensors flagged as "intermediate".</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.004 seconds)</div>
+<div class='ex-time'>(0.005 seconds)</div>
 </span>
 </div>
 </td>
@@ -674,7 +674,7 @@ t3.isIntermediate()</pre>
 <span>The library context exposes a set of useful functions.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.039 seconds)</div>
+<div class='ex-time'>(0.010 seconds)</div>
 </span>
 </div>
 </td>
@@ -713,7 +713,7 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 <tbody>
 <tr class='ex-pass'>
 <td class='ex-value'>ln(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure12@da70480</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure12@52c1775c</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0.007 seconds)</span>
@@ -721,7 +721,7 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>ln(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure13@1d834b28</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure13@c4364fc</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0.001 seconds)</span>
@@ -729,7 +729,7 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>gaus(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure14@29d02aa2</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure14@e22ec7d</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -737,15 +737,15 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>gaus(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure15@7c97da9e</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure15@3c746295</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>fast_gaus(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure16@27f065</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure16@1aa959e2</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -753,15 +753,7 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>fast_gaus(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure17@240ef9aa</td>
-<td class='ex-result'>
-<span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
-</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>sig(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure18@e6fa178</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure17@e2bfcfb</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -769,31 +761,31 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sig(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure19@75bb3be3</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure18@1f3a1de5</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>tanh(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure20@1d52bc1f</td>
-<td class='ex-result'>
-<span>OK</span>
-<span class='ex-time'>(0.004 seconds)</span>
-</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>tanh(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure21@64adc30c</td>
+<td class='ex-value'>sig(I[0])</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure19@3d4de7ec</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>fast_tanh(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure22@37e76422</td>
+<td class='ex-value'>tanh(I[0])</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure20@60d7f72d</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>tanh(I[0])</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure21@45ebdfba</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -801,15 +793,15 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>fast_tanh(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure23@23be072e</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure22@17955761</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>softsign(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure24@1bad653b</td>
+<td class='ex-value'>fast_tanh(I[0])</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure23@5b0d2129</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -817,15 +809,23 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>softsign(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure25@69d8c092</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure24@6e87f07b</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>softsign(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure26@797c16fa</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure25@3beada7</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>softsign(I[0])</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure26@37248e2f</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -833,31 +833,31 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>quad(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure27@178376d4</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure27@61c5206a</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>quad(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure28@7a29593</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure28@71c24598</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>relu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure29@16596f47</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure29@2ce8ce50</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>relu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure30@65a4322b</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure30@41b62549</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -865,15 +865,15 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>abs(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure31@515dae17</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure31@4958353d</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>abs(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure32@6c8c1ce9</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure32@2dbb542f</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -881,15 +881,15 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sin(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure33@22c72420</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure33@25600e60</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>sin(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure34@2329c86f</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure34@190258cc</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -897,15 +897,15 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>cos(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure35@8896347</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure35@7fb8dff1</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.009 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>cos(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure36@78705cbf</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure36@539ef2aa</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -913,15 +913,15 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>softplus(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure37@1456b9c</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure37@66641be4</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>softplus(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure38@7cd24969</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure38@30c1f4b4</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -929,15 +929,15 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>silu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure39@23d84cd4</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure39@3d494e91</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>silu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure40@620274e5</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure40@4a18b0b3</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -945,15 +945,15 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>gelu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure41@3d914cb2</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure41@3b3f87ae</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>gelu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure42@36df861d</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure42@2df721a</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>
@@ -961,15 +961,15 @@ fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()</pre>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>selu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure43@3b8b746b</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure43@7565b151</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>selu(I[0])</td>
-<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure44@7e052fe1</td>
+<td class='ex-value'>ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure44@515f59b7</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0)</span>

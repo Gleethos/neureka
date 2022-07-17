@@ -87,7 +87,9 @@ public interface Component&lt;O&gt;
      * @param changeRequest An {@link OwnerChangeRequest} implementation instance used to communicate the type of change, context information and the ability to execute the change directly.
      * @return The truth value determining if the state change should be aborted or not.
      */
-    boolean update( OwnerChangeRequest&lt;O&gt; changeRequest );
-
+    default boolean update( OwnerChangeRequest&lt;O&gt; changeRequest ) {
+<span class="fc" id="L91">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
+<span class="fc" id="L92">        return true;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Mon Jun 06 11:39:50 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Jul 17 20:20:21 CEST 2022 by danie</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.330 seconds</td>
+<td>0.089 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -358,7 +358,7 @@ div.footer {
 <span>Various NDConfigurations behaviour exactly as their general purpose implementation.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.220 seconds)</div>
+<div class='ex-time'>(0.036 seconds)</div>
 </span>
 </div>
 </td>
@@ -369,7 +369,7 @@ div.footer {
 </td>
 <td>
 <pre class='block-source'>var ndc1 = SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset)
-var ndc2 = AbstractNDC.construct(shape, translation, indicesMap, spread, offset)
+var ndc2 = NDConfiguration.of(shape, translation, indicesMap, spread, offset)
 var i1 = NDIterator.of(ndc1, NDIterator.NonVirtual.FALSE)
 var i2 = NDIterator.of(ndc2, NDIterator.NonVirtual.FALSE)</pre>
 </td>
@@ -475,7 +475,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.simple.SimpleNDConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.066 seconds)</span>
+<span class='ex-time'>(0.018 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -487,7 +487,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.reshaped.ReshapedNDConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.016 seconds)</span>
+<span class='ex-time'>(0.002 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -499,7 +499,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.sliced.SlicedNDConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.011 seconds)</span>
+<span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -511,7 +511,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.simple.Simple3DConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.013 seconds)</span>
+<span class='ex-time'>(0.002 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -523,7 +523,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.reshaped.Reshaped3DConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.006 seconds)</span>
+<span class='ex-time'>(0.003 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -535,7 +535,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.sliced.Sliced3DConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.006 seconds)</span>
+<span class='ex-time'>(0.002 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -547,7 +547,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.simple.Simple2DConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.003 seconds)</span>
+<span class='ex-time'>(0.002 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -559,7 +559,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.reshaped.Reshaped2DConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.014 seconds)</span>
+<span class='ex-time'>(0.002 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -595,7 +595,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.sliced.Sliced2DConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.063 seconds)</span>
+<span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -631,7 +631,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.simple.Simple1DConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.013 seconds)</span>
+<span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -643,7 +643,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.simple.Simple1DConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -655,7 +655,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.reshaped.Reshaped1DConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -667,7 +667,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.reshaped.Reshaped1DConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.003 seconds)</span>
+<span class='ex-time'>(0)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -679,7 +679,7 @@ ndc1.offset()      == ndc2.offset()</pre>
 <td class='ex-value'>class neureka.ndim.config.types.sliced.Sliced1DConfiguration</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.004 seconds)</span>
+<span class='ex-time'>(0.002 seconds)</span>
 </td>
 </tr>
 </tbody>

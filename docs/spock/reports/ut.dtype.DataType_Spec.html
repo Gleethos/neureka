@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Mon Jun 06 11:39:52 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Jul 17 20:20:14 CEST 2022 by danie</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.034 seconds</td>
+<td>0.030 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -358,16 +358,16 @@ div.footer {
 <tbody>
 <ul id='toc'>
 <li>
-<a href='#1752789137' class='feature-toc-pass'>DataType multiton instances behave as expected.</a>
+<a href='#-2127216738' class='feature-toc-pass'>DataType multi-ton instances behave as expected.</a>
 </li>
 </ul>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='1752789137'>
-<span>DataType multiton instances behave as expected.</span>
+<div class='feature-description' id='-2127216738'>
+<span>DataType multi-ton instances behave as expected.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.003 seconds)</div>
+<div class='ex-time'>(0.001 seconds)</div>
 </span>
 </div>
 </td>
@@ -383,7 +383,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>DataType dt = DataType.of( typeClass )</pre>
+<pre class='block-source'>DataType&lt;?&gt; dt = DataType.of( typeClass )</pre>
 </td>
 </tr>
 <tr>
@@ -457,15 +457,6 @@ div.footer {
 <td class='ex-value'>true</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
-</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>class [B</td>
-<td class='ex-value'>class neureka.dtype.custom.I8</td>
-<td class='ex-value'>true</td>
-<td class='ex-result'>
-<span>OK</span>
 <span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
@@ -488,8 +479,44 @@ div.footer {
 </td>
 </tr>
 <tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>class neureka.dtype.custom.F64</td>
+<td class='ex-value'>true</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>class neureka.dtype.custom.I16</td>
+<td class='ex-value'>true</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>class neureka.dtype.custom.I8</td>
+<td class='ex-value'>true</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
 <td class='ex-value'>class java.lang.String</td>
 <td class='ex-value'>class java.lang.String</td>
+<td class='ex-value'>false</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.util.Date</td>
+<td class='ex-value'>class java.util.Date</td>
 <td class='ex-value'>false</td>
 <td class='ex-result'>
 <span>OK</span>
@@ -519,7 +546,7 @@ div.footer {
 </div>
 </td>
 <td>
-<div class='spec-status'>7/7 passed</div>
+<div class='spec-status'>10/10 passed</div>
 </td>
 </tr>
 </tbody>

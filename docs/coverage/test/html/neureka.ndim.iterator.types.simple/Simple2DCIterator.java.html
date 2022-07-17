@@ -12,8 +12,8 @@ public final class Simple2DCIterator extends Simple2DConfiguration implements ND
 <span class="fc" id="L12">        super( ndc.shape(), ndc.translation() );</span>
 <span class="fc" id="L13">    }</span>
 
-    @Override
-    public final void increment() {
+    /** {@inheritDoc} */
+    @Override public final void increment() {
 <span class="fc" id="L17">        _d2++;</span>
 <span class="fc bfc" id="L18" title="All 2 branches covered.">        if ( _d2 == _shape2 ) {</span>
 <span class="fc" id="L19">            _d2 = 0;</span>
@@ -21,8 +21,8 @@ public final class Simple2DCIterator extends Simple2DConfiguration implements ND
         }
 <span class="fc" id="L22">    }</span>
 
-    @Override
-    public final void decrement() {
+    /** {@inheritDoc} */
+    @Override public final void decrement() {
 <span class="fc" id="L26">        _d2--;</span>
 <span class="fc bfc" id="L27" title="All 2 branches covered.">        if ( _d2 == -1 ) {</span>
 <span class="fc" id="L28">            _d2 = _shape2 - 1;</span>
@@ -30,32 +30,26 @@ public final class Simple2DCIterator extends Simple2DConfiguration implements ND
         }
 <span class="fc" id="L31">    }</span>
 
-    @Override
-    public final int i() {
-<span class="fc" id="L35">        return this.indexOfIndices( _d1, _d2 );</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L34">    @Override public final int i() { return this.indexOfIndices( _d1, _d2 ); }</span>
 
-    @Override
-    public final int get( int axis ) {
-<span class="fc bfc" id="L40" title="All 2 branches covered.">        return ( axis == 0 ) ? _d1 : _d2;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc bfc" id="L37" title="All 2 branches covered.">    @Override public final int get( int axis ) { return ( axis == 0 ? _d1 : _d2 ); }</span>
 
-    @Override
-    public final int[] get() {
-<span class="fc" id="L45">        return new int[]{ _d1, _d2 };</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L40">    @Override public final int[] get() { return new int[]{ _d1, _d2 }; }</span>
 
-    @Override
-    public final void set( int axis, int position ) {
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        if ( axis == 0 ) _d1 = position;</span>
-<span class="fc" id="L51">        else _d2 = position;</span>
+    /** {@inheritDoc} */
+    @Override public final void set( int axis, int position ) {
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if ( axis == 0 ) _d1 = position;</span>
+<span class="fc" id="L45">        else _d2 = position;</span>
+<span class="fc" id="L46">    }</span>
+
+    /** {@inheritDoc} */
+    @Override public final void set( int[] indices ) {
+<span class="fc" id="L50">        _d1 = indices[0];</span>
+<span class="fc" id="L51">        _d2 = indices[1];</span>
 <span class="fc" id="L52">    }</span>
-
-    @Override
-    public final void set( int[] indices ) {
-<span class="fc" id="L56">        _d1 = indices[0];</span>
-<span class="fc" id="L57">        _d2 = indices[1];</span>
-<span class="fc" id="L58">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

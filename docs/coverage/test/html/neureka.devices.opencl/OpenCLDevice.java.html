@@ -58,6 +58,8 @@ import neureka.common.utility.DataConverter;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.CLFunctionCompiler;
+import neureka.dtype.DataType;
+import neureka.dtype.NumericType;
 import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
 import neureka.ndim.config.NDConfiguration;
@@ -78,18 +80,18 @@ import static org.jocl.CL.*;
  */
 public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
 {
-<span class="fc" id="L81">    private static final Logger _LOG = LoggerFactory.getLogger(OpenCLDevice.class);</span>
+<span class="fc" id="L83">    private static final Logger _LOG = LoggerFactory.getLogger(OpenCLDevice.class);</span>
 
     public static OpenCLDevice newInstanceOf(OpenCLPlatform platform, cl_device_id did) {
-<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if (!platform.has(did)) platform.put(did, new OpenCLDevice(platform, did));</span>
-<span class="fc" id="L85">        return platform.get(did);</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if (!platform.has(did)) platform.put(did, new OpenCLDevice(platform, did));</span>
+<span class="fc" id="L87">        return platform.get(did);</span>
     }
 
-<span class="fc" id="L88">    public enum Type {</span>
-<span class="fc" id="L89">        CPU, GPU, ACCELERATOR, DEFAULT, CUSTOM, ALL, UNKNOWN</span>
+<span class="fc" id="L90">    public enum Type {</span>
+<span class="fc" id="L91">        CPU, GPU, ACCELERATOR, DEFAULT, CUSTOM, ALL, UNKNOWN</span>
     }
 
-<span class="fc" id="L92">    enum cl_dtype { F32, F64 }</span>
+<span class="fc" id="L94">    enum cl_dtype { F32, F64 }</span>
 
     /*==================================================================================================================
     |
@@ -105,7 +107,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
      * a reference to a wrapper containing a pointer to the tensors data (cl_data)
      * The latter two lend their identity for garbage collection!
      */
-<span class="fc" id="L108">    static class cl_tsr&lt;V, T extends V&gt; implements Component&lt;Tsr&lt;T&gt;&gt; {</span>
+<span class="fc" id="L110">    static class cl_tsr&lt;V, T extends V&gt; implements Component&lt;Tsr&lt;T&gt;&gt; {</span>
 
         /**
          * This class is responsible for representing the
@@ -115,9 +117,9 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
          * Meaning this inner memory object &quot;cl_mem&quot; will
          * be freed via a call hook stored inside a Cleaner instance...
          */
-<span class="fc" id="L118">        public static class cl_value</span>
+<span class="fc" id="L120">        public static class cl_value</span>
         {
-<span class="fc" id="L120">            public int      size = 0;</span>
+<span class="fc" id="L122">            public int      size = 0;</span>
             public cl_mem   data;
             public cl_event event;
         }
@@ -129,19 +131,19 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
          * Meaning this inner memory object &quot;cl_mem&quot; will
          * be freed via a call hook stored inside a Cleaner instance...
          */
-<span class="fc" id="L132">        public static class cl_config {</span>
+<span class="fc" id="L134">        public static class cl_config {</span>
             public cl_mem data;
         }
 
-<span class="fc" id="L136">        public cl_dtype  dtype = cl_dtype.F32;</span>
+<span class="fc" id="L138">        public cl_dtype  dtype = cl_dtype.F32;</span>
         public cl_config config;
         public cl_value  value;
 
         @Override
         public boolean update(OwnerChangeRequest&lt;Tsr&lt;T&gt;&gt; changeRequest) {
             // Update not needed...
-<span class="fc" id="L143">            changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
-<span class="fc" id="L144">            return true;</span>
+<span class="fc" id="L145">            changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
+<span class="fc" id="L146">            return true;</span>
         }
     }
 
@@ -161,11 +163,11 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
 
         public cl_ad_hoc(
                 String source, cl_kernel kernel, cl_program program
-<span class="fc" id="L164">        ) {</span>
-<span class="fc" id="L165">            this.source = source;</span>
-<span class="fc" id="L166">            this.kernel = kernel;</span>
-<span class="fc" id="L167">            this.program = program;</span>
-<span class="fc" id="L168">        }</span>
+<span class="fc" id="L166">        ) {</span>
+<span class="fc" id="L167">            this.source = source;</span>
+<span class="fc" id="L168">            this.kernel = kernel;</span>
+<span class="fc" id="L169">            this.program = program;</span>
+<span class="fc" id="L170">        }</span>
     }
 
     /*==================================================================================================================
@@ -174,9 +176,9 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     |   ---------------------------
     */
 
-<span class="fc" id="L177">    private final Set&lt;Tsr&lt;Number&gt;&gt; _tensors = Collections.newSetFromMap(new WeakHashMap&lt;&gt;());</span>
+<span class="fc" id="L179">    private final Set&lt;Tsr&lt;Number&gt;&gt; _tensors = Collections.newSetFromMap(new WeakHashMap&lt;&gt;());</span>
 
-<span class="fc" id="L179">    private final KernelCache _kernelCache = new KernelCache();</span>
+<span class="fc" id="L181">    private final KernelCache _kernelCache = new KernelCache();</span>
 
     private final cl_device_id _deviceId;
 
@@ -204,33 +206,33 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
      * @param deviceId The underlying OpenCL id of this device.
      */
     private OpenCLDevice(OpenCLPlatform platform, cl_device_id deviceId) {
-<span class="fc" id="L207">        super();</span>
-<span class="fc" id="L208">        _deviceId = deviceId;</span>
-<span class="fc" id="L209">        _platform = platform;</span>
-<span class="fc" id="L210">        _queue = clCreateCommandQueueWithProperties(// Create a command-queue for the selected device</span>
-<span class="fc" id="L211">                platform.getContext(), deviceId,</span>
+<span class="fc" id="L209">        super();</span>
+<span class="fc" id="L210">        _deviceId = deviceId;</span>
+<span class="fc" id="L211">        _platform = platform;</span>
+<span class="fc" id="L212">        _queue = clCreateCommandQueueWithProperties(// Create a command-queue for the selected device</span>
+<span class="fc" id="L213">                platform.getContext(), deviceId,</span>
                 null,
                 null
         );
-<span class="pc" id="L215">        _cleaning(this, () -&gt; clReleaseCommandQueue(_queue));</span>
-<span class="fc" id="L216">    }</span>
+<span class="pc" id="L217">        _cleaning(this, () -&gt; clReleaseCommandQueue(_queue));</span>
+<span class="fc" id="L218">    }</span>
 
     public String toString() {
-<span class="fc" id="L219">        return &quot;OpenCLDevice[deviceId=&quot; + _deviceId + &quot;,platform=&quot; + _platform + &quot;]&quot;;</span>
+<span class="fc" id="L221">        return &quot;OpenCLDevice[deviceId=&quot; + _deviceId + &quot;,platform=&quot; + _platform + &quot;]&quot;;</span>
     }
 
-<span class="nc" id="L222">    public cl_device_id getDeviceId() { return _deviceId; }</span>
+<span class="nc" id="L224">    public cl_device_id getDeviceId() { return _deviceId; }</span>
 
-<span class="fc" id="L224">    public OpenCLPlatform getPlatform() { return _platform; }</span>
+<span class="fc" id="L226">    public OpenCLPlatform getPlatform() { return _platform; }</span>
 
     public boolean hasAdHocKernel( String name ) {
-<span class="fc" id="L227">        return _kernelCache.has(name);</span>
+<span class="fc" id="L229">        return _kernelCache.has(name);</span>
     }
 
     public KernelCaller getAdHocKernel( String name ) {
-<span class="fc" id="L231">        cl_ad_hoc adHoc = _kernelCache.get(name);</span>
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        if (adHoc != null) return new KernelCaller(adHoc.kernel, _queue);</span>
-<span class="nc" id="L233">        else return null;</span>
+<span class="fc" id="L233">        cl_ad_hoc adHoc = _kernelCache.get(name);</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">        if (adHoc != null) return new KernelCaller(adHoc.kernel, _queue);</span>
+<span class="nc" id="L235">        else return null;</span>
     }
 
     /**
@@ -248,22 +250,22 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
      * @return This very instance in order to enable the factory pattern.
      */
     public synchronized OpenCLDevice compileAdHocKernel(String name, String source) {
-<span class="fc bfc" id="L251" title="All 2 branches covered.">        if (this.hasAdHocKernel(name)) {</span>
-<span class="fc" id="L252">            cl_ad_hoc adHoc = _kernelCache.get(name);</span>
-<span class="fc" id="L253">            String message =</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        if (this.hasAdHocKernel(name)) {</span>
+<span class="fc" id="L254">            cl_ad_hoc adHoc = _kernelCache.get(name);</span>
+<span class="fc" id="L255">            String message =</span>
                 &quot;Cannot compile kernel source for name '&quot; + name + &quot;' because the name is already taken.\n&quot; +
                 &quot;Use another name or find out why this kernel already exists.\n&quot; +
                 (
-<span class="pc bpc" id="L257" title="1 of 2 branches missed.">                        adHoc.source.equals(source)</span>
-<span class="pc" id="L258">                                ? &quot;Besides the name, the source code of the existing kernel is also identical.\n&quot; : &quot;&quot;</span>
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">                        adHoc.source.equals(source)</span>
+<span class="pc" id="L260">                                ? &quot;Besides the name, the source code of the existing kernel is also identical.\n&quot; : &quot;&quot;</span>
                 );
-<span class="fc" id="L260">            _log.error(message);</span>
-<span class="fc" id="L261">            throw new IllegalArgumentException(message);</span>
+<span class="fc" id="L262">            _log.error(message);</span>
+<span class="fc" id="L263">            throw new IllegalArgumentException(message);</span>
         }
 
         // Create the program for the kernel
-<span class="fc" id="L265">        cl_program cpProgram = clCreateProgramWithSource(</span>
-<span class="fc" id="L266">                getPlatform().getContext(),</span>
+<span class="fc" id="L267">        cl_program cpProgram = clCreateProgramWithSource(</span>
+<span class="fc" id="L268">                getPlatform().getContext(),</span>
                 1,
                 new String[]{source},
                 null,
@@ -271,7 +273,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
         );
 
         // Build the program
-<span class="fc" id="L274">        int err = clBuildProgram(</span>
+<span class="fc" id="L276">        int err = clBuildProgram(</span>
                 cpProgram,
                 1,
                 new cl_device_id[]{_deviceId},
@@ -283,27 +285,27 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
         cl_kernel kernel;
         try {
             // Create the kernel
-<span class="fc" id="L286">            kernel = clCreateKernel(cpProgram, name, null);</span>
-<span class="fc" id="L287">        } catch (Exception e) {</span>
-<span class="pc bpc" id="L288" title="2 of 4 branches missed.">            if (e.getMessage().equals(&quot;CL_INVALID_KERNEL_NAME&quot;) &amp;&amp; !source.contains(&quot;__kernel void &quot; + name)) {</span>
-<span class="fc" id="L289">                String message = &quot;Method 'clCreateKernel' failed! The name of the '__kernel' method declared inside \n&quot; +</span>
+<span class="fc" id="L288">            kernel = clCreateKernel(cpProgram, name, null);</span>
+<span class="fc" id="L289">        } catch (Exception e) {</span>
+<span class="pc bpc" id="L290" title="2 of 4 branches missed.">            if (e.getMessage().equals(&quot;CL_INVALID_KERNEL_NAME&quot;) &amp;&amp; !source.contains(&quot;__kernel void &quot; + name)) {</span>
+<span class="fc" id="L291">                String message = &quot;Method 'clCreateKernel' failed! The name of the '__kernel' method declared inside \n&quot; +</span>
                         &quot;the source String does not match the provided name needed for kernel creation.&quot;;
-<span class="fc" id="L291">                _log.error(message, e);</span>
-<span class="fc" id="L292">                throw new IllegalArgumentException(message);</span>
+<span class="fc" id="L293">                _log.error(message, e);</span>
+<span class="fc" id="L294">                throw new IllegalArgumentException(message);</span>
             }
-<span class="nc" id="L294">            _log.error(&quot;Method call 'clCreateKernel(.., name=\&quot;&quot; + name + &quot;\&quot;, ..)' failed!&quot;, e);</span>
-<span class="nc" id="L295">            throw e;</span>
-<span class="fc" id="L296">        }</span>
-<span class="fc" id="L297">        cl_ad_hoc adHoc = new cl_ad_hoc(source, kernel, cpProgram);</span>
+<span class="nc" id="L296">            _log.error(&quot;Method call 'clCreateKernel(.., name=\&quot;&quot; + name + &quot;\&quot;, ..)' failed!&quot;, e);</span>
+<span class="nc" id="L297">            throw e;</span>
+<span class="fc" id="L298">        }</span>
+<span class="fc" id="L299">        cl_ad_hoc adHoc = new cl_ad_hoc(source, kernel, cpProgram);</span>
 
         // Storing the ad hoc object in a weak hash map for fast access by operations :
-<span class="fc" id="L300">        _kernelCache.put( name, adHoc );</span>
+<span class="fc" id="L302">        _kernelCache.put( name, adHoc );</span>
 
-<span class="fc" id="L302">        _cleaning(adHoc, () -&gt; {</span>
-<span class="nc" id="L303">            clReleaseKernel(kernel);</span>
-<span class="nc" id="L304">            clReleaseProgram(cpProgram);</span>
-<span class="nc" id="L305">        });</span>
-<span class="fc" id="L306">        return this;</span>
+<span class="fc" id="L304">        _cleaning(adHoc, () -&gt; {</span>
+<span class="nc" id="L305">            clReleaseKernel(kernel);</span>
+<span class="nc" id="L306">            clReleaseProgram(cpProgram);</span>
+<span class="nc" id="L307">        });</span>
+<span class="fc" id="L308">        return this;</span>
     }
 
 
@@ -315,15 +317,15 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
      */
     @Override
     public synchronized Collection&lt;Tsr&lt;Number&gt;&gt; getTensors() {
-<span class="fc" id="L318">        Collection&lt;Collection&lt;Tsr&lt;Number&gt;&gt;&gt; collection = Collections.singleton(_tensors);</span>
-<span class="fc" id="L319">        Collection&lt;Tsr&lt;Number&gt;&gt; extracted = new ArrayList&lt;&gt;();</span>
-<span class="pc bpc" id="L320" title="1 of 2 branches missed.">        collection.forEach( c -&gt; c.forEach( t -&gt; { if ( t != null ) extracted.add(t); } ) );</span>
-<span class="fc" id="L321">        return extracted;</span>
+<span class="fc" id="L320">        Collection&lt;Collection&lt;Tsr&lt;Number&gt;&gt;&gt; collection = Collections.singleton(_tensors);</span>
+<span class="fc" id="L321">        Collection&lt;Tsr&lt;Number&gt;&gt; extracted = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">        collection.forEach( c -&gt; c.forEach( t -&gt; { if ( t != null ) extracted.add(t); } ) );</span>
+<span class="fc" id="L323">        return extracted;</span>
     }
 
     @Override
     public Operation optimizedOperationOf(Function function, String name) {
-<span class="fc" id="L326">        return new CLFunctionCompiler( this, function, name ).optimize();</span>
+<span class="fc" id="L328">        return new CLFunctionCompiler( this, function, name ).optimize();</span>
     }
 
     /**
@@ -331,10 +333,10 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
      */
     @Override
     public void dispose() {
-<span class="fc" id="L334">        _tensors.forEach( this::restore );</span>
-<span class="fc" id="L335">        clFinish( _queue );</span>
-<span class="fc" id="L336">        clReleaseCommandQueue( _queue );</span>
-<span class="fc" id="L337">    }</span>
+<span class="fc" id="L336">        _tensors.forEach( this::restore );</span>
+<span class="fc" id="L337">        clFinish( _queue );</span>
+<span class="fc" id="L338">        clReleaseCommandQueue( _queue );</span>
+<span class="fc" id="L339">    }</span>
 
     /**
      * This method assumes that the passed tensor is stored on this device instance.
@@ -347,71 +349,75 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
      */
     @Override
     public Device&lt;Number&gt; restore( Tsr&lt;Number&gt; tensor ) {
-<span class="fc bfc" id="L350" title="All 2 branches covered.">        if ( !this.has( tensor ) ) {</span>
-<span class="fc" id="L351">            String message = &quot;The passed tensor cannot be restored from this OpenCL device &quot; +</span>
-                    &quot;because the tensor is not stored on the device.\n&quot;;
-<span class="fc" id="L353">            _log.error(message);</span>
-<span class="fc" id="L354">            throw new IllegalArgumentException(message);</span>
+<span class="fc bfc" id="L352" title="All 2 branches covered.">        if ( !this.has( tensor ) ) {</span>
+<span class="fc" id="L353">            String message = &quot;The passed tensor cannot be restored from this OpenCL device &quot; +</span>
+                                &quot;because the tensor is not stored on the device.\n&quot;;
+<span class="fc" id="L355">            _log.error(message);</span>
+<span class="fc" id="L356">            throw new IllegalArgumentException(message);</span>
         }
-<span class="fc bfc" id="L356" title="All 2 branches covered.">        double[] value = tensor.isVirtual()</span>
-<span class="fc" id="L357">                ? DataConverter.Utility.floatToDouble(_value( new float[1], tensor, 0 ))</span>
-<span class="fc" id="L358">                : DataConverter.Utility.floatToDouble(_value( new float[tensor.size()], tensor, 0 ));</span>
 
-<span class="fc" id="L360">        this.free( tensor );</span>
-<span class="fc" id="L361">        tensor.forComponent( Tsr.class, this::restore );</span>
-<span class="fc" id="L362">        tensor.setValue(value);</span>
-<span class="fc" id="L363">        return this;</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">        Object value  = tensor.isVirtual()</span>
+<span class="fc" id="L360">                            ? _value( new float[1], tensor, 0 )</span>
+<span class="fc" id="L361">                            : _value( new float[tensor.size()], tensor, 0 );</span>
+
+<span class="fc" id="L363">        Class&lt;?&gt; arrayType = Objects.requireNonNull(tensor.getDataType().getTypeClassInstance(NumericType.class)).holderArrayType();</span>
+
+<span class="fc" id="L365">        value = DataConverter.get().convert( value, arrayType );</span>
+
+<span class="fc" id="L367">        this.free( tensor );</span>
+<span class="fc" id="L368">        tensor.forComponent( Tsr.class, this::restore );</span>
+<span class="fc" id="L369">        tensor.setItems( value );</span>
+<span class="fc" id="L370">        return this;</span>
     }
 
     @Override
     public &lt;T extends Number&gt; Device&lt;Number&gt; store( Tsr&lt;T&gt; tensor, Tsr&lt;T&gt; parent ) {
-<span class="fc" id="L368">        _store(tensor, parent, () -&gt; tensor.set((Component) this));</span>
-<span class="fc" id="L369">        return this;</span>
-    }
-
-    private &lt;T extends Number&gt; Device&lt;Number&gt; _store( Tsr&lt;T&gt; tensor, Tsr&lt;T&gt; parent, Runnable migration ) {
-<span class="fc bfc" id="L373" title="All 2 branches covered.">        if (!parent.isOutsourced()) throw new IllegalStateException(&quot;Data parent is not outsourced!&quot;);</span>
-<span class="fc" id="L374">        _add((Tsr&lt;Number&gt;) tensor, parent.get(cl_tsr.class), migration);</span>
-<span class="fc" id="L375">        _tensors.add((Tsr&lt;Number&gt;) tensor);</span>
+<span class="fc" id="L375">        _store(tensor, parent, () -&gt; tensor.set((Component) this));</span>
 <span class="fc" id="L376">        return this;</span>
     }
 
+    private &lt;T extends Number&gt; void _store(Tsr&lt;T&gt; tensor, Tsr&lt;T&gt; parent, Runnable migration ) {
+<span class="fc bfc" id="L380" title="All 2 branches covered.">        if (!parent.isOutsourced()) throw new IllegalStateException(&quot;Data parent is not outsourced!&quot;);</span>
+<span class="fc" id="L381">        _add( tensor.getUnsafe().upcast(Number.class), parent.get(cl_tsr.class), migration);</span>
+<span class="fc" id="L382">        _tensors.add( tensor.getUnsafe().upcast(Number.class) );</span>
+<span class="fc" id="L383">    }</span>
+
     private &lt;T extends Number&gt; void _add( Tsr&lt;Number&gt; tensor, cl_tsr&lt;Number, T&gt; parent, Runnable migration ) {
-<span class="fc bfc" id="L380" title="All 2 branches covered.">        if ( this.has( tensor ) ) {</span>
-<span class="fc" id="L381">            _LOG.debug(&quot;Trying to add a tensor to a device which already reports hosting it.&quot;);</span>
-<span class="fc" id="L382">            return;</span>
+<span class="fc bfc" id="L386" title="All 2 branches covered.">        if ( this.has( tensor ) ) {</span>
+<span class="fc" id="L387">            _LOG.debug(&quot;Trying to add a tensor to a device which already reports hosting it.&quot;);</span>
+<span class="fc" id="L388">            return;</span>
         }
-<span class="fc" id="L384">        cl_tsr&lt;Number, Number&gt; newClt = new cl_tsr&lt;&gt;();</span>
+<span class="fc" id="L390">        cl_tsr&lt;Number, Number&gt; newClt = new cl_tsr&lt;&gt;();</span>
 
         //VALUE TRANSFER:
-<span class="fc bfc" id="L387" title="All 2 branches covered.">        if ( parent == null ) {</span>
-<span class="fc" id="L388">            newClt.value = new cl_tsr.cl_value();</span>
-<span class="fc" id="L389">            _store(tensor, newClt);</span>
-<span class="pc bpc" id="L390" title="1 of 4 branches missed.">            if ( tensor.rqsGradient() &amp;&amp; tensor.has(Tsr.class) )</span>
-<span class="nc" id="L391">                this.store(tensor.getGradient());</span>
+<span class="fc bfc" id="L393" title="All 2 branches covered.">        if ( parent == null ) {</span>
+<span class="fc" id="L394">            newClt.value = new cl_tsr.cl_value();</span>
+<span class="fc" id="L395">            _store(tensor, newClt);</span>
+<span class="pc bpc" id="L396" title="1 of 4 branches missed.">            if ( tensor.rqsGradient() &amp;&amp; tensor.has(Tsr.class) )</span>
+<span class="nc" id="L397">                this.store(tensor.getGradient());</span>
 
             {
-<span class="fc" id="L394">                final cl_mem clValMem = newClt.value.data;</span>
-<span class="fc" id="L395">                cl_event clValEvent = newClt.value.event;</span>
-<span class="fc" id="L396">                _cleaning(newClt.value, () -&gt; {</span>
-<span class="pc bpc" id="L397" title="1 of 2 branches missed.">                    if (clValEvent != null) clWaitForEvents(1, new cl_event[]{clValEvent});</span>
-<span class="fc" id="L398">                    clReleaseMemObject(clValMem);//Removing value.. from device!</span>
-<span class="fc" id="L399">                });</span>
-<span class="fc" id="L400">            }</span>
+<span class="fc" id="L400">                final cl_mem clValMem = newClt.value.data;</span>
+<span class="fc" id="L401">                cl_event clValEvent = newClt.value.event;</span>
+<span class="fc" id="L402">                _cleaning(newClt.value, () -&gt; {</span>
+<span class="pc bpc" id="L403" title="1 of 2 branches missed.">                    if (clValEvent != null) clWaitForEvents(1, new cl_event[]{clValEvent});</span>
+<span class="fc" id="L404">                    clReleaseMemObject(clValMem);//Removing value.. from device!</span>
+<span class="fc" id="L405">                });</span>
+<span class="fc" id="L406">            }</span>
         } else { // Tensor is a subset tensor of parent:
-<span class="fc" id="L402">            newClt.dtype = parent.dtype;</span>
-<span class="fc" id="L403">            newClt.value = parent.value;</span>
+<span class="fc" id="L408">            newClt.dtype = parent.dtype;</span>
+<span class="fc" id="L409">            newClt.value = parent.value;</span>
         }
 
-<span class="fc" id="L406">        newClt.config = _writeNDConfig(tensor.getNDConf());</span>
+<span class="fc" id="L412">        newClt.config = _writeNDConfig(tensor.getNDConf());</span>
 
         cl_mem[] memos;
-<span class="fc bfc" id="L409" title="All 2 branches covered.">        if ( parent == null )</span>
-<span class="fc" id="L410">            memos = new cl_mem[]{newClt.value.data, newClt.config.data};</span>
+<span class="fc bfc" id="L415" title="All 2 branches covered.">        if ( parent == null )</span>
+<span class="fc" id="L416">            memos = new cl_mem[]{newClt.value.data, newClt.config.data};</span>
         else
-<span class="fc" id="L412">            memos = new cl_mem[]{newClt.config.data};</span>
+<span class="fc" id="L418">            memos = new cl_mem[]{newClt.config.data};</span>
 
-<span class="fc" id="L414">        clEnqueueMigrateMemObjects(</span>
+<span class="fc" id="L420">        clEnqueueMigrateMemObjects(</span>
                 _queue,
                 memos.length,
                 memos,
@@ -421,48 +427,48 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
                 null
         );
 
-<span class="fc" id="L424">        _tensors.add( tensor );</span>
+<span class="fc" id="L430">        _tensors.add( tensor );</span>
 
-<span class="fc" id="L426">        tensor.set( newClt );</span>
-<span class="fc" id="L427">        migration.run(); // TODO: REMOVE</span>
+<span class="fc" id="L432">        tensor.set( newClt );</span>
+<span class="fc" id="L433">        migration.run(); // TODO: REMOVE</span>
 
-<span class="fc" id="L429">        tensor.setIsOutsourced( true );</span>
+<span class="fc" id="L435">        tensor.setIsOutsourced( true );</span>
 
         // When tensors get stored on this device,
         // they are implicitly converted to a float tensor:
-<span class="pc bpc" id="L433" title="1 of 2 branches missed.">        if ( Neureka.get().backend().get(CLContext.class).getSettings().isAutoConvertToFloat() )</span>
-<span class="fc" id="L434">            tensor.getUnsafe().toType(F32.class);</span>
-<span class="fc" id="L435">    }</span>
+<span class="pc bpc" id="L439" title="1 of 2 branches missed.">        if ( Neureka.get().backend().get(CLContext.class).getSettings().isAutoConvertToFloat() )</span>
+<span class="fc" id="L440">            tensor.getUnsafe().toType(F32.class);</span>
+<span class="fc" id="L441">    }</span>
 
     private cl_tsr.cl_config _writeNDConfig(NDConfiguration ndc) {
 
-<span class="fc" id="L439">        cl_tsr.cl_config clf = new cl_tsr.cl_config();</span>
+<span class="fc" id="L445">        cl_tsr.cl_config clf = new cl_tsr.cl_config();</span>
 
         //CONFIG TRANSFER: &lt;[ shape | translation | indicesMap | indices | scale ]&gt;
-<span class="fc" id="L442">        int[] config = ndc.asInlineArray();</span>
+<span class="fc" id="L448">        int[] config = ndc.asInlineArray();</span>
 
         //SHAPE/TRANSLATION/IDXMAP/OFFSET/SPREAD TRANSFER:
-<span class="fc" id="L445">        clf.data = clCreateBuffer(</span>
-<span class="fc" id="L446">                _platform.getContext(),</span>
+<span class="fc" id="L451">        clf.data = clCreateBuffer(</span>
+<span class="fc" id="L452">                _platform.getContext(),</span>
                 CL_MEM_READ_WRITE,
                 (long) config.length * Sizeof.cl_int,
                 null, null
         );
 
-<span class="fc" id="L452">        clEnqueueWriteBuffer(</span>
+<span class="fc" id="L458">        clEnqueueWriteBuffer(</span>
                 _queue,
                 clf.data,
                 CL_TRUE,
                 0,
                 (long) config.length * Sizeof.cl_int,
-<span class="fc" id="L458">                Pointer.to(config),</span>
+<span class="fc" id="L464">                Pointer.to(config),</span>
                 0,
                 null,
                 null
         );
-<span class="fc" id="L463">        final cl_mem clConfMem = clf.data;</span>
-<span class="fc" id="L464">        _cleaning(clf, () -&gt; clReleaseMemObject(clConfMem));</span>
-<span class="fc" id="L465">        return clf;</span>
+<span class="fc" id="L469">        final cl_mem clConfMem = clf.data;</span>
+<span class="fc" id="L470">        _cleaning(clf, () -&gt; clReleaseMemObject(clConfMem));</span>
+<span class="fc" id="L471">        return clf;</span>
     }
 
     /**
@@ -476,7 +482,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
      */
     @Override
     public &lt;T extends Number&gt; boolean has( Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L479">        return _tensors.contains(tensor);</span>
+<span class="fc" id="L485">        return _tensors.contains(tensor);</span>
     }
 
 
@@ -484,103 +490,112 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
             Tsr&lt;Number&gt; tensor,
             cl_tsr&lt;?, ?&gt; newClTsr
     ) {
-<span class="fc" id="L487">        Data data = Data.of( tensor.getUnsafe().getData() );</span>
-<span class="fc" id="L488">        newClTsr.value.size = (int) data.getLength();</span>
-<span class="fc" id="L489">        newClTsr.dtype = data.getType();</span>
+<span class="fc" id="L493">        Data data = Data.of( tensor.getUnsafe().getData() );</span>
+<span class="fc" id="L494">        newClTsr.value.size = (int) data.getLength();</span>
+<span class="fc" id="L495">        newClTsr.dtype = data.getType();</span>
         //VALUE TRANSFER:
-<span class="fc" id="L491">        cl_mem mem = clCreateBuffer(</span>
-<span class="fc" id="L492">                _platform.getContext(),</span>
+<span class="fc" id="L497">        cl_mem mem = clCreateBuffer(</span>
+<span class="fc" id="L498">                _platform.getContext(),</span>
                 CL_MEM_READ_WRITE,
-<span class="fc" id="L494">                (long) data.getItemSize() * data.getLength(),</span>
+<span class="fc" id="L500">                (long) data.getItemSize() * data.getLength(),</span>
                 null,
                 null
         );
-<span class="fc" id="L498">        newClTsr.value.data = mem;</span>
-<span class="fc" id="L499">        clEnqueueWriteBuffer(</span>
+<span class="fc" id="L504">        newClTsr.value.data = mem;</span>
+<span class="fc" id="L505">        clEnqueueWriteBuffer(</span>
                 _queue, mem,
                 CL_TRUE, 0,
-<span class="fc" id="L502">                (long) data.getItemSize() * data.getLength(),</span>
-<span class="fc" id="L503">                data.getPointer(), 0, null, null</span>
+<span class="fc" id="L508">                (long) data.getItemSize() * data.getLength(),</span>
+<span class="fc" id="L509">                data.getPointer(), 0, null, null</span>
         );
-<span class="fc" id="L505">    }</span>
+<span class="fc" id="L511">    }</span>
 
     @Override
-    public &lt;T extends Number&gt; Device&lt;Number&gt; free( Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L509">        cl_tsr&lt;?, ?&gt; clt = tensor.get(cl_tsr.class);</span>
-<span class="pc bpc" id="L510" title="1 of 2 branches missed.">        if (clt == null) return this;</span>
-<span class="fc" id="L511">        _tensors.remove(tensor);</span>
-<span class="fc" id="L512">        tensor.setIsOutsourced(false);</span>
-<span class="fc" id="L513">        ((Tsr&lt;Number&gt;) tensor).remove(cl_tsr.class);</span>
-<span class="fc" id="L514">        return this;</span>
+    public final &lt;T extends Number&gt; Device&lt;Number&gt; free( Tsr&lt;T&gt; tensor ) {
+<span class="fc" id="L515">        cl_tsr&lt;?, ?&gt; clt = tensor.get(cl_tsr.class);</span>
+<span class="pc bpc" id="L516" title="1 of 2 branches missed.">        if (clt == null) return this;</span>
+<span class="fc" id="L517">        _tensors.remove(tensor);</span>
+<span class="fc" id="L518">        tensor.setIsOutsourced(false);</span>
+<span class="fc" id="L519">        tensor.remove(cl_tsr.class);</span>
+<span class="fc" id="L520">        return this;</span>
     }
 
     @Override
-    protected &lt;T extends Number&gt; T _readItem( Tsr&lt;T&gt; tensor, int index ) {
-<span class="fc" id="L519">        return (T) Float.valueOf(_value(new float[1], (Tsr&lt;Number&gt;) tensor, index)[0]);</span>
+    protected final &lt;T extends Number&gt; T _readItem( Tsr&lt;T&gt; tensor, int index ) {
+<span class="fc" id="L525">        return (T) Float.valueOf(_value(new float[1], tensor.getUnsafe().upcast(Number.class), index)[0]);</span>
     }
 
     @Override
-    protected &lt;T extends Number, A&gt; A _readArray( Tsr&lt;T&gt; tensor, Class&lt;A&gt; arrayType, int start, int size ) {
-<span class="fc" id="L524">        return (A) _value(new float[size], (Tsr&lt;Number&gt;) tensor, start);</span>
+    protected final &lt;T extends Number, A&gt; A _readArray( Tsr&lt;T&gt; tensor, Class&lt;A&gt; arrayType, int start, int size ) {
+<span class="fc" id="L530">        return (A) _value(new float[size], tensor.getUnsafe().upcast(Number.class), start);</span>
     }
 
     @Override
-    protected &lt;T extends Number&gt; void _writeItem( Tsr&lt;T&gt; tensor, T item, int start, int size ) {
-<span class="fc" id="L529">        _overwrite( tensor, start, Data.of(item, 0, size) );</span>
-<span class="fc" id="L530">    }</span>
+    protected final &lt;T extends Number&gt; void _writeItem( Tsr&lt;T&gt; tensor, T item, int start, int size ) {
+<span class="fc" id="L535">        _overwrite( tensor, start, Data.of(item, 0, size) );</span>
+<span class="fc" id="L536">    }</span>
 
     @Override
-    protected &lt;T extends Number&gt; void _writeArray( Tsr&lt;T&gt; tensor, Object array, int offset, int start, int size ) {
-<span class="fc" id="L534">        _overwrite( tensor, start, Data.of(array, offset, size) );</span>
-<span class="fc" id="L535">    }</span>
+    protected final &lt;T extends Number&gt; void _writeArray( Tsr&lt;T&gt; tensor, Object array, int offset, int start, int size ) {
+<span class="fc" id="L540">        _overwrite( tensor, start, Data.of(array, offset, size) );</span>
+<span class="fc" id="L541">    }</span>
 
-    private Device&lt;Number&gt; _overwrite(
+    @Override
+    protected Object _allocate( DataType&lt;?&gt; dataType, int size ) {
+<span class="nc" id="L545">        throw new IllegalStateException(&quot;Not implemented yet!&quot;); // Currently, tensors can only be initialized on the heap.</span>
+    }
+
+    @Override
+    protected Object _actualize( Tsr&lt;?&gt; tensor ) {
+<span class="nc" id="L550">        throw new IllegalStateException(&quot;Not implemented yet!&quot;); // Currently, tensors can only be initialized on the heap.</span>
+    }
+
+    private void _overwrite(
             Tsr&lt;?&gt; tensor, long offset, Data data
     ) {
-<span class="fc bfc" id="L540" title="All 2 branches covered.">        if ( data.getLength() == 0 ) return this;</span>
-<span class="fc" id="L541">        cl_tsr&lt;?, ?&gt; clt = tensor.get(cl_tsr.class);</span>
-<span class="fc bfc" id="L542" title="All 2 branches covered.">        if (clt.value.event != null) clWaitForEvents(1, new cl_event[]{clt.value.event});</span>
-<span class="fc" id="L543">        clt.value.event = new cl_event();</span>
-<span class="fc" id="L544">        long start = offset * data.getItemSize();</span>
-<span class="fc" id="L545">        long size  = data.getItemSize() * data.getLength();</span>
-<span class="fc" id="L546">        clEnqueueWriteBuffer(</span>
+<span class="fc bfc" id="L556" title="All 2 branches covered.">        if ( data.getLength() == 0 ) return;</span>
+<span class="fc" id="L557">        cl_tsr&lt;?, ?&gt; clt = tensor.get(cl_tsr.class);</span>
+<span class="fc bfc" id="L558" title="All 2 branches covered.">        if (clt.value.event != null) clWaitForEvents(1, new cl_event[]{clt.value.event});</span>
+<span class="fc" id="L559">        clt.value.event = new cl_event();</span>
+<span class="fc" id="L560">        long start = offset * data.getItemSize();</span>
+<span class="fc" id="L561">        long size  = data.getItemSize() * data.getLength();</span>
+<span class="fc" id="L562">        clEnqueueWriteBuffer(</span>
                 _queue, clt.value.data, CL_TRUE,
                 start, size,
-<span class="fc" id="L549">                data.getPointer(), 0, null,</span>
+<span class="fc" id="L565">                data.getPointer(), 0, null,</span>
                 clt.value.event
         );
-<span class="fc" id="L552">        return this;</span>
-    }
+<span class="fc" id="L568">    }</span>
 
     @Override
     protected final &lt;T extends Number&gt; void _swap(Tsr&lt;T&gt; former, Tsr&lt;T&gt; replacement) {
-<span class="nc" id="L557">        cl_tsr&lt;Number, T&gt; clTsr = former.get(cl_tsr.class);</span>
-<span class="nc" id="L558">        former.remove(cl_tsr.class);</span>
-<span class="nc" id="L559">        replacement.set(clTsr);</span>
-<span class="nc" id="L560">        _tensors.remove(former);</span>
-<span class="nc" id="L561">        _tensors.add((Tsr&lt;Number&gt;) replacement);</span>
-<span class="nc" id="L562">    }</span>
+<span class="nc" id="L572">        cl_tsr&lt;Number, T&gt; clTsr = former.get(cl_tsr.class);</span>
+<span class="nc" id="L573">        former.remove(cl_tsr.class);</span>
+<span class="nc" id="L574">        replacement.set(clTsr);</span>
+<span class="nc" id="L575">        _tensors.remove(former);</span>
+<span class="nc" id="L576">        _tensors.add( replacement.getUnsafe().upcast(Number.class) );</span>
+<span class="nc" id="L577">    }</span>
 
     @Override
     public boolean update( OwnerChangeRequest&lt;Tsr&lt;Number&gt;&gt; changeRequest ) {
-<span class="fc" id="L566">        super.update(changeRequest);</span>
-<span class="fc bfc" id="L567" title="All 2 branches covered.">        if (changeRequest.type() == IsBeing.ADDED) {</span>
-<span class="fc" id="L568">            Tsr&lt;Number&gt; newOwner = changeRequest.getNewOwner();</span>
-<span class="fc" id="L569">            _updateInternal(newOwner, changeRequest::executeChange);</span>
-<span class="fc" id="L570">        } else</span>
-<span class="fc" id="L571">            changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
-<span class="fc" id="L572">        return true;</span>
+<span class="fc" id="L581">        super.update(changeRequest);</span>
+<span class="fc bfc" id="L582" title="All 2 branches covered.">        if (changeRequest.type() == IsBeing.ADDED) {</span>
+<span class="fc" id="L583">            Tsr&lt;Number&gt; newOwner = changeRequest.getNewOwner();</span>
+<span class="fc" id="L584">            _updateInternal(newOwner, changeRequest::executeChange);</span>
+<span class="fc" id="L585">        } else</span>
+<span class="fc" id="L586">            changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
+<span class="fc" id="L587">        return true;</span>
     }
 
     @Override
     protected &lt;T extends Number&gt; void _updateNDConf( Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L577">        cl_tsr&lt;?, ?&gt; clt = tensor.get(cl_tsr.class);</span>
-<span class="pc bpc" id="L578" title="1 of 2 branches missed.">        if ( clt != null ) {</span>
+<span class="fc" id="L592">        cl_tsr&lt;?, ?&gt; clt = tensor.get(cl_tsr.class);</span>
+<span class="pc bpc" id="L593" title="1 of 2 branches missed.">        if ( clt != null ) {</span>
             // This will create a new cl config.
-<span class="fc" id="L580">            clt.config = _writeNDConfig(tensor.getNDConf());</span>
+<span class="fc" id="L595">            clt.config = _writeNDConfig(tensor.getNDConf());</span>
             // The old one will be garbage collected through the cleaner!
-<span class="fc" id="L582">            cl_mem[] memos = new cl_mem[]{clt.config.data};</span>
-<span class="fc" id="L583">            clEnqueueMigrateMemObjects(</span>
+<span class="fc" id="L597">            cl_mem[] memos = new cl_mem[]{clt.config.data};</span>
+<span class="fc" id="L598">            clEnqueueMigrateMemObjects(</span>
                     _queue,
                     memos.length,
                     memos,
@@ -590,39 +605,39 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
                     null
             );
         }
-<span class="fc" id="L593">    }</span>
+<span class="fc" id="L608">    }</span>
 
     @Override
-<span class="fc" id="L596">    protected &lt;T extends Number&gt; int _sizeOccupiedBy( Tsr&lt;T&gt; tensor ) { return tensor.get(cl_tsr.class).value.size; }</span>
+<span class="fc" id="L611">    protected &lt;T extends Number&gt; int _sizeOccupiedBy( Tsr&lt;T&gt; tensor ) { return tensor.get(cl_tsr.class).value.size; }</span>
 
     @Override
     protected &lt;T extends Number&gt; Object _readAll( Tsr&lt;T&gt; tensor, boolean clone ) {
-<span class="fc" id="L600">        cl_tsr&lt;?, ?&gt; clt = tensor.get(cl_tsr.class);</span>
-<span class="fc" id="L601">        return _readArray( tensor, float[].class, 0, clt.value.size );</span>
+<span class="fc" id="L615">        cl_tsr&lt;?, ?&gt; clt = tensor.get(cl_tsr.class);</span>
+<span class="fc" id="L616">        return _readArray( tensor, float[].class, 0, clt.value.size );</span>
     }
 
     private void _updateInternal(Tsr&lt;Number&gt; newOwner, Runnable migration) {
-<span class="fc" id="L605">        Tsr&lt;Number&gt; root = null;</span>
-<span class="fc bfc" id="L606" title="All 2 branches covered.">        if (newOwner.has(Relation.class)) root = ((Relation&lt;Number&gt;) newOwner.get(Relation.class)).findRootTensor();</span>
-<span class="fc bfc" id="L607" title="All 2 branches covered.">        if (root != null) store(newOwner, root);</span>
-<span class="fc" id="L608">        else _add(newOwner, null, migration);</span>
-<span class="fc" id="L609">    }</span>
+<span class="fc" id="L620">        Tsr&lt;Number&gt; root = null;</span>
+<span class="fc bfc" id="L621" title="All 2 branches covered.">        if (newOwner.has(Relation.class)) root = ((Relation&lt;Number&gt;) newOwner.get(Relation.class)).findRootTensor();</span>
+<span class="fc bfc" id="L622" title="All 2 branches covered.">        if (root != null) store(newOwner, root);</span>
+<span class="fc" id="L623">        else _add(newOwner, null, migration);</span>
+<span class="fc" id="L624">    }</span>
 
     private &lt;A&gt; A _value( A array, Tsr&lt;Number&gt; tensor, int offset ) {
-<span class="fc" id="L612">        Data data = Data.of( array );</span>
-<span class="fc" id="L613">        cl_tsr&lt;?, ?&gt; clt = tensor.get(cl_tsr.class);</span>
-<span class="fc" id="L614">        clEnqueueReadBuffer(</span>
+<span class="fc" id="L627">        Data data = Data.of( array );</span>
+<span class="fc" id="L628">        cl_tsr&lt;?, ?&gt; clt = tensor.get(cl_tsr.class);</span>
+<span class="fc" id="L629">        clEnqueueReadBuffer(</span>
                 _queue,
                 clt.value.data,
                 CL_TRUE,
-<span class="fc" id="L618">                (long) offset * data.getItemSize(), // one double == eight byte</span>
-<span class="fc" id="L619">                (long) data.getItemSize() * data.getLength(),</span>
-<span class="fc" id="L620">                data.getPointer(),</span>
+<span class="fc" id="L633">                (long) offset * data.getItemSize(), // one double == eight byte</span>
+<span class="fc" id="L634">                (long) data.getItemSize() * data.getLength(),</span>
+<span class="fc" id="L635">                data.getPointer(),</span>
                 0,
                 null,
                 null
         );
-<span class="fc" id="L625">        return (A) data.getData();</span>
+<span class="fc" id="L640">        return (A) data.getData();</span>
     }
 
     /**
@@ -631,23 +646,23 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
      */
     public KernelCaller getKernel( ExecutionCall&lt;OpenCLDevice&gt; call ) {
         String chosen;
-<span class="fc" id="L634">        Algorithm algorithm = call.getAlgorithm();</span>
-<span class="pc bpc" id="L635" title="1 of 2 branches missed.">        DeviceAlgorithm&lt;?&gt; deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm&lt;?&gt;) algorithm) : null );</span>
+<span class="fc" id="L649">        Algorithm algorithm = call.getAlgorithm();</span>
+<span class="pc bpc" id="L650" title="1 of 2 branches missed.">        DeviceAlgorithm&lt;?&gt; deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm&lt;?&gt;) algorithm) : null );</span>
         // We create the kernel name from the chosen algorithm:
-<span class="pc bpc" id="L637" title="1 of 2 branches missed.">        ImplementationFor&lt;OpenCLDevice&gt; impl = ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(OpenCLDevice.class) );</span>
-<span class="pc bpc" id="L638" title="2 of 4 branches missed.">        if ( impl instanceof CLImplementation &amp;&amp; _platform.hasKernel(((CLImplementation) impl).getKernelFor(call).getName()) ) {</span>
-<span class="fc" id="L639">            chosen = ((CLImplementation) impl).getKernelFor( call ).getName();</span>
+<span class="pc bpc" id="L652" title="1 of 2 branches missed.">        ImplementationFor&lt;OpenCLDevice&gt; impl = ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(OpenCLDevice.class) );</span>
+<span class="pc bpc" id="L653" title="2 of 4 branches missed.">        if ( impl instanceof CLImplementation &amp;&amp; _platform.hasKernel(((CLImplementation) impl).getKernelFor(call).getName()) ) {</span>
+<span class="fc" id="L654">            chosen = ((CLImplementation) impl).getKernelFor( call ).getName();</span>
         }
         else
-<span class="nc" id="L642">            chosen = call.getAlgorithm().getName() + &quot;_&quot; + call.getOperation().getIdentifier();</span>
+<span class="nc" id="L657">            chosen = call.getAlgorithm().getName() + &quot;_&quot; + call.getOperation().getIdentifier();</span>
 
-<span class="fc" id="L644">        cl_kernel kernel = _platform.getKernel( chosen );</span>
-<span class="pc bpc" id="L645" title="1 of 2 branches missed.">        if ( kernel == null )</span>
-<span class="nc" id="L646">            throw new IllegalStateException(</span>
-<span class="nc" id="L647">                    &quot;No kernel found for signature '&quot; + chosen + &quot;' for operation '&quot; +  call.getOperation().getIdentifier() + &quot;'.&quot;</span>
+<span class="fc" id="L659">        cl_kernel kernel = _platform.getKernel( chosen );</span>
+<span class="pc bpc" id="L660" title="1 of 2 branches missed.">        if ( kernel == null )</span>
+<span class="nc" id="L661">            throw new IllegalStateException(</span>
+<span class="nc" id="L662">                    &quot;No kernel found for signature '&quot; + chosen + &quot;' for operation '&quot; +  call.getOperation().getIdentifier() + &quot;'.&quot;</span>
                 );
 
-<span class="fc" id="L650">        return new KernelCaller(kernel, _queue);</span>
+<span class="fc" id="L665">        return new KernelCaller(kernel, _queue);</span>
     }
 
     /**
@@ -655,14 +670,14 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
      * @return A {@link KernelCaller} for calling the requested kernel.
      */
     public KernelCaller getKernel( String name ) {
-<span class="nc" id="L658">        cl_kernel kernel = _platform.getKernel( name );</span>
-<span class="nc bnc" id="L659" title="All 2 branches missed.">        if ( kernel == null )</span>
-<span class="nc" id="L660">            throw new IllegalStateException(&quot;No kernel found with name '&quot; + name + &quot;'.&quot;);</span>
-<span class="nc" id="L661">        return new KernelCaller(kernel, _queue);</span>
+<span class="nc" id="L673">        cl_kernel kernel = _platform.getKernel( name );</span>
+<span class="nc bnc" id="L674" title="All 2 branches missed.">        if ( kernel == null )</span>
+<span class="nc" id="L675">            throw new IllegalStateException(&quot;No kernel found with name '&quot; + name + &quot;'.&quot;);</span>
+<span class="nc" id="L676">        return new KernelCaller(kernel, _queue);</span>
     }
 
     @Override
-<span class="fc" id="L665">    protected boolean _approveExecutionOf( Tsr&lt;?&gt;[] tensors, int d, Operation type ) { return true; }</span>
+<span class="fc" id="L680">    protected boolean _approveExecutionOf( Tsr&lt;?&gt;[] tensors, int d, Operation type ) { return true; }</span>
 
 
     /*==================================================================================================================
@@ -671,80 +686,80 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     |   ---------------------------
     */
 
-<span class="fc" id="L674">    public String name() { return Query.getString( _deviceId, CL_DEVICE_NAME ); }</span>
+<span class="fc" id="L689">    public String name() { return Query.getString( _deviceId, CL_DEVICE_NAME ); }</span>
 
-<span class="fc" id="L676">    public String vendor() { return Query.getString(_deviceId, CL_DEVICE_VENDOR); }</span>
+<span class="fc" id="L691">    public String vendor() { return Query.getString(_deviceId, CL_DEVICE_VENDOR); }</span>
 
-<span class="fc" id="L678">    public String version() { return Query.getString(_deviceId, CL_DRIVER_VERSION); }</span>
+<span class="fc" id="L693">    public String version() { return Query.getString(_deviceId, CL_DRIVER_VERSION); }</span>
 
     public Type type() {
-<span class="fc" id="L681">        long deviceType = Query.getLong(_deviceId, CL_DEVICE_TYPE);</span>
-<span class="pc bpc" id="L682" title="1 of 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_CPU) != 0) return Type.CPU;</span>
-<span class="pc bpc" id="L683" title="1 of 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_GPU) != 0) return Type.GPU;</span>
-<span class="nc bnc" id="L684" title="All 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_ACCELERATOR) != 0) return Type.ACCELERATOR;</span>
-<span class="nc bnc" id="L685" title="All 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_DEFAULT) != 0) return Type.DEFAULT;</span>
-<span class="nc bnc" id="L686" title="All 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_CUSTOM) != 0) return Type.CUSTOM;</span>
-<span class="nc bnc" id="L687" title="All 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_ALL) != 0) return Type.ALL;</span>
-<span class="nc" id="L688">        return Type.UNKNOWN;</span>
+<span class="fc" id="L696">        long deviceType = Query.getLong(_deviceId, CL_DEVICE_TYPE);</span>
+<span class="pc bpc" id="L697" title="1 of 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_CPU) != 0) return Type.CPU;</span>
+<span class="pc bpc" id="L698" title="1 of 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_GPU) != 0) return Type.GPU;</span>
+<span class="nc bnc" id="L699" title="All 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_ACCELERATOR) != 0) return Type.ACCELERATOR;</span>
+<span class="nc bnc" id="L700" title="All 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_DEFAULT) != 0) return Type.DEFAULT;</span>
+<span class="nc bnc" id="L701" title="All 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_CUSTOM) != 0) return Type.CUSTOM;</span>
+<span class="nc bnc" id="L702" title="All 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_ALL) != 0) return Type.ALL;</span>
+<span class="nc" id="L703">        return Type.UNKNOWN;</span>
     }
 
-<span class="nc" id="L691">    public int maxComputeUnits() { return Query.getInt(_deviceId, CL_DEVICE_MAX_COMPUTE_UNITS); }</span>
+<span class="nc" id="L706">    public int maxComputeUnits() { return Query.getInt(_deviceId, CL_DEVICE_MAX_COMPUTE_UNITS); }</span>
 
-<span class="nc" id="L693">    public long maxWorkItemSimensions() { return Query.getLong(_deviceId, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS); }</span>
+<span class="nc" id="L708">    public long maxWorkItemSimensions() { return Query.getLong(_deviceId, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS); }</span>
 
-<span class="nc" id="L695">    public long[] maxWorkItemSizes() { return Query.getSizes(_deviceId, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3); }</span>
+<span class="nc" id="L710">    public long[] maxWorkItemSizes() { return Query.getSizes(_deviceId, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3); }</span>
 
-<span class="fc" id="L697">    public long maxWorkGroupSize() { return Query.getSize(_deviceId, CL_DEVICE_MAX_WORK_GROUP_SIZE); }</span>
+<span class="fc" id="L712">    public long maxWorkGroupSize() { return Query.getSize(_deviceId, CL_DEVICE_MAX_WORK_GROUP_SIZE); }</span>
 
-<span class="fc" id="L699">    public long maxClockFrequenzy() { return Query.getLong(_deviceId, CL_DEVICE_MAX_CLOCK_FREQUENCY); }</span>
+<span class="fc" id="L714">    public long maxClockFrequenzy() { return Query.getLong(_deviceId, CL_DEVICE_MAX_CLOCK_FREQUENCY); }</span>
 
-<span class="nc" id="L701">    public int maxAddressBits() { return Query.getInt(_deviceId, CL_DEVICE_ADDRESS_BITS); }</span>
+<span class="nc" id="L716">    public int maxAddressBits() { return Query.getInt(_deviceId, CL_DEVICE_ADDRESS_BITS); }</span>
 
-<span class="nc" id="L703">    public long maxMemAllocSize() { return Query.getLong(_deviceId, CL_DEVICE_MAX_MEM_ALLOC_SIZE); }</span>
+<span class="nc" id="L718">    public long maxMemAllocSize() { return Query.getLong(_deviceId, CL_DEVICE_MAX_MEM_ALLOC_SIZE); }</span>
 
-<span class="fc" id="L705">    public long globalMemSize() { return Query.getLong(_deviceId, CL_DEVICE_GLOBAL_MEM_SIZE); }</span>
+<span class="fc" id="L720">    public long globalMemSize() { return Query.getLong(_deviceId, CL_DEVICE_GLOBAL_MEM_SIZE); }</span>
 
-<span class="nc" id="L707">    public int errorCorrectionSupport() { return Query.getInt(_deviceId, CL_DEVICE_ERROR_CORRECTION_SUPPORT); }</span>
+<span class="nc" id="L722">    public int errorCorrectionSupport() { return Query.getInt(_deviceId, CL_DEVICE_ERROR_CORRECTION_SUPPORT); }</span>
 
-<span class="nc" id="L709">    public int localMemType() { return Query.getInt(_deviceId, CL_DEVICE_LOCAL_MEM_TYPE); }</span>
+<span class="nc" id="L724">    public int localMemType() { return Query.getInt(_deviceId, CL_DEVICE_LOCAL_MEM_TYPE); }</span>
 
-<span class="nc" id="L711">    public long localMemSize() { return Query.getLong(_deviceId, CL_DEVICE_LOCAL_MEM_SIZE); }</span>
+<span class="nc" id="L726">    public long localMemSize() { return Query.getLong(_deviceId, CL_DEVICE_LOCAL_MEM_SIZE); }</span>
 
-<span class="fc" id="L713">    public long maxConstantBufferSize() { return Query.getLong(_deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE); }</span>
+<span class="fc" id="L728">    public long maxConstantBufferSize() { return Query.getLong(_deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE); }</span>
 
-<span class="nc" id="L715">    public long maxConstantBufferSizeKB() { return (int) (Query.getLong(_deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE) / 1024); }</span>
+<span class="nc" id="L730">    public long maxConstantBufferSizeKB() { return (int) (Query.getLong(_deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE) / 1024); }</span>
 
-<span class="nc" id="L717">    public int imageSupport() { return Query.getInt(_deviceId, CL_DEVICE_IMAGE_SUPPORT); }</span>
+<span class="nc" id="L732">    public int imageSupport() { return Query.getInt(_deviceId, CL_DEVICE_IMAGE_SUPPORT); }</span>
 
-<span class="nc" id="L719">    public int maxReadImageArgs() { return Query.getInt(_deviceId, CL_DEVICE_MAX_READ_IMAGE_ARGS); }</span>
+<span class="nc" id="L734">    public int maxReadImageArgs() { return Query.getInt(_deviceId, CL_DEVICE_MAX_READ_IMAGE_ARGS); }</span>
 
-<span class="fc" id="L721">    public int maxWriteImageArgs() { return Query.getInt(_deviceId, CL_DEVICE_MAX_WRITE_IMAGE_ARGS); }</span>
+<span class="fc" id="L736">    public int maxWriteImageArgs() { return Query.getInt(_deviceId, CL_DEVICE_MAX_WRITE_IMAGE_ARGS); }</span>
 
-<span class="nc" id="L723">    public long singleFPConfig() { return Query.getLong(_deviceId, CL_DEVICE_SINGLE_FP_CONFIG); }</span>
+<span class="nc" id="L738">    public long singleFPConfig() { return Query.getLong(_deviceId, CL_DEVICE_SINGLE_FP_CONFIG); }</span>
 
-<span class="fc" id="L725">    public long image2DMaxWidth() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE2D_MAX_WIDTH); }</span>
+<span class="fc" id="L740">    public long image2DMaxWidth() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE2D_MAX_WIDTH); }</span>
 
-<span class="fc" id="L727">    public long image2DMaxHeight() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE2D_MAX_HEIGHT); }</span>
+<span class="fc" id="L742">    public long image2DMaxHeight() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE2D_MAX_HEIGHT); }</span>
 
-<span class="fc" id="L729">    public long image3DMaxWidth() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_WIDTH); }</span>
+<span class="fc" id="L744">    public long image3DMaxWidth() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_WIDTH); }</span>
 
-<span class="fc" id="L731">    public long image3DMaxHeight() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_HEIGHT); }</span>
+<span class="fc" id="L746">    public long image3DMaxHeight() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_HEIGHT); }</span>
 
-<span class="fc" id="L733">    public long image3DMaxDepth() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_DEPTH); }</span>
+<span class="fc" id="L748">    public long image3DMaxDepth() { return Query.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_DEPTH); }</span>
 
-<span class="fc" id="L735">    public int prefVecWidthChar() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR); }</span>
+<span class="fc" id="L750">    public int prefVecWidthChar() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR); }</span>
 
-<span class="fc" id="L737">    public int prefVecWidthShort() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT); }</span>
+<span class="fc" id="L752">    public int prefVecWidthShort() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT); }</span>
 
-<span class="fc" id="L739">    public int prefVecWidthInt() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT); }</span>
+<span class="fc" id="L754">    public int prefVecWidthInt() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT); }</span>
 
-<span class="fc" id="L741">    public int prefVecWidthLong() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG); }</span>
+<span class="fc" id="L756">    public int prefVecWidthLong() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG); }</span>
 
-<span class="fc" id="L743">    public int prefVecWidthFloat() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT); }</span>
+<span class="fc" id="L758">    public int prefVecWidthFloat() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT); }</span>
 
-<span class="fc" id="L745">    public int prefVecWidthDouble() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE); }</span>
+<span class="fc" id="L760">    public int prefVecWidthDouble() { return Query.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE); }</span>
 
-<span class="nc" id="L747">    public static class Query {</span>
+<span class="nc" id="L762">    public static class Query {</span>
         /**
          * Returns the value of the device info parameter with the given name
          *
@@ -753,7 +768,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
          * @return The value
          */
         public static int getInt(cl_device_id device, int paramName) {
-<span class="fc" id="L756">            return getInts(device, paramName, 1)[0];</span>
+<span class="fc" id="L771">            return getInts(device, paramName, 1)[0];</span>
         }
 
         /**
@@ -765,9 +780,9 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
          * @return The value
          */
         public static int[] getInts(cl_device_id device, int paramName, int numValues) {
-<span class="fc" id="L768">            int[] values = new int[numValues];</span>
-<span class="fc" id="L769">            clGetDeviceInfo(device, paramName, (long) Sizeof.cl_int * numValues, Pointer.to(values), null);</span>
-<span class="fc" id="L770">            return values;</span>
+<span class="fc" id="L783">            int[] values = new int[numValues];</span>
+<span class="fc" id="L784">            clGetDeviceInfo(device, paramName, (long) Sizeof.cl_int * numValues, Pointer.to(values), null);</span>
+<span class="fc" id="L785">            return values;</span>
         }
 
         /**
@@ -778,7 +793,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
          * @return The value
          */
         public static long getLong(cl_device_id device, int paramName) {
-<span class="fc" id="L781">            return getLongs(device, paramName, 1)[0];</span>
+<span class="fc" id="L796">            return getLongs(device, paramName, 1)[0];</span>
         }
 
         /**
@@ -790,9 +805,9 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
          * @return The value
          */
         public static long[] getLongs(cl_device_id device, int paramName, int numValues) {
-<span class="fc" id="L793">            long[] values = new long[numValues];</span>
-<span class="fc" id="L794">            clGetDeviceInfo(device, paramName, (long) Sizeof.cl_long * numValues, Pointer.to(values), null);</span>
-<span class="fc" id="L795">            return values;</span>
+<span class="fc" id="L808">            long[] values = new long[numValues];</span>
+<span class="fc" id="L809">            clGetDeviceInfo(device, paramName, (long) Sizeof.cl_long * numValues, Pointer.to(values), null);</span>
+<span class="fc" id="L810">            return values;</span>
         }
 
         /**
@@ -804,15 +819,15 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
          */
         public static String getString(cl_device_id device, int paramName) {
             // Obtain the length of the string that will be queried
-<span class="fc" id="L807">            long[] size = new long[1];</span>
-<span class="fc" id="L808">            clGetDeviceInfo(device, paramName, 0, null, size);</span>
+<span class="fc" id="L822">            long[] size = new long[1];</span>
+<span class="fc" id="L823">            clGetDeviceInfo(device, paramName, 0, null, size);</span>
 
             // Create a buffer of the appropriate size and fill it with the info
-<span class="fc" id="L811">            byte[] buffer = new byte[(int) size[0]];</span>
-<span class="fc" id="L812">            clGetDeviceInfo(device, paramName, buffer.length, Pointer.to(buffer), null);</span>
+<span class="fc" id="L826">            byte[] buffer = new byte[(int) size[0]];</span>
+<span class="fc" id="L827">            clGetDeviceInfo(device, paramName, buffer.length, Pointer.to(buffer), null);</span>
 
             // Create a string from the buffer (excluding the trailing \0 byte)
-<span class="fc" id="L815">            return new String(buffer, 0, buffer.length - 1);</span>
+<span class="fc" id="L830">            return new String(buffer, 0, buffer.length - 1);</span>
         }
 
         /**
@@ -824,15 +839,15 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
          */
         public static String getString(cl_platform_id platform, int paramName) {
             // Obtain the length of the string that will be queried
-<span class="nc" id="L827">            long[] size = new long[1];</span>
-<span class="nc" id="L828">            clGetPlatformInfo(platform, paramName, 0, null, size);</span>
+<span class="nc" id="L842">            long[] size = new long[1];</span>
+<span class="nc" id="L843">            clGetPlatformInfo(platform, paramName, 0, null, size);</span>
 
             // Create a buffer of the appropriate size and fill it with the info
-<span class="nc" id="L831">            byte[] buffer = new byte[(int) size[0]];</span>
-<span class="nc" id="L832">            clGetPlatformInfo(platform, paramName, buffer.length, Pointer.to(buffer), null);</span>
+<span class="nc" id="L846">            byte[] buffer = new byte[(int) size[0]];</span>
+<span class="nc" id="L847">            clGetPlatformInfo(platform, paramName, buffer.length, Pointer.to(buffer), null);</span>
 
             // Create a string from the buffer (excluding the trailing \0 byte)
-<span class="nc" id="L835">            return new String(buffer, 0, buffer.length - 1);</span>
+<span class="nc" id="L850">            return new String(buffer, 0, buffer.length - 1);</span>
         }
 
         /**
@@ -843,7 +858,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
          * @return The value64
          */
         public static long getSize(cl_device_id device, int paramName) {
-<span class="fc" id="L846">            return getSizes(device, paramName, 1)[0];</span>
+<span class="fc" id="L861">            return getSizes(device, paramName, 1)[0];</span>
         }
 
         /**
@@ -857,25 +872,25 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
         public static long[] getSizes(cl_device_id device, int paramName, int numValues) {
             // The size of the returned data has to depend on
             // the size of a size_t, which is handled here
-<span class="fc" id="L860">            ByteBuffer buffer = ByteBuffer.allocate(numValues * Sizeof.size_t).order(ByteOrder.nativeOrder());</span>
-<span class="fc" id="L861">            clGetDeviceInfo(</span>
+<span class="fc" id="L875">            ByteBuffer buffer = ByteBuffer.allocate(numValues * Sizeof.size_t).order(ByteOrder.nativeOrder());</span>
+<span class="fc" id="L876">            clGetDeviceInfo(</span>
                     device,
                     paramName,
                     (long) Sizeof.size_t * numValues,
-<span class="fc" id="L865">                    Pointer.to(buffer),</span>
+<span class="fc" id="L880">                    Pointer.to(buffer),</span>
                     null
             );
-<span class="fc" id="L868">            long[] values = new long[numValues];</span>
-<span class="pc bpc" id="L869" title="1 of 2 branches missed.">            if (Sizeof.size_t == 4) {</span>
-<span class="nc bnc" id="L870" title="All 2 branches missed.">                for (int i = 0; i &lt; numValues; i++) {</span>
-<span class="nc" id="L871">                    values[i] = buffer.getInt(i * Sizeof.size_t);</span>
+<span class="fc" id="L883">            long[] values = new long[numValues];</span>
+<span class="pc bpc" id="L884" title="1 of 2 branches missed.">            if (Sizeof.size_t == 4) {</span>
+<span class="nc bnc" id="L885" title="All 2 branches missed.">                for (int i = 0; i &lt; numValues; i++) {</span>
+<span class="nc" id="L886">                    values[i] = buffer.getInt(i * Sizeof.size_t);</span>
                 }
             } else {
-<span class="fc bfc" id="L874" title="All 2 branches covered.">                for (int i = 0; i &lt; numValues; i++) {</span>
-<span class="fc" id="L875">                    values[i] = buffer.getLong(i * Sizeof.size_t);</span>
+<span class="fc bfc" id="L889" title="All 2 branches covered.">                for (int i = 0; i &lt; numValues; i++) {</span>
+<span class="fc" id="L890">                    values[i] = buffer.getLong(i * Sizeof.size_t);</span>
                 }
             }
-<span class="fc" id="L878">            return values;</span>
+<span class="fc" id="L893">            return values;</span>
         }
 
     }

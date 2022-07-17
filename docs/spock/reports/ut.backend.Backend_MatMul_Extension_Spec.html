@@ -1,0 +1,841 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
+}
+
+h3 {
+    font-weight: 200;
+}
+
+table {
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+}
+
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+table.features-table {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table {
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table th {
+    background: lightblue;
+    padding: 6px;
+}
+
+table.summary-table td {
+    background: #E0E0E0;
+    padding: 6px;
+}
+
+pre.title {
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+pre.narrative {
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+.feature-description {
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
+}
+
+.feature-toc-error {
+    color: #F89A4F;
+}
+
+.feature-toc-failure {
+    color: #FF8080;
+}
+
+.feature-toc-ignored {
+    color: lightgray;
+}
+
+.feature-toc-pass {
+    color: green;
+}
+
+.feature-description.error {
+    background: #F89A4F;
+}
+
+.feature-description.failure {
+    background: #FF8080;
+}
+
+.feature-description.ignored {
+    background: lightgray;
+}
+
+.feature-description.ignored .reason {
+    color: black;
+    font-style: italic;
+    font-size: small;
+}
+
+div.extra-info {
+    font-size: small;
+}
+
+div.spec-headers {
+    margin: 4px;
+    font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
+}
+
+div.pending-feature {
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
+}
+
+div.problem-description {
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
+}
+
+div.problem-header {
+    font-weight: bold;
+    color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table{
+    width: 98%;
+}
+
+table.ex-table th {
+    background: lightblue;
+    padding: 5px;
+}
+
+table.ex-table td {
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
+}
+
+table td {
+    min-width: 50px;
+}
+
+col.block-kind-col {
+    width: 70px;
+}
+
+span.spec-header {
+    font-weight: bold;
+}
+
+div.spec-text {
+    /*color: green;*/
+}
+
+div.spec-status {
+    font-style: italic;
+}
+
+.ignored {
+    color: gray;
+}
+
+td.ex-result {
+    text-align: center;
+    background: white !important;
+}
+
+.ex-pass {
+    color: darkgreen;
+}
+
+.ex-fail {
+    color: red;
+    font-weight: bold;
+}
+
+div.block-kind {
+    margin: 2px;
+    font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+pre.block-source.error {
+    background-color: pink;
+    color: red;
+    font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+    margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+    color: gray;
+    margin-top: -14px;
+}
+
+pre.block-source.post-error {
+    color: gray;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}</style>
+</head>
+<body>
+<h2>Report for ut.backend.Backend_MatMul_Extension_Spec</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Sun Jul 17 20:20:14 CEST 2022 by danie</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>0.232 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#-206912866' class='feature-toc-pass'>GEMM matrix multiplication reference implementation can be set as custom OperationType and works as expected.</a>
+</li>
+<li>
+<a href='#1899090721' class='feature-toc-pass'>Test context mock for opencl reference implementations.</a>
+</li>
+<li>
+<a href='#20392533' class='feature-toc-pass'>Tile parsing for kernel parameter calculation yields expected tile dimensions.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-206912866'>
+<span>GEMM matrix multiplication reference implementation can be set as custom OperationType and works as expected.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.168 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>BackendContext oldContext = Neureka.get().backend()
+BackendContext testContext = oldContext.clone()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>def run = testContext.runner()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>run { testContext == Neureka.get().backend() }</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr t1 = Tsr.of([row_sze, com_sze], -3d..8d)
+Tsr t2 = Tsr.of([com_sze, col_sze], -7d..4d)
+run {
+                Neureka.get().backend()
+                    .addOperation(
+                            Operation
+                                .builder()
+                                .setIdentifier('test_function')
+                                .setOperator('test_function')
+                                .setArity(-1)
+                                .setIsIndexer(false)
+                                .setIsOperator(false)
+                                .setIsDifferentiable(true)
+                                .setIsInline(false)
+                                .setStringifier(
+                                        children -&gt; {
+                                            String expression = String.join(", ", children);
+                                            if (expression.charAt(0) == '(' &amp;&amp; expression.charAt(expression.length() - 1) == ')') {
+                                                return "test_function" + expression;
+                                            }
+                                            return "test_function" + "(" + expression + ")";
+                                        }
+                                )
+                                .build()
+                                .setAlgorithm(
+                                        DeviceAlgorithm.withName("my_algorithm")
+                                            .setIsSuitableFor(call -&gt; SuitabilityPredicate.GOOD  )
+                                            .setAutogradModeFor(call -&gt; AutoDiffMode.BACKWARD_ONLY )
+                                            .setExecution( (caller, call) -&gt;
+                                                Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
+                                                    .withAutoDiff((Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; adCall, boolean forward) -&gt; {
+                                                        if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
+                                                        return ADAgent.withAD((t, error) -&gt; new FunctionParser( Neureka.get().backend() ).parse(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                                    })
+                                            )
+                                            .setCallPreparation(
+                                                    call -&gt; {
+                                                         Device&lt;?&gt; device = call.getDevice();
+                                                        if ( call.input( 0 ) == null ) // Creating a new tensor:
+                                                        {
+                                                            int[] shp = new int[]{call.input( 1 ).getNDConf().shape(0), call.input( 2 ).getNDConf().shape(1)}
+                                                            Tsr output = Tsr.of(shp, 0.0);
+                                                            output.setIsVirtual(false);
+                                                            device.store( output );
+                                                            call.setInput( 0, output );
+                                                        }
+                                                        return call;
+                                                    }
+                                            )
+                                            .setImplementationFor(
+                                                    CPU.class,
+                                                    CPUImplementation
+                                                        .withArity(3)
+                                                        .andImplementation(
+                                                            (call) -&gt; {
+                                                                Tsr drn = call.input(Number.class, 0)
+                                                                Tsr src1 = call.input(Number.class, 1)
+                                                                Tsr src2 = call.input(Number.class, 2)
+                                                                assert src1.shape(1) == src2.shape(0)
+
+                                                                //for ( int i=0; i&lt;clContext.getGws(); i++ ) {
+                                                                //    kernel.gemm_template(
+                                                                //            drn.getDataAs( float[].class ),                     //__global float[] drain,
+                                                                //            drn.getNDConf().asInlineArray(),   //__global int[] drn_conf,
+                                                                //            src1.getDataAs( float[].class ),                    //const __global float[] src1,
+                                                                //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,
+                                                                //            src2.getDataAs( float[].class ),                    //const __global float[] src2,
+                                                                //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,
+                                                                //            //call.getTsrOfType( Number.class, 0).rank(),//int rank, == 2
+                                                                //            //-1, //const int d,
+                                                                //            clContext.getMaxTSRow(),//128, //const u int max_ts_row,//  = 128, // ts := tile size
+                                                                //            clContext.getMaxTSCol(),//128, //const u int max_ts_col,//  = 128,
+                                                                //            clContext.getMaxTSCom(),//16, //const u int max_ts_com,//  = 16,
+                                                                //            clContext.getMaxWPTRow(),//8, //const u int max_wpt_row,// = 8,   // wpt := work per thread
+                                                                //            clContext.getMaxWPTCol()//8  //const u int max_wpt_col // = 8,
+                                                                //    )
+                                                                //    clContext.increment()
+                                                                //}
+                                                            }
+                                                        )
+                                            )
+                                            .buildFunAlgorithm()
+                                )
+                )
+            }
+Function testFun = run { Function.of("test_function(I[0],I[1])") }</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>testFun.toString() == "test_function(I[0], I[1])"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr t3 = run { testFun([t1, t2]) }</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t3 != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().backend() == oldContext</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>lws</th>
+<th class='ex-header'>rws</th>
+<th class='ex-header'>com_sze</th>
+<th class='ex-header'>row_sze</th>
+<th class='ex-header'>col_sze</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>320</td>
+<td class='ex-value'>32</td>
+<td class='ex-value'>80</td>
+<td class='ex-value'>640</td>
+<td class='ex-value'>640</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.162 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>32</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>8</td>
+<td class='ex-value'>64</td>
+<td class='ex-value'>64</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.006 seconds)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1899090721'>
+<span>Test context mock for opencl reference implementations.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.008 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>clContext.getMaxWPTCol()==wpt_col
+clContext.getMaxWPTRow()==wpt_row
+clContext.getMaxTSCom()==ts_com
+clContext.getMaxTSCol()==ts_col
+clContext.getMaxTSRow()==ts_row</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>lws</th>
+<th class='ex-header'>rws</th>
+<th class='ex-header'>com_sze</th>
+<th class='ex-header'>row_sze</th>
+<th class='ex-header'>col_sze</th>
+<th class='ex-header'>ts_com</th>
+<th class='ex-header'>ts_row</th>
+<th class='ex-header'>ts_col</th>
+<th class='ex-header'>wpt_row</th>
+<th class='ex-header'>wpt_col</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>32</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>8</td>
+<td class='ex-value'>64</td>
+<td class='ex-value'>64</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>4</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.007 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>320</td>
+<td class='ex-value'>32</td>
+<td class='ex-value'>80</td>
+<td class='ex-value'>640</td>
+<td class='ex-value'>640</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>4</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>738</td>
+<td class='ex-value'>84</td>
+<td class='ex-value'>345</td>
+<td class='ex-value'>848</td>
+<td class='ex-value'>738</td>
+<td class='ex-value'>23</td>
+<td class='ex-value'>16</td>
+<td class='ex-value'>18</td>
+<td class='ex-value'>8</td>
+<td class='ex-value'>9</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>3/3 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='20392533'>
+<span>Tile parsing for kernel parameter calculation yields expected tile dimensions.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.004 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>int[] result = DispatchUtility.parseTile( size, shape as int[] )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>result == expected as int[]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>size</th>
+<th class='ex-header'>shape</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>800</td>
+<td class='ex-value'>[432, 93, 352, 193]</td>
+<td class='ex-value'>[8, 31, 4, 1]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.004 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>1800</td>
+<td class='ex-value'>[432, 903, 3520, 193]</td>
+<td class='ex-value'>[108, 3, 8, 1]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>800</td>
+<td class='ex-value'>[422, 293]</td>
+<td class='ex-value'>[2, 293]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>600</td>
+<td class='ex-value'>[993]</td>
+<td class='ex-value'>[331]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>200</td>
+<td class='ex-value'>[252, 143]</td>
+<td class='ex-value'>[12, 13]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>100</td>
+<td class='ex-value'>[100, 100]</td>
+<td class='ex-value'>[10, 5]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>100</td>
+<td class='ex-value'>[400, 100]</td>
+<td class='ex-value'>[8, 5]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>255</td>
+<td class='ex-value'>[470, 652]</td>
+<td class='ex-value'>[47, 4]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>255</td>
+<td class='ex-value'>[7849, 4782]</td>
+<td class='ex-value'>[47, 6]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>16384</td>
+<td class='ex-value'>[256, 256]</td>
+<td class='ex-value'>[128, 128]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>64</td>
+<td class='ex-value'>[128, 128]</td>
+<td class='ex-value'>[8, 8]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>16</td>
+<td class='ex-value'>[4, 4]</td>
+<td class='ex-value'>[4, 4]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>12/12 passed</div>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>

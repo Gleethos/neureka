@@ -61,7 +61,7 @@ import java.util.stream.IntStream;
  *
  * @param &lt;V&gt; The type of the values which ought to be represented by the {@link Tsr} built by this {@link TensorBuilder}.
  */
-public final class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDevice&lt;V&gt;, IterByOrIterFromOrAll&lt;V&gt;, To&lt;V&gt;, Step&lt;V&gt;
+public final class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDevice&lt;V&gt;, IterByOrIterFromOrAllTsr&lt;V&gt;, ToForTsr&lt;V&gt;, StepForTsr&lt;V&gt;
 {
 <span class="fc" id="L66">    private static final Logger _LOG = LoggerFactory.getLogger(TensorBuilder.class);</span>
 
@@ -89,7 +89,7 @@ public final class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOn
     @SafeVarargs
     @Override
     public final Tsr&lt;V&gt; andFill( V... values ) {
-<span class="fc" id="L92">        LogUtil.nullArgCheck( values, &quot;values&quot;, _dataType.getValueTypeClass(), &quot;Cannot fill a tensor will a value array that is null!&quot; );</span>
+<span class="fc" id="L92">        LogUtil.nullArgCheck( values, &quot;values&quot;, _dataType.getItemTypeClass(), &quot;Cannot fill a tensor will a value array that is null!&quot; );</span>
 <span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if ( _isAllOne(values) ) return _get( values[0] );</span>
 <span class="fc" id="L94">        return _get( values );</span>
     }
@@ -122,8 +122,8 @@ public final class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOn
     }
 
     @Override
-    public To&lt;V&gt; andFillFrom( V index ) {
-<span class="fc" id="L126">        LogUtil.nullArgCheck(index, &quot;index&quot;, _dataType.getValueTypeClass(), &quot;Cannot create a range where the last index is undefined!&quot;);</span>
+    public ToForTsr&lt;V&gt; andFillFrom( V index ) {
+<span class="fc" id="L126">        LogUtil.nullArgCheck(index, &quot;index&quot;, _dataType.getItemTypeClass(), &quot;Cannot create a range where the last index is undefined!&quot;);</span>
 <span class="fc" id="L127">        _from = _checked(index);</span>
 <span class="fc" id="L128">        return this;</span>
     }
@@ -133,7 +133,7 @@ public final class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOn
 
     @Override
     public Tsr&lt;V&gt; andSeed( Object seed ) {
-<span class="fc" id="L136">        Class&lt;V&gt; type = _dataType.getValueTypeClass();</span>
+<span class="fc" id="L136">        Class&lt;V&gt; type = _dataType.getItemTypeClass();</span>
 <span class="fc" id="L137">        Class&lt;?&gt; seedType = seed.getClass();</span>
         try {
 <span class="fc" id="L139">            Function random = Neureka.get().backend().getFunction().random();</span>
@@ -154,7 +154,7 @@ public final class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOn
     }
 
     @Override
-    public IterByOrIterFromOrAll&lt;V&gt; withShape( int... shape ) {
+    public IterByOrIterFromOrAllTsr&lt;V&gt; withShape( int... shape ) {
 <span class="fc" id="L158">        LogUtil.nullArgCheck(shape, &quot;shape&quot;, int[].class, &quot;Cannot create a tensor without shape!&quot;);</span>
 <span class="fc bfc" id="L159" title="All 2 branches covered.">        if ( shape.length == 0 )</span>
 <span class="fc" id="L160">            throw new IllegalArgumentException(&quot;Cannot instantiate a tensor without shape arguments.&quot;);</span>
@@ -174,7 +174,7 @@ public final class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOn
     public Tsr&lt;V&gt; scalar( V value ) {
 <span class="pc bpc" id="L175" title="1 of 2 branches missed.">        if ( value != null ) {</span>
 <span class="fc" id="L176">            value = _checked( value );</span>
-<span class="pc bpc" id="L177" title="1 of 2 branches missed.">            if ( value.getClass() != _dataType.getValueTypeClass() )</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">            if ( value.getClass() != _dataType.getItemTypeClass() )</span>
 <span class="nc" id="L178">                throw new IllegalArgumentException(&quot;Provided value is of the wrong type!&quot;);</span>
         }
 <span class="fc" id="L180">        _shape = new int[]{ 1 };</span>
@@ -189,7 +189,7 @@ public final class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOn
      * @return The value converted to the type defined by the provided {@link #_dataType}.
      */
     private V _checked( V o ) {
-<span class="fc" id="L192">        Class&lt;?&gt; jvmType = _dataType.getValueTypeClass();</span>
+<span class="fc" id="L192">        Class&lt;?&gt; jvmType = _dataType.getItemTypeClass();</span>
 <span class="pc bpc" id="L193" title="1 of 2 branches missed.">        if ( Number.class.isAssignableFrom(jvmType) ) {</span>
 <span class="pc bpc" id="L194" title="1 of 4 branches missed.">            if ( o instanceof Number &amp;&amp; o.getClass() != jvmType ) {</span>
 <span class="fc" id="L195">                Number n = (Number) o;</span>
@@ -205,7 +205,7 @@ public final class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOn
     }
 
     @Override
-<span class="fc" id="L208">    public Step&lt;V&gt; to( V index ) { _to = _checked(index); return this; }</span>
+<span class="fc" id="L208">    public StepForTsr&lt;V&gt; to( V index ) { _to = _checked(index); return this; }</span>
 
     @Override
     public Tsr&lt;V&gt; step( double size ) {
@@ -285,7 +285,7 @@ public final class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOn
     }
 
     @Override
-    public WithShapeOrScalarOrVector&lt;V&gt; on( Device&lt;V&gt; device ) {
+    public WithShapeOrScalarOrVectorTsr&lt;V&gt; on( Device&lt;V&gt; device ) {
 <span class="fc" id="L289">        LogUtil.nullArgCheck(device, &quot;device&quot;, Device.class, &quot;Cannot create a tensor with an undefined device!&quot;);</span>
 <span class="fc" id="L290">        _device = device;</span>
 <span class="fc" id="L291">        return this;</span>

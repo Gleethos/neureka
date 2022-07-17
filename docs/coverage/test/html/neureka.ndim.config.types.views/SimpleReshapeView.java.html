@@ -19,112 +19,93 @@ public class SimpleReshapeView extends AbstractNDC
     private final int[] _spread;
     private final int[] _offset;
 
+
     public SimpleReshapeView( int[] form, NDConfiguration toBeViewed )
-<span class="fc" id="L23">    {</span>
-<span class="fc" id="L24">        _toBeViewed = toBeViewed;</span>
-<span class="fc" id="L25">        _form = form;</span>
+<span class="fc" id="L24">    {</span>
+<span class="fc" id="L25">        _toBeViewed = toBeViewed;</span>
+<span class="fc" id="L26">        _form = form;</span>
 
-<span class="fc" id="L27">        List&lt;Integer&gt; _translator = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L28">        List&lt;Integer&gt; _translator = new ArrayList&lt;&gt;();</span>
 
-<span class="fc bfc" id="L29" title="All 2 branches covered.">        for ( int i=0; i &lt; form.length; i++ )</span>
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">                if ( form[ i ] &lt; -1 ) throw new IllegalArgumentException(</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        for ( int j : form )</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">            if ( j &lt; -1 )</span>
+<span class="nc" id="L32">                throw new IllegalArgumentException(</span>
                     &quot;SimpleReshapeView may not view a NDConfiguration beyond reshaping and or padding!&quot;
                 );
-<span class="fc bfc" id="L33" title="All 2 branches covered.">            else if ( form[ i ] &gt;= 0 )  _translator.add( form[ i ] );</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">            else if ( j &gt;= 0 )</span>
+<span class="fc" id="L36">                _translator.add( j );</span>
 
-<span class="fc" id="L35">        _formTranslator = _translator.stream().mapToInt( e -&gt; e ).toArray();</span>
+<span class="fc" id="L38">        _formTranslator = _translator.stream().mapToInt( e -&gt; e ).toArray();</span>
 
 
-<span class="fc" id="L38">        NDConfiguration ndc = _simpleReshape( form, toBeViewed );</span>
-<span class="fc" id="L39">        _shape = ndc.shape();</span>
-<span class="fc" id="L40">        _translation = ndc.translation();</span>
-<span class="fc" id="L41">        _indicesMap = ndc.indicesMap();</span>
-<span class="fc" id="L42">        _spread = ndc.spread();</span>
-<span class="fc" id="L43">        _offset = ndc.offset();</span>
-<span class="fc" id="L44">    }</span>
+<span class="fc" id="L41">        NDConfiguration ndc = _simpleReshape( form, toBeViewed );</span>
+<span class="fc" id="L42">        _shape       = ndc.shape();</span>
+<span class="fc" id="L43">        _translation = ndc.translation();</span>
+<span class="fc" id="L44">        _indicesMap  = ndc.indicesMap();</span>
+<span class="fc" id="L45">        _spread      = ndc.spread();</span>
+<span class="fc" id="L46">        _offset      = ndc.offset();</span>
+<span class="fc" id="L47">    }</span>
 
-    @Override
-    public final int rank() {
-<span class="fc" id="L48">        return _shape.length;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L50">    @Override public final int rank() { return _shape.length; }</span>
 
-    @Override
-    public final int[] shape() {
-<span class="fc" id="L53">        return _shape;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L53">    @Override public final int[] shape() { return _shape; }</span>
 
-    @Override
-    public final int shape( int i ) {
-<span class="nc" id="L58">        return _shape[ i ];</span>
-    }
+    /** {@inheritDoc} */
+<span class="nc" id="L56">    @Override public final int shape( int i ) { return _shape[ i ]; }</span>
 
-    @Override
-    public final int[] indicesMap() {
-<span class="nc" id="L63">        return _indicesMap;</span>
-    }
+    /** {@inheritDoc} */
+<span class="nc" id="L59">    @Override public final int[] indicesMap() { return _indicesMap; }</span>
 
-    @Override
-    public final int indicesMap(int i ) {
-<span class="nc" id="L68">        return _indicesMap[ i ];</span>
-    }
+    /** {@inheritDoc} */
+<span class="nc" id="L62">    @Override public final int indicesMap(int i ) { return _indicesMap[ i ]; }</span>
 
-    @Override
-    public final int[] translation() {
-<span class="fc" id="L73">        return _translation;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L65">    @Override public final int[] translation() { return _translation; }</span>
 
-    @Override
-    public final int translation( int i ) {
-<span class="nc" id="L78">        return _translation[ i ];</span>
-    }
+    /** {@inheritDoc} */
+<span class="nc" id="L68">    @Override public final int translation( int i ) { return _translation[ i ]; }</span>
 
-    @Override
-    public final int[] spread() {
-<span class="nc" id="L83">        return _spread;</span>
-    }
+    /** {@inheritDoc} */
+<span class="nc" id="L71">    @Override public final int[] spread() { return _spread; }</span>
 
-    @Override
-    public final int spread( int i ) {
-<span class="fc" id="L88">        return _spread[ i ];</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L74">    @Override public final int spread( int i ) { return _spread[ i ]; }</span>
 
-    @Override
-    public final int[] offset() {
-<span class="nc" id="L93">        return _offset;</span>
-    }
+    /** {@inheritDoc} */
+<span class="nc" id="L77">    @Override public final int[] offset() { return _offset; }</span>
 
-    @Override
-    public final int offset( int i ) {
-<span class="fc" id="L98">        return _offset[ i ];</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L80">    @Override public final int offset( int i ) { return _offset[ i ]; }</span>
 
-    @Override
-    public final int indexOfIndex(int index) {
-<span class="fc" id="L103">        return indexOfIndices( indicesOfIndex(index) );</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L83">    @Override public final int indexOfIndex( int index ) { return indexOfIndices( indicesOfIndex(index) ); }</span>
 
+    /** {@inheritDoc} */
     @Override
     public final int[] indicesOfIndex( int index ) {
-<span class="fc" id="L108">        int[] indices = new int[ _shape.length ];</span>
-<span class="fc bfc" id="L109" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
-<span class="fc" id="L110">            indices[ ii ] += index / _indicesMap[ ii ];</span>
-<span class="fc" id="L111">            index %= _indicesMap[ ii ];</span>
+<span class="fc" id="L88">        int[] indices = new int[ _shape.length ];</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
+<span class="fc" id="L90">            indices[ ii ] += index / _indicesMap[ ii ];</span>
+<span class="fc" id="L91">            index %= _indicesMap[ ii ];</span>
         }
-<span class="fc" id="L113">        return indices;</span>
+<span class="fc" id="L93">        return indices;</span>
     }
 
+    /** {@inheritDoc} */
     @Override
     public final int indexOfIndices( int[] indices ) {
-<span class="fc" id="L118">        int[] innerIdx = _rearrange( indices, _form, _formTranslator );</span>
-<span class="fc" id="L119">        return _toBeViewed.indexOfIndices( innerIdx );</span>
+<span class="fc" id="L99">        int[] innerIdx = _rearrange( indices, _form, _formTranslator );</span>
+<span class="fc" id="L100">        return _toBeViewed.indexOfIndices( innerIdx );</span>
     }
 
     @Contract(pure = true)
     private static int[] _rearrange( @NotNull int[] array, @NotNull int[] ptr, @NotNull int[] indices ) {
-<span class="fc bfc" id="L124" title="All 2 branches covered.">        for ( int i = 0; i &lt; ptr.length; i++ ) {</span>
-<span class="fc bfc" id="L125" title="All 2 branches covered.">            if ( ptr[ i ] &gt;= 0 ) indices[ ptr[ i ] ] = array[ i ];</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        for ( int i = 0; i &lt; ptr.length; i++ ) {</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">            if ( ptr[ i ] &gt;= 0 ) indices[ ptr[ i ] ] = array[ i ];</span>
         }
-<span class="fc" id="L127">        return indices;</span>
+<span class="fc" id="L108">        return indices;</span>
     }
 
 }

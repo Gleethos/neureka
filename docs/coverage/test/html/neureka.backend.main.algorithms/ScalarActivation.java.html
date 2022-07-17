@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Contract;
 <span class="fc" id="L35">                Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
 <span class="pc bpc" id="L36" title="2 of 4 branches missed.">                assert call.input( 0 ) == null;  // Creating a new tensor:</span>
 <span class="fc" id="L37">                int[] outShape = call.input( 1 ).getNDConf().shape();</span>
-<span class="fc" id="L38">                Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input( 1 ).getValueClass();</span>
+<span class="fc" id="L38">                Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input( 1 ).getItemClass();</span>
 <span class="fc" id="L39">                Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );</span>
                 try {
 <span class="fc" id="L41">                    device.store( output );</span>
@@ -49,7 +49,7 @@ import org.jetbrains.annotations.Contract;
 <span class="fc" id="L49">        setImplementationFor(</span>
             OpenCLDevice.class,
             call -&gt; {
-<span class="fc" id="L52">                Number value =  funs.getFor( call ).invoke(call.input( Number.class, 1 ).getValueAt(0).doubleValue());</span>
+<span class="fc" id="L52">                Number value =  funs.getFor( call ).invoke(call.input( Number.class, 1 ).getItemAt(0).doubleValue());</span>
 <span class="fc" id="L53">                Tsr&lt;Number&gt; out = call.input( Number.class, 0 );</span>
 <span class="fc" id="L54">                out.getUnsafe().setDataAt(0, value);</span>
 <span class="fc" id="L55">            }</span>
@@ -66,7 +66,7 @@ import org.jetbrains.annotations.Contract;
             Functions&lt;Fun&gt; functions
     ) {
 <span class="fc" id="L68">        CPU.RangeWorkload workload = (i,end) -&gt; {</span>
-<span class="fc" id="L69">            Number value =  functions.get(Fun.F64ToF64.class).get( call.get( Arg.DerivIdx.class ) ).invoke(call.input( Number.class, 1 ).getValueAt(0).doubleValue());</span>
+<span class="fc" id="L69">            Number value =  functions.get(Fun.F64ToF64.class).get( call.get( Arg.DerivIdx.class ) ).invoke(call.input( Number.class, 1 ).getItemAt(0).doubleValue());</span>
 <span class="fc" id="L70">            Tsr&lt;Number&gt; out = call.input( Number.class, 0 );</span>
 <span class="fc" id="L71">            out.getUnsafe().setDataAt(0, value);</span>
 <span class="fc" id="L72">        };</span>

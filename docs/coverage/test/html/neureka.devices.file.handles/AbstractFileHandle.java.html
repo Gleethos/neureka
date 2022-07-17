@@ -112,7 +112,7 @@ public abstract class AbstractFileHandle&lt;C, V&gt; implements FileHandle&lt;C,
     public Storage&lt;V&gt; restore( Tsr&lt;V&gt; tensor ) {
         try {
 <span class="nc" id="L114">            Object value = _loadData();</span>
-<span class="nc" id="L115">            tensor.setValue( value );</span>
+<span class="nc" id="L115">            tensor.setItems( value );</span>
 <span class="nc" id="L116">        } catch ( Exception e ) {</span>
 <span class="nc" id="L117">            _LOG.error( &quot;Restoring tensor from filesystem failed!\n&quot;, e );</span>
 <span class="nc" id="L118">            e.printStackTrace();</span>

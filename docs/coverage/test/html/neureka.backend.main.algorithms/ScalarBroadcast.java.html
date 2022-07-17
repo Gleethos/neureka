@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Contract;
 <span class="nc" id="L37">                    Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
 <span class="nc bnc" id="L38" title="All 4 branches missed.">                    assert call.input( 0 ) == null;  // Creating a new tensor:</span>
 <span class="nc" id="L39">                    int[] outShape = call.input( 1 ).getNDConf().shape();</span>
-<span class="nc" id="L40">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input( 1 ).getValueClass();</span>
+<span class="nc" id="L40">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input( 1 ).getItemClass();</span>
 <span class="nc" id="L41">                    Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );</span>
 <span class="nc" id="L42">                    output.setIsVirtual( false );</span>
                     try {
@@ -83,7 +83,7 @@ import org.jetbrains.annotations.Contract;
 <span class="nc" id="L83">        Tsr&lt;Number&gt; t0_drn = call.input( Number.class, 0 );</span>
 <span class="nc" id="L84">        Tsr&lt;Number&gt; src    = call.input( Number.class, 1 );</span>
 
-<span class="nc" id="L86">        Class&lt;?&gt; typeClass = t0_drn.getValueClass();</span>
+<span class="nc" id="L86">        Class&lt;?&gt; typeClass = t0_drn.getItemClass();</span>
 
 <span class="nc" id="L88">        CPU.RangeWorkload workload = null;</span>
 

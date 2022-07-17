@@ -86,7 +86,7 @@ implements ExecutionPreparation, ADAgentSupplier
 <span class="fc bfc" id="L86" title="All 2 branches covered.">                                            for ( int i = start; i &lt; end; i++ ) {</span>
 <span class="fc" id="L87">                                                StringBuilder b = new StringBuilder();</span>
 <span class="fc bfc" id="L88" title="All 2 branches covered.">                                                for (int ii = 1; ii &lt; call.arity(); ii++ ) {</span>
-<span class="fc" id="L89">                                                    b.append(call.input( Object.class, ii ).getValueAt(i));</span>
+<span class="fc" id="L89">                                                    b.append(call.input( Object.class, ii ).getItemAt(i));</span>
                                                 }
 <span class="fc" id="L91">                                                setAt( call.input( Object.class, 0 ), i, b.toString() );</span>
                                             }
@@ -178,7 +178,7 @@ implements ExecutionPreparation, ADAgentSupplier
 <span class="fc" id="L178">                        Object[] inputs = new Object[ call.arity() - 1 ];</span>
 <span class="fc bfc" id="L179" title="All 2 branches covered.">                        for ( int i = start; i &lt; end; i++ ) {</span>
 <span class="fc bfc" id="L180" title="All 2 branches covered.">                            for ( int ii = 0; ii &lt; inputs.length; ii++ ) {</span>
-<span class="fc" id="L181">                                inputs[ ii ] = call.input( Object.class, 1 + ii ).getValueAt(i);</span>
+<span class="fc" id="L181">                                inputs[ ii ] = call.input( Object.class, 1 + ii ).getItemAt(i);</span>
                             }
 <span class="fc" id="L183">                            setAt( call.input( Object.class, 0 ), i, _tryExecute(finalMethod, inputs, 0));</span>
                         }

@@ -13,7 +13,7 @@ import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.internal.CalcUtil;
 import neureka.framing.Relation;
-import neureka.ndim.AbstractTensor;
+import neureka.ndim.AbstractNda;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
@@ -42,7 +42,7 @@ public class Reshape extends AbstractOperation
 <span class="fc" id="L42">                    Tsr&lt;?&gt;[] inputs = CalcUtil.srcActivation( call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );</span>
 <span class="fc" id="L43">                    int[] newForm = new int[ inputs.length - 1 ];</span>
 <span class="fc bfc" id="L44" title="All 2 branches covered.">                    for ( int i = 0; i &lt; inputs.length - 1; i++ )</span>
-<span class="fc" id="L45">                        newForm[ i ] = ( (Number) inputs[ i ].getValueAt( 0 ) ).intValue();</span>
+<span class="fc" id="L45">                        newForm[ i ] = ( (Number) inputs[ i ].getItemAt( 0 ) ).intValue();</span>
 
 <span class="fc bfc" id="L47" title="All 2 branches covered.">                    if ( call.getValOf( Arg.DerivIdx.class ) &gt;= 0 ) //reverse reshape:</span>
 <span class="fc" id="L48">                        newForm = invert( newForm );</span>
@@ -92,7 +92,7 @@ public class Reshape extends AbstractOperation
 <span class="fc bfc" id="L92" title="All 4 branches covered.">                for ( int ii = handle; ii &lt; largest; ii++ ) newReshape[ ii ] = ( postfix &lt;= prefix ) ? ii - padding : -1;</span>
 
 <span class="fc" id="L94">                Function f = Function.of(</span>
-<span class="fc" id="L95">                        AbstractTensor.Utility.shapeString( newReshape ) + &quot;:(I[ 0 ])&quot;,</span>
+<span class="fc" id="L95">                        AbstractNda.Utility.shapeString( newReshape ) + &quot;:(I[ 0 ])&quot;,</span>
                         doesAD
                 );
 <span class="fc" id="L98">                tensors[ i ] = f.execute( tensors[ i ] );</span>
@@ -169,9 +169,9 @@ public class Reshape extends AbstractOperation
 <span class="nc" id="L169">            throw new IllegalArgumentException(</span>
                     &quot;New shape does not match tensor size!&quot; +
                             &quot; (&quot; +
-<span class="nc" id="L172">                            AbstractTensor.Utility.shapeString( newShp ) +</span>
+<span class="nc" id="L172">                            AbstractNda.Utility.shapeString( newShp ) +</span>
 <span class="nc bnc" id="L173" title="All 2 branches missed.">                            ((NDConfiguration.Utility.sizeOfShape( newShp ) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) +</span>
-<span class="nc" id="L174">                            AbstractTensor.Utility.shapeString(t.getNDConf().shape()) + &quot;&quot; +</span>
+<span class="nc" id="L174">                            AbstractNda.Utility.shapeString(t.getNDConf().shape()) + &quot;&quot; +</span>
                             &quot;)&quot;
             );
         }

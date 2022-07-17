@@ -31,7 +31,7 @@ import java.util.Arrays;
      *  Implementations of {@link NDConfiguration} are expected to be immutable which allows us to have them be
      *  shared between tensors (because they are read only, meaning no side-effects).
      */
-    private static final Cache&lt;NDConfiguration&gt; _CACHED_NDCS;
+    private static final Cache&lt;NDConfiguration&gt; _CACHED_NDCS; // Cached ND-Configurations.
     static
     {
 <span class="fc" id="L37">        _CACHED_NDCS = new Cache&lt;&gt;(512);</span>
@@ -42,7 +42,7 @@ import java.util.Arrays;
      *  Warning! This can of course become dangerous when these arrays are being shared and modified.
      *  Please copy them when exposing them to the user.
      */
-    private static final Cache&lt;int[]&gt; _CACHED_INT_ARRAYS;
+    private static final Cache&lt;int[]&gt; _CACHED_INT_ARRAYS; // ND-Configurations are often based on integer arrays representing things like shape, strides, etc...
     static
     {
 <span class="fc" id="L48">        _CACHED_INT_ARRAYS = new Cache&lt;&gt;(512);</span>
@@ -60,70 +60,73 @@ import java.util.Arrays;
      */
 <span class="fc" id="L61">    protected static int[] _cacheArray( int[] data ) { return _CACHED_INT_ARRAYS.process( data ); }</span>
 
-
-    public static NDConfiguration construct (
+    /**
+     *   A factory method which creates and {@link NDConfiguration} instances best suited for the
+     *   provided raw configuration data...
+     */
+    static NDConfiguration construct (
             int[] shape,
             int[] translation,
             int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-<span class="fc bfc" id="L71" title="All 2 branches covered.">        for ( int dim : shape )</span>
-<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            if ( dim == 0 )</span>
-<span class="nc" id="L73">                throw new IllegalStateException(</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        for ( int dim : shape )</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">            if ( dim == 0 )</span>
+<span class="nc" id="L76">                throw new IllegalStateException(</span>
                     &quot;Trying to create tensor configuration containing shape with dimension 0.\n&quot; +
                     &quot;Shape dimensions must be greater than 0!\n&quot;
                 );
 
-<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        if ( Neureka.get().settings().ndim().isOnlyUsingDefaultNDConfiguration() )</span>
-<span class="nc" id="L79">            return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        if ( Neureka.get().settings().ndim().isOnlyUsingDefaultNDConfiguration() )</span>
+<span class="nc" id="L82">            return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);</span>
 
-<span class="fc" id="L81">        boolean isSimple = _isSimpleConfiguration(shape, translation, indicesMap, spread, offset);</span>
-<span class="fc" id="L82">        boolean isSimpleTransposed = _isSimpleTransposedConfiguration(shape, spread, offset);</span>
+<span class="fc" id="L84">        boolean isSimple = _isSimpleConfiguration(shape, translation, indicesMap, spread, offset);</span>
+<span class="fc" id="L85">        boolean isSimpleTransposed = _isSimpleTransposedConfiguration(shape, spread, offset);</span>
 
-<span class="fc bfc" id="L84" title="All 2 branches covered.">        if ( isSimple )</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if ( isSimple )</span>
         {
-<span class="fc bfc" id="L86" title="All 2 branches covered.">            if ( shape.length == 1 ) {</span>
-<span class="fc bfc" id="L87" title="All 2 branches covered.">                if ( shape[ 0 ] == 1 )</span>
-<span class="fc" id="L88">                    return Simple0DConfiguration.construct();</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            if ( shape.length == 1 ) {</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">                if ( shape[ 0 ] == 1 )</span>
+<span class="fc" id="L91">                    return Simple0DConfiguration.construct();</span>
                 else
-<span class="fc" id="L90">                    return Simple1DConfiguration.construct(shape, translation);</span>
+<span class="fc" id="L93">                    return Simple1DConfiguration.construct(shape, translation);</span>
             }
-<span class="fc bfc" id="L92" title="All 2 branches covered.">            else if ( shape.length == 2 )</span>
-<span class="fc" id="L93">                return Simple2DConfiguration.construct(shape, translation);</span>
-<span class="fc bfc" id="L94" title="All 2 branches covered.">            else if ( shape.length == 3 )</span>
-<span class="fc" id="L95">                return Simple3DConfiguration.construct(shape, translation);</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            else if ( shape.length == 2 )</span>
+<span class="fc" id="L96">                return Simple2DConfiguration.construct(shape, translation);</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">            else if ( shape.length == 3 )</span>
+<span class="fc" id="L98">                return Simple3DConfiguration.construct(shape, translation);</span>
             else
-<span class="fc" id="L97">                return SimpleNDConfiguration.construct(shape, translation);</span>
+<span class="fc" id="L100">                return SimpleNDConfiguration.construct(shape, translation);</span>
         }
-<span class="fc bfc" id="L99" title="All 2 branches covered.">        if ( isSimpleTransposed )</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if ( isSimpleTransposed )</span>
         {
-<span class="fc bfc" id="L101" title="All 2 branches covered.">            if ( shape.length == 1 )</span>
-<span class="fc" id="L102">                return Reshaped1DConfiguration.construct(shape, translation, indicesMap);</span>
-<span class="fc bfc" id="L103" title="All 2 branches covered.">            else if ( shape.length == 2 )</span>
-<span class="fc" id="L104">                return Reshaped2DConfiguration.construct(shape, translation, indicesMap);</span>
-<span class="fc bfc" id="L105" title="All 2 branches covered.">            else if ( shape.length == 3 )</span>
-<span class="fc" id="L106">                return Reshaped3DConfiguration.construct(shape, translation, indicesMap);</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            if ( shape.length == 1 )</span>
+<span class="fc" id="L105">                return Reshaped1DConfiguration.construct(shape, translation, indicesMap);</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">            else if ( shape.length == 2 )</span>
+<span class="fc" id="L107">                return Reshaped2DConfiguration.construct(shape, translation, indicesMap);</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">            else if ( shape.length == 3 )</span>
+<span class="fc" id="L109">                return Reshaped3DConfiguration.construct(shape, translation, indicesMap);</span>
             else
-<span class="fc" id="L108">                return ReshapedNDConfiguration.construct(shape, translation, indicesMap);</span>
+<span class="fc" id="L111">                return ReshapedNDConfiguration.construct(shape, translation, indicesMap);</span>
         }
 
-<span class="fc bfc" id="L111" title="All 2 branches covered.">        if ( shape.length == 1 ) {</span>
-<span class="fc bfc" id="L112" title="All 2 branches covered.">            if ( shape[ 0 ] == 1 )</span>
-<span class="fc" id="L113">                return Sliced0DConfiguration.construct(shape, offset);</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        if ( shape.length == 1 ) {</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">            if ( shape[ 0 ] == 1 )</span>
+<span class="fc" id="L116">                return Sliced0DConfiguration.construct(shape, offset);</span>
             else
-<span class="fc" id="L115">                return Sliced1DConfiguration.construct(shape, translation, indicesMap, spread, offset);</span>
+<span class="fc" id="L118">                return Sliced1DConfiguration.construct(shape, translation, indicesMap, spread, offset);</span>
         }
-<span class="fc bfc" id="L117" title="All 2 branches covered.">        else if ( shape.length == 2 )</span>
-<span class="fc" id="L118">            return Sliced2DConfiguration.construct(shape, translation, indicesMap, spread, offset);</span>
-<span class="fc bfc" id="L119" title="All 2 branches covered.">        else if ( shape.length == 3 )</span>
-<span class="fc" id="L120">            return Sliced3DConfiguration.construct(shape, translation, indicesMap, spread, offset);</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        else if ( shape.length == 2 )</span>
+<span class="fc" id="L121">            return Sliced2DConfiguration.construct(shape, translation, indicesMap, spread, offset);</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        else if ( shape.length == 3 )</span>
+<span class="fc" id="L123">            return Sliced3DConfiguration.construct(shape, translation, indicesMap, spread, offset);</span>
 
         // This configuration fits every shape:
-<span class="fc" id="L123">        return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);</span>
+<span class="fc" id="L126">        return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);</span>
     }
 
-<span class="fc" id="L126">    protected static &lt;T extends NDConfiguration&gt; T _cached( T ndc ) { return _CACHED_NDCS.process( ndc ); }</span>
+<span class="fc" id="L129">    protected static &lt;T extends NDConfiguration&gt; T _cached( T ndc ) { return _CACHED_NDCS.process( ndc ); }</span>
 
     private static boolean _isSimpleConfiguration(
             int[] shape,
@@ -133,53 +136,53 @@ import java.util.Arrays;
             int[] offset
     ) {
         // Note: Column major is not simple because there are no simple column major implementations...
-<span class="fc" id="L136">        int[] newTranslation = Layout.ROW_MAJOR.newTranslationFor( shape );</span>
-<span class="fc" id="L137">        int[] newSpread = new int[ shape.length ];</span>
-<span class="fc" id="L138">        Arrays.fill( newSpread, 1 );</span>
-<span class="fc bfc" id="L139" title="All 2 branches covered.">        return  Arrays.equals( translation, newTranslation ) &amp;&amp;</span>
-<span class="fc bfc" id="L140" title="All 2 branches covered.">                Arrays.equals( indicesMap, newTranslation ) &amp;&amp;</span>
-<span class="fc bfc" id="L141" title="All 2 branches covered.">                Arrays.equals( offset, new int[ shape.length ] ) &amp;&amp;</span>
-<span class="fc bfc" id="L142" title="All 2 branches covered.">                Arrays.equals( spread, newSpread );</span>
+<span class="fc" id="L139">        int[] newTranslation = Layout.ROW_MAJOR.newTranslationFor( shape );</span>
+<span class="fc" id="L140">        int[] newSpread = new int[ shape.length ];</span>
+<span class="fc" id="L141">        Arrays.fill( newSpread, 1 );</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        return  Arrays.equals( translation, newTranslation ) &amp;&amp;</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">                Arrays.equals( indicesMap, newTranslation ) &amp;&amp;</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                Arrays.equals( offset, new int[ shape.length ] ) &amp;&amp;</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">                Arrays.equals( spread, newSpread );</span>
     }
 
     private static boolean _isSimpleTransposedConfiguration(
             int[] shape, int[] spread, int[] offset
     ) {
-<span class="fc" id="L148">        int[] newSpread = new int[ shape.length ];</span>
-<span class="fc" id="L149">        Arrays.fill( newSpread, 1 );</span>
-<span class="fc bfc" id="L150" title="All 2 branches covered.">        return Arrays.equals( offset, new int[ shape.length ] ) &amp;&amp;</span>
-<span class="fc bfc" id="L151" title="All 2 branches covered.">               Arrays.equals( spread, newSpread );</span>
+<span class="fc" id="L151">        int[] newSpread = new int[ shape.length ];</span>
+<span class="fc" id="L152">        Arrays.fill( newSpread, 1 );</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        return Arrays.equals( offset, new int[ shape.length ] ) &amp;&amp;</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">               Arrays.equals( spread, newSpread );</span>
     }
 
 
     @Override
     public String toString() {
-<span class="nc" id="L157">        return &quot;NDConfiguration@&quot;+Integer.toHexString(hashCode())+&quot;#&quot;+Long.toHexString(this.hashCode())+&quot;[&quot; +</span>
-<span class="nc" id="L158">                    &quot;layout=&quot;+getLayout().name()+&quot;,&quot;+</span>
-<span class="nc" id="L159">                    &quot;shape=&quot;+Arrays.toString(shape())+&quot;,&quot;+</span>
-<span class="nc" id="L160">                    &quot;translation=&quot;+Arrays.toString(translation())+&quot;,&quot;+</span>
-<span class="nc" id="L161">                    &quot;indicesMap=&quot;+Arrays.toString(indicesMap())+&quot;,&quot;+</span>
-<span class="nc" id="L162">                    &quot;spread=&quot;+Arrays.toString(spread())+&quot;,&quot;+</span>
-<span class="nc" id="L163">                    &quot;offset=&quot;+Arrays.toString(offset())+&quot;&quot;+</span>
+<span class="nc" id="L160">        return &quot;NDConfiguration@&quot;+Integer.toHexString(hashCode())+&quot;#&quot;+Long.toHexString(this.hashCode())+&quot;[&quot; +</span>
+<span class="nc" id="L161">                    &quot;layout=&quot;+getLayout().name()+&quot;,&quot;+</span>
+<span class="nc" id="L162">                    &quot;shape=&quot;+Arrays.toString(shape())+&quot;,&quot;+</span>
+<span class="nc" id="L163">                    &quot;translation=&quot;+Arrays.toString(translation())+&quot;,&quot;+</span>
+<span class="nc" id="L164">                    &quot;indicesMap=&quot;+Arrays.toString(indicesMap())+&quot;,&quot;+</span>
+<span class="nc" id="L165">                    &quot;spread=&quot;+Arrays.toString(spread())+&quot;,&quot;+</span>
+<span class="nc" id="L166">                    &quot;offset=&quot;+Arrays.toString(offset())+&quot;&quot;+</span>
                 &quot;]&quot;;
     }
 
     protected static NDConfiguration _simpleReshape( int[] newForm, NDConfiguration ndc )
     {
-<span class="fc" id="L169">        int[] newShape = Utility.rearrange( ndc.shape(), newForm );</span>
-<span class="fc" id="L170">        int[] newTranslation = ndc.getLayout().rearrange( ndc.translation(), newShape, newForm );</span>
-<span class="fc" id="L171">        int[] newIndicesMap = ndc.getLayout().newTranslationFor( newShape );</span>
-<span class="fc" id="L172">        int[] newSpread = new int[ newForm.length ];</span>
-<span class="fc bfc" id="L173" title="All 2 branches covered.">        for ( int i = 0; i &lt; newForm.length; i++ ) {</span>
-<span class="fc bfc" id="L174" title="All 2 branches covered.">            if ( newForm[ i ] &lt; 0 ) newSpread[ i ] = 1;</span>
-<span class="pc bpc" id="L175" title="1 of 2 branches missed.">            else if ( newForm[ i ] &gt;= 0 ) newSpread[ i ] = ndc.spread( newForm[ i ] );</span>
+<span class="fc" id="L172">        int[] newShape = Utility.rearrange( ndc.shape(), newForm );</span>
+<span class="fc" id="L173">        int[] newTranslation = ndc.getLayout().rearrange( ndc.translation(), newShape, newForm );</span>
+<span class="fc" id="L174">        int[] newIndicesMap = ndc.getLayout().newTranslationFor( newShape );</span>
+<span class="fc" id="L175">        int[] newSpread = new int[ newForm.length ];</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        for ( int i = 0; i &lt; newForm.length; i++ ) {</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">            if ( newForm[ i ] &lt; 0 ) newSpread[ i ] = 1;</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">            else if ( newForm[ i ] &gt;= 0 ) newSpread[ i ] = ndc.spread( newForm[ i ] );</span>
         }
-<span class="fc" id="L177">        int[] newOffset = new int[newForm.length];</span>
-<span class="fc bfc" id="L178" title="All 2 branches covered.">        for ( int i = 0; i &lt; newForm.length; i++ ) {</span>
-<span class="fc bfc" id="L179" title="All 2 branches covered.">            if ( newForm[ i ] &lt; 0 ) newOffset[ i ] = 0;</span>
-<span class="pc bpc" id="L180" title="1 of 2 branches missed.">            else if ( newForm[ i ] &gt;= 0 ) newOffset[ i ] = ndc.offset( newForm[ i ] );</span>
+<span class="fc" id="L180">        int[] newOffset = new int[newForm.length];</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        for ( int i = 0; i &lt; newForm.length; i++ ) {</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">            if ( newForm[ i ] &lt; 0 ) newOffset[ i ] = 0;</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">            else if ( newForm[ i ] &gt;= 0 ) newOffset[ i ] = ndc.offset( newForm[ i ] );</span>
         }
-<span class="fc" id="L182">        return AbstractNDC.construct(</span>
+<span class="fc" id="L185">        return AbstractNDC.construct(</span>
                 newShape,
                 newTranslation,
                 newIndicesMap,
@@ -192,36 +195,35 @@ import java.util.Arrays;
     public NDConfiguration newReshaped( int[] newForm )
     {
         //TODO : shape check!
-<span class="fc bfc" id="L195" title="All 2 branches covered.">        if ( _isSimpleConfiguration( shape(), translation(), indicesMap(), spread(), offset() ) )</span>
-<span class="fc" id="L196">            return _simpleReshape( newForm, this );</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        if ( _isSimpleConfiguration( shape(), translation(), indicesMap(), spread(), offset() ) )</span>
+<span class="fc" id="L199">            return _simpleReshape( newForm, this );</span>
         else
-<span class="fc" id="L198">            return new SimpleReshapeView( newForm, this );</span>
-            //throw new IllegalStateException(&quot;Not ready&quot;);
+<span class="fc" id="L201">            return new SimpleReshapeView( newForm, this );</span>
     }
 
     @Override
     public int hashCode() {
-<span class="fc" id="L204">        return Long.valueOf(</span>
-<span class="fc" id="L205">                    this.getClass().hashCode() +</span>
-<span class="fc" id="L206">                   Arrays.hashCode( shape() )       * 1L +</span>
-<span class="fc" id="L207">                   Arrays.hashCode( translation() ) * 2L +</span>
-<span class="fc" id="L208">                   Arrays.hashCode( indicesMap() )  * 3L +</span>
-<span class="fc" id="L209">                   Arrays.hashCode( spread() )      * 4L +</span>
-<span class="fc" id="L210">                   Arrays.hashCode( offset() )      * 5L +</span>
-<span class="fc bfc" id="L211" title="All 2 branches covered.">                   ( getLayout() == Layout.ROW_MAJOR ? 0 : 1 )</span>
-            )
-<span class="fc" id="L213">            .hashCode();</span>
+<span class="fc" id="L206">        return Long.valueOf(</span>
+<span class="fc" id="L207">                   this.getClass().hashCode() +</span>
+<span class="fc" id="L208">                   Arrays.hashCode( shape() )       * 1L +</span>
+<span class="fc" id="L209">                   Arrays.hashCode( translation() ) * 2L +</span>
+<span class="fc" id="L210">                   Arrays.hashCode( indicesMap() )  * 3L +</span>
+<span class="fc" id="L211">                   Arrays.hashCode( spread() )      * 4L +</span>
+<span class="fc" id="L212">                   Arrays.hashCode( offset() )      * 5L +</span>
+<span class="fc" id="L213">                   getLayout().hashCode()</span>
+                )
+<span class="fc" id="L215">                .hashCode();</span>
     }
 
     @Override
     public boolean equals( NDConfiguration ndc ) {
-<span class="pc bpc" id="L218" title="1 of 2 branches missed.">        return  this.getClass() == ndc.getClass() &amp;&amp;</span>
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">                Arrays.equals(shape(),       ndc.shape()      ) &amp;&amp;</span>
-<span class="pc bpc" id="L220" title="1 of 2 branches missed.">                Arrays.equals(translation(), ndc.translation()) &amp;&amp;</span>
-<span class="pc bpc" id="L221" title="1 of 2 branches missed.">                Arrays.equals(indicesMap(),  ndc.indicesMap() ) &amp;&amp;</span>
-<span class="pc bpc" id="L222" title="1 of 2 branches missed.">                Arrays.equals(spread(),      ndc.spread()     ) &amp;&amp;</span>
-<span class="fc bfc" id="L223" title="All 2 branches covered.">                Arrays.equals(offset(),      ndc.offset()     ) &amp;&amp;</span>
-<span class="pc bpc" id="L224" title="1 of 2 branches missed.">                this.getLayout() == ndc.getLayout();</span>
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">        return this.getClass() == ndc.getClass() &amp;&amp;</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">               Arrays.equals(shape(),       ndc.shape()      ) &amp;&amp;</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">               Arrays.equals(translation(), ndc.translation()) &amp;&amp;</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">               Arrays.equals(indicesMap(),  ndc.indicesMap() ) &amp;&amp;</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">               Arrays.equals(spread(),      ndc.spread()     ) &amp;&amp;</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">               Arrays.equals(offset(),      ndc.offset()     ) &amp;&amp;</span>
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">               this.getLayout() == ndc.getLayout();</span>
     }
 
 

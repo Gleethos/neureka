@@ -63,7 +63,7 @@ public class Power extends AbstractOperation
 <span class="fc" id="L63">                } else {</span>
 
 <span class="fc" id="L65">                    Tsr&lt;?&gt;[] reduction = Utility.subset(call.inputs(), 1,  2, call.arity()-2);</span>
-<span class="fc" id="L66">                    reduction[ 0 ] = call.input( 1 ).clone().getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L66">                    reduction[ 0 ] = call.input( 1 ).deepCopy().getUnsafe().setIsIntermediate( true );</span>
 
 <span class="fc bfc" id="L68" title="All 2 branches covered.">                    if ( d==0 ) {</span>
 <span class="fc" id="L69">                        Tsr&lt;?&gt; exp = traverse.execute(</span>
@@ -89,7 +89,7 @@ public class Power extends AbstractOperation
 <span class="fc" id="L89">                                                                .on(device)</span>
                                         );
 
-<span class="fc" id="L92">                        reduction = new Tsr[]{ call.input( 1 ).clone().getUnsafe().setIsIntermediate( true ), inner, call.input( d ) };</span>
+<span class="fc" id="L92">                        reduction = new Tsr[]{ call.input( 1 ).deepCopy().getUnsafe().setIsIntermediate( true ), inner, call.input( d ) };</span>
 <span class="fc" id="L93">                        Tsr&lt;?&gt; exp = traverse.execute(</span>
 <span class="fc" id="L94">                                                ExecutionCall.of( reduction )</span>
 <span class="fc" id="L95">                                                                .andArgs( Arg.DerivIdx.of(-1) )</span>

@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Contract;
                 {
 <span class="fc" id="L41">                    int[] outShape = call.input( 1 ).getNDConf().shape();</span>
 
-<span class="fc" id="L43">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getValueClass();</span>
+<span class="fc" id="L43">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getItemClass();</span>
 <span class="fc" id="L44">                    Tsr&lt;Object&gt; output = Tsr.of( type ).withShape( outShape ).all( 0.0 ).getUnsafe().setIsIntermediate( true );</span>
 <span class="fc" id="L45">                    output.setIsVirtual( false );</span>
                     try {
@@ -94,7 +94,7 @@ import org.jetbrains.annotations.Contract;
 <span class="fc" id="L94">        FunTuple&lt;Fun.F64F64ToF64&gt; funF64 = pairs.get(Fun.F64F64ToF64.class);</span>
 <span class="fc" id="L95">        FunTuple&lt;Fun.F32F32ToF32&gt; funF32 = pairs.get(Fun.F32F32ToF32.class);</span>
 <span class="fc" id="L96">        FunTuple&lt;Fun.I32I32ToI32&gt; funI32 = pairs.get(Fun.I32I32ToI32.class);</span>
-<span class="fc" id="L97">        Class&lt;?&gt; typeClass = call.input( 1 ).getValueClass();</span>
+<span class="fc" id="L97">        Class&lt;?&gt; typeClass = call.input( 1 ).getItemClass();</span>
 
 <span class="fc" id="L99">        int d = call.getDerivativeIndex();</span>
 

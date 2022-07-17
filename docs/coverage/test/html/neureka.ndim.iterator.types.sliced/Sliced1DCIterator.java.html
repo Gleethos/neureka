@@ -11,26 +11,26 @@ public final class Sliced1DCIterator extends Sliced1DConfiguration implements ND
 <span class="fc" id="L11">        super(ndc.shape(0), ndc.translation(0), ndc.indicesMap(0), ndc.spread(0), ndc.offset(0));</span>
 <span class="fc" id="L12">    }</span>
 
-    @Override
-<span class="fc" id="L15">    public final void increment() { _d1++; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L15">    @Override public final void increment() { _d1++; }</span>
 
-    @Override
-<span class="fc" id="L18">    public final void decrement() { _d1--; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L18">    @Override public final void decrement() { _d1--; }</span>
 
-    @Override
-<span class="fc" id="L21">    public final int i() { return this.indexOfIndices(_d1); }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L21">    @Override public final int i() { return this.indexOfIndices(_d1); }</span>
 
-    @Override
-<span class="nc" id="L24">    public final int get( int axis ) { return _d1; }</span>
+    /** {@inheritDoc} */
+<span class="nc" id="L24">    @Override public final int get( int axis ) { return _d1; }</span>
 
-    @Override
-<span class="fc" id="L27">    public final int[] get() { return new int[]{_d1}; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L27">    @Override public final int[] get() { return new int[]{_d1}; }</span>
 
-    @Override
-<span class="nc" id="L30">    public final void set( int axis, int position ) { _d1 = position; }</span>
+    /** {@inheritDoc} */
+<span class="nc" id="L30">    @Override public final void set( int axis, int position ) { _d1 = position; }</span>
 
-    @Override
-<span class="fc" id="L33">    public final void set( int[] indices ) { _d1 = indices[0]; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L33">    @Override public final void set( int[] indices ) { _d1 = indices[0]; }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

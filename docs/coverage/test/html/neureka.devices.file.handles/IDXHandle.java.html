@@ -85,7 +85,7 @@ import java.util.stream.Collectors;
 
 <span class="fc" id="L86">        int typeId = numre.read( new UI8() );</span>
 <span class="fc" id="L87">        Class&lt;?&gt; typeClass = TYPE_MAP.get( typeId );</span>
-<span class="fc" id="L88">        _dataType = (DataType&lt;NumericType&lt;?, ?, ?, ?&gt;&gt;) DataType.of( typeClass );</span>
+<span class="fc" id="L88">        _dataType = DataType.of( typeClass );</span>
 
 <span class="fc" id="L90">        int rank = numre.read( new UI8() );</span>
 <span class="fc" id="L91">        int[] shape = new int[ rank ];</span>
@@ -178,7 +178,7 @@ import java.util.stream.Collectors;
 <span class="pc bpc" id="L178" title="1 of 2 branches missed.">        DataType&lt;?&gt; type = Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes()</span>
 <span class="fc" id="L179">                            ? DataType.of( _dataType.getTypeClassInstance(NumericType.class).getNumericTypeTarget() )</span>
 <span class="pc" id="L180">                            : _dataType;</span>
-<span class="fc" id="L181">        return (Tsr&lt;Number&gt;) Tsr.of( type, _shape, value );</span>
+<span class="fc" id="L181">        return Tsr.of( type, _shape, value ).getUnsafe().upcast(Number.class);</span>
     }
 
     @Override

@@ -45,7 +45,7 @@ import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.common.composition.Component;
 import neureka.devices.host.CPU;
-import neureka.ndim.AbstractTensor;
+import neureka.ndim.AbstractNda;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.*;
@@ -282,9 +282,9 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
 
     /**
      *  Implementations of this represent the access to tensors stored on a device
-     *  in order to read from or write to said tensor.
-     *  Warning: This API exposes the true underlying data of a tensor
-     *  which does not take into account slice, reshape or stride information...
+     *  in order to read from or write to said tensor. &lt;br&gt;
+     *  &lt;b&gt;Warning: This API exposes the true underlying data of a tensor
+     *  which does not take into account slice, reshape or stride information...&lt;/b&gt;
      *
      * @param &lt;V&gt; The type parameter of the tensor accessed by an instance of this.
      */
@@ -349,11 +349,15 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
          */
         void cleanup( Runnable action );
         /**
-         *  This method automatically called within the {@link AbstractTensor.Unsafe#setNDConf(NDConfiguration)} method
+         *  This method automatically called within the {@link AbstractNda.Unsafe#setNDConf(NDConfiguration)} method
          *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
          *  given {@link Device} implementation... &lt;br&gt;&lt;br&gt;
          */
         void updateNDConf();
+
+        Object allocate( int size );
+
+        Object actualize();
     }
 
     /**
@@ -364,17 +368,25 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
     interface Writer
     {
         /**
+         *  Writes whatever kind of data was previously specified, to the tensors'
+         *  data at the position targeted by the provided {@code index}.
+         *
          * @param index The position at which data should be written to.
          */
-<span class="fc" id="L369">        default void at(int index) { intoRange(index, index+1); }</span>
+<span class="fc" id="L376">        default void at( int index ) { intoRange( index, index + 1 ); }</span>
         /**
+         *  Writes whatever kind of data was previously specified, to the tensors'
+         *  data into the range targeted by the provided {@code start} and {@code limit}.
+         *
          * @param start The first position of the writing cursor in the accessed tensor.
          * @param limit The exclusive limit of the range which should be written to.
          */
-        void intoRange(int start, int limit);
+        void intoRange( int start, int limit );
         /**
          *  A convenience method for specifying that the entire data array of
          *  the accessed tensor should be written to.
+         *  This is equivalent to calling {@link #intoRange(int, int)} with the arguments
+         *  {@code 0} and {@code tensor.size()}.
          */
         void fully();
     }

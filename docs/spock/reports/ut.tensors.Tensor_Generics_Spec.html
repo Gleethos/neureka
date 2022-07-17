@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Mon Jun 06 11:39:53 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Jul 17 20:20:15 CEST 2022 by danie</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.036 seconds</td>
+<td>0.024 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -375,7 +375,7 @@ div.footer {
 <span>Anonymous tensor instance has the default datatype class as defined in Neureka settings.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.004 seconds)</div>
+<div class='ex-time'>(0.005 seconds)</div>
 </span>
 </div>
 </td>
@@ -393,7 +393,7 @@ div.footer {
 <div class='block-kind'>Expect:</div>
 </td>
 <td>
-<pre class='block-source'>t.getRepresentativeValueClass() == Neureka.get().settings().dtype().defaultDataTypeClass</pre>
+<pre class='block-source'>t.getRepresentativeItemClass() == Neureka.get().settings().dtype().defaultDataTypeClass</pre>
 </td>
 </tr>
 <tr>
@@ -401,7 +401,7 @@ div.footer {
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>t.getValueClass() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getValueTypeClass()</pre>
+<pre class='block-source'>t.getItemClass() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getItemTypeClass()</pre>
 </td>
 </tr>
 <tr>
@@ -428,7 +428,7 @@ div.footer {
 <div class='block-kind'>Expect:</div>
 </td>
 <td>
-<pre class='block-source'>t.getValueClass() == String.class</pre>
+<pre class='block-source'>t.getItemClass() == String.class</pre>
 </td>
 </tr>
 <tr>
@@ -436,7 +436,7 @@ div.footer {
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>t.getRepresentativeValueClass() == String.class</pre>
+<pre class='block-source'>t.getRepresentativeItemClass() == String.class</pre>
 </td>
 </tr>
 <tr>
@@ -453,7 +453,7 @@ div.footer {
 <span>1D tensors can be created from primitive arrays.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.010 seconds)</div>
+<div class='ex-time'>(0.007 seconds)</div>
 </span>
 </div>
 </td>
@@ -487,7 +487,7 @@ div.footer {
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>t.getValueClass() == expected</pre>
+<pre class='block-source'>t.getItemClass() == expected</pre>
 </td>
 </tr>
 <tr>
@@ -511,7 +511,7 @@ div.footer {
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -538,7 +538,7 @@ div.footer {
 <td class='ex-value'>class java.lang.Long</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -547,7 +547,7 @@ div.footer {
 <td class='ex-value'>class java.lang.Short</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.002 seconds)</span>
+<span class='ex-time'>(0.001 seconds)</span>
 </td>
 </tr>
 </tbody>

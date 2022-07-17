@@ -307,14 +307,14 @@ div.footer {
 }</style>
 </head>
 <body>
-<h2>Report for ut.backend.core.Matrix_Multiplication_Spec</h2>
+<h2>Report for ut.backend.Matrix_Multiplication_Spec</h2>
 <hr></hr>
 <div class='back-link'>
 <a href='index.html'>&lt;&lt; Back</a>
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Mon Jun 06 11:40:04 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Jul 17 20:20:13 CEST 2022 by danie</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -329,13 +329,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>2</td>
-<td>2</td>
+<td>1</td>
+<td>1</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.421 seconds</td>
+<td>0.741 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -351,9 +351,6 @@ div.footer {
 <li>
 <a href='#-1633683550' class='feature-toc-pass'>The simple CPU matrix multiplication implementation works as expected.</a>
 </li>
-<li>
-<a href='#-678265085' class='feature-toc-pass'>The internal matrix multiplication test script runs!</a>
-</li>
 </ul>
 <tr>
 <td colspan='10'>
@@ -361,8 +358,84 @@ div.footer {
 <span>The simple CPU matrix multiplication implementation works as expected.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.003 seconds)</div>
+<div class='ex-time'>(0.582 seconds)</div>
 </span>
+<div class='extra-info'>
+<ul>
+<li>
+<div>
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        </div>
+</li>
+<li>
+<div>
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        </div>
+</li>
+<li>
+<div>
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        </div>
+</li>
+<li>
+<div>
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        </div>
+</li>
+<li>
+<div>
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        </div>
+</li>
+<li>
+<div>
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        </div>
+</li>
+<li>
+<div>
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        </div>
+</li>
+<li>
+<div>
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        </div>
+</li>
+<li>
+<div>
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        </div>
+</li>
+<li>
+<div>
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        </div>
+</li>
+<li>
+<div>
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        </div>
+</li>
+<li>
+<div>
+            Matrix multiplication is possible between matrices of various dimensions,
+            data types as well as data layouts!
+        </div>
+</li>
+</ul>
+</div>
 </div>
 </td>
 </tr>
@@ -371,7 +444,58 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>var C = new double[M*N]</pre>
+<div class='block-text'>We instantiate 2 matrices based on the data from the data table at the end of this method.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr&lt;?&gt; a = Tsr.of(type, [M,K] as int[], A)
+Tsr&lt;?&gt; b = Tsr.of(type, [K,N] as int[], B)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We create the data layout type based on the provided string...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>var dataLayout = layout == 'ROW' ? NDConfiguration.Layout.ROW_MAJOR : NDConfiguration.Layout.COLUMN_MAJOR</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>After that we convert both matrices to the layout!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>a.unsafe.toLayout( dataLayout )
+b.unsafe.toLayout( dataLayout )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>This should of cause make report that they indeed have this new layout.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>a.NDConf.layout == dataLayout
+b.NDConf.layout == dataLayout</pre>
 </td>
 </tr>
 <tr>
@@ -379,7 +503,13 @@ div.footer {
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>CPUMatMul.execute(true, A, B, C, M, K, N)</pre>
+<div class='block-text'>We now perform the matrix multiplication with the 2 matrix tensors...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr&lt;?&gt; c = a.matMul(b)</pre>
 </td>
 </tr>
 <tr>
@@ -387,7 +517,35 @@ div.footer {
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>C == expectedC</pre>
+<div class='block-text'>The result will have the expected (M x N) shape.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c.shape == [M,N]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>It should have the expected value array.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c.items == expectedC</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>We use the following scenario parameters:</div>
 </td>
 </tr>
 <tr>
@@ -399,49 +557,183 @@ div.footer {
 <table class='ex-table'>
 <thead>
 <tr>
-<th class='ex-header'>A</th>
-<th class='ex-header'>B</th>
+<th class='ex-header'>layout</th>
+<th class='ex-header'>type</th>
 <th class='ex-header'>M</th>
 <th class='ex-header'>K</th>
 <th class='ex-header'>N</th>
+<th class='ex-header'>A</th>
+<th class='ex-header'>B</th>
 <th class='ex-header'>expectedC</th>
 </tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
+<td class='ex-value'>ROW</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
 <td class='ex-value'>[4.0, 3.0, 2.0, 1.0]</td>
 <td class='ex-value'>[-0.5, 1.5, 1.0, -2.0]</td>
-<td class='ex-value'>2</td>
-<td class='ex-value'>2</td>
-<td class='ex-value'>2</td>
 <td class='ex-value'>[1.0, 0.0, 0.0, 1.0]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.378 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>ROW</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>[0.5]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.029 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>ROW</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>[2.0, 3.0, -1.0, -1.5]</td>
 <td class='ex-result'>
 <span>OK</span>
 <span class='ex-time'>(0.003 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>[-2.0, 1.0]</td>
-<td class='ex-value'>[-1.0, -1.5]</td>
-<td class='ex-value'>1</td>
+<td class='ex-value'>ROW</td>
+<td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>2</td>
-<td class='ex-value'>1</td>
-<td class='ex-value'>[0.5]</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[4.0, 3.0, 2.0, 1.0]</td>
+<td class='ex-value'>[-0.5, 1.5, 1.0, -2.0]</td>
+<td class='ex-value'>[1.0, 0.0, 0.0, 1.0]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0)</span>
+<span class='ex-time'>(0.008 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
+<td class='ex-value'>ROW</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
 <td class='ex-value'>[-2.0, 1.0]</td>
 <td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>[0.5]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.033 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>ROW</td>
+<td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>2</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>2</td>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
 <td class='ex-value'>[2.0, 3.0, -1.0, -1.5]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0)</span>
+<span class='ex-time'>(0.004 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>COL</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[4.0, 2.0, 3.0, 1.0]</td>
+<td class='ex-value'>[-0.5, 1.0, 1.5, -2.0]</td>
+<td class='ex-value'>[1.0, 0.0, 0.0, 1.0]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.064 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>COL</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>[0.5]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.028 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>COL</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>[2.0, 3.0, -1.0, -1.5]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.011 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>COL</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[4.0, 2.0, 3.0, 1.0]</td>
+<td class='ex-value'>[-0.5, 1.0, 1.5, -2.0]</td>
+<td class='ex-value'>[1.0, 0.0, 0.0, 1.0]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.008 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>COL</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>[0.5]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.010 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>COL</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>[2.0, 3.0, -1.0, -1.5]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.006 seconds)</span>
 </td>
 </tr>
 </tbody>
@@ -449,26 +741,7 @@ div.footer {
 </div>
 </td>
 <td>
-<div class='spec-status'>3/3 passed</div>
-</td>
-</tr>
-<tr>
-<td colspan='10'>
-<div class='feature-description' id='-678265085'>
-<span>The internal matrix multiplication test script runs!</span>
-<span class='return-toc'>
-<a href='#toc'>Return</a>
-<div class='ex-time'>(1.408 seconds)</div>
-</span>
-</div>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>Expect:</div>
-</td>
-<td>
-<pre class='block-source'>InternalMatMulTest.start()</pre>
+<div class='spec-status'>12/12 passed</div>
 </td>
 </tr>
 </tbody>

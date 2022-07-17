@@ -21,50 +21,50 @@ public class VirtualNDConfiguration extends AbstractNDC
 <span class="fc" id="L21">        return _cached( new VirtualNDConfiguration( shape ) );</span>
     }
 
-    @Override
-<span class="fc" id="L25">    public final int rank() { return _shape.length; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L25">    @Override public final int rank() { return _shape.length; }</span>
 
-    @Override
-<span class="fc" id="L28">    public final int[] shape() { return _shape; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L28">    @Override public final int[] shape() { return _shape; }</span>
 
-    @Override
-<span class="fc" id="L31">    public final int shape( int i ) { return _shape[ i ]; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L31">    @Override public final int shape( int i ) { return _shape[ i ]; }</span>
 
-    @Override
-<span class="fc" id="L34">    public final int[] indicesMap() { return new int[rank()]; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L34">    @Override public final int[] indicesMap() { return new int[rank()]; }</span>
 
-    @Override
-<span class="nc" id="L37">    public final int indicesMap( int i ) { return 0; }</span>
+    /** {@inheritDoc} */
+<span class="nc" id="L37">    @Override public final int indicesMap( int i ) { return 0; }</span>
 
-    @Override
-<span class="fc" id="L40">    public final int[] translation() { return new int[rank()]; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L40">    @Override public final int[] translation() { return new int[rank()]; }</span>
 
-    @Override
-<span class="nc" id="L43">    public final int translation( int i ) { return 0; }</span>
+    /** {@inheritDoc} */
+<span class="nc" id="L43">    @Override public final int translation( int i ) { return 0; }</span>
 
-    @Override
-<span class="fc" id="L46">    public final int[] spread() { return new int[rank()]; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L46">    @Override public final int[] spread() { return new int[rank()]; }</span>
 
-    @Override
-<span class="fc" id="L49">    public final int spread( int i ) { return 0; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L49">    @Override public final int spread( int i ) { return 0; }</span>
 
-    @Override
-<span class="fc" id="L52">    public final int[] offset() { return new int[rank()]; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L52">    @Override public final int[] offset() { return new int[rank()]; }</span>
 
-    @Override
-<span class="nc" id="L55">    public final int offset( int i ) { return 0; }</span>
+    /** {@inheritDoc} */
+<span class="nc" id="L55">    @Override public final int offset( int i ) { return 0; }</span>
 
-    @Override
-<span class="fc" id="L58">    public final int indexOfIndex(int index) { return 0; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L58">    @Override public final int indexOfIndex( int index ) { return 0; }</span>
 
-    @Override
-<span class="fc" id="L61">    public final int[] indicesOfIndex(int index) { return new int[rank()]; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L61">    @Override public final int[] indicesOfIndex( int index ) { return new int[rank()]; }</span>
 
-    @Override
-<span class="fc" id="L64">    public final int indexOfIndices(int[] indices) { return 0; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L64">    @Override public final int indexOfIndices(int[] indices) { return 0; }</span>
 
-    @Override
-<span class="fc" id="L67">    public final boolean isVirtual() { return true; }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L67">    @Override public final boolean isVirtual() { return true; }</span>
 
 
 }

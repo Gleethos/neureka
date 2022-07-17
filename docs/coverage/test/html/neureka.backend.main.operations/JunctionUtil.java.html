@@ -92,7 +92,7 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L92">            } else {</span>
 <span class="fc" id="L93">                Tsr&lt;?&gt;[] reduction = Operation.Utility.without(call.inputs(), 1+d);</span>
 <span class="pc bpc" id="L94" title="1 of 2 branches missed.">                if ( reduction.length &gt; 2 ) {</span>
-<span class="pc bpc" id="L95" title="1 of 2 branches missed.">                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? call.input( 1 ).clone().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? call.input( 1 ).deepCopy().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];</span>
 <span class="fc" id="L96">                    result = recursiveExecutor.execute(</span>
 <span class="fc" id="L97">                            ExecutionCall.of( reduction )</span>
 <span class="fc" id="L98">                                            .andArgs( Arg.DerivIdx.of( -1 ) )</span>
@@ -136,7 +136,7 @@ import org.slf4j.LoggerFactory;
                 Tsr&lt;?&gt; a;
 <span class="pc bpc" id="L137" title="1 of 2 branches missed.">                if ( d &gt; 1 ) {</span>
 <span class="nc" id="L138">                    Tsr&lt;?&gt;[] reduction = Operation.Utility.subset(call.inputs(), 1, 1, d+1);</span>
-<span class="nc" id="L139">                    reduction[ 0 ] = call.input( 1 ).clone().getUnsafe().setIsIntermediate( true );</span>
+<span class="nc" id="L139">                    reduction[ 0 ] = call.input( 1 ).deepCopy().getUnsafe().setIsIntermediate( true );</span>
 <span class="nc" id="L140">                    result = recursiveExecutor.execute(</span>
 <span class="nc" id="L141">                                        ExecutionCall.of( reduction )</span>
 <span class="nc" id="L142">                                                        .andArgs(Arg.DerivIdx.of(-1))</span>
@@ -230,10 +230,10 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L230">            }</span>
             else
 <span class="fc" id="L232">                call.setInput( 0,</span>
-<span class="fc" id="L233">                        call.input( 1 ).clone()</span>
+<span class="fc" id="L233">                        call.input( 1 ).deepCopy()</span>
 <span class="fc" id="L234">                           .getUnsafe()</span>
 <span class="fc" id="L235">                           .setIsIntermediate( true )</span>
-<span class="pc bpc" id="L236" title="2 of 4 branches missed.">                           .setValue( d == 0 || thisIsForAddition ? 1f : -1f )</span>
+<span class="pc bpc" id="L236" title="2 of 4 branches missed.">                           .setItems( d == 0 || thisIsForAddition ? 1f : -1f )</span>
                     );
         }
 <span class="fc" id="L239">        return result;</span>
@@ -241,20 +241,30 @@ import org.slf4j.LoggerFactory;
 
 
     public static &lt;V&gt; Tsr&lt;V&gt; newTsrLike( Tsr&lt;V&gt; template, double value ) {
-        //Tsr&lt;V&gt; t = (Tsr&lt;V&gt;) Tsr.like( (Tsr&lt;Number&gt;) template ).all( value );
-        //t.setIsVirtual(false);
-<span class="fc" id="L246">        Tsr&lt;V&gt; t = Tsr.of( template.getValueClass(), template.getNDConf().shape(), value )</span>
-<span class="fc" id="L247">                        .getUnsafe()</span>
-<span class="fc" id="L248">                        .setIsIntermediate( true );</span>
-<span class="fc" id="L249">        t.setIsVirtual( false );</span>
-<span class="fc" id="L250">        t.setValue( value );</span>
+<span class="fc" id="L244">        return newTsrLike(</span>
+<span class="fc" id="L245">            template.itemClass(),</span>
+<span class="fc" id="L246">            template.getNDConf().shape(),</span>
+<span class="fc" id="L247">            template.isOutsourced(),</span>
+<span class="fc" id="L248">            template.get( Device.class ),</span>
+            value
+        );
+    }
+
+    public static &lt;V&gt; Tsr&lt;V&gt; newTsrLike(
+        Class&lt;V&gt; type, int[] shape, boolean isOutsourced, Device&lt;Object&gt; device, double value
+    ) {
+<span class="fc" id="L256">        Tsr&lt;V&gt; t = Tsr.of( type, shape, value )</span>
+<span class="fc" id="L257">                        .getUnsafe()</span>
+<span class="fc" id="L258">                        .setIsIntermediate( true );</span>
+<span class="fc" id="L259">        t.setIsVirtual( false );</span>
+<span class="fc" id="L260">        t.setItems( value );</span>
         try {
-<span class="fc bfc" id="L252" title="All 2 branches covered.">            if ( template.isOutsourced() ) template.get( Device.class ).store( t );</span>
-<span class="nc" id="L253">        } catch ( Exception exception ) {</span>
-<span class="nc" id="L254">            _LOG.error( &quot;Failed storing a newly created tensor from a template tensor to its host device.&quot;, exception );</span>
-<span class="nc" id="L255">            throw exception;</span>
-<span class="fc" id="L256">        }</span>
-<span class="fc" id="L257">        return t;</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">            if ( isOutsourced ) device.store( t );</span>
+<span class="nc" id="L263">        } catch ( Exception exception ) {</span>
+<span class="nc" id="L264">            _LOG.error( &quot;Failed storing a newly created tensor from a template tensor to its host device.&quot;, exception );</span>
+<span class="nc" id="L265">            throw exception;</span>
+<span class="fc" id="L266">        }</span>
+<span class="fc" id="L267">        return t;</span>
     }
 
 }

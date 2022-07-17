@@ -45,7 +45,7 @@ import neureka.ndim.iterator.NDIterator;
 <span class="pc bpc" id="L45" title="1 of 2 branches missed.">                if ( call.input(  0 ) == null ) // Creating a new tensor:</span>
                 {
 <span class="fc" id="L47">                    int[] shape = call.input(  1 ).getNDConf().shape();</span>
-<span class="fc" id="L48">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getValueClass();</span>
+<span class="fc" id="L48">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getItemClass();</span>
 <span class="fc" id="L49">                    Tsr&lt;Object&gt; output = Tsr.of(type).withShape(shape).all( 0.0 ).getUnsafe().setIsIntermediate( true );</span>
 <span class="fc" id="L50">                    output.setIsVirtual( false );</span>
                     try {
@@ -103,8 +103,8 @@ import neureka.ndim.iterator.NDIterator;
     ) {
 <span class="fc" id="L104">        Tsr&lt;?&gt; t0_drn = call.input( 0 );</span>
 <span class="fc" id="L105">        Tsr&lt;?&gt; t1_src = call.input( 1 );</span>
-<span class="fc" id="L106">        Class&lt;?&gt; typeClass = t0_drn.getValueClass();</span>
-<span class="fc" id="L107">        Class&lt;?&gt; rightTypeClass = t1_src.getValueClass();</span>
+<span class="fc" id="L106">        Class&lt;?&gt; typeClass = t0_drn.getItemClass();</span>
+<span class="fc" id="L107">        Class&lt;?&gt; rightTypeClass = t1_src.getItemClass();</span>
 
 <span class="pc bpc" id="L109" title="2 of 4 branches missed.">        assert !t0_drn.isVirtual();</span>
 <span class="pc bpc" id="L110" title="2 of 4 branches missed.">        assert !t1_src.isVirtual();</span>
@@ -220,10 +220,10 @@ import neureka.ndim.iterator.NDIterator;
 <span class="pc bpc" id="L220" title="2 of 4 branches missed.">            assert fun != null;</span>
 <span class="fc" id="L221">            byte[] t0_value = (byte[]) t0_drn.getUnsafe().getData();</span>
 <span class="fc" id="L222">            byte[] t1_value = t1_src.getUnsafe().getDataAs(byte[].class);</span>
-<span class="pc bpc" id="L223" title="1 of 2 branches missed.">            if ( isSimple )</span>
-<span class="nc" id="L224">                workload = (start, end) -&gt; {</span>
-<span class="nc bnc" id="L225" title="All 2 branches missed.">                    for ( int i = start; i &lt; end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);</span>
-<span class="nc" id="L226">                };</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">            if ( isSimple )</span>
+<span class="fc" id="L224">                workload = (start, end) -&gt; {</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);</span>
+<span class="fc" id="L226">                };</span>
             else
 <span class="fc" id="L228">                workload = (i, end) -&gt; {</span>
 <span class="fc" id="L229">                    NDIterator t0Idx = NDIterator.of( t0_drn );</span>

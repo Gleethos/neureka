@@ -201,7 +201,7 @@ import java.util.stream.Collectors;
 <span class="fc" id="L201">                                call.setInput( 0, Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );</span>
                             else {
 <span class="fc" id="L203">                                int gwz = call.input(Number.class, 0).size();</span>
-<span class="fc" id="L204">                                float value = call.input(Number.class, 2).getValueAt(0).floatValue();</span>
+<span class="fc" id="L204">                                float value = call.input(Number.class, 2).getItemAt(0).floatValue();</span>
 <span class="fc" id="L205">                                call.getDevice()</span>
 <span class="fc" id="L206">                                    .getKernel(call)</span>
 <span class="fc" id="L207">                                    .passAllOf(call.input(Number.class, 0))</span>

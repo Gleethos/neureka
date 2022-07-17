@@ -1,0 +1,1733 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
+}
+
+h3 {
+    font-weight: 200;
+}
+
+table {
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+}
+
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+table.features-table {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table {
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table th {
+    background: lightblue;
+    padding: 6px;
+}
+
+table.summary-table td {
+    background: #E0E0E0;
+    padding: 6px;
+}
+
+pre.title {
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+pre.narrative {
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+.feature-description {
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
+}
+
+.feature-toc-error {
+    color: #F89A4F;
+}
+
+.feature-toc-failure {
+    color: #FF8080;
+}
+
+.feature-toc-ignored {
+    color: lightgray;
+}
+
+.feature-toc-pass {
+    color: green;
+}
+
+.feature-description.error {
+    background: #F89A4F;
+}
+
+.feature-description.failure {
+    background: #FF8080;
+}
+
+.feature-description.ignored {
+    background: lightgray;
+}
+
+.feature-description.ignored .reason {
+    color: black;
+    font-style: italic;
+    font-size: small;
+}
+
+div.extra-info {
+    font-size: small;
+}
+
+div.spec-headers {
+    margin: 4px;
+    font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
+}
+
+div.pending-feature {
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
+}
+
+div.problem-description {
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
+}
+
+div.problem-header {
+    font-weight: bold;
+    color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table{
+    width: 98%;
+}
+
+table.ex-table th {
+    background: lightblue;
+    padding: 5px;
+}
+
+table.ex-table td {
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
+}
+
+table td {
+    min-width: 50px;
+}
+
+col.block-kind-col {
+    width: 70px;
+}
+
+span.spec-header {
+    font-weight: bold;
+}
+
+div.spec-text {
+    /*color: green;*/
+}
+
+div.spec-status {
+    font-style: italic;
+}
+
+.ignored {
+    color: gray;
+}
+
+td.ex-result {
+    text-align: center;
+    background: white !important;
+}
+
+.ex-pass {
+    color: darkgreen;
+}
+
+.ex-fail {
+    color: red;
+    font-weight: bold;
+}
+
+div.block-kind {
+    margin: 2px;
+    font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+pre.block-source.error {
+    background-color: pink;
+    color: red;
+    font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+    margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+    color: gray;
+    margin-top: -14px;
+}
+
+pre.block-source.post-error {
+    color: gray;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}</style>
+</head>
+<body>
+<h2>Report for ut.tensors.Fluent_Tensor_Creation_Spec</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Sun Jul 17 20:20:15 CEST 2022 by danie</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7</td>
+<td>7</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>0.166 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#-1428332698' class='feature-toc-pass'>Tensors can be created fluently.</a>
+</li>
+<li>
+<a href='#1523077750' class='feature-toc-pass'>Range based tensors can be created fluently.</a>
+</li>
+<li>
+<a href='#141682626' class='feature-toc-pass'>Value based tensors can be created fluently.</a>
+</li>
+<li>
+<a href='#-1366466942' class='feature-toc-pass'>Seed based tensors can be created fluently.</a>
+</li>
+<li>
+<a href='#-1301895892' class='feature-toc-pass'>Initialization lambda based tensors can be created fluently.</a>
+</li>
+<li>
+<a href='#-584948784' class='feature-toc-pass'>Vectors can be created fluently.</a>
+</li>
+<li>
+<a href='#-1552338631' class='feature-toc-pass'>Scalars can be created fluently.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1428332698'>
+<span>Tensors can be created fluently.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.017 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We create a new homogeneously filled Tsr instance using the fluent builder API.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr&lt;?&gt; t = Tsr.of( type )
+.withShape( 3, 2 )
+.all( value )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>This new instance will have the expected data type...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.dataType == DataType.of(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>...also it will contain the expected data.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.unsafe.data == data
+t.data.length == 1
+t.items.length == 6</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The tensor will have the shape we passed to the builder.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.shape() == [3, 2]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The size of the tensor will be the product of all shape entries!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.size() == 6</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>
+                Based on the fact that the tensor is homogeneously filled it will be a "virtual tensor"
+                This means that the tensor will not have allocated the memory proportional to the size
+                of the tensor!
+            </div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.isVirtual()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used to populate the builder API:</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>value</th>
+<th class='ex-header'>data</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>[4]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.010 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>4.0</td>
+<td class='ex-value'>[4.0]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>4.0</td>
+<td class='ex-value'>[4.0]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>42</td>
+<td class='ex-value'>[42]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Boolean</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>[false]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Character</td>
+<td class='ex-value'>°</td>
+<td class='ex-value'>°</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.003 seconds)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>6/6 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1523077750'>
+<span>Range based tensors can be created fluently.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.012 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We create a range based Tsr instance using the fluent builder API.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr&lt;?&gt; t = Tsr.of( type )
+.withShape( 3, 2 )
+.andFillFrom( from ).to( to ).step( step )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>This new instance will have the expected data type...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.dataType == DataType.of(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>...also it will contain the expected data.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.unsafe.data == data
+t.data == data</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The tensor will have the shape we passed to the builder.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.shape() == [3, 2]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The size of the tensor will be the product of all shape entries!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.size() == 6</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>
+                Based on the fact that the tensor is not homogeneously filled it will be an "actual tensor".
+                The opposite of that, a "virtual tensor", would mean that a tensor does not have allocated 
+                memory proportional to the size of the tensor! 
+                In this case however the tensor should be actual which means that it is not virtual.
+            </div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>!t.isVirtual()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used to populate the builder API:</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>from</th>
+<th class='ex-header'>to</th>
+<th class='ex-header'>step</th>
+<th class='ex-header'>data</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>-9</td>
+<td class='ex-value'>18</td>
+<td class='ex-value'>2.0</td>
+<td class='ex-value'>[-9, -7, -5, -3, -1, 1]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.003 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>-2</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>2.0</td>
+<td class='ex-value'>[-2, 0, 2, 4, -2, 0]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>2.7</td>
+<td class='ex-value'>45.0</td>
+<td class='ex-value'>3.0</td>
+<td class='ex-value'>[2.7, 5.7, 8.7, 11.7, 14.7, 17.7]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.004 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>-3.0</td>
+<td class='ex-value'>3.0</td>
+<td class='ex-value'>0.5</td>
+<td class='ex-value'>[-3.0, -2.5, -2.0, -1.5, -1.0, -0.5]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>6.4</td>
+<td class='ex-value'>78.3</td>
+<td class='ex-value'>4.0</td>
+<td class='ex-value'>[6.4, 10.4, 14.4, 18.4, 22.4, 26.4]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>0.0</td>
+<td class='ex-value'>1.0</td>
+<td class='ex-value'>0.2</td>
+<td class='ex-value'>[0.0, 0.2, 0.4, 0.6, 0.8, 1.0]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>-5</td>
+<td class='ex-value'>6</td>
+<td class='ex-value'>2.0</td>
+<td class='ex-value'>[-5, -3, -1, 1, 3, 5]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>-65</td>
+<td class='ex-value'>45</td>
+<td class='ex-value'>5.0</td>
+<td class='ex-value'>[-65, -60, -55, -50, -45, -40]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.004 seconds)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>8/8 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='141682626'>
+<span>Value based tensors can be created fluently.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.005 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We create a Tsr instance by passing an array of arguments which ought to iteratively fill the instance.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr&lt;?&gt; t = Tsr.of( type )
+.withShape( 3, 2 )
+.andFill( data )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>This new instance will have the expected data type...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.dataType == DataType.of(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>...also it will contain the expected data.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.unsafe.data == expected
+t.data == expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The tensor will have the shape we passed to the builder.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.shape() == [3, 2]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The size of the tensor will be the product of all shape entries!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.size() == 6</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>
+                Based on the fact that the tensor is not homogeneously filled it will be an "actual tensor".
+                The opposite of that, a "virtual tensor", would mean that a tensor does not have allocated 
+                memory proportional to the size of the tensor! 
+                In this case however the tensor should be actual which means that it is not virtual.
+            </div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>!t.isVirtual()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used to populate the builder API:</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>data</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>[2, 3, 4]</td>
+<td class='ex-value'>[2, 3, 4, 2, 3, 4]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>[-5.0, 6.5, 7.0]</td>
+<td class='ex-value'>[-5.0, 6.5, 7.0, -5.0, 6.5, 7.0]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.003 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>[6, -1, -2]</td>
+<td class='ex-value'>[6, -1, -2, 6, -1, -2]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>[22.4, 26.4]</td>
+<td class='ex-value'>[22.4, 26.4, 22.4, 26.4, 22.4, 26.4]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>[-20, 3, 4, -3]</td>
+<td class='ex-value'>[-20, 3, 4, -3, -20, 3]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>[23, 199]</td>
+<td class='ex-value'>[23, 199, 23, 199, 23, 199]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Boolean</td>
+<td class='ex-value'>[true, false]</td>
+<td class='ex-value'>[true, false, true, false, true, false]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Character</td>
+<td class='ex-value'>[x, y]</td>
+<td class='ex-value'>xyxyxy</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>8/8 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1366466942'>
+<span>Seed based tensors can be created fluently.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.008 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We create a Tsr instance by passing an array of arguments which ought to be populated based on a seed.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr&lt;?&gt; t = Tsr.of( type )
+.withShape( 3, 2 )
+.andSeed( seed )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>This new instance will have the expected data type...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.dataType == DataType.of(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>...also it will contain the expected data.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.unsafe.data == expected
+t.data == expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The tensor will have the shape we passed to the builder.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.shape() == [3, 2]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The size of the tensor will be the product of all shape entries!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.size() == 6</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString().startsWith("(3x2):")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>
+                Based on the fact that the tensor is not homogeneously filled it will be an "actual tensor".
+                The opposite of that, a "virtual tensor", would mean that a tensor does not have allocated 
+                memory proportional to the size of the tensor! 
+                In this case however the tensor should be actual which means that it is not virtual.
+            </div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>!t.isVirtual()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used to populate the builder API:</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>seed</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>a</td>
+<td class='ex-value'>[1339394550, -1833393546, -856828099, -757072988, 2102900152, 1199451677]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.005 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>b</td>
+<td class='ex-value'>[-0.7129147576473633, -0.021739959992013475, 0.0688712696353899, -0.06398972167241564, 0.8226821091309379, 2.530713285361827]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>c</td>
+<td class='ex-value'>[18384, 2870, 20818, -5635, -20565, -25424]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>d</td>
+<td class='ex-value'>[-1.4496698, 1.0095189, -0.22373904, 0.18774746, -1.1156114, 1.4588006]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>e</td>
+<td class='ex-value'>[-91, -11, -71, 103, -103, -63]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>f</td>
+<td class='ex-value'>[5691513877775159445, 1358544122458653242, -7551650784545132424, -6481055261550539775, 3561520525539920014, 7097824773375655256]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Boolean</td>
+<td class='ex-value'>g</td>
+<td class='ex-value'>[false, true, true, false, true, false]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Character</td>
+<td class='ex-value'>h</td>
+<td class='ex-value'>ྒ凌ﻄ낓ᾒ鼋</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>8/8 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1301895892'>
+<span>Initialization lambda based tensors can be created fluently.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.009 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We create a Tsr instance by passing an initialization lambda which ought to iteratively fill the instance.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr&lt;?&gt; t = Tsr.of( type )
+.withShape( 3, 2 )
+.andWhere( initializer )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>This new instance will have the expected data type...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.dataType == DataType.of(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>...also it will contain the expected data.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.unsafe.data == expected
+t.data == expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The tensor will have the shape we passed to the builder.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.shape() == [3, 2]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The size of the tensor will be the product of all shape entries!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.size() == 6</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>
+                Based on the fact that the tensor is not homogeneously filled it will be an "actual tensor".
+                The opposite of that, a "virtual tensor", would mean that a tensor does not have allocated 
+                memory proportional to the size of the tensor! 
+                In this case however the tensor should be actual which means that it is not virtual.
+            </div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>!t.isVirtual()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used to populate the builder API:</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>initializer</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@7d4e4df4</td>
+<td class='ex-value'>[0, 2, 3, 5, 6, 8]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.005 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@14d953ce</td>
+<td class='ex-value'>[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@11c9bf6e</td>
+<td class='ex-value'>[0, 2, 3, 5, 6, 8]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@5933305</td>
+<td class='ex-value'>[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@5281150f</td>
+<td class='ex-value'>[0, 2, 3, 5, 6, 8]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@27575e55</td>
+<td class='ex-value'>[0, 2, 3, 5, 6, 8]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Character</td>
+<td class='ex-value'>ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@1d2b441f</td>
+<td class='ex-value'> </td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.001 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Boolean</td>
+<td class='ex-value'>ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@694fdebe</td>
+<td class='ex-value'>[true, false, true, false, true, false]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>8/8 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-584948784'>
+<span>Vectors can be created fluently.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We create a new Tsr instance using the "vector" method in the fluent builder API.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr&lt;?&gt; t = Tsr.of( type ).vector( values )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>This new instance will have the expected data type...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.dataType == DataType.of(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>...also it will contain the expected data.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.unsafe.data == data
+t.data == data</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The tensor will have a one dimensional shape of the same length as the provided data array.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.shape() == [values.length]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The size of the tensor will also be as long as the data array!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.size() == values.length</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>
+                Based on the fact that the tensor is not homogeneously filled it will be an "actual tensor".
+                The opposite of that, a "virtual tensor", would mean that a tensor does not have allocated 
+                memory proportional to the size of the tensor! 
+                In this case however the tensor should be actual which means that it is not virtual.
+            </div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>!t.isVirtual()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used to populate the builder API:</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>values</th>
+<th class='ex-header'>data</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>[4, 5, -2]</td>
+<td class='ex-value'>[4, 5, -2]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>[-1.0, 7.5]</td>
+<td class='ex-value'>[-1.0, 7.5]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>[0.6, -32.7]</td>
+<td class='ex-value'>[0.6, -32.7]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>[1, 3, 2, 4]</td>
+<td class='ex-value'>[1, 3, 2, 4]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>4/4 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1552338631'>
+<span>Scalars can be created fluently.</span>
+<span class='return-toc'>
+<a href='#toc'>Return</a>
+<div class='ex-time'>(0.002 seconds)</div>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>We create a new Tsr instance using the "scalar" method in the fluent builder API.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr&lt;?&gt; t = Tsr.of( type ).scalar( value )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>This new instance will have the expected data type...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.dataType == DataType.of(type)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>...also it will contain the expected data.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.unsafe.data == data
+t.data == data</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The tensor will have a one dimensional shape of 1.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.shape() == [1]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The size of the tensor will also 1!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.size() == 1</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used to populate the builder API:</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>value</th>
+<th class='ex-header'>data</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>3</td>
+<td class='ex-value'>[3]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.002 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>5.7</td>
+<td class='ex-value'>[5.7]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>9.4</td>
+<td class='ex-value'>[9.4]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>42</td>
+<td class='ex-value'>[42]</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>4/4 passed</div>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>

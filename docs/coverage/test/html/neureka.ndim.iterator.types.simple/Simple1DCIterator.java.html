@@ -13,41 +13,27 @@ public final class Simple1DCIterator extends Simple1DConfiguration implements ND
 <span class="fc" id="L13">    }</span>
 
 
-    @Override
-    public final void increment() {
-<span class="fc" id="L18">        _d1++;</span>
-<span class="fc" id="L19">    }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L17">    @Override public final void increment() { _d1++; }</span>
 
-    @Override
-    public final void decrement() {
-<span class="fc" id="L23">        _d1--;</span>
-<span class="fc" id="L24">    }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L20">    @Override public final void decrement() { _d1--; }</span>
 
 
-    @Override
-    public final int i() {
-<span class="fc" id="L29">        return this.indexOfIndices(_d1);</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L24">    @Override public final int i() { return this.indexOfIndices(_d1); }</span>
 
-    @Override
-    public final int get( int axis ) {
-<span class="fc" id="L34">        return _d1;</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L27">    @Override public final int get( int axis ) { return _d1; }</span>
 
-    @Override
-    public final int[] get() {
-<span class="fc" id="L39">        return new int[]{_d1};</span>
-    }
+    /** {@inheritDoc} */
+<span class="fc" id="L30">    @Override public final int[] get() { return new int[]{_d1}; }</span>
 
-    @Override
-    public final void set( int axis, int position ) {
-<span class="fc" id="L44">        _d1 = position;</span>
-<span class="fc" id="L45">    }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L33">    @Override public final void set( int axis, int position ) { _d1 = position; }</span>
 
-    @Override
-    public final void set( int[] indices) {
-<span class="fc" id="L49">        _d1 = indices[0];</span>
-<span class="fc" id="L50">    }</span>
+    /** {@inheritDoc} */
+<span class="fc" id="L36">    @Override public final void set( int[] indices) { _d1 = indices[0]; }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

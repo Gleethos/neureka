@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Mon Jun 06 11:39:53 CEST 2022 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Jul 17 20:20:14 CEST 2022 by danie</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.363 seconds</td>
+<td>0.212 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -373,7 +373,7 @@ div.footer {
 <span>ADAM optimizes according to expected inputs</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.218 seconds)</div>
+<div class='ex-time'>(0.103 seconds)</div>
 </span>
 </div>
 </td>
@@ -389,7 +389,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr g = Tsr.of(gradient)</pre>
+<pre class='block-source'>Tsr g = Tsr.of(expectedWeight)</pre>
 </td>
 </tr>
 <tr>
@@ -403,7 +403,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>w.set( Tsr.of( input ) )
+<pre class='block-source'>w.set( Tsr.of( gradient ) )
 w.applyGradient()</pre>
 </td>
 </tr>
@@ -435,8 +435,8 @@ w.offset().hashCode()==g.offset().hashCode()</pre>
 <table class='ex-table'>
 <thead>
 <tr>
-<th class='ex-header'>input</th>
 <th class='ex-header'>gradient</th>
+<th class='ex-header'>expectedWeight</th>
 </tr>
 </thead>
 <tbody>
@@ -445,79 +445,79 @@ w.offset().hashCode()==g.offset().hashCode()</pre>
 <td class='ex-value'>0.009999999666666677</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.046 seconds)</span>
-</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>-3</td>
-<td class='ex-value'>0.02343838820965563</td>
-<td class='ex-result'>
-<span>OK</span>
-<span class='ex-time'>(0.024 seconds)</span>
-</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>2</td>
-<td class='ex-value'>0.030115667802083777</td>
-<td class='ex-result'>
-<span>OK</span>
 <span class='ex-time'>(0.020 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>-3</td>
-<td class='ex-value'>0.040571568761377755</td>
+<td class='ex-value'>0.01999</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.018 seconds)</span>
+<span class='ex-time'>(0.013 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>2</td>
-<td class='ex-value'>0.04604647775568702</td>
+<td class='ex-value'>0.02426</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.017 seconds)</span>
+<span class='ex-time'>(0.009 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>-3</td>
+<td class='ex-value'>0.03034</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.009 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>2</td>
-<td class='ex-value'>0.04750863243746767</td>
+<td class='ex-value'>0.03332</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.018 seconds)</span>
+<span class='ex-time'>(0.010 seconds)</span>
+</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>2</td>
+<td class='ex-value'>0.03409</td>
+<td class='ex-result'>
+<span>OK</span>
+<span class='ex-time'>(0.008 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>-4</td>
-<td class='ex-value'>0.054017821302644514</td>
+<td class='ex-value'>0.03738</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.021 seconds)</span>
+<span class='ex-time'>(0.009 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>-3</td>
-<td class='ex-value'>0.06320597194500503</td>
+<td class='ex-value'>0.04194</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.017 seconds)</span>
+<span class='ex-time'>(0.008 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>-3</td>
-<td class='ex-value'>0.07446842921800374</td>
+<td class='ex-value'>0.04744</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.017 seconds)</span>
+<span class='ex-time'>(0.008 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>2</td>
-<td class='ex-value'>0.08205723598079066</td>
+<td class='ex-value'>0.05112</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.020 seconds)</span>
+<span class='ex-time'>(0.009 seconds)</span>
 </td>
 </tr>
 </tbody>
@@ -534,7 +534,7 @@ w.offset().hashCode()==g.offset().hashCode()</pre>
 <span>Equations used by ADAM return expected result.</span>
 <span class='return-toc'>
 <a href='#toc'>Return</a>
-<div class='ex-time'>(0.093 seconds)</div>
+<div class='ex-time'>(0.051 seconds)</div>
 </span>
 </div>
 </td>
@@ -604,7 +604,7 @@ t5.toString().contains( expected )</pre>
 <td class='ex-value'>(1):[-0.29999]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.023 seconds)</span>
+<span class='ex-time'>(0.018 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -613,7 +613,7 @@ t5.toString().contains( expected )</pre>
 <td class='ex-value'>(1):[-0.29999]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.019 seconds)</span>
+<span class='ex-time'>(0.008 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -622,7 +622,7 @@ t5.toString().contains( expected )</pre>
 <td class='ex-value'>(1):[-3.0]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.008 seconds)</span>
+<span class='ex-time'>(0.004 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -631,7 +631,7 @@ t5.toString().contains( expected )</pre>
 <td class='ex-value'>(1):[3.0]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.010 seconds)</span>
+<span class='ex-time'>(0.006 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -640,7 +640,7 @@ t5.toString().contains( expected )</pre>
 <td class='ex-value'>(1):[0.00999]</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.033 seconds)</span>
+<span class='ex-time'>(0.015 seconds)</span>
 </td>
 </tr>
 </tbody>
@@ -707,7 +707,7 @@ t5.toString().contains( expected )</pre>
 <td class='ex-value'>-0.29999999999999993</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.006 seconds)</span>
+<span class='ex-time'>(0.005 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
@@ -716,7 +716,7 @@ t5.toString().contains( expected )</pre>
 <td class='ex-value'>-1.0</td>
 <td class='ex-result'>
 <span>OK</span>
-<span class='ex-time'>(0.001 seconds)</span>
+<span class='ex-time'>(0.002 seconds)</span>
 </td>
 </tr>
 <tr class='ex-pass'>
