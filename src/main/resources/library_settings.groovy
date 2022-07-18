@@ -18,7 +18,7 @@ Neureka.configure {
         }
 
         view { 
-            tensors {
+            ndArrays {
                 it.rowLimit          = 50
                 it.isScientific      = true
                 it.isMultiline       = true
