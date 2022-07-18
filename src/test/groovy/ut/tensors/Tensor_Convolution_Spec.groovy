@@ -30,6 +30,7 @@ class Tensor_Convolution_Spec extends Specification
             it.postfix           = ""
             it.prefix            = ""
             it.hasSlimNumbers    = false
+            it.isLegacy          = false
         })
     }
 
