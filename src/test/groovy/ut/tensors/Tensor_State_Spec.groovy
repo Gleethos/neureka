@@ -36,7 +36,7 @@ class Tensor_State_Spec extends Specification
     {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true
@@ -140,7 +140,7 @@ class Tensor_State_Spec extends Specification
                     Neureka.get()
                             .settings()
                             .view()
-                            .getTensorSettings()
+                            .getNDPrintSettings()
                             .clone()
                             .setRowLimit(  mode.contains( "s" ) ? 3 : 32 )
                             .setIsScientific( mode.contains( "c" )  )

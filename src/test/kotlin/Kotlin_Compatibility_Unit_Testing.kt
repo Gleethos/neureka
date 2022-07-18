@@ -23,7 +23,7 @@ Kotlin_Compatibility_Unit_Testing {
         Neureka.get().reset()
 
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors {
+        Neureka.get().settings().view().ndArrays {
             it.isScientific = true
             it.isMultiline = false
             it.hasGradient = true
@@ -272,7 +272,7 @@ Kotlin_Compatibility_Unit_Testing {
         // Given:
         val viewSettings = Neureka.get().settings().view()
         // And :
-        viewSettings.tensors {
+        viewSettings.ndArrays {
                         it.isCellBound = true
                         it.hasSlimNumbers = false
                         it.prefix = "§"
@@ -307,7 +307,7 @@ Kotlin_Compatibility_Unit_Testing {
 )!""")
 
         // When :
-        viewSettings.tensors {
+        viewSettings.ndArrays {
             it.isCellBound = true
             it.hasSlimNumbers = true
             it.prefix = ".."
@@ -352,7 +352,7 @@ Kotlin_Compatibility_Unit_Testing {
         // Given:
         val viewSettings = Neureka.get().settings().view()
         // And :
-        viewSettings.tensors {
+        viewSettings.ndArrays {
             it.isCellBound = true
             it.hasSlimNumbers = true
             it.isMultiline = true

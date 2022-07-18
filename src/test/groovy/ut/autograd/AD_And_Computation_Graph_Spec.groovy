@@ -14,7 +14,7 @@ class AD_And_Computation_Graph_Spec extends Specification
     {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true
@@ -33,7 +33,7 @@ class AD_And_Computation_Graph_Spec extends Specification
     def "Reshaping produces expected computation graph and also works with reverse mode AD."(){
 
         given :
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
             Tsr<Double> a = Tsr.of([2, 3], [
                                 1d, 2d, 3d,
                                 4d, 5d, 6d

@@ -32,7 +32,7 @@ class Tensor_Operation_Spec extends Specification
         // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
         SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true
@@ -182,7 +182,7 @@ class Tensor_Operation_Spec extends Specification
             Class<?> type, String code, String expected
     ) {
         given :
-            Neureka.get().settings().view().tensors({it.hasSlimNumbers=true})
+            Neureka.get().settings().view().ndArrays({it.hasSlimNumbers=true})
             Tsr a = Tsr.of(5d).unsafe.toType(type)
             Tsr b = Tsr.of(3f).unsafe.toType(type)
             Binding binding = new Binding()
@@ -227,7 +227,7 @@ class Tensor_Operation_Spec extends Specification
     def 'Overloaded operation methods on tensors produce expected results when called.'()
     {
         given :
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
             Tsr a = Tsr.of(2d).setRqsGradient(true)
             Tsr b = Tsr.of(-4d)
             Tsr c = Tsr.of(3d).setRqsGradient(true)
@@ -248,7 +248,7 @@ class Tensor_Operation_Spec extends Specification
             Device device
     ) {
         given :
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
             Tsr a = Tsr.of([11, 11], 3d..19d).to( device )
             Tsr x = a[1..-2,0..-1]
             Tsr y = a[0..-3,0..-1]
@@ -275,7 +275,7 @@ class Tensor_Operation_Spec extends Specification
             BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String cValue, String wGradient, String device
     ) {
         given :
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and :
             String wValue = whichGrad
                                 ? "8" + ( bShape.inject(1, {x,y->x*y}) > 1 ? ", 9" : "" )
@@ -308,7 +308,7 @@ class Tensor_Operation_Spec extends Specification
             w.toString({it.hasSlimNumbers = true}) == "[$wShape]:($wValue):g:($wGradient)"
 
         when :
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
         then :
             c.toString({it.hasSlimNumbers = true}) == "(2x2):[$cValue]"
 
@@ -369,7 +369,7 @@ class Tensor_Operation_Spec extends Specification
     def 'Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance'()
     {
         given : 'Neurekas view is set to legacy and three tensors of which one requires gradients.'
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
             Tsr x = Tsr.of(3).setRqsGradient(true)
             Tsr b = Tsr.of(-4)
             Tsr w = Tsr.of(2)

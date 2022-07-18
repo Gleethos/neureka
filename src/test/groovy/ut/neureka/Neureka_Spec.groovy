@@ -62,7 +62,7 @@ class Neureka_Spec extends Specification
         // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
         SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true
@@ -125,10 +125,10 @@ class Neureka_Spec extends Specification
 
         where :
             value | getter                                                                       | setter
-            false | { Neureka.Settings it -> it.view().getTensorSettings().getIsLegacy()} | { Neureka.Settings s, v -> s.view().getTensorSettings().setIsLegacy(v)}
-            true  | { Neureka.Settings it -> it.view().getTensorSettings().getHasGradient()} | { Neureka.Settings s, v -> s.view().getTensorSettings().setHasGradient(v)}
-            false | { Neureka.Settings it -> it.view().getTensorSettings().getHasSlimNumbers()} | { Neureka.Settings s, v -> s.view().getTensorSettings().setHasSlimNumbers(v)}
-            true  | { Neureka.Settings it -> it.view().getTensorSettings().getIsScientific()} | { Neureka.Settings s, v -> s.view().getTensorSettings().setIsScientific(v)}
+            false | { Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}       | { Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}
+            true  | { Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}    | { Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}
+            false | { Neureka.Settings it -> it.view().getNDPrintSettings().getHasSlimNumbers()} | { Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasSlimNumbers(v)}
+            true  | { Neureka.Settings it -> it.view().getNDPrintSettings().getIsScientific()}   | { Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsScientific(v)}
             false | { Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}      | { Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}
             false | { Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}     | { Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}
             true  | { Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}       | { Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}

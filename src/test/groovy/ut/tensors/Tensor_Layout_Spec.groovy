@@ -28,7 +28,7 @@ class Tensor_Layout_Spec extends Specification
         // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
         SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true
@@ -47,7 +47,7 @@ class Tensor_Layout_Spec extends Specification
     def 'A new transposed version of a given tensor will be returned by the "T()" method.'()
     {
         given : 'We want to view tensors in the "[shape]:(value)" format so we set the corresponding flag.'
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and : 'We instantiate a test tensor:'
             var t = Tsr.of([2, 3], [
                     1d, 2d, 3d,
@@ -73,7 +73,7 @@ class Tensor_Layout_Spec extends Specification
             String device, String expectedString
     ) {
         given : 'We want to view tensors in the "(shape:[value]" format so we set the corresponding flag.'
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
         and :
             var a = Tsr.ofFloats().withShape(2, 3).andWhere({it, idx->((7**it)%11-5).floatValue()})
             var b = Tsr.ofFloats().withShape(3, 4).andWhere({it, idx->((5**it)%11-5).floatValue()})

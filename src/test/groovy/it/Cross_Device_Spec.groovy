@@ -31,7 +31,7 @@ class Cross_Device_Spec extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true
@@ -54,7 +54,7 @@ class Cross_Device_Spec extends Specification
             Device device = ( deviceType == "CPU" ) ? CPU.get() : Device.get('first')
             Neureka.get().reset()
             Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
         and : 'Two tensors, one requiring gradients and the other one does not.'
             var tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{
@@ -109,7 +109,7 @@ class Cross_Device_Spec extends Specification
         given : 'A given device of any type and the settings configured for testing.'
             Device device = ( deviceType == "CPU" ) ? CPU.get() : Device.get('first')
             Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
         expect : 'The integration test runs successful.'
             CrossDeviceSystemTest.on(device)
@@ -122,7 +122,7 @@ class Cross_Device_Spec extends Specification
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
     def 'Test simple NN implementation with manual backprop'(Device device) {
         given:
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
         expect:
             device != null
@@ -142,7 +142,7 @@ class Cross_Device_Spec extends Specification
     ) {
         // Some more asserts:
         given : 'We use the legacy representation of tensors for this little test!'
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and : 'We create a small matrix of 4 fours which requires a gradient and is stored on the provided device!'
             Tsr t = Tsr.of([2, 2], 4d).setRqsGradient(true).to(device)
         when : 'We now call the backward method on the tensor directly without having done any operations...'

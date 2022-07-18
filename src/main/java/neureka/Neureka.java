@@ -598,7 +598,7 @@ public final class Neureka
             /**
              *  Settings for configuring how tensors should be converted to {@link String} representations.
              */
-            public NDPrintSettings getTensorSettings() { return _settings; }
+            public NDPrintSettings getNDPrintSettings() { return _settings; }
 
             /**
              *  This allows you to provide a lambda to configure how tensors should be
@@ -608,11 +608,11 @@ public final class Neureka
              *
              * @param should A consumer of the {@link NDPrintSettings} ready to be configured.
              */
-            public void tensors( Consumer<NDPrintSettings> should ) { should.accept(_settings); }
+            public void ndArrays( Consumer<NDPrintSettings> should ) { should.accept(_settings); }
 
             public String toString() {
                 return "Neureka.Settings.View[" +
-                            "tensors=" + this.getTensorSettings() +
+                            "ndArrayPrintSettings=" + this.getNDPrintSettings() +
                         "]";
             }
         }

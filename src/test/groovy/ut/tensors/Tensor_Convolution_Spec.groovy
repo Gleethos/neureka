@@ -17,7 +17,7 @@ class Tensor_Convolution_Spec extends Specification
         SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
 
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true
@@ -46,7 +46,7 @@ class Tensor_Convolution_Spec extends Specification
         given: 'Gradient auto apply for tensors in ue is set to false.'
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
         and: 'Tensor legacy view is set to true.'
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and: 'Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].'
             var x = Tsr.of(new int[]{2, 3, 1},
                                     new double[]{
@@ -85,7 +85,7 @@ class Tensor_Convolution_Spec extends Specification
     def 'Manual convolution produces expected result.'()
     {
         given :
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
             Tsr a = Tsr.of([100, 100], 3d..19d)
             Tsr x = a[1..-2,0..-1]
             Tsr y = a[0..-3,0..-1]
@@ -126,7 +126,7 @@ class Tensor_Convolution_Spec extends Specification
             Device device
     ) {
         given :
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
             Tsr a = Tsr.of([4, 4], 0d..16d).to( device )
 
             Tsr x = a[1..-2,0..-1]
@@ -168,7 +168,7 @@ class Tensor_Convolution_Spec extends Specification
     void 'Autograd works with simple 2D convolution.'()
     {
         given : 'The following library configuration is being used.'
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
@@ -234,7 +234,7 @@ class Tensor_Convolution_Spec extends Specification
     def 'Sime convolution works as expected eith autograd.'()
     {
         given :
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)

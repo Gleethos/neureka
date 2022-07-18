@@ -101,12 +101,12 @@ public final class NdaAsString
              * @return A new {@link NdaAsString} based on the provided configuration.
              */
             @Override
-            public NdaAsString withConfig(String config ) { return withConfig( Neureka.get().settings().view().getTensorSettings().clone().with(config) ); }
+            public NdaAsString withConfig(String config ) { return withConfig( Neureka.get().settings().view().getNDPrintSettings().clone().with(config) ); }
             /**
              * @return A new {@link NdaAsString} based on the default configuration.
              */
             @Override
-            public NdaAsString byDefaults() { return withConfig( Neureka.get().settings().view().getTensorSettings() ); }
+            public NdaAsString byDefaults() { return withConfig( Neureka.get().settings().view().getNDPrintSettings() ); }
         };
     }
 

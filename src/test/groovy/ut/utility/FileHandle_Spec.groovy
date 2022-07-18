@@ -30,7 +30,7 @@ class FileHandle_Spec extends Specification
 
     def setup() {
         Neureka.get().reset()
-        Neureka.get().settings().view().tensors({ NDPrintSettings it -> it.setCellSize(15) })
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it -> it.setCellSize(15) })
 
         File dir = new File( "build/test-can" )
         if ( ! dir.exists() ) dir.mkdirs()
@@ -40,7 +40,7 @@ class FileHandle_Spec extends Specification
         Tsr<?> tensor, Class<NumericType<?,?,?,?>> type, String filename, String expected
     ) {
         given:
-            Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+            Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.setIsScientific( true )
             it.setIsMultiline( false )
             it.setHasGradient( true )

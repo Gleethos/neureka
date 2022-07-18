@@ -10,7 +10,7 @@ class StandaloneBenchmark {
 
 		Neureka.get().reset()
 		// Configure printing of tensors to be more compact:
-		Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+		Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.setIsScientific( true )
             it.setIsMultiline( false )
             it.setHasGradient( true )

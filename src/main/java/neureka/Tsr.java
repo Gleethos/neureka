@@ -1963,30 +1963,19 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return NdaAsString.representing( this ).withConfig( conf ).toString();
     }
 
-    default String toString( NDPrintSettings config ) {
+    /** {@inheritDoc} */
+    @Override default String toString( NDPrintSettings config ) {
         if ( this.isDeleted() ) return "deleted";
         else if ( this.isEmpty() ) return "empty";
         else if ( this.isUndefined() ) return "undefined";
-        return NdaAsString.representing( this ).withConfig( config ).toString();
+        return Nda.super.toString( config );
     }
 
-    /**
-     *  This allows you to provide a lambda to configure how this tensor should be
-     *  converted to {@link String} instances.
-     *  The provided {@link Consumer} will receive a {@link NDPrintSettings} instance
-     *  which allows you to change various settings with the help of method chaining.
-     *
-     * @param config A consumer of the {@link NDPrintSettings} ready to be configured.
-     * @return The {@link String} representation of this tensor.
-     */
-    default String toString( Consumer<NDPrintSettings> config ) {
+    /** {@inheritDoc} */
+    @Override default String toString( Consumer<NDPrintSettings> configurator ) {
         if ( this.isDeleted() ) return "deleted";
-        NDPrintSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();
-        config.accept(defaults);
-        return NdaAsString.representing( this ).withConfig( defaults ).toString();
+        return Nda.super.toString( configurator );
     }
-
-    String toString();
 
     /**
      *  This method creates and returns a new tensor instance

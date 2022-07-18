@@ -38,7 +38,7 @@ class Tensor_Function_Spec extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true
@@ -144,7 +144,7 @@ class Tensor_Function_Spec extends Specification
     def 'Reshaping on 3D tensors works by instantiate a Function instance built from a String.'()
     {
         given :
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
             Function f = Function.of("[2, 0, 1]:(I[0])")
 
         when : Tsr t = Tsr.of([3, 4, 2], 1d..5d)

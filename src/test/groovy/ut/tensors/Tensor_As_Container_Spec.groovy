@@ -30,7 +30,7 @@ class Tensor_As_Container_Spec extends Specification
            not be able to execute operations on every kind of tensor...        
         """
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true

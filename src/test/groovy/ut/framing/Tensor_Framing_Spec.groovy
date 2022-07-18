@@ -39,7 +39,7 @@ class Tensor_Framing_Spec extends Specification
             """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true
@@ -146,7 +146,7 @@ class Tensor_Framing_Spec extends Specification
     void 'Rank 2 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.'()
     {
         given: 'Tensor printing is set to "legacy" for this test.'
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and: 'And a labeled tensor of rank 2 is being created.'
             Tsr t = Tsr.of([3, 4], [
                     1d, 2d, 3d, 4d,
@@ -224,7 +224,7 @@ class Tensor_Framing_Spec extends Specification
     def 'Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.' ()
     {
         given: 'Tensor printing is set to "legacy" for this test.'
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and: 'And a labeled tensor of rank 3 is being created.'
             Tsr t = Tsr.of([2, 3, 4], -7d..7d)
             t.label( 'My Tensor', [

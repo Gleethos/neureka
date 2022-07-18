@@ -38,7 +38,7 @@ class Tensor_Slicing_Spec extends Specification
 
     def setup() {
         Neureka.get().reset()
-        Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
+        Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
     }
 
     def 'When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.' (

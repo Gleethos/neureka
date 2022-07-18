@@ -8,9 +8,12 @@ import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.states.AxisOrGet;
 import neureka.framing.Relation;
 import neureka.ndim.NDimensional;
+import neureka.view.NDPrintSettings;
+import neureka.view.NdaAsString;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -486,5 +489,27 @@ public interface Nda<V> extends NDimensional, Iterable<V>
          */
         void set( V value );
     }
+
+    default String toString( NDPrintSettings config ) {
+        return NdaAsString.representing( this ).withConfig( config ).toString();
+    }
+
+    /**
+     *  This allows you to provide a lambda to configure how this nd-array should be
+     *  converted to {@link String} instances.
+     *  The provided {@link Consumer} will receive a {@link NDPrintSettings} instance
+     *  which allows you to change various settings with the help of method chaining.
+     *
+     * @param config A consumer of the {@link NDPrintSettings} ready to be configured.
+     * @return The {@link String} representation of this nd-array.
+     */
+    default String toString( Consumer<NDPrintSettings> config ) {
+        NDPrintSettings defaults = Neureka.get().settings().view().getNDPrintSettings().clone();
+        config.accept(defaults);
+        return NdaAsString.representing( this ).withConfig( defaults ).toString();
+    }
+
+    String toString();
+
 
 }

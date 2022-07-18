@@ -29,7 +29,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true
@@ -51,7 +51,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         given :
             if ( device == null ) return
             Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return
 
         and: 'A tensor which ought to be sliced:'
@@ -108,7 +108,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         given :
             if ( device == null ) return
             Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
+            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return
 
         when :
