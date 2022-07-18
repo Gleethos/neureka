@@ -849,38 +849,21 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default boolean isUndefined() { return getNDConf() == null || getNDConf().shape() == null; }
 
-    /**
-     *  If this tensor is a slice of a parent tensor then this method will yield true.
-     *  Slices can be created by calling the variations of the "{@link Tsr#getAt}" method.
-     *
-     * @return The truth value determining if this tensor is a slice of another tensor.
-     */
+    /** {@inheritDoc} */
     @Override
     default boolean isSlice() {
         Relation<V> child = get( Relation.class );
         return ( child != null && child.hasParent() );
     }
 
-    /**
-     *  This method returns the number of slices which have been
-     *  created from this very tensor.
-     *  It does so by accessing the {@link Relation} component if present
-     *  which internally keeps track of slices via weak references.
-     *
-     * @return The number of slices derived from this tensor.
-     */
+    /** {@inheritDoc} */
     @Override
     default int sliceCount() {
         Relation<V> child = this.get( Relation.class );
         return ( child != null ) ? child.childCount() : 0;
     }
 
-    /**
-     *  If slices have been derived from this tensor then it is a "slice parent".
-     *  This is what this method will determine, in which case, it will return true.
-     *
-     * @return The truth value determining if slices have been derived from this tensor.
-     */
+    /** {@inheritDoc} */
     @Override
     default boolean isSliceParent() {
         Relation<V> parent = this.get( Relation.class );
@@ -1009,17 +992,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  This is especially useful for checking the correcting of auto-grad!
      */
     int getVersion();
-
-    /**
-     * @return The type class of individual value items within this {@link Tsr} instance.
-     */
-    @Override
-    Class<V> getItemClass();
-
-    /**
-     * @return The type class of individual value items within this {@link Tsr} instance.
-     */
-    default Class<V> itemClass() { return getItemClass(); }
 
     /**
      *  This method returns the {@link DataType} instance of this {@link Tsr}, which is
@@ -1182,7 +1154,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                     // And then we remove the gradient because it is no longer needed.
                     remove( Tsr.class );
                     // We are now ready to apply the gradient to the tensor. This is an inline operation!
-                    // Therefore we need to turn off the inline operation safety net:
+                    // Therefore, we need to turn off the inline operation safety net:
                     boolean inlineSafety = Neureka.get().settings().autograd().isPreventingInlineOperations();
                     if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( false );
                     // INLINE OPERATION :
@@ -1879,6 +1851,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     |       ...transformation and modification...
     */
 
+    /** {@inheritDoc} */
     @Override default <T> Tsr<T> mapTo(
         Class<T> typeClass,
         java.util.function.Function<V,T> mapper

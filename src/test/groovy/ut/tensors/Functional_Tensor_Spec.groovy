@@ -48,6 +48,7 @@ class Functional_Tensor_Spec extends Specification
         and :
             b.every((Predicate<Integer>){it == 1})
             !b.any((Predicate<Integer>){it == 2})
+            b.none((Predicate<Integer>){it == 2})
         and :
             a.count((Predicate<Integer>){it == 0}) == 1
             a.count((Predicate<Integer>){it == 1}) == 2
