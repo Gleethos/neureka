@@ -1335,12 +1335,12 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> plus( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add 'null' to a tensor!");
-        return Neureka.get().backend().getAutogradFunction().plus().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getAutogradFunction().plus().call( this, other );
     }
 
     default Tsr<V> plusAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add-assign 'null' to a tensor!");
-        return Neureka.get().backend().getFunction().plusAssign().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getFunction().plusAssign().call( this, other );
     }
 
     /**
@@ -1373,7 +1373,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> minus( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract 'null' from a tensor!");
-        return Neureka.get().backend().getAutogradFunction().minus().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getAutogradFunction().minus().call( this, other );
     }
 
     default Tsr<V> minus( V other ) {
@@ -1386,7 +1386,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
     default Tsr<V> minusAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract-assign 'null' from a tensor!");
-        return Neureka.get().backend().getFunction().minusAssign().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getFunction().minusAssign().call( this, other );
     }
 
 
@@ -1401,7 +1401,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /**
      * @return A clone of this tensor where the signs of all elements are flipped.
      */
-    default Tsr<V> negative() { return Neureka.get().backend().getAutogradFunction().neg().call( (Tsr<V>) this ); }
+    default Tsr<V> negative() { return Neureka.get().backend().getAutogradFunction().neg().call( this ); }
 
     /**
      *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
@@ -1413,14 +1413,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         else if ( this.rank() == 2 ) {
             boolean wasIntermediate = this.isIntermediate();
             this.getUnsafe().setIsIntermediate(false);
-            Tsr<V> result = Neureka.get().backend().getFunction().transpose2D().call( (Tsr<V>) this );
+            Tsr<V> result = Neureka.get().backend().getFunction().transpose2D().call( this );
             this.getUnsafe().setIsIntermediate(wasIntermediate);
             return result;
         }
         StringBuilder operation = new StringBuilder();
         for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( i == 0 ? "" : ", " );
         operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
-        return Function.of( operation.toString(), true ).call( (Tsr<V>) this );
+        return Function.of( operation.toString(), true ).call( this );
     }
 
     /**
@@ -1511,7 +1511,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                     "Encountered ranks: " + this.rank() + ", " + other.rank() + ";"
                 );
 
-        return Neureka.get().backend().getAutogradFunction().matMul().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getAutogradFunction().matMul().call( this, other );
     }
 
     /**
@@ -1588,7 +1588,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> multiply( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply 'null' with a tensor!");
-        return Neureka.get().backend().getAutogradFunction().mul().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getAutogradFunction().mul().call( this, other );
     }
 
     /**
@@ -1640,7 +1640,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> timesAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply-assign 'null' to a tensor!");
-        return Neureka.get().backend().getFunction().mulAssign().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getFunction().mulAssign().call( this, other );
     }
 
     /**
@@ -1675,13 +1675,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> div( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide a tensor by 'null' (In any sense of the word)!");
-        return Neureka.get().backend().getAutogradFunction().div().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getAutogradFunction().div().call( this, other );
     }
     default Tsr<V> div( V value ) { return div( of( getItemClass(), getNDConf().shape(), value ) ); }
 
     default Tsr<V> divAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
-        return Neureka.get().backend().getFunction().divAssign().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getFunction().divAssign().call( this, other );
     }
 
     /**
@@ -1702,7 +1702,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> mod( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
-        return Neureka.get().backend().getAutogradFunction().mod().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getAutogradFunction().mod().call( this, other );
     }
 
     default Tsr<V> mod( int other ) { return mod(of(getItemClass(), getNDConf().shape(), other)); }
@@ -1714,7 +1714,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     default Tsr<V> modAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
-        return Neureka.get().backend().getFunction().modAssign().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getFunction().modAssign().call( this, other );
     }
 
     /**
@@ -1735,7 +1735,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> power( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot raise a tensor to the power of 'null'!");
-        return Neureka.get().backend().getAutogradFunction().pow().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getAutogradFunction().pow().call( this, other );
     }
 
     default Tsr<V> power( V value ) {
@@ -1747,7 +1747,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> xor( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot raise a tensor to the power of 'null'!");
-        return Neureka.get().backend().getAutogradFunction().pow().call( (Tsr<V>) this, other );
+        return Neureka.get().backend().getAutogradFunction().pow().call( this, other );
     }
 
     /**
