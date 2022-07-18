@@ -782,7 +782,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  Outsourced means that the tensor is stored on a {@link Device} implementation instance.
      *
      * @return The truth value determining if the data of this tensor is not actually stored inside of it
-     *         in the form of of a traditional primitive JVM array!
+     *         in the form of a traditional primitive JVM array!
      */
     boolean isOutsourced();
 
