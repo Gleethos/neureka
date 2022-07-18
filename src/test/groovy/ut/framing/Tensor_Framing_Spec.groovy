@@ -2,7 +2,7 @@ package ut.framing
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 import spock.lang.Specification
 import spock.lang.Title
 import spock.lang.Narrative
@@ -39,7 +39,7 @@ class Tensor_Framing_Spec extends Specification
             """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true

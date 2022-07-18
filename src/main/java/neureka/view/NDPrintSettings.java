@@ -6,10 +6,10 @@ import java.util.function.Supplier;
  *  This is simply a mutable container for configuring how {@link neureka.Tsr}
  *  instances ought to be converted to {@link String}s.
  */
-public final class TsrStringSettings {
-
+public final class NDPrintSettings
+{
     private final Supplier<Boolean> _notModifiable;
-    private int _cellSize;
+    private int     _cellSize;
     private int     _rowLimit;
     private boolean _hasGradient;
     private boolean _isScientific;
@@ -25,7 +25,7 @@ public final class TsrStringSettings {
     private String  _indent;
     private boolean _legacy;
 
-    public TsrStringSettings(Supplier<Boolean> notModifiable) {
+    public NDPrintSettings(Supplier<Boolean> notModifiable) {
         _notModifiable = notModifiable;
         _isScientific = true;
         _multiline = true;
@@ -42,24 +42,24 @@ public final class TsrStringSettings {
         _indent = "";
     }
 
-    public TsrStringSettings clone() {
-        TsrStringSettings clone = new TsrStringSettings(() -> false);
+    public NDPrintSettings clone() {
+        NDPrintSettings clone = new NDPrintSettings(() -> false);
         _imposeOn(clone);
         return clone;
     }
 
-    public TsrStringSettings with( TsrStringSettings other ) {
+    public NDPrintSettings with(NDPrintSettings other ) {
         other._imposeOn( this );
         return this;
     }
 
     /**
-     *  This method takes the provided {@link TsrStringSettings} instance
-     *  and copies its state in {@code this} {@link TsrStringSettings} instance.
+     *  This method takes the provided {@link NDPrintSettings} instance
+     *  and copies its state in {@code this} {@link NDPrintSettings} instance.
      *
-     * @param other The {@link TsrStringSettings} which ought to be read from.
+     * @param other The {@link NDPrintSettings} which ought to be read from.
      */
-    private void _imposeOn( TsrStringSettings other ) {
+    private void _imposeOn( NDPrintSettings other ) {
         other._cellSize = _cellSize;
         other._rowLimit = _rowLimit;
         other._hasGradient = _hasGradient;
@@ -98,7 +98,7 @@ public final class TsrStringSettings {
      *
      * @param cellSize The width of the cell in terms of numbers of characters.
      */
-    public TsrStringSettings setCellSize( int cellSize ) {
+    public NDPrintSettings setCellSize(int cellSize ) {
         if ( _notModifiable.get() ) return this;
         _cellSize = cellSize;
         return this;
@@ -126,7 +126,7 @@ public final class TsrStringSettings {
      *
      * @param shortage The maximum number of rows in the {@link String} representation of the tensor.
      */
-    public TsrStringSettings setRowLimit( int shortage ) {
+    public NDPrintSettings setRowLimit(int shortage ) {
         if ( _notModifiable.get() ) return this;
         _rowLimit = shortage;
         return this;
@@ -142,7 +142,7 @@ public final class TsrStringSettings {
     /**
      * @param hasGradient The truth value determining if the tensor should also print its gradient.
      */
-    public TsrStringSettings setHasGradient( boolean hasGradient ) {
+    public NDPrintSettings setHasGradient(boolean hasGradient ) {
         if ( _notModifiable.get() ) return this;
         _hasGradient = hasGradient;
         return this;
@@ -158,7 +158,7 @@ public final class TsrStringSettings {
     /**
      * @param isScientific The truth value determining if numeric values should be formatted in scientific notation.
      */
-    public TsrStringSettings setIsScientific( boolean isScientific ) {
+    public NDPrintSettings setIsScientific(boolean isScientific ) {
         if ( _notModifiable.get() ) return this;
         _isScientific = isScientific;
         return this;
@@ -174,7 +174,7 @@ public final class TsrStringSettings {
     /**
      * @param isMultiline The truth value determining if the tensor should be printed in one line or across multiple lines.
      */
-    public TsrStringSettings setIsMultiline( boolean isMultiline ) {
+    public NDPrintSettings setIsMultiline(boolean isMultiline ) {
         if ( _notModifiable.get() ) return this;
         _multiline = isMultiline;
         return this;
@@ -190,7 +190,7 @@ public final class TsrStringSettings {
     /**
      * @param haveSlimNumbers The truth value determining if numbers should be formatted more compactly (1.0 to 1).
      */
-    public TsrStringSettings setHasSlimNumbers( boolean haveSlimNumbers ) {
+    public NDPrintSettings setHasSlimNumbers(boolean haveSlimNumbers ) {
         if ( _notModifiable.get() ) return this;
         _haveSlimNumbers = haveSlimNumbers;
         return this;
@@ -206,7 +206,7 @@ public final class TsrStringSettings {
     /**
      * @param hasValue The truth value determining if the values of the tensor should be included in the {@link String} representation.
      */
-    public TsrStringSettings setHasValue( boolean hasValue ) {
+    public NDPrintSettings setHasValue(boolean hasValue ) {
         if ( _notModifiable.get() ) return this;
         _hasValue = hasValue;
         return this;
@@ -222,7 +222,7 @@ public final class TsrStringSettings {
     /**
      * @param hasShape The truth value determining if the tensor should have its shape included in the {@link String}.
      */
-    public TsrStringSettings setHasShape( boolean hasShape ) {
+    public NDPrintSettings setHasShape(boolean hasShape ) {
         if ( _notModifiable.get() ) return this;
         _hasShape = hasShape;
         return this;
@@ -241,7 +241,7 @@ public final class TsrStringSettings {
      *         The truth value determining if the {@link String} representation of the
      *         tensor should have its computation graph attached (if present).
      */
-    public TsrStringSettings setHasRecursiveGraph( boolean hasRecursiveGraph ) {
+    public NDPrintSettings setHasRecursiveGraph(boolean hasRecursiveGraph ) {
         if ( _notModifiable.get() ) return this;
         _hasRecursiveGraph = hasRecursiveGraph;
         return this;
@@ -251,7 +251,7 @@ public final class TsrStringSettings {
         return _hasDerivatives;
     }
 
-    public TsrStringSettings setHasDerivatives( boolean hasDerivatives ) {
+    public NDPrintSettings setHasDerivatives(boolean hasDerivatives ) {
         if ( _notModifiable.get() ) return this;
         _hasDerivatives = hasDerivatives;
         return this;
@@ -261,7 +261,7 @@ public final class TsrStringSettings {
         return _isCellBound;
     }
 
-    public TsrStringSettings setIsCellBound( boolean isCellBound ) {
+    public NDPrintSettings setIsCellBound(boolean isCellBound ) {
         if ( _notModifiable.get() ) return this;
         _isCellBound = isCellBound;
         return this;
@@ -277,7 +277,7 @@ public final class TsrStringSettings {
     /**
      * @param prefix The {@link String} which will be prepended at the beginning of a {@link neureka.Tsr} string representation.
      */
-    public TsrStringSettings setPrefix( String prefix ) {
+    public NDPrintSettings setPrefix(String prefix ) {
         if ( _notModifiable.get() ) return this;
         _prefix = prefix;
         return this;
@@ -293,7 +293,7 @@ public final class TsrStringSettings {
     /**
      * @param postfix The {@link String} which will be appended at the end of a {@link neureka.Tsr} string representation.
      */
-    public TsrStringSettings setPostfix( String postfix ) {
+    public NDPrintSettings setPostfix(String postfix ) {
         if ( _notModifiable.get() ) return this;
         _postfix = postfix;
         return this;
@@ -313,7 +313,7 @@ public final class TsrStringSettings {
      *               {@link String} representation where
      *               the {@link #getIsMultiline()} is set to {@code true}.
      */
-    public TsrStringSettings setIndent( String indent ) {
+    public NDPrintSettings setIndent(String indent ) {
         if ( _notModifiable.get() ) return this;
         _indent = indent;
         return this;
@@ -337,7 +337,7 @@ public final class TsrStringSettings {
      *
      * @param legacy The truth value determining the type of brackets used.
      */
-    public TsrStringSettings setIsLegacy( boolean legacy ) {
+    public NDPrintSettings setIsLegacy(boolean legacy ) {
         if ( _notModifiable.get() ) return this;
         _legacy = legacy;
         return this;
@@ -345,14 +345,14 @@ public final class TsrStringSettings {
 
     /**
      * @param modes A {@link String} in which letters will be translated to settings.
-     * @return A {@link TsrStringSettings} configuration based on the provided modes.
+     * @return A {@link NDPrintSettings} configuration based on the provided modes.
      */
-    public TsrStringSettings with( String modes )
+    public NDPrintSettings with(String modes )
     {
         if ( modes == null || modes.trim().isEmpty() )
             return this;
 
-        TsrStringSettings settings = this;
+        NDPrintSettings settings = this;
         if ( modes.contains( "s" ) ) settings.setRowLimit(  3  );
         settings.setIsScientific(  modes.contains( "c" )                                      )
         .setIsMultiline(  modes.contains( "f" )                                      )

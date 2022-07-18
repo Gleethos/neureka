@@ -77,21 +77,22 @@ import neureka.fluent.building.TensorBuilder;
 import neureka.fluent.building.states.IterByOrIterFromOrAll;
 import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 import neureka.fluent.building.states.WithShapeOrScalarOrVectorOnDevice;
-import neureka.fluent.slicing.SliceBuilder;
-import neureka.fluent.slicing.states.AxisOrGet;
 import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
-import neureka.ndim.AbstractNda;
 import neureka.ndim.Filler;
 import neureka.ndim.NDConstructor;
+import neureka.ndim.NDUtil;
 import neureka.ndim.config.NDConfiguration;
 import neureka.optimization.Optimizer;
-import neureka.view.TsrAsString;
-import neureka.view.TsrStringSettings;
+import neureka.view.NDPrintSettings;
+import neureka.view.NdaAsString;
 
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -1462,13 +1463,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> convDot( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class);
         Tsr<V> a = this;
-        int[][] fitter = AbstractNda.Utility.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );
+        int[][] fitter = NDUtil.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );
         boolean doReshape = false;
         for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
         for ( int i = 0; i < fitter[ 1 ].length && !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;
         if ( doReshape ) {
-            a = Function.of( AbstractNda.Utility.shapeString( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
-            other = Function.of( AbstractNda.Utility.shapeString( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( other );
+            a = Function.of( NDUtil.shapeString( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
+            other = Function.of( NDUtil.shapeString( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( other );
         }
         return Neureka.get()
                 .backend()
@@ -1959,30 +1960,30 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         if ( this.isDeleted() ) return "deleted";
         else if ( this.isEmpty() ) return "empty";
         else if ( this.isUndefined() ) return "undefined";
-        return TsrAsString.representing( this ).withConfig( conf ).toString();
+        return NdaAsString.representing( this ).withConfig( conf ).toString();
     }
 
-    default String toString( TsrStringSettings config ) {
+    default String toString( NDPrintSettings config ) {
         if ( this.isDeleted() ) return "deleted";
         else if ( this.isEmpty() ) return "empty";
         else if ( this.isUndefined() ) return "undefined";
-        return TsrAsString.representing( this ).withConfig( config ).toString();
+        return NdaAsString.representing( this ).withConfig( config ).toString();
     }
 
     /**
      *  This allows you to provide a lambda to configure how this tensor should be
      *  converted to {@link String} instances.
-     *  The provided {@link Consumer} will receive a {@link TsrStringSettings} instance
+     *  The provided {@link Consumer} will receive a {@link NDPrintSettings} instance
      *  which allows you to change various settings with the help of method chaining.
      *
-     * @param config A consumer of the {@link TsrStringSettings} ready to be configured.
+     * @param config A consumer of the {@link NDPrintSettings} ready to be configured.
      * @return The {@link String} representation of this tensor.
      */
-    default String toString( Consumer<TsrStringSettings> config ) {
+    default String toString( Consumer<NDPrintSettings> config ) {
         if ( this.isDeleted() ) return "deleted";
-        TsrStringSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();
+        NDPrintSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();
         config.accept(defaults);
-        return TsrAsString.representing( this ).withConfig( defaults ).toString();
+        return NdaAsString.representing( this ).withConfig( defaults ).toString();
     }
 
     String toString();

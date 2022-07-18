@@ -13,7 +13,7 @@ import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.internal.CalcUtil;
 import neureka.framing.Relation;
-import neureka.ndim.AbstractNda;
+import neureka.ndim.NDUtil;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
@@ -92,9 +92,9 @@ public class Reshape extends AbstractOperation
                 for ( int ii = handle; ii < largest; ii++ ) newReshape[ ii ] = ( postfix <= prefix ) ? ii - padding : -1;
 
                 Function f = Function.of(
-                        AbstractNda.Utility.shapeString( newReshape ) + ":(I[ 0 ])",
-                        doesAD
-                );
+                                    NDUtil.shapeString( newReshape ) + ":(I[ 0 ])",
+                                    doesAD
+                            );
                 tensors[ i ] = f.execute( tensors[ i ] );
             }
         }
@@ -169,9 +169,9 @@ public class Reshape extends AbstractOperation
             throw new IllegalArgumentException(
                     "New shape does not match tensor size!" +
                             " (" +
-                            AbstractNda.Utility.shapeString( newShp ) +
+                            NDUtil.shapeString( newShp ) +
                             ((NDConfiguration.Utility.sizeOfShape( newShp ) < t.size()) ? "<" : ">") +
-                            AbstractNda.Utility.shapeString(t.getNDConf().shape()) + "" +
+                            NDUtil.shapeString(t.getNDConf().shape()) + "" +
                             ")"
             );
         }

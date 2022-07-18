@@ -36,6 +36,7 @@ SOFTWARE.
 
 package neureka.view;
 
+import neureka.Nda;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
@@ -55,9 +56,9 @@ import java.util.function.Function;
  *  Methods in this class use the builder in order to construct a String representation
  *  for said tensor.
  *  These methods perform the String building based on a set of certain
- *  configurations provided by the {@link TsrStringSettings}!
+ *  configurations provided by the {@link NDPrintSettings}!
  */
-public final class TsrAsString
+public final class NdaAsString
 {
     private final int     _cellSize;
     private final int     _rowLimit;
@@ -78,38 +79,38 @@ public final class TsrAsString
     private final Tsr<?>  _tensor;
     private final boolean _legacy;
 
-    TsrStringSettings     _config;
+    NDPrintSettings _config;
     private StringBuilder _asStr;
 
     /**
      *  A builder providing multiple different configuration options for building
-     *  a {@link TsrAsString} instance in a fluent way.
+     *  a {@link NdaAsString} instance in a fluent way.
      */
-    public static Builder representing( Tsr<?> t ) {
+    public static Builder representing( Nda<?> t ) {
         return new Builder() {
             /**
              * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
-             * @return A new {@link TsrAsString} based on the provided configuration.
+             * @return A new {@link NdaAsString} based on the provided configuration.
              */
             @Override
-            public TsrAsString withConfig( TsrStringSettings configMap ) {
-                return new TsrAsString( t, configMap );
+            public NdaAsString withConfig(NDPrintSettings configMap ) {
+                return new NdaAsString( t, configMap );
             }
             /**
              * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
-             * @return A new {@link TsrAsString} based on the provided configuration.
+             * @return A new {@link NdaAsString} based on the provided configuration.
              */
             @Override
-            public TsrAsString withConfig( String config ) { return withConfig( Neureka.get().settings().view().getTensorSettings().clone().with(config) ); }
+            public NdaAsString withConfig(String config ) { return withConfig( Neureka.get().settings().view().getTensorSettings().clone().with(config) ); }
             /**
-             * @return A new {@link TsrAsString} based on the default configuration.
+             * @return A new {@link NdaAsString} based on the default configuration.
              */
             @Override
-            public TsrAsString byDefaults() { return withConfig( Neureka.get().settings().view().getTensorSettings() ); }
+            public NdaAsString byDefaults() { return withConfig( Neureka.get().settings().view().getTensorSettings() ); }
         };
     }
 
-    private TsrAsString( Tsr<?> tensor, TsrStringSettings settings )
+    private NdaAsString( Nda<?> tensor, NDPrintSettings settings )
     {
         if ( tensor.getNDConf() != null )
             _shape = tensor.getNDConf().shape();
@@ -117,7 +118,7 @@ public final class TsrAsString
             _shape = new int[0];
 
         _config = settings.clone();
-        _tensor = tensor;
+        _tensor = (Tsr<?>) tensor; // There is only one implementation for both Tsr and Nda...
 
         _isCompact          = _config.getIsScientific() ;
         _rowLimit           = _config.getRowLimit() ;
@@ -146,7 +147,7 @@ public final class TsrAsString
      * @param toBeAppended The String which ought to be appended to this builder.
      * @return This very instance in order to enable method-chaining.
      */
-    private TsrAsString _$( String toBeAppended ) {
+    private NdaAsString _$(String toBeAppended ) {
         _asStr.append( toBeAppended ); return this;
     }
 
@@ -160,7 +161,7 @@ public final class TsrAsString
      * @param toBeAppended The int which ought to be appended to this builder.
      * @return This very instance in order to enable method-chaining.
      */
-    private TsrAsString _$( int toBeAppended ) { _asStr.append( toBeAppended ); return this; }
+    private NdaAsString _$(int toBeAppended ) { _asStr.append( toBeAppended ); return this; }
 
     /**
      *  This method takes the data of a tensor and converts it into
@@ -384,7 +385,7 @@ public final class TsrAsString
         int trimStart = ( _shape[ dim ] / 2 - trimSize / 2 );
         int trimEnd = ( _shape[ dim ] / 2 + trimSize / 2 );
         trimEnd += ( trimSize % 2 );
-        if ( _shape[ dim ] > _rowLimit ) assert (_shape[ dim ] - (trimEnd - trimStart)) == _rowLimit;
+        assert _shape[dim] <= _rowLimit || (_shape[dim] - (trimEnd - trimStart)) == _rowLimit;
         NDFrame<?> alias = _tensor.get( NDFrame.class );
         if ( dim == indices.length - 1 ) {
             if (
@@ -440,11 +441,11 @@ public final class TsrAsString
             _$( Util.indent( dim ) )._$( _legacy ? ")" : "]" );
         }
         int i = dim - 1;
-        if ( i >= 0 && i < indices.length && indices[ i ] != 0 ) _$( "," );
+        if (i >= 0 && indices[i] != 0) _$( "," );
         if ( i >= 0 ) _$( _breakAndIndent() );
     }
 
-    private TsrAsString _buildSingleLabel( NDFrame<?> alias, int dim, int[] indices ) {
+    private NdaAsString _buildSingleLabel(NDFrame<?> alias, int dim, int[] indices ) {
         int pos = dim - 1;
         List<Object> key = alias.atAxis( pos ).getAllAliases();
         if ( pos >= 0 && key != null ) {
@@ -501,25 +502,25 @@ public final class TsrAsString
 
     /**
      *  A builder interface providing multiple different options for building
-     *  a {@link TsrAsString} instance in a fluent way.
+     *  a {@link NdaAsString} instance in a fluent way.
      */
     public interface Builder {
         /**
          * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
-         * @return A new {@link TsrAsString} based on the provided configuration.
+         * @return A new {@link NdaAsString} based on the provided configuration.
          */
-        TsrAsString withConfig( TsrStringSettings configMap );
+        NdaAsString withConfig( NDPrintSettings configMap );
 
         /**
          * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
-         * @return A new {@link TsrAsString} based on the provided configuration.
+         * @return A new {@link NdaAsString} based on the provided configuration.
          */
-        TsrAsString withConfig( String config );
+        NdaAsString withConfig( String config );
 
         /**
-         * @return A new {@link TsrAsString} based on the default configuration.
+         * @return A new {@link NdaAsString} based on the default configuration.
          */
-        TsrAsString byDefaults();
+        NdaAsString byDefaults();
     }
 
     /**

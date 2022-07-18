@@ -66,17 +66,15 @@ import neureka.devices.Device;
 import neureka.dtype.DataType;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.SmartSlicer;
-import neureka.fluent.slicing.states.AxisOrGet;
 import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
-import neureka.ndim.AbstractNda;
 import neureka.ndim.Filler;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterator.NDIterator;
-import neureka.view.TsrAsString;
+import neureka.view.NdaAsString;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
@@ -1316,7 +1314,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         if ( this.isDeleted() ) return "deleted";
         else if ( this.isEmpty() ) return "empty";
         else if ( this.isUndefined() ) return "undefined";
-        return TsrAsString.representing( this ).byDefaults().toString();
+        return NdaAsString.representing( this ).byDefaults().toString();
     }
 
 }

@@ -45,7 +45,7 @@ import neureka.devices.opencl.CLContext;
 import neureka.devices.opencl.utility.Messages;
 import neureka.dtype.custom.F64;
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
-import neureka.view.TsrStringSettings;
+import neureka.view.NDPrintSettings;
 import org.slf4j.Logger;
 
 import java.io.BufferedReader;
@@ -589,26 +589,26 @@ public final class Neureka
          */
         public class View
         {
-            private final TsrStringSettings _settings;
+            private final NDPrintSettings _settings;
 
             View() {
-                _settings = new TsrStringSettings(Settings.this::notModifiable);
+                _settings = new NDPrintSettings(Settings.this::notModifiable);
             }
 
             /**
              *  Settings for configuring how tensors should be converted to {@link String} representations.
              */
-            public TsrStringSettings getTensorSettings() { return _settings; }
+            public NDPrintSettings getTensorSettings() { return _settings; }
 
             /**
              *  This allows you to provide a lambda to configure how tensors should be
              *  converted to {@link String} instances.
-             *  The provided {@link Consumer} will receive a {@link TsrStringSettings} instance
+             *  The provided {@link Consumer} will receive a {@link NDPrintSettings} instance
              *  which allows you to change various settings with the help of method chaining.
              *
-             * @param should A consumer of the {@link TsrStringSettings} ready to be configured.
+             * @param should A consumer of the {@link NDPrintSettings} ready to be configured.
              */
-            public void tensors( Consumer<TsrStringSettings> should ) { should.accept(_settings); }
+            public void tensors( Consumer<NDPrintSettings> should ) { should.accept(_settings); }
 
             public String toString() {
                 return "Neureka.Settings.View[" +

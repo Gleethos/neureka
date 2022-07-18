@@ -3,7 +3,7 @@ package ut.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
@@ -55,7 +55,7 @@ class Autograd_Explained extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true

@@ -84,9 +84,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param predicate The lambda to check each element against.
      * @return true if every item in the nd-array matches the predicate, false otherwise.
      */
-    default boolean every( Predicate<V> predicate ) {
-        return stream().allMatch(predicate);
-    }
+    default boolean every( Predicate<V> predicate ) { return stream().allMatch(predicate); }
 
     /**
      * Iterates over every element of this nd-array, and checks whether any
@@ -94,9 +92,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param predicate The lambda to check each element against.
      * @return true if any item in the nd-array matches the predicate, false otherwise.
      */
-    default boolean any( Predicate<V> predicate ) {
-        return stream().anyMatch(predicate);
-    }
+    default boolean any( Predicate<V> predicate ) { return stream().anyMatch(predicate); }
 
     /**
      * Iterates over every element of this nd-array, and checks whether none
@@ -104,9 +100,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param predicate The lambda to check each element against.
      * @return true if none of the items in the nd-array match the predicate, false otherwise.
      */
-    default boolean none( Predicate<V> predicate ) {
-        return stream().noneMatch(predicate);
-    }
+    default boolean none( Predicate<V> predicate ) { return stream().noneMatch(predicate);}
 
     /**
      *  Iterates over every element of this nd-array, and counts the number of
@@ -114,9 +108,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param predicate The lambda to check each element against.
      * @return The number of items in the nd-array that match the predicate.
      */
-    default int count( Predicate<V> predicate ) {
-        return (int) stream().filter(predicate).count();
-    }
+    default int count( Predicate<V> predicate ) { return (int) stream().filter(predicate).count(); }
 
     /**
      *  This returns an unprocessed version of the underlying data of this nd-array.
@@ -195,7 +187,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
         return getDataAt( getNDConf().indexOfIndices( indices ) );
     }
 
-    default <A> A getItemsAs(Class<A> arrayTypeClass ) {
+    default <A> A getItemsAs( Class<A> arrayTypeClass ) {
         return DataConverter.get().convert( getItems(), arrayTypeClass );
     }
 
@@ -224,7 +216,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
 
     /**
      *  The following method enables access to specific scalar elements within the nd-array.
-     *  The method name also translates to the subscript operator in Groovy.
+     *  The method name also translates to the subscription operator in Groovy.
      *
      * @param indices The index array of the element which should be returned.
      * @return An element located at the provided index.
@@ -243,17 +235,17 @@ public interface Nda<V> extends NDimensional, Iterable<V>
 
     /**
      *  The following method enables access to specific scalar elements within the nd-array.
-     *  The method name also translates to the subscript operator in Groovy.
+     *  The method name also translates to the subscription operator in Groovy.
      *
      * @param indices The index array of the element which should be returned.
      * @return An element located at the provided index.
      */
-    Nda<V> get(int... indices);
+    Nda<V> get( int... indices );
 
     /**
      *  The following method enables the creation of nd-array slices which access
      *  the same underlying data (possibly from a different view).
-     *  The method name also translates to the subscript operator in Groovy.
+     *  The method name also translates to the subscription operator in Groovy.
      *
      * @param args An arbitrary number of arguments which can be used for slicing.
      * @return A slice nd-array created based on the passed keys.
@@ -263,7 +255,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     /**
      *  The following method enables the creation of nd-array slices which access
      *  the same underlying data (possibly from a different view).
-     *  The method name also translates to the subscript operator in Groovy.
+     *  The method name also translates to the subscription operator in Groovy.
      *
      * @param args An arbitrary number of arguments which can be used for slicing.
      * @return A slice nd-array created based on the passed keys.
@@ -452,8 +444,8 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return A new nd-array of type {@code T}.
      */
     <T> Nda<T> mapTo(
-            Class<T> typeClass,
-            java.util.function.Function<V,T> mapper
+        Class<T> typeClass,
+        java.util.function.Function<V,T> mapper
     );
 
     /**

@@ -8,7 +8,7 @@ import neureka.devices.opencl.CLContext
 import testutility.opencl.DispatchUtility
 import neureka.dtype.DataType
 import neureka.ndim.config.NDConfiguration
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -41,7 +41,7 @@ class OpenCLDevice_Spec extends Specification
         """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true

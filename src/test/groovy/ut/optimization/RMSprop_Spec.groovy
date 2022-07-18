@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.optimization.Optimizer
 import neureka.optimization.implementations.RMSprop
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -28,7 +28,7 @@ class RMSprop_Spec extends Specification
         Neureka.get().reset()
         w.set(o)
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true

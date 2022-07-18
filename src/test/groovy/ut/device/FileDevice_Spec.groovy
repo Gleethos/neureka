@@ -8,7 +8,7 @@ import neureka.devices.file.handles.*
 import neureka.dtype.DataType
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.I16
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 import spock.lang.Specification
 
 class FileDevice_Spec extends Specification
@@ -29,7 +29,7 @@ class FileDevice_Spec extends Specification
     {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true
@@ -140,7 +140,7 @@ class FileDevice_Spec extends Specification
         then :
             device.loadable == ['biostats.csv']
             device.loaded == ['biostats-without-head.csv']
-            t.toString({ TsrStringSettings it ->
+            t.toString({ NDPrintSettings it ->
                         it.setHasSlimNumbers(false)
                           .setIsScientific(true)
                           .setIsCellBound(false)
@@ -175,7 +175,7 @@ class FileDevice_Spec extends Specification
         then :
             device.loadable == []
             device.loaded == ['biostats-without-head.csv', 'biostats.csv']
-            t.toString({ TsrStringSettings it ->
+            t.toString({ NDPrintSettings it ->
                         it.setHasSlimNumbers(false)
                                 .setIsScientific(true)
                                 .setIsCellBound(false)

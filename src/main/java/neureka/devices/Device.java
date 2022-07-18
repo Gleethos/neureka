@@ -45,7 +45,6 @@ import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.common.composition.Component;
 import neureka.devices.host.CPU;
-import neureka.ndim.AbstractNda;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.*;

@@ -5,7 +5,7 @@ import neureka.Tsr
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionParser
 import neureka.devices.Device
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -38,7 +38,7 @@ class Tensor_Function_Spec extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true

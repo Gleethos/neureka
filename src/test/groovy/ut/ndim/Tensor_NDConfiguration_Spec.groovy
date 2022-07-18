@@ -6,7 +6,7 @@ import neureka.ndim.config.types.simple.Simple1DConfiguration
 import neureka.ndim.config.types.simple.Simple0DConfiguration
 import neureka.ndim.config.types.sliced.Sliced0DConfiguration
 import neureka.ndim.config.types.sliced.Sliced1DConfiguration
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 import spock.lang.Specification
 import spock.lang.Title
 
@@ -26,7 +26,7 @@ class Tensor_NDConfiguration_Spec extends Specification
         """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true

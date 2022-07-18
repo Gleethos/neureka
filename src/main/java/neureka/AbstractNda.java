@@ -34,10 +34,8 @@ SOFTWARE.
 
 */
 
-package neureka.ndim;
+package neureka;
 
-import neureka.Neureka;
-import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.utility.DataConverter;
@@ -45,6 +43,7 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
+import neureka.ndim.Filler;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -66,7 +65,7 @@ import java.util.Arrays;
  * @param <C> The type of the concrete class extending this abstract class (currently the {@link Tsr} class).
  * @param <V> The value type of the individual items stored within this nd-array.
  */
-public abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implements Tsr<V>
+abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implements Tsr<V>
 {
     protected static Logger _LOG;
 
@@ -350,46 +349,6 @@ public abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> i
             this.get(Device.class).access((Tsr) this).updateNDConf();
 
         return (C) this;
-    }
-
-    /**
-     *  Static utility methods for the NDArray.
-     */
-    public static class Utility
-    {
-        @Contract( pure = true )
-        public static String shapeString( int[] conf ) {
-            StringBuilder str = new StringBuilder();
-            for ( int i = 0; i < conf.length; i++ )
-                str.append(conf[ i ]).append((i != conf.length - 1) ? ", " : "");
-            return "[" + str + "]";
-        }
-
-        @Contract(pure = true)
-        public static int[][] makeFit( int[] sA, int[] sB ) {
-            int lastIndexOfA = 0;
-            for ( int i = sA.length-1; i >= 0; i-- ) {
-                if ( sA[ i ] != 1 ) {
-                    lastIndexOfA = i;
-                    break;
-                }
-            }
-            int firstIndexOfB = 0;
-            for ( int i = 0; i < sB.length; i++ ) {
-                if ( sB[ i ] != 1 ) {
-                    firstIndexOfB = i;
-                    break;
-                }
-            }
-            int newSize = lastIndexOfA + sB.length - firstIndexOfB;
-            int[] rsA = new int[ newSize ];
-            int[] rsB = new int[ newSize ];
-            for( int i = 0; i <newSize; i++ ) {
-                if ( i <= lastIndexOfA ) rsA[ i ] = i; else rsA[ i ] = -1;
-                if ( i >= lastIndexOfA ) rsB[ i ] = i - lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
-            }
-            return new int[][]{ rsA, rsB };
-        }
     }
 
 }

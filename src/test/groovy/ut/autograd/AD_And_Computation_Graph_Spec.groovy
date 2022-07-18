@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
 import neureka.calculus.Function
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 import spock.lang.Specification
 
 
@@ -14,7 +14,7 @@ class AD_And_Computation_Graph_Spec extends Specification
     {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true

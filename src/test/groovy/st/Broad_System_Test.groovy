@@ -1,7 +1,7 @@
 package st
 
 import neureka.Neureka
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 import st.tests.BroadSystemTest
 import spock.lang.Specification
 
@@ -10,7 +10,7 @@ class Broad_System_Test extends Specification
     def setupSpec() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true

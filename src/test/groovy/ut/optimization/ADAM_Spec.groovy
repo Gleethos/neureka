@@ -5,7 +5,7 @@ import neureka.Tsr
 import neureka.calculus.Function
 import neureka.optimization.Optimizer
 import neureka.optimization.implementations.ADAM
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -29,7 +29,7 @@ class ADAM_Spec extends Specification
         Neureka.get().reset()
         w.set(o)
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true

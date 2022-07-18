@@ -2,7 +2,7 @@ package st.tests
 
 import neureka.Neureka
 import neureka.devices.host.CPU
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 
 class StandaloneBenchmark {
 
@@ -10,7 +10,7 @@ class StandaloneBenchmark {
 
 		Neureka.get().reset()
 		// Configure printing of tensors to be more compact:
-		Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+		Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.setIsScientific( true )
             it.setIsMultiline( false )
             it.setHasGradient( true )

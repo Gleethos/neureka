@@ -191,7 +191,7 @@ public abstract class AbstractOperation implements Operation
         }
         float defaultSuitability = _defaultAlgorithm.isSuitableFor( call );
 
-        if ( defaultSuitability > bestScore || ( bestImpl == null && defaultSuitability > 0f ) ) {
+        if ( defaultSuitability > bestScore ) {
             _LOG.debug("Default algorithm picked for call targeting operation '"+call.getOperation()+"'.");
             return _defaultAlgorithm;
         }

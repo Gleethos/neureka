@@ -10,7 +10,7 @@ import neureka.devices.Device
 import neureka.devices.file.FileDevice
 import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 import spock.lang.Ignore
 import spock.lang.IgnoreIf
 import spock.lang.Specification
@@ -35,7 +35,7 @@ class Cross_Device_Type_Spec extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true

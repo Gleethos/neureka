@@ -3,7 +3,7 @@ package ut.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.dtype.DataType
-import neureka.view.TsrStringSettings
+import neureka.view.NDPrintSettings
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
@@ -30,7 +30,7 @@ class Tensor_As_Container_Spec extends Specification
            not be able to execute operations on every kind of tensor...        
         """
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+        Neureka.get().settings().view().tensors({ NDPrintSettings it ->
             it.isScientific      = true
             it.isMultiline       = false
             it.hasGradient       = true
