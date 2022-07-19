@@ -135,7 +135,7 @@ class Tensor_State_Spec extends Specification
     def 'Tensors as String can be formatted depending on shape.'(
             List<Integer> shape, String mode, String expected
     ){
-        given:
+        given: 'We configure a NDPrintSettings object.'
             def settings =
                     Neureka.get()
                             .settings()

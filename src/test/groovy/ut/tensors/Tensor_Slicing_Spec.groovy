@@ -258,28 +258,28 @@ class Tensor_Slicing_Spec extends Specification
 
     def 'Slicing is also a Function with autograd support!'(
     ) {
-        given :
+        given : 'A 2 dimensional tensor requiring gradients.'
             var t = Tsr.ofBytes().withShape(4, 4).andFill(-1, 7, 3).setRqsGradient(true)
-        and :
+        and : '3 arrays we need to slice (the slice shape, offset and spread/strides).'
             int[] newShape  = [2, 2]
             int[] newOffset = [1, 1]
             int[] newSpread = [1, 1]
 
-        when :
+        when : 'Slicing the tensor using the slice function.'
             Tsr<Object> slice = Function.of("slice(I[0])", true)
                                     .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))
                                     .call(t)
-        then :
+        then : 'The resulting tensor will have the correct shape and values.'
             slice.toString() == "(2x2):[\n" +
                                 "   [   3.0 ,  -1.0  ],\n" +
                                 "   [  -1.0 ,   7.0  ]\n" +
                                 "]"
 
-        when :
-           slice.backward(-8)
+        when : 'We perform a backward pass using an "error" of -8.'
+            slice.backward(-8)
 
-        then :
-           t.toString() == "(4x4):[\n" +
+        then : 'The gradient of the original tensor will be contain 4 times -8.'
+            t.toString() == "(4x4):[\n" +
                            "   [  -1.0 ,   7.0 ,   3.0 ,  -1.0  ],\n" +
                            "   [   7.0 ,   3.0 ,  -1.0 ,   7.0  ],\n" +
                            "   [   3.0 ,  -1.0 ,   7.0 ,   3.0  ],\n" +
@@ -295,31 +295,30 @@ class Tensor_Slicing_Spec extends Specification
 
     def 'Normal slicing will try to do autograd.'()
     {
-        given :
+        given : 'A 1 dimensional tensor (vector) requiring gradients.'
             var t = Tsr.ofBytes().withShape(5).andFill(-1, 7, 3).setRqsGradient(true)
 
-        when :
+        when : 'Slicing the tensor using the subscription operator (which calls the getAt(List) method).'
             var s = t[2..3]
-        and :
+        and : 'We perform a backward pass using an "error" of 42.'
             s.backward(42)
 
-        then :
+        then : 'The gradient of the original tensor will be contain 2 times 42.'
             t.toString() == "(5):[  -1.0 ,   7.0 ,   3.0 ,  -1.0 ,   7.0  ]:g:[   0.0 ,   0.0 ,  42.0 ,  42.0 ,   0.0  ]"
-
     }
 
     def 'We can avoid autograd when slicing by using the "detached" instead of the "get" method.'()
     {
-        given :
+        given : 'A 1 dimensional tensor (vector) requiring gradients.'
             var t = Tsr.ofBytes().withShape(4).andFill(-1, 7, 3).setRqsGradient(true)
 
-        when :
+        when : 'We slice the tensor through the fluent slicer, then get it detached and finally backpropagation an error of 73.'
             t.slice()
                 .axis(0).from(0).to(1)
                 .detached()
                 .backward(73)
 
-        then :
+        then : 'The gradient of the original tensor will still be null, because we performed detached slicing.'
             t.toString() == "(4):[  -1.0 ,   7.0 ,   3.0 ,  -1.0  ]:g:[null]"
 
         when :

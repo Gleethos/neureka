@@ -95,33 +95,33 @@ class Neureka_Spec extends Specification
             Neureka.version()=="0.17.0"//version
     }
 
-    def 'Neureka settings class can be locked.'(
+    def 'Neureka settings class can be locked causing its properties to be immutable.'(
             boolean value, def getter, def setter
     ) {
-        given :
+        given : 'Something used to set a property and something to get the property.'
             def set = { it -> setter(Neureka.get().settings(), it) }
             def get = { getter(Neureka.get().settings()) }
-        expect :
+        expect : 'Initially the property has the expected value.'
             get() == value
 
-        when :
+        when : 'We lock the settings object...'
             Neureka.get().settings().setIsLocked(true)
-        and :
+        and : 'We try to set the property to another value...'
             set(!value)
-        then :
+        then : 'The property is not changed!'
             get() == value
 
-        when :
+        when : 'We unlock the settings object...'
             Neureka.get().settings().setIsLocked(false)
-        and :
+        and : 'Again we try to set the property to another value...'
             set(!value)
-        then :
+        then : 'The property is changed!'
             get() != value
 
-        cleanup :
+        cleanup : 'We reset the settings object to its original state.'
             set(value)
 
-        where :
+        where : 'The properties used are boolean types.'
             value | getter                                                                       | setter
             false | { Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}       | { Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}
             true  | { Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}    | { Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}

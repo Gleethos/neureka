@@ -63,7 +63,7 @@ class Tensor_Version_Spec extends Specification
             int version_of_b,
             String expected
     ) {
-        given :
+        given : '2 tensors a and b.'
             Neureka.get().settings().autograd().setIsPreventingInlineOperations( safe_inline )
             Tsr a = Tsr.of(4) + Tsr.of(2)
             Tsr b = Tsr.of(-1) + Tsr.of(-3).setRqsGradient(true)
@@ -71,14 +71,14 @@ class Tensor_Version_Spec extends Specification
             binding.setVariable('a', a)
             binding.setVariable('b', b)
 
-        expect :
+        expect : 'Initially both tensors have a version number of 0.'
             a.getVersion() == 0
             b.getVersion() == 0
 
-        when : 'The groovy code is being evaluated.'
+        when : 'The groovy code (performing inline operations) is being evaluated.'
             Tsr c = new GroovyShell(binding).evaluate((code))
 
-        then : 'The resulting tensor (toString) will contain the expected String.'
+        then : 'The resulting tensor (toString) will contain the expected sub-string.'
             c.toString().contains(expected)
             c == a
 
