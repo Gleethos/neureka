@@ -1,5 +1,6 @@
-package neureka.dtype;
+package neureka.dtype.custom;
 
+import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
 
 import java.io.DataOutput;
@@ -18,7 +19,7 @@ import java.util.Map;
  * @param <HolderType> The holder type is the JVM type which can hold the data but not necessarily represent it (int cant hold uint).
  * @param <HolderArrayType> The holder array type is the JVM array type which can hold the data but not necessarily represent it (int[] cant hold uint[]).
  */
-public abstract class AbstractNumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
+abstract class AbstractNumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
 implements NumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
 {
     private static final Map<Object,Object> _NUMERIC_TYPE_RELATIONS;
