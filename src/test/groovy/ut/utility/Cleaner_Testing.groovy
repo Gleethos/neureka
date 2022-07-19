@@ -3,6 +3,7 @@ package ut.utility
 import neureka.Tsr
 import neureka.devices.DeviceCleaner
 import spock.lang.Specification
+import testutility.Sleep
 
 class Cleaner_Testing extends Specification
 {
@@ -38,9 +39,13 @@ class Cleaner_Testing extends Specification
             r1 = null
             r3 = null
             System.gc()
-            Thread.sleep(250)
+            Sleep.until(250, {
+                refCount == 8 && cleaner._registered == 8
+            })
             System.gc()
-            Thread.sleep(250)
+            Sleep.until(250, {
+                refCount == 8 && cleaner._registered == 8
+            })
 
         then :
             refCount == 8
@@ -50,9 +55,13 @@ class Cleaner_Testing extends Specification
             r2 = null
             r4 = null
             System.gc()
-            Thread.sleep(250)
+            Sleep.until(250, {
+                refCount == 6 && cleaner._registered == 6
+            })
             System.gc()
-            Thread.sleep(250)
+            Sleep.until(250, {
+                refCount == 6 && cleaner._registered == 6
+            })
 
         then :
             refCount == 6

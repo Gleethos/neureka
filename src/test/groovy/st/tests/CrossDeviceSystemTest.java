@@ -3,6 +3,7 @@ package st.tests;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.opencl.OpenCLDevice;
+import testutility.Sleep;
 import testutility.UnitTester_Tensor;
 
 import java.util.ArrayList;
@@ -199,13 +200,20 @@ public class CrossDeviceSystemTest
         tensor1 = null;
         tensor2 = null;
         listOfTensors.forEach((t)->t.setRqsGradient(false));//Removes gradients!
-        System.gc();
-        try { Thread.sleep(400); } catch (InterruptedException e) { e.printStackTrace(); }
-        System.gc();
-        try { Thread.sleep(400); } catch (InterruptedException e) { e.printStackTrace(); }
 
-        if(gpu instanceof OpenCLDevice)
+        if ( gpu instanceof OpenCLDevice )
         {
+            System.gc();
+            Sleep.until(400, ()->{
+                int numberOfOutsourced = gpu.getTensors().size() - initialNumberOfOutsourced;
+                return numberOfOutsourced == listOfTensors.size();
+            });
+            System.gc();
+            Sleep.until(400, ()->{
+                int numberOfOutsourced = gpu.getTensors().size() - initialNumberOfOutsourced;
+                return numberOfOutsourced == listOfTensors.size();
+            });
+
             Collection<Tsr> outsourced = gpu.getTensors();
             int numberOfOutsourced = outsourced.size() - initialNumberOfOutsourced;
 

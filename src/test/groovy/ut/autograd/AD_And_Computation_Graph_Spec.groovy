@@ -6,6 +6,7 @@ import neureka.autograd.GraphNode
 import neureka.calculus.Function
 import neureka.view.NDPrintSettings
 import spock.lang.Specification
+import testutility.Sleep
 
 
 class AD_And_Computation_Graph_Spec extends Specification
@@ -105,9 +106,13 @@ class AD_And_Computation_Graph_Spec extends Specification
             d = null
             e = null
             System.gc()
-            Thread.sleep(100)
+            Sleep.until(100, {
+                n.parents.every {it.payload == null && !it.hasDerivatives()}
+            })
             System.gc()
-            Thread.sleep(200)
+            Sleep.until(200, {
+                n.parents.every {it.payload == null && !it.hasDerivatives()}
+            })
 
         then :
             for ( GraphNode p : n.parents ) {

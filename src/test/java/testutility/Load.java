@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class Utility {
-    public static String readResource(String path, Object caller){
+public class Load {
+    public static String resourceAt( String path, Object caller ) {
         InputStream stream = caller.getClass().getClassLoader().getResourceAsStream(path);
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));
@@ -23,4 +23,5 @@ public class Utility {
             return null;
         }
     }
+
 }

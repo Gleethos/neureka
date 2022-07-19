@@ -6,6 +6,7 @@ import neureka.view.NDPrintSettings
 import spock.lang.Specification
 import spock.lang.Title
 import spock.lang.Narrative
+import testutility.Sleep
 
 import java.lang.ref.WeakReference
 
@@ -404,10 +405,7 @@ class Tensor_Framing_Spec extends Specification
             WeakReference weak = new WeakReference(x)
             x = null
             System.gc()
-            for ( int i : 1..100 ) {
-                if( weak.get() == null ) break
-                Thread.sleep(10)
-            }
+            Sleep.until(100, { weak.get() == null })
 
         then : 'The weak reference is null because the tensor had no string reference to it! (No memory leak!)'
             weak.get() != null

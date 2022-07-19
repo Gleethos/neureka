@@ -8,7 +8,7 @@ import neureka.common.utility.SettingsLoader
 import neureka.view.NDPrintSettings
 import spock.lang.Shared
 import spock.lang.Specification
-import testutility.Utility
+import testutility.Load
 
 class Benchmark_System_Test extends Specification
 {
@@ -65,7 +65,7 @@ class Benchmark_System_Test extends Specification
             def configuration = [ "iterations":1, "sample_size":20, "difficulty":15, "intensifier":0 ]
 
         and : 'The benchmark script is being loaded into a GroovyShell instance.'
-            def session = new GroovyShell().evaluate(Utility.readResource("benchmark.groovy", this))
+            def session = new GroovyShell().evaluate(Load.resourceAt("benchmark.groovy", this))
 
         and : 'A String instance for the result hash is being instantiated and the expected hash.'
             String hash = ""
