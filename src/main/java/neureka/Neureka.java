@@ -294,8 +294,8 @@ public final class Neureka
         private final Debug    _debug;
         private final AutoGrad _autograd;
         private final View     _view;
-        private final NDim     _ndim;
-        private final DType    _dtype;
+        private final NDim     _nDim;
+        private final DType    _dTpe;
 
         private boolean _isLocked = false;
 
@@ -303,8 +303,8 @@ public final class Neureka
             _debug    = new Debug();
             _autograd = new AutoGrad();
             _view     = new View();
-            _ndim     = new NDim();
-            _dtype    = new DType();
+            _nDim = new NDim();
+            _dTpe = new DType();
         }
 
         private boolean notModifiable() {
@@ -345,24 +345,24 @@ public final class Neureka
             return _view;
         }
 
-        public NDim ndim() { return _ndim; }
+        public NDim ndim() { return _nDim; }
 
         /**
          *  This allows you to configure Neureka using a Groovy DSL.
          */
         public NDim ndim( Object closure ) {
-            SettingsLoader.tryGroovyClosureOn( closure, _ndim );
-            return _ndim;
+            SettingsLoader.tryGroovyClosureOn( closure, _nDim);
+            return _nDim;
         }
 
-        public DType dtype() { return _dtype; }
+        public DType dtype() { return _dTpe; }
 
         /**
          *  This allows you to configure Neureka using a Groovy DSL.
          */
         public DType dtype( Object closure ) {
-            SettingsLoader.tryGroovyClosureOn( closure, _dtype );
-            return _dtype;
+            SettingsLoader.tryGroovyClosureOn( closure, _dTpe);
+            return _dTpe;
         }
 
         /**
@@ -385,8 +385,8 @@ public final class Neureka
                         "debug="    + _debug    + "," +
                         "autograd=" + _autograd + "," +
                         "view="     + _view     + "," +
-                        "ndim="     + _ndim     + "," +
-                        "dtype="    + _dtype    + "," +
+                        "ndim="     + _nDim + "," +
+                        "dtype="    + _dTpe + "," +
                         "isLocked=" + this.isLocked() +
                     "]";
         }
@@ -706,6 +706,10 @@ public final class Neureka
          */
         public String readResource( String path ) {
             InputStream stream = getClass().getClassLoader().getResourceAsStream( path );
+            if ( stream == null )
+                throw new IllegalStateException(
+                        "Failed to create InputStream for resource path '"+path+"'."
+                    );
             try {
                 BufferedReader br = new BufferedReader(new InputStreamReader( stream ));
                 StringBuilder sb = new StringBuilder();
@@ -744,9 +748,8 @@ public final class Neureka
                         "    cause: " + cause + "\n" +
                         "    tip: " + tip.get().replace("\n", "\n    "+"     ").trim() + "\n"
                     );
-
-                return found;
             }
+            return found;
         }
 
     }
