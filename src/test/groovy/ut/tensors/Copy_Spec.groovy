@@ -29,15 +29,16 @@ class Copy_Spec extends Specification
 
     def 'A deep copy of a tensor is also a deep copy of the underlying data array.'()
     {
-        given :
+        given : 'A tensor of ints with shape (2, 3).'
             var t = Tsr.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)
-        expect :
+        expect : 'The underlying data array is as expected.'
             t.unsafe.data == [1, 2 ,-9, 8, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
 
-        when :
+        when : 'We create a deep copy of the tensor.'
             var deep = t.deepCopy()
-        then :
+        then : 'The copy is not the same instance as the original tensor.'
             deep !== t // It's not the same instance!
+        and : 'The shape and underlying data array are equal to the original tensor but the data is not identical.'
             deep.shape == t.shape
             deep.unsafe.data == t.unsafe.data // The tensors share the same values!
             deep.unsafe.data !== t.unsafe.data // ...but they are not the same array!
