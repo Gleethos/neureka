@@ -21,10 +21,10 @@ class Tensor_Interop_Spec extends Specification
     def 'Tensor can be converted to buffered images.'(
             Class<?> type, Tsr.ImageType image, int... shape
     ) {
-        when :
+        when : 'A tensor of the provided type is converted to a buffered image'
             var asImage = Tsr.of(type).withShape(shape).andFill(42..73).asImage(image)
 
-        then :
+        then : 'The resulting image has the expected shape'
             asImage.height == shape[0]
             asImage.width  == shape[1]
 
@@ -41,12 +41,12 @@ class Tensor_Interop_Spec extends Specification
             Class<?> type, Tsr.ImageType image, int... shape
     ) {
 
-        when :
+        when : 'We try to convert a tensor of the provided type to a buffered image...'
             Tsr.of(type).withShape(shape).all(-3).asImage(image)
 
-        then :
+        then : 'An exception is thrown!'
             var exception = thrown(IllegalArgumentException)
-        and :
+        and : 'The exception message has a plausible size.'
             exception.message.length() > 13
 
         where :

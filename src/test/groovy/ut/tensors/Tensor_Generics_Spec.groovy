@@ -49,12 +49,10 @@ class Tensor_Generics_Spec extends Specification
             t.getRepresentativeItemClass() == Neureka.get().settings().dtype().defaultDataTypeClass
         and :
             t.getItemClass() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getItemTypeClass()
-
-
     }
 
-    def 'String tensor instance discovers expected class.'(){
-
+    def 'String tensor instance discovers expected class.'()
+    {
         given :
             Tsr t = Tsr.of([2, 4], ["Hi", "I'm", "a", "String", "list"])
 

@@ -321,13 +321,13 @@ class Tensor_Slicing_Spec extends Specification
         then : 'The gradient of the original tensor will still be null, because we performed detached slicing.'
             t.toString() == "(4):[  -1.0 ,   7.0 ,   3.0 ,  -1.0  ]:g:[null]"
 
-        when :
+        when : 'We slice the tensor through the fluent slicer but this time use the get method and then again backpropagation an error of 73.'
             t.slice()
                 .axis(0).from(0).to(1)
                 .get()
                 .backward(73)
 
-        then :
+        then : 'This time there will be 2 times 73 in the gradient.'
             t.toString() == "(4):[  -1.0 ,   7.0 ,   3.0 ,  -1.0  ]:g:[  73.0 ,  73.0 ,   0.0 ,   0.0  ]"
     }
 

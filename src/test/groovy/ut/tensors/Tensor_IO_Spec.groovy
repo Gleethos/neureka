@@ -302,20 +302,20 @@ class Tensor_IO_Spec extends Specification
         and : 'We store the tensor on the given device, to ensure that it work there as well.'
             t.to(device)
 
-        expect :
+        expect : 'The tensor is virtual because it is filled homogeneously with the same value.'
             t.isVirtual()
             t.items == [1, 1, 1]
-            t.data == [1]
+            t.data == [1] // The data array is a single element array.
 
-        when :
+        when : 'We access the third item of the tensor and set the value 42.'
             t.at(2).set(42)
 
-        then :
+        then : 'The tensor is no longer virtual because it now stores 2 different values.'
             !t.isVirtual()
             t.items == [1, 1, 42]
             t.data == [1, 1, 42]
 
-        where :
+        where : 'We ensure that this works on different devices and with different data types.'
             device | type
             'CPU'  | Double
             'CPU'  | Float
@@ -351,17 +351,18 @@ class Tensor_IO_Spec extends Specification
     def 'Vector tensors can be instantiated via factory methods.'(
         def data, Class<?> type, List<Integer> shape
     ) {
-        given :
+        given : 'We create a vector tensor using the "of" factory method.'
             Tsr<?> t = Tsr.of(data)
+            // In practise this might be something like: Tsr.of(42, 666, 73, 64)
 
-        expect :
+        expect : 'The resulting tensor has the expected item type class.'
             t.itemClass == type
-        and :
+        and : 'Also the expected shape.'
             t.shape() == shape
-        and :
+        and : 'The tensor has the expected data array.'
             t.unsafe.data == data
             t.data == data
-        and :
+        and : 'The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.'
             t.items == data
 
         where :
