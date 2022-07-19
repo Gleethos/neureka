@@ -82,10 +82,10 @@ public class ADAM<V extends Number> implements Optimizer<V>
         double b1hat = ( 1 - Math.pow( B1, t ) );
         double b2hat = ( 1 - Math.pow( B2, t ) );
         m = Tsr.of(B1+" * ", m, " + "+b1Inverse+" * ", g);
-        v = Tsr.of(B2+" * ", v, " + "+b2Inverse+" * (", g,"^2 )");
+        v = Tsr.of(B2+" * ", v, " + "+b2Inverse+" * (", g,"**2 )");
         Tsr<V> mh = Tsr.of(m, "/"+b1hat);
         Tsr<V> vh = Tsr.of(v, "/"+b2hat);
-        Tsr<V> newg = Tsr.of("-"+ lr +" * ",mh," / (",vh,"^0.5 + "+E+")");
+        Tsr<V> newg = Tsr.of("-"+ lr +" * ",mh," / (",vh,"**0.5 + "+E+")");
         mh.getUnsafe().delete();
         vh.getUnsafe().delete();
         return newg;

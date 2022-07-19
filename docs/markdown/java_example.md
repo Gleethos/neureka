@@ -6,11 +6,11 @@ Simple scalar calculation:
     Tsr<Double> b = Tsr.of(-4);
     Tsr<Double> w = Tsr.of(2);
         
-    Tsr<Double> y = Tsr.of("((i0 + i1) * i2) ^ 2", x, b, w);
+    Tsr<Double> y = Tsr.of("((i0 + i1) * i2) ** 2", x, b, w);
     
     /*
-     *   f(x) = ((x-4)*2)^2; :=>  f(3) = 4
-     *   f(x)' = 8*x - 32 ;  :=>  f(3)' = -8
+     *   f(x) = ((x-4)*2)**2; :=>  f(3) = 4
+     *   f(x)' = 8*x - 32 ;   :=>  f(3)' = -8
      */
      
      y.backward();

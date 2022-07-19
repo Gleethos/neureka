@@ -41,7 +41,7 @@ class Calculus_Stress_Test extends Specification
                 t = t + Tsr.of( t.shape(), -3d..12d )
                 t = t * Tsr.of( t.shape(),  2d..3d  )
                 t = t / Tsr.of( t.shape(),  1d..2d  )
-                t = t ^ Tsr.of( t.shape(),  2d..1d  )
+                t = t **Tsr.of( t.shape(),  2d..1d  )
                 t = t - Tsr.of( t.shape(), -2d..2d  )
                 return t
             }

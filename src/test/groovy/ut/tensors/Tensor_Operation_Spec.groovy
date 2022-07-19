@@ -200,25 +200,25 @@ class Tensor_Operation_Spec extends Specification
             Double | '(2+a)'    || "7"
             Double | '(2*b)'    || "6"
             Double | '(6/b)'    || "2"
-            Double | '(2^b)'    || "8"
+            //Double | '(2^b)'   || "8"
             Double | '(2**b)'   || "8"
             Double | '(4-a)'    || "-1"
             Double | '(2.0+a)'  || "7"
             Double | '(2.0*b)'  || "6"
             Double | '(6.0/b)'  || "2"
-            Double | '(2.0^b)'  || "8"
+            //Double | '(2.0^b)'  || "8"
             Double | '(2.0**b)' || "8"
             Double | '(4.0-a)'  || "-1"
             Float  | '(2+a)'    || "7"
             Float  | '(2*b)'    || "6"
             Float  | '(6/b)'    || "2"
-            Float  | '(2^b)'    || "8"
+            //Float  | '(2^b)'    || "8"
             Float  | '(2**b)'   || "8"
             Float  | '(4-a)'    || "-1"
             Float  | '(2.0+a)'  || "7"
             Float  | '(2.0*b)'  || "6"
             Float  | '(6.0/b)'  || "2"
-            Float  | '(2.0^b)'  || "8"
+            //Float  | '(2.0^b)'  || "8"
             Float  | '(2.0**b)' || "8"
             Float  | '(4.0-a)'  || "-1"
 
@@ -233,14 +233,14 @@ class Tensor_Operation_Spec extends Specification
             Tsr c = Tsr.of(3d).setRqsGradient(true)
 
         expect :
-            ( a / a                     ).toString().contains("[1]:(1.0)")
-            ( c % a                     ).toString().contains("[1]:(1.0)")
-            ( ( ( b / b ) ^ c % a ) * 3 ).toString().contains("[1]:(3.0)")
-            ( a *= b                    ).toString().contains("(-8.0)")
-            ( a += -c                   ).toString().contains("(-11.0)")
-            ( a -= c                    ).toString().contains("(-14.0)")
-            ( a /= Tsr.of(2d)     ).toString().contains("(-7.0)")
-            ( a %= c                    ).toString().contains("(-1.0)")
+            ( a / a                      ).toString().contains("[1]:(1.0)")
+            ( c % a                      ).toString().contains("[1]:(1.0)")
+            ( ( ( b / b ) ** c % a ) * 3 ).toString().contains("[1]:(3.0)")
+            ( a *= b                     ).toString().contains("(-8.0)")
+            ( a += -c                    ).toString().contains("(-11.0)")
+            ( a -= c                     ).toString().contains("(-14.0)")
+            ( a /= Tsr.of(2d)      ).toString().contains("(-7.0)")
+            ( a %= c                     ).toString().contains("(-1.0)")
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null }) // We need to assure that this system supports OpenCL!
@@ -366,7 +366,7 @@ class Tensor_Operation_Spec extends Specification
             'GPU'  | Float  | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
     }
 
-    def 'Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance'()
+    def 'Operators "+,*,**" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance'()
     {
         given : 'Neurekas view is set to legacy and three tensors of which one requires gradients.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
@@ -378,7 +378,7 @@ class Tensor_Operation_Spec extends Specification
 
         then : y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
-        when : y = ((x+b)*w)^2
+        when : y = ((x+b)*w)**2
         then : y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true)

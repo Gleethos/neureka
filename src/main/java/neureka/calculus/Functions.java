@@ -56,8 +56,8 @@ public class Functions {
         _minusAssign = Function.of( "I[ 0 ]<-(I[ 0 ]-I[ 1 ])", doingAD );
         _div = Function.of( "(I[ 0 ]/I[ 1 ])",                 doingAD );
         _divAssign = Function.of( "I[ 0 ]<-(I[ 0 ]/I[ 1 ])",   doingAD );
-        _pow = Function.of( "(I[ 0 ]^I[ 1 ])",                 doingAD );
-        _powAssign = Function.of( "I[ 0 ]<-(I[ 0 ]^I[ 1 ])",   doingAD );
+        _pow = Function.of( "(I[ 0 ]**I[ 1 ])",                 doingAD );
+        _powAssign = Function.of( "I[ 0 ]<-(I[ 0 ]**I[ 1 ])",   doingAD );
         _mul = Function.of( "I[ 0 ]*I[ 1 ]",                   doingAD );
         _mulAssign = Function.of( "I[ 0 ]<-(I[ 0 ]*I[ 1 ])",   doingAD );
         _add = Function.of( "I[ 0 ]+I[ 1 ]",                   doingAD );

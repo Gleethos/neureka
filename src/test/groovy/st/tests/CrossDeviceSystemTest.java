@@ -146,10 +146,10 @@ public class CrossDeviceSystemTest
         listOfTensors.add(b);
         listOfTensors.add(w);
         /*
-         *      ((3-4)*2)^2 = 4
+         *      ((3-4)*2)**2 = 4
          *  dx:   8*3 - 32  = -8
          */
-        Tsr<Double> y = Tsr.of("((i0+i1)*i2)^2", x, b, w);
+        Tsr<Double> y = Tsr.of("((i0+i1)*i2)**2", x, b, w);
         tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0)"});
         y.backward(Tsr.of(2));
         tester.testTensor(x, new String[]{"-16.0"});
@@ -162,7 +162,7 @@ public class CrossDeviceSystemTest
         listOfTensors.add(x);
         listOfTensors.add(b);
         listOfTensors.add(w);
-        y = Tsr.of("(2^i0^i1^i2^2", x, b, w);
+        y = Tsr.of("(2**i0**i1**i2**2", x, b, w);
         tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.38629)"});
         tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
 

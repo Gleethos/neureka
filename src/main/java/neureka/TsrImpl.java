@@ -159,7 +159,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             alongside input tensors to the constructor.
             An example would be:
 
-                Tsr<?> t = Tsr.of( "tanh(", x, ") * 7 ^", y );
+                Tsr<?> t = Tsr.of( "tanh(", x, ") * 7 **", y );
         */
         boolean containsString = false;
         int numberOfTensors = 0;

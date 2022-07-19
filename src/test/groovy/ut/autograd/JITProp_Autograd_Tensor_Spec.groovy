@@ -319,7 +319,7 @@ class JITProp_Autograd_Tensor_Spec extends Specification
 
         when :
             Tsr s = (a+b) * c // (2 - 3) * 3 = -3
-            Tsr x = (s/a)+s // (-3)^2 -3 = 6
+            Tsr x = (s/a)+s // (-3)**2 -3 = 6
         then :
             !a.has(JITProp.class)
             !b.has(JITProp.class)
@@ -358,7 +358,7 @@ class JITProp_Autograd_Tensor_Spec extends Specification
 
         when :
             Tsr s = (a+b) * c // (2 - 3) * 3 = -3
-            Tsr x = (s^a)+s // (-3)^2 -3 = 6
+            Tsr x = (s**a)+s // (-3)**2 -3 = 6
 
         then :
             !a.has(JITProp.class)
@@ -390,7 +390,7 @@ class JITProp_Autograd_Tensor_Spec extends Specification
 
         when :
             Tsr s = (a+b) * c
-            Tsr x = (s^2)+s
+            Tsr x = (s**2)+s
 
         then :
             s.toString().contains("->d[1]:(-2.0)")

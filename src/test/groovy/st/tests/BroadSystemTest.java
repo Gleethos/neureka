@@ -214,14 +214,14 @@ public class BroadSystemTest
         tensor1.setRqsGradient(true);
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1},
-                "((i0+2)^2)",
+                "((i0+2)**2)",
                 new String[]{"d|[ [2x2]:(6.0, 8.0, 10.0, 12.0) ]|:t{ [2x2]:(1.0, 2.0, 3.0, 4.0) }"}
         );
         //---
         tensor1 = Tsr.of(new int[]{2, 2}, new double[]{1, 2, 3, 4});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
         result = Tsr.of("(i0+2)", tensor1);
-        result = Tsr.of("I[0]^2", result);
+        result = Tsr.of("I[0]**2", result);
         tester.testContains(
                 result.toString("rc"),
                 new String[]{"d|[ [2x2]:(6.0, 8.0, 10.0, 12.0) ]|:t{ [2x2]:(1.0, 2.0, 3.0, 4.0) }"},

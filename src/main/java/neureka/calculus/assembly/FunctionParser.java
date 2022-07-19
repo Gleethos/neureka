@@ -147,7 +147,7 @@ public class FunctionParser
             if ( foundOperations.contains( _context.getOperation( operationID ).getOperator() ) ) {
                 String currentChain = null;
                 boolean groupingOccurred = false;
-                boolean enoughPresent = ParseUtil.numberOfOperationsWithin( foundOperations ) > 1;// Otherwise: I[j]^4 goes nuts!
+                boolean enoughPresent = ParseUtil.numberOfOperationsWithin( foundOperations ) > 1;// Otherwise: I[j]**4 goes nuts!
                 if ( enoughPresent ) {
                     String[] foundCompArray = foundComponents.toArray( new String[ 0 ] );
                     int length = foundCompArray.length;

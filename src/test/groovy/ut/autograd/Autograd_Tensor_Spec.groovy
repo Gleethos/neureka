@@ -52,11 +52,11 @@ class Autograd_Tensor_Spec extends Specification
             Tsr b = Tsr.of(new int[]{1}, -4)
             Tsr w = Tsr.of(new int[]{1}, 2)
         /**
-         *      ((3-4)*2)^2 = 4
+         *      ((3-4)*2)**2 = 4
          *  dx:   8*3 - 32  = -8
          * */
-        when: 'A new tensor is being calculated by the equation "((i0+i1)*i2)^2".'
-            Tsr y = Tsr.of("((i0+i1)*i2)^2", x, b, w)
+        when: 'A new tensor is being calculated by the equation "((i0+i1)*i2)**2".'
+            Tsr y = Tsr.of("((i0+i1)*i2)**2", x, b, w)
         then: 'The resulting tensor should contain "[1]:(4.0); ->d[1]:(-8.0), " where the last part is a derivative.'
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
@@ -66,7 +66,7 @@ class Autograd_Tensor_Spec extends Specification
             x.toString().contains("-16.0")
 
         when : 'We create a new tensor via the same equation but applied in a different way...'
-            y = Tsr.of("(","(",x,"+",b,")","*",w,")^2")
+            y = Tsr.of("(","(",x,"+",b,")","*",w,")**2")
         then : 'The will produce the same result once again.'
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
@@ -76,7 +76,7 @@ class Autograd_Tensor_Spec extends Specification
             x.toString().contains("-24.0")
 
         when : 'We execute the same equation once more...'
-            y = Tsr.of("((",x,"+",b,")*",w,")^2")
+            y = Tsr.of("((",x,"+",b,")*",w,")**2")
         then : 'The result will be as expected.'
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
@@ -158,7 +158,7 @@ class Autograd_Tensor_Spec extends Specification
             x = Tsr.of(new int[]{1}, 4).setRqsGradient(true).unsafe.toType(type)
             b = Tsr.of(new int[]{1}, 0.5).unsafe.toType(type)
             w = Tsr.of(new int[]{1}, 0.5).unsafe.toType(type)
-            y = Tsr.of("(2^i0^i1^i2^2", x, b, w)
+            y = Tsr.of("(2**i0**i1**i2**2", x, b, w)
         then :
             y.toString().contains("[1]:(4.0);")
             y.toString().contains(" ->d[1]:(1.38629)")

@@ -33,8 +33,8 @@ public class Power extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setIdentifier(         "power"    )
-                        .setOperator(         "^"        )
+                        .setIdentifier(       "power"    )
+                        .setOperator(         "**"        )
                         .setArity(            -1         )
                         .setIsOperator(       true       )
                         .setIsIndexer(        false      )
@@ -289,7 +289,7 @@ public class Power extends AbstractOperation
         StringBuilder reconstructed = new StringBuilder();
         for ( int i = 0; i < children.length; ++i ) {
             reconstructed.append( children[ i ] );
-            if ( i < children.length - 1 ) reconstructed.append(" ^ ");
+            if ( i < children.length - 1 ) reconstructed.append(" ** ");
         }
         return "(" + reconstructed + ")";
     }
@@ -310,7 +310,7 @@ public class Power extends AbstractOperation
         if (aDerivable) {
             String aAsDerivative = a.getDerivative(derivationIndex).toString();
             if ( !aAsDerivative.equals("0.0") ) {
-                first = ("( "+ bAsStr +" * "+ aAsStr + " ^ (" + bAsStr + " - 1) )");
+                first = ("( "+ bAsStr +" * "+ aAsStr + " ** (" + bAsStr + " - 1) )");
                 if (!aAsDerivative.equals("1.0")) first = aAsDerivative + " * " + first;
             }
         }
@@ -319,7 +319,7 @@ public class Power extends AbstractOperation
         if ( !bAsDerivative.isEmpty() && !bAsDerivative.equals("1.0") ) bAsDerivative += " * ";
         else bAsDerivative = "";
         String second = "";
-        if ( bDerivable ) second = "(ln("+aAsStr+") * "+aAsStr+" ^ "+bAsStr+")";
+        if ( bDerivable ) second = "(ln("+aAsStr+") * "+aAsStr+" ** "+bAsStr+")";
         String result;
         if ( !first.trim().isEmpty() && !second.trim().isEmpty() ) result = bAsDerivative+"("+first+" + "+second+")";
         else if (!first.trim().isEmpty()) result = bAsDerivative + "("+first+")";

@@ -52,11 +52,11 @@ class Calculus_Scalar_Spec extends Specification
     }
 
 
-    def 'Function "(I[0]+1/I[0])^-I[0]" instance returns expected scalar result.'(
+    def 'Function "(I[0]+1/I[0])**-I[0]" instance returns expected scalar result.'(
             double[] inputs, Integer index, double expected
     ){
-        given : 'We create a Function instance from expression "(I[0]+1/I[0])^-I[0]".'
-            Function f = new FunctionParser( Neureka.get().backend() ).parse("(I[0]+1/I[0])^-I[0]", false)
+        given : 'We create a Function instance from expression "(I[0]+1/I[0])**-I[0]".'
+            Function f = new FunctionParser( Neureka.get().backend() ).parse("(I[0]+1/I[0])**-I[0]", false)
 
         expect : 'The function yields expected scalar results when called.'
             if (index!=null) assert f.derive( inputs, index ) == expected
@@ -139,18 +139,18 @@ class Calculus_Scalar_Spec extends Specification
              "quad(abs(prod(ij))-6)"          | [2, 3, -2]           | 1     || -12*-4
              "sumJs(ij)"                      | [2, 3, -2]           | null  || 3
              "sumJs(ij)"                      | [2, 3, -2]           | 1     || 1
-             "sumJs(ij^1)"                    | [2, 3, -2]           | null  || 3
-             "sumJs(ij^1)"                    | [2, 3, -2]           | 1     || 1
-             "I[1]^2"                         | [2, 3, -2]           | null  || 9
-             "I[1]^2"                         | [2, 3, -2]           | 1     || 6
-             "sumJs(ij^2)"                    | [2, 3, -2]           | null  || 17
-             "sumJs(ij^2)"                    | [2, 3, -2]           | 1     || 6
-             "2^I[1]"                         | [2, 3, -2]           | null  || 8
-             "2^I[0]"                         | [2, 3, -2]           | null  || 4
-             "2^I[2]"                         | [2, 3, -2]           | null  || 0.25
-             "2^I[1]"                         | [2, 3, -2]           | 1     || 5.545177444479562
-             "sumJs(2^I[j])"                  | [2, 3, -2]           | null  || 12.25
-             "sumJs(2^I[j])"                  | [2, 3, -2]           | 1     || 5.545177444479562
+             "sumJs(ij**1)"                   | [2, 3, -2]           | null  || 3
+             "sumJs(ij**1)"                   | [2, 3, -2]           | 1     || 1
+             "I[1]**2"                        | [2, 3, -2]           | null  || 9
+             "I[1]**2"                        | [2, 3, -2]           | 1     || 6
+             "sumJs(ij**2)"                   | [2, 3, -2]           | null  || 17
+             "sumJs(ij**2)"                   | [2, 3, -2]           | 1     || 6
+             "2**I[1]"                        | [2, 3, -2]           | null  || 8
+             "2**I[0]"                        | [2, 3, -2]           | null  || 4
+             "2**I[2]"                        | [2, 3, -2]           | null  || 0.25
+             "2**I[1]"                        | [2, 3, -2]           | 1     || 5.545177444479562
+             "sumJs(2**I[j])"                 | [2, 3, -2]           | null  || 12.25
+             "sumJs(2**I[j])"                 | [2, 3, -2]           | 1     || 5.545177444479562
              "I[1]%2"                         | [2, 3, -2]           | null  || 1
              "I[1]%2"                         | [2, 3, -2]           | 1     || 1
              "I[2]%2"                         | [2, 3, -5]           | null  || -1

@@ -31,14 +31,14 @@ Float     .metaClass.div = { Tsr t -> Tsr.of(delegate.toString(),"/", t ) }
 BigDecimal.metaClass.div = { Tsr t -> Tsr.of(delegate.toString(),"/", t ) }
 
 //POWER
-Integer   .metaClass.power = { Tsr t -> Tsr.of(delegate.toString(),"^", t ) }
-Short   .metaClass.power = { Tsr t -> Tsr.of(delegate.toString(),"^", t ) }
-Byte      .metaClass.power = { Tsr t -> Tsr.of(delegate.toString(),"^", t ) }
-Double    .metaClass.power = { Tsr t -> Tsr.of(delegate.toString(),"^", t ) }
-Float     .metaClass.power = { Tsr t -> Tsr.of(delegate.toString(),"^", t ) }
-BigDecimal.metaClass.power = { Tsr t -> Tsr.of(delegate.toString(),"^", t ) }
+Integer   .metaClass.power = { Tsr t -> Tsr.of(delegate.toString(),"**", t ) }
+Short     .metaClass.power = { Tsr t -> Tsr.of(delegate.toString(),"**", t ) }
+Byte      .metaClass.power = { Tsr t -> Tsr.of(delegate.toString(),"**", t ) }
+Double    .metaClass.power = { Tsr t -> Tsr.of(delegate.toString(),"**", t ) }
+Float     .metaClass.power = { Tsr t -> Tsr.of(delegate.toString(),"**", t ) }
+BigDecimal.metaClass.power = { Tsr t -> Tsr.of(delegate.toString(),"**", t ) }
 
-//XOR (POWER)
+//XOR
 Integer   .metaClass.xor = { Tsr t -> Tsr.of(delegate.toString(),"^", t ) }
 Short     .metaClass.xor = { Tsr t -> Tsr.of(delegate.toString(),"^", t ) }
 Byte      .metaClass.xor = { Tsr t -> Tsr.of(delegate.toString(),"^", t ) }

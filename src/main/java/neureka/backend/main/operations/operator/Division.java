@@ -243,7 +243,7 @@ public class Division extends AbstractOperation
                         " - ((" + // The second expression is the inner derivative (current index)! (inner times outer...)
                             s + " * " + children[ index ].getDerivative(d) +
                         ") / ( "
-                            + children[ index ] + "^2 " +
+                            + children[ index ] + "**2 " +
                         ") )";
             }
         } else {

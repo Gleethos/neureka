@@ -92,7 +92,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             b.spread() != null
 
         when :
-            Tsr y = ( s * 4 ) ^ 1.5
+            Tsr y = ( s * 4 ) ** 1.5
 
         then :
              y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'
@@ -117,10 +117,10 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             Tsr w = Tsr.of([1],  2d)
             device.store(x).store(b).store(w)
             /*
-                        ((3-4)*2)^2 = 4
+                        ((3-4)*2)**2 = 4
                   dx:    8*3 - 32   = -8
              */
-            Tsr y = Tsr.of("((i0+i1)*i2)^2", [x, b, w])
+            Tsr y = Tsr.of("((i0+i1)*i2)**2", [x, b, w])
         then:
             y.indicesMap() != null
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")

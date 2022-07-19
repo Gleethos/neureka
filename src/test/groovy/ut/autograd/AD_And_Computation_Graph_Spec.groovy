@@ -79,7 +79,7 @@ class AD_And_Computation_Graph_Spec extends Specification
             Tsr<Double> a = Tsr.of(2d).setRqsGradient(true)
             Tsr<Double> b = a * 3 / 5
             Tsr<Double> c = Tsr.of(3d)
-            Tsr<Double> d = b ^ c
+            Tsr<Double> d = b ** c
             Tsr<Double> e = d * c
             GraphNode n = e.get( GraphNode.class )
 
