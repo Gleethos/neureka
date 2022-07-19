@@ -2,7 +2,7 @@ package neureka;
 
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
-import neureka.fluent.building.TensorBuilder;
+import neureka.fluent.building.NdaBuilder;
 import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.states.AxisOrGet;
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  */
 public interface Nda<V> extends NDimensional, Iterable<V>
 {
-    static <V> WithShapeOrScalarOrVector<V> of(Class<V> type) { return new TensorBuilder<>( type ); }
+    static <V> WithShapeOrScalarOrVector<V> of(Class<V> type) { return new NdaBuilder<>( type ); }
 
     /**
      *  If this nd-array is a slice of a parent nd-array then this method will yield true.

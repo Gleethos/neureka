@@ -59,11 +59,11 @@ import java.util.stream.IntStream;
  *
  * }</pre>
  *
- * @param <V> The type of the values which ought to be represented by the {@link Tsr} built by this {@link TensorBuilder}.
+ * @param <V> The type of the values which ought to be represented by the {@link Tsr} built by this {@link NdaBuilder}.
  */
-public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, IterByOrIterFromOrAllTsr<V>, ToForTsr<V>, StepForTsr<V>
+public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, IterByOrIterFromOrAllTsr<V>, ToForTsr<V>, StepForTsr<V>
 {
-    private static final Logger _LOG = LoggerFactory.getLogger(TensorBuilder.class);
+    private static final Logger _LOG = LoggerFactory.getLogger(NdaBuilder.class);
 
     private final DataType<V> _dataType;
     private int[] _shape;
@@ -72,7 +72,7 @@ public final class TensorBuilder<V> implements WithShapeOrScalarOrVectorOnDevice
     private Device<V> _device = (Device<V>) CPU.get();
 
 
-    public TensorBuilder( Class<V> typeClass ) {
+    public NdaBuilder(Class<V> typeClass ) {
         LogUtil.nullArgCheck( typeClass, "typeClass", Class.class, "Cannot build tensor without data type information!" );
         _dataType = DataType.of( typeClass );
     }

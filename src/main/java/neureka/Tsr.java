@@ -73,7 +73,7 @@ import neureka.dtype.NumericType;
 import neureka.dtype.custom.UI16;
 import neureka.dtype.custom.UI32;
 import neureka.dtype.custom.UI8;
-import neureka.fluent.building.TensorBuilder;
+import neureka.fluent.building.NdaBuilder;
 import neureka.fluent.building.states.IterByOrIterFromOrAll;
 import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 import neureka.fluent.building.states.WithShapeOrScalarOrVectorOnDevice;
@@ -331,7 +331,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    static <V> WithShapeOrScalarOrVectorOnDevice<V> of(Class<V> typeClass ) { return new TensorBuilder<>( typeClass ); }
+    static <V> WithShapeOrScalarOrVectorOnDevice<V> of(Class<V> typeClass ) { return new NdaBuilder<>( typeClass ); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}

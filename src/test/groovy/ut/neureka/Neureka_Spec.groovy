@@ -32,8 +32,8 @@ import java.util.regex.Pattern
 class Neureka_Spec extends Specification
 {
     /**
-     *  The below pattern defines a common standard for the strings returned by 'toString' methods
-     *  returned by classes in the Neureka library.
+     *  The below pattern defines a common standard for the strings returned by the 'toString' methods
+     *  of the various objects in the Neureka library.
      */
     @Shared
     Pattern toStringStandard = ~("^(" +
@@ -48,12 +48,10 @@ class Neureka_Spec extends Specification
     def setupSpec()
     {
         reportHeader """
-                <h2> Neureka Behavior </h2>
-                <br> 
                 <p>
-                    This specification covers the behavior
-                    of the "Neureka" class, which is used as 
-                    a thread local configuration.          
+                    This specification defines what types of settings are exposed by
+                    Neureka as well as more general things like how string representations
+                    of various library types should look like...        
                 </p>
             """
     }
