@@ -1,7 +1,10 @@
 package ut.tensors
 
+import neureka.Neureka
 import neureka.Tsr
+import neureka.common.utility.SettingsLoader
 import neureka.dtype.DataType
+import neureka.view.NDPrintSettings
 import spock.lang.Specification
 
 import java.util.function.Predicate
@@ -9,6 +12,25 @@ import java.util.stream.Collectors
 
 class Functional_Tensor_Spec extends Specification
 {
+    def setup() {
+        // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
+        SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
+        // Configure printing of tensors to be more compact:
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
+            it.isScientific      = true
+            it.isMultiline       = false
+            it.hasGradient       = true
+            it.cellSize          = 1
+            it.hasValue          = true
+            it.hasRecursiveGraph = false
+            it.hasDerivatives    = true
+            it.hasShape          = true
+            it.isCellBound       = false
+            it.postfix           = ""
+            it.prefix            = ""
+            it.hasSlimNumbers    = false
+        })
+    }
 
     def 'Tensor initialization lambdas produce expected tensors.'()
     {

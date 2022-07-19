@@ -88,14 +88,13 @@ class Cross_Device_Spec extends Specification
 
         expect :
             result.contains(
-                        "[2x1x2]:(0.0, 7.0, -7.0, 0.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
+                "[2x1x2]:(0.0, 7.0, -7.0, 0.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
             )
 
         cleanup:
             product.getUnsafe().delete()
             tensor1.getUnsafe().delete()
             //tensor2.delete() // TODO: FIX EXCEPTION!
-
 
         where : 'The following settings are being used: '
             deviceType << ['CPU',  'GPU']
