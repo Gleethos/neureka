@@ -77,7 +77,7 @@ public final class CLFunctionCompiler {
                         .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                         .setExecution(
                             (caller, call) ->
-                                Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
+                                Result.of(CalcUtil.executeFor( caller, call, null ))
                                     .withADAction( target -> new FunctionParser( Neureka.get().backend() ).parse(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )
                         )
                         .setCallPreparation(

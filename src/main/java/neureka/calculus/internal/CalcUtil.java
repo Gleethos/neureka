@@ -33,14 +33,6 @@ public class CalcUtil
     private static final Logger _LOG = LoggerFactory.getLogger( CalcUtil.class );
 
     @Contract( pure = true )
-    public static Tsr<?> defaultRecursiveExecution(
-            final Function caller,
-            final ExecutionCall<? extends Device<?>> call
-    ) {
-        return executeFor( caller, call, null );
-    }
-
-    @Contract( pure = true )
     public static Tsr<?> executeFor(
             final Function caller,
             final ExecutionCall<? extends Device<?>> call,
@@ -73,40 +65,41 @@ public class CalcUtil
 
         //assert result == executionCall.tensor(0);
         return
-            _recursiveReductionOf( executionCall, call -> {
-                for ( Tsr<?> t : call.inputs() )
-                    if ( t == null ) throw new IllegalArgumentException(
-                        "Device arguments may not be null!\n" +
-                        "One or more tensor arguments within the given ExecutionCall instance is null."
-                    );
+            _recursiveReductionOf( executionCall, executor );
+    }
 
-                call = ExecutionCall.of( call.inputs() )
-                                    .andArgs( call.allMetaArgs() )
-                                    .running( call.getOperation() )
-                                    .on( call.getDevice() );
+    private static Tsr<?> _executeDeviceAlgorithm(ExecutionCall<? extends Device<?>> call) {
 
-                Device<?> device = call.getDevice();
-                device.approve( call );
+        for ( Tsr<?> t : call.inputs() )
+            if ( t == null ) throw new IllegalArgumentException(
+                    "Device arguments may not be null!\n" +
+                            "One or more tensor arguments within the given ExecutionCall instance is null."
+            );
 
-                Algorithm algorithm = call.getAlgorithm();
-                if ( algorithm == null ) {
-                    String message = _couldNotFindSuitableAlgorithmFor( device.getClass() );
-                    _LOG.error( message );
-                    throw new IllegalStateException( message );
-                } else {
-                    DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
-                    ImplementationFor<Device<?>> implementation =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(device) );
-                    if ( implementation == null ) {
-                        String message = _couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
-                        _LOG.error( message );
-                        throw new IllegalStateException( message );
-                    }
-                    else implementation.run( (ExecutionCall<Device<?>>) call );
-                }
-                return call.input( 0 );
-            },
-            executor
-        );
+        call = ExecutionCall.of( call.inputs() )
+                .andArgs( call.allMetaArgs() )
+                .running( call.getOperation() )
+                .on( call.getDevice() );
+
+        Device<?> device = call.getDevice();
+        device.approve( call );
+
+        Algorithm algorithm = call.getAlgorithm();
+        if ( algorithm == null ) {
+            String message = _couldNotFindSuitableAlgorithmFor( device.getClass() );
+            _LOG.error( message );
+            throw new IllegalStateException( message );
+        } else {
+            DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
+            ImplementationFor<Device<?>> implementation =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(device) );
+            if ( implementation == null ) {
+                String message = _couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
+                _LOG.error( message );
+                throw new IllegalStateException( message );
+            }
+            else implementation.run( (ExecutionCall<Device<?>>) call );
+        }
+        return call.input( 0 );
     }
 
     /**
@@ -374,7 +367,6 @@ public class CalcUtil
      *  then may or may not be called by implementations of the lambda...
      *
      * @param call The {@link ExecutionCall} whose arguments ought to be executed in groups.
-     * @param finalExecution The actual execution whose implementation is provided by the caller.
      * @param executor The traversing algorithm, which decides how to group arguments and when
      *                 the {@param finalExecution} ought to be called.
      *
@@ -383,7 +375,6 @@ public class CalcUtil
     @Contract( pure = true )
     private static Tsr<?> _recursiveReductionOf(
             final ExecutionCall<? extends Device<?>> call,
-            final java.util.function.Function<ExecutionCall<? extends Device<?>>, Tsr<?>> finalExecution,
             final RecursiveExecutor executor
     ) {
         Device<Object> device = call.getDeviceFor(Object.class);
@@ -405,11 +396,11 @@ public class CalcUtil
             result = executor.execute( // This is where the recursion occurs:
                                 call,
                                 innerCall -> // This lambda performs the recursive call, implementations decide if they want to dive deeper.
-                                        _recursiveReductionOf( innerCall, finalExecution, executor )
+                                        _recursiveReductionOf( innerCall, executor )
                             );
 
         if ( result == null )
-            call.setInput( 0, finalExecution.apply( call ) );
+            call.setInput( 0, _executeDeviceAlgorithm( call ) );
         else
             return result;
 

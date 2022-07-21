@@ -51,7 +51,7 @@ public class Randomization extends AbstractOperation
                 .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
                 .setExecution(
                    (caller, call) ->
-                       Result.of(CalcUtil.defaultRecursiveExecution(caller, call)).withAutoDiff(getDefaultAlgorithm())
+                       Result.of(CalcUtil.executeFor( caller, call, null )).withAutoDiff(getDefaultAlgorithm())
                 )
                 .setCallPreparation( call ->
                 {

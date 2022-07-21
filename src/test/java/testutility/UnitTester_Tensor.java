@@ -232,7 +232,7 @@ public class UnitTester_Tensor extends UnitTester
                                                 .orElse(AutoDiffMode.BACKWARD_ONLY)
                                 )
                                 .setExecution( (caller, call) ->
-                                    Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
+                                    Result.of(CalcUtil.executeFor( caller, call, null ))
                                         .withAutoDiff(( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                                         {
                                             Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
@@ -283,7 +283,7 @@ public class UnitTester_Tensor extends UnitTester
                                                 .orElse(AutoDiffMode.BACKWARD_ONLY)
                                     )
                                     .setExecution( (caller, call) ->
-                                        Result.of(CalcUtil.defaultRecursiveExecution(caller, call))
+                                        Result.of(CalcUtil.executeFor( caller, call, null ))
                                             .withAutoDiff(( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                                             {
                                                 Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
