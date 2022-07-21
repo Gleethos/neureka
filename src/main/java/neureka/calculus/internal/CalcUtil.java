@@ -76,11 +76,6 @@ public class CalcUtil
                             "One or more tensor arguments within the given ExecutionCall instance is null."
             );
 
-        call = ExecutionCall.of( call.inputs() )
-                .andArgs( call.allMetaArgs() )
-                .running( call.getOperation() )
-                .on( call.getDevice() );
-
         Device<?> device = call.getDevice();
         device.approve( call );
 
