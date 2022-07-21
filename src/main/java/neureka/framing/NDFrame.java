@@ -28,9 +28,9 @@ import java.util.function.Function;
  *  "b" : ["one", "two", "three", "four"]                                      <br>
  *                                                                             <br>
  *
- * @param <ValType> The type parameter of the value type of the tensor type to whom this component should belong.
+ * @param <V> The type parameter of the value type of the tensor type to whom this component should belong.
  */
-public final class NDFrame<ValType> implements Component<Tsr<ValType>>
+public final class NDFrame<V> implements Component<Tsr<V>>
 {
     private final List<Object> _hiddenKeys = new ArrayList<>();
     /**
@@ -65,7 +65,7 @@ public final class NDFrame<ValType> implements Component<Tsr<ValType>>
         for ( int i = 0; i < size; i++ ) _mapping.put( i, new LinkedHashMap<>() );
     }
 
-    public NDFrame( Map<Object, List<Object>> labels, Tsr<ValType> host, String tensorName ) {
+    public NDFrame(Map<Object, List<Object>> labels, Tsr<V> host, String tensorName ) {
         _tensorName = tensorName;
         _mapping = new LinkedHashMap<>( labels.size() * 3 );
         int[] index = { 0 };
@@ -113,9 +113,9 @@ public final class NDFrame<ValType> implements Component<Tsr<ValType>>
      * @param axisAlias The axis alias object which targets an {@link AxisFrame} of {@link NDFrame}.
      * @return A view of the targeted axis in the for of an{@link AxisFrame} which provides getters and setters for aliases.
      */
-    public AxisFrame<Integer, ValType> atAxis( Object axisAlias )
+    public AxisFrame<Integer, V> atAxis(Object axisAlias )
     {
-        return AxisFrame.<Integer, Integer, ValType>builder()
+        return AxisFrame.<Integer, Integer, V>builder()
                 .getter(
                         atKey -> () ->
                         {
@@ -272,7 +272,7 @@ public final class NDFrame<ValType> implements Component<Tsr<ValType>>
 
 
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
         changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         // This component does not have anything to do when switching owner...
         return true;
