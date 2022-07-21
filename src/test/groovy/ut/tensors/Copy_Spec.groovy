@@ -5,7 +5,7 @@ import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
 
-@Title("Copy or Not to Copy")
+@Title("To Copy or Not to Copy")
 @Narrative('''
 
     In this specification we cover the behaviour of tensors with respect to their copy methods.
@@ -49,45 +49,46 @@ class Copy_Spec extends Specification
 
     def 'A deep copy of a slice tensor is also a deep copy of the underlying data array.'()
     {
-        given :
-            var t = Tsr.ofInts().withShape(3, 3).andFill(1, 2, -9, 8, 3, -2)[0..1, 1..2]
-        expect :
-            t.items == [2, -9, 3, -2]
-            t.data == [1, 2, -9, 8, 3, -2, 1, 2, -9]
-            t.unsafe.data == [1, 2, -9, 8, 3, -2, 1, 2, -9] // It's unsafe because it exposes mutable parts of the tensor!
+        given : 'A slice of ints with shape (2, 2) sliced in-place from a tensor of shape (3, 3).'
+            var s = Tsr.ofInts().withShape(3, 3).andFill(1, 2, -9, 8, 3, -2)[0..1, 1..2]
+        expect : 'The underlying items and data array is as expected.'
+            s.items == [2, -9, 3, -2]
+            s.data == [1, 2, -9, 8, 3, -2, 1, 2, -9]
+            s.unsafe.data == [1, 2, -9, 8, 3, -2, 1, 2, -9] // It's unsafe because it exposes mutable parts of the tensor!
 
-        when :
-            var deep = t.deepCopy()
-        then :
+        when : 'We create a deep copy of the tensor.'
+            var deep = s.deepCopy()
+        then : 'The copy is not the same instance as the original tensor.'
+            deep !== s // It's not the same instance!
+        and : 'The underlying items and data array are as expected.'
             deep.items == [2, -9, 3, -2]
             deep.data == [2, -9, 3, -2]
             deep.unsafe.data == [2, -9, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
-        and :
-            deep !== t // It's not the same instance!
-            deep.shape == t.shape
-            deep.items == t.items // The tensors share the same values!
-            deep.items !== t.items // The tensors share the same values!
-            deep.unsafe.data !== t.unsafe.data // The tensors share the same values!
-            deep.unsafe.data !== t.unsafe.data // ...but they are not the same array!
-        and :
-            (0..<t.size).every({ int i -> deep.at(i) == t.at(i) }) // The values are the same!
+        and : 'The slice and the copy have the same shape.'
+            deep.shape == s.shape
+            deep.items == s.items // The tensors share the same values!
+            deep.items !== s.items // The tensors share the same values!
+            deep.unsafe.data !== s.unsafe.data // The tensors share the same values!
+            deep.unsafe.data !== s.unsafe.data // ...but they are not the same array!
+        and : 'We verify that they share the same ints through the "every" method.'
+            (0..<s.size).every({ int i -> deep.at(i) == s.at(i) }) // The values are the same!
     }
 
     def 'A shallow copy will share the same underlying data as its original tensor.'()
     {
-        given :
+        given : 'A tensor of ints with shape (2, 3).'
             var t = Tsr.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)
-        expect :
+        expect : 'The underlying data array is as expected.'
             t.unsafe.data == [1, 2 ,-9, 8, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
 
-        when :
+        when : 'We create a shallow copy of the tensor.'
             var shallow = t.shallowCopy()
-        then :
+        then : 'The copy is not the same instance as the original tensor.'
             shallow !== t // It's not the same instance!
             shallow.shape == t.shape
             shallow.unsafe.data == t.unsafe.data // The tensors share the same values!
             shallow.unsafe.data === t.unsafe.data // The tensors share the exact same data array!
-        and :
+        and : 'We verify that they share the same ints through the "every" method.'
             (0..<t.size).every({ int i -> shallow.at(i) == t.at(i) }) // The values are the same!
     }
 
