@@ -57,6 +57,98 @@ public class CalcUtil
             return _deepDerivative( call, nodes,  executor );
     }
 
+    public static Tsr<?> recursiveExecution(
+            ExecutionCall<? extends Device<?>> executionCall,
+            RecursiveExecutor executor
+    ) {
+        Algorithm currentAlgorithm = executionCall.getAlgorithm();
+        if ( currentAlgorithm instanceof ExecutionPreparation )
+            executionCall = ( (ExecutionPreparation) currentAlgorithm ).prepare( executionCall );
+
+        for ( Tsr<?> t : executionCall.inputs() )
+            if ( t == null ) throw new IllegalArgumentException(
+                    "Device arguments may not be null!\n" +
+                            "One or more tensor arguments within the given ExecutionCall instance is null."
+            );
+
+        //assert result == executionCall.tensor(0);
+        return
+        _recursiveReductionOf( executionCall, call -> {
+                for ( Tsr<?> t : call.inputs() )
+                    if ( t == null ) throw new IllegalArgumentException(
+                            "Device arguments may not be null!\n" +
+                                    "One or more tensor arguments within the given ExecutionCall instance is null."
+                    );
+
+                call = ExecutionCall.of( call.inputs() )
+                                    .andArgs( call.allMetaArgs() )
+                                    .running( call.getOperation() )
+                                    .on( call.getDevice() );
+
+                Device<?> device = call.getDevice();
+                device.approve( call );
+
+                Algorithm algorithm = call.getAlgorithm();
+                if ( algorithm == null ) {
+                    String message = _couldNotFindSuitableAlgorithmFor( device.getClass() );
+                    _LOG.error( message );
+                    throw new IllegalStateException( message );
+                } else {
+                    DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
+                    ImplementationFor<Device<?>> implementation =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(device) );
+                    if ( implementation == null ) {
+                        String message = _couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
+                        _LOG.error( message );
+                        throw new IllegalStateException( message );
+                    }
+                    else implementation.run( (ExecutionCall<Device<?>>) call );
+                }
+                return call.input( 0 );
+            },
+            executor
+        );
+    }
+
+    /**
+     *  This method performs a classical execution of a {@link Function} alongside an array of provided
+     *  arguments and an offset used to make room in the output array returned by this method.
+     */
+    @Contract( pure = true )
+    public static Tsr<?>[] srcActivation(
+            Tsr<?>[] inputs, int j, int d, int offset, Function[] src
+    ) {
+        return MemUtil.keep( inputs, () ->
+        {
+            int[] tempShape = null;
+            Class<?> tempType = null;
+            Tsr<?>[] tensors = new Tsr[ src.length + offset ];
+            for ( int i = offset; i < tensors.length; i++ ) {//constants need to be figured out!
+                if ( !( src[ i - offset ] instanceof FunctionConstant ) ) {
+                    if ( d < 0 ) // Not deriving this!
+                        tensors[ i ] =
+                                j >= 0
+                                        ? src[ i - offset ].execute( inputs, j )
+                                        : src[ i - offset ].execute( inputs );
+                    else // ...deriving at specified index...
+                        tensors[ i ] =
+                                j >= 0
+                                        ? src[ i - offset ].executeDerive( inputs, d, j )
+                                        : src[ i - offset ].executeDerive( inputs, d );
+
+                    tempShape = ( tempShape == null ? tensors[ i ].getNDConf().shape() : tempShape );
+                    tempType  = ( tempType  == null ? tensors[ i ].getItemClass()     : tempType  );
+                }
+            }
+            for ( int i = offset; i < tensors.length; i++ )
+                if ( tensors[ i ] == null )
+                    tensors[ i ] =
+                            j < 0
+                                    ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[ i - offset ]).value() ).getUnsafe().setIsIntermediate( true )
+                                    : Tsr.of( tempType, tempShape, src[ i - offset ].call(new double[]{}, j) ).getUnsafe().setIsIntermediate( true );
+            return tensors;
+        });
+    }
+
     @Contract( pure = true )
     private static Tsr<?> _deepActivation(
             final ExecutionCall<? extends Device<?>> call,
@@ -270,58 +362,6 @@ public class CalcUtil
             if ( !tensor.isDeleted() ) tensor.getUnsafe().delete();
     }
 
-    public static Tsr<?> recursiveExecution(
-            ExecutionCall<? extends Device<?>> executionCall,
-            RecursiveExecutor executor
-    ) {
-        Algorithm currentAlgorithm = executionCall.getAlgorithm();
-        if ( currentAlgorithm instanceof ExecutionPreparation )
-            executionCall = ( (ExecutionPreparation) currentAlgorithm ).prepare( executionCall );
-
-        for ( Tsr<?> t : executionCall.inputs() )
-            if ( t == null ) throw new IllegalArgumentException(
-                    "Device arguments may not be null!\n" +
-                            "One or more tensor arguments within the given ExecutionCall instance is null."
-            );
-
-        //assert result == executionCall.tensor(0);
-        return
-        _recursiveReductionOf( executionCall, call -> {
-                for ( Tsr<?> t : call.inputs() )
-                    if ( t == null ) throw new IllegalArgumentException(
-                            "Device arguments may not be null!\n" +
-                                    "One or more tensor arguments within the given ExecutionCall instance is null."
-                    );
-
-                call = ExecutionCall.of( call.inputs() )
-                                    .andArgs( call.allMetaArgs() )
-                                    .running( call.getOperation() )
-                                    .on( call.getDevice() );
-
-                Device<?> device = call.getDevice();
-                device.approve( call );
-
-                Algorithm algorithm = call.getAlgorithm();
-                if ( algorithm == null ) {
-                    String message = _couldNotFindSuitableAlgorithmFor( device.getClass() );
-                    _LOG.error( message );
-                    throw new IllegalStateException( message );
-                } else {
-                    DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
-                    ImplementationFor<Device<?>> implementation =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(device) );
-                    if ( implementation == null ) {
-                        String message = _couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
-                        _LOG.error( message );
-                        throw new IllegalStateException( message );
-                    }
-                    else implementation.run( (ExecutionCall<Device<?>>) call );
-                }
-                return call.input( 0 );
-            },
-            executor
-        );
-    }
-
     /**
      *  The following method can be used to split one big execution call into many
      *  grouped execution calls which will be executed recursively.
@@ -390,47 +430,6 @@ public class CalcUtil
 
         return call.input( 0 );
     }
-
-    /**
-     *  This method performs a classical execution of a {@link Function} alongside an array of provided
-     *  arguments and an offset used to make room in the output array returned by this method.
-     */
-    @Contract( pure = true )
-    public static Tsr<?>[] srcActivation(
-            Tsr<?>[] inputs, int j, int d, int offset, Function[] src
-    ) {
-        return MemUtil.keep( inputs, () ->
-        {
-            int[] tempShape = null;
-            Class<?> tempType = null;
-            Tsr<?>[] tensors = new Tsr[ src.length + offset ];
-            for ( int i = offset; i < tensors.length; i++ ) {//constants need to be figured out!
-                if ( !( src[ i - offset ] instanceof FunctionConstant ) ) {
-                    if ( d < 0 ) // Not deriving this!
-                        tensors[ i ] =
-                                    j >= 0
-                                        ? src[ i - offset ].execute( inputs, j )
-                                        : src[ i - offset ].execute( inputs );
-                    else // ...deriving at specified index...
-                        tensors[ i ] =
-                                    j >= 0
-                                        ? src[ i - offset ].executeDerive( inputs, d, j )
-                                        : src[ i - offset ].executeDerive( inputs, d );
-
-                    tempShape = ( tempShape == null ? tensors[ i ].getNDConf().shape() : tempShape );
-                    tempType  = ( tempType  == null ? tensors[ i ].getItemClass()     : tempType  );
-                }
-            }
-            for ( int i = offset; i < tensors.length; i++ )
-                if ( tensors[ i ] == null )
-                    tensors[ i ] =
-                                j < 0
-                                    ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[ i - offset ]).value() ).getUnsafe().setIsIntermediate( true )
-                                    : Tsr.of( tempType, tempShape, src[ i - offset ].call(new double[]{}, j) ).getUnsafe().setIsIntermediate( true );
-            return tensors;
-        });
-    }
-
 
     private static String _couldNotFindSuitableAlgorithmFor(Class<?> type ) {
         return LogUtil.format(
