@@ -43,7 +43,7 @@ public class ConvUtil {
                             Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
                                     "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
                                     false
-                            );
+                                );
                             Tsr<?> derivative = f.derive( (Tsr[]) adCall.inputs(), d );
                             assert d >= 0 && d <= 1;
                             assert derivative != null;
@@ -53,14 +53,13 @@ public class ConvUtil {
                             int[] shape = adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape();
                             // This is because it will be the shape of the output to the de-convolution!
                             return ADAgent.of( derivative )
-                                    .withAD(
-                                            target ->
-                                                    deConv.execute(
-                                                            target.error(),
-                                                            derivative,
-                                                            Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )
-                                                    )
-                                    );
+                                    .withAD( target ->
+                                                deConv.execute(
+                                                        target.error(),
+                                                        derivative,
+                                                        Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )
+                                                )
+                                        );
                         };
                         if ( !caller.isFlat() ) return Result.of(CalcUtil.defaultRecursiveExecution( caller, call )).withAutoDiff(autoDiff);
                         if ( call.getOperation().getOperator().equals("x") ) {
@@ -93,10 +92,8 @@ public class ConvUtil {
                                                                             .on( call.getDevice() ),
                                                             JunctionUtil::forConvolution
                                                         );
-                                if ( call.getOperation() == Neureka.get().backend().getOperation("x>>") )
-                                    return Result.of(tensors[ 2 ]).withAutoDiff(autoDiff);
-                                else
-                                    return Result.of(tensors[ 0 ]).withAutoDiff(autoDiff);
+
+                                return Result.of(tensors[ 0 ]).withAutoDiff(autoDiff);
                             }
                         }
                         return Result.of(CalcUtil.defaultRecursiveExecution( caller, call )).withAutoDiff(autoDiff);

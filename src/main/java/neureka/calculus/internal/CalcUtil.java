@@ -73,11 +73,11 @@ public class CalcUtil
 
         //assert result == executionCall.tensor(0);
         return
-        _recursiveReductionOf( executionCall, call -> {
+            _recursiveReductionOf( executionCall, call -> {
                 for ( Tsr<?> t : call.inputs() )
                     if ( t == null ) throw new IllegalArgumentException(
-                            "Device arguments may not be null!\n" +
-                                    "One or more tensor arguments within the given ExecutionCall instance is null."
+                        "Device arguments may not be null!\n" +
+                        "One or more tensor arguments within the given ExecutionCall instance is null."
                     );
 
                 call = ExecutionCall.of( call.inputs() )
@@ -391,19 +391,8 @@ public class CalcUtil
         Consumer<Tsr<?>>[] rollbacks = new Consumer[ call.arity() ];
         for (int i = 0; i < call.arity(); i++ )
             if ( call.input( i ) != null && !call.input( i ).isOutsourced() ) {
-                try {
-                    device.store( call.input( i ) );
-                } catch ( Exception e ) {
-                    e.printStackTrace();
-                }
-
-                rollbacks[ i ] = tensor -> {
-                                        try {
-                                            device.restore( (Tsr<Object>) tensor );
-                                        } catch ( Exception e ) {
-                                            e.printStackTrace();
-                                        }
-                                    };
+                device.store( call.input( i ) );
+                rollbacks[ i ] = tensor -> device.restore( (Tsr<Object>) tensor );
             }
             else
                 rollbacks[ i ] = t -> {};
