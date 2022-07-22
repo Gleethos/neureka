@@ -36,49 +36,21 @@ public class ConvUtil {
                     return AutoDiffMode.FORWARD_AND_BACKWARD;
                 })
                 .setExecution(
-                    ( caller, call ) -> {
-                        ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+                    ( caller, call ) ->
+                        Result.of(CalcUtil.executeFor( caller, call, (innerCaller, innerCall) ->
                         {
-                            int d = adCall.getDerivativeIndex();
-                            Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
-                                    "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
-                                    false
-                                );
-                            Tsr<?> derivative = f.derive( (Tsr[]) adCall.inputs(), d );
-                            assert d >= 0 && d <= 1;
-                            assert derivative != null;
-                            assert deConv != null;
-                            assert adCall.arity() >= 2 && adCall.arity() <= 3;
-                            // Now we need to remember the shape of the input which is targeted for back prop.
-                            int[] shape = adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape();
-                            // This is because it will be the shape of the output to the de-convolution!
-                            return ADAgent.of( derivative )
-                                    .withAD( target ->
-                                                deConv.execute(
-                                                        target.error(),
-                                                        derivative,
-                                                        Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )
-                                                )
-                                        );
-                        };
-                        return Result.of(CalcUtil.executeFor( caller, call, (innerCaller, innerCall) -> {
-
-                            if ( !caller.isFlat() )
-                                return CalcUtil.executeDeviceAlgorithm( innerCaller, innerCall );
-
-
                             if ( call.getOperation().getOperator().equals("x") ) {
                                 Tsr<?>[] tensors = new Tsr[]{null, call.input( 0 ), call.input( 1 )};
                                 tensors[ 0 ] =
-                                        (call.getValOf( Arg.DerivIdx.class ) < 0)
-                                                ? Tsr.of(
-                                                        call.input(0).getItemClass(),
-                                                        _shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
-                                                        0
-                                                )
-                                                .getUnsafe()
-                                                .setIsIntermediate( true )
-                                                : null;
+                                    (call.getValOf( Arg.DerivIdx.class ) < 0)
+                                            ? Tsr.of(
+                                                    call.input(0).getItemClass(),
+                                                    _shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
+                                                    0
+                                            )
+                                            .getUnsafe()
+                                            .setIsIntermediate( true )
+                                            : null;
 
                                 for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
                                 tensors[ 0 ] = CalcUtil.recursiveExecution( call.withInputs(tensors), JunctionUtil::forConvolution );
@@ -99,9 +71,31 @@ public class ConvUtil {
 
                                 return tensors[ 0 ];
                             }
-                        } )).withAutoDiff(autoDiff);
-
-                    }
+                        }))
+                        .withAutoDiff(( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+                        {
+                            int d = adCall.getDerivativeIndex();
+                            Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
+                                    "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
+                                    false
+                            );
+                            Tsr<?> derivative = f.derive( (Tsr[]) adCall.inputs(), d );
+                            assert d >= 0 && d <= 1;
+                            assert derivative != null;
+                            assert deConv != null;
+                            assert adCall.arity() >= 2 && adCall.arity() <= 3;
+                            // Now we need to remember the shape of the input which is targeted for back prop.
+                            int[] shape = adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape();
+                            // This is because it will be the shape of the output to the de-convolution!
+                            return ADAgent.of( derivative )
+                                    .withAD( target ->
+                                            deConv.execute(
+                                                    target.error(),
+                                                    derivative,
+                                                    Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )
+                                            )
+                                    );
+                        })
                 )
                 .setCallPreparation(
                      call -> {
