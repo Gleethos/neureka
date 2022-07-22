@@ -130,7 +130,7 @@ implements ExecutionPreparation, ADAgentSupplier
     }
 
     public Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call ) {
-        return CalcUtil.executeFor( caller, call, null );
+        return CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm);
     }
 
     @Override

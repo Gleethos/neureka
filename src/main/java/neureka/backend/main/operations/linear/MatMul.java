@@ -75,7 +75,7 @@ public class MatMul extends AbstractOperation
                         };
 
                         if ( !caller.isFlat() )
-                            return Result.of(CalcUtil.executeFor( caller, call, null )).withAutoDiff(autoDiff);
+                            return Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm)).withAutoDiff(autoDiff);
 
                         Tsr<?>[] tensors = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
                         for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );

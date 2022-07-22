@@ -48,7 +48,7 @@ public class AssignLeft extends AbstractOperation
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
             .setExecution(
                     (caller, call) ->
-                            Result.of(CalcUtil.executeFor( caller, call, null )).withAutoDiff(getDefaultAlgorithm())
+                            Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm )).withAutoDiff(getDefaultAlgorithm())
             )
             .setCallPreparation(
                 call -> {
@@ -112,7 +112,7 @@ public class AssignLeft extends AbstractOperation
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
             .setExecution(
                     (caller, call) ->
-                            Result.of(CalcUtil.executeFor( caller, call, null )).withAutoDiff(getDefaultAlgorithm())
+                            Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm )).withAutoDiff(getDefaultAlgorithm())
             )
             .setCallPreparation(
                     call -> {

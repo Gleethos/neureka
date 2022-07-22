@@ -61,7 +61,7 @@ public class ConvUtil {
                                                 )
                                         );
                         };
-                        if ( !caller.isFlat() ) return Result.of(CalcUtil.executeFor( caller, call, null )).withAutoDiff(autoDiff);
+                        if ( !caller.isFlat() ) return Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm )).withAutoDiff(autoDiff);
                         if ( call.getOperation().getOperator().equals("x") ) {
                             Tsr<?>[] tensors = new Tsr[]{null, call.input( 0 ), call.input( 1 )};
                             tensors[ 0 ] =
@@ -96,7 +96,7 @@ public class ConvUtil {
                                 return Result.of(tensors[ 0 ]).withAutoDiff(autoDiff);
                             }
                         }
-                        return Result.of(CalcUtil.executeFor( caller, call, null )).withAutoDiff(autoDiff);
+                        return Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm)).withAutoDiff(autoDiff);
                     }
                 )
                 .setCallPreparation(

@@ -63,12 +63,14 @@ public class CalcUtil
                 "One or more tensor arguments within the given ExecutionCall instance is null."
             );
 
-        //assert result == executionCall.tensor(0);
         return
             _recursiveReductionOf( executionCall, executor );
     }
 
-    private static Tsr<?> _executeDeviceAlgorithm(ExecutionCall<? extends Device<?>> call) {
+    public static Tsr<?> executeDeviceAlgorithm(
+        ExecutionCall<? extends Device<?>> call,
+        CallExecutor executor // Ignored! Only for compatibility!
+    ) {
 
         for ( Tsr<?> t : call.inputs() )
             if ( t == null ) throw new IllegalArgumentException(
@@ -395,7 +397,7 @@ public class CalcUtil
                             );
 
         if ( result == null )
-            result = _executeDeviceAlgorithm( call );
+            result = executeDeviceAlgorithm( call, null );
         else
             return result;
 
