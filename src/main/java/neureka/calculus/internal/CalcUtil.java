@@ -59,8 +59,8 @@ public class CalcUtil
 
         for ( Tsr<?> t : executionCall.inputs() )
             if ( t == null ) throw new IllegalArgumentException(
-                    "Device arguments may not be null!\n" +
-                            "One or more tensor arguments within the given ExecutionCall instance is null."
+                "Device arguments may not be null!\n" +
+                "One or more tensor arguments within the given ExecutionCall instance is null."
             );
 
         //assert result == executionCall.tensor(0);
@@ -395,7 +395,7 @@ public class CalcUtil
                             );
 
         if ( result == null )
-            call.setInput( 0, _executeDeviceAlgorithm( call ) );
+            result = _executeDeviceAlgorithm( call );
         else
             return result;
 
@@ -403,7 +403,7 @@ public class CalcUtil
             if ( call.input( i ) != null && !call.input( i ).isUndefined() )
                 rollbacks[ i ].accept( call.input( i ) );
 
-        return call.input( 0 );
+        return result;
     }
 
     private static String _couldNotFindSuitableAlgorithmFor(Class<?> type ) {
