@@ -3,6 +3,7 @@ package neureka.backend.main.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.fun.ADAgentSupplier;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
@@ -61,24 +62,21 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                     .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                     .orElse(AutoDiffMode.BACKWARD_ONLY)
         );
-        setExecution(
-            ( caller, call ) -> {
-                int offset = ( call.input( Number.class, 0 ) == null ? 1 : 0 );
-                if (
-                    call.input( Number.class, offset).shape().size() != call.input( Number.class, 1+offset).shape().size()
-                ) // Creating a new tensor:
-                {
-                    Tsr<?>[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };
-                    Reshape.makeFit( inputs, caller.isDoingAD() );
-                    inputs = new Tsr[]{ inputs[0], inputs[1] };
-                    return Result.of(CalcUtil.executeFor( caller, call.withInputs( inputs ), CalcUtil::executeDeviceAlgorithm ));
-                }
-                return Result.of(CalcUtil.executeFor( caller, call, finalExecutor ));
-            }
-        );
+        setDeviceExecution( finalExecutor, (ADAgentSupplier) null );
         setCallPreparation(
             call ->
             {
+                int offset = ( call.input( Number.class, 0 ) == null ? 1 : 0 );
+                if (
+                        call.input( Number.class, offset).shape().size() != call.input( Number.class, 1+offset).shape().size()
+                )
+                {
+                    Tsr<?>[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };
+                    Reshape.makeFit( inputs, true );
+                    inputs = new Tsr[]{ null, inputs[0], inputs[1] };
+                    call = call.withInputs( inputs );
+                }
+
                 Device device = call.getDevice();
                 if ( call.input( 0 ) == null ) // Creating a new tensor:
                 {
