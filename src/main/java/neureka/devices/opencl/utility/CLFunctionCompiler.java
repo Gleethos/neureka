@@ -2,6 +2,7 @@ package neureka.devices.opencl.utility;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.autograd.ADAgent;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;

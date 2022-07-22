@@ -2,15 +2,14 @@ package neureka.backend.main.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.Result;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.fun.ADAgentSupplier;
+import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.algorithms.internal.FunTuple;
 import neureka.backend.main.algorithms.internal.WithForward;
 import neureka.backend.main.implementations.CLImplementation;
-import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
@@ -32,7 +31,7 @@ public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
                     .basicSuitability()
         );
         setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD );
-        setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, finalExecutor )) );
+        setDeviceExecution( finalExecutor, (ADAgentSupplier) null );
         setCallPreparation(
             call -> {
                 Device<Object> device = (Device<Object>) call.getDevice();

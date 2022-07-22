@@ -3,9 +3,8 @@ package neureka.backend.main.operations.indexer;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.Result;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
@@ -15,7 +14,6 @@ import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.JunctionUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -114,11 +112,7 @@ public final class Product extends AbstractOperation
                     int[] shp = call.input( 1 ).getNDConf().shape();
                     Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
-                    try {
-                        device.store( output );
-                    } catch( Exception e ) {
-                        e.printStackTrace();
-                    }
+                    device.store( output );
                     call.setInput( 0, output );
                 }
                 return call;

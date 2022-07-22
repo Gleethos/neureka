@@ -258,11 +258,11 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
 
     public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( RecursiveExecutor executor, ADAgentSupplier adAgentSupplier ) {
         return
-                adAgentSupplier == null
-                        ? setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, executor )) )
-                        : setExecution( (caller, call) ->
-                                    Result.of(CalcUtil.executeFor( caller, call, executor ))
-                                            .withAutoDiff( adAgentSupplier )
+            adAgentSupplier == null
+                ? setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, executor )) )
+                : setExecution( (caller, call) ->
+                                        Result.of(CalcUtil.executeFor( caller, call, executor ))
+                                                .withAutoDiff( adAgentSupplier )
                             );
     }
 
