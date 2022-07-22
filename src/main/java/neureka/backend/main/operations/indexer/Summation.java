@@ -102,54 +102,51 @@ public final class Summation extends AbstractOperation
 
         Activation activation = new Activation()
         .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-        .setExecution(
-            (caller, call) ->
-                Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ))
-                    .withAutoDiff(
-                        ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
-                        {
-                            Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
-                            Function mul = Neureka.get().backend().getFunction().mul();
-                            if ( ctxDerivative != null )
-                                return ADAgent.of( ctxDerivative )
-                                                .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
+        .setDeviceExecution(
+            JunctionUtil::forAdditions,
+            ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+            {
+                Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
+                Function mul = Neureka.get().backend().getFunction().mul();
+                if ( ctxDerivative != null )
+                    return ADAgent.of( ctxDerivative )
+                                    .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
 
-                            int d = adCall.getDerivativeIndex();
-                            if ( adCall.autogradMode().allowsForward() )
-                            {
-                                Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
-                                return ADAgent.of( derivative )
-                                                .withAD( target -> mul.execute( target.error(), derivative ) );
-                            }
-                            else
-                            {
-                                if ( this.supports(Convolution.class) )
-                                {
-                                    Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
-                                            "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
-                                            false
-                                    );
-                                    Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
-                                    return ADAgent.of( derivative )
-                                            .withAD(
-                                                call.autogradMode() == AutoDiffMode.FORWARD_ONLY
-                                                ? target -> mul.execute( target.error(), derivative )
-                                                : target ->
-                                                    deConv.execute(
-                                                            target.error(),
-                                                            derivative,
-                                                            Tsr.of(target.node().getPayload().shape(), 0) ).getUnsafe().setIsIntermediate( true )
-                                            );
-                                }
-                                else
-                                {
-                                    Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
-                                    return ADAgent.of( derivative )
-                                                    .withAD( target -> mul.execute( target.error(), derivative ) );
-                                }
-                            }
-                        }
-                    )
+                int d = adCall.getDerivativeIndex();
+                if ( adCall.autogradMode().allowsForward() )
+                {
+                    Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
+                    return ADAgent.of( derivative )
+                                    .withAD( target -> mul.execute( target.error(), derivative ) );
+                }
+                else
+                {
+                    if ( this.supports(Convolution.class) )
+                    {
+                        Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
+                                "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
+                                false
+                        );
+                        Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
+                        return ADAgent.of( derivative )
+                                .withAD(
+                                    adCall.autogradMode() == AutoDiffMode.FORWARD_ONLY
+                                    ? target -> mul.execute( target.error(), derivative )
+                                    : target ->
+                                        deConv.execute(
+                                                target.error(),
+                                                derivative,
+                                                Tsr.of(target.node().getPayload().shape(), 0) ).getUnsafe().setIsIntermediate( true )
+                                );
+                    }
+                    else
+                    {
+                        Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
+                        return ADAgent.of( derivative )
+                                        .withAD( target -> mul.execute( target.error(), derivative ) );
+                    }
+                }
+            }
         )
         .setCallPreparation(
                 call -> {

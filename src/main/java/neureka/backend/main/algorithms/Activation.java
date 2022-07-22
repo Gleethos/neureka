@@ -38,7 +38,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                     .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                     .orElse(AutoDiffMode.BACKWARD_ONLY)
         );
-        setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm )) );
+        setDeviceExecution( CalcUtil::executeDeviceAlgorithm, null );
         setCallPreparation(
             call -> {
                 Device device = call.getDeviceFor(Number.class);

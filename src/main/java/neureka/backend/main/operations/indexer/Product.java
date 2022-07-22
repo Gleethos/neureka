@@ -96,16 +96,15 @@ public final class Product extends AbstractOperation
 
         Activation activation = new Activation()
         .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-        .setExecution(
-            (caller, call) ->
-                Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications ))
-                    .withAutoDiff( (Function f, ExecutionCall<? extends Device<?>> adCall ) ->
-                    {
-                        Function mul = Neureka.get().backend().getFunction().mul();
-                        Tsr<?> derivative = f.executeDerive( adCall.inputs(), adCall.getDerivativeIndex() );
-                        return ADAgent.of( derivative )
-                                        .withAD( target -> mul.execute( target.error(), derivative ) );
-                    })
+        .setDeviceExecution(
+            JunctionUtil::forMultiplications,
+            (Function f, ExecutionCall<? extends Device<?>> adCall ) -> // Autograd
+            {
+                Function mul = Neureka.get().backend().getFunction().mul();
+                Tsr<?> derivative = f.executeDerive( adCall.inputs(), adCall.getDerivativeIndex() );
+                return ADAgent.of( derivative )
+                                .withAD( target -> mul.execute( target.error(), derivative ) );
+            }
         )
         .setCallPreparation(
             call -> {
