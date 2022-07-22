@@ -398,11 +398,9 @@ public class CalcUtil
 
         if ( result == null )
             result = executeDeviceAlgorithm( call, null );
-        else
-            return result;
 
         for ( int i = 0; i < call.arity(); i++ )
-            if ( call.input( i ) != null && !call.input( i ).isUndefined() )
+            if ( call.input( i ) != null && !call.input( i ).isDeleted() && !call.input( i ).isUndefined() )
                 rollbacks[ i ].accept( call.input( i ) );
 
         return result;
