@@ -150,6 +150,7 @@ public class MatMul extends AbstractOperation
 
     private static ExecutionCall<Device<Object>> _prepare( ExecutionCall call )
     {
+        assert call.arity() <= 3;
         Device<Number> device = call.getDeviceFor(Number.class);
         if ( call.input( 0 ) == null ) // Creating a new tensor:
         {
