@@ -61,39 +61,46 @@ public class ConvUtil {
                                                 )
                                         );
                         };
-                        if ( !caller.isFlat() ) return Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm )).withAutoDiff(autoDiff);
-                        if ( call.getOperation().getOperator().equals("x") ) {
-                            Tsr<?>[] tensors = new Tsr[]{null, call.input( 0 ), call.input( 1 )};
-                            tensors[ 0 ] =
-                                (call.getValOf( Arg.DerivIdx.class ) < 0)
-                                    ? Tsr.of(
-                                        call.input(0).getItemClass(),
-                                            _shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
-                                            0
-                                        )
-                                        .getUnsafe()
-                                        .setIsIntermediate( true )
-                                    : null;
+                        return Result.of(CalcUtil.executeFor( caller, call, (innerCaller, innerCall) -> {
 
-                            for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                            tensors[ 0 ] = CalcUtil.recursiveExecution( call.withInputs(tensors), JunctionUtil::forConvolution );
-                            if ( tensors[ 0 ] == null )
-                                throw new IllegalStateException("Failed to execute convolution!");
-                            return Result.of(tensors[ 0 ]).withAutoDiff(autoDiff);
-                        } else {
-                            Tsr<?>[] tensors = CalcUtil.flatten( caller, call ).inputs();
-                            Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
-                            for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
-                            tensors[ 0 ] = CalcUtil.recursiveExecution(
-                                                        ExecutionCall.of( tensors )
-                                                                        .andArgs( Arg.DerivIdx.of(0) )
-                                                                        .running( call.getOperation() )
-                                                                        .on( call.getDevice() ),
-                                                        JunctionUtil::forConvolution
-                                                    );
+                            if ( !caller.isFlat() )
+                                return CalcUtil.executeDeviceAlgorithm( innerCaller, innerCall );
 
-                            return Result.of(tensors[ 0 ]).withAutoDiff(autoDiff);
-                        }
+
+                            if ( call.getOperation().getOperator().equals("x") ) {
+                                Tsr<?>[] tensors = new Tsr[]{null, call.input( 0 ), call.input( 1 )};
+                                tensors[ 0 ] =
+                                        (call.getValOf( Arg.DerivIdx.class ) < 0)
+                                                ? Tsr.of(
+                                                        call.input(0).getItemClass(),
+                                                        _shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
+                                                        0
+                                                )
+                                                .getUnsafe()
+                                                .setIsIntermediate( true )
+                                                : null;
+
+                                for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
+                                tensors[ 0 ] = CalcUtil.recursiveExecution( call.withInputs(tensors), JunctionUtil::forConvolution );
+                                if ( tensors[ 0 ] == null )
+                                    throw new IllegalStateException("Failed to execute convolution!");
+                                return tensors[ 0 ];
+                            } else {
+                                Tsr<?>[] tensors = CalcUtil.flatten( caller, call ).inputs();
+                                Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
+                                for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
+                                tensors[ 0 ] = CalcUtil.recursiveExecution(
+                                        ExecutionCall.of( tensors )
+                                                .andArgs( Arg.DerivIdx.of(0) )
+                                                .running( call.getOperation() )
+                                                .on( call.getDevice() ),
+                                        JunctionUtil::forConvolution
+                                );
+
+                                return tensors[ 0 ];
+                            }
+                        } )).withAutoDiff(autoDiff);
+
                     }
                 )
                 .setCallPreparation(
