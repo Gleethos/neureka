@@ -29,7 +29,7 @@ public class Addition extends AbstractOperation {
 
     private final Broadcast _broadcast =
             (Broadcast)
-                new Broadcast((executionCall, executor) -> null)
+                new Broadcast( CalcUtil::executeDeviceAlgorithm )
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call ) ->

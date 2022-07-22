@@ -224,7 +224,7 @@ public class UnitTester_Tensor extends UnitTester
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = _shpOfBrc(frstShp, scndShp);
 
-        Broadcast right = new Broadcast((executionCall, executor) -> null)
+        Broadcast right = new Broadcast( CalcUtil::executeDeviceAlgorithm )
                                 .setAutogradModeFor(
                                         call -> call
                                                 .validate().allNotNullHaveSame(NDimensional::shape)
@@ -275,7 +275,7 @@ public class UnitTester_Tensor extends UnitTester
                                                 )
                                 );
 
-        Broadcast left = new Broadcast((executionCall, executor) -> null)
+        Broadcast left = new Broadcast( CalcUtil::executeDeviceAlgorithm )
                                     .setAutogradModeFor(
                                         call -> call
                                                 .validate().allNotNullHaveSame(NDimensional::shape)

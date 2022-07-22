@@ -88,7 +88,7 @@ public class Modulo extends AbstractOperation {
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast((executionCall, executor) -> null)
+        Broadcast broadcast = new Broadcast( CalcUtil::executeDeviceAlgorithm )
             .setAutogradModeFor(
                     call -> call
                                 .validate().allNotNullHaveSame(NDimensional::shape)

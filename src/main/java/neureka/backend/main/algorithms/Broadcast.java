@@ -70,8 +70,8 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                 {
                     Tsr<?>[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };
                     Reshape.makeFit( inputs, caller.isDoingAD() );
-                    inputs = new Tsr[]{ null, inputs[0], inputs[1] };
-                    return Result.of(CalcUtil.recursiveExecution( call.withInputs( inputs ), CalcUtil::executeDeviceAlgorithm ));
+                    inputs = new Tsr[]{ inputs[0], inputs[1] };
+                    return Result.of(CalcUtil.executeFor( caller, call.withInputs( inputs ), CalcUtil::executeDeviceAlgorithm ));
                 }
                 return Result.of(CalcUtil.executeFor( caller, call, finalExecutor ));
             }
