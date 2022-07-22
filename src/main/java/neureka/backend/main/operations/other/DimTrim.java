@@ -54,10 +54,7 @@ public class DimTrim extends AbstractOperation
                                     : _pad(target.error(), new int[]{prefix, postfix}, true);
                     };
 
-                    Tsr<?>[] inputs = CalcUtil.srcActivation(
-                                            call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0,
-                                            caller.getSubFunctions().toArray(new Function[0])
-                                        );
+                    Tsr<?>[] inputs = CalcUtil.flatten( caller, call ).inputs();
                     assert inputs.length == 1;
                     Tsr<?> t = inputs[ 0 ];
                     if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {

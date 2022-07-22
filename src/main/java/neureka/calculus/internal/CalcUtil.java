@@ -99,43 +99,40 @@ public class CalcUtil
         return call.input( 0 );
     }
 
-    /**
-     *  This method performs a classical execution of a {@link Function} alongside an array of provided
-     *  arguments and an offset used to make room in the output array returned by this method.
-     */
-    @Contract( pure = true )
-    public static Tsr<?>[] srcActivation(
-            Tsr<?>[] inputs, int j, int d, int offset, Function[] src
+    public static <D extends Device<?>> ExecutionCall<D> flatten(
+        Function caller, ExecutionCall<D> call
     ) {
+        return _flatten( call, caller.getSubFunctions().toArray(new Function[0]) );
+    }
+
+
+    @Contract( pure = true )
+    private static <D extends Device<?>> ExecutionCall<D> _flatten(
+            ExecutionCall<D> call, Function[] src
+    ) {
+        ExecutionCall<D> innerCall = call.withArgs( Arg.DerivIdx.of(-1) );
+        Tsr<?>[] inputs = innerCall.inputs();
         return MemUtil.keep( inputs, () ->
         {
             int[] tempShape = null;
             Class<?> tempType = null;
-            Tsr<?>[] tensors = new Tsr[ src.length + offset ];
-            for ( int i = offset; i < tensors.length; i++ ) {//constants need to be figured out!
-                if ( !( src[ i - offset ] instanceof FunctionConstant ) ) {
-                    if ( d < 0 ) // Not deriving this!
-                        tensors[ i ] =
-                                j >= 0
-                                        ? src[ i - offset ].execute( inputs, j )
-                                        : src[ i - offset ].execute( inputs );
-                    else // ...deriving at specified index...
-                        tensors[ i ] =
-                                j >= 0
-                                        ? src[ i - offset ].executeDerive( inputs, d, j )
-                                        : src[ i - offset ].executeDerive( inputs, d );
-
+            Tsr<?>[] tensors = new Tsr[src.length];
+            for ( int i = 0; i < tensors.length; i++ ) {//constants need to be figured out!
+                if ( !( src[i] instanceof FunctionConstant ) ) {
+                    tensors[ i ] = src[i].execute(innerCall);
                     tempShape = ( tempShape == null ? tensors[ i ].getNDConf().shape() : tempShape );
                     tempType  = ( tempType  == null ? tensors[ i ].getItemClass()     : tempType  );
                 }
             }
-            for ( int i = offset; i < tensors.length; i++ )
+            int j = innerCall.getValOf( Arg.VarIdx.class );
+            for ( int i = 0; i < tensors.length; i++ )
                 if ( tensors[ i ] == null )
                     tensors[ i ] =
                             j < 0
-                                    ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[ i - offset ]).value() ).getUnsafe().setIsIntermediate( true )
-                                    : Tsr.of( tempType, tempShape, src[ i - offset ].call(new double[]{}, j) ).getUnsafe().setIsIntermediate( true );
-            return tensors;
+                                ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[i]).value() ).getUnsafe().setIsIntermediate( true )
+                                : Tsr.of( tempType, tempShape, src[i].call(new double[]{}, j)      ).getUnsafe().setIsIntermediate( true );
+
+            return innerCall.withInputs(tensors);
         });
     }
 
@@ -166,7 +163,7 @@ public class CalcUtil
                     call.getOperation().supportsAlgorithm(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-            tensors = srcActivation( call.inputs(), j, -1, 0, nodes );
+            tensors = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes ).inputs();
             String asStr = call.getOperation().stringify(
                                                 IntStream.range( 0, nodes.length )
                                                          .mapToObj( i -> "I[" + i + "]" )
@@ -180,7 +177,7 @@ public class CalcUtil
             return result;
         }
         else
-             tensors = srcActivation( call.inputs(), j, -1, 1, nodes );
+             tensors = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes ).withInputAt( 0, null ).inputs();
 
         tensors[0] = CalcUtil.recursiveExecution(
                                 call.withInputs( tensors )

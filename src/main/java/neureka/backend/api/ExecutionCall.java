@@ -43,6 +43,7 @@ import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -152,6 +153,12 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     public ExecutionCall<D> withInputs( Tsr<?>... inputs ) {
         LogUtil.nullArgCheck( inputs, "inputs", Tsr[].class );
         return new ExecutionCall<>( _device, _operation, inputs, _arguments.getAll(Arg.class) );
+    }
+
+    public ExecutionCall<D> withInputAt( int index, Tsr<?> added ) {
+        List<Tsr<?>> inputs = new ArrayList<>(Arrays.asList(_inputs));
+        inputs.add(index, added);
+        return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tsr<?>[0]), _arguments.getAll(Arg.class) );
     }
 
     /**

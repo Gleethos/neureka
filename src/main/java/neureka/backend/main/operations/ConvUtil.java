@@ -82,7 +82,7 @@ public class ConvUtil {
                             return Result.of(tensors[ 0 ]).withAutoDiff(autoDiff);
                         } else {
                             if ( call.getValOf( Arg.DerivIdx.class ) < 0 ) {
-                                Tsr<?>[] tensors = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
+                                Tsr<?>[] tensors = CalcUtil.flatten( caller, call ).inputs();
                                 Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                 for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
                                 tensors[ 0 ] = CalcUtil.recursiveExecution(

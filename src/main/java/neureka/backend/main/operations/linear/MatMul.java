@@ -74,18 +74,18 @@ public class MatMul extends AbstractOperation
                                         );
                         };
 
-                        if ( !caller.isFlat() )
-                            return Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm)).withAutoDiff(autoDiff);
-
-                        Tsr<?>[] tensors = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
-                        for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                        ExecutionCall<Device<Object>> preparedCall = _prepare( call.withInputs(tensors) );
+                        call = CalcUtil.flatten(caller, call).withInputAt( 0, null );
+                        for ( Tsr<?> t : call.inputs() ) if ( t != null ) t.setIsVirtual( false );
+                        call = _prepare( call );
                         return Result.of(MatMul.this.simpleMatMulAlgorithm
                                             .getImplementationFor(call.getDeviceFor(Object.class))
-                                            .runAndGetFirstTensor(preparedCall)).withAutoDiff(autoDiff);
+                                            .runAndGetFirstTensor((ExecutionCall<Device<Object>>) call)).withAutoDiff(autoDiff);
                     }
                 )
-                .setCallPreparation( MatMul::_prepare )
+                .setCallPreparation( call -> {
+                    throw new IllegalArgumentException("Matrix multiplication does not support call preparation!");
+                    // At least not through this way... this is the deprecated way...
+                })
                 .buildFunAlgorithm();
 
         setAlgorithm(

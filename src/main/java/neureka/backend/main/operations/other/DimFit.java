@@ -35,8 +35,8 @@ public class DimFit extends AbstractOperation
             .setExecution(
                 ( caller, call ) ->
                 {
-                    Tsr<?>[] inputs = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                     assert call.getValOf( Arg.DerivIdx.class ) < 0;
+                    Tsr<?>[] inputs = CalcUtil.flatten( caller, call ).inputs();
 
                     int largest = -1;
                     int[] shape = null;
@@ -60,8 +60,8 @@ public class DimFit extends AbstractOperation
                             int padding = largest-oldShape.length;
 
                             int handle = ( postfix <= prefix )? padding : largest-padding;
-                            for ( int ii=0; ii<handle; ii++) newReshape[ ii ]       = ( postfix <= prefix )? -1 : ii;
-                            for ( int ii=handle; ii<largest; ii++) newReshape[ ii ] = ( postfix <= prefix )? ii-padding : -1;
+                            for ( int ii = 0; ii < handle; ii++ ) newReshape[ ii ]      = ( postfix <= prefix )? -1 : ii;
+                            for ( int ii = handle; ii < largest; ii++) newReshape[ ii ] = ( postfix <= prefix )? ii-padding : -1;
 
                             change[ i ] = newReshape;
                         }

@@ -39,7 +39,7 @@ public class Reshape extends AbstractOperation
             .setExecution(
                 ( caller, call ) ->
                 {
-                    Tsr<?>[] inputs = CalcUtil.srcActivation( call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );
+                    Tsr<?>[] inputs = CalcUtil.flatten(caller, call).inputs();
                     int[] newForm = new int[ inputs.length - 1 ];
                     for ( int i = 0; i < inputs.length - 1; i++ )
                         newForm[ i ] = ( (Number) inputs[ i ].getItemAt( 0 ) ).intValue();
