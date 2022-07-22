@@ -3,6 +3,7 @@ package neureka.backend.api.template.algorithms;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.autograd.ADTarget;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.*;
 import neureka.backend.main.memory.MemValidator;
@@ -245,14 +246,30 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         return setDeviceExecution( executor, FallbackAlgorithm::ADAgent);
     }
 
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( RecursiveExecutor executor, ADAgentSupplier adAgentSupplier ) {
+    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( RecursiveExecutor executor, ADAgentSource adAgentSupplier ) {
         return
                 adAgentSupplier == null
                     ? setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, executor )) )
                     : setExecution( (caller, call) ->
-                            Result.of(CalcUtil.executeFor( caller, call, executor )).withAutoDiff(adAgentSupplier)
+                            Result.of(CalcUtil.executeFor( caller, call, executor ))
+                                    .withADAction( target -> adAgentSupplier.get(caller, call, target) )
                         );
     }
+
+    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( RecursiveExecutor executor, ADAgentSupplier adAgentSupplier ) {
+        return
+                adAgentSupplier == null
+                        ? setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, executor )) )
+                        : setExecution( (caller, call) ->
+                                    Result.of(CalcUtil.executeFor( caller, call, executor ))
+                                            .withAutoDiff( adAgentSupplier )
+                            );
+    }
+
+    public interface ADAgentSource {
+        Tsr<?> get(Function caller, ExecutionCall<? extends Device<?>> call, ADTarget<?> target);
+    }
+
 
     @Override
     public Result execute( Function caller, ExecutionCall<? extends Device<?>> call ) {

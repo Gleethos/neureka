@@ -75,10 +75,9 @@ public final class CLFunctionCompiler {
                         .withName( "generic_algorithm_for_"+ _functionName )
                         .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
                         .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-                        .setExecution(
-                            (caller, call) ->
-                                Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm ))
-                                    .withADAction( target -> new FunctionParser( Neureka.get().backend() ).parse(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )
+                        .setDeviceExecution(
+                                CalcUtil::executeDeviceAlgorithm,
+                                (caller, call, target) -> new FunctionParser( Neureka.get().backend() ).parse(caller.toString(), false).derive(new Tsr[]{target.error()}, 0)
                         )
                         .setCallPreparation(
                             call -> {

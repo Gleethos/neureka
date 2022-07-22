@@ -3,6 +3,7 @@ package neureka.backend.main.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.fun.ADAgentSupplier;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
@@ -38,7 +39,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                     .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                     .orElse(AutoDiffMode.BACKWARD_ONLY)
         );
-        setDeviceExecution( CalcUtil::executeDeviceAlgorithm, null );
+        setDeviceExecution( CalcUtil::executeDeviceAlgorithm, (ADAgentSupplier) null );
         setCallPreparation(
             call -> {
                 Device device = call.getDeviceFor(Number.class);
