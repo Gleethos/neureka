@@ -145,7 +145,7 @@ public class Addition extends AbstractOperation {
 
         Scalarization scalarization =
             new Scalarization()
-                .setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions )).withAutoDiff(getDefaultAlgorithm()) )
+                .setDeviceExecution( JunctionUtil::forAdditions )
                 .buildFunAlgorithm();
 
         setAlgorithm(

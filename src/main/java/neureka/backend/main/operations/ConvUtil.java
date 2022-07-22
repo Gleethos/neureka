@@ -81,22 +81,19 @@ public class ConvUtil {
                                 throw new IllegalStateException("Failed to execute convolution!");
                             return Result.of(tensors[ 0 ]).withAutoDiff(autoDiff);
                         } else {
-                            if ( call.getValOf( Arg.DerivIdx.class ) < 0 ) {
-                                Tsr<?>[] tensors = CalcUtil.flatten( caller, call ).inputs();
-                                Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
-                                for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
-                                tensors[ 0 ] = CalcUtil.recursiveExecution(
-                                                            ExecutionCall.of( tensors )
-                                                                            .andArgs( Arg.DerivIdx.of(0) )
-                                                                            .running( call.getOperation() )
-                                                                            .on( call.getDevice() ),
-                                                            JunctionUtil::forConvolution
-                                                        );
+                            Tsr<?>[] tensors = CalcUtil.flatten( caller, call ).inputs();
+                            Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
+                            for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
+                            tensors[ 0 ] = CalcUtil.recursiveExecution(
+                                                        ExecutionCall.of( tensors )
+                                                                        .andArgs( Arg.DerivIdx.of(0) )
+                                                                        .running( call.getOperation() )
+                                                                        .on( call.getDevice() ),
+                                                        JunctionUtil::forConvolution
+                                                    );
 
-                                return Result.of(tensors[ 0 ]).withAutoDiff(autoDiff);
-                            }
+                            return Result.of(tensors[ 0 ]).withAutoDiff(autoDiff);
                         }
-                        return Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm)).withAutoDiff(autoDiff);
                     }
                 )
                 .setCallPreparation(
@@ -107,11 +104,7 @@ public class ConvUtil {
                              int[] shp = _shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
                              Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                              output.setIsVirtual( false );
-                             try {
-                                 device.store( output );
-                             } catch ( Exception e ) {
-                                 e.printStackTrace();
-                             }
+                             device.store( output );
                              call.setInput( 0, output );
                          }
                          return call;

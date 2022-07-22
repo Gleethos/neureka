@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
@@ -49,10 +50,7 @@ public class Randomization extends AbstractOperation
         setAlgorithm(
             new Activation()
                 .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
-                .setExecution(
-                   (caller, call) ->
-                       Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm )).withAutoDiff(getDefaultAlgorithm())
-                )
+                .setDeviceExecution( CalcUtil::executeDeviceAlgorithm )
                 .setCallPreparation( call ->
                 {
                     if ( call.input( 0 ) == null )

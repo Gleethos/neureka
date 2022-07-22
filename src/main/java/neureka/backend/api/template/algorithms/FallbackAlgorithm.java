@@ -116,6 +116,11 @@ implements ExecutionPreparation, ADAgentSupplier
     @Override
     public ADAgent supplyADAgentFor( Function function, ExecutionCall<? extends Device<?>> call )
     {
+        return ADAgent( function, call );
+    }
+
+    public static ADAgent ADAgent(Function function, ExecutionCall<? extends Device<?>> call )
+    {
         Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
         Function mul = Neureka.get().backend().getFunction().mul();
         if ( derivative != null ) {
@@ -125,7 +130,7 @@ implements ExecutionPreparation, ADAgentSupplier
         Tsr<?> localDerivative = MemUtil.keep( call.inputs(), () -> function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );
         localDerivative.getUnsafe().setIsIntermediate( false );
         return ADAgent.of( localDerivative )
-                    .withAD( target -> mul.execute( target.error(), localDerivative ) );
+                .withAD( target -> mul.execute( target.error(), localDerivative ) );
         // TODO: Maybe delete local derivative??
     }
 

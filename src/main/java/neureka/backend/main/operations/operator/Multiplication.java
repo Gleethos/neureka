@@ -139,7 +139,7 @@ public class Multiplication extends AbstractOperation
 
         Scalarization scalarization = new Scalarization()
                 .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-                .setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications )).withAutoDiff(getDefaultAlgorithm()) )
+                .setDeviceExecution( JunctionUtil::forMultiplications )
                 .buildFunAlgorithm();
 
         setAlgorithm(

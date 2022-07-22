@@ -87,10 +87,7 @@ public class Subtraction extends AbstractOperation
         Scalarization scalarization =
             new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                .setExecution( (caller, call) ->
-                    Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forSubtractions ))
-                            .withAutoDiff(getDefaultAlgorithm())
-                )
+                .setDeviceExecution( JunctionUtil::forSubtractions )
                 .buildFunAlgorithm();
 
         setAlgorithm(

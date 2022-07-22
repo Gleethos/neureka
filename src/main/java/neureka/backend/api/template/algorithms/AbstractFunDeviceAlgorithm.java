@@ -7,6 +7,8 @@ import neureka.backend.api.*;
 import neureka.backend.api.fun.*;
 import neureka.backend.main.memory.MemValidator;
 import neureka.calculus.Function;
+import neureka.calculus.internal.CalcUtil;
+import neureka.calculus.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,9 +236,18 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         return _autogradModeFor.autoDiffModeFrom( call );
     }
 
-    public final AbstractFunDeviceAlgorithm<C> setExecution(Execution execution ) {
+    public final AbstractFunDeviceAlgorithm<C> setExecution( Execution execution ) {
         _execution = _checked(execution, _execution, Execution.class);
         return this;
+    }
+
+    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( RecursiveExecutor executor ) {
+        return
+            setExecution(
+                (caller, call) ->
+                    Result.of(CalcUtil.executeFor( caller, call, executor ))
+                            .withAutoDiff(FallbackAlgorithm::ADAgent)
+            );
     }
 
     @Override

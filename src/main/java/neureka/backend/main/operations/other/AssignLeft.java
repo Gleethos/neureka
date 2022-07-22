@@ -46,10 +46,7 @@ public class AssignLeft extends AbstractOperation
                }
             )
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
-            .setExecution(
-                    (caller, call) ->
-                            Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm )).withAutoDiff(getDefaultAlgorithm())
-            )
+            .setDeviceExecution( CalcUtil::executeDeviceAlgorithm )
             .setCallPreparation(
                 call -> {
                     int offset = ( call.input( 0 ) == null ? 1 : 0 );
@@ -110,10 +107,7 @@ public class AssignLeft extends AbstractOperation
                         .suitabilityIfValid(SuitabilityPredicate.EXCELLENT)
             )
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
-            .setExecution(
-                    (caller, call) ->
-                            Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm )).withAutoDiff(getDefaultAlgorithm())
-            )
+            .setDeviceExecution( CalcUtil::executeDeviceAlgorithm )
             .setCallPreparation(
                     call -> {
                         int offset = ( call.input( 0 ) == null ? 1 : 0 );

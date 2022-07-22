@@ -151,7 +151,7 @@ public class Division extends AbstractOperation
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-                .setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, JunctionUtil::forDivisionsOrModuli )).withAutoDiff(getDefaultAlgorithm()) )
+                .setDeviceExecution( JunctionUtil::forDivisionsOrModuli )
                 .buildFunAlgorithm();
 
         setAlgorithm(
