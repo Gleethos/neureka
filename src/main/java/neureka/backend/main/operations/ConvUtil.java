@@ -52,10 +52,9 @@ public class ConvUtil {
                                             : null;
 
                                 for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                                tensors[ 0 ] = CalcUtil.prepareAndExecuteRecursively( call.withInputs(tensors), JunctionUtil::forConvolution );
-                                if ( tensors[ 0 ] == null )
-                                    throw new IllegalStateException("Failed to execute convolution!");
-                                return tensors[ 0 ];
+
+                                ExecutionCall<?> prepared = CalcUtil._prepareForExecution( call.withInputs(tensors) );
+                                return CalcUtil.executeOnCommonDevice(prepared,()->JunctionUtil.forConvolution( prepared, null/*recursion is not expected to happen here*/ ));
                             } else {
                                 Tsr<?>[] tensors = CalcUtil.flatten( caller, call ).inputs();
                                 Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)

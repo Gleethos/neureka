@@ -58,7 +58,7 @@ public class CalcUtil
             _recursiveReductiveExecutionOf( executionCall, executor );
     }
 
-    private static ExecutionCall<? extends Device<?>> _prepareForExecution(ExecutionCall<? extends Device<?>> executionCall) {
+    public static ExecutionCall<? extends Device<?>> _prepareForExecution(ExecutionCall<? extends Device<?>> executionCall) {
         Algorithm currentAlgorithm = executionCall.getAlgorithm();
         if ( currentAlgorithm instanceof ExecutionPreparation )
             executionCall = ( (ExecutionPreparation) currentAlgorithm ).prepare( executionCall );
@@ -390,6 +390,23 @@ public class CalcUtil
             final ExecutionCall<? extends Device<?>> call,
             final RecursiveExecutor executor
     ) {
+        return executeOnCommonDevice(call, ()->{
+             /*
+                Below is the core lambda of recursive preprocessing
+                which is defined for each Algorithm individually :
+             */
+            Tsr<?> result = null;
+            if ( executor != null )
+                result = executor.execute( // This is where the recursion occurs:
+                        call,
+                        innerCall -> // This lambda performs the recursive call, implementations decide if they want to dive deeper.
+                                _recursiveReductiveExecutionOf( innerCall, executor )
+                );
+            return result;
+        });
+    }
+
+    public static <R> R executeOnCommonDevice(ExecutionCall<?> call, Supplier<R> execution ) {
         Device<Object> device = call.getDeviceFor(Object.class);
 
         Consumer<Tsr<?>>[] rollbacks = new Consumer[ call.arity() ];
@@ -400,17 +417,8 @@ public class CalcUtil
             }
             else
                 rollbacks[ i ] = t -> {};
-        /*
-            Below is the core lambda of recursive preprocessing
-            which is defined for each Algorithm individually :
-         */
-        Tsr<?> result = null;
-        if ( executor != null )
-            result = executor.execute( // This is where the recursion occurs:
-                                call,
-                                innerCall -> // This lambda performs the recursive call, implementations decide if they want to dive deeper.
-                                        _recursiveReductiveExecutionOf( innerCall, executor )
-                            );
+
+        R result = execution.get();
 
         if ( result == null )
             throw new IllegalStateException( "Execution of " + call + " failed!" );
