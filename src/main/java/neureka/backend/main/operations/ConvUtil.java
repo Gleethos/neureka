@@ -4,7 +4,6 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.fun.ADAgentSupplier;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
 import neureka.backend.main.algorithms.Convolution;
@@ -53,7 +52,7 @@ public class ConvUtil {
                                             : null;
 
                                 for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                                tensors[ 0 ] = CalcUtil.recursiveExecution( call.withInputs(tensors), JunctionUtil::forConvolution );
+                                tensors[ 0 ] = CalcUtil.prepareAndExecuteRecursively( call.withInputs(tensors), JunctionUtil::forConvolution );
                                 if ( tensors[ 0 ] == null )
                                     throw new IllegalStateException("Failed to execute convolution!");
                                 return tensors[ 0 ];
@@ -61,7 +60,7 @@ public class ConvUtil {
                                 Tsr<?>[] tensors = CalcUtil.flatten( caller, call ).inputs();
                                 Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                 for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
-                                tensors[ 0 ] = CalcUtil.recursiveExecution(
+                                tensors[ 0 ] = CalcUtil.prepareAndExecuteRecursively(
                                         ExecutionCall.of( tensors )
                                                 .andArgs( Arg.DerivIdx.of(0) )
                                                 .running( call.getOperation() )

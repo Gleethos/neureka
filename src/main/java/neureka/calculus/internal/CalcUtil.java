@@ -49,13 +49,13 @@ public class CalcUtil
             return _deepDerivative( call, nodes,  executor );
     }
 
-    public static Tsr<?> recursiveExecution(
+    public static Tsr<?> prepareAndExecuteRecursively(
             ExecutionCall<? extends Device<?>> executionCall,
             RecursiveExecutor executor
     ) {
         executionCall = _prepareForExecution(executionCall);
         return
-            _recursiveReductionOf( executionCall, executor );
+            _recursiveReductiveExecutionOf( executionCall, executor );
     }
 
     private static ExecutionCall<? extends Device<?>> _prepareForExecution(ExecutionCall<? extends Device<?>> executionCall) {
@@ -198,7 +198,7 @@ public class CalcUtil
             else
                 tensors = flattenedCall.inputs();
         }
-        Tsr<?> out = CalcUtil.recursiveExecution(
+        Tsr<?> out = CalcUtil.prepareAndExecuteRecursively(
                                 call.withInputs( tensors )
                                     .withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),
                                 executor
@@ -280,7 +280,7 @@ public class CalcUtil
                     if ( index >= 0 ) inner = tensors[ index ];
                     else {
                         // Optimization above did not apply, so we accumulate all the derivatives!
-                        tensors[0] = CalcUtil.recursiveExecution(
+                        tensors[0] = CalcUtil.prepareAndExecuteRecursively(
                                                 ExecutionCall.of( tensors )
                                                         .andArgs( Arg.DerivIdx.of( -1 ) )
                                                         .running( Neureka.get().backend().getOperation("+") )
@@ -312,7 +312,7 @@ public class CalcUtil
                     }
 
                 // Use those tensors for the outer derivative:
-                tensors[0] = CalcUtil.recursiveExecution(
+                tensors[0] = CalcUtil.prepareAndExecuteRecursively(
                                         ExecutionCall.of( tensors )
                                                 .andArgs( Arg.DerivIdx.of( d ) )
                                                 .running( call.getOperation() )
@@ -323,7 +323,7 @@ public class CalcUtil
                 //...multiply inner times outer: ( if inner is not 1 entirely... )
                 if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getItemsAs( double[].class )[ 0 ] == 1.0 ) ) {
                     tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
-                    tensors[0] = CalcUtil.recursiveExecution(
+                    tensors[0] = CalcUtil.prepareAndExecuteRecursively(
                                             ExecutionCall.of( tensors )
                                                     .andArgs( Arg.DerivIdx.of( -1 ) )
                                                     .running( Neureka.get().backend().getOperation("*") )
@@ -386,7 +386,7 @@ public class CalcUtil
      * @return The execution result of the provided {@param call}.
      */
     @Contract( pure = true )
-    private static Tsr<?> _recursiveReductionOf(
+    private static Tsr<?> _recursiveReductiveExecutionOf(
             final ExecutionCall<? extends Device<?>> call,
             final RecursiveExecutor executor
     ) {
@@ -409,7 +409,7 @@ public class CalcUtil
             result = executor.execute( // This is where the recursion occurs:
                                 call,
                                 innerCall -> // This lambda performs the recursive call, implementations decide if they want to dive deeper.
-                                        _recursiveReductionOf( innerCall, executor )
+                                        _recursiveReductiveExecutionOf( innerCall, executor )
                             );
 
         if ( result == null )

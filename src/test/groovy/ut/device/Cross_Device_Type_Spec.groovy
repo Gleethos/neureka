@@ -197,7 +197,7 @@ class Cross_Device_Type_Spec extends Specification
             call.getDevice() >> device
 
         when : 'The call is being passed to the execution utility method ..'
-            CalcUtil.recursiveExecution( call, CalcUtil::executeDeviceAlgorithm )
+            CalcUtil.prepareAndExecuteRecursively( call, CalcUtil::executeDeviceAlgorithm )
 
         then : '...the implementation is being accessed in order to access the mocked lambda...'
             (1.._) * call.getAlgorithm() >> implementation
