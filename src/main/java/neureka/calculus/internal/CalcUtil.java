@@ -53,18 +53,22 @@ public class CalcUtil
             ExecutionCall<? extends Device<?>> executionCall,
             RecursiveExecutor executor
     ) {
+        executionCall = _prepareForExecution(executionCall);
+        return
+            _recursiveReductionOf( executionCall, executor );
+    }
+
+    private static ExecutionCall<? extends Device<?>> _prepareForExecution(ExecutionCall<? extends Device<?>> executionCall) {
         Algorithm currentAlgorithm = executionCall.getAlgorithm();
         if ( currentAlgorithm instanceof ExecutionPreparation )
             executionCall = ( (ExecutionPreparation) currentAlgorithm ).prepare( executionCall );
 
         for ( Tsr<?> t : executionCall.inputs() )
             if ( t == null ) throw new IllegalArgumentException(
-                "Device arguments may not be null!\n" +
-                "One or more tensor arguments within the given ExecutionCall instance is null."
+                    "Device arguments may not be null!\n" +
+                            "One or more tensor arguments within the given ExecutionCall instance is null."
             );
-
-        return
-            _recursiveReductionOf( executionCall, executor );
+        return executionCall;
     }
 
     public static Tsr<?> executeDeviceAlgorithm(
@@ -177,7 +181,22 @@ public class CalcUtil
             return result;
         }
         else {
-            tensors = _flatten(call.withArgs(Arg.VarIdx.of(j)), nodes).withInputAt(0, null).inputs();
+            ExecutionCall<?> flattenedCall = _flatten(call.withArgs(Arg.VarIdx.of(j)), nodes);
+            int numberOfInputs = flattenedCall.arity();
+            boolean anyNumberOfInputs = flattenedCall.getOperation().getArity() < 0;
+            int operationArity = flattenedCall.getOperation().getArity();
+            if ( numberOfInputs < operationArity )
+                throw new IllegalArgumentException(
+                        "The number of inputs to the operation " + flattenedCall.getOperation() + " is " + numberOfInputs +
+                        " but the operation requires " + operationArity + " inputs."
+                );
+
+            boolean tooManyArgs = numberOfInputs > operationArity + 1;
+
+            if ( !tooManyArgs || anyNumberOfInputs )
+                tensors = flattenedCall.withInputAt(0, null).inputs();
+            else
+                tensors = flattenedCall.inputs();
         }
         Tsr<?> out = CalcUtil.recursiveExecution(
                                 call.withInputs( tensors )
