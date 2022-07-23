@@ -176,19 +176,19 @@ public class CalcUtil
 
             return result;
         }
-        else
-             tensors = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes ).withInputAt( 0, null ).inputs();
-
-        tensors[0] = CalcUtil.recursiveExecution(
+        else {
+            tensors = _flatten(call.withArgs(Arg.VarIdx.of(j)), nodes).withInputAt(0, null).inputs();
+        }
+        Tsr<?> out = CalcUtil.recursiveExecution(
                                 call.withInputs( tensors )
                                     .withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),
                                 executor
                             );
 
-        if ( tensors[ 0 ] == null ) // TODO: Fix this for 'left_inline'!!!
-            _LOG.debug("Executing operation '"+call.getOperation().getIdentifier()+"' did not yield a proper return value.");
+        if ( out == null )
+            throw new IllegalStateException("The result of the recursive execution is null!");
 
-        return ( tensors[ 0 ] == null ? tensors[ 1 ] : tensors[ 0 ] );
+        return out;
     }
 
     /**
