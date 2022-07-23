@@ -5,7 +5,6 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.Result;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
@@ -13,11 +12,10 @@ import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Convolution;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
-import neureka.backend.main.operations.JunctionUtil;
+import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
-import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -49,7 +47,7 @@ public final class Summation extends AbstractOperation
         //________________
         // BROADCASTING :
 
-        Broadcast operationAlgorithm = new Broadcast(JunctionUtil::forAdditions)
+        Broadcast operationAlgorithm = new Broadcast(ElemWiseUtil::forAdditions)
                 .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call ) ->
@@ -103,7 +101,7 @@ public final class Summation extends AbstractOperation
         Activation activation = new Activation()
         .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
         .setDeviceExecution(
-            JunctionUtil::forAdditions,
+            ElemWiseUtil::forAdditions,
             ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
             {
                 Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);

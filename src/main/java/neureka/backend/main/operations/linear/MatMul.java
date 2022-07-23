@@ -16,7 +16,7 @@ import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.operations.linear.internal.opencl.GEMM;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.internal.CalcUtil;
+import neureka.backend.main.internal.AlgoUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -74,7 +74,7 @@ public class MatMul extends AbstractOperation
                                         );
                         };
 
-                        call = CalcUtil.flatten(caller, call).withInputAt( 0, null );
+                        call = AlgoUtil.flatten(caller, call).withInputAt( 0, null );
                         for ( Tsr<?> t : call.inputs() ) if ( t != null ) t.setIsVirtual( false );
                         call = _prepare( call );
                         return Result.of(MatMul.this.simpleMatMulAlgorithm

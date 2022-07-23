@@ -4,7 +4,6 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
@@ -13,10 +12,9 @@ import neureka.backend.main.algorithms.Operator;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
-import neureka.backend.main.operations.JunctionUtil;
+import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -43,7 +41,7 @@ public class Subtraction extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        Operator operator = new Operator(JunctionUtil::forSubtractions)
+        Operator operator = new Operator(ElemWiseUtil::forSubtractions)
                                     .setSupplyADAgentFor( getDefaultAlgorithm() )
                                     .buildFunAlgorithm();
         setAlgorithm(
@@ -87,7 +85,7 @@ public class Subtraction extends AbstractOperation
         Scalarization scalarization =
             new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                .setDeviceExecution( JunctionUtil::forSubtractions )
+                .setDeviceExecution( ElemWiseUtil::forSubtractions )
                 .buildFunAlgorithm();
 
         setAlgorithm(
@@ -149,7 +147,7 @@ public class Subtraction extends AbstractOperation
 
         Broadcast broadcast =
                 (Broadcast)
-                new Broadcast(JunctionUtil::forSubtractions)
+                new Broadcast(ElemWiseUtil::forSubtractions)
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<? extends Device<?>> call ) ->
@@ -159,8 +157,8 @@ public class Subtraction extends AbstractOperation
                             Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                             assert ctxDerivative == null;
                             int d = call.getDerivativeIndex();
-                            Tsr<?> derivative = JunctionUtil.newTsrLike( call.input( d==0?1:0 ), 0 );
-                            Tsr<?> toBeDerived = JunctionUtil.newTsrLike( call.input( d ), 0 );
+                            Tsr<?> derivative = ElemWiseUtil.newTsrLike( call.input( d==0?1:0 ), 0 );
+                            Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike( call.input( d ), 0 );
                             Device device = call.getDevice();
                             return ADAgent.of( derivative )
                                         .withAD(

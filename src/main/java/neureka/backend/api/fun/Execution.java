@@ -2,6 +2,7 @@ package neureka.backend.api.fun;
 
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
+import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.calculus.Function;
 import neureka.devices.Device;
 
@@ -13,7 +14,7 @@ import neureka.devices.Device;
  *  the chosen {@link Device} in a given {@link ExecutionCall}.
  *  However, the  {@link Execution} does not have to select a device specific implementation.
  *  It can also occupy the rest of the execution without any other steps being taken.
- *  For example, a {@link neureka.backend.api.ImplementationFor} or a {@link neureka.calculus.internal.RecursiveExecutor}
+ *  For example, a {@link neureka.backend.api.ImplementationFor} or a {@link RecursiveExecutor}
  *  would not be used if not explicitly called.
  *  Bypassing other procedures is useful for full control and of course to implement unorthodox types of operations
  *  like the {@link neureka.backend.main.operations.other.Reshape} operation

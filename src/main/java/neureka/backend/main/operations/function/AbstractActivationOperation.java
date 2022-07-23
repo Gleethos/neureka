@@ -1,7 +1,6 @@
 package neureka.backend.main.operations.function;
 
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.Result;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
@@ -9,7 +8,7 @@ import neureka.backend.main.algorithms.ScalarActivation;
 import neureka.backend.main.algorithms.ScalarBroadcast;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.calculus.Function;
-import neureka.calculus.internal.CalcUtil;
+import neureka.backend.main.internal.AlgoUtil;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.NDimensional;
@@ -57,7 +56,7 @@ abstract class AbstractActivationOperation extends AbstractOperation {
                             .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                             .orElse(AutoDiffMode.BACKWARD_ONLY)
             )
-            .setDeviceExecution( CalcUtil::executeDeviceAlgorithm )
+            .setDeviceExecution( AlgoUtil::executeDeviceAlgorithm )
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
@@ -79,7 +78,7 @@ abstract class AbstractActivationOperation extends AbstractOperation {
                         .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                         .orElse(AutoDiffMode.BACKWARD_ONLY)
             )
-            .setDeviceExecution( CalcUtil::executeDeviceAlgorithm )
+            .setDeviceExecution( AlgoUtil::executeDeviceAlgorithm )
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,

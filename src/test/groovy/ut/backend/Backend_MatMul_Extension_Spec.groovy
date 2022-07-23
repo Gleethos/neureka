@@ -1,24 +1,19 @@
 package ut.backend
 
-import ut.backend.mocks.CLContext
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.ADAgent
-import neureka.backend.api.BackendContext
-import neureka.backend.api.DeviceAlgorithm
-import neureka.backend.api.ExecutionCall
-import neureka.backend.api.Operation
-import neureka.backend.api.AutoDiffMode
-import neureka.backend.api.Result
+import neureka.backend.api.*
 import neureka.backend.api.fun.SuitabilityPredicate
 import neureka.backend.main.implementations.CPUImplementation
+import neureka.backend.main.internal.AlgoUtil
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionParser
-import neureka.calculus.internal.CalcUtil
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import spock.lang.Specification
 import testutility.opencl.DispatchUtility
+import ut.backend.mocks.CLContext
 
 class Backend_MatMul_Extension_Spec extends Specification
 {
@@ -73,7 +68,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                             .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )
                                             .setAutogradModeFor(call -> AutoDiffMode.BACKWARD_ONLY )
                                             .setExecution( (caller, call) ->
-                                                Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm ))
+                                                Result.of(AlgoUtil.executeFor( caller, call, AlgoUtil::executeDeviceAlgorithm ))
                                                     .withAutoDiff((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward) -> {
                                                         if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                                                         return ADAgent.withAD((t, error) -> new FunctionParser( Neureka.get().backend() ).parse(f.toString(), false).derive(new Tsr[]{error}, 0));

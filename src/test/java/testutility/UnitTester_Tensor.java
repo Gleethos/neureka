@@ -13,7 +13,7 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.internal.CalcUtil;
+import neureka.backend.main.internal.AlgoUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -224,7 +224,7 @@ public class UnitTester_Tensor extends UnitTester
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = _shpOfBrc(frstShp, scndShp);
 
-        Broadcast right = new Broadcast( CalcUtil::executeDeviceAlgorithm )
+        Broadcast right = new Broadcast( AlgoUtil::executeDeviceAlgorithm )
                                 .setAutogradModeFor(
                                         call -> call
                                                 .validate().allNotNullHaveSame(NDimensional::shape)
@@ -232,7 +232,7 @@ public class UnitTester_Tensor extends UnitTester
                                                 .orElse(AutoDiffMode.BACKWARD_ONLY)
                                 )
                                 .setExecution( (caller, call) ->
-                                    Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm ))
+                                    Result.of(AlgoUtil.executeFor( caller, call, AlgoUtil::executeDeviceAlgorithm ))
                                         .withAutoDiff(( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                                         {
                                             Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
@@ -275,7 +275,7 @@ public class UnitTester_Tensor extends UnitTester
                                                 )
                                 );
 
-        Broadcast left = new Broadcast( CalcUtil::executeDeviceAlgorithm )
+        Broadcast left = new Broadcast( AlgoUtil::executeDeviceAlgorithm )
                                     .setAutogradModeFor(
                                         call -> call
                                                 .validate().allNotNullHaveSame(NDimensional::shape)
@@ -283,7 +283,7 @@ public class UnitTester_Tensor extends UnitTester
                                                 .orElse(AutoDiffMode.BACKWARD_ONLY)
                                     )
                                     .setExecution( (caller, call) ->
-                                        Result.of(CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm ))
+                                        Result.of(AlgoUtil.executeFor( caller, call, AlgoUtil::executeDeviceAlgorithm ))
                                             .withAutoDiff(( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                                             {
                                                 Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);

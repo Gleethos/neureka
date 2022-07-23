@@ -11,7 +11,7 @@ import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
-import neureka.backend.main.operations.JunctionUtil;
+import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -46,7 +46,7 @@ public final class Product extends AbstractOperation
         // BROADCASTING :
 
         setAlgorithm(
-            new Broadcast(JunctionUtil::forMultiplications)
+            new Broadcast(ElemWiseUtil::forMultiplications)
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
             .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call ) ->
@@ -95,7 +95,7 @@ public final class Product extends AbstractOperation
         Activation activation = new Activation()
         .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
         .setDeviceExecution(
-            JunctionUtil::forMultiplications,
+            ElemWiseUtil::forMultiplications,
             (Function f, ExecutionCall<? extends Device<?>> adCall ) -> // Autograd
             {
                 Function mul = Neureka.get().backend().getFunction().mul();

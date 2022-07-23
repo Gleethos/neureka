@@ -8,8 +8,8 @@ import neureka.backend.api.*;
 import neureka.backend.api.fun.*;
 import neureka.backend.main.memory.MemValidator;
 import neureka.calculus.Function;
-import neureka.calculus.internal.CalcUtil;
-import neureka.calculus.internal.RecursiveExecutor;
+import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -249,9 +249,9 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( RecursiveExecutor executor, ADAgentSource adAgentSupplier ) {
         return
                 adAgentSupplier == null
-                    ? setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, executor )) )
+                    ? setExecution( (caller, call) -> Result.of(AlgoUtil.executeFor( caller, call, executor )) )
                     : setExecution( (caller, call) ->
-                            Result.of(CalcUtil.executeFor( caller, call, executor ))
+                            Result.of(AlgoUtil.executeFor( caller, call, executor ))
                                     .withADAction( target -> adAgentSupplier.get(caller, call, target) )
                         );
     }
@@ -259,9 +259,9 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( RecursiveExecutor executor, ADAgentSupplier adAgentSupplier ) {
         return
             adAgentSupplier == null
-                ? setExecution( (caller, call) -> Result.of(CalcUtil.executeFor( caller, call, executor )) )
+                ? setExecution( (caller, call) -> Result.of(AlgoUtil.executeFor( caller, call, executor )) )
                 : setExecution( (caller, call) ->
-                                        Result.of(CalcUtil.executeFor( caller, call, executor ))
+                                        Result.of(AlgoUtil.executeFor( caller, call, executor ))
                                                 .withAutoDiff( adAgentSupplier )
                             );
     }

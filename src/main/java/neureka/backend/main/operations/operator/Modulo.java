@@ -5,7 +5,6 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
@@ -14,10 +13,10 @@ import neureka.backend.main.algorithms.Operator;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
-import neureka.backend.main.operations.JunctionUtil;
+import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.internal.CalcUtil;
+import neureka.backend.main.internal.AlgoUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -43,7 +42,7 @@ public class Modulo extends AbstractOperation {
         // DEFAULT OPERATION :
 
         Operator operator =
-                new Operator(JunctionUtil::forDivisionsOrModuli)
+                new Operator(ElemWiseUtil::forDivisionsOrModuli)
                        .setSupplyADAgentFor( getDefaultAlgorithm() )
                        .buildFunAlgorithm();
 
@@ -88,7 +87,7 @@ public class Modulo extends AbstractOperation {
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast( CalcUtil::executeDeviceAlgorithm )
+        Broadcast broadcast = new Broadcast( AlgoUtil::executeDeviceAlgorithm )
             .setAutogradModeFor(
                     call -> call
                                 .validate().allNotNullHaveSame(NDimensional::shape)
@@ -156,7 +155,7 @@ public class Modulo extends AbstractOperation {
                                 .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                                 .orElse(AutoDiffMode.BACKWARD_ONLY)
                 )
-                .setDeviceExecution( CalcUtil::executeDeviceAlgorithm )
+                .setDeviceExecution( AlgoUtil::executeDeviceAlgorithm )
                 .buildFunAlgorithm();
 
         setAlgorithm(

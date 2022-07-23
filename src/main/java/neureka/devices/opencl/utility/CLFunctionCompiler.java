@@ -2,19 +2,16 @@ package neureka.devices.opencl.utility;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.implementations.FunctionInput;
 import neureka.calculus.implementations.FunctionVariable;
-import neureka.calculus.internal.CalcUtil;
+import neureka.backend.main.internal.AlgoUtil;
 import neureka.devices.opencl.KernelCaller;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
@@ -77,7 +74,7 @@ public final class CLFunctionCompiler {
                         .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
                         .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                         .setDeviceExecution(
-                            CalcUtil::executeDeviceAlgorithm,
+                            AlgoUtil::executeDeviceAlgorithm,
                             (caller, call, target) -> Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0)
                         )
                         .setCallPreparation(

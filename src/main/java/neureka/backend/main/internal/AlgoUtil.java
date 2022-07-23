@@ -1,4 +1,4 @@
-package neureka.calculus.internal;
+package neureka.backend.main.internal;
 
 import neureka.Neureka;
 import neureka.Tsr;
@@ -6,7 +6,7 @@ import neureka.backend.api.*;
 import neureka.backend.api.fun.ExecutionPreparation;
 import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.memory.MemUtil;
-import neureka.backend.main.operations.JunctionUtil;
+import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
@@ -28,9 +28,9 @@ import java.util.stream.IntStream;
  *  This orchestration refers to the way an {@link ExecutionCall} alongside its caller, a {@link Function},
  *  should be handled to produce a correct result.
  */
-public class CalcUtil
+public class AlgoUtil
 {
-    private static final Logger _LOG = LoggerFactory.getLogger( CalcUtil.class );
+    private static final Logger _LOG = LoggerFactory.getLogger( AlgoUtil.class );
 
     @Contract( pure = true )
     public static Tsr<?> executeFor(
@@ -198,7 +198,7 @@ public class CalcUtil
             else
                 tensors = flattenedCall.inputs();
         }
-        Tsr<?> out = CalcUtil.prepareAndExecuteRecursively(
+        Tsr<?> out = AlgoUtil.prepareAndExecuteRecursively(
                                 call.withInputs( tensors )
                                     .withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),
                                 executor
@@ -280,12 +280,12 @@ public class CalcUtil
                     if ( index >= 0 ) inner = tensors[ index ];
                     else {
                         // Optimization above did not apply, so we accumulate all the derivatives!
-                        tensors[0] = CalcUtil.prepareAndExecuteRecursively(
+                        tensors[0] = AlgoUtil.prepareAndExecuteRecursively(
                                                 ExecutionCall.of( tensors )
                                                         .andArgs( Arg.DerivIdx.of( -1 ) )
                                                         .running( Neureka.get().backend().getOperation("+") )
                                                         .on( device ),
-                                                JunctionUtil::forAdditions
+                                                ElemWiseUtil::forAdditions
                                         );
                         inner = tensors[ 0 ];//-> this is now the inner derivative!
                     }
@@ -312,7 +312,7 @@ public class CalcUtil
                     }
 
                 // Use those tensors for the outer derivative:
-                tensors[0] = CalcUtil.prepareAndExecuteRecursively(
+                tensors[0] = AlgoUtil.prepareAndExecuteRecursively(
                                         ExecutionCall.of( tensors )
                                                 .andArgs( Arg.DerivIdx.of( d ) )
                                                 .running( call.getOperation() )
@@ -323,12 +323,12 @@ public class CalcUtil
                 //...multiply inner times outer: ( if inner is not 1 entirely... )
                 if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getItemsAs( double[].class )[ 0 ] == 1.0 ) ) {
                     tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
-                    tensors[0] = CalcUtil.prepareAndExecuteRecursively(
+                    tensors[0] = AlgoUtil.prepareAndExecuteRecursively(
                                             ExecutionCall.of( tensors )
                                                     .andArgs( Arg.DerivIdx.of( -1 ) )
                                                     .running( Neureka.get().backend().getOperation("*") )
                                                     .on( device ),
-                                            CalcUtil::executeDeviceAlgorithm
+                                            AlgoUtil::executeDeviceAlgorithm
                                     );
                     for ( int i = 1; i < tensors.length; i++ )
                         _deleteIfNotIn( call.inputs(), tensors[ i ] );

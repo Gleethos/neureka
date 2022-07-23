@@ -4,7 +4,6 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.Result;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
@@ -13,10 +12,10 @@ import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.CPUImplementation;
-import neureka.backend.main.operations.JunctionUtil;
+import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.internal.CalcUtil;
+import neureka.backend.main.internal.AlgoUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -29,7 +28,7 @@ public class Addition extends AbstractOperation {
 
     private final Broadcast _broadcast =
             (Broadcast)
-                new Broadcast( CalcUtil::executeDeviceAlgorithm )
+                new Broadcast( AlgoUtil::executeDeviceAlgorithm )
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call ) ->
@@ -39,8 +38,8 @@ public class Addition extends AbstractOperation {
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         assert ctxDerivative == null;
                         int d = call.getDerivativeIndex();
-                        Tsr<?> derivative = JunctionUtil.newTsrLike(call.input( d==0?1:0 ), 0);
-                        Tsr<?> toBeDerived = JunctionUtil.newTsrLike(call.input( d ), 0);
+                        Tsr<?> derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);
+                        Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);
                         Device device = call.getDeviceFor(Number.class);
                         return ADAgent.of( derivative )
                                         .withAD(
@@ -78,7 +77,7 @@ public class Addition extends AbstractOperation {
         //_____________________
         // DEFAULT OPERATION :
 
-        Operator operator = new Operator(JunctionUtil::forAdditions)
+        Operator operator = new Operator(ElemWiseUtil::forAdditions)
                                     .setSupplyADAgentFor( getDefaultAlgorithm() )
                                     .buildFunAlgorithm();
 
@@ -145,7 +144,7 @@ public class Addition extends AbstractOperation {
 
         Scalarization scalarization =
             new Scalarization()
-                .setDeviceExecution( JunctionUtil::forAdditions )
+                .setDeviceExecution( ElemWiseUtil::forAdditions )
                 .buildFunAlgorithm();
 
         setAlgorithm(

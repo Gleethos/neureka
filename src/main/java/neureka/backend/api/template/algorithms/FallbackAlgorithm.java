@@ -16,7 +16,7 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.assembly.ParseUtil;
-import neureka.calculus.internal.CalcUtil;
+import neureka.backend.main.internal.AlgoUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
@@ -135,7 +135,7 @@ implements ExecutionPreparation, ADAgentSupplier
     }
 
     public Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call ) {
-        return CalcUtil.executeFor( caller, call, CalcUtil::executeDeviceAlgorithm);
+        return AlgoUtil.executeFor( caller, call, AlgoUtil::executeDeviceAlgorithm);
     }
 
     @Override

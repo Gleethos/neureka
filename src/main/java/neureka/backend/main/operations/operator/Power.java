@@ -6,7 +6,6 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
@@ -17,8 +16,8 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.internal.CalcUtil;
-import neureka.calculus.internal.RecursiveExecutor;
+import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -112,7 +111,7 @@ public class Power extends AbstractOperation
                     }
                 }
             }
-            if ( result == null ) return CalcUtil.executeDeviceAlgorithm( call, null );
+            if ( result == null ) return AlgoUtil.executeDeviceAlgorithm( call, null );
             return result;
         };
 

@@ -11,7 +11,7 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
-import neureka.calculus.internal.CalcUtil;
+import neureka.backend.main.internal.AlgoUtil;
 import neureka.framing.Relation;
 import neureka.ndim.NDUtil;
 import neureka.ndim.config.NDConfiguration;
@@ -39,7 +39,7 @@ public class Reshape extends AbstractOperation
             .setExecution(
                 ( caller, call ) ->
                 {
-                    Tsr<?>[] inputs = CalcUtil.flatten(caller, call).inputs();
+                    Tsr<?>[] inputs = AlgoUtil.flatten(caller, call).inputs();
                     int[] newForm = new int[ inputs.length - 1 ];
                     for ( int i = 0; i < inputs.length - 1; i++ )
                         newForm[ i ] = ( (Number) inputs[ i ].getItemAt( 0 ) ).intValue();

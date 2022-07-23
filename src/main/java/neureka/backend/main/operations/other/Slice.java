@@ -8,7 +8,7 @@ import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.operations.JunctionUtil;
+import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -52,7 +52,7 @@ public class Slice extends AbstractOperation
                     return
                         Result.of(subset.getUnsafe().setIsIntermediate(true))
                             .withADAction( t -> {
-                                Tsr<Object> newError = JunctionUtil.newTsrLike((Class<Object>) typeClass, shape, isOutsourced, device, 0);
+                                Tsr<Object> newError = ElemWiseUtil.newTsrLike((Class<Object>) typeClass, shape, isOutsourced, device, 0);
                                 boolean isIntermediate = newError.isIntermediate();
                                 newError.getUnsafe().setIsIntermediate(false); // To avoid deletion!
                                 Tsr<Object> slice = Function.of("slice(I[0])", false)

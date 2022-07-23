@@ -4,8 +4,8 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.calculus.internal.CalcUtil;
-import neureka.calculus.internal.CallExecutor;
+import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.main.internal.CallExecutor;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import org.jetbrains.annotations.Contract;
@@ -17,57 +17,9 @@ import org.slf4j.LoggerFactory;
  *  in groups if their total number exceeds the arity of an operation.
  *  
  */
-public class JunctionUtil
+public class ElemWiseUtil
 {
-    private static final Logger _LOG = LoggerFactory.getLogger( JunctionUtil.class );
-
-    @Contract( pure = true )
-    public static Tsr<?> forConvolution(
-            ExecutionCall<? extends Device<?>> call,
-            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
-    ) {
-        Device<?> device = call.getDevice();
-        int d = call.getValOf( Arg.DerivIdx.class );
-        Operation operation = call.getOperation();
-
-        Tsr<?> result = null;
-        if ( call.arity() > 3 ) {
-            if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{ call.input( 0 ), call.input( 1 ), call.input( 2 ) };
-                result = recursiveExecutor.execute(
-                                    ExecutionCall.of( reduction )
-                                                    .andArgs( Arg.DerivIdx.of(d) )
-                                                    .running( operation )
-                                                    .on(device)
-                                );
-                call.setInput( 0, result );
-
-                reduction = Operation.Utility.offsetted(call.inputs(), 1);
-                result = recursiveExecutor.execute(
-                                    ExecutionCall.of( reduction )
-                                                    .andArgs(Arg.DerivIdx.of(d))
-                                                    .running(operation)
-                                                    .on(device)
-                                );
-                call.setInput( 0, result );
-            }
-            if ( result == null ) return CalcUtil.executeDeviceAlgorithm( call, null );
-            return result;
-        } else {
-            if ( call.getOperation().getOperator().equals("x") ) {
-                if ( d >= 0 ) {
-                    if ( d == 0 ) call.setInput( 0, call.input( 2 ) );
-                    else call.setInput( 0, call.input( 1 ) );
-                    return call.input( 0 );
-                } else {
-                    call.rearrangeInputs( 0, 1, 2 );
-                }
-            } else if ( call.getOperation().getOperator().equals("x"+ ((char) 187)) ) {
-                call.rearrangeInputs( 2, 1, 0 );
-            }
-            return CalcUtil.executeDeviceAlgorithm( call, null );
-        }
-    }
+    private static final Logger _LOG = LoggerFactory.getLogger( ElemWiseUtil.class );
 
     public static Tsr<?> forMultiplications(
             ExecutionCall<? extends Device<?>> call,
@@ -106,11 +58,11 @@ public class JunctionUtil
                 else
                     call.setInput( 0, reduction[ 1 ] );
             }
-            if ( result == null ) return CalcUtil.executeDeviceAlgorithm( call, null );
+            if ( result == null ) return AlgoUtil.executeDeviceAlgorithm( call, null );
             return result;
         } 
         else
-            return CalcUtil.executeDeviceAlgorithm( call, null );
+            return AlgoUtil.executeDeviceAlgorithm( call, null );
 
     }
 
@@ -181,7 +133,7 @@ public class JunctionUtil
                 b.getUnsafe().delete();
             }
         }
-        if ( result == null ) return CalcUtil.executeDeviceAlgorithm( call, null );
+        if ( result == null ) return AlgoUtil.executeDeviceAlgorithm( call, null );
         return result;
     }
 
@@ -240,7 +192,7 @@ public class JunctionUtil
                            .setItems( d == 0 || thisIsForAddition ? 1f : -1f )
                     );
         }
-        if ( result == null ) return CalcUtil.executeDeviceAlgorithm( call, null );
+        if ( result == null ) return AlgoUtil.executeDeviceAlgorithm( call, null );
         return result;
     }
 

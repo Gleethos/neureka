@@ -5,7 +5,6 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.Result;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
@@ -15,10 +14,9 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.memory.MemUtil;
-import neureka.backend.main.operations.JunctionUtil;
+import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.internal.CalcUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -46,7 +44,7 @@ public class Multiplication extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        Operator operator = new Operator(JunctionUtil::forMultiplications)
+        Operator operator = new Operator(ElemWiseUtil::forMultiplications)
                                    .setSupplyADAgentFor( getDefaultAlgorithm() )
                                    .buildFunAlgorithm();
 
@@ -84,7 +82,7 @@ public class Multiplication extends AbstractOperation
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast( JunctionUtil::forMultiplications )
+        Broadcast broadcast = new Broadcast( ElemWiseUtil::forMultiplications )
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call ) ->
@@ -139,7 +137,7 @@ public class Multiplication extends AbstractOperation
 
         Scalarization scalarization = new Scalarization()
                 .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-                .setDeviceExecution( JunctionUtil::forMultiplications )
+                .setDeviceExecution( ElemWiseUtil::forMultiplications )
                 .buildFunAlgorithm();
 
         setAlgorithm(

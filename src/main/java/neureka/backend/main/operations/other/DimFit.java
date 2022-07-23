@@ -9,7 +9,7 @@ import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.internal.CalcUtil;
+import neureka.backend.main.internal.AlgoUtil;
 import org.jetbrains.annotations.Contract;
 
 public class DimFit extends AbstractOperation
@@ -36,7 +36,7 @@ public class DimFit extends AbstractOperation
                 ( caller, call ) ->
                 {
                     assert call.getValOf( Arg.DerivIdx.class ) < 0;
-                    Tsr<?>[] inputs = CalcUtil.flatten( caller, call ).inputs();
+                    Tsr<?>[] inputs = AlgoUtil.flatten( caller, call ).inputs();
 
                     int largest = -1;
                     int[] shape = null;
