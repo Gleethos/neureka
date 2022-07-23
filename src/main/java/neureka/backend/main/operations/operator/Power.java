@@ -112,6 +112,7 @@ public class Power extends AbstractOperation
                     }
                 }
             }
+            if ( result == null ) return CalcUtil.executeDeviceAlgorithm( call, null );
             return result;
         };
 

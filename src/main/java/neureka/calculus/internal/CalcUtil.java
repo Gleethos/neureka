@@ -328,7 +328,7 @@ public class CalcUtil
                                                     .andArgs( Arg.DerivIdx.of( -1 ) )
                                                     .running( Neureka.get().backend().getOperation("*") )
                                                     .on( device ),
-                                            null
+                                            CalcUtil::executeDeviceAlgorithm
                                     );
                     for ( int i = 1; i < tensors.length; i++ )
                         _deleteIfNotIn( call.inputs(), tensors[ i ] );
@@ -413,7 +413,7 @@ public class CalcUtil
                             );
 
         if ( result == null )
-            result = executeDeviceAlgorithm( call, null );
+            throw new IllegalStateException( "Execution of " + call + " failed!" );
 
         for ( int i = 0; i < call.arity(); i++ )
             if ( call.input( i ) != null && !call.input( i ).isDeleted() && !call.input( i ).isUndefined() )

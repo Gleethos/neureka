@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.calculus.internal.CalcUtil;
 import neureka.calculus.internal.CallExecutor;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -50,6 +51,7 @@ public class JunctionUtil
                                 );
                 call.setInput( 0, result );
             }
+            if ( result == null ) return CalcUtil.executeDeviceAlgorithm( call, null );
             return result;
         } else {
             if ( call.getOperation().getOperator().equals("x") ) {
@@ -63,7 +65,7 @@ public class JunctionUtil
             } else if ( call.getOperation().getOperator().equals("x"+ ((char) 187)) ) {
                 call.rearrangeInputs( 2, 1, 0 );
             }
-            return null;
+            return CalcUtil.executeDeviceAlgorithm( call, null );
         }
     }
 
@@ -104,10 +106,11 @@ public class JunctionUtil
                 else
                     call.setInput( 0, reduction[ 1 ] );
             }
+            if ( result == null ) return CalcUtil.executeDeviceAlgorithm( call, null );
             return result;
         } 
         else
-            return null;
+            return CalcUtil.executeDeviceAlgorithm( call, null );
 
     }
 
@@ -178,6 +181,7 @@ public class JunctionUtil
                 b.getUnsafe().delete();
             }
         }
+        if ( result == null ) return CalcUtil.executeDeviceAlgorithm( call, null );
         return result;
     }
 
@@ -236,6 +240,7 @@ public class JunctionUtil
                            .setItems( d == 0 || thisIsForAddition ? 1f : -1f )
                     );
         }
+        if ( result == null ) return CalcUtil.executeDeviceAlgorithm( call, null );
         return result;
     }
 
