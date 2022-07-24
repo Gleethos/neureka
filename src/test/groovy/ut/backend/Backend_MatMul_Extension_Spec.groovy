@@ -4,6 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.ADAgent
 import neureka.backend.api.*
+import neureka.backend.api.fun.ADAgentSupplier
 import neureka.backend.api.fun.SuitabilityPredicate
 import neureka.backend.main.implementations.CPUImplementation
 import neureka.backend.main.internal.AlgoUtil
@@ -67,12 +68,12 @@ class Backend_MatMul_Extension_Spec extends Specification
                                         DeviceAlgorithm.withName("my_algorithm")
                                             .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )
                                             .setAutogradModeFor(call -> AutoDiffMode.BACKWARD_ONLY )
-                                            .setExecution( (caller, call) ->
-                                                Result.of(AlgoUtil.executeFor( caller, call, AlgoUtil::executeDeviceAlgorithm ))
-                                                    .withAutoDiff((Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward) -> {
-                                                        if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-                                                        return ADAgent.withAD((t, error) -> new FunctionParser( Neureka.get().backend() ).parse(f.toString(), false).derive(new Tsr[]{error}, 0));
-                                                    })
+                                            .setDeviceExecution(
+                                                AlgoUtil::executeDeviceAlgorithm,
+                                                (ADAgentSupplier){ Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ->
+                                                    if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
+                                                    return ADAgent.withAD((t, error) -> new FunctionParser( Neureka.get().backend() ).parse(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                                }
                                             )
                                             .setCallPreparation(
                                                     call -> {
