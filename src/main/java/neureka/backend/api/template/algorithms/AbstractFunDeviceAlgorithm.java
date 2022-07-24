@@ -279,6 +279,13 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
                 );
     }
 
+    public final AbstractFunDeviceAlgorithm<C> setTheDeviceExecution( Exec executor ) {
+        return setExecution( (caller, call) ->
+                        Result.of(AlgoUtil.executeFor(
+                                        caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b)
+                                ))
+                );
+    }
     public interface Exec {
 
         Tsr<?> execute( DeviceExecutionContext context, CallExecutor goDeeperWith );

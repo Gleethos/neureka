@@ -48,7 +48,7 @@ public class Randomization extends AbstractOperation
         setAlgorithm(
             new Activation()
                 .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
-                .setDeviceExecution( AlgoUtil::executeDeviceAlgorithm )
+                .setTheDeviceExecution( (context, callback) -> AlgoUtil.executeDeviceAlgorithm( context.call(), callback ) )
                 .setCallPreparation( call ->
                 {
                     if ( call.input( 0 ) == null )
