@@ -231,21 +231,21 @@ public class UnitTester_Tensor extends UnitTester
                                                 .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                                                 .orElse(AutoDiffMode.BACKWARD_ONLY)
                                 )
-                                .setExecution( (caller, call) ->
-                                    Result.of(AlgoUtil.executeFor( caller, call, AlgoUtil::executeDeviceAlgorithm ))
-                                        .withAutoDiff(( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
-                                        {
-                                            Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
-                                            Function mul = Neureka.get().backend().getFunction().mul();
-                                            if ( ctxDerivative != null ) {
-                                                return ADAgent.of( ctxDerivative )
-                                                        .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
-                                            }
-                                            int d = adCall.getDerivativeIndex();
-                                            Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
-                                            return ADAgent.of( derivative )
-                                                    .withAD( target -> mul.execute( target.error(), derivative ) );
-                                        })
+                                .setDeviceExecution(
+                                    AlgoUtil::executeDeviceAlgorithm,
+                                    ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+                                    {
+                                        Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
+                                        Function mul = Neureka.get().backend().getFunction().mul();
+                                        if ( ctxDerivative != null ) {
+                                            return ADAgent.of( ctxDerivative )
+                                                    .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
+                                        }
+                                        int d = adCall.getDerivativeIndex();
+                                        Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
+                                        return ADAgent.of( derivative )
+                                                .withAD( target -> mul.execute( target.error(), derivative ) );
+                                    }
                                 )
                                 .setCallPreparation(
                                         call -> {
@@ -282,22 +282,22 @@ public class UnitTester_Tensor extends UnitTester
                                                 .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                                                 .orElse(AutoDiffMode.BACKWARD_ONLY)
                                     )
-                                    .setExecution( (caller, call) ->
-                                        Result.of(AlgoUtil.executeFor( caller, call, AlgoUtil::executeDeviceAlgorithm ))
-                                            .withAutoDiff(( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
-                                            {
-                                                Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
-                                                Function mul = Neureka.get().backend().getFunction().mul();
-                                                if ( ctxDerivative != null ) {
-                                                    return ADAgent.of( ctxDerivative )
-                                                            .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
-                                                }
-                                                Tsr<?>[] inputs = adCall.inputs();
-                                                int d = adCall.getDerivativeIndex();
-                                                Tsr<?> derivative = f.executeDerive( inputs, d );
-                                                return ADAgent.of( derivative )
-                                                        .withAD( target -> mul.execute( target.error(), derivative ) );
-                                            })
+                                    .setDeviceExecution(
+                                        AlgoUtil::executeDeviceAlgorithm,
+                                        ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+                                        {
+                                            Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
+                                            Function mul = Neureka.get().backend().getFunction().mul();
+                                            if ( ctxDerivative != null ) {
+                                                return ADAgent.of( ctxDerivative )
+                                                        .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
+                                            }
+                                            Tsr<?>[] inputs = adCall.inputs();
+                                            int d = adCall.getDerivativeIndex();
+                                            Tsr<?> derivative = f.executeDerive( inputs, d );
+                                            return ADAgent.of( derivative )
+                                                    .withAD( target -> mul.execute( target.error(), derivative ) );
+                                        }
                                     )
                                     .setCallPreparation(
                                         call -> {
