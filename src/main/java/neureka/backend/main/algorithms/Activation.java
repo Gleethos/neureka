@@ -48,11 +48,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                     Class<Object> type = (Class<Object>) call.input(  1 ).getItemClass();
                     Tsr<Object> output = Tsr.of(type).withShape(shape).all( 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
-                    try {
-                        device.store( output );
-                    } catch( Exception e ) {
-                        e.printStackTrace();
-                    }
+                    device.store( output );
                     call.setInput(  0, output );
                 }
                 return call;
@@ -82,12 +78,12 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                                 // Drain tensor needs to be 'actual'! :
                                 if (!call.input( Number.class, offset + 1).isVirtual()) call.input( Number.class, offset).setIsVirtual( false );
                                 call.getDevice()
-                                        .getKernel(call)
-                                        .passAllOf( call.input( Number.class, offset ) )
-                                        .passAllOf( call.input( Number.class, offset + 1 ) )
-                                        .pass( call.input( Number.class, 0 ).rank() )
-                                        .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                        .call( gwz );
+                                    .getKernel(call)
+                                    .passAllOf( call.input( Number.class, offset ) )
+                                    .passAllOf( call.input( Number.class, offset + 1 ) )
+                                    .pass( call.input( Number.class, 0 ).rank() )
+                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                    .call( gwz );
                             }
                         )
                         .build();
