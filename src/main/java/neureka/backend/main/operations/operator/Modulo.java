@@ -155,7 +155,7 @@ public class Modulo extends AbstractOperation {
                                 .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                                 .orElse(AutoDiffMode.BACKWARD_ONLY)
                 )
-                .setTheDeviceExecution( (context, callback) -> AlgoUtil.executeDeviceAlgorithm( context.call(), callback ) )
+                .setDeviceExecution( (context, callback) -> AlgoUtil.executeDeviceAlgorithm( context.call(), callback ) )
                 .buildFunAlgorithm();
 
         setAlgorithm(

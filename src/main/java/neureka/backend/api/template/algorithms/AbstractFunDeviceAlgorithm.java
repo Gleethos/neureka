@@ -10,7 +10,6 @@ import neureka.backend.main.internal.CallExecutor;
 import neureka.backend.main.memory.MemValidator;
 import neureka.calculus.Function;
 import neureka.backend.main.internal.AlgoUtil;
-import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -243,7 +242,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         return this;
     }
 
-    public final AbstractFunDeviceAlgorithm<C> setTheDeviceExecution( Exec executor, ADAgentSource adAgentSupplier ) {
+    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(Exec executor, ADAgentSource adAgentSupplier ) {
         return
             adAgentSupplier == null
                 ? setExecution( (caller, call) -> Result.of(AlgoUtil.executeFor( caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b) )) )
@@ -253,17 +252,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
                     );
     }
 
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( Exec executor, ADAgentSupplier adAgentSupplier ) {
-        return
-            adAgentSupplier == null
-                ? setExecution( (caller, call) -> Result.of(AlgoUtil.executeFor( caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b) )) )
-                : setExecution( (caller, call) ->
-                                        Result.of(AlgoUtil.executeFor( caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b) ))
-                                                .withAutoDiff( adAgentSupplier )
-                            );
-    }
-
-    public final AbstractFunDeviceAlgorithm<C> setTheDeviceExecution( Exec executor, ADAgentSupplier adAgentSupplier ) {
+    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(Exec executor, ADAgentSupplier adAgentSupplier ) {
         return
                 adAgentSupplier == null
                         ? setExecution( (caller, call) -> Result.of(AlgoUtil.executeFor( caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b)  )) )
@@ -275,7 +264,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
                 );
     }
 
-    public final AbstractFunDeviceAlgorithm<C> setTheDeviceExecution( Exec executor ) {
+    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( Exec executor ) {
         return setExecution( (caller, call) ->
                         Result.of(AlgoUtil.executeFor(
                                         caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b)

@@ -73,7 +73,7 @@ public final class CLFunctionCompiler {
                         .withName( "generic_algorithm_for_"+ _functionName )
                         .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
                         .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-                        .setTheDeviceExecution(
+                        .setDeviceExecution(
                             (context, callback) -> AlgoUtil.executeDeviceAlgorithm(context.call(), callback),
                             (caller, call, target) -> Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0)
                         )

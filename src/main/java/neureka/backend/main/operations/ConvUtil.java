@@ -6,7 +6,6 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Operation;
-import neureka.backend.api.Result;
 import neureka.backend.main.algorithms.Convolution;
 import neureka.backend.main.internal.CallExecutor;
 import neureka.backend.main.operations.other.Reshape;
@@ -36,7 +35,7 @@ public class ConvUtil {
                     }
                     return AutoDiffMode.FORWARD_AND_BACKWARD;
                 })
-                .setTheDeviceExecution(
+                .setDeviceExecution(
                     (context, executor) ->
                     {
                         ExecutionCall<?> call = context.initialCall();

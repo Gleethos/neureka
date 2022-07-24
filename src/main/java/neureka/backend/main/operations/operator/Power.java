@@ -218,7 +218,7 @@ public class Power extends AbstractOperation
             new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-                .setTheDeviceExecution( (context, callback) -> rja.execute(context.call(), callback) )
+                .setDeviceExecution( (context, callback) -> rja.execute(context.call(), callback) )
                 .buildFunAlgorithm();
 
         setAlgorithm(
