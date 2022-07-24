@@ -247,12 +247,12 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         return setDeviceExecution( executor, FallbackAlgorithm::ADAgent);
     }
 
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( RecursiveExecutor executor, ADAgentSource adAgentSupplier ) {
+    public final AbstractFunDeviceAlgorithm<C> setTheDeviceExecution( Exec executor, ADAgentSource adAgentSupplier ) {
         return
             adAgentSupplier == null
-                ? setExecution( (caller, call) -> Result.of(AlgoUtil.executeFor( caller, call, executor )) )
+                ? setExecution( (caller, call) -> Result.of(AlgoUtil.executeFor( caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b) )) )
                 : setExecution( (caller, call) ->
-                        Result.of(AlgoUtil.executeFor( caller, call, executor ))
+                        Result.of(AlgoUtil.executeFor( caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b) ))
                                 .withADAction( target -> adAgentSupplier.get(caller, call, target) )
                     );
     }
