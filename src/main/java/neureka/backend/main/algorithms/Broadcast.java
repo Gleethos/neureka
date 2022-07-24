@@ -60,7 +60,7 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                     .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                     .orElse(AutoDiffMode.BACKWARD_ONLY)
         );
-        setDeviceExecution( finalExecutor, (ADAgentSupplier) null );
+        setDeviceExecution( (context, callback) -> finalExecutor.execute(context.call(), callback), (ADAgentSupplier) null );
         setCallPreparation(
             call ->
             {

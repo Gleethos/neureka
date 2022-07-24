@@ -101,7 +101,7 @@ public final class Summation extends AbstractOperation
         Activation activation = new Activation()
         .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
         .setDeviceExecution(
-            ElemWiseUtil::forAdditions,
+            (context, callback) -> ElemWiseUtil.forAdditions(context.call(), callback),
             ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
             {
                 Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);

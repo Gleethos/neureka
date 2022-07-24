@@ -69,7 +69,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                             .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )
                                             .setAutogradModeFor(call -> AutoDiffMode.BACKWARD_ONLY )
                                             .setDeviceExecution(
-                                                AlgoUtil::executeDeviceAlgorithm,
+                                                (context, callback) -> AlgoUtil.executeDeviceAlgorithm(context.call(), callback),
                                                 (ADAgentSupplier){ Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ->
                                                     if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                                                     return ADAgent.withAD((t, error) -> new FunctionParser( Neureka.get().backend() ).parse(f.toString(), false).derive(new Tsr[]{error}, 0));

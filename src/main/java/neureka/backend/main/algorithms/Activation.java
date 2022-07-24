@@ -38,7 +38,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                     .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                     .orElse(AutoDiffMode.BACKWARD_ONLY)
         );
-        setDeviceExecution( AlgoUtil::executeDeviceAlgorithm, (ADAgentSupplier) null );
+        setDeviceExecution( (context, callback) -> AlgoUtil.executeDeviceAlgorithm(context.call(), callback), (ADAgentSupplier) null );
         setCallPreparation(
             call -> {
                 Device device = call.getDeviceFor(Number.class);
