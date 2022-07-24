@@ -243,10 +243,6 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         return this;
     }
 
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( RecursiveExecutor executor ) {
-        return setDeviceExecution( executor, FallbackAlgorithm::ADAgent);
-    }
-
     public final AbstractFunDeviceAlgorithm<C> setTheDeviceExecution( Exec executor, ADAgentSource adAgentSupplier ) {
         return
             adAgentSupplier == null
@@ -284,6 +280,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
                         Result.of(AlgoUtil.executeFor(
                                         caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b)
                                 ))
+                                .withAutoDiff( FallbackAlgorithm::ADAgent )
                 );
     }
     public interface Exec {

@@ -137,7 +137,7 @@ public class Multiplication extends AbstractOperation
 
         Scalarization scalarization = new Scalarization()
                 .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-                .setDeviceExecution( ElemWiseUtil::forMultiplications )
+                .setTheDeviceExecution( (context, callback) -> ElemWiseUtil.forMultiplications(context.call(), callback) )
                 .buildFunAlgorithm();
 
         setAlgorithm(
