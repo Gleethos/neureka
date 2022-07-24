@@ -36,66 +36,67 @@ public class ConvUtil {
                     }
                     return AutoDiffMode.FORWARD_AND_BACKWARD;
                 })
-                .setExecution(
-                    ( caller, call ) ->
-                        Result.of(AlgoUtil.executeFor( caller, call, (innerCaller, innerCall) ->
-                        {
-                            if ( call.getOperation().getOperator().equals("x") ) {
-                                Tsr<?>[] tensors = new Tsr[]{null, call.input( 0 ), call.input( 1 )};
-                                tensors[ 0 ] =
-                                    (call.getValOf( Arg.DerivIdx.class ) < 0)
-                                            ? Tsr.of(
-                                                    call.input(0).getItemClass(),
-                                                    _shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
-                                                    0
-                                            )
-                                            .getUnsafe()
-                                            .setIsIntermediate( true )
-                                            : null;
+                .setTheDeviceExecution(
+                    (context, executor) ->
+                    {
+                        ExecutionCall<?> call = context.initialCall();
+                        Function caller = context.caller();
+                        if ( call.getOperation().getOperator().equals("x") ) {
+                            Tsr<?>[] tensors = new Tsr[]{null, call.input( 0 ), call.input( 1 )};
+                            tensors[ 0 ] =
+                                (call.getValOf( Arg.DerivIdx.class ) < 0)
+                                        ? Tsr.of(
+                                                call.input(0).getItemClass(),
+                                                _shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
+                                                0
+                                        )
+                                        .getUnsafe()
+                                        .setIsIntermediate( true )
+                                        : null;
 
-                                for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
+                            for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
 
-                                ExecutionCall<?> prepared = AlgoUtil._prepareForExecution( call.withInputs(tensors) );
-                                return AlgoUtil.executeOnCommonDevice(prepared,()->ConvUtil._executeRecursively( prepared, null/*recursion is not expected to happen here*/ ));
-                            } else {
-                                Tsr<?>[] tensors = AlgoUtil.flatten( caller, call ).inputs();
-                                Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
-                                for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
-                                tensors[ 0 ] = AlgoUtil.prepareAndExecuteRecursively(
-                                        ExecutionCall.of( tensors )
-                                                .andArgs( Arg.DerivIdx.of(0) )
-                                                .running( call.getOperation() )
-                                                .on( call.getDevice() ),
-                                        ConvUtil::_executeRecursively
-                                );
-
-                                return tensors[ 0 ];
-                            }
-                        }))
-                        .withAutoDiff(( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
-                        {
-                            int d = adCall.getDerivativeIndex();
-                            Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
-                                    "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
-                                    false
+                            ExecutionCall<?> prepared = AlgoUtil._prepareForExecution( call.withInputs(tensors) );
+                            return AlgoUtil.executeOnCommonDevice(prepared,()->ConvUtil._executeRecursively( prepared, null/*recursion is not expected to happen here*/ ));
+                        } else {
+                            Tsr<?>[] tensors = AlgoUtil.flatten( caller, call ).inputs();
+                            Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
+                            for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
+                            tensors[ 0 ] = AlgoUtil.prepareAndExecuteRecursively(
+                                    ExecutionCall.of( tensors )
+                                            .andArgs( Arg.DerivIdx.of(0) )
+                                            .running( call.getOperation() )
+                                            .on( call.getDevice() ),
+                                    ConvUtil::_executeRecursively
                             );
-                            Tsr<?> derivative = f.derive( (Tsr[]) adCall.inputs(), d );
-                            assert d >= 0 && d <= 1;
-                            assert derivative != null;
-                            assert deConv != null;
-                            assert adCall.arity() >= 2 && adCall.arity() <= 3;
-                            // Now we need to remember the shape of the input which is targeted for back prop.
-                            int[] shape = adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape();
-                            // This is because it will be the shape of the output to the de-convolution!
-                            return ADAgent.of( derivative )
-                                    .withAD( target ->
-                                            deConv.execute(
-                                                    target.error(),
-                                                    derivative,
-                                                    Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )
-                                            )
-                                    );
-                        })
+
+                            return tensors[ 0 ];
+                        }
+                    },
+                    ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+                    {
+                        int d = adCall.getDerivativeIndex();
+                        Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
+                                "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
+                                false
+                        );
+                        Tsr<?> derivative = f.derive( (Tsr[]) adCall.inputs(), d );
+                        assert d >= 0 && d <= 1;
+                        assert derivative != null;
+                        assert deConv != null;
+                        assert adCall.arity() >= 2 && adCall.arity() <= 3;
+                        // Now we need to remember the shape of the input which is targeted for back prop.
+                        int[] shape = adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape();
+                        // This is because it will be the shape of the output to the de-convolution!
+                        return ADAgent.of( derivative )
+                                .withAD( target ->
+                                        deConv.execute(
+                                                target.error(),
+                                                derivative,
+                                                Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )
+                                        )
+                                );
+                    }
                 )
                 .setCallPreparation(
                      call -> {
