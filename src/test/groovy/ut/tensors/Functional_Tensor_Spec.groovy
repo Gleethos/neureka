@@ -106,5 +106,21 @@ class Functional_Tensor_Spec extends Specification
             t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"
     }
 
+    def 'The "map" method is a shorter convenience method for mapping to the same type.'()
+    {
+        given : 'We create a tensor with a single element.'
+            var t = Tsr.of(
+                                    DataType.of( Integer.class ),
+                                    [ 1 ],
+                                    ( int i, int[] indices ) -> { 1 }
+                                )
+        when : 'We map the tensor to a new tensor of the same type.'
+            var b = t.map((it) -> {it + 1})
+        then : 'The new tensor should have the same value as the original tensor.'
+            b.toString() == "(1):[2.0]"
+            b.itemClass == Integer.class
+        and : 'The original tensor should not have changed because no inline operation occurred.'
+            t.toString() == "(1):[1.0]"
+    }
 
 }

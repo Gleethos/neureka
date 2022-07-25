@@ -112,8 +112,6 @@ import java.util.function.Consumer;
  */
 public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>>
 {
-
-
     /*==================================================================================================================
     |
     |       §(1) : CONSTRUCTION
@@ -1929,6 +1927,11 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                     }
                     return Tsr.of( typeClass, this.getNDConf().shape(), newData );
                 });
+    }
+
+    /** {@inheritDoc} */
+    @Override default Tsr<V> map( java.util.function.Function<V,V> mapper ) {
+        return mapTo( this.getItemClass(), mapper );
     }
 
     /**

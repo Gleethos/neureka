@@ -452,6 +452,27 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     );
 
     /**
+     * <p>
+     *     This method is a convenience method for mapping the items of this nd-array to another
+     *     nd-array of the same type based on a provided lambda expression which will be applies
+     *     to all items individually.
+     * </p>
+     *  Here a simple example:
+     *  <pre>{@code
+     *  Nda<String> a = Nda.of(String.class).vector("1", "2", "3");
+     *  Nda<String> b = a.map( s -> s + "!" );
+     *  }</pre>
+     *  Note: <br>
+     *  The provided lambda cannot be executed anywhere else but the CPU.
+     *
+     * @param mapper The lambda which maps the items of this nd-array to a new one.
+     * @return A new nd-array of type {@code V}.
+     */
+    default Nda<V> map( java.util.function.Function<V,V> mapper ) {
+        return mapTo( itemClass(), mapper );
+    }
+
+    /**
      *  This method exposes the {@link Access} API which allows you to get or set
      *  individual items within this nd-array targeted by an array of provided indices.
      * @param indices An array of indices targeting a particular position in this nd-array...
