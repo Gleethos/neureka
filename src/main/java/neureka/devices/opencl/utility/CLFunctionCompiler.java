@@ -77,7 +77,7 @@ public final class CLFunctionCompiler {
                         .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                         .setDeviceExecution(
                             (context, callback) -> AlgoUtil.executeDeviceAlgorithm(context.call(), callback),
-                            (context) -> ADAgent.withAD( target -> Function.of(context.caller().toString(), false).derive(new Tsr[]{target.error()}, 0) )
+                            (caller, call) -> ADAgent.withAD( target -> Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )
                         )
                         .setCallPreparation(
                             call -> {

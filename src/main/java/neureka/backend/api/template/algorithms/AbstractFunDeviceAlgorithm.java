@@ -3,7 +3,6 @@ package neureka.backend.api.template.algorithms;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.autograd.ADTarget;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.*;
 import neureka.backend.main.internal.CallExecutor;
@@ -242,48 +241,31 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         return this;
     }
 
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(Exec executor, Backprop adAgentSupplier ) {
-        return
-            adAgentSupplier == null
-                ? setExecution( (caller, call) -> Result.of(AlgoUtil.executeFor( caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b) )) )
-                : setExecution( (caller, call) ->
-                        Result.of(AlgoUtil.executeFor( caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b) ))
-                                .withAutoDiff( (caller1, adCall) -> adAgentSupplier.get(new DeviceExecutionContext(call, adCall, caller)) )
-                    );
-    }
-
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(Exec executor, ADAgentSupplier adAgentSupplier ) {
+    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(Execute executor, ADAgentSupplier adAgentSupplier ) {
         return
                 adAgentSupplier == null
-                        ? setExecution( (caller, call) -> Result.of(AlgoUtil.executeFor( caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b)  )) )
+                        ? setExecution( (caller, call) -> Result.of(AlgoUtil.executeFor( caller, call, (innerCall, callback) -> executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)  )) )
                         : setExecution( (caller, call) ->
                         Result.of(AlgoUtil.executeFor(
-                                    caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b)
+                                    caller, call, (innerCall, callback) -> executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)
                                 ))
                                 .withAutoDiff( adAgentSupplier )
                 );
     }
 
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( Exec executor ) {
+    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( Execute executor ) {
         return setExecution( (caller, call) ->
                         Result.of(AlgoUtil.executeFor(
-                                        caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b)
+                                   caller, call, (innerCall, callback) -> executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)
                                 ))
                                 .withAutoDiff( FallbackAlgorithm::ADAgent )
                 );
     }
-    public interface Exec {
+    public interface Execute {
 
         Tsr<?> execute( DeviceExecutionContext context, CallExecutor goDeeperWith );
 
     }
-
-    public interface Backprop {
-
-        ADAgent get(  DeviceExecutionContext context );
-
-    }
-
 
     @Override
     public Result execute( Function caller, ExecutionCall<? extends Device<?>> call ) {
