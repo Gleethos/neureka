@@ -242,13 +242,13 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         return this;
     }
 
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(Exec executor, ADAgentSource adAgentSupplier ) {
+    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(Exec executor, Backprop adAgentSupplier ) {
         return
             adAgentSupplier == null
                 ? setExecution( (caller, call) -> Result.of(AlgoUtil.executeFor( caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b) )) )
                 : setExecution( (caller, call) ->
                         Result.of(AlgoUtil.executeFor( caller, call, (a, b) -> executor.execute(new DeviceExecutionContext(call, a, caller), b) ))
-                                .withADAction( target -> adAgentSupplier.get(caller, call, target) )
+                                .withAutoDiff( (caller1, adCall) -> adAgentSupplier.get(new DeviceExecutionContext(call, adCall, caller)) )
                     );
     }
 
@@ -278,8 +278,10 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
 
     }
 
-    public interface ADAgentSource {
-        Tsr<?> get(Function caller, ExecutionCall<? extends Device<?>> call, ADTarget<?> target);
+    public interface Backprop {
+
+        ADAgent get(  DeviceExecutionContext context );
+
     }
 
 
