@@ -254,12 +254,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     }
 
     public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( Execute executor ) {
-        return setExecution( (caller, call) ->
-                        Result.of(AlgoUtil.executeFor(
-                                   caller, call, (innerCall, callback) -> executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)
-                                ))
-                                .withAutoDiff( FallbackAlgorithm::ADAgent )
-                );
+        return setDeviceExecution( executor, FallbackAlgorithm::ADAgent );
     }
     public interface Execute {
 
