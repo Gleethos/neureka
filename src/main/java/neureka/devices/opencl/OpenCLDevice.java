@@ -356,7 +356,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             throw new IllegalArgumentException(message);
         }
 
-        Object value  = _value(Data.of(tensor.itemClass(), tensor.isVirtual() ? 1 : tensor.size()), tensor, 0).getData();
+        Object value  = _value(Data.of(tensor.itemClass(), tensor.isVirtual() ? 1 : tensor.size()), tensor, 0).getArray();
 
         Class<?> arrayType = Objects.requireNonNull(tensor.getDataType().getTypeClassInstance(NumericType.class)).holderArrayType();
 
@@ -529,17 +529,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     protected final <T extends Number, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size ) {
-        return (A) _value(Data.of(tensor.itemClass(), size), tensor.getUnsafe().upcast(Number.class), start).getData();
+        return (A) _value(Data.of(tensor.itemClass(), size), tensor.getUnsafe().upcast(Number.class), start).getArray();
     }
 
     @Override
     protected final <T extends Number> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
-        _overwrite( tensor, start, Data.of(item, 0, size) );
+        _overwrite( tensor, start, Data.of(item, size, 0) );
     }
 
     @Override
     protected final <T extends Number> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size ) {
-        _overwrite( tensor, start, Data.of(array, offset, size) );
+        _overwrite( tensor, start, Data.of(array, size, offset) );
     }
 
     @Override

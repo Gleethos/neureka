@@ -3,7 +3,6 @@ package neureka.devices.opencl;
 import neureka.Neureka;
 import neureka.backend.api.BackendContext;
 import neureka.common.utility.DataConverter;
-import neureka.dtype.DataType;
 import org.jocl.Pointer;
 import org.jocl.Sizeof;
 
@@ -41,7 +40,7 @@ class Data
         return new Data( data, 0, lengthOf(data) );
     }
 
-    public static Data of( Object data, int start, int size ) {
+    public static Data of( Object data, int size, int start ) {
         return new Data( data, start, size );
     }
 
@@ -49,7 +48,7 @@ class Data
         _data = _preprocess( data, start, size );
     }
 
-    Object getData() { return _data; }
+    Object getArray() { return _data; }
 
     private Object _preprocess( Object data, int start, int size )
     {
@@ -90,42 +89,42 @@ class Data
         // TODO: Enable this for more types:
         if ( data instanceof float[] ) {
             float[] array = (float[]) data;
-            if ( start > 0 ) {
+            if ( start > 0 || size < array.length ) {
                 float[] newData = new float[size];
                 System.arraycopy(array, start, newData, 0, newData.length);
                 data = newData;
             }
         } else if ( data instanceof double[] ) {
             double[] array = (double[]) data;
-            if ( start > 0 ) {
+            if ( start > 0 || size < array.length ) {
                 double[] newData = new double[size];
                 System.arraycopy(array, start, newData, 0, newData.length);
                 data = newData;
             }
         } else if ( data instanceof int[] ) {
             int[] array = (int[]) data;
-            if ( start > 0 ) {
+            if ( start > 0 || size < array.length ) {
                 int[] newData = new int[size];
                 System.arraycopy(array, start, newData, 0, newData.length);
                 data = newData;
             }
         } else if ( data instanceof long[] ) {
             long[] array = (long[]) data;
-            if ( start > 0 ) {
+            if ( start > 0 || size < array.length ) {
                 long[] newData = new long[size];
                 System.arraycopy(array, start, newData, 0, newData.length);
                 data = newData;
             }
         } else if ( data instanceof short[] ) {
             short[] array = (short[]) data;
-            if ( start > 0 ) {
+            if ( start > 0 || size < array.length ) {
                 short[] newData = new short[size];
                 System.arraycopy(array, start, newData, 0, newData.length);
                 data = newData;
             }
         } else if ( data instanceof byte[] ) {
             byte[] array = (byte[]) data;
-            if ( start > 0 ) {
+            if ( start > 0 || size < array.length ) {
                 byte[] newData = new byte[size];
                 System.arraycopy(array, start, newData, 0, newData.length);
                 data = newData;
