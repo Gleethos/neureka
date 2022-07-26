@@ -72,7 +72,8 @@ import java.util.function.Consumer;
  *
  * @param <C> The concrete class at the bottom end of the inheritance hierarchy. (Used to allow for method chaining)
  */
-public abstract class AbstractComponentOwner<C> implements ComponentOwner<C> {
+public abstract class AbstractComponentOwner<C> implements ComponentOwner<C>
+{
     /**
      *  An array of (type) unique components.
      */
@@ -121,20 +122,21 @@ public abstract class AbstractComponentOwner<C> implements ComponentOwner<C> {
 
     private void _remove( Component<C> component ) {
         LogUtil.nullArgCheck( component, "component", Component.class );
-        if ( _components != null && _components.length != 0 ) {
-            int count = 0;
+        if ( _components != null && _components.length != 0 )
             for ( int i = 0; i < _components.length; i++ )
-                if ( _components[ i ] == component ) _components[ i ] = null;
-                else count++;
-            if ( count != _components.length ) {
-                Component<C>[] newComponents = new Component[ count ];
-                count = 0;
-                for ( int i = 0; i < _components.length; i++ )
-                    if ( _components[ i ] == null ) count++;
-                    else newComponents[ i - count ] = _components[ i ];
-                _components = newComponents;
-            }
-        }
+                if ( _components[ i ] == component ) {
+                    _setComps( _newArrayWithout(i, _components) );
+                    break;
+                }
+    }
+
+    private static <C> Component<C>[] _newArrayWithout(int index, Component<C>[] array) {
+        Component<C>[] newArray = new Component[array.length - 1];
+        if ( index >= 0 )
+            System.arraycopy(array, 0, newArray, 0, index);
+        if ( array.length - (index + 1) >= 0 )
+            System.arraycopy(array, index + 1, newArray, index, array.length - (index + 1));
+        return newArray;
     }
 
     private void _add( Component<C> component ) {
