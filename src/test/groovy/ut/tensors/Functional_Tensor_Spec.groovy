@@ -33,11 +33,13 @@ class Functional_Tensor_Spec extends Specification
             it.hasSlimNumbers    = false
         })
 
-        Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = false
+        if ( Neureka.get().backend().has(CLContext) )
+            Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = false
     }
 
     def cleanup() {
-        Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = true
+        if ( Neureka.get().backend().has(CLContext) )
+            Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = true
     }
 
     def 'Tensor initialization lambdas produce expected tensors.'()
