@@ -39,12 +39,8 @@ package neureka.common.composition;
 
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
-import neureka.autograd.JITProp;
 import neureka.backend.api.BackendContext;
 import neureka.common.utility.LogUtil;
-import neureka.devices.Device;
-import neureka.framing.Relation;
-import neureka.optimization.Optimizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,38 +144,7 @@ public abstract class AbstractComponentOwner<C> implements ComponentOwner<C>
             System.arraycopy( _components, 0, newComponents, 0, _components.length );
             newComponents[ newComponents.length - 1 ] = component;
             _setComps( newComponents );
-            for ( int i = 1; i < _components.length; i++ ) {
-                Component<C> a = _components[ i - 1 ];
-                Component<C> b = _components[ i     ];
-                if ( _orderOf( b ) > _orderOf( a ) ) {
-                    _components[ i - 1 ] = b; // Every time a component gets added, we do a little sorting.
-                    _components[ i     ] = a; // This leads to common components having faster access.
-                }
-            }
         }
-    }
-
-    /**
-     *  The following method enables fast access to components by assigning certain
-     *  implementations of the {@link Component} interface an order (determined by "importance").
-     *  This is relevant only for performance reasons because
-     *  the component owner referencing this component among
-     *  others can store them according to their order to
-     *  make component access as fast as possible! <br>
-     *  There is not much more to this then that.
-     *  New component implementations will default to a class order of 0
-     *  and otherwise one should consider profiling the access patterns
-     *  of the component system and update this mapping...
-     */
-    private static <T extends Component> int _orderOf( T component ) {
-        Class<?> typeClass = component.getClass();
-        if ( GraphNode.class          .equals( typeClass ) ) return 6; // This component is accessed most often!
-        if ( Device.class   .isAssignableFrom( typeClass ) ) return 5;
-        if ( Relation.class           .equals( typeClass ) ) return 4;
-        if ( Tsr.class                .equals( typeClass ) ) return 3;
-        if ( JITProp.class            .equals( typeClass ) ) return 2;
-        if ( Optimizer.class.isAssignableFrom( typeClass ) ) return 1;
-        return 0;
     }
 
     /**
@@ -229,8 +194,16 @@ public abstract class AbstractComponentOwner<C> implements ComponentOwner<C>
     {
         LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
         if ( _components != null ) {
-            for ( Component<?> component : _components ) {
-                if ( componentClass.isInstance( component ) ) return (T) component;
+            for ( int i = 0; i < _components.length; i++ ) {
+                if ( componentClass.isInstance( _components[ i ] ) ) {
+                    Component<C> component = _components[ i ];
+                    if ( _components.length > 1 && i > 0  ) {
+                        // Now we swap the components (faster access for common components):
+                        _components[ i ] = _components[ i - 1 ];
+                        _components[ i - 1 ] = component;
+                    }
+                    return (T) component;
+                }
             }
         }
         return null;
@@ -253,8 +226,8 @@ public abstract class AbstractComponentOwner<C> implements ComponentOwner<C>
         if ( _components != null ) {
             for ( Component<?> component : _components ) {
                 if (
-                        component != null &&
-                        componentClass.isAssignableFrom( component.getClass() )
+                    component != null &&
+                    componentClass.isAssignableFrom( component.getClass() )
                 )
                     found.add((T) component);
             }
