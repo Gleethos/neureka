@@ -8,11 +8,13 @@ import spock.lang.Specification
 class OpenCL_Data_Spec extends Specification
 {
     def setup() {
-        Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = false
+        if ( Neureka.get().backend().has(CLContext) )
+            Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = false
     }
 
     def cleanup() {
-        Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = true
+        if ( Neureka.get().backend().has(CLContext) )
+            Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = true
     }
 
 
