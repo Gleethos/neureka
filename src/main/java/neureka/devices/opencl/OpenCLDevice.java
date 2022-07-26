@@ -91,7 +91,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         CPU, GPU, ACCELERATOR, DEFAULT, CUSTOM, ALL, UNKNOWN
     }
 
-    enum cl_dtype { F32, F64 }
+    enum cl_dtype { F32, F64, I64, I32, I16, I8, U32, U16, U8 }
 
     /*==================================================================================================================
     |
@@ -356,9 +356,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             throw new IllegalArgumentException(message);
         }
 
-        Object value  = tensor.isVirtual()
-                            ? _value( new float[1], tensor, 0 )
-                            : _value( new float[tensor.size()], tensor, 0 );
+        Object value  = _value(Data.of(tensor.itemClass(), tensor.isVirtual() ? 1 : tensor.size()), tensor, 0).getData();
 
         Class<?> arrayType = Objects.requireNonNull(tensor.getDataType().getTypeClassInstance(NumericType.class)).holderArrayType();
 
@@ -382,7 +380,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
         _tensors.add( tensor.getUnsafe().upcast(Number.class) );
     }
 
-    private <T extends Number> void _add( Tsr<Number> tensor, cl_tsr<Number, T> parent, Runnable migration ) {
+    private <T extends Number> void _add(
+            Tsr<Number> tensor,
+            cl_tsr<Number, T> parent,
+            Runnable migration // Causes the device to be a component of the tensor!
+    ) {
         if ( this.has( tensor ) ) {
             _LOG.debug("Trying to add a tensor to a device which already reports hosting it.");
             return;
@@ -522,12 +524,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     protected final <T extends Number> T _readItem( Tsr<T> tensor, int index ) {
-        return (T) Float.valueOf(_value(new float[1], tensor.getUnsafe().upcast(Number.class), index)[0]);
+        return (T) _value(Data.of(tensor.itemClass(), 1), tensor.getUnsafe().upcast(Number.class), index).getElementAt(0);
     }
 
     @Override
     protected final <T extends Number, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size ) {
-        return (A) _value(new float[size], tensor.getUnsafe().upcast(Number.class), start);
+        return (A) _value(Data.of(tensor.itemClass(), size), tensor.getUnsafe().upcast(Number.class), start).getData();
     }
 
     @Override
@@ -623,8 +625,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         else _add(newOwner, null, migration);
     }
 
-    private <A> A _value( A array, Tsr<Number> tensor, int offset ) {
-        Data data = Data.of( array );
+    private Data _value( Data data, Tsr<Number> tensor, int offset ) {
         cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
         clEnqueueReadBuffer(
                 _queue,
@@ -637,7 +638,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null,
                 null
         );
-        return (A) data.getData();
+        return data;
     }
 
     /**

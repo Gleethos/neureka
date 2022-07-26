@@ -3,8 +3,10 @@ package ut.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.common.utility.SettingsLoader
+import neureka.devices.opencl.CLContext
 import neureka.dtype.DataType
 import neureka.view.NDPrintSettings
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 import java.util.function.Predicate
@@ -30,6 +32,12 @@ class Functional_Tensor_Spec extends Specification
             it.prefix            = ""
             it.hasSlimNumbers    = false
         })
+
+        Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = false
+    }
+
+    def cleanup() {
+        Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = true
     }
 
     def 'Tensor initialization lambdas produce expected tensors.'()
@@ -56,8 +64,10 @@ class Functional_Tensor_Spec extends Specification
     }
 
 
-    def 'We can analyse the values of a tensor using various predicate receiving methods'()
-    {
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
+    def 'We can analyse the values of a tensor using various predicate receiving methods'(
+            String device
+    ) {
         given : 'We create 2 tensors, where one is a slice of the other.'
             var a = Tsr.ofInts().withShape(3, 2).andFill(2, 0, 1, 1, 8, 3)
             var b = a[1, 0..1]
@@ -81,17 +91,21 @@ class Functional_Tensor_Spec extends Specification
                     .filter({it < 3})
                     .map({(it-4)*2})
                     .collect(Collectors.toList()) == [-4, -8, -6, -6]
+        where :
+            device << ['CPU', 'GPU']
     }
 
-
-    def 'Tensor mapping lambdas produce expected tensors.'()
-    {
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
+    def 'Tensor mapping lambdas produce expected tensors.'(
+       String device
+    ) {
         when : 'Instantiating a tensor using an initializer lambda...'
             Tsr t = Tsr.of(
                     DataType.of( Double.class ),
                         [ 2, 3 ],
                         ( int i, int[] indices ) -> { (i - 2) as Double }
                     )
+                    .to(device)
 
         then : 'The tensor has been initialized with the expected values:'
             t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"
@@ -104,16 +118,23 @@ class Functional_Tensor_Spec extends Specification
             b.itemClass == String.class
         and : 'The original tensor should not have changed because no inline operation occurred.'
             t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"
+
+        where :
+            device << ['CPU', 'GPU']
     }
 
-    def 'The "map" method is a shorter convenience method for mapping to the same type.'()
-    {
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
+    def 'The "map" method is a shorter convenience method for mapping to the same type.'(
+        String device
+    ) {
         given : 'We create a tensor with a single element.'
             var t = Tsr.of(
                                     DataType.of( Integer.class ),
                                     [ 1 ],
                                     ( int i, int[] indices ) -> { 1 }
                                 )
+                                .to(device)
+
         when : 'We map the tensor to a new tensor of the same type.'
             var b = t.map((it) -> {it + 1})
         then : 'The new tensor should have the same value as the original tensor.'
@@ -121,6 +142,9 @@ class Functional_Tensor_Spec extends Specification
             b.itemClass == Integer.class
         and : 'The original tensor should not have changed because no inline operation occurred.'
             t.toString() == "(1):[1.0]"
+
+        where :
+            device << ['CPU', 'GPU']
     }
 
 }

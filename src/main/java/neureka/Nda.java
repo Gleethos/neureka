@@ -468,9 +468,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param mapper The lambda which maps the items of this nd-array to a new one.
      * @return A new nd-array of type {@code V}.
      */
-    default Nda<V> map( java.util.function.Function<V,V> mapper ) {
-        return mapTo( itemClass(), mapper );
-    }
+    Nda<V> map( java.util.function.Function<V,V> mapper );
 
     /**
      *  This method exposes the {@link Access} API which allows you to get or set

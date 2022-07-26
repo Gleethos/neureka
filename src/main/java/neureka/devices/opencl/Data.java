@@ -3,6 +3,7 @@ package neureka.devices.opencl;
 import neureka.Neureka;
 import neureka.backend.api.BackendContext;
 import neureka.common.utility.DataConverter;
+import neureka.dtype.DataType;
 import org.jocl.Pointer;
 import org.jocl.Sizeof;
 
@@ -19,6 +20,22 @@ import java.util.Arrays;
 class Data
 {
     private final Object _data;
+
+    public static Data of(Class<?> type, int size) {
+        Object data = null;
+        if      ( type == Float.class   ) data = new float[size];
+        else if ( type == Double.class  ) data = new double[size];
+        else if ( type == Integer.class ) data = new int[size];
+        else if ( type == Long.class    ) data = new long[size];
+        else if ( type == Short.class   ) data = new short[size];
+        else if ( type == Byte.class    ) data = new byte[size];
+        else if ( type == Boolean.class ) data = new boolean[size];
+        else {
+            String message = "Unsupported data type  '"+type+"' was encountered.\n";
+            throw new IllegalArgumentException(message);
+        }
+        return of(data);
+    }
 
     public static Data of( Object data ) {
         return new Data( data, 0, lengthOf(data) );
@@ -150,6 +167,20 @@ class Data
     OpenCLDevice.cl_dtype getType() {
         if ( _data instanceof float[]  ) return OpenCLDevice.cl_dtype.F32;
         if ( _data instanceof double[] ) return OpenCLDevice.cl_dtype.F64;
+        if ( _data instanceof int[]    ) return OpenCLDevice.cl_dtype.I32;
+        if ( _data instanceof short[]  ) return OpenCLDevice.cl_dtype.I16;
+        if ( _data instanceof long[]   ) return OpenCLDevice.cl_dtype.I64;
+        if ( _data instanceof byte[]   ) return OpenCLDevice.cl_dtype.I8;
+        throw new IllegalStateException();
+    }
+
+    Number getElementAt(int i) {
+        if ( _data instanceof float[]  ) return ( (float[])  _data )[i];
+        if ( _data instanceof double[] ) return ( (double[]) _data )[i];
+        if ( _data instanceof int[]    ) return ( (int[])    _data )[i];
+        if ( _data instanceof short[]  ) return ( (short[])  _data )[i];
+        if ( _data instanceof long[]   ) return ( (long[])   _data )[i];
+        if ( _data instanceof byte[]   ) return ( (byte[])   _data )[i];
         throw new IllegalStateException();
     }
 
