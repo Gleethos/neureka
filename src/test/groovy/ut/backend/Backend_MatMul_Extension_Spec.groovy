@@ -84,7 +84,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                                             Tsr output = Tsr.of(shp, 0.0);
                                                             output.setIsVirtual(false);
                                                             device.store( output );
-                                                            call.setInput( 0, output );
+                                                            call = call.withInputAt( 0, output );
                                                         }
                                                         return call;
                                                     }

@@ -47,7 +47,7 @@ public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
                     } catch( Exception e ) {
                         e.printStackTrace();
                     }
-                    call.setInput( 0, output );
+                    call = call.withInputAt( 0, output );
                 }
                 return call;
             }

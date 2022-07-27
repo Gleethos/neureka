@@ -42,8 +42,7 @@ public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivatio
                 } catch( Exception e ) {
                     e.printStackTrace();
                 }
-                call.setInput( 0, output );
-                return call;
+                return call.withInputAt( 0, output );
             }
         );
         setImplementationFor(
