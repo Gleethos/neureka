@@ -208,6 +208,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      * @param i The index targeting the position where the provided tensor should be placed.
      * @param t The {@link Tsr} which ought to be placed at position {@code i}.
      */
+     @Deprecated
     public void setInput( int i, Tsr<?> t ) { _inputs[ i ] = t; }
 
 
