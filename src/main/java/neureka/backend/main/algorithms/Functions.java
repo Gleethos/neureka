@@ -85,7 +85,10 @@ public final class Functions<F extends Fun> {
 
         public ImplementationFor<CPU> get() {
             return new AbstractImplementationFor<>(
-                    call -> _implementation.get( call, new Functions<F>( _functions ) ),
+                    call -> {
+                        _implementation.get( call, new Functions<F>( _functions ) );
+                        return call.input(0);
+                    },
                     _arity
                 );
         }

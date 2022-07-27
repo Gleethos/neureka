@@ -1,5 +1,6 @@
 package neureka.backend.main.implementations;
 
+import neureka.backend.FunImplementationFor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.opencl.KernelCode;
@@ -10,7 +11,7 @@ public class SimpleCLImplementation extends CLImplementation {
     private KernelCode _kernel;
 
     protected SimpleCLImplementation(
-            ImplementationFor<OpenCLDevice> execution,
+            FunImplementationFor<OpenCLDevice> execution,
             int arity,
             String kernelName,
             String kernelSource

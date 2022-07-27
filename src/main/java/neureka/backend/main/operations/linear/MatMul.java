@@ -116,7 +116,7 @@ public class MatMul extends AbstractOperation
                                 .all( t -> t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
                                 .isValid()
                         ) {
-                            new GEMM().run( call );
+                            return new GEMM().runAndGetFirstTensor( call );
                         } else {
                             int M = call.input(1).shape(0);
                             int N = call.input(2).shape(1);
@@ -128,6 +128,8 @@ public class MatMul extends AbstractOperation
                                 .pass(call.input(Number.class, 2))
                                 .pass(call.input(Number.class, 0))
                                 .call(new long[]{M, N}, null);
+
+                            return call.input(0);
                         }
                     })
                     .build()
