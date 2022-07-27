@@ -155,7 +155,7 @@ public class UnitTester_Tensor extends UnitTester
         Neureka.get().backend().getOperation("x")
                 .getAlgorithm(Convolution.class)
                 .getImplementationFor( CPU.class )
-                .runAndGetFirstTensor(
+                .run(
                         ExecutionCall.of(
                                     Tsr.of(drnMxd, rsltData),
                                     Tsr.of(frstShp, frstData),
@@ -179,7 +179,7 @@ public class UnitTester_Tensor extends UnitTester
         Neureka.get().backend().getOperation(((char) 171)+"x")
                 .getAlgorithm(Convolution.class)
                 .getImplementationFor( CPU.class )
-                .runAndGetFirstTensor(
+                .run(
                         ExecutionCall.of(
                                 Tsr.of(frstShp, frstData),
                                 (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
@@ -201,7 +201,7 @@ public class UnitTester_Tensor extends UnitTester
         Neureka.get().backend().getOperation("*")
                 .getAlgorithm(Broadcast.class)
                 .getImplementationFor( CPU.class )
-                .runAndGetFirstTensor(
+                .run(
                         ExecutionCall.of(
                                 Tsr.of(drnMxd, rsltData),
                                 Tsr.of(frstShp, frstData),
@@ -258,7 +258,7 @@ public class UnitTester_Tensor extends UnitTester
                                         CPU.class,
                                         CPUImplementation
                                                 .withArity(3)
-                                                .andFunImplementation(
+                                                .andImplementation(
                                                         Broadcast.implementationForCPU()
                                                                 .with(Fun.F64F64ToF64.triple(
                                                                         ( a, b ) -> a * b,
@@ -310,7 +310,7 @@ public class UnitTester_Tensor extends UnitTester
                                             CPU.class,
                                             CPUImplementation
                                                     .withArity(3)
-                                                    .andFunImplementation(
+                                                    .andImplementation(
                                                             Broadcast.implementationForCPU()
                                                                     .with(Fun.F64F64ToF64.triple(
                                                                             ( a, b ) -> a * b,
@@ -327,7 +327,7 @@ public class UnitTester_Tensor extends UnitTester
                                     );
 
         left.getImplementationFor( CPU.class )
-                .runAndGetFirstTensor(
+                .run(
                         ExecutionCall.of(
                                     Tsr.of(frstShp, frstData),
                                     (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
@@ -340,7 +340,7 @@ public class UnitTester_Tensor extends UnitTester
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
 
         right.getImplementationFor( CPU.class )
-                .runAndGetFirstTensor(
+                .run(
                         ExecutionCall.of(
                                     Tsr.of(frstShp, frstData),
                                     (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),

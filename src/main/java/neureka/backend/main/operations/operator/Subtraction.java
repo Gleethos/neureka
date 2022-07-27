@@ -167,7 +167,7 @@ public class Subtraction extends AbstractOperation
                                             target ->
                                                 this.getAlgorithm( Broadcast.class )
                                                     .getImplementationFor( device )
-                                                    .runAndGetFirstTensor(
+                                                    .run(
                                                             ExecutionCall.of(
                                                                         toBeDerived.setIsVirtual(false),
                                                                         derivative,

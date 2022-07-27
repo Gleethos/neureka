@@ -46,7 +46,7 @@ public class Addition extends AbstractOperation {
                                             target ->
                                                 this.getAlgorithm( Broadcast.class )
                                                      .getImplementationFor( device )
-                                                     .runAndGetFirstTensor(
+                                                     .run(
                                                              ExecutionCall.of(
                                                                      toBeDerived.setIsVirtual(false),
                                                                      derivative,
@@ -152,7 +152,7 @@ public class Addition extends AbstractOperation {
                 CPU.class,
                 CPUImplementation
                     .withArity(3)
-                    .andFunImplementation(
+                    .andImplementation(
                         call -> {
                             assert call.arity() == 3;
                             if ( call.getDerivativeIndex() == 0 )
@@ -177,7 +177,7 @@ public class Addition extends AbstractOperation {
                                         ( a, b ) ->  1 // deriving input 1
                                    ))
                                    .get()
-                                   .runAndGetFirstTensor( call );
+                                   .run( call );
                                 }
                                 return call.input( 0 );
                             }

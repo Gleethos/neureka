@@ -83,7 +83,7 @@ public class MatMul extends AbstractOperation
                 CPU.class,
                 CPUImplementation
                 .withArity(3)
-                .andFunImplementation( new CPUMatMul() )
+                .andImplementation( new CPUMatMul() )
             )
             .setImplementationFor(
                 OpenCLDevice.class,
@@ -116,7 +116,7 @@ public class MatMul extends AbstractOperation
                                 .all( t -> t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
                                 .isValid()
                         ) {
-                            return new GEMM().runAndGetFirstTensor( call );
+                            return new GEMM().run( call );
                         } else {
                             int M = call.input(1).shape(0);
                             int N = call.input(2).shape(1);

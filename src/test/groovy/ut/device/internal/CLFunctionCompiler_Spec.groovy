@@ -160,7 +160,7 @@ class CLFunctionCompiler_Spec extends Specification
         when : 'We call the OpenCLDevice specific implementation by passing a well populated ExecutionCall.'
             algorithm
                 .getImplementationFor(OpenCLDevice.class)
-                .runAndGetFirstTensor(
+                .run(
                         ExecutionCall.of(Tsr.of(0), Tsr.of(1), Tsr.of(2), Tsr.of(3))
                                         .running(resultOperation)
                                         .algorithm(algorithm)

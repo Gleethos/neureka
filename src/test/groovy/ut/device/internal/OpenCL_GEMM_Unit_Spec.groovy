@@ -21,7 +21,7 @@ class OpenCL_GEMM_Unit_Spec extends Specification {
             var kernel = Mock(KernelCaller)
 
         when :
-            new GEMM().runAndGetFirstTensor( call )
+            new GEMM().run( call )
 
         then :
             (1.._) * call.input(Float, 0) >> c

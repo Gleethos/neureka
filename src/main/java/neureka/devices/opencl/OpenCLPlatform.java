@@ -1,7 +1,7 @@
 package neureka.devices.opencl;
 
 import neureka.Neureka;
-import neureka.backend.FunImplementationFor;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.Operation;
@@ -146,7 +146,7 @@ public class OpenCLPlatform
                     // inverse:  src1/fdrn <- src2 <- drain
                     //===========================================================================
                     Map<String, String> code = new HashMap<>();
-                    FunImplementationFor<OpenCLDevice> impl = null;
+                    ImplementationFor<OpenCLDevice> impl = null;
                     for ( Operation type : Neureka.get().backend().getOperations() ) {
                         if ( preName.contains("activation") && type.supportsAlgorithm(Activation.class) )
                             impl = type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );
@@ -180,7 +180,7 @@ public class OpenCLPlatform
         for ( Operation type : Neureka.get().backend().getOperations() ) {
             for ( Algorithm algorithm : type.getAllAlgorithms()) {
                 DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
-                FunImplementationFor<OpenCLDevice> impl =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(OpenCLDevice.class) );
+                ImplementationFor<OpenCLDevice> impl =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(OpenCLDevice.class) );
                 if ( impl instanceof CLImplementation ) {
                     CLImplementation cli = ((CLImplementation) impl);
                     if ( cli instanceof SimpleCLImplementation ) {

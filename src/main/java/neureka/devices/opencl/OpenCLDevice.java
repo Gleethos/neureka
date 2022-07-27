@@ -50,7 +50,7 @@ package neureka.devices.opencl;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.FunImplementationFor;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.*;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.calculus.Function;
@@ -651,7 +651,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         Algorithm algorithm = call.getAlgorithm();
         DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
         // We create the kernel name from the chosen algorithm:
-        FunImplementationFor<OpenCLDevice> impl = ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(OpenCLDevice.class) );
+        ImplementationFor<OpenCLDevice> impl = ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(OpenCLDevice.class) );
         if ( impl instanceof CLImplementation && _platform.hasKernel(((CLImplementation) impl).getKernelFor(call).getName()) ) {
             chosen = ((CLImplementation) impl).getKernelFor( call ).getName();
         }

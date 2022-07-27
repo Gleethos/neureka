@@ -1,7 +1,6 @@
 package neureka.backend.main.implementations;
 
 
-import neureka.backend.FunImplementationFor;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.template.implementations.AbstractImplementationFor;
 import neureka.devices.opencl.KernelSource;
@@ -18,7 +17,7 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
 {
 
     protected CLImplementation(
-            FunImplementationFor<OpenCLDevice> execution,
+            ImplementationFor<OpenCLDevice> execution,
             int arity
     ) {
         super( execution, arity );
@@ -42,7 +41,7 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
      */
     public static class SourceBuilder
     {
-        private FunImplementationFor<OpenCLDevice> lambda;
+        private ImplementationFor<OpenCLDevice> lambda;
         private int arity;
         private String kernelName;
         private String kernelSource;
@@ -53,7 +52,7 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
          * @param lambda The code which passes the call data to OpenCL and calls the kernel.
          * @return This builder instance to allow for method chaining.
          */
-        public SourceBuilder lambda(FunImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
+        public SourceBuilder lambda(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
         public SourceBuilder arity(int arity) { this.arity = arity; return this; }
         public SourceBuilder kernelName(String kernelName) { this.kernelName = kernelName;return this; }
         public SourceBuilder kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }
@@ -61,7 +60,7 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
     }
 
     public static class Compiler {
-        private FunImplementationFor<OpenCLDevice> lambda;
+        private ImplementationFor<OpenCLDevice> lambda;
         private int arity;
         private String kernelSource;
         private String activationSource;
@@ -70,7 +69,7 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
 
         private Compiler() { }
 
-        public Compiler execution(FunImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
+        public Compiler execution(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
         public Compiler arity(int arity) { this.arity = arity; return this; }
         public Compiler kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }
         public Compiler activationSource(String activationSource) { this.activationSource = activationSource;return this; }
@@ -93,7 +92,7 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
 
         public AdHocCompiler arity( int arity ) { _arity = arity; return this; }
 
-        public CLImplementation caller( FunImplementationFor<OpenCLDevice> lambda) {
+        public CLImplementation caller( ImplementationFor<OpenCLDevice> lambda) {
             return new AdHocClImplementation( lambda, _arity, _source );
         }
 

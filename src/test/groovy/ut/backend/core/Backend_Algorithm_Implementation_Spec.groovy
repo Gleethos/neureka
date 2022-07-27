@@ -90,7 +90,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             var nativeExecutor = Mock( CPU.JVMExecutor )
 
         when : 'Host-executor instance is being called...'
-            hostExecutor.runAndGetFirstTensor( call )
+            hostExecutor.run( call )
 
         then : 'The mock objects are being called as expected.'
             (0.._) * tensor.getUnsafe() >> unsafe
@@ -139,7 +139,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             var kernel = Mock( KernelCaller )
 
         when : 'CL-executor instance is being called...'
-            clExecutor.runAndGetFirstTensor( call )
+            clExecutor.run( call )
 
         then : 'The mock objects are being called as expected.'
             (0.._) * call.arity() >> 3

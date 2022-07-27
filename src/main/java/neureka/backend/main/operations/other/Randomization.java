@@ -68,7 +68,7 @@ public class Randomization extends AbstractOperation
                     CPU.class,
                     CPUImplementation
                         .withArity(1)
-                        .andFunImplementation(
+                        .andImplementation(
                             call -> {
                                 call
                                 .getDevice()

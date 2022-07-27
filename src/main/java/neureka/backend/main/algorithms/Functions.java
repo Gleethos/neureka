@@ -1,6 +1,6 @@
 package neureka.backend.main.algorithms;
 
-import neureka.backend.FunImplementationFor;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Call;
 import neureka.backend.api.template.implementations.AbstractImplementationFor;
 import neureka.backend.main.algorithms.internal.Fun;
@@ -83,7 +83,7 @@ public final class Functions<F extends Fun> {
             return this;
         }
 
-        public FunImplementationFor<CPU> get() {
+        public ImplementationFor<CPU> get() {
             return new AbstractImplementationFor<>(
                     call -> {
                         _implementation.get( call, new Functions<F>( _functions ) );

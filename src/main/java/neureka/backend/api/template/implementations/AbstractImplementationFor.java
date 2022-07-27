@@ -1,23 +1,22 @@
 package neureka.backend.api.template.implementations;
 
 import neureka.Tsr;
-import neureka.backend.FunImplementationFor;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
+import neureka.backend.api.ExecutionCall;
 import neureka.devices.Device;
 
-public class AbstractImplementationFor< D extends Device<?> > implements FunImplementationFor<D>
+public class AbstractImplementationFor< D extends Device<?> > implements ImplementationFor<D>
 {
     private final int _arity;
-    private final FunImplementationFor<D> _lambda;
+    private final ImplementationFor<D> _lambda;
 
-    public AbstractImplementationFor( FunImplementationFor<D> implementationLambda, int arity ) {
+    public AbstractImplementationFor(ImplementationFor<D> implementationLambda, int arity ) {
         _lambda = implementationLambda;
         _arity = arity;
     }
 
     @Override
-    public Tsr<?> runAndGetFirstTensor(ExecutionCall<D> call ) {
+    public Tsr<?> run(ExecutionCall<D> call ) {
         if ( _arity >= 0 ) {
             int arity1 = call.arity();
             int arity2 = arity1 - 1; // The first tensor might be the output!
@@ -27,7 +26,7 @@ public class AbstractImplementationFor< D extends Device<?> > implements FunImpl
                 );
         }
         //assert call.size() == _arity ;
-        return _lambda.runAndGetFirstTensor( call );
+        return _lambda.run( call );
     }
 
 }

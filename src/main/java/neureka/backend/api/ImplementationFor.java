@@ -40,7 +40,6 @@ SOFTWARE.
 package neureka.backend.api;
 
 import neureka.Tsr;
-import neureka.backend.FunImplementationFor;
 import neureka.devices.Device;
 
 /**
@@ -55,7 +54,7 @@ import neureka.devices.Device;
  * @param <D> The Device type for which an implementation of this interface has been made.
  */
 @FunctionalInterface
-public interface ImplementationFor< D extends Device<?> > extends FunImplementationFor<D>
+public interface ImplementationFor<D extends Device<?>>
 {
     /**
      *  This method is the entrypoint for a concrete implementation
@@ -67,11 +66,7 @@ public interface ImplementationFor< D extends Device<?> > extends FunImplementat
      *
      *  @param call The call which ought to be executed on this implementation.
      */
-    void run( ExecutionCall<D> call );
+    Tsr<?> run( ExecutionCall<D> call );
 
-    @Override default Tsr<?> runAndGetFirstTensor( ExecutionCall<D> call ) {
-        this.run( call );
-        return call.input( 0 );
-    }
 
 }

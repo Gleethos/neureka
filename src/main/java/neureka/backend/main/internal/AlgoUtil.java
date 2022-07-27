@@ -2,7 +2,7 @@ package neureka.backend.main.internal;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.FunImplementationFor;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.ExecutionPreparation;
 import neureka.backend.main.algorithms.Activation;
@@ -93,13 +93,13 @@ public class AlgoUtil
             throw new IllegalStateException( message );
         } else {
             DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
-            FunImplementationFor<Device<?>> implementation =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(device) );
+            ImplementationFor<Device<?>> implementation =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(device) );
             if ( implementation == null ) {
                 String message = _couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
                 _LOG.error( message );
                 throw new IllegalStateException( message );
             }
-            else return implementation.runAndGetFirstTensor( (ExecutionCall<Device<?>>) call );
+            else return implementation.run( (ExecutionCall<Device<?>>) call );
         }
     }
 

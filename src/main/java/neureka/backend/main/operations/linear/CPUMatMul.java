@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.linear;
 
 import neureka.Tsr;
-import neureka.backend.FunImplementationFor;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.operations.linear.internal.M32;
 import neureka.backend.main.operations.linear.internal.M64;
@@ -11,7 +11,7 @@ import neureka.ndim.config.NDConfiguration;
 /**
  *  This is a library internal class, do not depend on this.
  */
-public class CPUMatMul implements FunImplementationFor<CPU> {
+public class CPUMatMul implements ImplementationFor<CPU> {
 
     public static void execute(
             boolean rowMajor, double[] A, double[] B, double[] C, int aRows, int aCols, int bCols
@@ -39,7 +39,7 @@ public class CPUMatMul implements FunImplementationFor<CPU> {
     }
 
     @Override
-    public Tsr<?> runAndGetFirstTensor( ExecutionCall<CPU> call )
+    public Tsr<?> run(ExecutionCall<CPU> call )
     {
         if ( !call.validate().all( (t1, t2) -> t1.getNDConf().getLayout().isCompatible(t2.getNDConf().getLayout()) ).isValid() )
             throw new IllegalArgumentException(

@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations;
 
-import neureka.backend.FunImplementationFor;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.opencl.KernelCode;
 import neureka.devices.opencl.OpenCLDevice;
@@ -34,7 +34,7 @@ public class ParsedCLImplementation extends CLImplementation {
 
     private KernelCode _kernel;
 
-    public ParsedCLImplementation(   FunImplementationFor<OpenCLDevice> lambda,
+    public ParsedCLImplementation(   ImplementationFor<OpenCLDevice> lambda,
                                      int arity,
                                      String kernelSource,
                                      String activationSource,

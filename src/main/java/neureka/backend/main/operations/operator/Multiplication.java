@@ -146,7 +146,7 @@ public class Multiplication extends AbstractOperation
                 CPU.class,
                 CPUImplementation
                     .withArity(3)
-                    .andFunImplementation(
+                    .andImplementation(
                         call -> {
                             if ( call.getDerivativeIndex() == 0 )
                                 call.setInput( 0, call.input( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
@@ -170,7 +170,7 @@ public class Multiplication extends AbstractOperation
                                         ( a, b ) -> a  // deriving input 1
                                     ))
                                     .get()
-                                    .runAndGetFirstTensor( call );
+                                    .run( call );
 
                             return call.input( 0 );
                         }
