@@ -211,7 +211,7 @@ public class UnitTester_Tensor extends UnitTester
                             .andArgs(Arg.DerivIdx.of(-1))
                             .running(Neureka.get().backend().getOperation("*"))
                             .on(CPU.get())
-        );
+                );
         assertIsEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
     }
@@ -259,7 +259,7 @@ public class UnitTester_Tensor extends UnitTester
                                         CPU.class,
                                         CPUImplementation
                                                 .withArity(3)
-                                                .andImplementation(
+                                                .andFunImplementation(
                                                         Broadcast.implementationForCPU()
                                                                 .with(Fun.F64F64ToF64.triple(
                                                                         ( a, b ) -> a * b,
@@ -311,7 +311,7 @@ public class UnitTester_Tensor extends UnitTester
                                             CPU.class,
                                             CPUImplementation
                                                     .withArity(3)
-                                                    .andImplementation(
+                                                    .andFunImplementation(
                                                             Broadcast.implementationForCPU()
                                                                     .with(Fun.F64F64ToF64.triple(
                                                                             ( a, b ) -> a * b,

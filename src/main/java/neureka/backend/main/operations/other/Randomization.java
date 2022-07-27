@@ -68,15 +68,17 @@ public class Randomization extends AbstractOperation
                     CPU.class,
                     CPUImplementation
                         .withArity(1)
-                        .andImplementation(
-                            call ->
+                        .andFunImplementation(
+                            call -> {
                                 call
                                 .getDevice()
                                 .getExecutor()
                                 .threaded(
                                     call.input( Number.class, 0 ).size(),
                                     _newWorkloadFor( call )
-                                )
+                                );
+                                return call.input( 0 );
+                            }
                         )
                 )
                 .setImplementationFor(

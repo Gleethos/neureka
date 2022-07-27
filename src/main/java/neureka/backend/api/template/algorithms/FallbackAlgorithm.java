@@ -40,7 +40,7 @@ implements ExecutionPreparation, ADAgentSupplier
                 CPU.class,
                 CPUImplementation
                     .withArity( arity )
-                    .andImplementation(
+                    .andFunImplementation(
                         call -> {
                             Function f = new FunctionParser(
                                                     Neureka.get().backend()
@@ -95,6 +95,8 @@ implements ExecutionPreparation, ADAgentSupplier
                             }
                             else
                                 _tryExecute(call, typeClass);
+
+                            return call.input( typeClass, 0 );
                         }
                     )
         );

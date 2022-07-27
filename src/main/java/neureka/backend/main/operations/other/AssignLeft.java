@@ -121,13 +121,14 @@ public class AssignLeft extends AbstractOperation
                 CPU.class,
                 CPUImplementation
                     .withArity(2)
-                    .andImplementation(
+                    .andFunImplementation(
                         call -> {
                             call.input( 0 ).setIsVirtual( false );
                             Neureka.get().backend().getOperation("idy")
                                     .getAlgorithm( Activation.class )
                                     .getImplementationFor( CPU.class )
                                     .run(call);
+                            return call.input( 0 );
                         }
                     )
             )

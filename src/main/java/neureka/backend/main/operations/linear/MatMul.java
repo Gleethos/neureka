@@ -83,7 +83,7 @@ public class MatMul extends AbstractOperation
                 CPU.class,
                 CPUImplementation
                 .withArity(3)
-                .andImplementation( new CPUMatMul() )
+                .andFunImplementation( new CPUMatMul() )
             )
             .setImplementationFor(
                 OpenCLDevice.class,

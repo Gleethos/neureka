@@ -93,7 +93,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                                     CPU.class,
                                                     CPUImplementation
                                                         .withArity(3)
-                                                        .andImplementation(
+                                                        .andFunImplementation(
                                                             (call) -> {
                                                                 Tsr drn = call.input(Number.class, 0)
                                                                 Tsr src1 = call.input(Number.class, 1)
@@ -118,6 +118,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                                                 //    )
                                                                 //    clContext.increment()
                                                                 //}
+                                                                return call.input(0)
                                                             }
                                                         )
                                             )

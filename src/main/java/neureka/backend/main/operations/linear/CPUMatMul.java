@@ -1,6 +1,7 @@
 package neureka.backend.main.operations.linear;
 
 import neureka.Tsr;
+import neureka.backend.FunImplementationFor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.operations.linear.internal.M32;
@@ -11,7 +12,7 @@ import neureka.ndim.config.NDConfiguration;
 /**
  *  This is a library internal class, do not depend on this.
  */
-public class CPUMatMul implements ImplementationFor<CPU> {
+public class CPUMatMul implements FunImplementationFor<CPU> {
 
     public static void execute(
             boolean rowMajor, double[] A, double[] B, double[] C, int aRows, int aCols, int bCols
@@ -39,7 +40,7 @@ public class CPUMatMul implements ImplementationFor<CPU> {
     }
 
     @Override
-    public void run( ExecutionCall<CPU> call )
+    public Tsr<?> runAndGetFirstTensor( ExecutionCall<CPU> call )
     {
         if ( !call.validate().all( (t1, t2) -> t1.getNDConf().getLayout().isCompatible(t2.getNDConf().getLayout()) ).isValid() )
             throw new IllegalArgumentException(
@@ -89,5 +90,7 @@ public class CPUMatMul implements ImplementationFor<CPU> {
                         "Data type '"+type.getSimpleName()+"' not yet supported " +
                         "for CPU based matrix multiplication!"
                     );
+
+        return call.input( 0 );
     }
 }

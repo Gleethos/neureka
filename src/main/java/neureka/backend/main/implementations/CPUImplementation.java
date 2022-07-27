@@ -1,5 +1,6 @@
 package neureka.backend.main.implementations;
 
+import neureka.backend.FunImplementationFor;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.template.implementations.AbstractImplementationFor;
 import neureka.devices.host.CPU;
@@ -25,5 +26,8 @@ public class CPUImplementation extends AbstractImplementationFor<CPU>
      */
     public interface AndImplementation {
         CPUImplementation andImplementation( ImplementationFor<CPU> creator );
+        default CPUImplementation andFunImplementation( FunImplementationFor<CPU> creator ) {
+            return andImplementation( creator::runAndGetFirstTensor );
+        }
     }
 }

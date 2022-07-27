@@ -98,9 +98,8 @@ public class AlgoUtil
                 _LOG.error( message );
                 throw new IllegalStateException( message );
             }
-            else implementation.run( (ExecutionCall<Device<?>>) call );
+            else return implementation.runAndGetFirstTensor( (ExecutionCall<Device<?>>) call );
         }
-        return call.input( 0 );
     }
 
     public static <D extends Device<?>> ExecutionCall<D> flatten(

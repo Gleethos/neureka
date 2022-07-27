@@ -152,7 +152,7 @@ public class Addition extends AbstractOperation {
                 CPU.class,
                 CPUImplementation
                     .withArity(3)
-                    .andImplementation(
+                    .andFunImplementation(
                         call -> {
                             assert call.arity() == 3;
                             if ( call.getDerivativeIndex() == 0 )
@@ -179,6 +179,7 @@ public class Addition extends AbstractOperation {
                                    .get()
                                    .run( call );
                                 }
+                                return call.input( 0 );
                             }
                         )
             )
