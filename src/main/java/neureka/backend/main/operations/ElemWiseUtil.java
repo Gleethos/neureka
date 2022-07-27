@@ -25,6 +25,7 @@ public class ElemWiseUtil
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
+        call = call.withInputs(call.inputs()); // Let's make sure we prevent any side effects.
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation type = call.getOperation();
@@ -36,13 +37,13 @@ public class ElemWiseUtil
                 result = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                                 );
-                call.setInput( 0, result );
+                call = call.withInputAt( 0, result );
 
                 reduction = Operation.Utility.offsetted(call.inputs(), 1);
                 result = recursiveExecutor.execute(
                         ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                 );
-                call.setInput( 0, result );
+                call = call.withInputAt( 0, result );
             } else {
                 Tsr<?>[] reduction = Operation.Utility.without(call.inputs(), 1+d);
                 if ( reduction.length > 2 ) {
@@ -53,10 +54,10 @@ public class ElemWiseUtil
                                             .running( Neureka.get().backend().getOperation("*") )
                                             .on( device )
                     );
-                    call.setInput( 0, result );
+                    call = call.withInputAt( 0, result );
                 }
                 else
-                    call.setInput( 0, reduction[ 1 ] );
+                    call = call.withInputAt( 0, reduction[ 1 ] );
             }
             if ( result == null ) return AlgoUtil.executeDeviceAlgorithm( call, null );
             return result;
