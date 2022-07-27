@@ -134,7 +134,7 @@ public class ConvUtil {
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
-        call = call.withInputs(call.inputs()); // Let's make sure we don't have any side effects!
+        call = call.withInputs(call.inputs().clone()); // Let's make sure we don't have any side effects!
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation operation = call.getOperation();
