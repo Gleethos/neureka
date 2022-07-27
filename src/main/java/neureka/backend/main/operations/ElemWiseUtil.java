@@ -159,6 +159,7 @@ public class ElemWiseUtil
             CallExecutor recursiveExecutor,
             boolean thisIsForAddition
     ) {
+        call = call.withInputs(call.inputs().clone()); // Let's make sure there are no side effects!
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation operation = call.getOperation();
@@ -173,7 +174,7 @@ public class ElemWiseUtil
                                                     .running(operation)
                                                     .on(device)
                             );
-                call.setInput( 0, result );
+                call = call.withInputAt(0, result );
 
                 reduction = Operation.Utility.offsetted(call.inputs(), 1);
                 result = recursiveExecutor.execute(
@@ -182,10 +183,10 @@ public class ElemWiseUtil
                                                         .running(operation)
                                                         .on(device)
                                 );
-                call.setInput( 0, result );
+                call = call.withInputAt(0, result );
             }
             else
-                call.setInput( 0,
+                call = call.withInputAt(0,
                         call.input( 1 ).deepCopy()
                            .getUnsafe()
                            .setIsIntermediate( true )

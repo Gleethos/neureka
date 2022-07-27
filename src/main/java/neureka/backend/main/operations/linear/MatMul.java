@@ -5,9 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.fun.ADAgentSupplier;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.Result;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.api.template.algorithms.FunDeviceAlgorithm;
@@ -143,7 +141,7 @@ public class MatMul extends AbstractOperation
     {
         assert call.arity() <= 3;
         Device<Number> device = call.getDeviceFor(Number.class);
-        if ( call.arity() == 2 ) call = call.withInputAt(0, null);
+        if ( call.arity() == 2 ) call = call.withAddedInputAt(0, null);
         if ( call.input( 0 ) == null ) // Creating a new tensor:
         {
             Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getItemTypeClass();

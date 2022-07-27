@@ -194,7 +194,7 @@ public class AlgoUtil
             boolean tooManyArgs = numberOfInputs > operationArity + 1;
 
             if ( !tooManyArgs || anyNumberOfInputs )
-                tensors = flattenedCall.withInputAt(0, null).inputs();
+                tensors = flattenedCall.withAddedInputAt(0, null).inputs();
             else
                 tensors = flattenedCall.inputs();
         }
