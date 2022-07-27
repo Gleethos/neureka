@@ -158,7 +158,7 @@ public class MatMul extends AbstractOperation
             }
             call.setInput( 0, output );
         }
-        _autoClone( call );
+        call = _autoClone( call );
         return (ExecutionCall<Device<Object>>) call;
     }
 
@@ -168,7 +168,7 @@ public class MatMul extends AbstractOperation
      *
      * @param call The execution call whose tensors ought to be cloned based on the complexity of their access patterns.
      */
-    private static void _autoClone( ExecutionCall<?> call ) {
+    private static ExecutionCall<?> _autoClone( ExecutionCall<?> call ) {
         for (int i = 0; i < call.arity(); i++ ) {
             if (
                     !_isSimpleRowMajorMatrix( call.input( i ) )
@@ -176,7 +176,7 @@ public class MatMul extends AbstractOperation
                     !_isSimpleColumnMajorMatrix( call.input( i ) )
             ) {
                 _LOG.debug("Auto cloning a tensor which does not have a simple ND configuration...");
-                call.setInput( i, call.input( i ).deepCopy().getUnsafe().setIsIntermediate( true ) );
+                call = call.withInputAt( i, call.input( i ).deepCopy().getUnsafe().setIsIntermediate( true ) );
                 /*
                     The user should do cloning explicitly because using slices
                     will cause the backend to perform auto cloning every time the
@@ -184,6 +184,7 @@ public class MatMul extends AbstractOperation
                  */
             }
         }
+        return call;
     }
 
     private static boolean _isSimpleColumnMajorMatrix( Tsr<?> t ) {
