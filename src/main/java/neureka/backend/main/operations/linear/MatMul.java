@@ -44,6 +44,8 @@ public class MatMul extends AbstractOperation
                 .setIsInline(         false       )
         );
 
+        //throw new IllegalArgumentException("Matrix multiplication does not support call preparation!");
+        // At least not through this way... this is the deprecated way...
         simpleMatMulAlgorithm =
             DeviceAlgorithm
                 .withName("simple_matmul")
@@ -56,9 +58,9 @@ public class MatMul extends AbstractOperation
                                     .getEstimation()
                 )
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-                .setExecution(
-                    ( caller, call ) -> {
-                        ADAgentSupplier autoDiff = ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+                .setDeviceExecution(
+                        ( context, callback ) -> AlgoUtil.executeDeviceAlgorithm(context.call(), null),
+                        ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                         {
                             if ( adCall.autogradMode().allowsForward() )
                                 throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
@@ -68,24 +70,13 @@ public class MatMul extends AbstractOperation
                             derivative.to(adCall.getDevice());
                             return ADAgent.of( derivative )
                                     .withAD( target ->
-                                                    d == 1
+                                            d == 1
                                                     ? matMul.execute( target.error(), derivative )
                                                     : matMul.execute( derivative, target.error() )
-                                        );
-                        };
-
-                        call = AlgoUtil.flatten(caller, call).withInputAt( 0, null );
-                        for ( Tsr<?> t : call.inputs() ) if ( t != null ) t.setIsVirtual( false );
-                        call = _prepare( call );
-                        return Result.of(MatMul.this.simpleMatMulAlgorithm
-                                            .getImplementationFor(call.getDeviceFor(Object.class))
-                                            .runAndGetFirstTensor((ExecutionCall<Device<Object>>) call)).withAutoDiff(autoDiff);
+                                    );
                     }
                 )
-                .setCallPreparation( call -> {
-                    throw new IllegalArgumentException("Matrix multiplication does not support call preparation!");
-                    // At least not through this way... this is the deprecated way...
-                })
+                .setCallPreparation(MatMul::_prepare)
                 .buildFunAlgorithm();
 
         setAlgorithm(
@@ -152,6 +143,7 @@ public class MatMul extends AbstractOperation
     {
         assert call.arity() <= 3;
         Device<Number> device = call.getDeviceFor(Number.class);
+        if ( call.arity() == 2 ) call = call.withInputAt(0, null);
         if ( call.input( 0 ) == null ) // Creating a new tensor:
         {
             Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getItemTypeClass();
