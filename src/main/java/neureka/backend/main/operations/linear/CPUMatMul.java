@@ -3,7 +3,6 @@ package neureka.backend.main.operations.linear;
 import neureka.Tsr;
 import neureka.backend.FunImplementationFor;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.operations.linear.internal.M32;
 import neureka.backend.main.operations.linear.internal.M64;
 import neureka.devices.host.CPU;

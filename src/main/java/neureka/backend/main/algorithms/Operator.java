@@ -77,6 +77,8 @@ public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
                                     .pass( call.input( Number.class, 0 ).rank() )
                                     .pass( call.getDerivativeIndex() )
                                     .call( gwz );
+
+                                return call.input( 0 );
                             }
                         )
                         .build();

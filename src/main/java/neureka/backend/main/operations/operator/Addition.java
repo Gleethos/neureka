@@ -177,7 +177,7 @@ public class Addition extends AbstractOperation {
                                         ( a, b ) ->  1 // deriving input 1
                                    ))
                                    .get()
-                                   .run( call );
+                                   .runAndGetFirstTensor( call );
                                 }
                                 return call.input( 0 );
                             }
@@ -211,6 +211,7 @@ public class Addition extends AbstractOperation {
                                     .pass(call.getValOf(Arg.DerivIdx.class))
                                     .call(gwz);
                             }
+                            return call.input( 0 );
                         }
                     )
                     .build()

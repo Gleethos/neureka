@@ -3,6 +3,7 @@ package ut.device.internal
 import neureka.Neureka
 import neureka.Tsr
 import neureka.backend.api.Algorithm
+import neureka.backend.api.DeviceAlgorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.calculus.Function
@@ -67,12 +68,12 @@ class CLFunctionCompiler_Spec extends Specification
         and : 'The context now stores the newly created operation.'
             context.getOperation("test_fun") == resultOperation
         when : 'Querying the new operation for an algorithm...'
-            var foundAlgorithm = resultOperation
-                                    .getAlgorithmFor(
-                                            ExecutionCall.of(t1, t2, t3)
-                                                            .running(resultOperation)
-                                                            .on(mockDevice)
-                                    )
+            var foundAlgorithm = ( DeviceAlgorithm ) resultOperation
+                                                        .getAlgorithmFor(
+                                                            ExecutionCall.of(t1, t2, t3)
+                                                                            .running(resultOperation)
+                                                                            .on(mockDevice)
+                                                        )
         then : 'We expect this algorithm to exist!'
             foundAlgorithm != null
         and : 'This algorithm is expected to host an implementation for our mocked device.'
@@ -114,7 +115,7 @@ class CLFunctionCompiler_Spec extends Specification
             t3.isOutsourced()
 
         when : 'We set a dummy implementation so that the real implementation does not get called'
-            foundAlgorithm.setImplementationFor(mockDevice.getClass(), (call)->{})
+            foundAlgorithm.setImplementationFor(mockDevice.getClass(), (call)->call.input(0))
         and : 'We call the function again...'
             fun( t1, t2, t3 )
 
@@ -159,7 +160,7 @@ class CLFunctionCompiler_Spec extends Specification
         when : 'We call the OpenCLDevice specific implementation by passing a well populated ExecutionCall.'
             algorithm
                 .getImplementationFor(OpenCLDevice.class)
-                .run(
+                .runAndGetFirstTensor(
                         ExecutionCall.of(Tsr.of(0), Tsr.of(1), Tsr.of(2), Tsr.of(3))
                                         .running(resultOperation)
                                         .algorithm(algorithm)

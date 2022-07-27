@@ -2,6 +2,7 @@ package ut.backend.core
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.backend.api.DeviceAlgorithm
 import neureka.devices.host.CPU
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
@@ -77,7 +78,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
 
 
     def 'HostExecutors of Operator implementations behave as expected.'(
-            Algorithm imp
+            DeviceAlgorithm imp
     ){
         given : 'Mock instances to simulate an ExecutionCall instance.'
             var call = Mock( ExecutionCall )
@@ -89,7 +90,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             var nativeExecutor = Mock( CPU.JVMExecutor )
 
         when : 'Host-executor instance is being called...'
-            hostExecutor.run( call )
+            hostExecutor.runAndGetFirstTensor( call )
 
         then : 'The mock objects are being called as expected.'
             (0.._) * tensor.getUnsafe() >> unsafe
@@ -127,7 +128,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
 
 
     def 'CLExecutors of Operator implementations behave as expected.'(
-            Algorithm imp
+            DeviceAlgorithm imp
     ){
 
         given : 'Mock instances to simulate an ExecutionCall instance.'
@@ -138,7 +139,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             var kernel = Mock( KernelCaller )
 
         when : 'CL-executor instance is being called...'
-            clExecutor.run( call )
+            clExecutor.runAndGetFirstTensor( call )
 
         then : 'The mock objects are being called as expected.'
             (0.._) * call.arity() >> 3

@@ -51,6 +51,7 @@ public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivatio
                 Number value =  funs.getFor( call ).invoke(call.input( Number.class, 1 ).getItemAt(0).doubleValue());
                 Tsr<Number> out = call.input( Number.class, 0 );
                 out.getUnsafe().setDataAt(0, value);
+                return call.input(0);
             }
         );
     }

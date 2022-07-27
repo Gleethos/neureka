@@ -1,17 +1,17 @@
 package neureka.backend.main.operations.linear.internal.opencl;
 
 import neureka.Tsr;
+import neureka.backend.FunImplementationFor;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.ImplementationFor;
 import neureka.devices.opencl.KernelCaller;
 import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.function.Supplier;
 
-public class GEMM implements ImplementationFor<OpenCLDevice> {
+public class GEMM implements FunImplementationFor<OpenCLDevice> {
 
     @Override
-    public void run( ExecutionCall<OpenCLDevice> call) {
+    public Tsr<?> runAndGetFirstTensor( ExecutionCall<OpenCLDevice> call) {
 
             Tsr<Float> c = call.input(Float.class, 0);
             Tsr<Float> a = call.input(Float.class, 1);
@@ -98,6 +98,7 @@ public class GEMM implements ImplementationFor<OpenCLDevice> {
         long[] global = new long[]{(long) Math.floor(M/MW), (long) Math.floor(N/NW), 1 };
 
         caller.pass( a ).pass( b ).pass( c ).call( global, local );
+        return call.input(0);
     }
 
 }

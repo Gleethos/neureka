@@ -90,6 +90,8 @@ public class AssignLeft extends AbstractOperation
                                 .pass( t.rank() )
                                 .pass( call.getValOf( Arg.DerivIdx.class ) )
                                 .call( gwz );
+
+                            return call.input(0);
                         }
                     )
                     .build()
@@ -124,11 +126,10 @@ public class AssignLeft extends AbstractOperation
                     .andFunImplementation(
                         call -> {
                             call.input( 0 ).setIsVirtual( false );
-                            Neureka.get().backend().getOperation("idy")
+                            return Neureka.get().backend().getOperation("idy")
                                     .getAlgorithm( Activation.class )
                                     .getImplementationFor( CPU.class )
-                                    .run(call);
-                            return call.input( 0 );
+                                    .runAndGetFirstTensor(call);
                         }
                     )
             )

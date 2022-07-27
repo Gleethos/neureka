@@ -97,7 +97,7 @@ public final class CLFunctionCompiler {
     }
 
 
-    private void _adHocKernelFor( ExecutionCall<?> call ) {
+    private Tsr<?> _adHocKernelFor( ExecutionCall<?> call ) {
 
         List<Tsr<Number>> args = Arrays.stream( _argPointer )
                                     .mapToObj( p -> call.input( p + 1 ).getUnsafe().upcast(Number.class) )
@@ -130,7 +130,7 @@ public final class CLFunctionCompiler {
             KernelCaller caller = _device.getAdHocKernel( kernelSignature );
             args.forEach( caller::passAllOf);
             caller.call( args.get(0).size() );
-            return;
+            return call.input(0);
         }
         // So no kernel with this signature was found...
         // Therefore we compile a new kernel specific to the provided call contents (shapes and types)!
@@ -195,6 +195,7 @@ public final class CLFunctionCompiler {
         KernelCaller caller = _device.getAdHocKernel( kernelSignature );
         args.forEach( caller::pass );
         caller.call( args.get(0).size() );
+        return call.input(0);
     }
 
     private static String _clTypeOf( Tsr<?> tensor ) {

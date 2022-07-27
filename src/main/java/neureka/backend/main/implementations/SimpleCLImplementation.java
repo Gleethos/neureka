@@ -2,7 +2,6 @@ package neureka.backend.main.implementations;
 
 import neureka.backend.FunImplementationFor;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.ImplementationFor;
 import neureka.devices.opencl.KernelCode;
 import neureka.devices.opencl.OpenCLDevice;
 

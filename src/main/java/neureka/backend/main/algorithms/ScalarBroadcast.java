@@ -60,6 +60,8 @@ public class ScalarBroadcast extends AbstractFunDeviceAlgorithm<ScalarBroadcast>
                         .pass((float) value)
                         .pass(t.rank())
                         .call( gwz );
+
+                return call.input(0);
             }
         );
     }

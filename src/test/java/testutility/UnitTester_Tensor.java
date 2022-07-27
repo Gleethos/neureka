@@ -6,20 +6,19 @@ import neureka.autograd.ADAgent;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Result;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Convolution;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CPUImplementation;
+import neureka.backend.main.internal.AlgoUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.backend.main.internal.AlgoUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
-import neureka.ndim.NDimensional;
 import neureka.ndim.NDUtil;
+import neureka.ndim.NDimensional;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
@@ -156,7 +155,7 @@ public class UnitTester_Tensor extends UnitTester
         Neureka.get().backend().getOperation("x")
                 .getAlgorithm(Convolution.class)
                 .getImplementationFor( CPU.class )
-                .run(
+                .runAndGetFirstTensor(
                         ExecutionCall.of(
                                     Tsr.of(drnMxd, rsltData),
                                     Tsr.of(frstShp, frstData),
@@ -180,7 +179,7 @@ public class UnitTester_Tensor extends UnitTester
         Neureka.get().backend().getOperation(((char) 171)+"x")
                 .getAlgorithm(Convolution.class)
                 .getImplementationFor( CPU.class )
-                .run(
+                .runAndGetFirstTensor(
                         ExecutionCall.of(
                                 Tsr.of(frstShp, frstData),
                                 (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
@@ -202,7 +201,7 @@ public class UnitTester_Tensor extends UnitTester
         Neureka.get().backend().getOperation("*")
                 .getAlgorithm(Broadcast.class)
                 .getImplementationFor( CPU.class )
-                .run(
+                .runAndGetFirstTensor(
                         ExecutionCall.of(
                                 Tsr.of(drnMxd, rsltData),
                                 Tsr.of(frstShp, frstData),
@@ -328,7 +327,7 @@ public class UnitTester_Tensor extends UnitTester
                                     );
 
         left.getImplementationFor( CPU.class )
-                .run(
+                .runAndGetFirstTensor(
                         ExecutionCall.of(
                                     Tsr.of(frstShp, frstData),
                                     (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
@@ -341,7 +340,7 @@ public class UnitTester_Tensor extends UnitTester
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
 
         right.getImplementationFor( CPU.class )
-                .run(
+                .runAndGetFirstTensor(
                         ExecutionCall.of(
                                     Tsr.of(frstShp, frstData),
                                     (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),

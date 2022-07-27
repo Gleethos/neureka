@@ -136,6 +136,8 @@ public class Subtraction extends AbstractOperation
                                     .pass( call.input( Number.class, 0 ).rank() )
                                     .pass( call.getValOf( Arg.DerivIdx.class ) )
                                     .call( gwz );
+
+                                return call.input(0);
                             }
                         )
                         .build()

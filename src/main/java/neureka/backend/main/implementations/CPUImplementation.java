@@ -18,7 +18,7 @@ public class CPUImplementation extends AbstractImplementationFor<CPU>
 {
     public static AndImplementation withArity( int arity ) { return lambda -> new CPUImplementation( lambda, arity ); }
 
-    private CPUImplementation( ImplementationFor<CPU> creator, int arity ) { super( creator, arity ); }
+    private CPUImplementation( FunImplementationFor<CPU> creator, int arity ) { super( creator, arity ); }
 
     /**
      *  This is represents the second step in the simple builder API for {@link CPUImplementation} instances.

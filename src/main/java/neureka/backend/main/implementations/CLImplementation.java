@@ -61,7 +61,7 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
     }
 
     public static class Compiler {
-        private ImplementationFor<OpenCLDevice> lambda;
+        private FunImplementationFor<OpenCLDevice> lambda;
         private int arity;
         private String kernelSource;
         private String activationSource;
@@ -70,7 +70,7 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
 
         private Compiler() { }
 
-        public Compiler execution(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
+        public Compiler execution(FunImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
         public Compiler arity(int arity) { this.arity = arity; return this; }
         public Compiler kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }
         public Compiler activationSource(String activationSource) { this.activationSource = activationSource;return this; }
@@ -93,7 +93,7 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
 
         public AdHocCompiler arity( int arity ) { _arity = arity; return this; }
 
-        public CLImplementation caller( ImplementationFor<OpenCLDevice> lambda) {
+        public CLImplementation caller( FunImplementationFor<OpenCLDevice> lambda) {
             return new AdHocClImplementation( lambda, _arity, _source );
         }
 
