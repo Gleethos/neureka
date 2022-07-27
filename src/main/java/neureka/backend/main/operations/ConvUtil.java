@@ -134,6 +134,7 @@ public class ConvUtil {
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
+        call = call.withInputs(call.inputs()); // Let's make sure we don't have any side effects!
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation operation = call.getOperation();
@@ -148,7 +149,7 @@ public class ConvUtil {
                                 .running( operation )
                                 .on(device)
                 );
-                call.setInput( 0, result );
+                call = call.withInputAt( 0, result );
 
                 reduction = Operation.Utility.offsetted(call.inputs(), 1);
                 result = recursiveExecutor.execute(
@@ -157,16 +158,19 @@ public class ConvUtil {
                                 .running(operation)
                                 .on(device)
                 );
-                call.setInput( 0, result );
+                call = call.withInputAt( 0, result );
             }
             if ( result == null ) return AlgoUtil.executeDeviceAlgorithm( call, null );
             return result;
         } else {
             if ( call.getOperation().getOperator().equals("x") ) {
                 if ( d >= 0 ) {
-                    if ( d == 0 ) call.setInput( 0, call.input( 2 ) );
-                    else call.setInput( 0, call.input( 1 ) );
-                    return call.input( 0 );
+                    if ( d == 0 )
+                        call = call.withInputAt( 0, call.input( 2 ) );
+                    else
+                        call = call.withInputAt( 0, call.input( 1 ) );
+                    return
+                        call.input( 0 );
                 } else {
                     call.rearrangeInputs( 0, 1, 2 );
                 }
