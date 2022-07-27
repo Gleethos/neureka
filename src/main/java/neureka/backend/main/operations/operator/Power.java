@@ -46,7 +46,7 @@ public class Power extends AbstractOperation
 
         RecursiveExecutor rja = (call, traverse)->
         {
-            call = call.withInputs(call.inputs());
+            call = call.withInputs(call.inputs().clone()); // Let's make a copy of the inputs to avoid side effects.
             Device<Number> device = call.getDeviceFor(Number.class);
             int d = call.getValOf( Arg.DerivIdx.class );
             Operation type = call.getOperation();

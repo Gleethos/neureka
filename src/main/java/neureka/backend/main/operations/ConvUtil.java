@@ -106,7 +106,7 @@ public class ConvUtil {
                              Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                              output.setIsVirtual( false );
                              device.store( output );
-                             call.setInput( 0, output );
+                             return call.withInputAt( 0, output );
                          }
                          return call;
                      }
