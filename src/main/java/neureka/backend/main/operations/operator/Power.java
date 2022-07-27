@@ -46,6 +46,7 @@ public class Power extends AbstractOperation
 
         RecursiveExecutor rja = (call, traverse)->
         {
+            call = call.withInputs(call.inputs());
             Device<Number> device = call.getDeviceFor(Number.class);
             int d = call.getValOf( Arg.DerivIdx.class );
             Operation type = call.getOperation();
@@ -58,7 +59,7 @@ public class Power extends AbstractOperation
                     call.setInput( 0, traverse.execute( call.withInputs( reduction ) ) );
                     reduction = Utility.offsetted( call.inputs(), 1 );
                     result = traverse.execute( call.withInputs( reduction ) );
-                    call.setInput( 0, result );
+                    call = call.withInputAt( 0, result );
                 } else {
 
                     Tsr<?>[] reduction = Utility.subset(call.inputs(), 1,  2, call.arity()-2);
@@ -73,7 +74,7 @@ public class Power extends AbstractOperation
                                             );
 
                         reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), exp};
-                        call.setInput( 0, traverse.execute(
+                        call = call.withInputAt( 0, traverse.execute(
                                                     ExecutionCall.of( reduction )
                                                                     .andArgs( Arg.DerivIdx.of(0) )
                                                                     .running(type)
@@ -104,7 +105,7 @@ public class Power extends AbstractOperation
                                                             .on(device)
                                             );
 
-                        call.setInput( 0, result );
+                        call = call.withInputAt( 0, result );
 
                         inner.getUnsafe().delete();
                         exp.getUnsafe().delete();
