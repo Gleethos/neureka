@@ -52,7 +52,7 @@ public class Randomization extends AbstractOperation
                 .setCallPreparation( call ->
                 {
                     if ( call.input( 0 ) == null )
-                        call.setInput( 0, call.input( 1 ) );
+                        call = call.withInputAt( 0, call.input( 1 ) );
 
                     call.input( 0 ).getUnsafe().incrementVersion(call);
 

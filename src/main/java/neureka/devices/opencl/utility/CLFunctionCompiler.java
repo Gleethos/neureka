@@ -86,7 +86,7 @@ public final class CLFunctionCompiler {
                                     Tsr<Double> output = Tsr.of(call.input(1).getNDConf().shape(), 0.0);
                                     output.setIsVirtual( false );
                                     call.getDeviceFor(Double.class).store(output);
-                                    call.setInput( 0, output );
+                                    call = call.withInputAt( 0, output );
                                 }
                                 return call;
                             }
