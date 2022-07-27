@@ -49,7 +49,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                     Tsr<Object> output = Tsr.of(type).withShape(shape).all( 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
                     device.store( output );
-                    call.setInput(  0, output );
+                    call = call.withInputAt( 0, output );
                 }
                 return call;
             }
