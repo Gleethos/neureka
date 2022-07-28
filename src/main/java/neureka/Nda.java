@@ -471,6 +471,24 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     Nda<V> map( java.util.function.Function<V,V> mapper );
 
     /**
+     *  This method creates and returns a new tensor instance
+     *  which is not only a copy of the configuration of this tensor but also a copy of
+     *  the underlying data array. <br>
+     *  (Note: the underlying nd-array will not be attached to any kind of computation graph)
+     *
+     * @return A new tensor instance which is a deep copy of this tensor.
+     */
+    Nda<V> deepCopy();
+
+    /**
+     *  This creates a copy where the underlying data is still the same. <br>
+     *  (Note: the underlying nd-array will not be attached to any kind of computation graph)
+     *
+     * @return A shallow copy where the underlying data is shared with this nd-array.
+     */
+    Nda<V> shallowCopy();
+
+    /**
      *  This method exposes the {@link Access} API which allows you to get or set
      *  individual items within this nd-array targeted by an array of provided indices.
      * @param indices An array of indices targeting a particular position in this nd-array...

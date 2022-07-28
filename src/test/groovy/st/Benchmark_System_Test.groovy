@@ -12,7 +12,6 @@ import testutility.Load
 
 class Benchmark_System_Test extends Specification
 {
-
     @Shared def oldStream
 
     def setup() {
@@ -44,7 +43,7 @@ class Benchmark_System_Test extends Specification
 
     def 'Tensor can be constructed by passing List instances.'()
     {
-        when : Tsr t = Tsr.ofDoubles().withShape(1, 3, 6 ).all(0)
+        when : var t = Tsr.ofDoubles().withShape(1, 3, 6 ).all(0)
         then :
             assert !t.toString().contains("empty")
             assert t.toString().contains("(1x3x6)")

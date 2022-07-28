@@ -1558,16 +1558,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     *  This is technically the equivalent to a full slice.
-     *
-     * @return A shallow copy where the underlying data is shared with this tensor.
-     */
-    default Tsr<V> shallowCopy() {
-        if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an exception here...
-        return slice().detached();
-    }
-
-    /**
      *  This method is synonymous to the {@link #times(Tsr)} method.
      *  Both of which will produce the product of
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
@@ -1980,14 +1970,22 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return Nda.super.toString( configurator );
     }
 
+    /** {@inheritDoc} */
+    @Override Tsr<V> deepCopy();
+
+    /** {@inheritDoc} */
+    @Override default Tsr<V> shallowCopy() {
+        if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an exception here...
+        return slice().detached();
+    }
+
     /**
-     *  This method creates and returns a new tensor instance
-     *  which is not only a copy of the configuration of this tensor but also a copy of
-     *  the underlying data array.
-     *
-     * @return A new tensor instance which is a deep copy of this tensor.
+     * @return A shallow copy of this tensor with autograd support.
      */
-    Tsr<V> deepCopy();
+    default Tsr<V> shallowClone() {
+        if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an exception here...
+        return slice().get();
+    }
 
     enum ImageType
     {

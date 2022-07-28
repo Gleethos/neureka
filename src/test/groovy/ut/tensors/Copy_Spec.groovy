@@ -74,7 +74,7 @@ class Copy_Spec extends Specification
             (0..<s.size).every({ int i -> deep.at(i) == s.at(i) }) // The values are the same!
     }
 
-    def 'A shallow copy will share the same underlying data as its original tensor.'()
+    def 'A shallow copy will share the same underlying data as its original tensor.'(Closure<Tsr> cloner)
     {
         given : 'A tensor of ints with shape (2, 3).'
             var t = Tsr.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)
@@ -82,7 +82,7 @@ class Copy_Spec extends Specification
             t.unsafe.data == [1, 2 ,-9, 8, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
 
         when : 'We create a shallow copy of the tensor.'
-            var shallow = t.shallowCopy()
+            var shallow = cloner(t)
         then : 'The copy is not the same instance as the original tensor.'
             shallow !== t // It's not the same instance!
             shallow.shape == t.shape
@@ -90,6 +90,9 @@ class Copy_Spec extends Specification
             shallow.unsafe.data === t.unsafe.data // The tensors share the exact same data array!
         and : 'We verify that they share the same ints through the "every" method.'
             (0..<t.size).every({ int i -> shallow.at(i) == t.at(i) }) // The values are the same!
+
+        where :
+            cloner << [{Tsr x -> x.shallowCopy()},{Tsr x -> x.shallowClone()}]
     }
 
 }

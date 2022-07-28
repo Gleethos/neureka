@@ -942,15 +942,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             );
     }
 
-    /**
-     *  If this tensor stores value types then this method will
-     *  essentially produce a deep copy of this tensor.
-     *  If the stored elements are reference types on the other hand,
-     *  then the resulting clone may not be treated as a deep copy,
-     *  especially if elements are mutable objects.
-     *
-     * @return A deep copy of this tensor.
-     */
+    /** {@inheritDoc} */
      @Override
     public TsrImpl<V> deepCopy() {
         Function cloner = Neureka.get().backend().getFunction().idy();
