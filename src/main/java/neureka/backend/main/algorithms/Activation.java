@@ -10,7 +10,7 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.algorithms.internal.WithForward;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.calculus.args.Arg;
-import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
@@ -38,7 +38,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                     .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                     .orElse(AutoDiffMode.BACKWARD_ONLY)
         );
-        setDeviceExecution( (context, callback) -> AlgoUtil.executeDeviceAlgorithm(context.call(), callback), (ADAgentSupplier) null );
+        setDeviceExecution( (context, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(context.call(), callback), (ADAgentSupplier) null );
         setCallPreparation(
             call -> {
                 Device device = call.getDeviceFor(Number.class);

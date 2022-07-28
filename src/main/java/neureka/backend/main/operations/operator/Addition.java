@@ -15,7 +15,7 @@ import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -28,7 +28,7 @@ public class Addition extends AbstractOperation {
 
     private final Broadcast _broadcast =
             (Broadcast)
-                new Broadcast( AlgoUtil::executeDeviceAlgorithm )
+                new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call ) ->

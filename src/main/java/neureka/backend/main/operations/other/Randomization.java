@@ -9,7 +9,7 @@ import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.iterator.NDIterator;
@@ -48,7 +48,7 @@ public class Randomization extends AbstractOperation
         setAlgorithm(
             new Activation()
                 .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
-                .setDeviceExecution( (context, callback) -> AlgoUtil.executeDeviceAlgorithm( context.call(), callback ) )
+                .setDeviceExecution( (context, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )
                 .setCallPreparation( call ->
                 {
                     if ( call.input( 0 ) == null )

@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.internal.CallExecutor;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -59,11 +59,11 @@ public class ElemWiseUtil
                 else
                     call = call.withInputAt( 0, reduction[ 1 ] );
             }
-            if ( result == null ) return AlgoUtil.executeDeviceAlgorithm( call, null );
+            if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
             return result;
         } 
         else
-            return AlgoUtil.executeDeviceAlgorithm( call, null );
+            return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
 
     }
 
@@ -135,7 +135,7 @@ public class ElemWiseUtil
                 b.getUnsafe().delete();
             }
         }
-        if ( result == null ) return AlgoUtil.executeDeviceAlgorithm( call, null );
+        if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
         return result;
     }
 
@@ -195,7 +195,7 @@ public class ElemWiseUtil
                            .setItems( d == 0 || thisIsForAddition ? 1f : -1f )
                     );
         }
-        if ( result == null ) return AlgoUtil.executeDeviceAlgorithm( call, null );
+        if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
         return result;
     }
 

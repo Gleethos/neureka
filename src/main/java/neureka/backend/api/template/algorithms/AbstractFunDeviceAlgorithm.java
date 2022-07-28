@@ -8,7 +8,6 @@ import neureka.backend.api.fun.*;
 import neureka.backend.main.internal.CallExecutor;
 import neureka.backend.main.memory.MemValidator;
 import neureka.calculus.Function;
-import neureka.backend.main.internal.AlgoUtil;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -244,9 +243,9 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(Execute executor, ADAgentSupplier adAgentSupplier ) {
         return
                 adAgentSupplier == null
-                        ? _setExecution( (caller, call) -> Result.of(AlgoUtil.executeFor( caller, call, (innerCall, callback) -> executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)  )) )
+                        ? _setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor( caller, call, (innerCall, callback) -> executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)  )) )
                         : _setExecution( (caller, call) ->
-                        Result.of(AlgoUtil.executeFor(
+                        Result.of(AbstractDeviceAlgorithm.executeFor(
                                     caller, call, (innerCall, callback) -> executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)
                                 ))
                                 .withAutoDiff( adAgentSupplier )

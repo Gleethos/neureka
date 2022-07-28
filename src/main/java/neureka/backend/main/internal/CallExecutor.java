@@ -2,6 +2,7 @@ package neureka.backend.main.internal;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.Device;
 
 /**

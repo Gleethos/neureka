@@ -16,7 +16,7 @@ import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -87,7 +87,7 @@ public class Modulo extends AbstractOperation {
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast( AlgoUtil::executeDeviceAlgorithm )
+        Broadcast broadcast = new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
             .setAutogradModeFor(
                     call -> call
                                 .validate().allNotNullHaveSame(NDimensional::shape)
@@ -155,7 +155,7 @@ public class Modulo extends AbstractOperation {
                                 .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                                 .orElse(AutoDiffMode.BACKWARD_ONLY)
                 )
-                .setDeviceExecution( (context, callback) -> AlgoUtil.executeDeviceAlgorithm( context.call(), callback ) )
+                .setDeviceExecution( (context, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )
                 .buildFunAlgorithm();
 
         setAlgorithm(

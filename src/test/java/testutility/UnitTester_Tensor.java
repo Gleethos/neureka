@@ -6,11 +6,11 @@ import neureka.autograd.ADAgent;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Convolution;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CPUImplementation;
-import neureka.backend.main.internal.AlgoUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -223,7 +223,7 @@ public class UnitTester_Tensor extends UnitTester
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = _shpOfBrc(frstShp, scndShp);
 
-        Broadcast right = new Broadcast( AlgoUtil::executeDeviceAlgorithm )
+        Broadcast right = new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
                                 .setAutogradModeFor(
                                         call -> call
                                                 .validate().allNotNullHaveSame(NDimensional::shape)
@@ -231,7 +231,7 @@ public class UnitTester_Tensor extends UnitTester
                                                 .orElse(AutoDiffMode.BACKWARD_ONLY)
                                 )
                                 .setDeviceExecution(
-                                    (context, callback) -> AlgoUtil.executeDeviceAlgorithm(context.call(), callback),
+                                    (context, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(context.call(), callback),
                                     ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                                     {
                                         Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
@@ -274,7 +274,7 @@ public class UnitTester_Tensor extends UnitTester
                                                 )
                                 );
 
-        Broadcast left = new Broadcast( AlgoUtil::executeDeviceAlgorithm )
+        Broadcast left = new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
                                     .setAutogradModeFor(
                                         call -> call
                                                 .validate().allNotNullHaveSame(NDimensional::shape)
@@ -282,7 +282,7 @@ public class UnitTester_Tensor extends UnitTester
                                                 .orElse(AutoDiffMode.BACKWARD_ONLY)
                                     )
                                     .setDeviceExecution(
-                                        (context, callback) -> AlgoUtil.executeDeviceAlgorithm(context.call(), callback),
+                                        (context, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(context.call(), callback),
                                         ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                                         {
                                             Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);

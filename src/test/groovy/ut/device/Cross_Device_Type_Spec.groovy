@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
-import neureka.backend.main.internal.AlgoUtil
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm
 import neureka.common.utility.DataConverter
 import neureka.devices.Device
 import neureka.devices.file.FileDevice
@@ -197,7 +197,7 @@ class Cross_Device_Type_Spec extends Specification
             call.getDevice() >> device
 
         when : 'The call is being passed to the execution utility method ..'
-            AlgoUtil.prepareAndExecuteRecursively( call, AlgoUtil::executeDeviceAlgorithm )
+            AbstractDeviceAlgorithm.prepareAndExecuteRecursively( call, AbstractDeviceAlgorithm::executeDeviceAlgorithm )
 
         then : '...the implementation is being accessed in order to access the mocked lambda...'
             (1.._) * call.getAlgorithm() >> implementation

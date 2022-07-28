@@ -14,7 +14,7 @@ import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.operations.linear.internal.opencl.GEMM;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -57,7 +57,7 @@ public class MatMul extends AbstractOperation
                 )
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setDeviceExecution(
-                        ( context, callback ) -> AlgoUtil.executeDeviceAlgorithm(context.call(), null),
+                        ( context, callback ) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(context.call(), null),
                         ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                         {
                             if ( adCall.autogradMode().allowsForward() )

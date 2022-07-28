@@ -16,7 +16,7 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
@@ -112,7 +112,7 @@ public class Power extends AbstractOperation
                     }
                 }
             }
-            if ( result == null ) return AlgoUtil.executeDeviceAlgorithm( call, null );
+            if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
             return result;
         };
 

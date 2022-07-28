@@ -6,8 +6,8 @@ import neureka.autograd.ADAgent
 import neureka.backend.api.*
 import neureka.backend.api.fun.ADAgentSupplier
 import neureka.backend.api.fun.SuitabilityPredicate
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm
 import neureka.backend.main.implementations.CPUImplementation
-import neureka.backend.main.internal.AlgoUtil
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionParser
 import neureka.devices.Device
@@ -69,7 +69,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                             .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )
                                             .setAutogradModeFor(call -> AutoDiffMode.BACKWARD_ONLY )
                                             .setDeviceExecution(
-                                                (context, callback) -> AlgoUtil.executeDeviceAlgorithm(context.call(), callback),
+                                                (context, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(context.call(), callback),
                                                 (ADAgentSupplier){ Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ->
                                                     if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                                                     return ADAgent.withAD((t, error) -> new FunctionParser( Neureka.get().backend() ).parse(f.toString(), false).derive(new Tsr[]{error}, 0));

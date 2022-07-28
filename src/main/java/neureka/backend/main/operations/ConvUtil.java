@@ -6,13 +6,14 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Operation;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.algorithms.Convolution;
 import neureka.backend.main.internal.CallExecutor;
 import neureka.backend.main.operations.other.Reshape;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
-import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.Device;
 import org.jetbrains.annotations.Contract;
 
@@ -55,19 +56,19 @@ public class ConvUtil {
 
                             for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
 
-                            ExecutionCall<?> prepared = AlgoUtil._prepareForExecution( call.withInputs(tensors) );
-                            return AlgoUtil.executeOnCommonDevice(prepared,()->ConvUtil._executeRecursively( prepared, null/*recursion is not expected to happen here*/ ));
+                            ExecutionCall<?> prepared = AbstractDeviceAlgorithm._prepareForExecution( call.withInputs(tensors) );
+                            return AbstractDeviceAlgorithm.executeOnCommonDevice(prepared,()->ConvUtil._executeRecursively( prepared, null/*recursion is not expected to happen here*/ ));
                         } else {
-                            Tsr<?>[] tensors = AlgoUtil.flatten( caller, call ).inputs();
+                            Tsr<?>[] tensors = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();
                             Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                             for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
-                            tensors[ 0 ] = AlgoUtil.prepareAndExecuteRecursively(
-                                    ExecutionCall.of( tensors )
-                                            .andArgs( Arg.DerivIdx.of(0) )
-                                            .running( call.getOperation() )
-                                            .on( call.getDevice() ),
-                                    ConvUtil::_executeRecursively
-                            );
+                            tensors[ 0 ] = AbstractDeviceAlgorithm.prepareAndExecuteRecursively(
+                                                    ExecutionCall.of( tensors )
+                                                            .andArgs( Arg.DerivIdx.of(0) )
+                                                            .running( call.getOperation() )
+                                                            .on( call.getDevice() ),
+                                                    ConvUtil::_executeRecursively
+                                            );
 
                             return tensors[ 0 ];
                         }
@@ -160,7 +161,7 @@ public class ConvUtil {
                 );
                 call = call.withInputAt( 0, result );
             }
-            if ( result == null ) return AlgoUtil.executeDeviceAlgorithm( call, null );
+            if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
             return result;
         } else {
             if ( call.getOperation().getOperator().equals("x") ) {
@@ -177,7 +178,7 @@ public class ConvUtil {
             } else if ( call.getOperation().getOperator().equals("x"+ ((char) 187)) ) {
                 call.rearrangeInputs( 2, 1, 0 );
             }
-            return AlgoUtil.executeDeviceAlgorithm( call, null );
+            return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
         }
     }
 

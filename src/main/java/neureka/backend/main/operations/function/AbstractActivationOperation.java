@@ -8,7 +8,7 @@ import neureka.backend.main.algorithms.ScalarActivation;
 import neureka.backend.main.algorithms.ScalarBroadcast;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.calculus.Function;
-import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.NDimensional;
@@ -56,7 +56,7 @@ abstract class AbstractActivationOperation extends AbstractOperation {
                             .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                             .orElse(AutoDiffMode.BACKWARD_ONLY)
             )
-            .setDeviceExecution( (context, callback) -> AlgoUtil.executeDeviceAlgorithm( context.call(), callback ) )
+            .setDeviceExecution( (context, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
@@ -78,7 +78,7 @@ abstract class AbstractActivationOperation extends AbstractOperation {
                         .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                         .orElse(AutoDiffMode.BACKWARD_ONLY)
             )
-            .setDeviceExecution( (context, callback) -> AlgoUtil.executeDeviceAlgorithm( context.call(), callback ) )
+            .setDeviceExecution( (context, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,

@@ -12,7 +12,7 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
-import neureka.backend.main.internal.AlgoUtil;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class DimTrim extends AbstractOperation
                                     : _pad(target.error(), new int[]{prefix, postfix}, true);
                     };
 
-                    Tsr<?>[] inputs = AlgoUtil.flatten( caller, call ).inputs();
+                    Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();
                     assert inputs.length == 1;
                     Tsr<?> t = inputs[ 0 ];
                     if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {
