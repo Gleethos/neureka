@@ -196,9 +196,9 @@ public class Addition extends AbstractOperation {
                         call -> {
                             assert call.arity() == 3;
                             if ( call.getDerivativeIndex() == 0 )
-                                call.setInput( 0, Tsr.of( call.input(1).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
+                                 return Tsr.of( call.input(1).shape(), 1d ).getUnsafe().setIsIntermediate( true );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.setInput( 0, Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
+                                return Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
                             else {
                                 int gwz = call.input(Number.class, 0).size();
                                 float value = call.input(Number.class, 2).getItemAt(0).floatValue();
