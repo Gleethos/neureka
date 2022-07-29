@@ -207,54 +207,48 @@ implements DeviceAlgorithm<C>
             for ( int i = 1; i < tensors.length; i++ )
                 tensors[ i ] = nodes[ 0 ].execute( call.inputs(), i - 1 );
         else
-        if (
-                !isFlat && j < 0 && (
-                        call.getOperation().isOperator()
-                                ||
-                                call.getOperation().supportsAlgorithm(Activation.class)
-                )
-        ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-            tensors = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes ).inputs();
-            String asStr = call.getOperation().stringify(
-                    IntStream.range( 0, nodes.length )
-                            .mapToObj( i -> "I[" + i + "]" )
-                            .toArray(String[]::new)
-            );
-            Tsr<?>[] finalTensors = tensors;
-            Tsr<?> result = MemUtil.keep( tensors, () -> new FunctionParser( Neureka.get().backend() ).parse( asStr, isDoingAD ).execute(finalTensors) );
-            for ( int i = 1; i < tensors.length; i++ )
-                _deleteIfNotIn( call.inputs(), tensors[ i ] );
+        {
+            ExecutionCall<?> flattenedCall = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes );
+            if (
+                    !isFlat && j < 0 && (
+                            call.getOperation().isOperator()
+                                    ||
+                            call.getOperation().supportsAlgorithm(Activation.class)
+                    )
+            ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
+                String asStr = call.getOperation().stringify(
+                                            IntStream.range(0, nodes.length)
+                                                .mapToObj(i -> "I[" + i + "]")
+                                                .toArray(String[]::new)
+                                        );
+                Tsr<?>[] finalTensors = flattenedCall.inputs();
+                Tsr<?> result = MemUtil.keep(finalTensors, () -> new FunctionParser(Neureka.get().backend()).parse(asStr, isDoingAD).execute(finalTensors));
+                for ( int i = 1; i < finalTensors.length; i++ )
+                    _deleteIfNotIn(call.inputs(), finalTensors[i]);
 
-            return result;
-        }
-        else {
-            ExecutionCall<?> flattenedCall = _flatten(call.withArgs(Arg.VarIdx.of(j)), nodes);
-            int numberOfInputs = flattenedCall.arity();
-            boolean anyNumberOfInputs = flattenedCall.getOperation().getArity() < 0;
-            int operationArity = flattenedCall.getOperation().getArity();
-            if ( numberOfInputs < operationArity )
-                throw new IllegalArgumentException(
-                        "The number of inputs to the operation " + flattenedCall.getOperation() + " is " + numberOfInputs +
-                                " but the operation requires " + operationArity + " inputs."
-                );
-
-            boolean tooManyArgs = numberOfInputs > operationArity + 1;
-
-            if ( !tooManyArgs || anyNumberOfInputs )
-                tensors = flattenedCall.withAddedInputAt(0, null).inputs();
-            else
-                tensors = flattenedCall.inputs();
-        }
-        Tsr<?> out = prepareAndExecuteRecursively(
-                                call.withInputs( tensors )
-                                        .withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),
-                                executor
+                return result;
+            } else {
+                int numberOfInputs = flattenedCall.arity();
+                boolean anyNumberOfInputs = flattenedCall.getOperation().getArity() < 0;
+                int operationArity = flattenedCall.getOperation().getArity();
+                if (numberOfInputs < operationArity)
+                    throw new IllegalArgumentException(
+                            "The number of inputs to the operation " + flattenedCall.getOperation() + " is " + numberOfInputs +
+                            " but the operation requires " + operationArity + " inputs."
                         );
 
-        if ( out == null )
-            throw new IllegalStateException("The result of the recursive execution is null!");
+                boolean tooManyArgs = numberOfInputs > operationArity + 1;
 
-        return out;
+                if ( !tooManyArgs || anyNumberOfInputs )
+                    tensors = flattenedCall.withAddedInputAt(0, null).inputs();
+                else
+                    tensors = flattenedCall.inputs();
+            }
+        }
+        return prepareAndExecuteRecursively(
+                                call.withInputs( tensors ).withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),
+                                executor
+                            );
     }
 
     /**
@@ -297,7 +291,6 @@ implements DeviceAlgorithm<C>
     ) {
         Supplier<Tsr<?>> actor = () ->
                 MemUtil.keep( call.inputs(), () -> {
-                    final Device<?> device = call.getDevice();
                     int d = call.getValOf( Arg.DerivIdx.class );
                     final int j = call.getValOf( Arg.VarIdx.class );
                     assert d >= 0;
@@ -316,7 +309,7 @@ implements DeviceAlgorithm<C>
                     else
                         for ( int i = 1; i < tensors.length; i++ )
                             tensors[ i ] =
-                                    j >= 0
+                                        j >= 0
                                             ? nodes[ i - 1 ].executeDerive( call.inputs(), d, j )
                                             : nodes[ i - 1 ].executeDerive( call.inputs(), d    );
 
@@ -331,7 +324,7 @@ implements DeviceAlgorithm<C>
                                     ExecutionCall.of( tensors )
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
                                             .running( Neureka.get().backend().getOperation("+") )
-                                            .on( device ),
+                                            .on( call.getDevice() ),
                                     ElemWiseUtil::forAdditions
                             );
                             inner = tensors[ 0 ];//-> this is now the inner derivative!
@@ -348,8 +341,8 @@ implements DeviceAlgorithm<C>
                         for ( int i = 1; i < tensors.length; i++ )
                             tensors[ i ] =
                                     j >= 0
-                                            ? nodes[ i - 1 ].execute( call.inputs(), j )
-                                            : nodes[ i - 1 ].execute( call.inputs() );
+                                        ? nodes[ i - 1 ].execute( call.inputs(), j )
+                                        : nodes[ i - 1 ].execute( call.inputs() );
 
                     //...get derivative index within src list:
                     for ( int i = 0; i < nodes.length; i++ )
@@ -360,31 +353,20 @@ implements DeviceAlgorithm<C>
 
                     // Use those tensors for the outer derivative:
                     tensors[0] = prepareAndExecuteRecursively(
-                            ExecutionCall.of( tensors )
-                                    .andArgs( Arg.DerivIdx.of( d ) )
-                                    .running( call.getOperation() )
-                                    .on( device ),
-                            executor
-                    );
+                                        ExecutionCall.of( tensors )
+                                                .andArgs( Arg.DerivIdx.of( d ) )
+                                                .running( call.getOperation() )
+                                                .on( call.getDevice() ),
+                                        executor
+                                    );
                     // At the end:
                     //...multiply inner times outer: ( if inner is not 1 entirely... )
-                    if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getItemsAs( double[].class )[ 0 ] == 1.0 ) ) {
-                        tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
-                        tensors[0] = prepareAndExecuteRecursively(
-                                ExecutionCall.of( tensors )
-                                        .andArgs( Arg.DerivIdx.of( -1 ) )
-                                        .running( Neureka.get().backend().getOperation("*") )
-                                        .on( device ),
-                                AbstractDeviceAlgorithm::executeDeviceAlgorithm
-                        );
-                        for ( int i = 1; i < tensors.length; i++ )
-                            _deleteIfNotIn( call.inputs(), tensors[ i ] );
-                    }
+                    Tsr<?> result = _innerTimesOuter( inner, tensors, call );
                     // done!
 
                     _delete( inner );
 
-                    return tensors[ 0 ];
+                    return result;
                 });
 
         int d = call.getValOf( Arg.DerivIdx.class );
@@ -401,6 +383,23 @@ implements DeviceAlgorithm<C>
         return out;
     }
 
+    private static Tsr<?> _innerTimesOuter(Tsr<?> inner, Tsr<?>[] tensors, ExecutionCall<?> call)
+    {
+        if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getItemsAs( double[].class )[ 0 ] == 1.0 ) ) {
+            tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
+            tensors[0] = prepareAndExecuteRecursively(
+                    ExecutionCall.of( tensors )
+                            .andArgs( Arg.DerivIdx.of( -1 ) )
+                            .running( Neureka.get().backend().getOperation("*") )
+                            .on( call.getDevice() ),
+                    AbstractDeviceAlgorithm::executeDeviceAlgorithm
+            );
+            for ( int i = 1; i < tensors.length; i++ )
+                _deleteIfNotIn( call.inputs(), tensors[ i ] );
+        }
+        return tensors[ 0 ];
+    }
+
     private static void _deleteIfNotIn( Tsr<?>[] array, Tsr<?> tensor ) {
         if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {
             for ( int i = 1; i < array.length; i++ )
@@ -411,8 +410,9 @@ implements DeviceAlgorithm<C>
     }
 
     private static void _delete( Tsr<?> tensor ) {
-        if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() )
-            if ( !tensor.isDeleted() ) tensor.getUnsafe().delete();
+        Neureka.Settings.Debug debug = Neureka.get().settings().debug();
+        if (  !tensor.isDeleted() && debug.isDeletingIntermediateTensors() )
+            tensor.getUnsafe().delete();
     }
 
     /**

@@ -27,14 +27,15 @@ import java.util.stream.IntStream;
  *  Turns a {@link Function} into OpenCL kernel code to make
  *  optimized just in time compilation possible.
  */
-public final class CLFunctionCompiler {
-
+public final class CLFunctionCompiler
+{
     private final OpenCLDevice _device;
     private final Function _functionToBeOptimized;
     private final String _functionName;
     private final int[] _argPointer;
 
-    public CLFunctionCompiler( OpenCLDevice device, Function toBeOptimized, String functionName ) {
+    public CLFunctionCompiler( OpenCLDevice device, Function toBeOptimized, String functionName )
+    {
         _device = device;
         _functionToBeOptimized = toBeOptimized;
         _functionName = functionName;
@@ -61,12 +62,12 @@ public final class CLFunctionCompiler {
                 .setIsDifferentiable( true )
                 .setIsInline( false )
                 .setStringifier(
-                        children -> {
-                            String expression = String.join( ", ", children );
-                            if ( expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')' )
-                                return _functionName + expression;
-                            return _functionName + "(" + expression + ")";
-                        }
+                    children -> {
+                        String expression = String.join( ", ", children );
+                        if ( expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')' )
+                            return _functionName + expression;
+                        return _functionName + "(" + expression + ")";
+                    }
                 )
                 .build()
                 .setAlgorithm(
