@@ -156,9 +156,9 @@ public class Addition extends AbstractOperation {
                         call -> {
                             assert call.arity() == 3;
                             if ( call.getDerivativeIndex() == 0 )
-                                call.setInput( 0, Tsr.of( call.input( 1 ).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
+                                return Tsr.of( call.input( 1 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.setInput( 0, Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true ) );
+                                return Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
                             else {
                                 Scalarization.implementationForCPU()
                                     .with(Fun.F64F64ToF64.triple(

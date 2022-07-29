@@ -201,17 +201,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      */
     public AutoDiffMode autogradMode() { return _autogradMode.get(); }
 
-    /**
-     *  Warning! This is the only way to mutate the inner state of an {@link ExecutionCall}.
-     *  Only use this to set a suitable output tensor to be returned as result.
-     *
-     * @param i The index targeting the position where the provided tensor should be placed.
-     * @param t The {@link Tsr} which ought to be placed at position {@code i}.
-     */
-     @Deprecated
-    public void setInput( int i, Tsr<?> t ) { _inputs[ i ] = t; }
-
-
     @Override
     public String toString()
     {
