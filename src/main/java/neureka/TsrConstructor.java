@@ -24,10 +24,8 @@ import java.util.stream.IntStream;
  *  sits inside this class instead of polluting the already very large
  *  {@link neureka.Tsr} class.
  */
-final class TsrConstructor {
-
-    private static final Logger _LOG = LoggerFactory.getLogger(TsrConstructor.class);
-
+final class TsrConstructor
+{
     /**
      *  An interface defining methods for configuring a {@link neureka.Tsr}
      *  in the making...
