@@ -73,7 +73,7 @@ class OpenCL_Data_Spec extends Specification
 
     def 'The "Data" class can represent various OpenCL data types.'(
       Object array, Class<Object> arrayType, Class<?> type,
-      int itemSize, int size, int offset
+      int itemSize, int size, int offset, String targetType
     ) {
         given :
             array = array.asType(arrayType)
@@ -97,28 +97,44 @@ class OpenCL_Data_Spec extends Specification
             data1.pointer != null
             data2.pointer != null
             data3.pointer != null
+        and :
+            data1.type.name() == targetType
+            data2.type.name() == targetType
+            data3.type.name() == targetType
+        and :
+            data1.array == (0..<data1.length).collect({it->data1.getElementAt((int)it)})
+            data2.array == (0..<data2.length).collect({it->data2.getElementAt((int)it)})
+            data3.array == (0..<data3.length).collect({it->data3.getElementAt((int)it)})
 
         where :
-            array        | arrayType |  type    | itemSize | size | offset
-            [1, 2]       | int[]     | Integer  |    4     | 1    | 1
-            [8, 5, 2]    | int[]     | Integer  |    4     | 2    | 0
-            [42]         | int[]     | Integer  |    4     | 1    | 0
-            [1,2,3,4,5]  | int[]     | Integer  |    4     | 3    | 2
+            array        | arrayType |  type    | itemSize | size | offset || targetType
+            [1, 2]       | int[]     | Integer  |    4     | 1    | 1      ||  'I32'
+            [8, 5, 2]    | int[]     | Integer  |    4     | 2    | 0      ||  'I32'
+            [42]         | int[]     | Integer  |    4     | 1    | 0      ||  'I32'
+            [1,2,3,4,5]  | int[]     | Integer  |    4     | 3    | 2      ||  'I32'
 
-            [1, 2]       | short[]   | Short    |    2     | 1    | 1
-            [8, 5, 2]    | short[]   | Short    |    2     | 2    | 0
-            [42]         | short[]   | Short    |    2     | 1    | 0
-            [1,2,3,4,5]  | short[]   | Short    |    2     | 3    | 2
+            [1, 2]       | byte[]    | Byte     |    1     | 1    | 1      ||  'I8'
+            [8, 5, 2]    | byte[]    | Byte     |    1     | 2    | 0      ||  'I8'
+            [42]         | byte[]    | Byte     |    1     | 1    | 0      ||  'I8'
+            [1,2,3,4,5]  | byte[]    | Byte     |    1     | 3    | 2      ||  'I8'
 
-            [0.3, -0.9]  | float[]   | Float    |    4     | 2    | 0
-            [2, 0.5, 8]  | float[]   | Float    |    4     | 2    | 0
+            [1, 2]       | long[]    | Long     |    8     | 1    | 1      ||  'I64'
+            [8, 5, 2]    | long[]    | Long     |    8     | 2    | 0      ||  'I64'
+            [42]         | long[]    | Long     |    8     | 1    | 0      ||  'I64'
+            [1,2,3,4,5]  | long[]    | Long     |    8     | 3    | 2      ||  'I64'
 
-            [0.3, -0.9]  | double[]  | Double   |    8     | 2    | 0
-            [2, 0.5, 8]  | double[]  | Double   |    8     | 2    | 0
-            [0.6, 3, 0.2]| double[]  | Double   |    8     | 1    | 1
+            [1, 2]       | short[]   | Short    |    2     | 1    | 1      ||  'I16'
+            [8, 5, 2]    | short[]   | Short    |    2     | 2    | 0      ||  'I16'
+            [42]         | short[]   | Short    |    2     | 1    | 0      ||  'I16'
+            [1,2,3,4,5]  | short[]   | Short    |    2     | 3    | 2      ||  'I16'
 
+            [0.3, -0.9]  | float[]   | Float    |    4     | 2    | 0      ||  'F32'
+            [2, 0.5, 8]  | float[]   | Float    |    4     | 2    | 0      ||  'F32'
+
+            [0.3, -0.9]  | double[]  | Double   |    8     | 2    | 0      ||  'F64'
+            [2, 0.5, 8]  | double[]  | Double   |    8     | 2    | 0      ||  'F64'
+            [0.6, 3, 0.2]| double[]  | Double   |    8     | 1    | 1      ||  'F64'
     }
-
 
 
 }

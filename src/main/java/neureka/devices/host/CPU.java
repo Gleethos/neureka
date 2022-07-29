@@ -507,7 +507,7 @@ public class CPU extends AbstractDevice<Object>
 
 
         /**
-         *  Takes the provided range and divides it into multi-threaded workloads.
+         *  Takes the provided range and divides it into multithreaded workloads.
          *
          * @param first The start index of the threaded workload range.
          * @param limit The limit for the workload range, which is exclusive.
