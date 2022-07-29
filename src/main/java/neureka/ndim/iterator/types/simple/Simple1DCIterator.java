@@ -19,7 +19,6 @@ public final class Simple1DCIterator extends Simple1DConfiguration implements ND
     /** {@inheritDoc} */
     @Override public final void decrement() { _d1--; }
 
-
     /** {@inheritDoc} */
     @Override public final int i() { return this.indexOfIndices(_d1); }
 

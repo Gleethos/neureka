@@ -1,20 +1,8 @@
 package neureka.devices.file.handles;
 
 import neureka.Tsr;
-import neureka.devices.Storage;
 import neureka.devices.file.FileHandle;
-import neureka.devices.host.CPU;
-import neureka.dtype.DataType;
-import neureka.dtype.custom.I16;
-import neureka.dtype.custom.UI8;
 import org.slf4j.LoggerFactory;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.Raster;
-import java.io.File;
-import java.io.IOException;
 
 /**
  *  This class is one of many extensions of the {@link AbstractFileHandle} which
