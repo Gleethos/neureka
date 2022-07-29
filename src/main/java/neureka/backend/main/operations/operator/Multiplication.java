@@ -149,9 +149,9 @@ public class Multiplication extends AbstractOperation
                     .andImplementation(
                         call -> {
                             if ( call.getDerivativeIndex() == 0 )
-                                call.setInput( 0, call.input( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
+                                return call.input( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.setInput( 0, call.input( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
+                                return call.input( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true );
                             else
                                 Scalarization.implementationForCPU()
                                     .with(Fun.F64F64ToF64.triple(
@@ -188,9 +188,9 @@ public class Multiplication extends AbstractOperation
                     .execution(
                         call -> {
                             if ( call.getDerivativeIndex() == 0 )
-                                call.setInput( 0, call.input( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
+                                return call.input( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true );
                             else if ( call.getDerivativeIndex() == 1 )
-                                call.setInput( 0, call.input( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true ) );
+                                return call.input( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true );
                             else {
                                 int offset = (call.input(Number.class, 2).isVirtual() || call.input(Number.class, 2).size() == 1) ? 1 : 0;
                                 int gwz = call.input(Number.class, 0).size();
