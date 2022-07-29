@@ -21,7 +21,7 @@ public final class ConcreteMachine extends CommonMachine {
         }
 
         if (ENVIRONMENT == null) {
-            _LOG.info(
+            _LOG.debug(
                     "No matching hardware profile found for this system. " +
                     "Instantiating a default hardware profile with the following main properties: " +
                     "Architecture={} Threads={} Memory={}", architecture, threads, memory
