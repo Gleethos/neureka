@@ -10,14 +10,45 @@ import java.util.concurrent.Future;
 import java.util.function.IntSupplier;
 
 /**
- *  Divides workloads until they can be processed efficiently
- *  and then submits them to a thread pool for execution...
+ *  An API for registering workloads which will be divided into smaller workloads so that they can
+ *  be executed efficiently by a thread pool... <br>
+ *  This is a library internal class, do not depend on this.
  */
 public abstract class WorkScheduler {
 
+    public WorkScheduler() { super(); }
+
+    /**
+     * Synchronous execution - wait until it's finished.
+     *
+     * @param first The first index, in a range, to include.
+     * @param limit The first index NOT to include - last (excl.) index in a range.
+     * @param threshold The work size threshold.
+     */
+    public final void invoke(
+            final ExecutorService executor,
+            final int first,
+            final int limit,
+            final int threshold
+    ) {
+        int availableWorkers = ConcreteMachine.ENVIRONMENT.threads;
+        Divider.devide(
+            executor,
+            first,
+            limit,
+            threshold,
+            availableWorkers,
+            this::_work
+        );
+    }
+
+    protected abstract void _work(final int first, final int limit);
+
+
     /**
      *  Divides workloads until they can be processed efficiently
-     *  and then submits them to a thread pool for execution...
+     *  and then submits them to a thread pool for execution... <br>
+     *  This is a library internal class, do not depend on this.
      */
     public static final class Divider
     {
@@ -37,14 +68,14 @@ public abstract class WorkScheduler {
         }
 
         public void divide( final int first, final int limit, final CPU.RangeWorkload rangeWorkload) {
-            WorkScheduler._call(
+            devide(
                     _executor,
                     first,
                     limit,
                     _threshold,
                     _parallelism.getAsInt(),
                     rangeWorkload
-                );
+            );
         }
 
         public Divider parallelism(
@@ -61,63 +92,35 @@ public abstract class WorkScheduler {
             return this;
         }
 
-    }
+        private static void devide(
+                final ExecutorService executor,
+                final int start,
+                final int end,
+                final int threshold,
+                final int workers,
+                final CPU.RangeWorkload rangeWorkload
+        ) {
+            int workload = end - start;
 
-    private static void _call(
-            final ExecutorService executor,
-            final int start,
-            final int end,
-            final int threshold,
-            final int workers,
-            final CPU.RangeWorkload rangeWorkload
-    ) {
-        int workload = end - start;
+            if ( workload > threshold && workers > 1 ) {
 
-        if ( workload > threshold && workers > 1 ) {
+                int split = start + workload / 2;
+                int nextWorkers = workers / 2;
 
-            int split = start + workload / 2;
-            int nextWorkers = workers / 2;
+                Future<?> firstPart = executor.submit( () -> devide(executor, start, split, threshold, nextWorkers, rangeWorkload) );
+                Future<?> secondPart = executor.submit( () -> devide(executor, split, end, threshold, nextWorkers, rangeWorkload) );
 
-            Future<?> firstPart = executor.submit( () -> _call(executor, start, split, threshold, nextWorkers, rangeWorkload) );
-            Future<?> secondPart = executor.submit( () -> _call(executor, split, end, threshold, nextWorkers, rangeWorkload) );
-
-            try {
-                firstPart.get();
-                secondPart.get();
-            } catch ( final InterruptedException | ExecutionException cause ) {
-                throw new RuntimeException(cause);
+                try {
+                    firstPart.get();
+                    secondPart.get();
+                } catch ( final InterruptedException | ExecutionException cause ) {
+                    throw new RuntimeException(cause);
+                }
             }
+            else
+                rangeWorkload.execute(start, end);
         }
-        else
-            rangeWorkload.execute(start, end);
+
     }
-
-    public WorkScheduler() { super(); }
-
-    /**
-     * Synchronous execution - wait until it's finished.
-     *
-     * @param first The first index, in a range, to include.
-     * @param limit The first index NOT to include - last (excl.) index in a range.
-     * @param threshold The work size threshold.
-     */
-    public final void invoke(
-            final ExecutorService executor,
-            final int first,
-            final int limit,
-            final int threshold
-    ) {
-        int availableWorkers = ConcreteMachine.ENVIRONMENT.threads;
-        _call(
-                executor,
-                first,
-                limit,
-                threshold,
-                availableWorkers,
-                this::_work
-        );
-    }
-
-    protected abstract void _work(final int first, final int limit);
 
 }
