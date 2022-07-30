@@ -103,9 +103,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
     /**
      * This class is an OpenCL-Device specific tensor component used to store
      * the floating point size ( 1:float, 2:double, ...),
-     * a reference to a wrapper containing a pointer to the tensors configuration (cl_config),
+     * a reference to a wrapper containing a pointer to the tensor's configuration (cl_config),
      * and
-     * a reference to a wrapper containing a pointer to the tensors data (cl_data)
+     * a reference to a wrapper containing a pointer to the tensor's data (cl_data)
      * The latter two lend their identity for garbage collection!
      */
     static class cl_tsr<V, T extends V> implements Component<Tsr<T>> {
