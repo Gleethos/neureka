@@ -14,6 +14,7 @@ import neureka.devices.host.CPU
 import neureka.devices.opencl.CLContext
 import neureka.dtype.DataType
 import neureka.framing.Relation
+import neureka.ndim.config.NDConfiguration
 import neureka.view.NDPrintSettings
 import spock.lang.*
 
@@ -188,7 +189,11 @@ class Neureka_Spec extends Specification
                     new CustomDeviceCleaner(),
                     (Tsr.of(2).setRqsGradient(true)*Tsr.of(-2)).graphNode,
                     new GraphLock(Function.of('i0*3/2')),
-                    FileDevice.at('.')
+                    FileDevice.at('.'),
+                    NDConfiguration.of((int[])[2,3,8,4],(int[])[96, 32, 4, 1],(int[])[96, 32, 4, 1],(int[])[1,1,1,1],(int[])[0,0,0,0]),
+                    NDConfiguration.of((int[])[2,3,8,4],(int[])[96, 200, 8, 1],(int[])[96, 32, 4, 1],(int[])[1,1,1,1],(int[])[0,0,0,0]),
+                    NDConfiguration.of((int[])[2,3,8,4],(int[])[96, 32, 4, 1],(int[])[96, 92, 4, 1],(int[])[1,4,1,1],(int[])[0,0,0,0]),
+                    NDConfiguration.of((int[])[2,3,8],(int[])[24,8,1],(int[])[24,8,1],(int[])[1, 1, 1],(int[])[0,0,0])
             ]
     }
 
@@ -219,7 +224,6 @@ class Neureka_Spec extends Specification
 
         where : 'The following operations are being used..'
             operation << Neureka.get().backend.operations
-
     }
 
 

@@ -210,17 +210,17 @@ public abstract class AbstractOperation implements Operation
         return _algorithms.containsKey( implementation );
     }
 
-    @Override public boolean isOperator() { return _isOperator; }
+    @Override public final boolean isOperator() { return _isOperator; }
 
     @Override public String getIdentifier() { return _function; }
 
-    @Override public String getOperator() { return _operator; }
+    @Override public final String getOperator() { return _operator; }
 
-    @Override public int getArity() { return _arity; }
+    @Override public final int getArity() { return _arity; }
 
-    @Override public boolean isIndexer() { return _isIndexer; }
+    @Override public final boolean isIndexer() { return _isIndexer; }
 
-    @Override public boolean isDifferentiable() { return _isDifferentiable; }
+    @Override public final boolean isDifferentiable() { return _isDifferentiable; }
 
     @Override public boolean isInline() { return _isInline; }
 
@@ -228,8 +228,20 @@ public abstract class AbstractOperation implements Operation
 
     @Override
     public final String toString() {
-        String asString = this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode());
+        String operationName = operationName().trim();
+        operationName = operationName.isEmpty() ? "AnonymousOperation" : operationName;
+        String asString = operationName+"@"+Integer.toHexString(hashCode());
         asString = asString + "[identifier='" + _function + "',operator='"+_operator+"']";
         return asString;
+    }
+
+    /**
+     *  Override this if you want your operation to have a string representation
+     *  with a custom prefix which is something other than the simple class name!
+     *
+     * @return The simple class name, or something else if overridden.
+     */
+    protected String operationName() {
+        return this.getClass().getSimpleName();
     }
 }
