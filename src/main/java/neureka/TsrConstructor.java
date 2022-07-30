@@ -24,10 +24,8 @@ import java.util.stream.IntStream;
  *  sits inside this class instead of polluting the already very large
  *  {@link neureka.Tsr} class.
  */
-final class TsrConstructor {
-
-    private static final Logger _LOG = LoggerFactory.getLogger(TsrConstructor.class);
-
+final class TsrConstructor
+{
     /**
      *  An interface defining methods for configuring a {@link neureka.Tsr}
      *  in the making...
@@ -112,21 +110,20 @@ final class TsrConstructor {
     }
 
     private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {
-        if ( Arrays.stream( data ).anyMatch( e -> DataType.of(e.getClass()) != dataType ) ) {
-            for ( int i = 0; i < ( data ).length; i++ ) {
+        if ( Arrays.stream( data ).anyMatch( e -> DataType.of(e.getClass()) != dataType ) )
+            for ( int i = 0; i < ( data ).length; i++ )
                 ( data )[i] = DataConverter.get().convert( ( (Object[]) data )[i], dataType.getItemTypeClass() );
-            }
-        }
+
         return _optimizeObjectArray(dataType, data, size);
     }
 
     public boolean constructAllFromOne(NDConstructor ndConstructor, Object data ) {
-        if ( data instanceof Double    ) { _constructAllF64(ndConstructor, (Double)    data ); return true; }
-        if ( data instanceof Float     ) { _constructAllF32(ndConstructor, (Float)     data ); return true; }
-        if ( data instanceof Integer   ) { _constructAllI32(ndConstructor, (Integer)   data ); return true; }
-        if ( data instanceof Short     ) { _constructAllI16(ndConstructor, (Short)     data ); return true; }
-        if ( data instanceof Byte      ) { _constructAllI8(ndConstructor, (Byte)      data ); return true; }
-        if ( data instanceof Long      ) { _constructAllI64(ndConstructor, (Long)      data ); return true; }
+        if ( data instanceof Double    ) { _constructAllF64(ndConstructor,  (Double)    data ); return true; }
+        if ( data instanceof Float     ) { _constructAllF32(ndConstructor,  (Float)     data ); return true; }
+        if ( data instanceof Integer   ) { _constructAllI32(ndConstructor,  (Integer)   data ); return true; }
+        if ( data instanceof Short     ) { _constructAllI16(ndConstructor,  (Short)     data ); return true; }
+        if ( data instanceof Byte      ) { _constructAllI8(ndConstructor,   (Byte)      data ); return true; }
+        if ( data instanceof Long      ) { _constructAllI64(ndConstructor,  (Long)      data ); return true; }
         if ( data instanceof Boolean   ) { _constructAllBool(ndConstructor, (Boolean)   data ); return true; }
         if ( data instanceof Character ) { _constructAllChar(ndConstructor, (Character) data ); return true; }
         if ( Number.class.isAssignableFrom( data.getClass() ) ) {

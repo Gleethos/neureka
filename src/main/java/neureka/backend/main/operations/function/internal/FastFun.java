@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.function.internal;
 
-public class FastFun {
-
+public class FastFun
+{
     /**
      *  This is extremely fast and has virtually the same accuracy as {@code 1 / Math.pow(x, 0.5)}.
      */

@@ -1,15 +1,15 @@
 package neureka.backend.main.operations.other;
 
 import neureka.Tsr;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.iterator.NDIterator;

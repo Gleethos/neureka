@@ -20,13 +20,13 @@ public abstract class Arg<T> implements Component<Args> {
     public Arg( T arg ) { _value = arg; }
 
     public T get() {
-        if ( _value instanceof int[]     ) return (T) ((int[])_value).clone();
-        if ( _value instanceof float[]   ) return (T) ((float[])_value).clone();
-        if ( _value instanceof double[]  ) return (T) ((double[])_value).clone();
-        if ( _value instanceof long[]    ) return (T) ((long[])_value).clone();
-        if ( _value instanceof short[]   ) return (T) ((short[])_value).clone();
-        if ( _value instanceof byte[]    ) return (T) ((byte[])_value).clone();
-        if ( _value instanceof char[]    ) return (T) ((char[])_value).clone();
+        if ( _value instanceof int[]     ) return (T) ((int[])    _value).clone();
+        if ( _value instanceof float[]   ) return (T) ((float[])  _value).clone();
+        if ( _value instanceof double[]  ) return (T) ((double[]) _value).clone();
+        if ( _value instanceof long[]    ) return (T) ((long[])   _value).clone();
+        if ( _value instanceof short[]   ) return (T) ((short[])  _value).clone();
+        if ( _value instanceof byte[]    ) return (T) ((byte[])   _value).clone();
+        if ( _value instanceof char[]    ) return (T) ((char[])   _value).clone();
         if ( _value instanceof boolean[] ) return (T) ((boolean[])_value).clone();
         return _value;
     }
