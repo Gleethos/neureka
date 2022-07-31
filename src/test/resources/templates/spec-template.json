@@ -1,0 +1,95 @@
+<%
+def stats = utils.stats( data )
+def esc = {
+  it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+}
+%>{
+  "class-name":"${utils.getSpecClassName( data )}",
+  "statistics":{
+    "runs":"${stats.totalRuns}",
+    "successes":"${fmt.toPercentage(stats.successRate)}",
+    "failures":"${stats.failures}",
+    "errors":"${stats.errors}",
+    "skipped":"${stats.skipped}",
+    "duration":"${fmt.toTimeDuration(stats.time)}"
+  },
+<%
+  def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
+%>
+  "title":"<% if ( specTitle ) { out << esc(specTitle) } %>",
+  "narrative":"<% if ( data.info.narrative ) { out << esc(data.info.narrative) } %>",
+<%
+  def writeTagOrAttachment = {feature ->
+    def tagsByKey = feature.tags.groupBy( {t -> t.key} )
+    tagsByKey.each {key, values ->
+      out << '"' << key.capitalize() << '"['
+      out << values.collect({tag->esc(tag.url)}).collect({'"'+it+'"'}).join(",")
+      out << '],'
+    }
+    if ( feature.attachments.size > 0 ) {
+      out << '"see":['
+      out << feature.attachments.collect({v->esc(v.url)}).collect({'"'+it+'"'}).join(",")
+      out << '],'
+    }
+  }
+  def writeHeaders = { headers ->
+    out << '"headers":['
+    if ( headers ) out << headers.collect({v->esc(v)}).collect({'"'+it+'"'}).join(",")
+    out << '],'
+  }
+  def writeExtraInfo = {extraInfo ->
+    out << '"extra-info":['
+    if ( extraInfo ) out << extraInfo.collect({v->esc(v)}).collect({'"'+it+'"'}).join(",")
+    out << '],'
+  }
+  writeHeaders( utils.specHeaders( data ) )
+  writeTagOrAttachment data.info
+%>
+  "features":{ <%
+    def i = 0
+    def size = 0
+    features.eachFeature { name, result, blocks, iterations, params -> size++ }
+    features.eachFeature { name, result, blocks, iterations, params ->
+      def feature = delegate
+      def iterationTimes = iterations.collect { it.time ?: 0L }
+      def totalTime = fmt.toTimeDuration( iterationTimes.sum() )
+  %>
+    "${esc(name)}": {
+      "result":"$result",
+      "duration":"$totalTime",
+      <%
+      writeTagOrAttachment( feature )
+      if (result != "IGNORED") {
+        if ( utils.isUnrolled( feature ) ) {
+          iterations.each { iter ->
+            writeExtraInfo( utils.nextSpecExtraInfo( data, feature, iter.info ) )
+          }
+        } else {
+          writeExtraInfo( utils.nextSpecExtraInfo( data, feature ) )
+        }
+      }
+      %>
+      "blocks":[
+        <% out << blocks.collect({ b -> '{' +
+            '"kind":"'  + esc(b.kind.replace(':', '').toLowerCase())   + '",' +
+            '"text":"'  + esc(b.text)                                  + '",' +
+            '"code":["' + (
+              b.sourceCode.size() == 1 ? esc(b.sourceCode[0]) : b.sourceCode.collect({esc(it)}).join('","')
+            ) + '"]' + '}'
+        }).join(",\n") %>
+      ],
+      <%
+      def executedIterations = iterations.findAll {it.dataValues || it.errors}
+      def problems = executedIterations.findAll {it.errors}
+      %>
+      "problems":"${executedIterations.findAll {it.errors}}"
+    }<%
+    if( i < size ){ out << "," }
+    i++
+    %>
+  <%
+  } // FEATURE LOOP END
+  %>
+  },
+  "generator":"<%out << com.athaydes.spockframework.report.SpockReportExtension.PROJECT_URL%>"
+}
