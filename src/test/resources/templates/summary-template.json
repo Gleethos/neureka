@@ -1,0 +1,40 @@
+<%
+def stats = utils.aggregateStats( data )
+def esc = {
+it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+}
+%>{
+  "project": "${projectName}",
+  "version": "${projectVersion}",
+  "created": "${new Date()}",
+  "statistics":{
+    "runs":"${stats.total}",
+    "passed":"${stats.passed}",
+    "failed":"${stats.failed}",
+    "feature-failures":"${stats.fFails}",
+    "success-rate":"${stats.successRate}",
+    "duration":"${stats.time}"
+  },
+  "specifications": {<%
+    def i = 0
+    data.each { name, map ->
+    def s = map.stats
+    def features = map.executedFeatures
+    %>"$name":{
+      "feature-count":"${s.totalFeatures}",
+      "failures":"${s.failures}",
+      "errors":"${s.errors}",
+      "skipped":"${s.skipped}" ,
+      "success-rate":"${s.successRate}",
+      "duration":"${s.time}",
+      "features":[<%
+        out << (features.size() == 1 ? ('"'+esc(features[0])+'"') : ('"'+features.collect({esc(it)}).join('","'))+'"')
+      %>]
+    }<%
+      i++
+      if ( i < data.size() ) out << ","
+    }
+    %>
+  }
+  "generator":"<%out << com.athaydes.spockframework.report.SpockReportExtension.PROJECT_URL%>"
+}

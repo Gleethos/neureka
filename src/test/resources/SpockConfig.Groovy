@@ -22,7 +22,7 @@ spockReports {
     // Set properties specific to the TemplateReportCreator
     set 'com.athaydes.spockframework.report.template.TemplateReportCreator.specTemplateFile':'/templates/spec-template.json'
     set 'com.athaydes.spockframework.report.template.TemplateReportCreator.reportFileExtension':'json'
-    set 'com.athaydes.spockframework.report.template.TemplateReportCreator.summaryTemplateFile':'/templates/summary-template.md'
-    set 'com.athaydes.spockframework.report.template.TemplateReportCreator.summaryFileName':'summary.md'
+    set 'com.athaydes.spockframework.report.template.TemplateReportCreator.summaryTemplateFile':'/templates/summary-template.json'
+    set 'com.athaydes.spockframework.report.template.TemplateReportCreator.summaryFileName':'summary.json'
     set 'com.athaydes.spockframework.report.template.TemplateReportCreator.enabled':true
 }

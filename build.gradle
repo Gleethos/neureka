@@ -179,9 +179,7 @@ compileTestKotlin {
 test {
     //filter { includeTestsMatching "*" } // Filter for tests scenarios!
 
-    // Spock-Reports configuration :
-    //systemProperty 'com.athaydes.spockframework.report.outputDir', 'docs/spock/reports'
-    systemProperty 'com.athaydes.spockframework.report.showCodeBlocks', true
+    // Spock-Reports configuration can be found in the test resources: src/test/resources/SpockConfig.Groovy
 
     useJUnitPlatform() // ...otherwise tests will not be received by gradle...
 
@@ -192,7 +190,6 @@ test {
     // Number of threads used for testing :
     maxParallelForks = (int) Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
 }
-
 
 
 //----------------------------------------------------------------------------------------------------------------------

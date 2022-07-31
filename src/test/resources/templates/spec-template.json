@@ -73,9 +73,9 @@ def esc = {
         <% out << blocks.collect({ b -> '{' +
             '"kind":"'  + esc(b.kind.replace(':', '').toLowerCase())   + '",' +
             '"text":"'  + esc(b.text)                                  + '",' +
-            '"code":["' + (
-              b.sourceCode.size() == 1 ? esc(b.sourceCode[0]) : b.sourceCode.collect({esc(it)}).join('","')
-            ) + '"]' + '}'
+            '"code":[' + (
+              b.sourceCode.size() == 1 ? ('"'+esc(b.sourceCode[0])+'"') : ('"'+b.sourceCode.collect({esc(it)}).join('","')+'"')
+            ) + ']' + '}'
         }).join(",\n") %>
       ],
       <%
@@ -84,8 +84,8 @@ def esc = {
       %>
       "problems":"${executedIterations.findAll {it.errors}}"
     }<%
-    if( i < size ){ out << "," }
     i++
+    if( i < size ){ out << "," }
     %>
   <%
   } // FEATURE LOOP END
