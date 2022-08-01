@@ -8,7 +8,7 @@ def strList = { (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it
   "className":"${utils.getSpecClassName( data )}",
   "statistics":{
     "runs":"${stats.totalRuns}",
-    "successes":"${fmt.toPercentage(stats.successRate)}",
+    "successRate":"${fmt.toPercentage(stats.successRate)}",
     "failures":"${stats.failures}",
     "errors":"${stats.errors}",
     "skipped":"${stats.skipped}",

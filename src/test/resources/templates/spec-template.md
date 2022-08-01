@@ -2,7 +2,7 @@
 def stats = utils.stats( data )
 %># Report for ${utils.getSpecClassName( data )}
 
-## My Summary
+## Summary
 
 * Total Runs: ${stats.totalRuns}
 * Success Rate: ${fmt.toPercentage(stats.successRate)}
