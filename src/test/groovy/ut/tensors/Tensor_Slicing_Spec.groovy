@@ -27,8 +27,6 @@ class Tensor_Slicing_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """
-                <h2> Tensor Slicing </h2>
-                <br> 
                 <p>
                     This specification covers the behavior of tensors when being sliced 
                     on multiple different device types using the SliceBuilder API.           

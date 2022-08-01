@@ -4,34 +4,41 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("Tensor (Data Array) Version")
+@Narrative('''
+
+    There are two fundamental categories of operations
+    which can be applied to tensors : 
+    Inline operations and Non-Inline  operations! 
+    
+    Inline operations are often times problematic because they produce
+    side effects by changing passed tensors instead of producing new ones... 
+    One such bad side effect can easily occur for tensors involved in the
+    autograd system, more specifically: the recorded computation graph. 
+    Inline operations can break the mathematically pureness of the back-propagation
+    procedure by for example changing partial derivatives... <br>
+    In order to prevent said errors to occur unnoticed tensors
+    have versions which will increment when the underlying data of the tensor changes. 
+    This version will be tracked by the computation graph as well in order to
+    match it with the ones stored inside the tensor. 
+    A mismatch would then yield an exception! 
+    
+    This specification is responsible for defining the behaviour of this
+    version number with respect to their wrapping tensors as well as computation graph nodes.
+                
+
+''')
 class Tensor_Version_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """
-                <h2> Tensor Version Behavior </h2>
-                <br> 
                 <p>
-                    There are two fundamental categories of operations
-                    which can be applied to tensors : <br>
-                    Inline operations and Non-Inline  operations! <br>
-                    <br>
-                    Inline operations are often times problematic because they produce
-                    side effects by changing passed tensors instead of producing new ones... <br>   
-                    One such bad side effect can easily occur for tensors involved in the
-                    autograd system, more specifically: the recorded computation graph. <br>
-                    Inline operations can break the mathematically pureness of the back-propagation
-                    procedure by for example changing partial derivatives... <br>
-                    In order to prevent said errors to occur unnoticed tensors
-                    have versions which will increment when the underlying data of the tensor changes. <br>
-                    This version will be tracked by the computation graph as well in order to
-                    match it with the ones stored inside the tensor. <br>
-                    A mismatch would then yield an exception! <br>
-                    <br>
-                    This specification is responsible for defining the behaviour of this
-                    version number with respect to their wrapping tensors as well as computation graph nodes.
-                
+                    Here you can find out how the version number of a tensor is
+                    set and tracked.
                 </p>
             """
     }

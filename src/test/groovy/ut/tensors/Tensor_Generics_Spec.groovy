@@ -4,19 +4,25 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.dtype.DataType
 import neureka.view.NDPrintSettings
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("Tensors as Generic Containers")
+@Narrative('''
+
+    Tensors do not just store numeric data.
+    They can hold anything which can be stuffed into a "Object[]" array.
+    You could even create a tensor of tensors!  
+
+''')
 class Tensor_Generics_Spec extends Specification
 {
     def setupSpec()
     {
         reportHeader """
-                <h2> Tensors as Containers </h2>
-                <br> 
                 <p>
-                    Tensors do not just store numeric data.
-                    They can hold anything which can be stuffed into a "Object[]" array.
-                    You could even create a tensor of tensors!            
+                    Here you will find out how to create a tensor of any kind of data.          
                 </p>
             """
     }

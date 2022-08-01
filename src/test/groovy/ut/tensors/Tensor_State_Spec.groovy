@@ -24,7 +24,6 @@ class Tensor_State_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """    
-            <h2>Tensor State Tests</h2>
             <p>
                 This unit test specification covers the expected state of newly instantiated tensors.
                 Certain properties must have their expected default values.
