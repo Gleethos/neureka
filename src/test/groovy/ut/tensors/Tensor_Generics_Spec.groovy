@@ -95,7 +95,6 @@ class Tensor_Generics_Spec extends Specification
               2  | new byte[]{42 , 73}       | Byte
               3  | new long[]{-16 , 54, 12}  | Long
               1  | new short[]{26}           | Short
-
     }
 
 
