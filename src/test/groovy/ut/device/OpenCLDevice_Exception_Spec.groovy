@@ -6,9 +6,19 @@ import neureka.devices.Device
 import neureka.devices.opencl.CLContext
 import neureka.dtype.DataType
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("OpenCLDevice Exception Handling")
+@Narrative('''
+
+    The OpenCLDevice class, one of many implementations of the Device interface, 
+    represents physical OpenCL devices.
+    This specification defines how instances of this class deal with exceptional information.
+
+''')
 class OpenCLDevice_Exception_Spec extends Specification
 {
 
@@ -17,11 +27,9 @@ class OpenCLDevice_Exception_Spec extends Specification
     def setupSpec()
     {
         reportHeader """
-            <h2> OpenCLDevice Exception Integration Tests </h2>
             <p>
-                Specified below are strict tests covering the behavior
-                of the OpenCLDevice when encountering exceptional situation
-                where insightful error messages are important.
+                It is important that an OpenCLDevice gives insightful error messages
+                when encountering exceptional situations.
             </p>
         """
         Neureka.get().reset()

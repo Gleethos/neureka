@@ -12,6 +12,8 @@ import spock.lang.Title
     
     This specification defines the expected behaviour of the Function API
     with respect to receiving simple scalar values as arguments.
+    Functions don't have to be used alongside tensors / nd-arrays,
+    they can also be fed standalone scalar values.
     
 ''')
 class Calculus_Scalar_Spec extends Specification
