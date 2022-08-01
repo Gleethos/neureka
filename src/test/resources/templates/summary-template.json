@@ -1,8 +1,9 @@
 <%
 def stats = utils.aggregateStats( data )
 def esc = {
-it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+  it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
 }
+def strList = { (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it)}).join('","'))+'"') }
 %>{
   "project": "${projectName}",
   "version": "${projectVersion}",
@@ -11,8 +12,8 @@ it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").r
     "runs":"${stats.total}",
     "passed":"${stats.passed}",
     "failed":"${stats.failed}",
-    "feature-failures":"${stats.fFails}",
-    "success-rate":"${stats.successRate}",
+    "featureFailures":"${stats.fFails}",
+    "successRate":"${stats.successRate}",
     "duration":"${stats.time}"
   },
   "specifications": {<%
@@ -20,16 +21,16 @@ it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").r
     data.each { name, map ->
     def s = map.stats
     def features = map.executedFeatures
+    def ignored = map.ignoredFeatures
     %>"$name":{
-      "feature-count":"${s.totalFeatures}",
+      "featureCount":"${s.totalFeatures}",
       "failures":"${s.failures}",
       "errors":"${s.errors}",
       "skipped":"${s.skipped}" ,
-      "success-rate":"${s.successRate}",
+      "successRate":"${s.successRate}",
       "duration":"${s.time}",
-      "features":[<%
-        out << (features.size() == 1 ? ('"'+esc(features[0])+'"') : ('"'+features.collect({esc(it)}).join('","'))+'"')
-      %>]
+      "features":[<% out << strList(features) %>],
+      "ignoredFeatures":[<% out << strList(ignored) %>]
     }<%
       i++
       if ( i < data.size() ) out << ","
