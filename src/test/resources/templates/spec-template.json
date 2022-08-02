@@ -3,7 +3,7 @@ def stats = utils.stats( data )
 def esc = {
   it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
 }
-def strList = { (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it)}).join('","'))+'"') }
+def strList = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it)}).join('","'))+'"') }
 %>{
   "className":"${utils.getSpecClassName( data )}",
   "statistics":{
@@ -22,31 +22,31 @@ def strList = { (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it
 <%
   def writeTagOrAttachment = {feature ->
     def tagsByKey = feature.tags.groupBy( {t -> t.key} )
+    out << '"tags":{'
     tagsByKey.each {key, values ->
-      out << '    "' << key.capitalize() << '"['
+      out << '"' << key.capitalize() << '"['
       out << values.collect({tag->esc(tag.url)}).collect({'"'+it+'"'}).join(",")
       out << '],'
     }
-    if ( feature.attachments.size > 0 ) {
-      out << '    "see":['
-      out << feature.attachments.collect({v->esc(v.url)}).collect({'"'+it+'"'}).join(",")
-      out << '],'
-    }
+    out << '},'
+    out << '"see":['
+    if ( feature.attachments.size > 0 ) out << feature.attachments.collect({v->esc(v.url)}).collect({'"'+it+'"'}).join(",")
+    out << '],'
   }
   def writeHeaders = { headers ->
-    out << '    "headers":['
+    out << '  "headers":['
     if ( headers ) out << headers.collect({v->esc(v)}).collect({'"'+it+'"'}).join(",")
     out << '],'
   }
-  def writeExtraInfo = {extraInfo ->
-    out << '    "extra-info":['
+  def writeExtraInfo = { extraInfo ->
+    out << '"extraInfo":['
     if ( extraInfo ) out << extraInfo.collect({v->esc(v)}).collect({'"'+it+'"'}).join(",")
-    out << '],'
+    out << ']'
   }
   writeHeaders( utils.specHeaders( data ) )
   writeTagOrAttachment data.info
 %>
-  "features":{ <%
+  "features":[ <%
     def i = 0
     def size = 0
     features.eachFeature { name, result, blocks, iterations, params -> size++ }
@@ -55,29 +55,31 @@ def strList = { (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it
       def iterationTimes = iterations.collect { it.time ?: 0L }
       def totalTime = fmt.toTimeDuration( iterationTimes.sum() )
   %>
-    "${esc(name)}": {
+    {
+      "id":"${esc(name)}",
       "result":"$result",
       "duration":"$totalTime",
+      "iterations":{
       <%
       writeTagOrAttachment( feature )
       if (result != "IGNORED") {
-        if ( utils.isUnrolled( feature ) ) {
+        if ( utils.isUnrolled( feature ) )
           iterations.each { iter ->
             writeExtraInfo( utils.nextSpecExtraInfo( data, feature, iter.info ) )
           }
-        } else {
-          writeExtraInfo( utils.nextSpecExtraInfo( data, feature ) )
-        }
+        else
+            writeExtraInfo( utils.nextSpecExtraInfo( data, feature ) )
       }
+      else writeExtraInfo( null )
       %>
+      },
       "blocks":[
-        <% out << blocks.collect({ b -> '{' +
+<% out << blocks.collect({ b -> '        {' +
             '"kind":"'  + esc(b.kind.replace(':', '').toLowerCase())   + '",' +
             '"text":"'  + esc(b.text)                                  + '",' +
             '"code":[' + strList(b.sourceCode) + ']' + '}'
         }).join(",\n") %>
-      ],
-      <%
+      ],<%
       def executedIterations = iterations.findAll {it.dataValues || it.errors}
       def problems = executedIterations.findAll {it.errors}
       %>
@@ -89,6 +91,6 @@ def strList = { (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it
   <%
   } // FEATURE LOOP END
   %>
-  },
+  ],
   "generator":"<%out << com.athaydes.spockframework.report.SpockReportExtension.PROJECT_URL%>"
 }

@@ -10,6 +10,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
     def 'Tensors can be created fluently.'(
             Class<Object> type, Object value, Object data
     ) {
+        reportInfo "This feature is based on a fluent builder API!"
 
         given : 'We create a new homogeneously filled Tsr instance using the fluent builder API.'
             Tsr<?> t = Tsr.of( type )

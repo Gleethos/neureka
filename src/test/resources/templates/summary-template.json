@@ -3,7 +3,14 @@ def stats = utils.aggregateStats( data )
 def esc = {
   it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
 }
-def strList = { (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it)}).join('","'))+'"') }
+def strFeatures = { features ->
+    features = features.collect({ feature ->
+      '{"id":"'+esc(feature)+'","extraInfo":[]}'
+    })
+    if ( features.size() == 0 ) out << ""
+    if ( features.size() == 1 ) out << features[0]
+    if ( features.size() > 1 ) out << features.collect({ it }).join(",")
+}
 %>{
   "project": "${projectName}",
   "version": "${projectVersion}",
@@ -16,26 +23,27 @@ def strList = { (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it
     "successRate":"${stats.successRate}",
     "duration":"${stats.time}"
   },
-  "specifications": {<%
+  "specifications": [<%
     def i = 0
     data.each { name, map ->
     def s = map.stats
-    def features = map.executedFeatures
+    def executed = map.executedFeatures
     def ignored = map.ignoredFeatures
-    %>"$name":{
+    %>{
+      "className":"$name",
       "featureCount":"${s.totalFeatures}",
       "failures":"${s.failures}",
       "errors":"${s.errors}",
       "skipped":"${s.skipped}" ,
       "successRate":"${s.successRate}",
       "duration":"${s.time}",
-      "features":[<% out << strList(features) %>],
-      "ignoredFeatures":[<% out << strList(ignored) %>]
+      "executedFeatures":[<% strFeatures(executed) %>],
+      "ignoredFeatures":[<% strFeatures(ignored) %>]
     }<%
       i++
       if ( i < data.size() ) out << ","
     }
     %>
-  }
+  ],
   "generator":"<%out << com.athaydes.spockframework.report.SpockReportExtension.PROJECT_URL%>"
 }
