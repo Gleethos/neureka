@@ -51,14 +51,15 @@ import java.util.Arrays;
 
 
 /**
- *  This is the precursor class to the final {@link Tsr} class from which
+ *  This is the precursor class to the final {@link TsrImpl} class from which
  *  tensor instances can be created. <br>
  *  The inheritance model of a tensor is structured as follows: <br>
- *  {@link Tsr} inherits from {@link AbstractNda} which inherits from {@link AbstractComponentOwner}
+ *  {@link TsrImpl} inherits from {@link AbstractNda} which inherits from {@link AbstractComponentOwner}.
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
- *  This class also implements the {@link Tsr} interface, which uses
- *  default methods to expose a rich API with good interoperability with
+ *  The above mentioned classes are implementation details covered by
+ *  the {@link Nda} and {@link Tsr} interfaces, which define various
+ *  default methods spanning a rich API with good interoperability with
  *  different JVM languages...
  *
  * @param <C> The type of the concrete class extending this abstract class (currently the {@link Tsr} class).
