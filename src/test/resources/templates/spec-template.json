@@ -1,9 +1,30 @@
 <%
-def stats = utils.stats( data )
-def esc = {
-  it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+// A Java method which takes a string and replaces single breaks with spaces, but leaves multiple consecutive breaks in:
+def noSingleBreaks = { String s ->
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < s.length(); i++) {
+        if (s.charAt(i) == '\n') {
+            if ( i > 0 && i + 1 < s.length() && s.charAt(i) == '\n' && s.charAt(i+1) != '\n' && s.charAt(i-1) != '\n')
+                sb.append(' ');
+            else
+                sb.append('\n');
+        }
+        else sb.append(s.charAt(i));
+    }
+    return sb.toString().trim();
 }
-def strList = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it)}).join('","'))+'"') }
+def trim = {it -> noSingleBreaks(it.replaceAll("\\s+", " ").replace("(\\n\\n)\\n*", "\n\n")).trim()}
+def esc = {it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t").trim()}
+def strList = {
+  //if (it.collect({c->c.toString()}).contains("----")) throw new IllegalArgumentException("String contains a ----")
+  return it.isEmpty() ? "" : (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it)}).join('","'))+'"')
+}
+
+//----
+
+println("Generating json for '"+utils.getSpecClassName( data )+"' now!")
+
+def stats = utils.stats( data )
 %>{
   "className":"${utils.getSpecClassName( data )}",
   "statistics":{
@@ -18,7 +39,7 @@ def strList = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"
   def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
 %>
   "title":"<% if ( specTitle ) { out << esc(specTitle) } %>",
-  "narrative":"<% if ( data.info.narrative ) { out << esc(data.info.narrative) } %>",
+  "narrative":"<% if ( data.info.narrative ) { out << esc(trim(data.info.narrative)) } %>",
 <%
   def writeTagOrAttachment = {feature ->
     def tagsByKey = feature.tags.groupBy( {t -> t.key} )
@@ -35,12 +56,12 @@ def strList = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"
   }
   def writeHeaders = { headers ->
     out << '  "headers":['
-    if ( headers ) out << headers.collect({v->esc(v)}).collect({'"'+it+'"'}).join(",")
+    if ( headers ) out << headers.collect({v->esc(trim(v))}).collect({'"'+it+'"'}).join(",")
     out << '],'
   }
   def writeExtraInfo = { extraInfo ->
     out << '"extraInfo":['
-    if ( extraInfo ) out << extraInfo.collect({v->esc(v)}).collect({'"'+it+'"'}).join(",")
+    if ( extraInfo ) out << extraInfo.collect({v->esc(trim(v))}).collect({'"'+it+'"'}).join(",")
     out << ']'
   }
   writeHeaders( utils.specHeaders( data ) )
