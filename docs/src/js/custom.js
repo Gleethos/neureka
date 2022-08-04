@@ -200,6 +200,12 @@ function createLoaderDropDownFor(specName, expandableFeature) {
                         content.append(createUIForFeature(feature));
                     }
                 });
+                setTimeout(() => {
+                        hljs.initHighlighting.called = false;
+                        hljs.initHighlighting();
+                    },
+                    50
+                );
             });
         }
 
