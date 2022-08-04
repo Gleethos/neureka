@@ -2,28 +2,6 @@
     :root {
         --mainColor: #00e968;
     }
-    .NavBox a {
-        white-space: nowrap;
-        background: linear-gradient(
-                to bottom, var(--mainColor) 0%,
-                var(--mainColor) 100%
-        );
-        background-position: 0 100%;
-        background-repeat: repeat-x;
-        background-size: 4px 2px;
-        color: #000;
-        text-decoration: none;
-        transition: background-size .2s;
-        cursor: pointer;
-        border-radius: 0.1em;
-        padding: 0.25em 0.25em 0.25em 0.25em;
-        margin: 0.25em 0.25em 0.25em 0.25em;
-    }
-    .NavBox a:hover {
-        background-size: 4px 50px;
-        color: cyan;
-        background-color: #99dcff;
-    }
     .toc_container {
         border: 1px solid #aaa;
         display: table;
@@ -51,12 +29,12 @@
         <section class="toc_container">
             <h3 href="#">Neural Networks</h3>
             <div>
-                <a class="navTopic" onclick="loadContent('neural_networks/explained')">
+                <button class="navTopic" onclick="loadContent('neural_networks/explained')">
                     Deep Learning Introduction
-                </a>
-                <a class="navTopic" onclick="loadContent('neural_networks/quickstart')">
+                </button>
+                <button class="navTopic" onclick="loadContent('neural_networks/quickstart')">
                     Neureka Quickstart Example
-                </a>
+                </button>
             </div>
         </section>
     </div>
@@ -66,21 +44,21 @@
         <section class="toc_container">
             <h3 href="#">Tensors</h3>
             <div>
-                <a class="navTopic" onclick="loadContent('tensors/instantiation')">
+                <button class="navTopic" onclick="loadContent('tensors/instantiation')">
                     Instantiation
-                </a>
-                <a class="navTopic" onclick="loadContent('tensors/indexing')">
+                </button>
+                <button class="navTopic" onclick="loadContent('tensors/indexing')">
                     Indexing
-                </a>
-                <a class="navTopic" onclick="loadContent('tensors/seeding')">
+                </button>
+                <button class="navTopic" onclick="loadContent('tensors/seeding')">
                     Seeding
-                </a>
-                <a class="navTopic" onclick="loadContent('tensors/slicing')">
+                </button>
+                <button class="navTopic" onclick="loadContent('tensors/slicing')">
                     Slicing
-                </a>
-                <a class="navTopic" onclick="loadContent('tensors/labeling')">
+                </button>
+                <button class="navTopic" onclick="loadContent('tensors/labeling')">
                     Index Labeling
-                </a>
+                </button>
             </div>
         </section>
     </div>
@@ -90,15 +68,15 @@
         <section class="toc_container">
             <h3 href="#">Calculus</h3>
             <div>
-                <a class="navTopic" onclick="loadContent('calculus/functions')">
+                <button class="navTopic" onclick="loadContent('calculus/functions')">
                     Functions
-                </a>
-                <a class="navTopic" onclick="loadContent('calculus/reshaping')">
+                </button>
+                <button class="navTopic" onclick="loadContent('calculus/reshaping')">
                     Reshaping
-                </a>
-                <a class="navTopic" onclick="loadContent('calculus/math_with_class')">
+                </button>
+                <button class="navTopic" onclick="loadContent('calculus/math_with_class')">
                     Math with Class
-                </a>
+                </button>
             </div>
         </section>
     </div>
@@ -108,15 +86,15 @@
         <section class="toc_container">
             <h3 href="#">Autograd</h3>
             <div>
-                <a class="navTopic" onclick="loadContent('autograd/introduction')">
+                <button class="navTopic" onclick="loadContent('autograd/introduction')">
                     Introduction
-                </a>
-                <a class="navTopic" onclick="loadContent('autograd/autograd')">
+                </button>
+                <button class="navTopic" onclick="loadContent('autograd/autograd')">
                     Autograd
-                </a>
-                <a class="navTopic" onclick="loadContent('autograd/flags')">
+                </button>
+                <button class="navTopic" onclick="loadContent('autograd/flags')">
                     Flags
-                </a>
+                </button>
             </div>
         </section>
     </div>
@@ -126,18 +104,18 @@
         <section class="toc_container">
             <h3 href="#">Devices</h3>
             <div>
-                <a class="navTopic" onclick="loadContent('devices/introduction')">
+                <button class="navTopic" onclick="loadContent('devices/introduction')">
                     Introduction
-                </a>
-                <a class="navTopic" onclick="loadContent('devices/instantiation')">
+                </button>
+                <button class="navTopic" onclick="loadContent('devices/instantiation')">
                     Instantiation
-                </a>
-                <a class="navTopic" onclick="loadContent('devices/file_device')">
+                </button>
+                <button class="navTopic" onclick="loadContent('devices/file_device')">
                     IO with File Devices
-                </a>
-                <a class="navTopic" onclick="loadContent('devices/opencl_device')">
+                </button>
+                <button class="navTopic" onclick="loadContent('devices/opencl_device')">
                     Bare Metal with OpenCL
-                </a>
+                </button>
             </div>
         </section>
     </div>
@@ -147,9 +125,9 @@
         <section class="toc_container">
             <h3 href="#">Optimization</h3>
             <div>
-                <a class="navTopic" onclick="loadContent('optimization/instantiation')">
+                <button class="navTopic" onclick="loadContent('optimization/instantiation')">
                     Instantiation
-                </a>
+                </button>
             </div>
         </section>
     </div>

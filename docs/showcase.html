@@ -241,6 +241,54 @@
                         </div>
 
                     </div>
+
+                    <div class="MainContentWrapper">
+                        <div class=container-fluid>
+                            <h1>Living Documentation</h1><br>
+                            <input id="spec_search">
+                            <div class="ContentBox" id="TARGET"></div>
+                            <style>
+                                .collapsible {
+                                  cursor: pointer;
+                                  padding: 10px;
+                                  width: 100%;
+                                }
+
+                                .content {
+                                  padding: 0 18px;
+                                  display: none;
+                                  overflow: hidden;
+                                  background-color: #f1f1f1;
+                                }
+
+                                .NavBox button {
+                                    white-space: nowrap;
+                                    background: linear-gradient(
+                                            to bottom, var(--mainColor) 0%,
+                                            var(--mainColor) 100%
+                                    );
+                                    background-position: 0 100%;
+                                    background-repeat: repeat-x;
+                                    background-size: 4px 2px;
+                                    color: #000;
+                                    text-decoration: none;
+                                    transition: background-size .2s;
+                                    cursor: pointer;
+                                    border-radius: 0.1em;
+                                    padding: 0.25em 0.65em 0.25em 0.65em;
+                                    border:none;
+                                }
+                                .NavBox button:hover {
+                                    background-size: 4px 50px;
+                                }
+                            </style>
+                            <script>
+                                $(document).ready(()=>{
+                                    loadReportUI("#TARGET", "#spec_search");
+                                });
+                            </script>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>

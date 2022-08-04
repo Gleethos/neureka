@@ -191,6 +191,11 @@ body {
     background-color: black;
 }
 
+button:hover {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+  transition: 0.35s;
+}
+
 main {
     margin: 0px;
     padding-top: 2em;
@@ -425,7 +430,6 @@ header p {
 
 /*Bootstrap correction:*/
 
-
 .container {
     width: 100%;
 }
@@ -527,7 +531,7 @@ header p {
 .ContentBox h3 {
     border-bottom: 0.1em solid black;
     box-shadow: 0 0 0.1em 0.01em #00033d;
-    margin-bottom: 0.8em;
+    margin-bottom: 0.0em;
     padding: 0.1em;
     color: #00033d;
     text-align: center;
