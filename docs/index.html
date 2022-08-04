@@ -23,7 +23,7 @@
     <!-----------------------------------CUSTOM CSS------------------------------------------>
     <link rel="stylesheet" href="src/css/style.css">
     <!-----------------------------------HIGHLIGHT CSS------------------------------------------>
-    <link rel="stylesheet" href="src/css/sunburst.min.css">
+    <link rel="stylesheet" href="src/css/lang-styles/intellij-light.min.css">
     <script src="src/js/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <script src="src/js/custom.js"></script>
@@ -247,38 +247,32 @@
                                         <div class="TabBody">
                                             <div class="groovyTab">
                 <pre><code class="hljs java">
-
-    var x = Tsr.of(3d).setRqsGradient(true)
-    var b = Tsr.of(-4d)
-    var w = Tsr.of(2d)
-    var y = ((x+b)*w)**2
-    y.backward(1)
-    // x.getGradient(): "(1):[-8]"
-
+var x = Tsr.of(3d).setRqsGradient(true)
+var b = Tsr.of(-4d)
+var w = Tsr.of(2d)
+var y = ((x+b)*w)**2
+y.backward(1)
+// x.getGradient(): "(1):[-8]"
                 </code></pre>
                                             </div>
                                             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
-
-    var x = Tsr.of(3d).setRqsGradient(true);
-    var b = Tsr.of(-4d);
-    var w = Tsr.of(2d);
-    var y = Tsr.of("((i0+i1)*i2)^2", x, b, w);
-    y.backward(1);
-    // x.getGradient(): "(1):[-8]"
-
+var x = Tsr.of(3d).setRqsGradient(true);
+var b = Tsr.of(-4d);
+var w = Tsr.of(2d);
+var y = Tsr.of("((i0+i1)*i2)^2", x, b, w);
+y.backward(1);
+// x.getGradient(): "(1):[-8]"
                 </code></pre>
                                             </div>
                                             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-    val x = Tsr.of(3.0).setRqsGradient(true)
-    val b = Tsr.of(-4.0)
-    val w = Tsr.of(2.0)
-    val y = Tsr.of("((i0+i1)*i2)^2", x, b, w)
-    y.backward(1.0)
-    // x.getGradient(): "(1):[-8]"
-
+val x = Tsr.of(3.0).setRqsGradient(true)
+val b = Tsr.of(-4.0)
+val w = Tsr.of(2.0)
+val y = Tsr.of("((i0+i1)*i2)^2", x, b, w)
+y.backward(1.0)
+// x.getGradient(): "(1):[-8]"
                 </code></pre>
                                             </div>
                                         </div>
