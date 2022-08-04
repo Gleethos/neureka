@@ -129,6 +129,7 @@ targetCompatibility = 8
 repositories {
     mavenCentral()
     //gradlePluginPortal { url "http://jcenter.bintray.com/" }
+    maven { url 'https://jitpack.io' }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -150,7 +151,7 @@ dependencies {
     testImplementation 'org.codehaus.groovy:groovy:3.0.11'
     testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0")
     testImplementation 'org.spockframework:spock-core:2.1-groovy-3.0'
-    testImplementation 'com.athaydes:spock-reports:2.3.0-groovy-3.0'//, { transitive = false }
+    testImplementation 'com.github.gleethos:spock-reports:6f6933b'//, { transitive = false }
 
     testRuntimeOnly group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.10' // allows mocking of classes (in addition to interfaces)
     testRuntimeOnly group: 'org.objenesis', name: 'objenesis', version: '3.2'      // allows mocking of classes without default constructor (together with ByteBuddy or CGLIB)
