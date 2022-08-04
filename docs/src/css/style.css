@@ -352,7 +352,8 @@ hr {
 }
 
 #navi img {
-    width: 1.5em;
+    width: 1.25em;
+    margin: -1.45em 0em -1em 0em;
 }
 
 header img {
