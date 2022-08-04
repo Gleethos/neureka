@@ -463,12 +463,12 @@ header p {
 
 .MainContentWrapper h1 {
     text-align: center;
-    font-family: "sans-serif", cursive, serif;
+    font-family: Arial;
 }
 
 .MainContentWrapper h2 {
     text-align: center;
-    font-family: "sans-serif", cursive, serif;
+    font-family: Arial;
     border-bottom: 0.05em solid black;
     box-shadow: 0 0 0.1em 0.01em #000000;
     margin-bottom: 0.01em;
