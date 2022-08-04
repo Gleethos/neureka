@@ -45,30 +45,34 @@ function loadReportUI(target, search) {
             let scores = {};
             let nameToFeatures = {};
             specificationArray.forEach((spec)=>{
-                features = spec['executedFeatures'];
-                nameToFeatures[spec['className']] = features;
-                scores[spec['className']] = 0;
-                scores[spec['className']] += searchScore(term, spec['className'].replace(".", " ").replace("_", " ").toLowerCase());
-                scores[spec['className']] += searchScore(term, spec['title'].toLowerCase());
-                scores[spec['className']] += searchScore(term, spec['narrative'].toLowerCase());
-                let featureToScore = {};
-                features.forEach((feature)=>{
-                    featureToScore[feature['id']] = searchScore(term, feature['id'].toLowerCase());
-                    scores[spec['className']] += featureToScore[feature['id']];
-                });
-                // We sort the features based on their score:
-                features = Object.keys(featureToScore).sort((a, b)=>{
-                    return featureToScore[b] - featureToScore[a];
-                });
-                // ...and we but the sorted features into a mapping between the spec name and features:
-                nameToFeatures[spec['className']] = features;
+                let name = spec['className'];
+                // We make sure that the spec is not the "Example_Spec" class:
+                if ( name.indexOf("Example_Spec") == -1 ) {
+                    features = spec['executedFeatures'];
+                    nameToFeatures[name] = features;
+                    scores[name] = 0;
+                    scores[name] += searchScore(term, spec['className'].replace(".", " ").replace("_", " ").toLowerCase());
+                    scores[name] += searchScore(term, spec['title'].toLowerCase());
+                    scores[name] += searchScore(term, spec['narrative'].toLowerCase());
+                    let featureToScore = {};
+                    features.forEach((feature)=>{
+                        featureToScore[feature['id']] = searchScore(term, feature['id'].toLowerCase());
+                        scores[name] += featureToScore[feature['id']];
+                    });
+                    // We sort the features based on their score:
+                    features = Object.keys(featureToScore).sort((a, b)=>{
+                        return featureToScore[b] - featureToScore[a];
+                    });
+                    // ...and we but the sorted features into a mapping between the spec name and features:
+                    nameToFeatures[name] = features;
+                }
             });
             // Now we sort the scored specifications by score:
             let sortedScores = Object.keys(scores).sort((a,b)=>{
                 return scores[b]-scores[a];
             });
             // And we select only the top 4:
-            sortedScores = sortedScores.slice(0,4);
+            sortedScores = sortedScores.slice(0,3);
             let chosen = [];
             // We then iterate over the sorted scores:
             sortedScores.forEach((specName)=>{
@@ -203,10 +207,10 @@ function createLoaderDropDownFor(specName, expandableFeature) {
         currentlyHidden = content.css('display') == 'none';
 
         // Before we toggle the content we need to "untoggle" all the sibling contents:
-        $('.content').each((index, current)=>{ $(current).hide(); });
+        $('.content').each((index, current)=>{ $(current).hide(100); });
 
         // We switch the content display attribute:
-        if ( currentlyHidden ) content.show(); else content.hide();
+        if ( currentlyHidden ) content.show(100); else content.hide(100);
     });
 
     return wrapper;

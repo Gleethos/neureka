@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.008 seconds"
+    "duration":"0.007 seconds"
   },
 
   "title":"",
@@ -56,7 +56,7 @@
       "blocks":[
         {"kind":"given","text":"A simple tensor having a device as component","code":["def device = Mock(Device)","device.has(_) >>> [false, true, true]","Tsr t = Tsr.of(1)"]},
         {"kind":"when","text":"","code":["t.to(device)","t.setIsOutsourced(true)"]},
-        {"kind":"then","text":"","code":["1 * device.update({","Component.OwnerChangeRequest request -> request.executeChange()","})"]},
+        {"kind":"then","text":"","code":["1 * device.update({","    Component.OwnerChangeRequest request -> request.executeChange()","})"]},
         {"kind":"when","text":"The device is being accessed via the \"device()\" method...","code":["Device found = t.get(Device.class)"]},
         {"kind":"then","text":"This found device should be the one that was set originally.","code":["found == device"]},
         {"kind":"and","text":"","code":["found == t.getDevice()"]},

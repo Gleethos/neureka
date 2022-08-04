@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.046 seconds"
+    "duration":"0.050 seconds"
   },
 
   "title":"",
@@ -23,11 +23,11 @@
       "blocks":[
         {"kind":"given","text":"","code":["var ndc1 = SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset)","var ndc2 = NDConfiguration.of(shape, translation, indicesMap, spread, offset)","var i1 = NDIterator.of(ndc1, NDIterator.NonVirtual.FALSE)","var i2 = NDIterator.of(ndc2, NDIterator.NonVirtual.FALSE)"]},
         {"kind":"expect","text":"","code":["ndc2.getClass()    == expected","ndc1.rank()        == ndc2.rank()","ndc1.size()        == ndc2.size()","ndc1.shape()       == ndc2.shape()","ndc1.translation() == ndc2.translation()","ndc1.indicesMap()  == ndc2.indicesMap()","ndc1.spread()      == ndc2.spread()","ndc1.offset()      == ndc2.offset()"]},
-        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","ndc1.indicesOfIndex(it) == ndc2.indicesOfIndex(it)","})",".every()"]},
-        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","ndc1.indexOfIndices(ndc1.indicesOfIndex(it)) == ndc2.indexOfIndices(ndc2.indicesOfIndex(it))","})",".every()"]},
-        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","ndc1.indexOfIndex(it) == ndc2.indexOfIndex(it)","})",".every()"]},
-        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","boolean matches = i1.get() == i2.get()","if ( it < ndc1.size()-1 ) { i1.increment(); i2.increment() }","return matches","})",".every()"]},
-        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","boolean matches = i1.get() == i2.get()","i1.decrement(); i2.decrement()","return matches","})",".every()"]},
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    ndc1.indicesOfIndex(it) == ndc2.indicesOfIndex(it)","})",".every()"]},
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    ndc1.indexOfIndices(ndc1.indicesOfIndex(it)) == ndc2.indexOfIndices(ndc2.indicesOfIndex(it))","})",".every()"]},
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    ndc1.indexOfIndex(it) == ndc2.indexOfIndex(it)","})",".every()"]},
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    boolean matches = i1.get() == i2.get()","    if ( it < ndc1.size()-1 ) { i1.increment(); i2.increment() }","    return matches","})",".every()"]},
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    boolean matches = i1.get() == i2.get()","    i1.decrement(); i2.decrement()","    return matches","})",".every()"]},
         {"kind":"where","text":"","code":[]}
       ],
       "problems":"[]"

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.568 seconds"
+    "duration":"2.555 seconds"
   },
 
   "title":"",
@@ -58,7 +58,7 @@
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.018 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -69,7 +69,7 @@
         {"kind":"and","text":"A mocked relation between both tensors returned by the slice as component.","code":["Relation r = Mock(Relation)","s.has(Relation.class) >> true","s.get(Relation.class) >> r","r.findRootTensor() >> t"]},
         {"kind":"when","text":"We try to add the slice to the device.","code":["device.store(s)"]},
         {"kind":"then","text":"This will simple trigger the attempt of the device to register itself as component.","code":["1 * s.set({ it == device })"]},
-        {"kind":"when","text":"If the tensor was not a mock it would then cause the following change request to be dispatched:","code":["device.update(new Component.OwnerChangeRequest() {","@Override Tsr<?> getOldOwner() { return null }","@Override Tsr<?> getNewOwner() { return s }","@Override boolean executeChange() { return true }","})"]},
+        {"kind":"when","text":"If the tensor was not a mock it would then cause the following change request to be dispatched:","code":["device.update(new Component.OwnerChangeRequest() {","    @Override Tsr<?> getOldOwner() { return null }","    @Override Tsr<?> getNewOwner() { return s }","    @Override boolean executeChange() { return true }","})"]},
         {"kind":"then","text":"The device will now try to store the tensor throw an exception because the tensor has an illegal state...","code":["def exception = thrown(IllegalStateException)"]},
         {"kind":"and","text":"It explains what went wrong.","code":["exception.message == \"Data parent is not outsourced!\""]}
       ],
@@ -79,12 +79,12 @@
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"2.537 seconds",
+      "duration":"2.528 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["CLContext context","List<OpenCLDevice> devices = []","Runnable dispose = {","context = Neureka.get().backend().get(CLContext)","assert context.platforms.size() > 0","context.platforms.each {","assert it.devices.size() > 0","devices.addAll(it.devices)","}","context.dispose()","}","def thread = new Thread(dispose)"]},
+        {"kind":"given","text":"","code":["CLContext context","List<OpenCLDevice> devices = []","Runnable dispose = {","    context = Neureka.get().backend().get(CLContext)","    assert context.platforms.size() > 0","    context.platforms.each {","        assert it.devices.size() > 0","        devices.addAll(it.devices)","    }","    context.dispose()","}","def thread = new Thread(dispose)"]},
         {"kind":"when","text":"","code":["thread.start()","thread.join()"]},
         {"kind":"then","text":"","code":["noExceptionThrown()"]},
         {"kind":"and","text":"","code":["context.platforms.size() == 0"]},

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.014 seconds"
+    "duration":"0.009 seconds"
   },
 
   "title":"To Copy or Not to Copy",
@@ -16,7 +16,7 @@
     {
       "id":"A deep copy of a tensor is also a deep copy of the underlying data array.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -34,7 +34,7 @@
     {
       "id":"A deep copy of a slice tensor is also a deep copy of the underlying data array.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -53,7 +53,7 @@
     {
       "id":"A shallow copy will share the same underlying data as its original tensor.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

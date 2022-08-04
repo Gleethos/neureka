@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.391 seconds"
+    "duration":"0.399 seconds"
   },
 
   "title":"The CPU device, an API for CPU based execution",
@@ -16,7 +16,7 @@
     {
       "id":"Thread pool executes given workload in parallel",
       "result":"PASS",
-      "duration":"0.386 seconds",
+      "duration":"0.395 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\\n Warning! This test is flaky simply because it relies on the behaviour of threads\\n which may or may not behave as expected. \\n"]
       },
@@ -26,7 +26,7 @@
         {"kind":"expect","text":"This device should not be null but be an instance of the CPU representative device type.","code":["cpu != null","cpu instanceof CPU"]},
         {"kind":"when","text":"Accessing the executor of the cpu device...","code":["CPU.JVMExecutor exec = ( (CPU) cpu ).getExecutor()"]},
         {"kind":"then","text":"The executor is not null as well as its internal thread pool!","code":["exec != null"]},
-        {"kind":"expect","text":"","code":["if ( exec.getCorePoolSize() <= 2 ) true","else {","int[] min = new int[]{ exec.getCorePoolSize() }","assert min[0] > 0 && min[0] <= Runtime.getRuntime().availableProcessors()","Thread t = new Thread(() -> {","while ( min[0] > 0 ) {","int current = exec.getCorePoolSize() - exec.getActiveThreadCount()","if ( current < min[0] ) min[0] = current","}","})","t.start()","Tsr c = ( a / b ) * 3","assert c.shape() == [100,60,60,2]","int result = min[0]","try {","min[0] = 0","t.join()","} catch (InterruptedException e) {","e.printStackTrace()","}","assert result <= (exec.getCorePoolSize() / 2)","}"]}
+        {"kind":"expect","text":"","code":["if ( exec.getCorePoolSize() <= 2 ) true","else {","    int[] min = new int[]{ exec.getCorePoolSize() }","    assert min[0] > 0 && min[0] <= Runtime.getRuntime().availableProcessors()","    Thread t = new Thread(() -> {","        while ( min[0] > 0 ) {","            int current = exec.getCorePoolSize() - exec.getActiveThreadCount()","            if ( current < min[0] ) min[0] = current","        }","    })","    t.start()","    Tsr c = ( a / b ) * 3","    assert c.shape() == [100,60,60,2]","    int result = min[0]","    try {","        min[0] = 0","        t.join()","    } catch (InterruptedException e) {","        e.printStackTrace()","    }","    assert result <= (exec.getCorePoolSize() / 2)","}"]}
       ],
       "problems":"[]"
     },

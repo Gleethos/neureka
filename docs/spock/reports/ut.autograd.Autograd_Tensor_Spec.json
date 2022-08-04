@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.019 seconds"
+    "duration":"0.018 seconds"
   },
 
   "title":"",
@@ -43,14 +43,14 @@
     {
       "id":"Second-Test \"x-mul\" autograd behaviour. (Not on device)",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"Gradient auto apply for tensors in ue is set to false.","code":["Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)"]},
         {"kind":"and","text":"Tensor legacy view is set to true.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
-        {"kind":"when","text":"","code":["def x = Tsr.ofDoubles()",".withShape(3, 3)",".andFill(","1.0, 2.0, 5.0,","-1.0, 4.0, -2.0,","-2.0, 3.0, 4.0,",")","def y = Tsr.of(","new int[]{2, 2},","new double[]{","-1, 3,","2, 3,","}).setRqsGradient(true)"]},
+        {"kind":"when","text":"","code":["def x = Tsr.ofDoubles()",".withShape(3, 3)",".andFill(","        1.0, 2.0, 5.0,","        -1.0, 4.0, -2.0,","        -2.0, 3.0, 4.0,",")","def y = Tsr.of(","new int[]{2, 2},","new double[]{","        -1, 3,","        2, 3,","}).setRqsGradient(true)"]},
         {"kind":"then","text":"","code":["y.toString().contains(\":g:(null)\")"]},
         {"kind":"when","text":"","code":["def z = Tsr.of(\"I0xi1\", x, y)"]},
         {"kind":"then","text":"","code":["z.toString().contains(\"[2x2]:(15.0, 15.0, 18.0, 8.0)\")"]},
@@ -58,7 +58,7 @@
         {"kind":"then","text":"","code":["z.toString().contains(\"[2x2]:(15.0, 15.0, 18.0, 8.0)\")"]},
         {"kind":"when","text":"","code":["z.backward(Tsr.of(new int[]{2, 2}, 1))"]},
         {"kind":"then","text":"","code":["y.toString().contains(\"[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)\")"]},
-        {"kind":"when","text":"","code":["x = Tsr.of(","new int[]{3, 3},","new double[]{","1, 2, 5,","-1, 4, -2,","-2, 3, 4,","}",").unsafe.toType(type)","y = Tsr.of(","new int[]{2, 2},","new double[]{","-1, 3,","2, 3,","}).setRqsGradient(true).unsafe.toType(type)"]},
+        {"kind":"when","text":"","code":["x = Tsr.of(","        new int[]{3, 3},","        new double[]{","                1, 2, 5,","                -1, 4, -2,","                -2, 3, 4,","        }",").unsafe.toType(type)","y = Tsr.of(","new int[]{2, 2},","new double[]{","        -1, 3,","        2, 3,","}).setRqsGradient(true).unsafe.toType(type)"]},
         {"kind":"then","text":"","code":["y.toString().contains(\":g:(null)\")"]},
         {"kind":"when","text":"","code":["z = Tsr.of(\"I0xi1\", y, x)"]},
         {"kind":"then","text":"","code":["z.toString().contains(\"[2x2]:(15.0, 15.0, 18.0, 8.0)\")"]},
@@ -82,7 +82,7 @@
     {
       "id":"A tensor used as derivative within a computation graph will throw exception when trying to deleting it.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

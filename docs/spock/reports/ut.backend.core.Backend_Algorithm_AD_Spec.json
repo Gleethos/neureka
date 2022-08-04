@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.130 seconds"
+    "duration":"0.122 seconds"
   },
 
   "title":"",
@@ -53,7 +53,7 @@
     {
       "id":"Convolution implementations behave as expected.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -72,7 +72,7 @@
     {
       "id":"Broadcast implementations behave as expected.",
       "result":"PASS",
-      "duration":"0.022 seconds",
+      "duration":"0.024 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

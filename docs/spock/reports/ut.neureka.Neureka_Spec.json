@@ -16,7 +16,7 @@
     {
       "id":"Neureka class instance has expected behaviour.",
       "result":"PASS",
-      "duration":"0.091 seconds",
+      "duration":"0.090 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -32,7 +32,7 @@
     {
       "id":"Neureka settings class can be locked causing its properties to be immutable.",
       "result":"PASS",
-      "duration":"0.793 seconds",
+      "duration":"0.825 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"Every Thread instance has their own Neureka instance.",
       "result":"PASS",
-      "duration":"0.078 seconds",
+      "duration":"0.079 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
     {
       "id":"Various library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"1.701 seconds",
+      "duration":"1.664 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -85,7 +85,7 @@
     {
       "id":"OpenCL related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"0.198 seconds",
+      "duration":"0.197 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -99,13 +99,13 @@
     {
       "id":"Backend related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"2.601 seconds",
+      "duration":"2.610 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
-        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","toStringStandard.matcher(it.toString()).matches()","}"]},
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
         {"kind":"where","text":"The following operations are being used..","code":[]}
       ],
       "problems":"[]"

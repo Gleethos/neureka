@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.026 seconds"
+    "duration":"0.021 seconds"
   },
 
   "title":"",
@@ -52,7 +52,7 @@
     {
       "id":"A functional algorithm warns us when modified after it has been built!",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,7 +62,7 @@
         {"kind":"when","text":"We build it thoroughly...","code":["algorithm",".setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)",".setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )","._setExecution((caller, call ) -> null)",".setCallPreparation(call -> null)",".buildFunAlgorithm()"]},
         {"kind":"then","text":"The algorithm should be usable just fine!","code":["algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT","algorithm.autoDiffModeFrom(null) == AutoDiffMode.BACKWARD_ONLY","algorithm.execute(null, null) == null","algorithm.prepare(null) == null"]},
         {"kind":"when","text":"We try to modify the algorithm even if it is already built...","code":["setter(algorithm)"]},
-        {"kind":"then","text":"We will get a warning which wells us that mutating the state of the algorithm is discouraged!","code":["1 * System.err.println(","\"[Test worker] WARN neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm - \" +","\"Implementation '$type.simpleName' in algorithm '$algorithm' was modified! \" +","\"Please consider only modifying the standard backend state of Neureka for experimental reasons.\"",")"]},
+        {"kind":"then","text":"We will get a warning which wells us that mutating the state of the algorithm is discouraged!","code":["1 * System.err.println(","    \"[Test worker] WARN neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm - \" +","    \"Implementation '$type.simpleName' in algorithm '$algorithm' was modified! \" +","    \"Please consider only modifying the standard backend state of Neureka for experimental reasons.\"",")"]},
         {"kind":"cleanup","text":"","code":["System.err = oldStream"]},
         {"kind":"where","text":"","code":[]}
       ],

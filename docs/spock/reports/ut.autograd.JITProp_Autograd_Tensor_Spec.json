@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.164 seconds"
+    "duration":"0.171 seconds"
   },
 
   "title":"",
@@ -34,7 +34,7 @@
     {
       "id":"Test JIT propagation variant one.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -68,7 +68,7 @@
     {
       "id":"Gradient auto-apply kicks in when used AD uses JIT prop",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
     {
       "id":"Test no preemptive gradient apply when not requested and auto apply and JIT_prop",
       "result":"PASS",
-      "duration":"0.122 seconds",
+      "duration":"0.134 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -114,7 +114,7 @@
     {
       "id":"Test autograd without JIT and auto apply.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

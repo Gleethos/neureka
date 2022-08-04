@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.039 seconds"
+    "duration":"0.047 seconds"
   },
 
   "title":"",
@@ -21,8 +21,8 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var fun1 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {","var outputs = [Tsr.of(1)]","tensors.length.times { outputs.add(tensors[it]) }","return outputs[0]","})"]},
-        {"kind":"and","text":"","code":["var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {","var outputs = [Tsr.of(1)]","tensors.length.times { outputs.add(tensors[it]) }","return outputs[0].unsafe.setIsIntermediate(true)","})"]},
+        {"kind":"given","text":"","code":["var fun1 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {","    var outputs = [Tsr.of(1)]","    tensors.length.times { outputs.add(tensors[it]) }","    return outputs[0]","})"]},
+        {"kind":"and","text":"","code":["var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {","    var outputs = [Tsr.of(1)]","    tensors.length.times { outputs.add(tensors[it]) }","    return outputs[0].unsafe.setIsIntermediate(true)","})"]},
         {"kind":"and","text":"","code":["var a = Tsr.of(3)","var b = Tsr.of(-2.5)"]},
         {"kind":"expect","text":"","code":["!a.isIntermediate()","!b.isIntermediate()"]},
         {"kind":"when","text":"","code":["caller(a, b, fun1)"]},
@@ -37,13 +37,13 @@
     {
       "id":"Function implementations ensure that outputs which are input members are not flagged as \"intermediate\"!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var fun1 = new DummyFunction((Args args, Tsr<?>[] tensors) -> tensors[0] )"]},
-        {"kind":"and","text":"","code":["var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {","return tensors[0].unsafe.setIsIntermediate( true ) // This should fail!","})"]},
+        {"kind":"and","text":"","code":["var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {","    return tensors[0].unsafe.setIsIntermediate( true ) // This should fail!","})"]},
         {"kind":"and","text":"","code":["var a = Tsr.of(3)","var b = Tsr.of(-2.5)"]},
         {"kind":"expect","text":"","code":["!a.isIntermediate()","!b.isIntermediate()"]},
         {"kind":"when","text":"","code":["caller(a, b, fun1)"]},
@@ -58,12 +58,12 @@
     {
       "id":"Function implementations will ensure the \"call\" and \"invoke\" does not return tensors flagged as \"intermediate\".",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var fun = new DummyFunction((Args args, Tsr<?>[] tensors) -> {","return Tsr.of(42f).unsafe.setIsIntermediate(true)","})"]},
+        {"kind":"given","text":"","code":["var fun = new DummyFunction((Args args, Tsr<?>[] tensors) -> {","    return Tsr.of(42f).unsafe.setIsIntermediate(true)","})"]},
         {"kind":"and","text":"","code":["var a = Tsr.of(3)","var b = Tsr.of(-2.5)"]},
         {"kind":"expect","text":"","code":["!a.isIntermediate()","!b.isIntermediate()"]},
         {"kind":"when","text":"","code":["var t1 = fun.call(a, b)","var t2 = fun.invoke(a, b)","var t3 = fun.execute(a, b)"]},
@@ -75,7 +75,7 @@
     {
       "id":"The library context exposes a set of useful functions.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

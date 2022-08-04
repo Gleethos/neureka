@@ -16,7 +16,7 @@
     {
       "id":"We can concatenate 2 tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"We can concatenate 2 float tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -91,7 +91,7 @@
     {
       "id":"We can concatenate and then back-propagate 3 simple float tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

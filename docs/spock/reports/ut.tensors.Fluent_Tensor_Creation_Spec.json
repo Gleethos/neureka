@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.028 seconds"
+    "duration":"0.031 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },

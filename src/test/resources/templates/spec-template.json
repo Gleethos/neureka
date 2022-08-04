@@ -13,9 +13,9 @@ def noSingleBreaks = { String s ->
     }
     return sb.toString().trim();
 }
-def trim = {it -> noSingleBreaks(it.replaceAll("\\s+", " ").replace("(\\n\\n)\\n*", "\n\n")).trim()}
-def simpleEsc = {it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t").trim()}
-def esc = { trim(simpleEsc(it)) }
+def trim = {it -> noSingleBreaks(it.replaceAll("\\s+", " ").replace("(\\n\\n)\\n*", "\n\n"))}
+def simpleEsc = {it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")}
+def esc = { trim(simpleEsc(it).trim()) }
 def strList = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({simpleEsc(it)}).join('","'))+'"')}
 
 //----

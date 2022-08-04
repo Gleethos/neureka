@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"1",
-    "duration":"0.097 seconds"
+    "duration":"0.083 seconds"
   },
 
   "title":"",
@@ -60,7 +60,7 @@
     {
       "id":"Passing a numeric array to a tensor should modify its content!",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -76,7 +76,7 @@
     {
       "id":"Tensor data can be fetched from device if the tensor is stored on it...",
       "result":"PASS",
-      "duration":"0.017 seconds",
+      "duration":"0.018 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -115,7 +115,7 @@
     {
       "id":"Devices store tensors which can also be restored.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -181,7 +181,7 @@
     {
       "id":"Virtual tensors stay virtual when outsourced.",
       "result":"PASS",
-      "duration":"0.014 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
