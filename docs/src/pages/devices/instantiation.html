@@ -24,36 +24,30 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-    var device0         = Device.any('first gpu') // Returns CPU instance if GPU not found! (Never null)
-    var device1         = Device.get('first gpu') // Returns closest type of device matching the provided string or null.
-    var device2         = Device.get(OpenCLDevice, 'first gpu') // Returns requested device type or null.
-    var optionalDevice1 = Device.find('first gpu') // Optional of found device which may be null.
-    var optionalDevice2 = Device.find(OpenCLDevice, 'first gpu') // Optional of requested device type which may be null.
-
+                <pre><code class="hljs language-java">
+var device0         = Device.any('first gpu') // Returns CPU instance if GPU not found! (Never null)
+var device1         = Device.get('first gpu') // Returns closest type of device matching the provided string or null.
+var device2         = Device.get(OpenCLDevice, 'first gpu') // Returns requested device type or null.
+var optionalDevice1 = Device.find('first gpu') // Optional of found device which may be null.
+var optionalDevice2 = Device.find(OpenCLDevice, 'first gpu') // Optional of requested device type which may be null.
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-    var device0         = Device.any("first gpu"); // Returns CPU instance if GPU not found! (Never null)
-    var device1         = Device.get("first gpu"); // Returns closest type of device matching the provided string or null.
-    var device2         = Device.get(OpenCLDevice.class, "first gpu"); // Returns requested device type or null.
-    var optionalDevice1 = Device.find("first gpu"); // Optional of found device which may be null.
-    var optionalDevice2 = Device.find(OpenCLDevice.class, "first gpu"); // Optional of requested device type which may be null.
-
+                <pre><code class="hljs language-java">
+var device0         = Device.any("first gpu"); // Returns CPU instance if GPU not found! (Never null)
+var device1         = Device.get("first gpu"); // Returns closest type of device matching the provided string or null.
+var device2         = Device.get(OpenCLDevice.class, "first gpu"); // Returns requested device type or null.
+var optionalDevice1 = Device.find("first gpu"); // Optional of found device which may be null.
+var optionalDevice2 = Device.find(OpenCLDevice.class, "first gpu"); // Optional of requested device type which may be null.
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-    val device0         = Device.any("first gpu") // Returns CPU instance if GPU not found! (Never null)
-    val device1         = Device.get("first gpu") // Returns closest type of device matching the provided string or null.
-    val device2         = Device.get(OpenCLDevice::class.java, "first gpu") // Returns requested device type or null.
-    val optionalDevice1 = Device.find("first gpu") // Optional of found device which may be null.
-    val optionalDevice2 = Device.find(OpenCLDevice::class.java, "first gpu") // Optional of requested device type which may be null.
-
+val device0         = Device.any("first gpu") // Returns CPU instance if GPU not found! (Never null)
+val device1         = Device.get("first gpu") // Returns closest type of device matching the provided string or null.
+val device2         = Device.get(OpenCLDevice::class.java, "first gpu") // Returns requested device type or null.
+val optionalDevice1 = Device.find("first gpu") // Optional of found device which may be null.
+val optionalDevice2 = Device.find(OpenCLDevice::class.java, "first gpu") // Optional of requested device type which may be null.
                 </code></pre>
             </div>
         </div>
@@ -94,26 +88,26 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    def platforms = Neureka.get().backend().get(CLContext.class).getPlatforms()
-    def devices = platforms[0].devices
+def platforms = Neureka.get().backend().get(CLContext.class).getPlatforms()
+def devices = platforms[0].devices
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    List&#60;OpenCLPlatform&#62; platforms = Neureka.get().backend().get(CLContext.class).getPlatforms();
-    List&#60;OpenCLDevice&#62; devices = platforms.get(0).getDevices();
+List&#60;OpenCLPlatform&#62; platforms = Neureka.get().backend().get(CLContext.class).getPlatforms();
+List&#60;OpenCLDevice&#62; devices = platforms.get(0).getDevices();
 
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-    val platforms : List&#60;OpenCLPlatform&#62; = Neureka.get().context.get(CLContext.class).platforms
-    val devices : List&#60;OpenCLDevice&#62; = platforms[0].devices
+val platforms : List&#60;OpenCLPlatform&#62; = Neureka.get().context.get(CLContext.class).platforms
+val devices : List&#60;OpenCLDevice&#62; = platforms[0].devices
 
                 </code></pre>
             </div>
@@ -149,18 +143,18 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-    myTensor.to( device )
+                <pre><code class="hljs language-java">
+myTensor.to( device )
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-    myTensor.to( device );
+                <pre><code class="hljs language-java">
+myTensor.to( device );
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-    myTensor.to( device )
+myTensor.to( device )
                 </code></pre>
             </div>
         </div>
@@ -175,18 +169,18 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-    device.store( myTensor )
+                <pre><code class="hljs language-java">
+device.store( myTensor )
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-    device.store( myTensor );
+                <pre><code class="hljs language-java">
+device.store( myTensor );
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-    device.store( myTensor );
+device.store( myTensor );
                 </code></pre>
             </div>
         </div>

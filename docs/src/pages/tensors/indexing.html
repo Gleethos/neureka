@@ -12,23 +12,22 @@
     </div>
 </div>
 <div class="col-sm-12 col-md-12">
-                                               <pre><code class="hljs java">
+    <pre><code class="hljs language-java">
+Tsr a = Tsr.of(
+    [4, 6], [
+        1, 2, 3, 4, 5, 6,
+        7, 8, 9, 1, 2, 3,
+        4, 5, 6, 7, 8, 9,
+        1, 2, 3, 4, 5, 6
+])
 
-        Tsr a = Tsr.of(
-            [4, 6], [
-                1, 2, 3, 4, 5, 6,
-                7, 8, 9, 1, 2, 3,
-                4, 5, 6, 7, 8, 9,
-                1, 2, 3, 4, 5, 6
-        ])
+def s = a[1, -2] // Getting a single value via indexing!
 
-        def s = a[1, -2] // Getting a single value via indexing!
+//  s:>> 2.0
 
-        //  s:>> 2.0
+s = a[[1, -2]]
 
-        s = a[[1, -2]]
+//  s:>> 2.0  // Passing indexAlias lists works as well!
 
-        //  s:>> 2.0  // Passing indexAlias lists works as well!
-
-                                                </code></pre>
+    </code></pre>
 </div>

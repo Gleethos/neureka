@@ -23,24 +23,18 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-    var settings = Neureka.get().settings()
-
+                <pre><code class="hljs language-java">
+var settings = Neureka.get().settings()
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-    var settings = Neureka.get().settings();
-
+                <pre><code class="hljs language-java">
+var settings = Neureka.get().settings();
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-    val settings = Neureka.get().settings()
-
+val settings = Neureka.get().settings()
                 </code></pre>
             </div>
         </div>
@@ -66,36 +60,30 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-    Neureka.get().reset() // First we reset everything, just in case! 👍
-    // Then we use the following autograd settings :
-    Neureka.get().settings().autograd().isApplyingGradientWhenRequested = false
-    Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-    Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = false
-
+                <pre><code class="hljs language-java">
+Neureka.get().reset() // First we reset everything, just in case! 👍
+// Then we use the following autograd settings :
+Neureka.get().settings().autograd().isApplyingGradientWhenRequested = false
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
+Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = false
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-    Neureka.get().reset(); // First we reset everything, just in case! 👍
-    // Then we use the following autograd settings :
-    Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false );
-    Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false );
-    Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false );
-
+                <pre><code class="hljs language-java">
+Neureka.get().reset(); // First we reset everything, just in case! 👍
+// Then we use the following autograd settings :
+Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false );
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false );
+Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false );
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-    Neureka.get().reset() // First we reset everything, just in case! 👍
-    // Then we use the following autograd settings :
-    Neureka.get().settings().autograd().isApplyingGradientWhenRequested = false
-    Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-    Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = false
-
+Neureka.get().reset() // First we reset everything, just in case! 👍
+// Then we use the following autograd settings :
+Neureka.get().settings().autograd().isApplyingGradientWhenRequested = false
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
+Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = false
                 </code></pre>
             </div>
         </div>
@@ -136,24 +124,18 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-    var device = Device.any('first gpu') // Returns CPU instance if GPU not found! (Never null)
-
+                <pre><code class="hljs language-java">
+var device = Device.any('first gpu') // Returns CPU instance if GPU not found! (Never null)
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-    var device = Device.any("first gpu"); // Returns CPU instance if GPU not found! (Never null)
-
+                <pre><code class="hljs language-java">
+var device = Device.any("first gpu"); // Returns CPU instance if GPU not found! (Never null)
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-    val device = Device.any("first gpu") // Returns CPU instance if GPU not found! (Never null)
-
+val device = Device.any("first gpu") // Returns CPU instance if GPU not found! (Never null)
                 </code></pre>
             </div>
         </div>
@@ -178,24 +160,18 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-    device.store( myTensor )
-
+                <pre><code class="hljs language-java">
+device.store( myTensor )
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-    device.store( myTensor );
-
+                <pre><code class="hljs language-java">
+device.store( myTensor );
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-    device.store( myTensor )
-
+device.store( myTensor )
                 </code></pre>
             </div>
         </div>
@@ -210,24 +186,18 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-    myTensor.set( device )
-
+                <pre><code class="hljs language-java">
+myTensor.set( device )
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-    myTensor.set( device );
-
+                <pre><code class="hljs language-java">
+myTensor.set( device );
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-    myTensor.set( device )
-
+myTensor.set( device )
                 </code></pre>
             </div>
         </div>
@@ -264,51 +234,45 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-    var X = Tsr.of(
-                [[0.6667, 1.0000],
-                 [0.3333, 0.5556],
-                 [1.0000, 0.6667]]
-            )
-    var y = Tsr.of(
-                    [[0.9200],
-                     [1.0000],
-                     [0.8900]]
-            )
-
+                <pre><code class="hljs language-java">
+var X = Tsr.of(
+            [[0.6667, 1.0000],
+             [0.3333, 0.5556],
+             [1.0000, 0.6667]]
+        )
+var y = Tsr.of(
+                [[0.9200],
+                 [1.0000],
+                 [0.8900]]
+        )
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-    var X = Tsr.of(new double[][]{
-                     {0.6667, 1.0000},
-                     {0.3333, 0.5556},
-                     {1.0000, 0.6667}
-                });
-    var y = Tsr.of(new double[][]{
-                    {0.9200},
-                    {1.0000},
-                    {0.8900}
-                });
-
+                <pre><code class="hljs language-java">
+var X = Tsr.of(new double[][]{
+                 {0.6667, 1.0000},
+                 {0.3333, 0.5556},
+                 {1.0000, 0.6667}
+            });
+var y = Tsr.of(new double[][]{
+                {0.9200},
+                {1.0000},
+                {0.8900}
+            });
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-    val X = Tsr.of(arrayOf(
-                     doubleArrayOf(0.6667, 1.0000),
-                     doubleArrayOf(0.3333, 0.5556),
-                     doubleArrayOf(1.0000, 0.6667)
-                ))
-    val y = Tsr.of(arrayOf(
-                    doubleArrayOf(0.9200),
-                    doubleArrayOf(1.0000),
-                    doubleArrayOf(0.8900)
-                ))
-
+val X = Tsr.of(arrayOf(
+                 doubleArrayOf(0.6667, 1.0000),
+                 doubleArrayOf(0.3333, 0.5556),
+                 doubleArrayOf(1.0000, 0.6667)
+            ))
+val y = Tsr.of(arrayOf(
+                doubleArrayOf(0.9200),
+                doubleArrayOf(1.0000),
+                doubleArrayOf(0.8900)
+            ))
                 </code></pre>
             </div>
         </div>
@@ -346,7 +310,7 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
     var W1 = Tsr.of(
                     [[-1.1843,  0.0146, -1.4647],
@@ -364,7 +328,7 @@
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
     var W1 = Tsr.of(new double[][]{
                         {-1.1843,  0.0146, -1.4647},
@@ -425,14 +389,14 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
     var sig = Function.of('sig(I[0])')
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
     var sig = Function.of("sig(I[0])");
 
@@ -467,7 +431,7 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
     def errors = []
     def losses = []
@@ -491,7 +455,7 @@
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
     private List errors = new ArrayList<>();
     private List losses = new ArrayList<>();
@@ -562,7 +526,7 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
     100.times {
         var loss = forwardAndBackward(X)
@@ -572,7 +536,7 @@
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
     for ( int i = 0; i < 100; i++ ) {
         Tsr&#60;Double&#62; loss = forwardAndBackward(X);

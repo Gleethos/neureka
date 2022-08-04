@@ -256,7 +256,7 @@ function createUIForFeature(featureData) {
         let blockTitle = $('<div style="width:100%"></div>');
         blockTitle.html("<i>"+uppercaseFirstLetter(block['kind'])+"</i> "+lowercaseFirstLetter(block['text']));
         let blockCode = $('<pre style="width:100%"></pre>');
-        let codeWrapper = $('<code class="hljs java"></code>');
+        let codeWrapper = $('<code class="hljs language-java"></code>');
         blockCode.append(codeWrapper);
         codeWrapper.text(block['code'].join("\n"));
         blockDiv.append(blockTitle);

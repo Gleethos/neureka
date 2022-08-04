@@ -22,82 +22,81 @@
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
+var t = Tsr.of([3, 3, 4], -11..3)
+var s = t.slice()
+            .axis(0).at(1)
+            .axis(2).from(1).to(2)
+            .get()
+/*
+    s.toString():
 
-    Tsr t = Tsr.of([3, 3, 4], -11..3)
-    Tsr s = t.slice()
-                .axis(0).at(1)
-                .axis(2).from(1).to(2)
-                .get()
-    /*
-        s.toString():
-
-        (1x3x2):[
-           [
-              [   2.0 ,   3.0  ],
-              [  -9.0 ,  -8.0  ],
-              [  -5.0 ,  -4.0  ]
-           ]
-        ]
+    (1x3x2):[
+       [
+          [   2.0 ,   3.0  ],
+          [  -9.0 ,  -8.0  ],
+          [  -5.0 ,  -4.0  ]
+       ]
+    ]
 
 
-        Note: Axis 1 will be sliced implicitly if not specified!
-        ------------------------------------------------------------------
-    */
+    Note: Axis 1 will be sliced implicitly if not specified!
+    ------------------------------------------------------------------
+*/
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-    Tsr t = Tsr.of(
-                    new int[]{3, 3, 4},
-                    new double[]{-11, -10, ... 2, 3}
-            );
-    Tsr s = t.slice()
+                <pre><code class="hljs language-java">
+Tsr&#60;Double&#62; t = Tsr.of(
+                new int[]{3, 3, 4},
+                new double[]{-11, -10, ... 2, 3}
+        );
+Tsr&#60;Double&#62; s = t.slice()
                 .axis(0).at(1)
                 .axis(2).from(1).to(2)
                 .get();
-    /*
-        s.toString():
+/*
+    s.toString():
 
-        (1x3x2):[
-           [
-              [   2.0 ,   3.0  ],
-              [  -9.0 ,  -8.0  ],
-              [  -5.0 ,  -4.0  ]
-           ]
-        ]
+    (1x3x2):[
+       [
+          [   2.0 ,   3.0  ],
+          [  -9.0 ,  -8.0  ],
+          [  -5.0 ,  -4.0  ]
+       ]
+    ]
 
 
-        Note: Axis 1 will be sliced implicitly if not specified!
-        ------------------------------------------------------------------
-    */
+    Note: Axis 1 will be sliced implicitly if not specified!
+    ------------------------------------------------------------------
+*/
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-    val t = Tsr.of(
-                    intArrayOf(3, 3, 4),
-                    doubleArrayOf(-11, -10, ... 2, 3)
-            )
-    val s = t.slice()
-                .axis(0).at(1)
-                .axis(2).from(1).to(2)
-                .get()
-    /*
-        s.toString():
+val t = Tsr.of(
+                intArrayOf(3, 3, 4),
+                doubleArrayOf(-11, -10, ... 2, 3)
+        )
+val s = t.slice()
+            .axis(0).at(1)
+            .axis(2).from(1).to(2)
+            .get()
+/*
+    s.toString():
 
-        (1x3x2):[
-           [
-              [   2.0 ,   3.0  ],
-              [  -9.0 ,  -8.0  ],
-              [  -5.0 ,  -4.0  ]
-           ]
-        ]
+    (1x3x2):[
+       [
+          [   2.0 ,   3.0  ],
+          [  -9.0 ,  -8.0  ],
+          [  -5.0 ,  -4.0  ]
+       ]
+    ]
 
 
-        Note: Axis 1 will be sliced implicitly if not specified!
-        ------------------------------------------------------------------
-    */
+    Note: Axis 1 will be sliced implicitly if not specified!
+    ------------------------------------------------------------------
+*/
                 </code></pre>
             </div>
         </div>
@@ -145,33 +144,27 @@ to trigger the actual slicing based on the previously specified range(s).
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-    Tsr s = t[1, 0..2, 1..2]
-
+                <pre><code class="hljs language-java">
+var s = t[1, 0..2, 1..2]
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-    Tsr s = t.getAt(
-                new int[]{1},    // Axis 0
-                new int[]{0, 2}, // Axis 1
-                new int[]{1, 2}  // Axis 2
-            );
-
+                <pre><code class="hljs language-java">
+Tsr&#60;Double&#62; s = t.getAt(
+            new int[]{1},    // Axis 0
+            new int[]{0, 2}, // Axis 1
+            new int[]{1, 2}  // Axis 2
+        );
                 </code></pre>
             </div>
 
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-    val s = t.getAt(
-                intArrayOf(1),    // Axis 0
-                intArrayOf(0, 2), // Axis 1
-                intArrayOf(1, 2)  // Axis 2
-            )
-
+val s = t.getAt(
+            intArrayOf(1),    // Axis 0
+            intArrayOf(0, 2), // Axis 1
+            intArrayOf(1, 2)  // Axis 2
+        )
                 </code></pre>
             </div>
         </div>
@@ -189,8 +182,6 @@ to trigger the actual slicing based on the previously specified range(s).
     </div>
 </div>
 
-
-
 <div class="col-sm 12 col-md-12">
     <div class="ContentBox">
         <h3>
@@ -206,8 +197,6 @@ to trigger the actual slicing based on the previously specified range(s).
     </div>
 </div>
 
-
-
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="TabWrapper">
         <div class="TabHead">
@@ -218,24 +207,23 @@ to trigger the actual slicing based on the previously specified range(s).
         <div class="TabBody">
             <div class="groovyExplainedTab row no-gutters">
                 <div class="col-sm-12 col-md-7 col-lg-6">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
+Tsr s = t[[[0..0]:1, [0..0]:1, [0..3]:2]]
 
-    Tsr s = t[[[0..0]:1, [0..0]:1, [0..3]:2]]
+//  '[i..j]:k' is equivalent to pythons 'i:j:k' syntax for indexing! (numpy)
+//  i.. start indexAlias.
+//  j.. end indexAlias. (inclusive!)
+//  k.. step size.
 
-    //  '[i..j]:k' is equivalent to pythons 'i:j:k' syntax for indexing! (numpy)
-    //  i.. start indexAlias.
-    //  j.. end indexAlias. (inclusive!)
-    //  k.. step size.
+/*
+  s.toString() :
 
-    /*
-      s.toString() :
-
-      (1x1x2):[
-         [
-            [  -11.0,  -9.0  ]
-         ]
-      ]
-    */
+  (1x1x2):[
+     [
+        [  -11.0,  -9.0  ]
+     ]
+  ]
+*/
                 </code></pre>
                 </div>
                 <div class="col-sm-12 col-md-5 col-lg-6">
@@ -249,29 +237,27 @@ to trigger the actual slicing based on the previously specified range(s).
             </div>
             <div class="javaExplainedTab row no-gutters" style="display:none">
                 <div class="col-sm-12 col-md-7 col-lg-6">
-                    <pre><code class="hljs java">
+                    <pre><code class="hljs language-java">
+Tsr&#60;Double&#62; s = t.slice()
+             .axis(0).at(0)
+             .axis(1).at(0)
+             .axis(2).from(0).to(3).step(2)
+             .get();
 
-    Tsr s = t.slice()
-                 .axis(0).at(0)
-                 .axis(1).at(0)
-                 .axis(2).from(0).to(3).step(2)
-                 .get();
+//  from.. start position
+//  to.. end position (inclusive!)
+//  step.. step size
+//  at.. shortcut for when (from == to)
 
-    //  from.. start position
-    //  to.. end position (inclusive!)
-    //  step.. step size
-    //  at.. shortcut for when (from == to)
+/*
+  s.toString() :
 
-    /*
-      s.toString() :
-
-      (1x1x2):[
-         [
-            [  -11.0,  -9.0  ]
-         ]
-      ]
-    */
-
+  (1x1x2):[
+     [
+        [  -11.0,  -9.0  ]
+     ]
+  ]
+*/
                     </code></pre>
                 </div>
                 <div class="col-sm-12 col-md-5 col-lg-6">
@@ -286,28 +272,26 @@ to trigger the actual slicing based on the previously specified range(s).
             <div class="kotlinExplainedTab row no-gutters" style="display:none">
                 <div class="col-sm-12 col-md-7 col-lg-6">
                     <pre><code class="hljs kotlin">
+val s = t.slice()
+             .axis(0).at(0)
+             .axis(1).at(0)
+             .axis(2).from(0).to(3).step(2)
+             .get()
 
-    val s = t.slice()
-                 .axis(0).at(0)
-                 .axis(1).at(0)
-                 .axis(2).from(0).to(3).step(2)
-                 .get()
+//  from.. start position
+//  to.. end position (inclusive!)
+//  step.. step size
+//  at.. shortcut for when (from == to)
 
-    //  from.. start position
-    //  to.. end position (inclusive!)
-    //  step.. step size
-    //  at.. shortcut for when (from == to)
+/*
+  s.toString() :
 
-    /*
-      s.toString() :
-
-      (1x1x2):[
-         [
-            [  -11.0,  -9.0  ]
-         ]
-      ]
-    */
-
+  (1x1x2):[
+     [
+        [  -11.0,  -9.0  ]
+     ]
+  ]
+*/
                     </code></pre>
                 </div>
                 <div class="col-sm-12 col-md-5 col-lg-6">

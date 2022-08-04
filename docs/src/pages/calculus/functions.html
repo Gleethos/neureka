@@ -23,23 +23,23 @@ A `Function` is created by calling its static factory method:
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    def f = Function.of('I[0] * (I[1] + I[2])')
+var f = Function.of('I[0] * (I[1] + I[2])')
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    Function f = Function.of("I[0] * (I[1] + I[2])");
+Function f = Function.of("I[0] * (I[1] + I[2])");
 
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-    val f : Function = Function.of("I[0] * (I[1] + I[2])")
+val f : Function = Function.of("I[0] * (I[1] + I[2])")
 
                 </code></pre>
             </div>
@@ -66,23 +66,23 @@ inputs will be recognized by '`I[j]`', '`Ij`' or '`ij`', where `j` is the input 
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    Neureka.get().context.autogradFunction.sig(4)
+Neureka.get().context.autogradFunction.sig(4)
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    Neureka.get().backend().getAutogradFunction().sig().call(4);
+Neureka.get().backend().getAutogradFunction().sig().call(4);
 
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-    Neureka.get().context.autogradFunction.sig(4)
+Neureka.get().context.autogradFunction.sig(4)
 
                 </code></pre>
             </div>
@@ -108,23 +108,23 @@ inputs will be recognized by '`I[j]`', '`Ij`' or '`ij`', where `j` is the input 
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    Neureka.get().backend().getFunction().sig(4)
+Neureka.get().backend().getFunction().sig(4)
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    Neureka.get().backend().getFunction().sig().call(4);
+Neureka.get().backend().getFunction().sig().call(4);
 
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-    Neureka.get().context.function.sig(4)
+Neureka.get().context.function.sig(4)
 
                 </code></pre>
             </div>

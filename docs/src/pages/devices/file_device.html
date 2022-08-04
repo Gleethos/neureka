@@ -34,23 +34,23 @@ factory method by passing a String expression containing a path :
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    def device = FileDevice.at('my/relative/path/to/a/directory');
+def device = FileDevice.at('my/relative/path/to/a/directory');
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    Device&#60;Object&#62; device = FileDevice.at("my/relative/path/to/a/directory");
+Device&#60;Object&#62; device = FileDevice.at("my/relative/path/to/a/directory");
 
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-    val device : Device&#60;Object&#62; = FileDevice.at("my/relative/path/to/a/directory")
+val device : Device&#60;Object&#62; = FileDevice.at("my/relative/path/to/a/directory")
 
                 </code></pre>
             </div>
@@ -76,89 +76,89 @@ The following code shows how to store tensors on a file device :
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    // Creating a device which manages the directory targeted by a given path :
-    def device = FileDevice.at( 'my/relative/path/to/directory' )
+// Creating a device which manages the directory targeted by a given path :
+def device = FileDevice.at( 'my/relative/path/to/directory' )
 
-    // ... and a tensor which we want to persist :
-    Tsr a = Tsr.of([2, 4, 3], 4)
+// ... and a tensor which we want to persist :
+Tsr a = Tsr.of([2, 4, 3], 4)
 
-    // Initially the device does not know about the tensor "a" :
-    assert !device.contains(a)
+// Initially the device does not know about the tensor "a" :
+assert !device.contains(a)
 
-    // But when we store it on the file device...
-    device.store( a, 'tensor-name.idx' ) // 'device.store( a )' if the name should be generated...
+// But when we store it on the file device...
+device.store( a, 'tensor-name.idx' ) // 'device.store( a )' if the name should be generated...
 
-    // ... then the tensor exists as an "idx" file :
-    assert new File( 'my/relative/path/to/directory/' + 'tensor-name.idx' ).exists()
+// ... then the tensor exists as an "idx" file :
+assert new File( 'my/relative/path/to/directory/' + 'tensor-name.idx' ).exists()
 
-    // ... and the RAM will be freed ...
-    assert a.unsafe.data == null
+// ... and the RAM will be freed ...
+assert a.unsafe.data == null
 
-    // If we want to delete the tensor from the device then we call the following :
-    device.free( a )
+// If we want to delete the tensor from the device then we call the following :
+device.free( a )
 
-    // ... and the file is gone :
-    assert !new File( 'my/relative/path/to/directory/' + 'tensor-name.idx' ).exists()
+// ... and the file is gone :
+assert !new File( 'my/relative/path/to/directory/' + 'tensor-name.idx' ).exists()
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    // Creating a device which manages the directory targeted by a given path :
-    Device&#60;Object&#62; device = FileDevice.at( "my/relative/path/to/directory" );
+// Creating a device which manages the directory targeted by a given path :
+Device&#60;Object&#62; device = FileDevice.at( "my/relative/path/to/directory" );
 
-    // ... and a tensor which we want to persist :
-    Tsr&#60;Double&#62; a = Tsr.of(Double.class).withShape(2, 4, 3).all(4.0);
+// ... and a tensor which we want to persist :
+Tsr&#60;Double&#62; a = Tsr.of(Double.class).withShape(2, 4, 3).all(4.0);
 
-    // Initially the device does not know about the tensor "a" :
-    assert !device.contains(a);
+// Initially the device does not know about the tensor "a" :
+assert !device.contains(a);
 
-    // But when we store it on the file device...
-    device.store( a, "tensor-name.idx" ); // 'device.store( a )' if the name should be generated...
+// But when we store it on the file device...
+device.store( a, "tensor-name.idx" ); // 'device.store( a )' if the name should be generated...
 
-    // ... then the tensor exists as a "idx" file :
-    assert new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists();
+// ... then the tensor exists as a "idx" file :
+assert new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists();
 
-    // ... and the RAM will be freed ...
-    assert a.getUnsafe().getData() == null;
+// ... and the RAM will be freed ...
+assert a.getUnsafe().getData() == null;
 
-    // If we want to delete the tensor from the device then we call the following :
-    device.free( a );
+// If we want to delete the tensor from the device then we call the following :
+device.free( a );
 
-    // ... and the file is gone :
-    assert !new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists();
+// ... and the file is gone :
+assert !new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists();
 
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-    // Creating a device which manages the directory targeted by a given path :
-    val device : Device&#60;Object&#62; = FileDevice.at( "my/relative/path/to/directory" )
+// Creating a device which manages the directory targeted by a given path :
+val device : Device&#60;Object&#62; = FileDevice.at( "my/relative/path/to/directory" )
 
-    // ... and a tensor which we want to persist :
-    val a : Tsr&#60;Double&#62; = Tsr.of(Double.class).withShape(2, 4, 3).all(4.0)
+// ... and a tensor which we want to persist :
+val a : Tsr&#60;Double&#62; = Tsr.of(Double.class).withShape(2, 4, 3).all(4.0)
 
-    // Initially the device does not know about the tensor "a" :
-    assert(!device.contains(a))
+// Initially the device does not know about the tensor "a" :
+assert(!device.contains(a))
 
-    // But when we store it on the file device...
-    device.store( a, "tensor-name.idx" ) // 'device.store( a )' if the name should be generated...
+// But when we store it on the file device...
+device.store( a, "tensor-name.idx" ) // 'device.store( a )' if the name should be generated...
 
-    // ... then the tensor exists as a "idx" file :
-    assert( File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists() )
+// ... then the tensor exists as a "idx" file :
+assert( File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists() )
 
-    // ... and the RAM will be freed ...
-    assert( a.unsafe.data == null )
+// ... and the RAM will be freed ...
+assert( a.unsafe.data == null )
 
-    // If we want to delete the tensor from the device then we call the following :
-    device.free( a )
+// If we want to delete the tensor from the device then we call the following :
+device.free( a )
 
-    // ... and the file is gone :
-    assert !new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists()
+// ... and the file is gone :
+assert !new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists()
 
                 </code></pre>
             </div>
@@ -183,29 +183,29 @@ The following code shows how to store tensors on a file device :
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    device.restore( myTensor ) // Loads the tensor but does not delete the file.
+device.restore( myTensor ) // Loads the tensor but does not delete the file.
 
-    device.free( myOtherTensor ) // Deletes the provided tensor (If stored on the file device).
+device.free( myOtherTensor ) // Deletes the provided tensor (If stored on the file device).
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
+                <pre><code class="hljs language-java">
 
-    device.restore( myTensor ); // Loads the tensor but does not delete the file.
+device.restore( myTensor ); // Loads the tensor but does not delete the file.
 
-    device.free( myOtherTensor ); // Deletes the provided tensor (If stored on the file device).
+device.free( myOtherTensor ); // Deletes the provided tensor (If stored on the file device).
 
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-    device.restore( myTensor ) // Loads the tensor but does not delete the file.
+device.restore( myTensor ) // Loads the tensor but does not delete the file.
 
-    device.free( myOtherTensor ) // Deletes the provided tensor (If stored on the file device).
+device.free( myOtherTensor ) // Deletes the provided tensor (If stored on the file device).
 
                 </code></pre>
             </div>

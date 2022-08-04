@@ -29,39 +29,33 @@ the static `Tsr::of(T type)` factory method.
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-    Tsr t = Tsr.of(Double)
-                    .withShape(2, 4)
-                    .andFill(
-                        1, 2, 3, 4,
-                        9, 8, 6, 5
-                    )
-
+                <pre><code class="hljs language-java">
+var t = Tsr.of(Double)
+                .withShape(2, 4)
+                .andFill(
+                    1, 2, 3, 4,
+                    9, 8, 6, 5
+                )
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-    Tsr t = Tsr.of(Double.class)
+                <pre><code class="hljs language-java">
+Tsr&#60;Double&#62; t = Tsr.of(Double.class)
                     .withShape(2, 4)
                     .andFill(
                         1, 2, 3, 4,
                         9, 8, 6, 5
                     );
-
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-    val t = Tsr.of(Double::class.java)
-                    .withShape(2, 4)
-                    .andFill(
-                        1.0, 2.0, 3.0, 4.0,
-                        9.0, 8.0, 6.0, 5.0
-                    );
-
+val t = Tsr.of(Double::class.java)
+                .withShape(2, 4)
+                .andFill(
+                    1.0, 2.0, 3.0, 4.0,
+                    9.0, 8.0, 6.0, 5.0
+                );
                 </code></pre>
             </div>
         </div>
@@ -77,34 +71,31 @@ the static `Tsr::of(T type)` factory method.
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-    Tsr t = Tsr.of([2, 4],[
-                1, 2, 3, 4,
-                9, 8, 6, 5
-            ])
+                <pre><code class="hljs language-java">
+var t = Tsr.of([2, 4],[
+            1, 2, 3, 4,
+            9, 8, 6, 5
+        ])
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-    Tsr t = Tsr.of(
-         new int[]{2, 4},
-         new double[]{
-                1, 2, 3, 4,
-                9, 8, 6, 5,
-        });
+                <pre><code class="hljs language-java">
+Tsr&#60;Double&#62; t = Tsr.of(
+             new int[]{2, 4},
+             new double[]{
+                    1, 2, 3, 4,
+                    9, 8, 6, 5,
+            });
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-    val t = Tsr.of(
-         intArrayOf(2, 4),
-         doubleArrayOf(
-                1, 2, 3, 4,
-                9, 8, 6, 5,
-        ))
+val t = Tsr.of(
+     intArrayOf(2, 4),
+     doubleArrayOf(
+            1, 2, 3, 4,
+            9, 8, 6, 5,
+    ))
                 </code></pre>
             </div>
         </div>
@@ -129,24 +120,18 @@ the static `Tsr::of(T type)` factory method.
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-        Tsr t = Tsr.of([2, 4], -5)
-
+                <pre><code class="hljs language-java">
+var t = Tsr.of([2, 4], -5.0)
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-        Tsr t = Tsr.of(new int[]{2, 4}, -5);
-
+                <pre><code class="hljs language-java">
+Tsr&#60;Double&#62; t = Tsr.of(new int[]{2, 4}, -5d);
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-        val t = Tsr.of(intArrayOf(2, 4), -5)
-
+val t = Tsr.of(intArrayOf(2, 4), -5.0)
                 </code></pre>
             </div>
         </div>
@@ -170,24 +155,18 @@ the static `Tsr::of(T type)` factory method.
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-    Tsr t = Tsr.of(-5)
-
+                <pre><code class="hljs language-java">
+var t = Tsr.of(-5)
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-    Tsr t = Tsr.of(-5);
-
+                <pre><code class="hljs language-java">
+Tsr&#60;Integer&#62; t = Tsr.of(-5);
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-    val t = Tsr.of(-5)
-
+val t = Tsr.of(-5)
                 </code></pre>
             </div>
         </div>

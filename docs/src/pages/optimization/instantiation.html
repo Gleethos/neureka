@@ -23,30 +23,24 @@ If you want more options, consider implementing the interface for custom optimiz
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-        var o = new SGD(0.01) // 0.01 learning rate
-        var w = Tsr.of(0f)
-        w.set(o)
-
+                <pre><code class="hljs language-java">
+var o = new SGD(0.01) // 0.01 learning rate
+var w = Tsr.of(0f)
+w.set(o)
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-        Optimizer o = new SGD(0.01); // 0.01 learning rate
-        Tsr&#60;Float&#62; w = Tsr.of(0f);
-        w.set(o);
-
+                <pre><code class="hljs language-java">
+Optimizer o = new SGD(0.01); // 0.01 learning rate
+Tsr&#60;Float&#62; w = Tsr.of(0f);
+w.set(o);
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-        val o = new SGD(0.01) // 0.01 learning rate
-        val w = Tsr.of(0f)
-        w.set(o)
-
+val o = new SGD(0.01) // 0.01 learning rate
+val w = Tsr.of(0f)
+w.set(o)
                 </code></pre>
             </div>
         </div>
@@ -77,30 +71,24 @@ If you want more options, consider implementing the interface for custom optimiz
         </div>
         <div class="TabBody">
             <div class="groovyTab">
-                <pre><code class="hljs java">
-
-        Tsr w = Tsr.of(0)
-        def o = new ADAM(w)
-        w.set(o)
-
+                <pre><code class="hljs language-java">
+Tsr w = Tsr.of(0)
+def o = new ADAM(w)
+w.set(o)
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
-                <pre><code class="hljs java">
-
-        Tsr w = Tsr.of(0);
-        Optimizer o = new ADAM(w);
-        w.set(o);
-
+                <pre><code class="hljs language-java">
+Tsr w = Tsr.of(0);
+Optimizer o = new ADAM(w);
+w.set(o);
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
-        val w = Tsr.of(0)
-        val o = new ADAM(w)
-        w.set(o)
-
+val w = Tsr.of(0)
+val o = new ADAM(w)
+w.set(o)
                 </code></pre>
             </div>
         </div>
