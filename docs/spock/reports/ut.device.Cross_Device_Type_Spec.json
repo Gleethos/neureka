@@ -1,0 +1,205 @@
+{
+  "className":"ut.device.Cross_Device_Type_Spec",
+  "statistics":{
+    "runs":"9",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"1",
+    "duration":"0.087 seconds"
+  },
+
+  "title":"",
+  "narrative":"",
+  "headers":["\\n <h2> Cross Device-Type Unit Tests </h2>\\n <p>\\n Specified below are strict tests for the factory methods in the\\n Device interface as well as its various implementations \\n which should adhere to a certain set of common behaviours.\\n </p>\\n"],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Querying for Device implementations works as expected.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"The query is being passed to the \"find\" method...","code":["var device = Device.get(query)"]},
+        {"kind":"then","text":"","code":["device != null"]},
+        {"kind":"and","text":"The resulting Device variable has the expected type.","code":["device.class == type"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Advanced device querying methods query as expected!",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"","code":["Device.get(type, key) === expected","Device.find(type, key).isEmpty() && expected == null || Device.find(type, key).get() === expected"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"The simpler device querying methods query as expected!",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"","code":["Device.get(key) === expected","Device.any(key) === expected || Device.any(key) === CPU.get()","Device.find(key).isEmpty() && expected == null || Device.find(key).get() === expected"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Passing a numeric array to a tensor should modify its content!",
+      "result":"PASS",
+      "duration":"0.010 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A 2D tensor is being instantiated..","code":["Tsr t = Tsr.of(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
+        {"kind":"when","text":"A numeric array is passed to said tensor...","code":["t.setItems(data1)","t.setItems(data2)"]},
+        {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
+        {"kind":"where","text":"The following data is being used :","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Tensor data can be fetched from device if the tensor is stored on it...",
+      "result":"PASS",
+      "duration":"0.022 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Because in some environments OpenCL might not be available, the test will be stopped!","code":["if ( device == null ) return"]},
+        {"kind":"when","text":"A 2D tensor is being instantiated by passing the given shape and data...","code":["Tsr t = Tsr.of(shape, data).to(device)"]},
+        {"kind":"then","text":"The tensor values (as List) are as expected.","code":["Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))"]},
+        {"kind":"when","text":"The same underlying data is being queried by calling the device...","code":["var result = (0..<t.size()).collect{device.access(t).readAt(it)}"]},
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+        {"kind":"when","text":"","code":["result = (0..<t.size()).collect{device.access(t).readArray(data.getClass(), it, 1)[0]}"]},
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Execution calls containing null arguments will cause an exception to be thrown in device instances.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A mocked ExecutionCall with mocked algorithm...","code":["var call = Mock(ExecutionCall)","var implementation = Mock(Algorithm)"]},
+        {"kind":"and","text":"We construct a plausible mocked call by making it expose the given device.","code":["call.getDevice() >> device"]},
+        {"kind":"when","text":"The call is being passed to the execution utility method ..","code":["AbstractDeviceAlgorithm.prepareAndExecuteRecursively( call, AbstractDeviceAlgorithm::executeDeviceAlgorithm )"]},
+        {"kind":"then","text":"...the implementation is being accessed in order to access the mocked lambda...","code":["(1.._) * call.getAlgorithm() >> implementation"]},
+        {"kind":"and","text":"The tensor array is being accessed to check for null. (For exception throwing)","code":["1 * call.inputs() >> new Tsr[]{ Mock(Tsr), null }"]},
+        {"kind":"and","text":"The expected exception is being thrown alongside a descriptive message.","code":["def exception = thrown(IllegalArgumentException)","exception.message == \"Device arguments may not be null!\\n\" +","\"One or more tensor arguments within the given ExecutionCall instance is null.\""]},
+        {"kind":"where","text":"The following Device instances are being tested :","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Devices store tensors which can also be restored.",
+      "result":"PASS",
+      "duration":"0.009 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"The given device is available and Neureka is being reset.","code":["if ( device == null ) return"]},
+        {"kind":"and","text":"Two tensors which will be transferred later on...","code":["int initialNumber = device.size()","Tsr a = Tsr.of([2, 3], \";)\")","Tsr b = Tsr.of([3, 4], \":P\")"]},
+        {"kind":"expect","text":"The given device is initially empty.","code":["device.isEmpty() == ( device.size() == 0 )","!device.has( a )","!device.has( b )"]},
+        {"kind":"when","text":"The the first tensor is being passed to the device...","code":["device.store( a )"]},
+        {"kind":"then","text":"...tensor \"a\" is now on the device.","code":["!device.isEmpty()","device.size() == initialNumber + 1","device.has( a )","!device.has( b )"]},
+        {"kind":"when","text":"The the second tensor is being passed to the device...","code":["device.store( b )"]},
+        {"kind":"then","text":"...tensor \"b\" is now also on the device.","code":["!device.isEmpty()","device.size() == initialNumber + 2","device.has( a )","device.has( b )"]},
+        {"kind":"when","text":"They are being removed again...","code":["device.free( a ).free( b )"]},
+        {"kind":"then","text":"...the device is empty again.","code":["device.isEmpty() == ( initialNumber == 0 )","device.size() == initialNumber","!device.has( a )","!device.has( b )"]},
+        {"kind":"where","text":"The following Device instances are being tested :","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Devices store slices which can also be restored.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"The given device is available and Neureka is being reset.","code":["if ( device == null ) return"]},
+        {"kind":"and","text":"Two tensors which will be transferred later on...","code":["int initialNumber = device.size()","Tsr a = Tsr.of([2, 3], \";)\")","Tsr b = a[1, 0..2]"]},
+        {"kind":"expect","text":"The given device is initially empty.","code":["device.isEmpty() == ( device.size() == 0 )","!device.has( a )","!device.has( b )"]},
+        {"kind":"when","text":"The the first tensor is being passed to the device...","code":["device.store( a )"]},
+        {"kind":"then","text":"...tensor \"a\" is now on the device.","code":["!device.isEmpty()","device.size() == initialNumber + 1","device.has( a )"]},
+        {"kind":"and","text":"","code":["!device.has( b )"]},
+        {"kind":"when","text":"","code":["device.free( a )"]},
+        {"kind":"then","text":"...the device is empty again.","code":["device.isEmpty() == ( initialNumber == 0 )","device.size() == initialNumber","!device.has( a )","!device.has( b )"]},
+        {"kind":"where","text":"The following Device instances are being tested :","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Devices cannot store slices which parents are not already stored.",
+      "result":"IGNORED",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"The given device is available and Neureka is being reset.","code":["if ( device == null ) return"]},
+        {"kind":"and","text":"Two tensors which will be transferred later on...","code":["Tsr a = Tsr.of([2, 3], \";)\")","Tsr b = a[1, 0..2]"]},
+        {"kind":"and","text":"","code":["var initialSize = device.size()"]},
+        {"kind":"expect","text":"The given device is initially empty.","code":["device.isEmpty() == ( device.size() == 0 )","!device.has( a )","!device.has( b )"]},
+        {"kind":"when","text":"The the first tensor is being passed to the device...","code":["device.store( b )"]},
+        {"kind":"then","text":"...tensor \"a\" is now on the device.","code":["var exception = thrown(IllegalStateException)","exception.message.contains(\"Data parent is not outsourced!\")"]},
+        {"kind":"expect","text":"The given device is initially empty.","code":["device.isEmpty() == ( device.size() == 0 )","!device.has( a )","!device.has( b )"]},
+        {"kind":"when","text":"","code":["storageMethod(device, a)"]},
+        {"kind":"then","text":"","code":["!device.isEmpty()","a.isOutsourced()","b.isOutsourced()"]},
+        {"kind":"and","text":"","code":["device.has( a )","b.unsafe.data == null","device.has( b )","device.size() == initialSize"]},
+        {"kind":"where","text":"The following Device instances are being tested :","code":[]}
+      ],
+      "problems":"[:]"
+    },
+  
+    {
+      "id":"Virtual tensors stay virtual when outsourced.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a homogeneously filled tensor, which is therefor \"virtual\".","code":["var t = Tsr.ofFloats().withShape(4,3).all(-0.54f)"]},
+        {"kind":"and","text":"We also get a device for testing...","code":["var device = Device.get(deviceType)"]},
+        {"kind":"expect","text":"We expect that the tensor is virtual, meaning its underlying data array stores only a single value...","code":["t.isVirtual()"]},
+        {"kind":"when","text":"We send the tensor to the device...","code":["t.to(device)"]},
+        {"kind":"then","text":"This should cause it to be \"outsourced\", (except dor a CPU device of course).","code":["t.isOutsourced() != ( device instanceof CPU )"]},
+        {"kind":"and","text":"...we expect the tensor to stay virtual on the device!","code":["t.isVirtual()"]},
+        {"kind":"when","text":"We restore the device...","code":["device.restore(t)"]},
+        {"kind":"then","text":"The tensor should no longer be outsourced.","code":["!t.isOutsourced()"]},
+        {"kind":"and","text":"It should still be virtual!","code":["t.isVirtual()"]},
+        {"kind":"where","text":"We test on the following devices:","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

@@ -1,0 +1,87 @@
+{
+  "className":"ut.tensors.Functional_Tensor_Spec",
+  "statistics":{
+    "runs":"4",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.505 seconds"
+  },
+
+  "title":"",
+  "narrative":"",
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Tensor initialization lambdas produce expected tensors.",
+      "result":"PASS",
+      "duration":"0.067 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"Instantiating a tensor using an initializer lambda...","code":["Tsr t = Tsr.of(","DataType.of( Integer.class ),","[ 2, 3 ],","( int i, int[] indices ) -> { i - 2 }",")"]},
+        {"kind":"then","text":"The tensor has been initialized with the expected values:","code":["t.toString() == \"(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]\""]},
+        {"kind":"when","text":"","code":["t = Tsr.of(","DataType.of( String.class ),","[ 2, 3 ],","( int i, int[] indices ) -> { i + ':' + indices.toString() }",")"]},
+        {"kind":"then","text":"","code":["t.toString() == \"(2x3):[0:[0, 0], 1:[0, 1], 2:[0, 2], 3:[1, 0], 4:[1, 1], 5:[1, 2]]\""]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"We can analyse the values of a tensor using various predicate receiving methods",
+      "result":"PASS",
+      "duration":"0.130 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create 2 tensors, where one is a slice of the other.","code":["var a = Tsr.ofInts().withShape(3, 2).andFill(2, 0, 1, 1, 8, 3)","var b = a[1, 0..1]"]},
+        {"kind":"expect","text":"","code":["!a.every((Predicate<Integer>){it == 1})","a.any((Predicate<Integer>){it == 1})","a.any((Predicate<Integer>){it == 8})","!a.any((Predicate<Integer>){it == 42})"]},
+        {"kind":"and","text":"","code":["b.every((Predicate<Integer>){it == 1})","!b.any((Predicate<Integer>){it == 2})","b.none((Predicate<Integer>){it == 2})"]},
+        {"kind":"and","text":"","code":["a.count((Predicate<Integer>){it == 0}) == 1","a.count((Predicate<Integer>){it == 1}) == 2","b.count((Predicate<Integer>){it == 1}) == 2","b.count((Predicate<Integer>){it == 3}) == 0"]},
+        {"kind":"and","text":"We can also easily turn a tensor into a stream!","code":["a.stream()",".filter({it < 3})",".map({(it-4)*2})",".collect(Collectors.toList()) == [-4, -8, -6, -6]"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Tensor mapping lambdas produce expected tensors.",
+      "result":"PASS",
+      "duration":"0.138 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"Instantiating a tensor using an initializer lambda...","code":["Tsr t = Tsr.of(","DataType.of( Double.class ),","[ 2, 3 ],","( int i, int[] indices ) -> { (i - 2) as Double }",")",".to(device)"]},
+        {"kind":"then","text":"The tensor has been initialized with the expected values:","code":["t.toString() == \"(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]\""]},
+        {"kind":"when","text":"We want to perform an element wise mapping to a new tensor...","code":["def b = t.mapTo(String, (it) -> {\"<$it>\".replace(\".0\", \"\")})"]},
+        {"kind":"then","text":"We expect the returned tensor to be a String container whose Strings are formatted according to our mapping lambda.","code":["b.toString() == \"(2x3):[<-2>, <-1>, <0>, <1>, <2>, <3>]\"","b.itemClass == String.class"]},
+        {"kind":"and","text":"The original tensor should not have changed because no inline operation occurred.","code":["t.toString() == \"(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]\""]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"The \"map\" method is a shorter convenience method for mapping to the same type.",
+      "result":"PASS",
+      "duration":"0.162 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a tensor with a single element.","code":["var t = Tsr.of(","DataType.of( Integer.class ),","[ 1 ],","( int i, int[] indices ) -> { 1 }",")",".to(device)"]},
+        {"kind":"when","text":"We map the tensor to a new tensor of the same type.","code":["var b = t.map((it) -> {it + 1})"]},
+        {"kind":"then","text":"The new tensor should have the same value as the original tensor.","code":["b.toString() == \"(1):[2.0]\"","b.itemClass == Integer.class"]},
+        {"kind":"and","text":"The original tensor should not have changed because no inline operation occurred.","code":["t.toString() == \"(1):[1.0]\""]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

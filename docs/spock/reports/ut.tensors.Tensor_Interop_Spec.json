@@ -1,0 +1,49 @@
+{
+  "className":"ut.tensors.Tensor_Interop_Spec",
+  "statistics":{
+    "runs":"2",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.011 seconds"
+  },
+
+  "title":"Tensors play well with other data structures!",
+  "narrative":"Tensors should have good interoperability with other JDK data structures like images.\n In this specification we define these interoperability requirements.",
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Tensor can be converted to buffered images.",
+      "result":"PASS",
+      "duration":"0.005 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"A tensor of the provided type is converted to a buffered image","code":["var asImage = Tsr.of(type).withShape(shape).andFill(42..73).asImage(image)"]},
+        {"kind":"then","text":"The resulting image has the expected shape","code":["asImage.height == shape[0]","asImage.width == shape[1]"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Not all tensor can be converted to images.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We try to convert a tensor of the provided type to a buffered image...","code":["Tsr.of(type).withShape(shape).all(-3).asImage(image)"]},
+        {"kind":"then","text":"An exception is thrown!","code":["var exception = thrown(IllegalArgumentException)"]},
+        {"kind":"and","text":"The exception message has a plausible size.","code":["exception.message.length() > 13"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

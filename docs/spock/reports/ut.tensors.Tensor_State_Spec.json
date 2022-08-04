@@ -1,0 +1,160 @@
+{
+  "className":"ut.tensors.Tensor_State_Spec",
+  "statistics":{
+    "runs":"8",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.025 seconds"
+  },
+
+  "title":"The Tensor Initialization and State Specification",
+  "narrative":"This specification defines the expected states of freshly instantiated\n and initialized tensors.\n After a tensor was created successfully we expect it \n to have certain properties like a shape, rank, type nnd data array\n among other things.",
+  "headers":["\\n <p>\\n This unit test specification covers the expected state of newly instantiated tensors.\\n Certain properties must have their expected default values.\\n </p>\\n"],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"A tensor can be instantiated from a target type and nested lists.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We instantiate a tensor based on a target type and a list of things.","code":["var t = Tsr.of(type, list)"]},
+        {"kind":"expect","text":"The tensor has the targeted type, shape and data array!","code":["t.itemClass == type","t.shape() == shape","t.unsafe.data == expected"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Tensors as String can be formatted on an entry based level.",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new tensor of rank 2 storing Strings:","code":["Tsr t = Tsr.of(DataType.of(String.class), [2, 3], (i, indices) -> {","return [\"sweet\", \"salty\", \"blue\", \"spinning\", \"confused\", \"shining\"].get( (i + 17**i)%6 ) + ' ' +","[\"Saitan\", \"Apple\", \"Tofu\", \"Strawberry\", \"Almond\", \"Salad\"].get( (i + 7**i)%6 )","})"]},
+        {"kind":"expect","text":"When we convert the tensor to a String via the flags \"b\" (cell bound) and \"f\" (formatted).","code":["t.toString({ NDPrintSettings it ->","it.setHasSlimNumbers(false)",".setIsScientific(true)",".setIsCellBound(true)",".setIsMultiline(true)",".setCellSize(5)","}) == \"(2x3):[\\n\" +","\" [ sal.., swe.., spi.. ],\\n\" +","\" [ blu.., shi.., con.. ]\\n\" +","\"]\""]},
+        {"kind":"and","text":"When additionally supplying the flag \"p\" (padding) then most String entries will be printed fully.","code":["t.toString({ NDPrintSettings it ->","it.setHasSlimNumbers(false)",".setIsScientific(true)",".setIsCellBound(true)",".setIsMultiline(true)",".setCellSize(15)","}) == \"(2x3):[\\n\" +","\" [ salty Apple , sweet Tofu , spinning Stra.. ],\\n\" +","\" [ blue Almond , shining Salad , confused Saitan ]\\n\" +","\"]\""]},
+        {"kind":"and","text":"Whe can use a map of configuration configuration enums as keys and fitting objects as values:","code":["t.toString(","{ NDPrintSettings it -> it.setIsCellBound(true).setCellSize(10)}",") == \"(2x3):[salty Ap.., sweet Tofu, spinning.., blue Alm.., shining .., confused..]\""]},
+        {"kind":"and","text":"This way we can also configure a postfix and prefix as well as limit the number of entries in a row:","code":["t.toString({ NDPrintSettings it ->","it.setPrefix('START<|').setPostfix('|>END').setCellSize(0).setIsCellBound(false).setRowLimit(2) }",") == \"START<|(2x3):[salty Apple, sweet Tofu, ... + 4 more]|>END\""]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Numeric tensors as String can be formatted on an entry based level.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new tensor of rank 2 storing floats:","code":["Tsr t = Tsr.of(DataType.of(Float.class), [2, 3], (i, indices) -> (i%4)/3 as float )"]},
+        {"kind":"expect","text":"When we convert the tensor to a String via the flag \"f\" (formatted).","code":["t.toString(","{ NDPrintSettings it -> it.setHasSlimNumbers(false).setIsScientific(true).setIsCellBound(false).setIsMultiline(false).setCellSize(3) }",") == \"(2x3):[0.0, 0.33333, 0.66666, 1.0, 0.0, 0.33333]\""]},
+        {"kind":"and","text":"Whe can use a map of configuration configuration enums as keys and fitting objects as values:","code":["t.toString(","{ NDPrintSettings it -> it.setHasSlimNumbers(true).setIsScientific(true).setCellSize(0) }",") == \"(2x3):[0, .33333, .66666, 1, 0, .33333]\""]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Tensors as String can be formatted depending on shape.",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We configure a NDPrintSettings object.","code":["def settings =","Neureka.get()",".settings()",".view()",".getNDPrintSettings()",".clone()",".setRowLimit( mode.contains( \"s\" ) ? 3 : 32 )",".setIsScientific( mode.contains( \"c\" ) )",".setIsMultiline( mode.contains( \"f\" ) )",".setHasGradient( mode.contains( \"g\" ) )",".setCellSize( mode.contains( \"p\" ) ? 6 : mode.contains( \"f\" ) ? 2 : 1 )",".setHasValue( !(mode.contains( \"shp\" ) || mode.contains(\"shape\")) )",".setHasRecursiveGraph( mode.contains( \"r\" ) )",".setHasDerivatives( mode.contains( \"d\" ) )",".setHasShape( !mode.contains( \"v\" ) )",".setIsCellBound( mode .contains( \"b\" ) )",".setPostfix( \"\" )",".setPrefix( \"\" )",".setHasSlimNumbers( false )"]},
+        {"kind":"and","text":"Four tensors of various data types:","code":["Tsr<Float> t1 = Tsr.of( Float.class, shape, -4f..5f ).set( Tsr.of( shape, -7f..3f ) )","Tsr<Double> t2 = Tsr.of( Double.class, shape, -4d..5d ).set( Tsr.of( shape, -7d..3d ) )","Tsr<Integer> t3 = Tsr.of( Integer.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )","Tsr<Short> t4 = Tsr.of( Short.class, shape, (-4 as short)..(5 as short) ).set( Tsr.of( shape, (-7 as short)..(3 as short) ) )","Tsr<Byte> t5 = Tsr.of( Byte.class, shape, (-4 as byte )..(5 as byte ) ).set( Tsr.of( shape, (-7 as byte)..(3 as byte) ) )"]},
+        {"kind":"expect","text":"The first tensor has the expected internals and produces the correct String representation.","code":["t1.toString(settings) == expected","t1.dataType == DataType.of( Float.class )","t1.unsafe.data instanceof float[]"]},
+        {"kind":"and","text":"The second tensor has the expected internals and produces the correct String representation.","code":["t2.toString(settings) == expected","t2.dataType == DataType.of( Double.class )","t2.unsafe.data instanceof double[]"]},
+        {"kind":"and","text":"The third tensor has the expected internals and produces the correct String representation.","code":["t3.toString(settings).replace(' ','') == expected.replace('.0',' ').replace(' ','')","t3.dataType == DataType.of( Integer.class )","t3.unsafe.data instanceof int[]"]},
+        {"kind":"and","text":"The fourth tensor has the expected internals and produces the correct String representation.","code":["t4.toString(settings).replace(' ','') == expected.replace('.0',' ').replace(' ','')","t4.dataType == DataType.of( Short.class )","t4.unsafe.data instanceof short[]"]},
+        {"kind":"and","text":"The fifth tensor has the expected internals and produces the correct String representation.","code":["t5.toString(settings).replace(' ','') == expected.replace('.0',' ').replace(' ','')","t5.dataType == DataType.of( Byte.class )","t5.unsafe.data instanceof byte[]"]},
+        {"kind":"where","text":"The print configurations codes \"mode\", a common shape and expected String representation will be supplied:","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Newly instantiated and unmodified scalar tensor has expected state.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new instance of a scalar tensor.","code":["Tsr t = Tsr.of( 6 )"]},
+        {"kind":"expect","text":"The tensor is not stored on another device, meaning that it is not \"outsourced\".","code":["!t.isOutsourced()"]},
+        {"kind":"and","text":"The tensor contains the expected data.","code":["t.getItemsAs( double[].class ) == [6] as double[]","t.getItemsAs( float[].class ) == [6] as float[]","t.getDataAs( double[].class ) == [6] as double[]","t.getDataAs( float[].class ) == [6] as float[]","t.unsafe.data == [6] as double[]","t.items == [6] as double[]"]},
+        {"kind":"when","text":"The flag \"isOutsourced\" is being set to false...","code":["t.setIsOutsourced( true )"]},
+        {"kind":"then","text":"The tensor is now outsourced and its data is gone. (garbage collected)","code":["t.isOutsourced()","!(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])","t.getItemsAs( double[].class ) == null","t.getItemsAs( float[].class ) == null","t.getDataAs( double[].class ) == null","t.getDataAs( float[].class ) == null","t.unsafe.data == null","t.items == null"]},
+        {"kind":"when","text":"The \"isOutsourced\" flag is set to its original state...","code":["t.setIsOutsourced( false )"]},
+        {"kind":"then","text":"Internally the tensor reallocates an array of adequate size. (dependent on \"isVirtual\")","code":["t.getItemsAs( double[].class ) == [0] as double[]","t.getItemsAs( float[].class ) == [0] as float[]","t.getDataAs( double[].class ) == [0] as double[]","t.getDataAs( float[].class ) == [0] as float[]","t.unsafe.data == [0] as double[]","t.items == [0] as double[]","t.isVirtual()"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Newly instantiated and unmodified vector tensor has expected state.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new vector tensor is being instantiated.","code":["Tsr t = Tsr.of( new int[]{ 2 }, 5 )"]},
+        {"kind":"expect","text":"The tensor is not stored on another device, meaning that it is not \"outsourced\".","code":["!t.isOutsourced()"]},
+        {"kind":"when","text":"The flag \"isOutsourced\" is being set to false...","code":["t.setIsOutsourced( true )"]},
+        {"kind":"then","text":"The tensor is now outsourced and its data is gone. (garbage collected)","code":["t.isOutsourced()","!(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])","t.dataType.getRepresentativeType() == Neureka.get().settings().dtype().defaultDataTypeClass","t.getItemsAs( double[].class ) == null","t.getItemsAs( float[].class ) == null","t.unsafe.data == null","t.items == null"]},
+        {"kind":"when","text":"The \"isOutsourced\" flag is set to its original state...","code":["t.setIsOutsourced( false )"]},
+        {"kind":"then","text":"Internally the tensor reallocates an array of adequate size. (dependent on \"isVirtual\")","code":["t.getItemsAs( double[].class ) == [0, 0] as double[]","t.getItemsAs( float[].class ) == [0, 0] as float[]","t.unsafe.data == [0] as double[]","t.items == [0, 0] as double[]","t.isVirtual()"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Tensor created from shape and datatype has expected state.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new vector tensor is being instantiated.","code":["Tsr t = Tsr.of( DataType.of(I8.class ), new int[]{ 2 } )"]},
+        {"kind":"expect","text":"The tensor is not stored on another device, meaning that it is not \"outsourced\".","code":["!t.isOutsourced()","t.getItemsAs( double[].class ) == [0, 0] as double[]","t.getItemsAs( float[].class ) == [0, 0] as float[]","t.unsafe.data == [0] as byte[]","t.items == [0, 0] as byte[]","t.isVirtual()"]},
+        {"kind":"when","text":"The flag \"isOutsourced\" is being set to false...","code":["t.setIsOutsourced( true )"]},
+        {"kind":"then","text":"The tensor is now outsourced and its data is gone. (garbage collected)","code":["t.isOutsourced()","!(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])","t.dataType.getRepresentativeType() == I8.class","t.getItemsAs( double[].class ) == null","t.getItemsAs( float[].class ) == null","t.unsafe.data == null","t.items == null"]},
+        {"kind":"when","text":"The \"isOutsourced\" flag is set to its original state...","code":["t.setIsOutsourced( false )"]},
+        {"kind":"then","text":"Internally the tensor reallocates an array of adequate size. (dependent on \"isVirtual\")","code":["t.getItemsAs( double[].class ) == [0, 0] as double[]","t.getItemsAs( float[].class ) == [0, 0] as float[]","t.unsafe.data == [0] as byte[]","t.items == [0, 0] as byte[]","t.isVirtual()"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"The data and the value of a tensor a 2 different things!",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a simple vector:","code":["var v = Tsr.ofFloats().withShape(3).andFill(-2, 4, 8)"]},
+        {"kind":"and","text":"And then we store it on the device we want to test.","code":["v.to(device)"]},
+        {"kind":"when","text":"We create a slice of the above vector, a scalar...","code":["var s = v.slice().axis(0).at(1).get()"]},
+        {"kind":"then","text":"The slice contains the expected value with respect to the slice parent...","code":["v.at(1).get() == s.at(0).get()"]},
+        {"kind":"and","text":"They both do not share the same value array.","code":["v.items != s.items"]},
+        {"kind":"and","text":"They so however share the same underlying data.","code":["v.unsafe.data == s.unsafe.data"]},
+        {"kind":"and","text":"","code":["s.items == [4]"]},
+        {"kind":"where","text":"We test the following devices:","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

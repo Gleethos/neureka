@@ -1,0 +1,106 @@
+{
+  "className":"it.Cross_Device_Spec",
+  "statistics":{
+    "runs":"5",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"17.716 seconds"
+  },
+
+  "title":"Cross Device Stress Test Specification",
+  "narrative":"This specification is pretty much a system test which covers\n the behavior of the library as a whole across multiple devices!\n No matter which device is being used for a given stress test, the result should be the same...",
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Convolution can model matrix multiplications across devices.",
+      "result":"PASS",
+      "duration":"0.015 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A given device of any type and the settings configured for testing.","code":["Device device = ( deviceType == \"CPU\" ) ? CPU.get() : Device.get('first')","Neureka.get().reset()","Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
+        {"kind":"and","text":"Two tensors, one requiring gradients and the other one does not.","code":["var tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{","1, 2, // 3, 1,","2, -3, // -2, -1,","}).setRqsGradient( true )","var tensor2 = Tsr.of(new int[]{1, 2, 2}, new double[]{","-2, 3, // 0 7","1, 2, // -7 0","})","device.store(tensor1).store(tensor2)"]},
+        {"kind":"and","text":"","code":["Tsr product = Tsr.of(\"i0xi1\", tensor1, tensor2)","product.backward( Tsr.of(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}) )","String result = product.toString({","it.rowLimit = 15 // \"rc\"","it.isScientific = false","it.isMultiline = false","it.hasGradient = false","it.cellSize = 1","it.hasValue = true","it.hasRecursiveGraph = true","it.hasDerivatives = false","it.hasShape = true","it.isCellBound = false","it.postfix = \"\"","it.prefix = \"\"","it.hasSlimNumbers = false","})"]},
+        {"kind":"expect","text":"","code":["result.contains(","\"[2x1x2]:(0.0, 7.0, -7.0, 0.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }\"",")"]},
+        {"kind":"cleanup","text":"","code":["product.getUnsafe().delete()","tensor1.getUnsafe().delete()"]},
+        {"kind":"where","text":"The following settings are being used:","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Test cross device system test runs successfully.",
+      "result":"PASS",
+      "duration":"4.284 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A given device of any type and the settings configured for testing.","code":["Device device = ( deviceType == \"CPU\" ) ? CPU.get() : Device.get('first')","Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
+        {"kind":"expect","text":"The integration test runs successful.","code":["CrossDeviceSystemTest.on(device)"]},
+        {"kind":"where","text":"The following settings are being used:","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Test simple NN implementation with manual backprop",
+      "result":"PASS",
+      "duration":"13.287 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
+        {"kind":"expect","text":"","code":["device != null"]},
+        {"kind":"and","text":"","code":["new SimpleNNSystemTest(SimpleNNSystemTest.Mode.CONVOLUTION).on(device)"]},
+        {"kind":"and","text":"","code":["if ( !(device instanceof OpenCLDevice) )","new SimpleNNSystemTest(SimpleNNSystemTest.Mode.MAT_MUL).on(device)"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"A gradient of ones can be set by calling the backward method on a tensor sitting on any device.",
+      "result":"PASS",
+      "duration":"0.004 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We use the legacy representation of tensors for this little test!","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
+        {"kind":"and","text":"We create a small matrix of 4 fours which requires a gradient and is stored on the provided device!","code":["Tsr t = Tsr.of([2, 2], 4d).setRqsGradient(true).to(device)"]},
+        {"kind":"when","text":"We now call the backward method on the tensor directly without having done any operations...","code":["t.backward(1)"]},
+        {"kind":"and","text":"Then we take the gradient to see what happened.","code":["Tsr g = t.getGradient()"]},
+        {"kind":"then","text":"We expect this gradient to be all ones with the shape of our matrix!","code":["g.toString().contains(\"[2x2]:(1.0, 1.0, 1.0, 1.0)\")","t.toString().contains(\"[2x2]:(4.0, 4.0, 4.0, 4.0):g:(1.0, 1.0, 1.0, 1.0)\")"]},
+        {"kind":"and","text":"","code":["t.isOutsourced() == !(device instanceof DummyDevice)","g.isOutsourced() == !(device instanceof DummyDevice)"]},
+        {"kind":"and","text":"","code":["t.device == device || (device instanceof DummyDevice && !t.isOutsourced())","g.device == device || (device instanceof DummyDevice && !t.isOutsourced())"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Mapping tensors works for every device (even if they are not used).",
+      "result":"PASS",
+      "duration":"0.043 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["\"\"\"","We start off by storing the provided tensor on the provided device.","This might be any kind of device like for example an $OpenCLDevice.","Which means the tensor might not be sitting in RAM!","\"\"\"","tensor.to(device)"]},
+        {"kind":"when","text":"\n We call the mapping method which is supposed to create a new tensor of the provided type.\n This procedure is only supported when the tensor is stored in RAM, so when\n the tensor is outsourced (stored on a device), then we expect that the mapping method\n temporarily migrates the tensor back and forth internally...\n","code":["Tsr<?> result = tensor.mapTo(target, lambda)"]},
+        {"kind":"then","text":"We expect the String representation of the tensor to be as expected!","code":["result.toString() == expected"]},
+        {"kind":"and","text":"We expect the result to have the expected target class!","code":["result.itemClass == target"]},
+        {"kind":"and","text":"Lastly, the original tensor used as mapping source should be stored on the original device!","code":["tensor.isOutsourced() == !(device instanceof CPU)","tensor.device == device"]},
+        {"kind":"where","text":"We use the following data to test this mapping for a wide range of types and values!","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

@@ -1,0 +1,68 @@
+{
+  "className":"ut.tensors.Tensor_Gradient_Spec",
+  "statistics":{
+    "runs":"3",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.004 seconds"
+  },
+
+  "title":"Gradients are Tensors which are Components of other Tensors",
+  "narrative":"This specification defines the gradient API on tensors.\n So one ought to be able to check wetter or not a tensor has a gradient attached to it or not.\n In that case one should be able to get this gradient and then work with\n it independently of the original tensor to which it belongs to...",
+  "headers":["\\n <h2> Tensor Gradient Unit Tests </h2>\\n <br>\\n <b>Why is there a difference between \\\"rqsGradient()\\\" and \\\"hasGradient()\\\" ? :</b>\\n <br><br>\\n <p>\\n The latter property simply tells if a tensor has another tensor as component.\\n This however does not necessitate it to also require gradients via the autograd system.\\n This is what the prior property is for. \\n </p>\\n"],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Tensors can have gradients but not require them.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new simple tensor.","code":["Tsr t = Tsr.of(-3)"]},
+        {"kind":"and","text":"A second tensor viewed as gradient.","code":["Tsr g = Tsr.of(9)"]},
+        {"kind":"when","text":"The gradient tensor is added to the prior tensor as component.","code":["t.set( g )"]},
+        {"kind":"then","text":"The prior tensor \"hasGradient()\" but does not \"rqsGradient()\"","code":["t.has(Tsr.class)","t.hasGradient()","!t.rqsGradient()"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Tensors that have gradients but do not require them still print them.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new simple tensor.","code":["Tsr t = Tsr.of(-3)"]},
+        {"kind":"and","text":"A second tensor viewed as gradient.","code":["Tsr g = Tsr.of(9)"]},
+        {"kind":"when","text":"The gradient tensor is added to the prior tensor as component.","code":["t.set( g )"]},
+        {"kind":"then","text":"The prior tensor will also include its gradient in the \"toString()\" result.","code":["t.toString().contains(\"]:g:[\")"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Gradient of tensor is being applies regardless of the tensor requiring gradient or not",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new simple tensor.","code":["Tsr t = Tsr.of(-3)"]},
+        {"kind":"and","text":"A second tensor viewed as gradient.","code":["Tsr g = Tsr.of(9)"]},
+        {"kind":"and","text":"The gradient tensor is added to the prior tensor as component.","code":["t.set( g )"]},
+        {"kind":"when","text":"The request to apply the gradient is being made.","code":["t.applyGradient()"]},
+        {"kind":"then","text":"The tensor changed as expected.","code":["t.toString().contains(expected)"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

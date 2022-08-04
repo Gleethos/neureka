@@ -1,0 +1,128 @@
+{
+  "className":"ut.tensors.exceptions.Tensor_Delete_Exception_Spec",
+  "statistics":{
+    "runs":"7",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.005 seconds"
+  },
+
+  "title":"",
+  "narrative":"",
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"A deleted tensor will tell you that it has been deleted.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a scalar tensor and then immediately delete it.","code":["Tsr t = Tsr.of(-2).getUnsafe().delete()"]},
+        {"kind":"expect","text":"This tensor will tell you that it is deleted through the \"toString\" method.","code":["t.toString() == \"deleted\""]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"A deleted tensor will throw an exception when accessing its configuration.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a tensor and immediately delete it.","code":["Tsr t = Tsr.of(new int[]{1, 2}, -2..4).getUnsafe().delete()"]},
+        {"kind":"expect","text":"This tensor should then know that it is deleted.","code":["t.isDeleted()"]},
+        {"kind":"when","text":"Trying to access the NDConfiguration instance...","code":["t.getNDConf()"]},
+        {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the ND-Configuration of an already deleted tensor.\""]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"A deleted tensor will throw an exception when trying to set its configuration.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a tensor and immediately delete it.","code":["Tsr t = Tsr.of(new int[]{1, 2}, -2..4).getUnsafe().delete()"]},
+        {"kind":"expect","text":"This tensor should then know that it is deleted.","code":["t.isDeleted()"]},
+        {"kind":"when","text":"Trying to access the NDConfiguration instance...","code":["t.unsafe.setNDConf(null)"]},
+        {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the unsafe API of an already deleted tensor.\""]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"A deleted tensor will throw an exception when accessing its data.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a tensor and immediately delete it.","code":["Tsr t = Tsr.of(new int[]{2, 1}, -3..2).getUnsafe().delete()"]},
+        {"kind":"expect","text":"This tensor should then know that it is deleted.","code":["t.isDeleted()"]},
+        {"kind":"when","text":"Trying to access the data object...","code":["t.unsafe.getData()"]},
+        {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the unsafe API of an already deleted tensor.\""]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"A deleted tensor will throw an exception when trying to modify its data.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a tensor and immediately delete it.","code":["Tsr t = Tsr.of(new int[]{2}, -3..2).getUnsafe().delete()"]},
+        {"kind":"expect","text":"This tensor should then know that it is deleted.","code":["t.isDeleted()"]},
+        {"kind":"when","text":"Trying to modify the data object...","code":["t.unsafe.setDataAt(0, 7)"]},
+        {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the unsafe API of an already deleted tensor.\""]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"A deleted tensor will throw an exception when accessing its data type.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a tensor and immediately delete it.","code":["Tsr t = Tsr.of(new int[]{2, 1}, -3..2).getUnsafe().delete()"]},
+        {"kind":"expect","text":"This tensor should then know that it is deleted.","code":["t.isDeleted()"]},
+        {"kind":"when","text":"Trying to access the DataType instance...","code":["t.getDataType()"]},
+        {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the data type of an already deleted tensor.\""]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"A deleted tensor will throw an exception when modifying its data type.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a tensor and immediately delete it.","code":["Tsr t = Tsr.of(new int[]{2, 1}, -3..2).getUnsafe().delete()"]},
+        {"kind":"expect","text":"This tensor should then know that it is deleted.","code":["t.isDeleted()"]},
+        {"kind":"when","text":"Trying to access the DataType instance...","code":["t.unsafe.setDataType(DataType.of(Float.class))"]},
+        {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the unsafe API of an already deleted tensor.\""]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

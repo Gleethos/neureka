@@ -1,0 +1,34 @@
+{
+  "className":"ut.optimization.AdaGrad_Spec",
+  "statistics":{
+    "runs":"1",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.020 seconds"
+  },
+
+  "title":"",
+  "narrative":"",
+  "headers":["\\n <h2> AdaGrad Optimizer Behavior </h2>\\n <br> \\n <p>\\n This specification check the behavior of the AdaGrad class. \\n </p>\\n"],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"AdaGrad optimizes according to expected inputs",
+      "result":"PASS",
+      "duration":"0.012 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tsr g = Tsr.of(expectedWeight)"]},
+        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tsr.of( gradient ) )","w.applyGradient()"]},
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.translation().hashCode()==g.translation().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

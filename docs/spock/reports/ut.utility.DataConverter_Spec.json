@@ -1,0 +1,48 @@
+{
+  "className":"ut.utility.DataConverter_Spec",
+  "statistics":{
+    "runs":"2",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.004 seconds"
+  },
+
+  "title":"",
+  "narrative":"",
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"The DataConverter can convert the given array data.",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["def converter = DataConverter.get()","def f32Array = new float[2]","def f64Array = new double[2]"]},
+        {"kind":"expect","text":"","code":["converter.convert( [-50, 2, 190] as byte[], BigInteger[].class ) == [-50, 2, -66] as BigInteger[]","converter.convert( [-50, 2, 190] as byte[], short[].class ) == [-50, 2, -66] as short[]","converter.convert( [-50, 2, 190] as byte[], int[].class ) == [-50, 2, -66] as int[]","converter.convert( [-50, 2, 190] as byte[], long[].class ) == [-50, 2, -66] as long[]"]},
+        {"kind":"and","text":"","code":["DataConverter.Utility.seededFloatArray( f32Array, 42 ) == [1.1419053, 0.91940796] as float[]","DataConverter.Utility.newSeededFloatArray( 42, 2 ) == f32Array","DataConverter.Utility.seededFloatArray( f32Array, \"I'm a seed!\") == [-0.037259135, -0.7227145] as float[]","DataConverter.Utility.newSeededFloatArray( \"I'm a seed!\", 2 ) == f32Array"]},
+        {"kind":"and","text":"","code":["DataConverter.Utility.seededDoubleArray( f64Array, 42 ) == [1.1419053154730547, 0.9194079489827879] as double[]","DataConverter.Utility.newSeededDoubleArray( 42, 2 ) == f64Array","DataConverter.Utility.seededDoubleArray( f64Array, \"I'm a seed!\") == [-0.03725913496921719, -0.722714495437272] as double[]","DataConverter.Utility.newSeededDoubleArray( \"I'm a seed!\", 2 ) == f64Array"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"An array of any type of object may be converted to a array of primitives.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"","code":["DataConverter.Utility.objectsToFloats([1, 2, 3].toArray(), 2) == [1, 2] as float[]","DataConverter.Utility.objectsToDoubles([1, 2, 3].toArray(), 2) == [1, 2] as double[]","DataConverter.Utility.objectsToBytes([1, 2, 3].toArray(), 2) == [1, 2] as byte[]","DataConverter.Utility.objectsToInts([1, 2, 3].toArray(), 2) == [1, 2] as int[]","DataConverter.Utility.objectsToLongs([1, 2, 3].toArray(), 2) == [1, 2] as long[]","DataConverter.Utility.objectsToShorts([1, 2, 3].toArray(), 2) == [1, 2] as short[]"]},
+        {"kind":"and","text":"","code":["DataConverter.Utility.objectsToFloats([2.2, 3.9].toArray(), 2) == [2.2,3.9] as float[]","DataConverter.Utility.objectsToDoubles([2.2, 3.9].toArray(), 2) == [2.2, 3.9] as double[]","DataConverter.Utility.objectsToBytes([2.2, 3.9].toArray(), 2) == [2, 3] as byte[]","DataConverter.Utility.objectsToInts([2.2, 3.9].toArray(), 2) == [2, 3] as int[]","DataConverter.Utility.objectsToLongs([2.2, 3.9].toArray(), 2) == [2, 3] as long[]","DataConverter.Utility.objectsToShorts([2.2, 3.9].toArray(), 2) == [2, 3] as short[]"]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

@@ -1,0 +1,109 @@
+{
+  "className":"ut.calculus.Tensor_Function_Spec",
+  "statistics":{
+    "runs":"5",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.097 seconds"
+  },
+
+  "title":"Applying Functions on Tensors",
+  "narrative":"A tensor would be nothing without being able to apply operations on them.\n However, calling operations manually in order to process your\n tensors can be a verbose and error prone task.\n This is where functions come into play.\n Neurekas functions are composed of operations forming an abstract syntax tree.\n Passing tensors to a function will route them trough this tree and apply\n all of the operations on the tensors.",
+  "headers":["\\n <p>\\n This specification ensures that tensors supplied\\n to functions are executed successfully and produce the expected results.\\n </p>\\n"],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"The optimization function for the SGD algorithm produces the expected result",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We use a common learning rate.","code":["var learningRate = 0.01"]},
+        {"kind":"and","text":"Based on that we instantiate the SGD optimization inline function.","code":["var fun = Function.of(\"I[0] <- (I[0] * -$learningRate)\")"]},
+        {"kind":"and","text":"A tensor, which will be treated as gradient.","code":["var g = Tsr.of(1.0)"]},
+        {"kind":"when","text":"We apply the function to the gradient...","code":["var result = fun(g)"]},
+        {"kind":"then","text":"Both the result tensor and the gradient will have the expected value.","code":["result.toString() == \"(1):[-0.01]\"","g.toString() == \"(1):[-0.01]\""]},
+        {"kind":"and","text":"The result will be identical to the gradient, simply because its an inline function.","code":["result === g"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Tensor results of various Function instances return expected results.",
+      "result":"PASS",
+      "duration":"0.051 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["\"A new Function instance created from ${equation}.\"","Function f = new FunctionParser( Neureka.get().backend() ).parse(equation, true)"]},
+        {"kind":"and","text":"","code":["inputs.each {it.to(Device.get(device))}"]},
+        {"kind":"and","text":"The result is being calculated by invoking the Function instance.","code":["Tsr<?> result = ( index != null ? f.derive( inputs, index ) : f.call( inputs ) )","List<Double> value = result.getItemsAs(double[].class) as List<Double>"]},
+        {"kind":"expect","text":"","code":["\"The calculated result ${result} should be (ruffly) equal to expected ${expected}.\"","(0..<value.size()).every {equals(value[it], expected.values().first()[it], 1e-6)}"]},
+        {"kind":"and","text":"The shape is as expected as well :","code":["result.shape == expected.keySet().first()"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Reshaping on 3D tensors works by instantiate a Function instance built from a String.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Function f = Function.of(\"[2, 0, 1]:(I[0])\")"]},
+        {"kind":"when","text":"","code":["Tsr t = Tsr.of([3, 4, 2], 1d..5d)"]},
+        {"kind":"then","text":"","code":["t.toString().contains(\"[3x4x2]:(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0)\")"]},
+        {"kind":"when","text":"","code":["Tsr r = f(t)"]},
+        {"kind":"then","text":"","code":["r.toString().contains(\"[2x3x4]\")","r.toString().contains(\"[2x3x4]:(1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0)\")"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"The \"DimTrim\" operation works forward as well as backward!",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tsr t = Tsr.of([1, 1, 3, 2, 1], 8d).setRqsGradient(true)"]},
+        {"kind":"when","text":"","code":["Tsr trimmed = Function.of(\"dimtrim(I[0])\")(t)"]},
+        {"kind":"then","text":"","code":["trimmed.toString().contains(\"(3x2):[8.0, 8.0, 8.0, 8.0, 8.0, 8.0]; ->d(\")"]},
+        {"kind":"when","text":"","code":["Tsr back = trimmed.backward()"]},
+        {"kind":"then","text":"","code":["back == trimmed"]},
+        {"kind":"and","text":"","code":["t.getGradient().toString() == \"(1x1x3x2x1):[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]\""]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Executed tensors are intermediate tensors.",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var fun = Function.of('i0 * relu(i0) + 1')"]},
+        {"kind":"and","text":"","code":["var t = Tsr.of(1f, -5f, -3f, 2f, 8f)"]},
+        {"kind":"expect","text":"","code":["t.itemClass == Float","fun.toString() == \"((I[0] * relu(I[0])) + 1.0)\""]},
+        {"kind":"when","text":"","code":["var result1 = fun.call(t)","var result2 = fun.invoke(t)","var result3 = fun.execute(t)"]},
+        {"kind":"then","text":"","code":["!result1.isIntermediate()"]},
+        {"kind":"and","text":"","code":["!result2.isIntermediate()"]},
+        {"kind":"and","text":"","code":["result3.isIntermediate()"]},
+        {"kind":"and","text":"","code":["result1.toString() == \"(5):[2.0, 1.25, 1.09, 5.0, 65.0]\"","result2.toString() == \"(5):[2.0, 1.25, 1.09, 5.0, 65.0]\"","result3.toString() == \"(5):[2.0, 1.25, 1.09, 5.0, 65.0]\""]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

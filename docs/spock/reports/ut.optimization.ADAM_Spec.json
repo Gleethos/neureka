@@ -1,0 +1,64 @@
+{
+  "className":"ut.optimization.ADAM_Spec",
+  "statistics":{
+    "runs":"3",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.052 seconds"
+  },
+
+  "title":"",
+  "narrative":"",
+  "headers":["\\n <h2> ADAM Optimizer Behavior </h2>\\n <br> \\n <p>\\n This specification check the behavior of the ADAM class. \\n </p>\\n"],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"ADAM optimizes according to expected inputs",
+      "result":"PASS",
+      "duration":"0.025 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tsr g = Tsr.of(expectedWeight)"]},
+        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tsr.of( gradient ) )","w.applyGradient()"]},
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.translation().hashCode()==g.translation().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Equations used by ADAM return expected result.",
+      "result":"PASS",
+      "duration":"0.013 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create tensors given an equation and array or list of input tensors...","code":["var t1 = Tsr.of( expression, inputs )","var t2 = Tsr.of( expression, inputs as Float[] )","var t3 = Tsr.of( expression, true, inputs.collect( it -> Tsr.of(it) ) )","var t4 = Tsr.of( expression, false, inputs.collect( it -> Tsr.of(it) ) )","var t5 = Tsr.of( expression, false, inputs.collect( it -> Tsr.of(it) ) as Tsr<Double>[] )"]},
+        {"kind":"expect","text":"...this produces the expected result String.","code":["t1.toString().contains( expected )","t2.toString().contains( expected.replace(\".29999\", \".30000\") )","t3.toString().contains( expected )","t4.toString().contains( expected )","t5.toString().contains( expected )"]},
+        {"kind":"where","text":"The following expressions, inputs and expected String results are being used :","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Equations \"I[0]*I[1]+(1-I[2])*I[3]\" and \"(1-I[0])*I[1]\" used within ADAM return expected results.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Function f = Function.of(expression)"]},
+        {"kind":"expect","text":"","code":["output == f(input)"]},
+        {"kind":"where","text":"The following expressions, inputs and expected String results are being used :","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

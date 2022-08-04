@@ -1,0 +1,57 @@
+{
+  "className":"ut.device.Cross_Device_IO_Spec",
+  "statistics":{
+    "runs":"2",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.031 seconds"
+  },
+
+  "title":"Devices manage the states of the tensors they store!",
+  "narrative":"Tensors should not manage their states\n themselves, simply because the type and location\n of the data is dependent on the device onto which they are stored.\n This specification tests of various device implementations\n enable reading to or writing from the tensors they store.",
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"We can use the access device API to read from a tensor.",
+      "result":"PASS",
+      "duration":"0.008 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We fetch the required device instance from its interface.","code":["var device = Device.get(deviceType)"]},
+        {"kind":"and","text":"We fetch the array type of the tested data type!","code":["var arrayType = DataType.of(type).dataArrayType()"]},
+        {"kind":"and","text":"A tensor filled with 4 values which we are going to store on the previously fetched device.","code":["var t = Tsr.of(type).withShape(4).andFill(fill).to(device)"]},
+        {"kind":"and","text":"A slice from the above tensor.","code":["var s = t[1..2]"]},
+        {"kind":"expect","text":"The device reports that both tensors have the same data array size.","code":["device.access(t).dataSize == 4","device.access(s).dataSize == 4"]},
+        {"kind":"and","text":"Reading the underlying tensor data from the device will yield the expected result.","code":["device.access(t).readAll(false) == expected","device.access(s).readAll(false) == expected","device.access(t).readAll(true) == expected","device.access(s).readAll(true) == expected"]},
+        {"kind":"and","text":"This is also true for when reading at a particular index.","code":["device.access(t).readArray(arrayType, 1, 1) == [expected[1]]","device.access(s).readArray(arrayType, 1, 1) == [expected[1]]","device.access(t).readArray(arrayType, 2, 1) == [expected[2]]","device.access(s).readArray(arrayType, 2, 1) == [expected[2]]"]},
+        {"kind":"where","text":"We use the following data:","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"We can use the access device API to write to a tensor",
+      "result":"PASS",
+      "duration":"0.005 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We fetch the required device instance from its interface.","code":["var device = Device.get(deviceType)"]},
+        {"kind":"and","text":"We fetch the array type of the tested data type!","code":["var arrayType = DataType.of(type).dataArrayType()"]},
+        {"kind":"and","text":"A tensor filled with 4 values which we are going to store on the previously fetched device.","code":["var t = Tsr.of(type).withShape(4).andFill(fill).to(device)"]},
+        {"kind":"and","text":"A slice from the above tensor.","code":["var s = t[1..2]"]},
+        {"kind":"when","text":"We write some test data into different ranges within the 2 tensors.","code":["device.access(t).writeFrom(write, 0).intoRange(0,2)","device.access(s).writeFrom(write, 0).intoRange(2,4)"]},
+        {"kind":"then","text":"Reading the previously written data should yield the expected result.","code":["device.access(t).readArray(arrayType, 0, 2) == [expected[0],expected[1]]","device.access(s).readArray(arrayType, 2, 2) == [expected[2],expected[3]]"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

@@ -1,0 +1,116 @@
+{
+  "className":"ut.neureka.Neureka_Spec",
+  "statistics":{
+    "runs":"6",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"5.364 seconds"
+  },
+
+  "title":"The Neureka context can be used and configured as expected.",
+  "narrative":"This specification covers the behavior of the Neureka class which\n exposes a global API for configuring thread local contexts and library settings.\n The purpose of this is to assert that the API exposed by the Neureka class \n is both thread local and configurable.\n This specification also exists to cover standards for the Neureka library in general.",
+  "headers":["\\n <p>\\n This specification defines what types of settings are exposed by\\n Neureka as well as more general things like how string representations\\n of various library types should look like... \\n </p>\\n"],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Neureka class instance has expected behaviour.",
+      "result":"PASS",
+      "duration":"0.087 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"Important settings have their expected states.","code":["!Neureka.get().settings().isLocked()","!Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads()","!Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()"]},
+        {"kind":"when","text":"Once something is changes to false...","code":["Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = true"]},
+        {"kind":"then","text":"This setting change applies!","code":["Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()","!Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()"]},
+        {"kind":"and","text":"The version number is as expected!","code":["Neureka.version()==\"0.17.0\""]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Neureka settings class can be locked causing its properties to be immutable.",
+      "result":"PASS",
+      "duration":"0.791 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Something used to set a property and something to get the property.","code":["def set = { it -> setter(Neureka.get().settings(), it) }","def get = { getter(Neureka.get().settings()) }"]},
+        {"kind":"expect","text":"Initially the property has the expected value.","code":["get() == value"]},
+        {"kind":"when","text":"We lock the settings object...","code":["Neureka.get().settings().setIsLocked(true)"]},
+        {"kind":"and","text":"We try to set the property to another value...","code":["set(!value)"]},
+        {"kind":"then","text":"The property is not changed!","code":["get() == value"]},
+        {"kind":"when","text":"We unlock the settings object...","code":["Neureka.get().settings().setIsLocked(false)"]},
+        {"kind":"and","text":"Again we try to set the property to another value...","code":["set(!value)"]},
+        {"kind":"then","text":"The property is changed!","code":["get() != value"]},
+        {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
+        {"kind":"where","text":"The properties used are boolean types.","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Every Thread instance has their own Neureka instance.",
+      "result":"PASS",
+      "duration":"0.070 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A map containing entries for Neureka instances.","code":["def map = ['instance 1':null, 'instance 2':null]"]},
+        {"kind":"when","text":"Two newly instantiated tensors store their Neureka instances in the map.","code":["def t1 = new Thread({ map['instance 1'] = Neureka.get() })","def t2 = new Thread({ map['instance 2'] = Neureka.get() })"]},
+        {"kind":"and","text":"The tensors are being started and joined.","code":["t1.start()","t2.start()","t1.join()","t2.join()"]},
+        {"kind":"then","text":"The map entries will no longer be filled with null.","code":["map['instance 1'] != null","map['instance 2'] != null"]},
+        {"kind":"and","text":"The Neureka instances stored in the map will be different objects.","code":["map['instance 1'] != map['instance 2']"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention!",
+      "result":"PASS",
+      "duration":"1.614 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+        {"kind":"where","text":"The following objects are being used..","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"OpenCL related library objects adhere to the same toString formatting convention!",
+      "result":"PASS",
+      "duration":"0.191 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaCLObject.toString()).matches()"]},
+        {"kind":"where","text":"The following objects are being used..","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention!",
+      "result":"PASS",
+      "duration":"2.531 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","toStringStandard.matcher(it.toString()).matches()","}"]},
+        {"kind":"where","text":"The following operations are being used..","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

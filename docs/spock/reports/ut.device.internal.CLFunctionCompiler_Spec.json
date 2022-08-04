@@ -1,0 +1,80 @@
+{
+  "className":"ut.device.internal.CLFunctionCompiler_Spec",
+  "statistics":{
+    "runs":"2",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.015 seconds"
+  },
+
+  "title":"Turning functions into kernels.",
+  "narrative":"Neureka parses mathematical expressions into an AST representation\n hidden behind the Function interface...\n This feature does not exist without reason, we can use\n this abstract syntax tree to compile to OpenCL kernels\n for optimal execution speed!",
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
+      "result":"PASS",
+      "duration":"0.011 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A mocked OpenCLDevice which allows us to test the compiler without OpenCL dependency.","code":["var mockDevice = Mock(OpenCLDevice)"]},
+        {"kind":"and","text":"Three simple scalar tensors (of doubles) which we will keep in RAM (not outsource to a device).","code":["Tsr<Number> t1 = Tsr.of( 1 )","Tsr<Number> t2 = Tsr.of(-2 )","Tsr<Number> t3 = Tsr.of( 5 )"]},
+        {"kind":"and","text":"A simple test function which will serve as the basis for the optimization.","code":["var funToBeOptimized = Function.of(\"i2 - (i0 / i1)\")"]},
+        {"kind":"and","text":"Finally we instantiate the compiler which uses the mocked device and the test function for optimization.","code":["var compiler = new CLFunctionCompiler(","mockDevice,","funToBeOptimized,","\"test_fun\"",")"]},
+        {"kind":"when","text":"We instruct the compiler to compile an optimized kernel in the form of an Operation instance","code":["Operation resultOperation = compiler.optimize()"]},
+        {"kind":"then","text":"This resulting operation will not be null!","code":["resultOperation != null"]},
+        {"kind":"when","text":"We create a new cloned context from the current one with the added test operation...","code":["var context = Neureka.get().backend().clone().addOperation(resultOperation)"]},
+        {"kind":"and","text":"... a context runner ...","code":["var run = context.runner()"]},
+        {"kind":"and","text":"We create a function based on our optimized operation...","code":["Function fun = run {","new FunctionParser( Neureka.get().backend() )",".parse(resultOperation, 3, true)","}"]},
+        {"kind":"then","text":"This function should of course not be null!","code":["fun != null"]},
+        {"kind":"and","text":"The function should look as follows when represented as a String:","code":["fun.toString() == \"test_fun(I[0], I[1], I[2])\""]},
+        {"kind":"and","text":"The context now stores the newly created operation.","code":["context.getOperation(\"test_fun\") == resultOperation"]},
+        {"kind":"when","text":"Querying the new operation for an algorithm...","code":["var foundAlgorithm = ( DeviceAlgorithm ) resultOperation",".getAlgorithmFor(","ExecutionCall.of(t1, t2, t3)",".running(resultOperation)",".on(mockDevice)",")"]},
+        {"kind":"then","text":"We expect this algorithm to exist!","code":["foundAlgorithm != null"]},
+        {"kind":"and","text":"This algorithm is expected to host an implementation for our mocked device.","code":["foundAlgorithm.getImplementationFor(mockDevice.getClass()) != null"]},
+        {"kind":"when","text":"Calling this function using the previously created scalars...","code":["fun( t1, t2, t3 )"]},
+        {"kind":"then","text":"\n This will lead to an exception because these tensors are not members of the mocked OpenCLDevice instance.\n All of them are still residing in RAM without being member of any device...\n Therefore in order for this to work we need to fake the membership of these tensors!\n","code":["var exception = thrown(IllegalStateException)","exception.message == \"No suitable implementation found for algorithm 'generic_algorithm_for_test_fun' and device type 'CPU'.\""]},
+        {"kind":"when","text":"We set the mocked device as components of our three scalar tensors...","code":["t1.to(mockDevice)","t2.to(mockDevice)","t3.to(mockDevice)","t1.setIsOutsourced(true)","t2.setIsOutsourced(true)","t3.setIsOutsourced(true)"]},
+        {"kind":"then","text":"\n This will require the mocked OpenCLDevice to notify the tensors that they are not already members.\n This will cause the tensor to add themselves to the device after which\n the tensors will ask the device again if they are now their members!\n","code":["(0.._) * mockDevice.has(t1) >>> [false, true]","(0.._) * mockDevice.has(t2) >>> [false, true]","(0.._) * mockDevice.has(t3) >>> [false, true]"]},
+        {"kind":"and","text":"The update method is being called on the device because it becomes the component of 3 tensors!","code":["(1.._) * mockDevice.update(_) >> true"]},
+        {"kind":"and","text":"Finally the tensors are outsourced members of our mocked OpenCLDevice (Even though they are technically still in RAM).","code":["t1.isOutsourced()","t2.isOutsourced()","t3.isOutsourced()"]},
+        {"kind":"when","text":"We set a dummy implementation so that the real implementation does not get called","code":["foundAlgorithm.setImplementationFor(mockDevice.getClass(), (call)->call.input(0))"]},
+        {"kind":"and","text":"We call the function again...","code":["fun( t1, t2, t3 )"]},
+        {"kind":"then","text":"\n We will register that the Operation created by the CLFunctionCompiler managed to \n integrate well with the Function backend (calculus package) and eventually\n dispatch an execution call to our mocked OpenCLDevice.\n","code":["1 * mockDevice.approve({ ExecutionCall<OpenCLDevice> call ->","call.device == mockDevice &&","call.operation == resultOperation","})"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A mocked OpenCLDevice which allows us to test the compiler without OpenCL dependency.","code":["var mockDevice = Mock(OpenCLDevice)"]},
+        {"kind":"and","text":"A mocked KernelCaller which allows us to check if the OpenCL backend is being called properly.","code":["var mockCaller = Mock(KernelCaller)"]},
+        {"kind":"and","text":"A test function which will be the optimization target for this test.","code":["var funToBeOptimized = Function.of(\"i2 + (i0 / i1)\")"]},
+        {"kind":"and","text":"Finally we create the function compiler!","code":["var compiler = new CLFunctionCompiler(","mockDevice,","funToBeOptimized,","\"test_fun\"",")"]},
+        {"kind":"when","text":"We instruct the compiler to produce an optimized operation based on the provided test function...","code":["Operation resultOperation = compiler.optimize()"]},
+        {"kind":"and","text":"We query this new operation for a any algorithm... (There should really only be a single one)","code":["Algorithm algorithm = resultOperation.getAlgorithm(Algorithm.class)"]},
+        {"kind":"then","text":"The returned algorithm should of course not be null...","code":["algorithm != null"]},
+        {"kind":"and","text":"...as well as an OpenCLDevice specific implementation within the algorithm.","code":["algorithm.getImplementationFor(OpenCLDevice.class) != null"]},
+        {"kind":"when","text":"We call the OpenCLDevice specific implementation by passing a well populated ExecutionCall.","code":["algorithm",".getImplementationFor(OpenCLDevice.class)",".run(","ExecutionCall.of(Tsr.of(0), Tsr.of(1), Tsr.of(2), Tsr.of(3))",".running(resultOperation)",".algorithm(algorithm)",".on(mockDevice) as ExecutionCall<OpenCLDevice>",")"]},
+        {"kind":"then","text":"We expect that the implementation first checks with an optimized kernel already exists...","code":["1 * mockDevice.hasAdHocKernel(\"test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\") >> false"]},
+        {"kind":"and","text":"The implementation will then also build and pass an \"adHoc\" kernel to the mocked device.","code":["1 * mockDevice.compileAdHocKernel(","\"test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\",","\"\"\"","int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]","{","int* offset = ( cfg + rank * 5 );","int* strides = ( cfg + rank * 4 );","int* indices = ( cfg + rank * 3 );","int* translation = ( cfg + rank );","int i = 0;","for ( int ii = 0; ii < rank; ii++ ) {","i += ( indices[ ii ] * strides[ ii ] + offset[ ii ] ) * translation[ ii ];","}","return i;","}","","int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]","{","int* indices = ( cfg + rank * 3 );","int* indicesMap = ( cfg + rank * 2 );","for( int ii = 0; ii < rank; ii++ ) {","indices[ ii ] = ( i / indicesMap[ ii ] ); // is derived from the shape of a tensor. Translates scalar index to dim-Index","i %= indicesMap[ ii ];","}","return _i_of_idx_on_tln( cfg, rank );","}","","__kernel void test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1(","__global double* arg0, __global double* arg1, __global double* arg2, __global double* arg3",") {","int cfg0[] = {1,1,1,0,1};","int cfg1[] = {1,1,1,0,1};","int cfg2[] = {1,1,1,0,1};","int cfg3[] = {1,1,1,0,1};","unsigned int i = get_global_id( 0 );","double v1 = arg1[_i_of_i(i, cfg1, 1)];","double v2 = arg2[_i_of_i(i, cfg2, 1)];","double v3 = arg3[_i_of_i(i, cfg3, 1)];","arg0[_i_of_i(i, cfg0, 1)] = (v1 + (v2 / v3));","}","","\"\"\")"]},
+        {"kind":"and","text":"After the kernel has been compiled we expect the implementation to be called through a caller.","code":["1 * mockDevice.getAdHocKernel(\"test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\") >> mockCaller"]},
+        {"kind":"and","text":"We expect that the caller receives 4 inputs, 1 output tensor and the 3 function arguments.","code":["4 * mockCaller.pass(_)"]},
+        {"kind":"and","text":"Finally the caller will receive a dispatch call with a work size of 1 (because the tensors are scalars).","code":["1 * mockCaller.call(1)"]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

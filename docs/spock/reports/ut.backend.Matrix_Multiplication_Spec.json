@@ -1,0 +1,38 @@
+{
+  "className":"ut.backend.Matrix_Multiplication_Spec",
+  "statistics":{
+    "runs":"1",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.016 seconds"
+  },
+
+  "title":"",
+  "narrative":"",
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"The simple CPU matrix multiplication implementation works as expected.",
+      "result":"PASS",
+      "duration":"0.006 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\\n Matrix multiplication is possible between matrices of various dimensions,\\n data types as well as data layouts!\\n","\\n Matrix multiplication is possible between matrices of various dimensions,\\n data types as well as data layouts!\\n","\\n Matrix multiplication is possible between matrices of various dimensions,\\n data types as well as data layouts!\\n","\\n Matrix multiplication is possible between matrices of various dimensions,\\n data types as well as data layouts!\\n","\\n Matrix multiplication is possible between matrices of various dimensions,\\n data types as well as data layouts!\\n","\\n Matrix multiplication is possible between matrices of various dimensions,\\n data types as well as data layouts!\\n","\\n Matrix multiplication is possible between matrices of various dimensions,\\n data types as well as data layouts!\\n","\\n Matrix multiplication is possible between matrices of various dimensions,\\n data types as well as data layouts!\\n","\\n Matrix multiplication is possible between matrices of various dimensions,\\n data types as well as data layouts!\\n","\\n Matrix multiplication is possible between matrices of various dimensions,\\n data types as well as data layouts!\\n","\\n Matrix multiplication is possible between matrices of various dimensions,\\n data types as well as data layouts!\\n","\\n Matrix multiplication is possible between matrices of various dimensions,\\n data types as well as data layouts!\\n"]
+      },
+      "blocks":[
+        {"kind":"given","text":"We instantiate 2 matrices based on the data from the data table at the end of this method.","code":["Tsr<?> a = Tsr.of(type, [M,K] as int[], A)","Tsr<?> b = Tsr.of(type, [K,N] as int[], B)"]},
+        {"kind":"and","text":"We create the data layout type based on the provided string...","code":["var dataLayout = layout == 'ROW' ? NDConfiguration.Layout.ROW_MAJOR : NDConfiguration.Layout.COLUMN_MAJOR"]},
+        {"kind":"and","text":"After that we convert both matrices to the layout!","code":["a.unsafe.toLayout( dataLayout )","b.unsafe.toLayout( dataLayout )"]},
+        {"kind":"expect","text":"This should of cause make report that they indeed have this new layout.","code":["a.NDConf.layout == dataLayout","b.NDConf.layout == dataLayout"]},
+        {"kind":"when","text":"We now perform the matrix multiplication with the 2 matrix tensors...","code":["Tsr<?> c = a.matMul(b)"]},
+        {"kind":"then","text":"The result will have the expected (M x N) shape.","code":["c.shape == [M,N]"]},
+        {"kind":"and","text":"It should have the expected value array.","code":["c.items == expectedC"]},
+        {"kind":"where","text":"We use the following scenario parameters:","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

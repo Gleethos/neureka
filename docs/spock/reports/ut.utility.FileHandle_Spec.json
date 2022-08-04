@@ -1,0 +1,125 @@
+{
+  "className":"ut.utility.FileHandle_Spec",
+  "statistics":{
+    "runs":"6",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.461 seconds"
+  },
+
+  "title":"",
+  "narrative":"",
+  "headers":["\\n This specification covers the expected functionality of\\n various \\\"FileHandle\\\" implementations.\\n Such implementations ought to be able to save tensors to\\n a given directory in the file format that they represent.\\n Functionalities like : \\\"store\\\", \\\"restore\\\" and \\\"free\\\" must\\n behave as expected.\\n (For more information take a look a the \\\"FileHandle\\\" & \\\"Storage\\\" interface)\\n"],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Test writing IDX file format.",
+      "result":"PASS",
+      "duration":"0.009 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","it.setIsScientific( true )","it.setIsMultiline( false )","it.setHasGradient( true )","it.setCellSize( 1 )","it.setHasValue( true )","it.setHasRecursiveGraph( false )","it.setHasDerivatives( false )","it.setHasShape( true )","it.setIsCellBound( false )","it.setPostfix( \"\" )","it.setPrefix( \"\" )","it.setHasSlimNumbers( false )","})"]},
+        {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
+        {"kind":"then","text":"The file will then exist at the following path:","code":["new File(\"build/test-can/\"+filename).exists()"]},
+        {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tsr loaded = idx.load()"]},
+        {"kind":"then","text":"The loaded tensor is as expected...","code":["loaded != null","loaded.toString() == expected","loaded.getDataType().getRepresentativeType() == type"]},
+        {"kind":"where","text":"The following paths and file names are being used for testing :","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Test reading IDX file format.",
+      "result":"PASS",
+      "duration":"0.008 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A variable for storing a hash :","code":["def hash = \"\""]},
+        {"kind":"when","text":"The given idx file is being loaded by the \"IDXHead\" class into a new tensor...","code":["IDXHandle idx = new IDXHandle( \"build/resources/test/idx/\" + filename )","Tsr loaded = idx.load()"]},
+        {"kind":"and","text":"... this new tensor is then hashed ...","code":["loaded.forEach( e -> hash = ( hash + e ).digest(\"md5\") )"]},
+        {"kind":"then","text":"The hash is as expected.","code":["hash == expected"]},
+        {"kind":"and","text":"The loaded tensor has the expected data type.","code":["loaded.dataType.getRepresentativeType() == I16.class","loaded.dataType == DataType.of( I16.class )"]},
+        {"kind":"and","text":"It contains the correct array type.","code":["loaded.unsafe.data instanceof short[]"]},
+        {"kind":"and","text":"The \"IDXHead\" instance has the expected state :","code":["idx.valueSize == 28 * 28","idx.valueSize == 28 * 28 * 1","idx.fileName == filename","idx.location.endsWith( filename )","idx.totalSize == 28 * 28 * 1 + 16","idx.dataType != loaded.dataType","idx.dataType == DataType.of( UI8.class )"]},
+        {"kind":"where","text":"The following files and the expected hashes of their data were used :","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"We can load image files as tensors.",
+      "result":"PASS",
+      "duration":"0.425 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var hash = \"\"","var type = filename.split(\"\\\\.\")[1].toLowerCase()"]},
+        {"kind":"when","text":"","code":["FileHandle handle = FileHandle.FACTORY.getLoader(type).load(\"build/resources/test/$type/\" + filename, null)","Tsr loaded = handle.load()","loaded.forEach(e -> hash = ( hash + e ).digest('md5') )"]},
+        {"kind":"then","text":"","code":["loaded != null","!loaded.isVirtual()","loaded.size() == shape.inject( 1, {prod, value -> prod * value} )","loaded.getDataType().getRepresentativeType() == I16.class","hash == expected"]},
+        {"kind":"and","text":"","code":["handle.shape == shape as int[]","handle.valueSize == shape.inject( 1, {prod, value -> prod * value} )","handle.totalSize == shape.inject( 1, {prod, value -> prod * value} )","handle.location.endsWith( filename )","handle.dataType == DataType.of( UI8.class )","loaded.dataType == DataType.of( I16.class )"]},
+        {"kind":"where","text":"The following jpg files with their expected shape and hash were used.","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["CSVHandle csv = new CSVHandle( \"build/resources/test/csv/\" + filename, params )","Tsr loaded = csv.load()","var hash = loaded.toString().digest('md5')"]},
+        {"kind":"then","text":"","code":["loaded != null","!loaded.isVirtual()","loaded.size() == shape.inject( 1, {prod, value -> prod * value} )","loaded.getDataType().getItemTypeClass() == String.class","hash == expected"]},
+        {"kind":"and","text":"","code":["csv.shape == shape as int[]","csv.valueSize == shape.inject( 1, {prod, value -> prod * value} )","csv.totalSize == byteSize","csv.dataSize == byteSize","csv.location.endsWith( filename )","csv.dataType == DataType.of( String.class )","loaded.dataType == DataType.of( String.class )"]},
+        {"kind":"where","text":"The following jpg files with their expected shape and hash were used.","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Fully labeled tenors will be stored with their labels included when saving them as CSV.",
+      "result":"PASS",
+      "duration":"0.004 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tsr t = Tsr.of(DataType.of(String.class), [2,3], [","'1', 'hi', ':)',","'2', 'hey', ';)'","]).label([","['r1', 'r2'],","['A', 'B', 'C']","])"]},
+        {"kind":"expect","text":"","code":["t.toString() == \"(2x3):[\\n\" +","\" ( A )( B )( C )\\n\" +","\" [ 1 , hi , :) ]:( r1 ),\\n\" +","\" [ 2 , hey , ;) ]:( r2 )\\n\" +","\"]\"","!new File(\"build/resources/test/csv/test.csv\").exists()"]},
+        {"kind":"when","text":"","code":["def csvHead = new CSVHandle( t, \"build/resources/test/csv/test.csv\" )","Tsr loaded = csvHead.load()"]},
+        {"kind":"then","text":"","code":["loaded.toString() == \"(2x3):[\\n\" +","\" ( A )( B )( C ):( test )\\n\" +","\" [ 1 , hi , :) ]:( r1 ),\\n\" +","\" [ 2 , hey , ;) ]:( r2 )\\n\" +","\"]\"","new File(\"build/resources/test/csv/test.csv\").exists()","new File(\"build/resources/test/csv/test.csv\").text == \",A,B,C\\nr1,1,hi,:)\\nr2,2,hey,;)\\n\""]},
+        {"kind":"when","text":"","code":["csvHead.free()"]},
+        {"kind":"then","text":"","code":["!new File(\"build/resources/test/csv/test.csv\").exists()"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Partially labeled tenors will be stored with their labels included when saving them as CSV.",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tsr t = Tsr.of(DataType.of(String.class), [2,3], [","'1', 'hi', ':)',","'2', 'hey', ';)'","]).label([","'ROW':null,","'COL':['A', 'B', 'C']","])"]},
+        {"kind":"expect","text":"","code":["t.toString() == \"(2x3):[\\n\" +","\" ( A )( B )( C )\\n\" +","\" [ 1 , hi , :) ]:( 0 ),\\n\" +","\" [ 2 , hey , ;) ]:( 1 )\\n\" +","\"]\"","!new File(\"build/resources/test/csv/test.csv\").exists()"]},
+        {"kind":"when","text":"","code":["def csvHead = new CSVHandle( t, \"build/resources/test/csv/test.csv\" )","Tsr loaded = csvHead.load()"]},
+        {"kind":"then","text":"","code":["loaded.toString() == \"(2x3):[\\n\" +","\" ( A )( B )( C ):( test )\\n\" +","\" [ 1 , hi , :) ]:( 0 ),\\n\" +","\" [ 2 , hey , ;) ]:( 1 )\\n\" +","\"]\"","new File(\"build/resources/test/csv/test.csv\").exists()","new File(\"build/resources/test/csv/test.csv\").text == \",A,B,C\\n0,1,hi,:)\\n1,2,hey,;)\\n\""]},
+        {"kind":"when","text":"","code":["csvHead.free()"]},
+        {"kind":"then","text":"","code":["!new File(\"build/resources/test/csv/test.csv\").exists()"]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

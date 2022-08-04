@@ -1,0 +1,35 @@
+{
+  "className":"ut.utility.Cleaner_Testing",
+  "statistics":{
+    "runs":"1",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.380 seconds"
+  },
+
+  "title":"",
+  "narrative":"",
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"The default DeviceCleaner works",
+      "result":"PASS",
+      "duration":"0.378 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["def cleaner = DeviceCleaner.getInstance()","def refCount = 10","def r1 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","def r2 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","def r3 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","def r4 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","def r5 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","def r6 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","def r7 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","def r8 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","def r9 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","def r10 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","cleaner.register( r1, {refCount--} )","cleaner.register( r2, {refCount--} )","cleaner.register( r3, {refCount--} )","cleaner.register( r4, {refCount--} )","cleaner.register( r5, {refCount--} )","cleaner.register( r6, {refCount--} )","cleaner.register( r7, {refCount--} )","cleaner.register( r8, {refCount--} )","cleaner.register( r9, {refCount--} )","cleaner.register( r10,{refCount--} )"]},
+        {"kind":"when","text":"","code":["r1 = null","r3 = null","System.gc()","Sleep.until(250, {","refCount == 8 && cleaner._registered == 8","})","System.gc()","Sleep.until(250, {","refCount == 8 && cleaner._registered == 8","})"]},
+        {"kind":"then","text":"","code":["refCount == 8","cleaner._registered == 8"]},
+        {"kind":"when","text":"","code":["r2 = null","r4 = null","System.gc()","Sleep.until(250, {","refCount == 6 && cleaner._registered == 6","})","System.gc()","Sleep.until(250, {","refCount == 6 && cleaner._registered == 6","})"]},
+        {"kind":"then","text":"","code":["refCount == 6","cleaner._registered == 6"]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

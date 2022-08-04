@@ -1,0 +1,113 @@
+{
+  "className":"ut.calculus.ConCat_Spec",
+  "statistics":{
+    "runs":"5",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.022 seconds"
+  },
+
+  "title":"Merging Tensors",
+  "narrative":"Tensors can not only be sliced, but also merged.\n This is most easily achieved through the concatenation operation, \n which stacks 2 tensors alongside a specified axis.\n This specification not only covers how you can concatenate tensors,\n but also how this works alongside autograd and non-numeric tensors.",
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"We can concatenate 2 tensors alongside a specified axis!",
+      "result":"PASS",
+      "duration":"0.009 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create 2 rank 3 tensors, which we want to concatenate, where the first one requires gradients.","code":["var a = Tsr.of(Double, [3, 4, 2], [-1.7, 2, 9.3, -3]).setRqsGradient(true)","var b = Tsr.ofDoubles().withShape(3, 2, 2).andFill(3,2.5,-6)"]},
+        {"kind":"and","text":"A function which should perform the concatenation.","code":["var cat = Function.of('concat(I[0], I[1])')"]},
+        {"kind":"when","text":"We call the previously created function alongside the axis alongside we want to concatinate","code":["var c = cat.with(Arg.Axis.of(1)).call(a, b)"]},
+        {"kind":"then","text":"The resulting tensor should have the expected shape.","code":["c.shape() == [3, 6, 2]"]},
+        {"kind":"when","text":"We use the result for some more operations...","code":["var y = c * 2"]},
+        {"kind":"and","text":"We back-propagate -3 on y...","code":["y.backward(-3)"]},
+        {"kind":"then","text":"The gradient of the first tensor should look as follows!","code":["a.gradient.every( it -> it == -6 )"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"We can concatenate 2 float tensors alongside a specified axis!",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create 2 rank 2 tensors, which we want to concatenate, where both require gradients.","code":["var a = Tsr.of(Float, [4, 2], [8f, -9f, 5f]).setRqsGradient(true)","var b = Tsr.ofFloats().withShape(4, 3).andFill(1,6,-6,3).setRqsGradient(true)"]},
+        {"kind":"and","text":"A function which should perform the concatenation.","code":["var cat = Function.of('concat(I[0], I[1])')"]},
+        {"kind":"when","text":"We call the previously created function alongside the axis alongside we want to concatenate.","code":["var c = cat.with(Arg.Axis.of(1)).call(a, b)"]},
+        {"kind":"then","text":"The resulting tensor should have the expected shape.","code":["c.shape() == [4, 5]"]},
+        {"kind":"when","text":"","code":["var y = c * 5 + 1"]},
+        {"kind":"and","text":"","code":["y.backward(-2)"]},
+        {"kind":"then","text":"","code":["a.gradient.every( it -> it == -10 )","b.gradient.every( it -> it == -10 )"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"We can concatenate 2 string tensors alongside a specified axis!",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create 2 rank 2 string tensors, which we want to concatenate, where both require gradients.","code":["var a = Tsr.of(String, [2, 5], [':)', ':P', 'B)'])","var b = Tsr.of(String).withShape(1, 5).andFill('O.o', '._.')"]},
+        {"kind":"and","text":"A function which should perform the concatenation.","code":["var cat = Function.of('concat(I[0], I[1])')"]},
+        {"kind":"when","text":"We call the previously created function alongside the axis alongside we want to concatenate.","code":["var c = cat.with(Arg.Axis.of(0)).call(a, b)"]},
+        {"kind":"then","text":"The resulting tensor should have the expected shape.","code":["c.shape() == [3, 5]"]},
+        {"kind":"and","text":"","code":["c.any( it -> it == ':P' )","c.any( it -> it == '._.' )"]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"We can concatenate and then back-propagate 2 simple float tensors alongside a specified axis!",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create 2 rank 2 tensors, which we want to concatenate, where both require gradients.","code":["var a = Tsr.of(Float, [3, 1], [8, -4, 7]).setRqsGradient(true)","var b = Tsr.of(Float).withShape(3, 1).andFill(5, -1, 2).setRqsGradient(true)"]},
+        {"kind":"and","text":"A function which should perform the concatenation.","code":["var cat = Function.of('concat(I[0], I[1])')"]},
+        {"kind":"when","text":"We call the previously created function alongside the axis alongside we want to concatenate.","code":["var c = cat.with(Arg.Axis.of(1)).call(a, b)"]},
+        {"kind":"then","text":"The resulting tensor should have the expected shape.","code":["c.shape() == [3, 2]"]},
+        {"kind":"when","text":"","code":["var y = c / 2"]},
+        {"kind":"and","text":"","code":["y.backward(Tsr.ofFloats().withShape(3,2).andFill(-1, 2, 0.5, 3, -0.1, 4))"]},
+        {"kind":"then","text":"","code":["a.gradient.items == [-0.5, 0.25, -0.05] as float[]","b.gradient.items == [1.0, 1.5, 2.0] as float[]"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"We can concatenate and then back-propagate 3 simple float tensors alongside a specified axis!",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create 2 rank 2 tensors, which we want to concatenate, where both require gradients.","code":["var a = Tsr.of(Float, [1, 3], [8, -4, 7]).setRqsGradient(true)","var b = Tsr.of(Float).withShape(1, 3).andFill(5, -1, 2).setRqsGradient(true)","var c = Tsr.ofRandom(Float, 1, 3).setRqsGradient(true)"]},
+        {"kind":"and","text":"A function which should perform the concatenation.","code":["var cat = Function.of('concat(I[0], I[1], I[2])')"]},
+        {"kind":"when","text":"We call the previously created function alongside the axis alongside we want to concatenate.","code":["var d = cat.with(Arg.Axis.of(0)).call(a, b, c)"]},
+        {"kind":"then","text":"The resulting tensor should have the expected shape.","code":["d.shape() == [3, 3]"]},
+        {"kind":"when","text":"","code":["var y = d ** 2"]},
+        {"kind":"and","text":"","code":["y.backward(Tsr.ofFloats().withShape(3,3).andFill(-1, 2, 0.5, 3, -0.1, 4))"]},
+        {"kind":"then","text":"","code":["a.gradient.items == [-16, -16, 7] as float[]","b.gradient.items == [30, 0.2, 16] as float[]","c.gradient.items == [0.30829078, -3.1254156, -0.52700233] as float[]"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

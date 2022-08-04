@@ -1,0 +1,38 @@
+{
+  "className":"ut.autograd.internal.GraphNode_Tensor_Exception_Unit_Tests",
+  "statistics":{
+    "runs":"1",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.006 seconds"
+  },
+
+  "title":"",
+  "narrative":"",
+  "headers":["\\n <h2> GraphNode Tensor Exceptions </h2>\\n <p>\\n Specified below are strict tests covering the exception behavior\\n of the GraphNode class interacting with Tsr instances.\\n </p>\\n"],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"A tensor cannot be deleted if it is part of a graph and the tensor is used as derivative.",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new simple scalar tensor instance.","code":["Tsr t = Tsr.of( 1 )"]},
+        {"kind":"and","text":"A GraphNode mock object which is being added to the tensor.","code":["def node = Mock( GraphNode )"]},
+        {"kind":"when","text":"","code":["t.set( node )"]},
+        {"kind":"then","text":"","code":["1 * node.update(_) >> true"]},
+        {"kind":"when","text":"We try to delete the tensor...","code":["t.getUnsafe().delete()"]},
+        {"kind":"then","text":"The graph node object will return true for \"isUsedAsDerivative()\" inside the tensor...","code":["1 * node.isUsedAsDerivative() >> true"]},
+        {"kind":"and","text":"...an exception is being thrown.","code":["def exception = thrown(IllegalStateException)","exception.message == \"Cannot delete a tensor which is used as derivative by the AD computation graph!\""]},
+        {"kind":"and","text":"The exception message is also being thrown.","code":["1 * System.err.println({it.endsWith(\"Cannot delete a tensor which is used as derivative by the AD computation graph!\")})"]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

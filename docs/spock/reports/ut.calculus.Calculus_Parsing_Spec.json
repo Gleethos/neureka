@@ -1,0 +1,61 @@
+{
+  "className":"ut.calculus.Calculus_Parsing_Spec",
+  "statistics":{
+    "runs":"3",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.024 seconds"
+  },
+
+  "title":"Parsing Expressions into Functions",
+  "narrative":"Neureka uses the 'Function' interface as a representation of a\n nested structure of operations.\n This means that a 'Function' is simply an abstract syntax trees made up of other 'Function' implementations\n which are assembled together by a parser receiving a string expression.\n In this specification we ensure that function expressions will be properly parsed into\n 'Function' implementations.",
+  "headers":["\\n This specification ensures that functions can be created from String expressions\\n using factory methods on the interface neureka.calculus.Function interface.\\n The implementation details as to how exactly this leads to an abstract syntax tree\\n will not be covered here.\\n This is because the parsing procedure is rather complex and the only thing we care about \\n is the result. \\n <br>\\n Within a given expression String passed to the parser, function inputs are\\n recognized by 'I[j]', 'Ij' or 'ij', where j is the input index.\\n Functions accept arrays as their inputs,\\n which is why variables must be targeted in such a way.\\n There are also many mathematical function like 'sig(..)', 'tanh(..)', 'sin(..)', 'cos(..)' \\n and many more which are recognised by the parser. \\n Other than that the syntax is rather mundane with respect to traditional\\n operations like for example plus '+', minus '-', times '*', ... etc. <br>\\n"],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Test parsed equations when building Function instances.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"A Function created from a given expression will be parsed as expected.","code":["Function.of(equation).toString() == expected"]},
+        {"kind":"where","text":"The following expressions and expected exception messages are being used :","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Parsed equations throw expected error messages.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We try to instantiate a Function by passing an expression String...","code":["Function.of(equation)"]},
+        {"kind":"then","text":"An exception is being thrown that contains the expected message!","code":["def error = thrown(IllegalArgumentException)","assert error.message==expected"]},
+        {"kind":"where","text":"The following expressions and expected exception messages are being used :","code":[]}
+      ],
+      "problems":"[]"
+    },
+  
+    {
+      "id":"Functions can derive themselves according to the provided index of the input which ought to be derived.",
+      "result":"PASS",
+      "duration":"0.004 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"A Function created from a given expression will produce the expected derivative String.","code":["Function.of(equation).getDerivative( index ).toString() == expected"]},
+        {"kind":"where","text":"The following expressions and derivation indices are being used :","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

@@ -1,0 +1,35 @@
+{
+  "className":"ut.utility.Utility_Spec",
+  "statistics":{
+    "runs":"1",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.009 seconds"
+  },
+
+  "title":"",
+  "narrative":"",
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Object arrays can be converted to primitive arrays.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["def result = code(input)"]},
+        {"kind":"then","text":"","code":["result == input"]},
+        {"kind":"and","text":"","code":["result.class != input.class"]},
+        {"kind":"and","text":"","code":["result.class == expectedType"]},
+        {"kind":"where","text":"","code":[]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

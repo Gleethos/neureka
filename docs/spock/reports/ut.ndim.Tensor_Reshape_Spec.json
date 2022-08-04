@@ -1,0 +1,34 @@
+{
+  "className":"ut.ndim.Tensor_Reshape_Spec",
+  "statistics":{
+    "runs":"1",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.002 seconds"
+  },
+
+  "title":"",
+  "narrative":"",
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"When matrices are transpose, they will change their layout type.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tsr t = Tsr.ofFloats().withShape(3, 4).andSeed(42)"]},
+        {"kind":"expect","text":"","code":["t.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR"]},
+        {"kind":"when","text":"","code":["t = t.T"]},
+        {"kind":"then","text":"","code":["t.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR"]}
+      ],
+      "problems":"[]"
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}
