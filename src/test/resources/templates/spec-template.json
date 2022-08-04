@@ -14,11 +14,8 @@ def noSingleBreaks = { String s ->
     return sb.toString().trim();
 }
 def trim = {it -> noSingleBreaks(it.replaceAll("\\s+", " ").replace("(\\n\\n)\\n*", "\n\n")).trim()}
-def esc = {it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t").trim()}
-def strList = {
-  //if (it.collect({c->c.toString()}).contains("----")) throw new IllegalArgumentException("String contains a ----")
-  return it.isEmpty() ? "" : (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it)}).join('","'))+'"')
-}
+def esc = { trim(it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t").trim()) }
+def strList = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({esc(it)}).join('","'))+'"')}
 
 //----
 
@@ -39,7 +36,7 @@ def stats = utils.stats( data )
   def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
 %>
   "title":"<% if ( specTitle ) { out << esc(specTitle) } %>",
-  "narrative":"<% if ( data.info.narrative ) { out << esc(trim(data.info.narrative)) } %>",
+  "narrative":"<% if ( data.info.narrative ) { out << esc(data.info.narrative) } %>",
 <%
   def writeTagOrAttachment = {feature ->
     def tagsByKey = feature.tags.groupBy( {t -> t.key} )
@@ -56,12 +53,12 @@ def stats = utils.stats( data )
   }
   def writeHeaders = { headers ->
     out << '  "headers":['
-    if ( headers ) out << headers.collect({v->esc(trim(v))}).collect({'"'+it+'"'}).join(",")
+    if ( headers ) out << headers.collect({v->esc(esc(v))}).collect({'"'+it+'"'}).join(",")
     out << '],'
   }
   def writeExtraInfo = { extraInfo ->
     out << '"extraInfo":['
-    if ( extraInfo ) out << extraInfo.collect({v->esc(trim(v))}).collect({'"'+it+'"'}).join(",")
+    if ( extraInfo ) out << extraInfo.collect({v->esc(esc(v))}).collect({'"'+it+'"'}).join(",")
     out << ']'
   }
   writeHeaders( utils.specHeaders( data ) )

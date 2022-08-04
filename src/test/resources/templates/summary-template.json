@@ -1,8 +1,21 @@
 <%
-def stats = utils.aggregateStats( data )
-def esc = {
-  it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+println("Generating summary json now!")
+// A Java method which takes a string and replaces single breaks with spaces, but leaves multiple consecutive breaks in:
+def noSingleBreaks = { String s ->
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < s.length(); i++) {
+        if (s.charAt(i) == '\n') {
+            if ( i > 0 && i + 1 < s.length() && s.charAt(i) == '\n' && s.charAt(i+1) != '\n' && s.charAt(i-1) != '\n')
+                sb.append(' ');
+            else
+                sb.append('\n');
+        }
+        else sb.append(s.charAt(i));
+    }
+    return sb.toString().trim();
 }
+def trim = {it -> noSingleBreaks(it.replaceAll("\\s+", " ").replace("(\\n\\n)\\n*", "\n\n")).trim()}
+def esc = { trim(it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t").trim()) }
 def strFeatures = { features ->
     features = features.collect({ feature ->
       '{"id":"'+esc(feature)+'","extraInfo":[]}'
@@ -11,6 +24,8 @@ def strFeatures = { features ->
     if ( features.size() == 1 ) out << features[0]
     if ( features.size() > 1 ) out << features.collect({ it }).join(",")
 }
+// ---
+def stats = utils.aggregateStats( data )
 %>{
   "project": "${projectName}",
   "version": "${projectVersion}",
@@ -27,18 +42,18 @@ def strFeatures = { features ->
     def i = 0
     data.each { name, map ->
     def s = map.stats
-    def executed = map.executedFeatures
-    def ignored = map.ignoredFeatures
     %>{
       "className":"$name",
+      "title":"${esc(map.title)}",
+      "narrative":"${esc(map.narrative)}",
       "featureCount":"${s.totalFeatures}",
       "failures":"${s.failures}",
       "errors":"${s.errors}",
       "skipped":"${s.skipped}" ,
       "successRate":"${s.successRate}",
       "duration":"${s.time}",
-      "executedFeatures":[<% strFeatures(executed) %>],
-      "ignoredFeatures":[<% strFeatures(ignored) %>]
+      "executedFeatures":[<% strFeatures(map.executedFeatures) %>],
+      "ignoredFeatures":[<% strFeatures(map.ignoredFeatures) %>]
     }<%
       i++
       if ( i < data.size() ) out << ","
