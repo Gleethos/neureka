@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.143 seconds"
+    "duration":"0.149 seconds"
   },
 
   "title":"Cross Device Tensor Slicing",
@@ -16,7 +16,7 @@
     {
       "id":"Slices can be created using the SliceBuilder.",
       "result":"PASS",
-      "duration":"0.040 seconds",
+      "duration":"0.039 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,13 +35,13 @@
     {
       "id":"Cross device sliced tensor integration test runs without errors.",
       "result":"PASS",
-      "duration":"0.096 seconds",
+      "duration":"0.102 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["if ( device == null ) return","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return"]},
-        {"kind":"when","text":"","code":["Tsr x = Tsr.of([1], 3d).setRqsGradient(true)","Tsr b = Tsr.of([1], -4d)","Tsr w = Tsr.of([1], 2d)","device.store(x).store(b).store(w)","Tsr y = Tsr.of(\"((i0+i1)*i2)**2\", [x, b, w])"]},
+        {"kind":"when","text":"","code":["Tsr x = Tsr.of([1],  3d).setRqsGradient(true)","Tsr b = Tsr.of([1], -4d)","Tsr w = Tsr.of([1],  2d)","device.store(x).store(b).store(w)","Tsr y = Tsr.of(\"((i0+i1)*i2)**2\", [x, b, w])"]},
         {"kind":"then","text":"","code":["y.indicesMap() != null","y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
         {"kind":"when","text":"","code":["y.backward(Tsr.of(2))","y = ( ( x + b ) * w )**2"]},
         {"kind":"then","text":"","code":["y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},

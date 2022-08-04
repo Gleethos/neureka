@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.014 seconds"
+    "duration":"0.019 seconds"
   },
 
   "title":"The BackendContext is a cloneable context which can run Tasks.",
@@ -24,7 +24,7 @@
         {"kind":"given","text":"The singleton BackendContext instance and a OperationType mock.","code":["def mockOperation = Mock(Operation)","def context = Neureka.get().backend()"]},
         {"kind":"when","text":"A clone is being created by calling \"clone()\" on the given context...","code":["def clone = context.clone()"]},
         {"kind":"then","text":"The two instances are not the same objects.","code":["clone != context"]},
-        {"kind":"and","text":"They contain the same entries.","code":["clone.size() == context.size()","clone.getOperationLookupMap() == context.getOperationLookupMap()","clone.getOperations() == context.getOperations()"]},
+        {"kind":"and","text":"They contain the same entries.","code":["clone.size()      == context.size()","clone.getOperationLookupMap()    == context.getOperationLookupMap()","clone.getOperations() == context.getOperations()"]},
         {"kind":"when","text":"","code":["1 * mockOperation.getOperator() >> \"\"","1 * mockOperation.getIdentifier() >> \"\""]},
         {"kind":"and","text":"The clone is changes its state.","code":["clone.addOperation( mockOperation )"]},
         {"kind":"then","text":"Their properties will no longer be the same.","code":["clone.size() != context.size()","clone.getOperationLookupMap() != context.getOperationLookupMap()","clone.getOperations() != context.getOperations()"]},
@@ -36,7 +36,7 @@
     {
       "id":"BackendContext instances return Runner instances for easy visiting.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -55,7 +55,7 @@
     {
       "id":"BackendContext instances return Runner instances for easy visiting with return values.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

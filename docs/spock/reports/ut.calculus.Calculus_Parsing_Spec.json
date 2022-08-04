@@ -45,7 +45,7 @@
     {
       "id":"Functions can derive themselves according to the provided index of the input which ought to be derived.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

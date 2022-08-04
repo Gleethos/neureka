@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.461 seconds"
+    "duration":"0.487 seconds"
   },
 
   "title":"",
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","it.setIsScientific( true )","it.setIsMultiline( false )","it.setHasGradient( true )","it.setCellSize( 1 )","it.setHasValue( true )","it.setHasRecursiveGraph( false )","it.setHasDerivatives( false )","it.setHasShape( true )","it.setIsCellBound( false )","it.setPostfix( \"\" )","it.setPrefix( \"\" )","it.setHasSlimNumbers( false )","})"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","it.setIsScientific( true )","it.setIsMultiline( false )","it.setHasGradient( true )","it.setCellSize( 1 )","it.setHasValue( true )","it.setHasRecursiveGraph( false )","it.setHasDerivatives( false )","it.setHasShape( true )","it.setIsCellBound( false )","it.setPostfix(  \"\" )","it.setPrefix(  \"\"  )","it.setHasSlimNumbers(  false )","})"]},
         {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
         {"kind":"then","text":"The file will then exist at the following path:","code":["new File(\"build/test-can/\"+filename).exists()"]},
         {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tsr loaded = idx.load()"]},
@@ -34,7 +34,7 @@
     {
       "id":"Test reading IDX file format.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"We can load image files as tensors.",
       "result":"PASS",
-      "duration":"0.425 seconds",
+      "duration":"0.444 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
     {
       "id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,15 +87,15 @@
     {
       "id":"Fully labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Tsr t = Tsr.of(DataType.of(String.class), [2,3], [","'1', 'hi', ':)',","'2', 'hey', ';)'","]).label([","['r1', 'r2'],","['A', 'B', 'C']","])"]},
-        {"kind":"expect","text":"","code":["t.toString() == \"(2x3):[\\n\" +","\" ( A )( B )( C )\\n\" +","\" [ 1 , hi , :) ]:( r1 ),\\n\" +","\" [ 2 , hey , ;) ]:( r2 )\\n\" +","\"]\"","!new File(\"build/resources/test/csv/test.csv\").exists()"]},
+        {"kind":"expect","text":"","code":["t.toString() == \"(2x3):[\\n\" +","\"   (        A       )(       B       )(       C        )\\n\" +","\"   [        1       ,        hi      ,        :)       ]:( r1 ),\\n\" +","\"   [        2       ,       hey      ,        ;)       ]:( r2 )\\n\" +","\"]\"","!new File(\"build/resources/test/csv/test.csv\").exists()"]},
         {"kind":"when","text":"","code":["def csvHead = new CSVHandle( t, \"build/resources/test/csv/test.csv\" )","Tsr loaded = csvHead.load()"]},
-        {"kind":"then","text":"","code":["loaded.toString() == \"(2x3):[\\n\" +","\" ( A )( B )( C ):( test )\\n\" +","\" [ 1 , hi , :) ]:( r1 ),\\n\" +","\" [ 2 , hey , ;) ]:( r2 )\\n\" +","\"]\"","new File(\"build/resources/test/csv/test.csv\").exists()","new File(\"build/resources/test/csv/test.csv\").text == \",A,B,C\\nr1,1,hi,:)\\nr2,2,hey,;)\\n\""]},
+        {"kind":"then","text":"","code":["loaded.toString() == \"(2x3):[\\n\" +","\"   (        A       )(       B       )(       C        ):( test )\\n\" +","\"   [        1       ,        hi      ,        :)       ]:( r1 ),\\n\" +","\"   [        2       ,       hey      ,        ;)       ]:( r2 )\\n\" +","\"]\"","new File(\"build/resources/test/csv/test.csv\").exists()","new File(\"build/resources/test/csv/test.csv\").text == \",A,B,C\\nr1,1,hi,:)\\nr2,2,hey,;)\\n\""]},
         {"kind":"when","text":"","code":["csvHead.free()"]},
         {"kind":"then","text":"","code":["!new File(\"build/resources/test/csv/test.csv\").exists()"]}
       ],
@@ -105,15 +105,15 @@
     {
       "id":"Partially labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Tsr t = Tsr.of(DataType.of(String.class), [2,3], [","'1', 'hi', ':)',","'2', 'hey', ';)'","]).label([","'ROW':null,","'COL':['A', 'B', 'C']","])"]},
-        {"kind":"expect","text":"","code":["t.toString() == \"(2x3):[\\n\" +","\" ( A )( B )( C )\\n\" +","\" [ 1 , hi , :) ]:( 0 ),\\n\" +","\" [ 2 , hey , ;) ]:( 1 )\\n\" +","\"]\"","!new File(\"build/resources/test/csv/test.csv\").exists()"]},
+        {"kind":"expect","text":"","code":["t.toString() == \"(2x3):[\\n\" +","\"   (        A       )(       B       )(       C        )\\n\" +","\"   [        1       ,        hi      ,        :)       ]:( 0 ),\\n\" +","\"   [        2       ,       hey      ,        ;)       ]:( 1 )\\n\" +","\"]\"","!new File(\"build/resources/test/csv/test.csv\").exists()"]},
         {"kind":"when","text":"","code":["def csvHead = new CSVHandle( t, \"build/resources/test/csv/test.csv\" )","Tsr loaded = csvHead.load()"]},
-        {"kind":"then","text":"","code":["loaded.toString() == \"(2x3):[\\n\" +","\" ( A )( B )( C ):( test )\\n\" +","\" [ 1 , hi , :) ]:( 0 ),\\n\" +","\" [ 2 , hey , ;) ]:( 1 )\\n\" +","\"]\"","new File(\"build/resources/test/csv/test.csv\").exists()","new File(\"build/resources/test/csv/test.csv\").text == \",A,B,C\\n0,1,hi,:)\\n1,2,hey,;)\\n\""]},
+        {"kind":"then","text":"","code":["loaded.toString() == \"(2x3):[\\n\" +","\"   (        A       )(       B       )(       C        ):( test )\\n\" +","\"   [        1       ,        hi      ,        :)       ]:( 0 ),\\n\" +","\"   [        2       ,       hey      ,        ;)       ]:( 1 )\\n\" +","\"]\"","new File(\"build/resources/test/csv/test.csv\").exists()","new File(\"build/resources/test/csv/test.csv\").text == \",A,B,C\\n0,1,hi,:)\\n1,2,hey,;)\\n\""]},
         {"kind":"when","text":"","code":["csvHead.free()"]},
         {"kind":"then","text":"","code":["!new File(\"build/resources/test/csv/test.csv\").exists()"]}
       ],

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.401 seconds"
+    "duration":"0.391 seconds"
   },
 
   "title":"The CPU device, an API for CPU based execution",
@@ -16,12 +16,12 @@
     {
       "id":"Thread pool executes given workload in parallel",
       "result":"PASS",
-      "duration":"0.398 seconds",
+      "duration":"0.386 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\\n Warning! This test is flaky simply because it relies on the behaviour of threads\\n which may or may not behave as expected. \\n"]
       },
       "blocks":[
-        {"kind":"given","text":"Two 4 dimensional tensor instances.","code":["Tsr a = Tsr.of(new int[]{100, 60, 1, 2}, 4)","Tsr b = Tsr.of(new int[]{100, 1, 60, 2}, -2)"]},
+        {"kind":"given","text":"Two 4 dimensional tensor instances.","code":["Tsr a = Tsr.of(new int[]{100, 60, 1, 2},  4)","Tsr b = Tsr.of(new int[]{100, 1, 60, 2}, -2)"]},
         {"kind":"and","text":"The default device returned by the first tensor:","code":["Device cpu = a.getDevice()"]},
         {"kind":"expect","text":"This device should not be null but be an instance of the CPU representative device type.","code":["cpu != null","cpu instanceof CPU"]},
         {"kind":"when","text":"Accessing the executor of the cpu device...","code":["CPU.JVMExecutor exec = ( (CPU) cpu ).getExecutor()"]},

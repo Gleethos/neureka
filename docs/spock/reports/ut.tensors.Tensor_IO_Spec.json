@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.040 seconds"
+    "duration":"0.059 seconds"
   },
 
   "title":"The Tensor state Input and Output Specification",
@@ -72,7 +72,7 @@
       "blocks":[
         {"kind":"given","text":"We are using the legacy view for tensors where bracket types are swapped, just because...","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
         {"kind":"and","text":"A new tensor instance with the shape (4x3).","code":["Tsr t1 = Tsr.of([4, 3], 1d..12d)"]},
-        {"kind":"when","text":"Recording the index behavior before and after a reshape operation...","code":["var t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})","var t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})","var t1_indices = t1.indicesOfIndex(5)","Tsr t2 = Function.of(\" [ 1, 0 ]:( I[0] ) \")(t1)","var t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})","var t2_idx = t2.indicesOfIndex(7)","var t1_ioi_3 = t1.indexOfIndices(t1.indicesOfIndex(7))","var t2_ioi_2 = t2.indexOfIndices(t2.indicesOfIndex(7))"]},
+        {"kind":"when","text":"Recording the index behavior before and after a reshape operation...","code":["var t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})","var t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})","var t1_indices = t1.indicesOfIndex(5)","Tsr t2 = Function.of(\" [ 1, 0 ]:( I[0] ) \")(t1)","var t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})","var t2_idx = t2.indicesOfIndex(7)","var t1_ioi_3 = t1.indexOfIndices(t1.indicesOfIndex(7))","var t2_ioi_2 =  t2.indexOfIndices(t2.indicesOfIndex(7))"]},
         {"kind":"then","text":"These recorded values are as one would expect.","code":["t1_ioi_1 == 7","t1_ioi_2 == 5","t1_indices[0] == 1","t1_indices[1] == 2","t2_ioi_1 == 7","t2_idx[0] == 1","t2_idx[1] == 3","t1_ioi_3 == 7","t2_ioi_2 == 10","t1.toString().contains(\"[4x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0)\")","t2.toString().contains(\"[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.0, 9.0, 12.0)\")"]}
       ],
       "problems":"[]"
@@ -97,7 +97,7 @@
     {
       "id":"Tensor value type can not be changed by passing float or double arrays to it.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -134,7 +134,7 @@
     {
       "id":"We can re-populate a tensor of shorts from a single scalar value!",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -152,7 +152,7 @@
     {
       "id":"We can manipulate the underlying data array of a tensor through the unsafe API.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -160,11 +160,11 @@
         {"kind":"given","text":"A tensor of 3 numbers:","code":["var t = Tsr.of(type).vector(42, 66, 73)"]},
         {"kind":"and","text":"We store the tensor on the given device, to ensure that it work there as well.","code":["t.to(device)"]},
         {"kind":"when","text":"We create a slice which should internally reference the same data as the slice parent.","code":["var s = t[1]"]},
-        {"kind":"then","text":"The slice has the expected state!","code":["s.isSlice()","s.items == [66]","s.data == [42, 66, 73]"]},
+        {"kind":"then","text":"The slice has the expected state!","code":["s.isSlice()","s.items == [66]","s.data  == [42, 66, 73]"]},
         {"kind":"when","text":"We call the \"setData\" method with a scalar value passed to it...","code":["s.unsafe.setDataAt(1, -9)"]},
         {"kind":"then","text":"The change will be reflected in the slice...","code":["s.items == [-9]"]},
         {"kind":"and","text":"Also in the slice parent!","code":["t.items == [42, -9, 73]"]},
-        {"kind":"and","text":"Both tensors should have the same data array!","code":["s.data == [42, -9, 73]","t.data == [42, -9, 73]"]},
+        {"kind":"and","text":"Both tensors should have the same data array!","code":["s.data  == [42, -9, 73]","t.data  == [42, -9, 73]"]},
         {"kind":"where","text":"","code":[]}
       ],
       "problems":"[]"
@@ -173,7 +173,7 @@
     {
       "id":"When we try to manipulate the underlying data array of a virtual tensor then it will become actual.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -262,7 +262,7 @@
     {
       "id":"Tensor values can be manipulated via static method calls within the \"Tsr.IO\" class.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -297,7 +297,7 @@
     {
       "id":"The tensor data array can be modified by targeting them with an index.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -318,7 +318,7 @@
     {
       "id":"Adding OpenCL device to tensor makes tensor be \"outsourced\" and contain the Device instance as component.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

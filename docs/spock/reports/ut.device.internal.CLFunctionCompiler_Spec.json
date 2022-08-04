@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.015 seconds"
+    "duration":"0.014 seconds"
   },
 
   "title":"Turning functions into kernels.",
@@ -16,7 +16,7 @@
     {
       "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -67,7 +67,7 @@
         {"kind":"and","text":"...as well as an OpenCLDevice specific implementation within the algorithm.","code":["algorithm.getImplementationFor(OpenCLDevice.class) != null"]},
         {"kind":"when","text":"We call the OpenCLDevice specific implementation by passing a well populated ExecutionCall.","code":["algorithm",".getImplementationFor(OpenCLDevice.class)",".run(","ExecutionCall.of(Tsr.of(0), Tsr.of(1), Tsr.of(2), Tsr.of(3))",".running(resultOperation)",".algorithm(algorithm)",".on(mockDevice) as ExecutionCall<OpenCLDevice>",")"]},
         {"kind":"then","text":"We expect that the implementation first checks with an optimized kernel already exists...","code":["1 * mockDevice.hasAdHocKernel(\"test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\") >> false"]},
-        {"kind":"and","text":"The implementation will then also build and pass an \"adHoc\" kernel to the mocked device.","code":["1 * mockDevice.compileAdHocKernel(","\"test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\",","\"\"\"","int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]","{","int* offset = ( cfg + rank * 5 );","int* strides = ( cfg + rank * 4 );","int* indices = ( cfg + rank * 3 );","int* translation = ( cfg + rank );","int i = 0;","for ( int ii = 0; ii < rank; ii++ ) {","i += ( indices[ ii ] * strides[ ii ] + offset[ ii ] ) * translation[ ii ];","}","return i;","}","","int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]","{","int* indices = ( cfg + rank * 3 );","int* indicesMap = ( cfg + rank * 2 );","for( int ii = 0; ii < rank; ii++ ) {","indices[ ii ] = ( i / indicesMap[ ii ] ); // is derived from the shape of a tensor. Translates scalar index to dim-Index","i %= indicesMap[ ii ];","}","return _i_of_idx_on_tln( cfg, rank );","}","","__kernel void test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1(","__global double* arg0, __global double* arg1, __global double* arg2, __global double* arg3",") {","int cfg0[] = {1,1,1,0,1};","int cfg1[] = {1,1,1,0,1};","int cfg2[] = {1,1,1,0,1};","int cfg3[] = {1,1,1,0,1};","unsigned int i = get_global_id( 0 );","double v1 = arg1[_i_of_i(i, cfg1, 1)];","double v2 = arg2[_i_of_i(i, cfg2, 1)];","double v3 = arg3[_i_of_i(i, cfg3, 1)];","arg0[_i_of_i(i, cfg0, 1)] = (v1 + (v2 / v3));","}","","\"\"\")"]},
+        {"kind":"and","text":"The implementation will then also build and pass an \"adHoc\" kernel to the mocked device.","code":["1 * mockDevice.compileAdHocKernel(","\"test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\",","\"\"\"","int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]","{","int* offset      = ( cfg + rank * 5 );","int* strides     = ( cfg + rank * 4 );","int* indices     = ( cfg + rank * 3 );","int* translation = ( cfg + rank     );","int i = 0;","for ( int ii = 0; ii < rank; ii++ ) {","i += ( indices[ ii ] * strides[ ii ] + offset[ ii ] ) * translation[ ii ];","}","return i;","}","","int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]","{","int* indices    = ( cfg + rank * 3 );","int* indicesMap = ( cfg + rank * 2 );","for( int ii = 0; ii < rank; ii++ ) {","indices[ ii ] = ( i / indicesMap[ ii ] ); // is derived from the shape of a tensor. Translates scalar index to dim-Index","i %= indicesMap[ ii ];","}","return _i_of_idx_on_tln( cfg, rank );","}","","__kernel void test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1(","__global double* arg0, __global double* arg1, __global double* arg2, __global double* arg3",") {","int cfg0[] = {1,1,1,0,1};","int cfg1[] = {1,1,1,0,1};","int cfg2[] = {1,1,1,0,1};","int cfg3[] = {1,1,1,0,1};","unsigned int i = get_global_id( 0 );","double v1 = arg1[_i_of_i(i, cfg1, 1)];","double v2 = arg2[_i_of_i(i, cfg2, 1)];","double v3 = arg3[_i_of_i(i, cfg3, 1)];","arg0[_i_of_i(i, cfg0, 1)] = (v1 + (v2 / v3));","}","","\"\"\")"]},
         {"kind":"and","text":"After the kernel has been compiled we expect the implementation to be called through a caller.","code":["1 * mockDevice.getAdHocKernel(\"test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\") >> mockCaller"]},
         {"kind":"and","text":"We expect that the caller receives 4 inputs, 1 output tensor and the 3 function arguments.","code":["4 * mockCaller.pass(_)"]},
         {"kind":"and","text":"Finally the caller will receive a dispatch call with a work size of 1 (because the tensors are scalars).","code":["1 * mockCaller.call(1)"]}

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.019 seconds"
+    "duration":"0.020 seconds"
   },
 
   "title":"",
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Mocked arguments used to call the GraphNode constructor.","code":["Tsr payload = Mock( Tsr )","Supplier<Tsr> supplier = () -> Result.of(payload)","Function function = Mock( Function )","Object context = Mock( GraphLock )","Device device = Mock( Device )"]},
+        {"kind":"given","text":"Mocked arguments used to call the GraphNode constructor.","code":["Tsr           payload  = Mock( Tsr )","Supplier<Tsr> supplier = () -> Result.of(payload)","Function      function = Mock( Function )","Object        context = Mock( GraphLock )","Device        device = Mock( Device )"]},
         {"kind":"and","text":"We set the payload up so that it return the mocked device!","code":["payload.getDevice() >> device"]},
         {"kind":"when","text":"We try to instantiate a GraphNode...","code":["new GraphNode( function, context, supplier )"]},
         {"kind":"then","text":"The mock objects are being called as expected.","code":["1 * function.isDoingAD() >> true","1 * payload.set( _ )","1 * device.access( _ ) >> Mock(Device.Access)","(1.._) * payload.getNDConf() >> Mock(NDConfiguration)"]}
@@ -32,7 +32,7 @@
     {
       "id":"GraphNode instantiation works as expected when the context argument is an ExecutionCall.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

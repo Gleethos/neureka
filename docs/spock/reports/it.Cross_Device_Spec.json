@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"17.716 seconds"
+    "duration":"18.421 seconds"
   },
 
   "title":"Cross Device Stress Test Specification",
@@ -16,14 +16,14 @@
     {
       "id":"Convolution can model matrix multiplications across devices.",
       "result":"PASS",
-      "duration":"0.015 seconds",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A given device of any type and the settings configured for testing.","code":["Device device = ( deviceType == \"CPU\" ) ? CPU.get() : Device.get('first')","Neureka.get().reset()","Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
-        {"kind":"and","text":"Two tensors, one requiring gradients and the other one does not.","code":["var tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{","1, 2, // 3, 1,","2, -3, // -2, -1,","}).setRqsGradient( true )","var tensor2 = Tsr.of(new int[]{1, 2, 2}, new double[]{","-2, 3, // 0 7","1, 2, // -7 0","})","device.store(tensor1).store(tensor2)"]},
-        {"kind":"and","text":"","code":["Tsr product = Tsr.of(\"i0xi1\", tensor1, tensor2)","product.backward( Tsr.of(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}) )","String result = product.toString({","it.rowLimit = 15 // \"rc\"","it.isScientific = false","it.isMultiline = false","it.hasGradient = false","it.cellSize = 1","it.hasValue = true","it.hasRecursiveGraph = true","it.hasDerivatives = false","it.hasShape = true","it.isCellBound = false","it.postfix = \"\"","it.prefix = \"\"","it.hasSlimNumbers = false","})"]},
+        {"kind":"and","text":"Two tensors, one requiring gradients and the other one does not.","code":["var tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{","1,  2, //  3, 1,","2, -3, // -2, -1,","}).setRqsGradient( true )","var tensor2 = Tsr.of(new int[]{1, 2, 2}, new double[]{","-2, 3, //  0  7","1, 2,  // -7  0","})","device.store(tensor1).store(tensor2)"]},
+        {"kind":"and","text":"","code":["Tsr product = Tsr.of(\"i0xi1\", tensor1, tensor2)","product.backward( Tsr.of(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}) )","String result = product.toString({","it.rowLimit = 15 // \"rc\"","it.isScientific = false","it.isMultiline = false","it.hasGradient = false","it.cellSize = 1","it.hasValue = true","it.hasRecursiveGraph = true","it.hasDerivatives = false","it.hasShape =  true","it.isCellBound = false","it.postfix = \"\"","it.prefix = \"\"","it.hasSlimNumbers = false","})"]},
         {"kind":"expect","text":"","code":["result.contains(","\"[2x1x2]:(0.0, 7.0, -7.0, 0.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }\"",")"]},
         {"kind":"cleanup","text":"","code":["product.getUnsafe().delete()","tensor1.getUnsafe().delete()"]},
         {"kind":"where","text":"The following settings are being used:","code":[]}
@@ -34,7 +34,7 @@
     {
       "id":"Test cross device system test runs successfully.",
       "result":"PASS",
-      "duration":"4.284 seconds",
+      "duration":"4.254 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -49,7 +49,7 @@
     {
       "id":"Test simple NN implementation with manual backprop",
       "result":"PASS",
-      "duration":"13.287 seconds",
+      "duration":"14.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.689 seconds"
+    "duration":"0.702 seconds"
   },
 
   "title":"",
@@ -16,12 +16,12 @@
     {
       "id":"Stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.174 seconds",
+      "duration":"0.167 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["def stress = ( Tsr t ) -> {","t = t + Tsr.of( t.shape(), -3d..12d )","t = t * Tsr.of( t.shape(), 2d..3d )","t = t / Tsr.of( t.shape(), 1d..2d )","t = t **Tsr.of( t.shape(), 2d..1d )","t = t - Tsr.of( t.shape(), -2d..2d )","return t","}"]},
+        {"kind":"given","text":"","code":["def stress = ( Tsr t ) -> {","t = t + Tsr.of( t.shape(), -3d..12d )","t = t * Tsr.of( t.shape(),  2d..3d  )","t = t / Tsr.of( t.shape(),  1d..2d  )","t = t **Tsr.of( t.shape(),  2d..1d  )","t = t - Tsr.of( t.shape(), -2d..2d  )","return t","}"]},
         {"kind":"and","text":"","code":["Tsr source = Tsr.of( [3, 3, 3, 3], -1d ).to( device )"]},
         {"kind":"when","text":"","code":["source[1..2, 0..2, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4d..2d )","Tsr t = source[1..2, 0..2, 1..1, 0d..2d]"]},
         {"kind":"then","text":"","code":["t.toString() == Tsr.of( [2, 3, 1, 3], -4d..2d ).toString()"]},
@@ -36,7 +36,7 @@
     {
       "id":"Dot operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
     {
       "id":"The broadcast operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.035 seconds",
+      "duration":"0.044 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -68,7 +68,7 @@
     {
       "id":"Activation functions work across types, on large prime sized 1D slices and non sliced 1D tensors.",
       "result":"PASS",
-      "duration":"0.300 seconds",
+      "duration":"0.308 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
     {
       "id":"Activation functions work across types.",
       "result":"PASS",
-      "duration":"0.033 seconds",
+      "duration":"0.034 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -97,7 +97,7 @@
         {"kind":"given","text":"We create a function based on the provided expression.","code":["var func = Function.of(funExpression)"]},
         {"kind":"and","text":"We use a large prime number to size our tensors in order to stress workload divisibility.","code":["var PRIME_SIZE_1 = 3","var PRIME_SIZE_2 = 5"]},
         {"kind":"and","text":"We create 2 tensors storing the same values, one sliced and the other a normal tensor.","code":["var t1 = Tsr.of(type).withShape(PRIME_SIZE_1).andSeed(\"Seitan\")","var t2 = Tsr.of(type).withShape(PRIME_SIZE_2).all(0)[1..3]","t2[0..t2.size-1] = t1"]},
-        {"kind":"expect","text":"The types of both tensors should match what was provided during instantiation.","code":["t1.dataType == DataType.of(type)","t1.itemClass == type","t2.dataType == DataType.of(type)","t2.itemClass == type"]},
+        {"kind":"expect","text":"The types of both tensors should match what was provided during instantiation.","code":["t1.dataType   == DataType.of(type)","t1.itemClass == type","t2.dataType   == DataType.of(type)","t2.itemClass == type"]},
         {"kind":"when","text":"We apply the function to both tensors...","code":["var result1 = ( !derive ? func(t1) : func.derive([t1], 0) )","var result2 = ( !derive ? func(t2) : func.derive([t2], 0) )"]},
         {"kind":"then","text":"First we ensure that both tensors have the correct value/element type.","code":["result1.itemClass == type","result2.itemClass == type"]},
         {"kind":"and","text":"The underlying data object should match the data array type as is defined by the data type!","code":["result1.unsafe.data.class == result1.dataType.dataArrayType()","result2.unsafe.data.class == result2.dataType.dataArrayType()"]},

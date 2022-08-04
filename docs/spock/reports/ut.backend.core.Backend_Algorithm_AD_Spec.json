@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.128 seconds"
+    "duration":"0.130 seconds"
   },
 
   "title":"",
@@ -33,7 +33,7 @@
     {
       "id":"Activation implementations behave as expected.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -72,7 +72,7 @@
     {
       "id":"Broadcast implementations behave as expected.",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

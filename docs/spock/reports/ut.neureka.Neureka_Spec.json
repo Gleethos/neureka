@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"5.364 seconds"
+    "duration":"5.542 seconds"
   },
 
   "title":"The Neureka context can be used and configured as expected.",
@@ -16,7 +16,7 @@
     {
       "id":"Neureka class instance has expected behaviour.",
       "result":"PASS",
-      "duration":"0.087 seconds",
+      "duration":"0.091 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -32,7 +32,7 @@
     {
       "id":"Neureka settings class can be locked causing its properties to be immutable.",
       "result":"PASS",
-      "duration":"0.791 seconds",
+      "duration":"0.793 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"Every Thread instance has their own Neureka instance.",
       "result":"PASS",
-      "duration":"0.070 seconds",
+      "duration":"0.078 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
     {
       "id":"Various library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"1.614 seconds",
+      "duration":"1.701 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -85,7 +85,7 @@
     {
       "id":"OpenCL related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"0.191 seconds",
+      "duration":"0.198 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -99,7 +99,7 @@
     {
       "id":"Backend related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"2.531 seconds",
+      "duration":"2.601 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

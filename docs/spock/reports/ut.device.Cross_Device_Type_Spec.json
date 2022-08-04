@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"1",
-    "duration":"0.087 seconds"
+    "duration":"0.097 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Querying for Device implementations works as expected.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -76,7 +76,7 @@
     {
       "id":"Tensor data can be fetched from device if the tensor is stored on it...",
       "result":"PASS",
-      "duration":"0.022 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -115,7 +115,7 @@
     {
       "id":"Devices store tensors which can also be restored.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -181,7 +181,7 @@
     {
       "id":"Virtual tensors stay virtual when outsourced.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.014 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

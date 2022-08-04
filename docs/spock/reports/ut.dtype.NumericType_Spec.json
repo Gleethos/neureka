@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.034 seconds"
+    "duration":"0.031 seconds"
   },
 
   "title":"The NumericType and its implementations model their respective numeric data types.",
@@ -54,7 +54,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"We apply a filter in order to guarantee that the right data type is being used.","code":["original = [","'UI8' : { o -> o as Byte },","'UI16': { o -> o as Short },","'UI32': { o -> o as Integer },","'UI64': { o -> o as Long },","'I8' : { o -> o as Byte },","'I16' : { o -> o as Short },","'I32' : { o -> o as Integer },","'I64' : { o -> o as Long },","'F32' : { o -> o as Float },","'F64' : { o -> o as Double }","][ num.class.simpleName ](original)"]},
+        {"kind":"when","text":"We apply a filter in order to guarantee that the right data type is being used.","code":["original = [","'UI8' : { o -> o as Byte },","'UI16': { o -> o as Short },","'UI32': { o -> o as Integer },","'UI64': { o -> o as Long },","'I8'  : { o -> o as Byte },","'I16' : { o -> o as Short },","'I32' : { o -> o as Integer },","'I64' : { o -> o as Long },","'F32' : { o -> o as Float },","'F64' : { o -> o as Double }","][ num.class.simpleName ](original)"]},
         {"kind":"and","text":"The convert the raw type (might represent unsigned value) to a JVM compatible target type...","code":["def resultTarget = num.foreignHolderBytesToTarget( rawOriginal )"]},
         {"kind":"and","text":"Then convert this result to the true byte array of the value...","code":["def backToRaw = num.targetToForeignHolderBytes( resultTarget )"]},
         {"kind":"then","text":"This produces the expected values which express the following relationships:","code":["resultTarget == target","backToRaw == rawOriginal","num.toTarget( original ) == target","num.convertToHolder(target) == original"]},

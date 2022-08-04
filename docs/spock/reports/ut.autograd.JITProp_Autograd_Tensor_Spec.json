@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.161 seconds"
+    "duration":"0.164 seconds"
   },
 
   "title":"",
@@ -23,7 +23,7 @@
       "blocks":[
         {"kind":"given","text":"The view settings are being set to legacy.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
         {"kind":"and","text":"The simple scalar tensors are being instantiated, where one requires gradients.","code":["Tsr a = Tsr.of(2).setRqsGradient(true)","Tsr b = Tsr.of(-4)","Tsr c = Tsr.of(3).setRqsGradient(true)"]},
-        {"kind":"when","text":"The following calculations are being executed :","code":["Tsr s = (a*b) + 2","Tsr x = s * (s+c)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)","x.backward(Tsr.of(1))","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)"]},
+        {"kind":"when","text":"The following calculations are being executed :","code":["Tsr s =  (a*b) + 2","Tsr x = s * (s+c)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)","x.backward(Tsr.of(1))","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)"]},
         {"kind":"then","text":"","code":["c.toString().contains(\"(3.0):g:(-6.0)\")","a.toString().contains(\"(2.0):g:(36.0)\")"]},
         {"kind":"when","text":"","code":["Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)","x.backward(4)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)"]},
         {"kind":"then","text":"","code":["c.toString().contains(\"(3.0):g:(-6.0)\")","a.toString().contains(\"(2.0):g:(36.0)\")"]}
@@ -39,7 +39,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","Tsr a = Tsr.of(2).setRqsGradient(true)","Tsr b = Tsr.of(-4)","Tsr c = Tsr.of(3).setRqsGradient(true)","Tsr s = (a*b) + 2","Tsr x = s * (s+c)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","Tsr a = Tsr.of(2).setRqsGradient(true)","Tsr b = Tsr.of(-4)","Tsr c = Tsr.of(3).setRqsGradient(true)","Tsr s =  (a*b) + 2","Tsr x = s * (s+c)"]},
         {"kind":"when","text":"","code":["x.backward(Tsr.of(1))"]},
         {"kind":"then","text":"","code":["c.toString().contains(\"g:(-6.0)\")","a.toString().contains(\"g:(null)\")"]},
         {"kind":"when","text":"","code":["a.applyGradient()"]},
@@ -56,7 +56,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","Tsr a = Tsr.of(2).setRqsGradient(true)","Tsr b = Tsr.of(-4)","Tsr c = Tsr.of(3).setRqsGradient(true)","Tsr s = (a*b) + 2","Tsr x = s * (s+c)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","Tsr a = Tsr.of(2).setRqsGradient(true)","Tsr b = Tsr.of(-4)","Tsr c = Tsr.of(3).setRqsGradient(true)","Tsr s =  (a*b) + 2","Tsr x = s * (s+c)"]},
         {"kind":"when","text":"","code":["x.backward(Tsr.of(1))"]},
         {"kind":"then","text":"","code":["c.toString().contains(\"g:(-6.0)\")","a.toString().contains(\"g:(null)\")"]},
         {"kind":"when","text":"","code":["Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Tsr y = a+3","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)"]},
@@ -68,7 +68,7 @@
     {
       "id":"Gradient auto-apply kicks in when used AD uses JIT prop",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -133,7 +133,7 @@
     {
       "id":"Test in-differential and JIT with auto apply",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

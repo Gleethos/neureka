@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"7.551 seconds"
+    "duration":"7.778 seconds"
   },
 
   "title":"Running Tensors through operations",
@@ -16,12 +16,12 @@
     {
       "id":"The \"dot\" operation reshapes and produces valid \"x\" operation result.",
       "result":"PASS",
-      "duration":"0.129 seconds",
+      "duration":"0.174 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Two multi-dimensional tensors.","code":["var a = Tsr.of([1, 4, 4, 1 ], 4f..12f).unsafe.toType(type)","var b = Tsr.of([1, 3, 5, 2, 1], -5d..3d).unsafe.toType(type)"]},
+        {"kind":"given","text":"Two multi-dimensional tensors.","code":["var a = Tsr.of([1, 4, 4, 1   ], 4f..12f).unsafe.toType(type)","var b = Tsr.of([1, 3, 5, 2, 1], -5d..3d).unsafe.toType(type)"]},
         {"kind":"when","text":"The \"dot\" method is being called on \"a\" receiving \"b\"...","code":["var c = a.convDot(b)"]},
         {"kind":"then","text":"The result tensor contains the expected shape.","code":["c.toString().contains(\"(4x2x5x2)\")"]},
         {"kind":"and","text":"","code":["c.itemClass == type"]},
@@ -33,7 +33,7 @@
     {
       "id":"The \"matMul\" operation produces the expected result.",
       "result":"PASS",
-      "duration":"0.402 seconds",
+      "duration":"0.423 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -50,7 +50,7 @@
     {
       "id":"The \"random\" function/operation populates tensors randomly.",
       "result":"PASS",
-      "duration":"0.132 seconds",
+      "duration":"0.133 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -72,7 +72,7 @@
     {
       "id":"The values of a randomly populated tensor seems to adhere to a gaussian distribution.",
       "result":"PASS",
-      "duration":"0.143 seconds",
+      "duration":"0.134 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -90,7 +90,7 @@
     {
       "id":"New method \"asFunction\" of String added at runtime is callable by groovy and also works.",
       "result":"PASS",
-      "duration":"0.567 seconds",
+      "duration":"0.593 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -109,7 +109,7 @@
     {
       "id":"New operator methods added to \"SDK-types\" at runtime are callable by groovy and also work.",
       "result":"PASS",
-      "duration":"1.309 seconds",
+      "duration":"1.344 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -131,7 +131,7 @@
       },
       "blocks":[
         {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Tsr a = Tsr.of(2d).setRqsGradient(true)","Tsr b = Tsr.of(-4d)","Tsr c = Tsr.of(3d).setRqsGradient(true)"]},
-        {"kind":"expect","text":"","code":["( a / a ).toString().contains(\"[1]:(1.0)\")","( c % a ).toString().contains(\"[1]:(1.0)\")","( ( ( b / b ) ** c % a ) * 3 ).toString().contains(\"[1]:(3.0)\")","( a *= b ).toString().contains(\"(-8.0)\")","( a += -c ).toString().contains(\"(-11.0)\")","( a -= c ).toString().contains(\"(-14.0)\")","( a /= Tsr.of(2d) ).toString().contains(\"(-7.0)\")","( a %= c ).toString().contains(\"(-1.0)\")"]}
+        {"kind":"expect","text":"","code":["( a / a                      ).toString().contains(\"[1]:(1.0)\")","( c % a                      ).toString().contains(\"[1]:(1.0)\")","( ( ( b / b ) ** c % a ) * 3 ).toString().contains(\"[1]:(3.0)\")","( a *= b                     ).toString().contains(\"(-8.0)\")","( a += -c                    ).toString().contains(\"(-11.0)\")","( a -= c                     ).toString().contains(\"(-14.0)\")","( a /= Tsr.of(2d)      ).toString().contains(\"(-7.0)\")","( a %= c                     ).toString().contains(\"(-1.0)\")"]}
       ],
       "problems":"[]"
     },
@@ -139,7 +139,7 @@
     {
       "id":"Simple slice addition produces expected result.",
       "result":"PASS",
-      "duration":"0.131 seconds",
+      "duration":"0.138 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -155,7 +155,7 @@
     {
       "id":"Auto reshaping and broadcasting works and the result can be back propagated.",
       "result":"PASS",
-      "duration":"2.519 seconds",
+      "duration":"2.577 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -165,7 +165,7 @@
         {"kind":"and","text":"","code":["def aShape = [2, 2]"]},
         {"kind":"and","text":"","code":["Tsr<Double> a = Tsr.of(aShape, 1d..5d).setRqsGradient(!whichGrad).to(Device.get(device))","Tsr<Double> b = Tsr.of(bShape, 8d..9d).setRqsGradient(whichGrad).to(Device.get(device))"]},
         {"kind":"and","text":"","code":["a.unsafe.toType(type)","b.unsafe.toType(type)"]},
-        {"kind":"and","text":"","code":["String wShape = ( whichGrad ? bShape : aShape ).join(\"x\")","Tsr w = ( whichGrad ? b : a )"]},
+        {"kind":"and","text":"","code":["String wShape = ( whichGrad ? bShape : aShape ).join(\"x\")","Tsr    w      = ( whichGrad ? b      : a      )"]},
         {"kind":"expect","text":"","code":["a.itemClass == type","b.itemClass == type"]},
         {"kind":"when","text":"","code":["Tsr c = operation.apply(a, b)"]},
         {"kind":"then","text":"","code":["c.toString({it.hasSlimNumbers = true}).startsWith(\"[2x2]:($cValue)\")","w.toString({it.hasSlimNumbers = true}) == \"[$wShape]:($wValue):g:(null)\""]},
@@ -181,7 +181,7 @@
     {
       "id":"Operators \"+,*,**\" produce expected results with gradients which can be accessed via a \"Ig[0]\" Function instance",
       "result":"PASS",
-      "duration":"0.061 seconds",
+      "duration":"0.063 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -212,7 +212,7 @@
     {
       "id":"Activation functions work across types on slices and non sliced tensors.",
       "result":"PASS",
-      "duration":"1.964 seconds",
+      "duration":"1.998 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
