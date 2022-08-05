@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.171 seconds"
+    "duration":"0.328 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Test pending error optimization",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -34,7 +34,7 @@
     {
       "id":"Test JIT propagation variant one.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -51,7 +51,7 @@
     {
       "id":"Test JIT propagation variant two.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -68,7 +68,7 @@
     {
       "id":"Gradient auto-apply kicks in when used AD uses JIT prop",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.036 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
     {
       "id":"Test no preemptive gradient apply when not requested and auto apply and JIT_prop",
       "result":"PASS",
-      "duration":"0.134 seconds",
+      "duration":"0.191 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -114,7 +114,7 @@
     {
       "id":"Test autograd without JIT and auto apply.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -133,7 +133,7 @@
     {
       "id":"Test in-differential and JIT with auto apply",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -150,7 +150,7 @@
     {
       "id":"Test no JIT prop when forward AD",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.015 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

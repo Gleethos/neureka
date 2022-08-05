@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.032 seconds"
+    "duration":"0.135 seconds"
   },
 
   "title":"Devices manage the states of the tensors they store!",
@@ -16,7 +16,7 @@
     {
       "id":"We can use the access device API to read from a tensor.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.028 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -36,7 +36,7 @@
     {
       "id":"We can use the access device API to write to a tensor",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.028 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.007 seconds"
+    "duration":"0.090 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Tensors try to migrate themselves to a device that is being added to them as component.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.038 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"Tensors try to remove themselves from their device when \"setIsOutsourced(false)\" is being called.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -49,7 +49,7 @@
     {
       "id":"The device of a tensor can be accessed via the \"device()\" method.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -68,7 +68,7 @@
     {
       "id":"When creating slices of tensors then this should trigger a \"parent - child\" relation noticeable to the device!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.027 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

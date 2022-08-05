@@ -103,7 +103,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             (0.._) * call.input(0) >> tensor
             (0.._) * call.input( Number.class, 1 ) >> tensor
             (1.._) * tensor.size() >> 0
-            (0.._) * tensor.itemClass >> Double
+            (0.._) * tensor.itemType >> Double
             (0.._) * tensor.getDataAs(double[]) >> new double[0]
             (0.._) * unsafe.getData() >> new double[0]
             (0.._) * unsafe.getDataAs(double[]) >> new double[0]

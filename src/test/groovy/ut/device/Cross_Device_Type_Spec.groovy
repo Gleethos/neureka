@@ -55,12 +55,12 @@ class Cross_Device_Type_Spec extends Specification
     def 'Querying for Device implementations works as expected.'(
             String query, Class type
     ) {
-        when : 'The query is being passed to the "find" method...'
+        when : 'We pass a query key word to the "get" method...'
             var device = Device.get(query)
 
-        then :
+        then : '...the result should be a non-null device (if our query key matches something).'
             device != null
-        and : 'The resulting Device variable has the expected type.'
+        and : 'The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).'
             device.class == type
 
         where :
@@ -81,8 +81,9 @@ class Cross_Device_Type_Spec extends Specification
 
     def 'Advanced device querying methods query as expected!'(Class<?> type, String key, Device<?> expected)
     {
-        expect :
+        expect : 'Querying for a device using a device type and key works as expected.'
             Device.get(type, key) === expected
+        and : 'We can use the "find" method if we want the result to be wrapped in a nice and safe Optional.'
             Device.find(type, key).isEmpty() && expected == null || Device.find(type, key).get() === expected
 
         where :

@@ -39,7 +39,7 @@ public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
                 {
                     int[] outShape = call.input( 1 ).getNDConf().shape();
 
-                    Class<Object> type = (Class<Object>) call.input(  1 ).getItemClass();
+                    Class<Object> type = (Class<Object>) call.input(  1 ).getItemType();
                     Tsr<Object> output = Tsr.of( type ).withShape( outShape ).all( 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
                     try {
@@ -95,7 +95,7 @@ public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
         FunTuple<Fun.F64F64ToF64> funF64 = pairs.get(Fun.F64F64ToF64.class);
         FunTuple<Fun.F32F32ToF32> funF32 = pairs.get(Fun.F32F32ToF32.class);
         FunTuple<Fun.I32I32ToI32> funI32 = pairs.get(Fun.I32I32ToI32.class);
-        Class<?> typeClass = call.input( 1 ).getItemClass();
+        Class<?> typeClass = call.input( 1 ).getItemType();
 
         int d = call.getDerivativeIndex();
 

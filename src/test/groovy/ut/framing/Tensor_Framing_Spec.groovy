@@ -20,7 +20,7 @@ import java.lang.ref.WeakReference
     data exploration and further processing.
     Data frames are so powerful because
     their indices are labeled and therefore human readable.
-    Neurekas tensors are general purpose data containers
+    Neureka's tensors are general purpose data containers
     which may also stored data in 2 dimensions whose
     indices may also be something other than integers.
 
@@ -148,7 +148,7 @@ class Tensor_Framing_Spec extends Specification
     {
         given: 'Tensor printing is set to "legacy" for this test.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-        and: 'And a labeled tensor of rank 2 is being created.'
+        and: 'A labeled tensor of rank 2 is being created.'
             Tsr t = Tsr.of([3, 4], [
                     1d, 2d, 3d, 4d,
                     9d, 8d, 6d, 5d,
@@ -226,7 +226,7 @@ class Tensor_Framing_Spec extends Specification
     {
         given: 'Tensor printing is set to "legacy" for this test.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-        and: 'And a labeled tensor of rank 3 is being created.'
+        and: 'A labeled tensor of rank 3 is being created.'
             Tsr t = Tsr.of([2, 3, 4], -7d..7d)
             t.label( 'My Tensor', [
                 ["1", "2"],

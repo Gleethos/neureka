@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.477 seconds"
+    "duration":"0.709 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Test writing IDX file format.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -34,7 +34,7 @@
     {
       "id":"Test reading IDX file format.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.033 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"We can load image files as tensors.",
       "result":"PASS",
-      "duration":"0.439 seconds",
+      "duration":"0.596 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
     {
       "id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.016 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,7 +87,7 @@
     {
       "id":"Fully labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -105,7 +105,7 @@
     {
       "id":"Partially labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

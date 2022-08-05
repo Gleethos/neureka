@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.051 seconds"
+    "duration":"0.248 seconds"
   },
 
   "title":"The Tensor state Input and Output Specification",
@@ -16,7 +16,7 @@
     {
       "id":"Tensors can be instantiated with String seed.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -30,7 +30,7 @@
     {
       "id":"Smart tensor constructors yield expected results.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -65,7 +65,7 @@
     {
       "id":"Indexing after reshaping works as expected.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
     {
       "id":"Passing String seed to tensor produces expected values.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -97,7 +97,7 @@
     {
       "id":"Tensor value type can not be changed by passing float or double arrays to it.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.016 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -119,7 +119,7 @@
     {
       "id":"We turn a tensor into a scalar value or string through the \"as\" operator!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -134,7 +134,7 @@
     {
       "id":"We can re-populate a tensor of shorts from a single scalar value!",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.046 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -152,7 +152,7 @@
     {
       "id":"We can manipulate the underlying data array of a tensor through the unsafe API.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.015 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -173,7 +173,7 @@
     {
       "id":"When we try to manipulate the underlying data array of a virtual tensor then it will become actual.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -208,13 +208,13 @@
     {
       "id":"Vector tensors can be instantiated via factory methods.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We create a vector tensor using the \"of\" factory method.","code":["Tsr<?> t = Tsr.of(data)"]},
-        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemClass == type"]},
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
         {"kind":"and","text":"Also the expected shape.","code":["t.shape() == shape"]},
         {"kind":"and","text":"The tensor has the expected data array.","code":["t.unsafe.data == data","t.data == data"]},
         {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == data"]},
@@ -226,7 +226,7 @@
     {
       "id":"A tensor produced by a function has expected properties.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -242,7 +242,7 @@
     {
       "id":"A tensor produced by the static \"Tsr.Create.newRandom(shape)\" has expected \"random\" value.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -262,7 +262,7 @@
     {
       "id":"Tensor values can be manipulated via static method calls within the \"Tsr.IO\" class.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -297,7 +297,7 @@
     {
       "id":"The tensor data array can be modified by targeting them with an index.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -318,7 +318,7 @@
     {
       "id":"Adding OpenCL device to tensor makes tensor be \"outsourced\" and contain the Device instance as component.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

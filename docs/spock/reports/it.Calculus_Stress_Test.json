@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.762 seconds"
+    "duration":"7.008 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.202 seconds",
+      "duration":"0.573 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -36,7 +36,7 @@
     {
       "id":"Dot operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.023 seconds",
+      "duration":"0.077 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
     {
       "id":"The broadcast operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.040 seconds",
+      "duration":"4.702 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -68,7 +68,7 @@
     {
       "id":"Activation functions work across types, on large prime sized 1D slices and non sliced 1D tensors.",
       "result":"PASS",
-      "duration":"0.318 seconds",
+      "duration":"0.945 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -76,9 +76,9 @@
         {"kind":"given","text":"We create a function based on the provided expression.","code":["var func = Function.of(funExpression)"]},
         {"kind":"and","text":"We use a large prime number to size our tensors in order to stress workload divisibility.","code":["var PRIME_SIZE_1 = 7907","var PRIME_SIZE_2 = 7919"]},
         {"kind":"and","text":"We create 2 tensors storing the same values, one sliced and the other a normal tensor.","code":["var t1 = Tsr.of(type).withShape(PRIME_SIZE_1).andSeed(\"Tempeh\")","var t2 = Tsr.of(type).withShape(PRIME_SIZE_2).all(0)[9..7915]","t2[0..t2.size-1] = t1"]},
-        {"kind":"expect","text":"The types of both tensors should match what was provided during instantiation.","code":["t1.dataType == DataType.of(type)","t1.itemClass == type","t2.dataType == DataType.of(type)","t2.itemClass == type"]},
+        {"kind":"expect","text":"The types of both tensors should match what was provided during instantiation.","code":["t1.dataType == DataType.of(type)","t1.itemType == type","t2.dataType == DataType.of(type)","t2.itemType == type"]},
         {"kind":"when","text":"We apply the function to both tensors...","code":["var result1 = func(t1)","var result2 = func(t2)"]},
-        {"kind":"then","text":"First we ensure that both tensors have the correct value/element type.","code":["result1.itemClass == type","result2.itemClass == type"]},
+        {"kind":"then","text":"First we ensure that both tensors have the correct value/element type.","code":["result1.itemType == type","result2.itemType == type"]},
         {"kind":"and","text":"The underlying data object should match the data array type as is defined by the data type!","code":["result1.unsafe.data.class == result1.dataType.dataArrayType()","result2.unsafe.data.class == result2.dataType.dataArrayType()"]},
         {"kind":"and","text":"The data of the first non slice tensor as well as its slice should be as expected.","code":["Arrays.hashCode(result1.unsafe.data) == expected[0]","Arrays.hashCode(result2.unsafe.data) == expected[1]"]},
         {"kind":"where","text":"","code":[]}
@@ -89,7 +89,7 @@
     {
       "id":"Activation functions work across types.",
       "result":"PASS",
-      "duration":"0.039 seconds",
+      "duration":"0.190 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -97,9 +97,9 @@
         {"kind":"given","text":"We create a function based on the provided expression.","code":["var func = Function.of(funExpression)"]},
         {"kind":"and","text":"We use a large prime number to size our tensors in order to stress workload divisibility.","code":["var PRIME_SIZE_1 = 3","var PRIME_SIZE_2 = 5"]},
         {"kind":"and","text":"We create 2 tensors storing the same values, one sliced and the other a normal tensor.","code":["var t1 = Tsr.of(type).withShape(PRIME_SIZE_1).andSeed(\"Seitan\")","var t2 = Tsr.of(type).withShape(PRIME_SIZE_2).all(0)[1..3]","t2[0..t2.size-1] = t1"]},
-        {"kind":"expect","text":"The types of both tensors should match what was provided during instantiation.","code":["t1.dataType   == DataType.of(type)","t1.itemClass == type","t2.dataType   == DataType.of(type)","t2.itemClass == type"]},
+        {"kind":"expect","text":"The types of both tensors should match what was provided during instantiation.","code":["t1.dataType   == DataType.of(type)","t1.itemType == type","t2.dataType   == DataType.of(type)","t2.itemType == type"]},
         {"kind":"when","text":"We apply the function to both tensors...","code":["var result1 = ( !derive ? func(t1) : func.derive([t1], 0) )","var result2 = ( !derive ? func(t2) : func.derive([t2], 0) )"]},
-        {"kind":"then","text":"First we ensure that both tensors have the correct value/element type.","code":["result1.itemClass == type","result2.itemClass == type"]},
+        {"kind":"then","text":"First we ensure that both tensors have the correct value/element type.","code":["result1.itemType == type","result2.itemType == type"]},
         {"kind":"and","text":"The underlying data object should match the data array type as is defined by the data type!","code":["result1.unsafe.data.class == result1.dataType.dataArrayType()","result2.unsafe.data.class == result2.dataType.dataArrayType()"]},
         {"kind":"and","text":"The data of the first non slice tensor as well as its slice should be as expected.","code":["result1.items == expected","result2.items == expected"]},
         {"kind":"where","text":"","code":[]}

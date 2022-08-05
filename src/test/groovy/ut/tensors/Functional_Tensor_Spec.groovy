@@ -117,7 +117,7 @@ class Functional_Tensor_Spec extends Specification
 
         then : 'We expect the returned tensor to be a String container whose Strings are formatted according to our mapping lambda.'
             b.toString() == "(2x3):[<-2>, <-1>, <0>, <1>, <2>, <3>]"
-            b.itemClass == String.class
+            b.itemType == String.class
         and : 'The original tensor should not have changed because no inline operation occurred.'
             t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"
 
@@ -141,7 +141,7 @@ class Functional_Tensor_Spec extends Specification
             var b = t.map((it) -> {it + 1})
         then : 'The new tensor should have the same value as the original tensor.'
             b.toString() == "(1):[2.0]"
-            b.itemClass == Integer.class
+            b.itemType == Integer.class
         and : 'The original tensor should not have changed because no inline operation occurred.'
             t.toString() == "(1):[1.0]"
 

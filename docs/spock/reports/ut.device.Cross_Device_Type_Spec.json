@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"1",
-    "duration":"0.083 seconds"
+    "duration":"0.875 seconds"
   },
 
   "title":"",
@@ -16,14 +16,14 @@
     {
       "id":"Querying for Device implementations works as expected.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.060 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"The query is being passed to the \"find\" method...","code":["var device = Device.get(query)"]},
-        {"kind":"then","text":"","code":["device != null"]},
-        {"kind":"and","text":"The resulting Device variable has the expected type.","code":["device.class == type"]},
+        {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+        {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+        {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
         {"kind":"where","text":"","code":[]}
       ],
       "problems":"[]"
@@ -32,12 +32,13 @@
     {
       "id":"Advanced device querying methods query as expected!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"expect","text":"","code":["Device.get(type, key) === expected","Device.find(type, key).isEmpty() && expected == null || Device.find(type, key).get() === expected"]},
+        {"kind":"expect","text":"Querying for a device using a device type and key works as expected.","code":["Device.get(type, key) === expected"]},
+        {"kind":"and","text":"We can use the \"find\" method if we want the result to be wrapped in a nice and safe Optional.","code":["Device.find(type, key).isEmpty() && expected == null || Device.find(type, key).get() === expected"]},
         {"kind":"where","text":"","code":[]}
       ],
       "problems":"[]"
@@ -46,7 +47,7 @@
     {
       "id":"The simpler device querying methods query as expected!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.083 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +61,7 @@
     {
       "id":"Passing a numeric array to a tensor should modify its content!",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.120 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -76,7 +77,7 @@
     {
       "id":"Tensor data can be fetched from device if the tensor is stored on it...",
       "result":"PASS",
-      "duration":"0.018 seconds",
+      "duration":"0.184 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -96,7 +97,7 @@
     {
       "id":"Execution calls containing null arguments will cause an exception to be thrown in device instances.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -115,7 +116,7 @@
     {
       "id":"Devices store tensors which can also be restored.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.055 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -137,7 +138,7 @@
     {
       "id":"Devices store slices which can also be restored.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.045 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -181,7 +182,7 @@
     {
       "id":"Virtual tensors stay virtual when outsourced.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.025 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

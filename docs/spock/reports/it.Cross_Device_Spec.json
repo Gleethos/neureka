@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"18.380 seconds"
+    "duration":"25.869 seconds"
   },
 
   "title":"Cross Device Stress Test Specification",
@@ -16,7 +16,7 @@
     {
       "id":"Convolution can model matrix multiplications across devices.",
       "result":"PASS",
-      "duration":"0.017 seconds",
+      "duration":"0.497 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -34,7 +34,7 @@
     {
       "id":"Test cross device system test runs successfully.",
       "result":"PASS",
-      "duration":"4.301 seconds",
+      "duration":"5.807 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -49,7 +49,7 @@
     {
       "id":"Test simple NN implementation with manual backprop",
       "result":"PASS",
-      "duration":"13.939 seconds",
+      "duration":"19.245 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"A gradient of ones can be set by calling the backward method on a tensor sitting on any device.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -86,7 +86,7 @@
     {
       "id":"Mapping tensors works for every device (even if they are not used).",
       "result":"PASS",
-      "duration":"0.039 seconds",
+      "duration":"0.045 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -94,7 +94,7 @@
         {"kind":"given","text":"","code":["\"\"\"","    We start off by storing the provided tensor on the provided device.","    This might be any kind of device like for example an $OpenCLDevice.","    Which means the tensor might not be sitting in RAM!","\"\"\"","tensor.to(device)"]},
         {"kind":"when","text":"\n We call the mapping method which is supposed to create a new tensor of the provided type.\n This procedure is only supported when the tensor is stored in RAM, so when\n the tensor is outsourced (stored on a device), then we expect that the mapping method\n temporarily migrates the tensor back and forth internally...\n","code":["Tsr<?> result = tensor.mapTo(target, lambda)"]},
         {"kind":"then","text":"We expect the String representation of the tensor to be as expected!","code":["result.toString() == expected"]},
-        {"kind":"and","text":"We expect the result to have the expected target class!","code":["result.itemClass == target"]},
+        {"kind":"and","text":"We expect the result to have the expected target class!","code":["result.itemType == target"]},
         {"kind":"and","text":"Lastly, the original tensor used as mapping source should be stored on the original device!","code":["tensor.isOutsourced() == !(device instanceof CPU)","tensor.device == device"]},
         {"kind":"where","text":"We use the following data to test this mapping for a wide range of types and values!","code":[]}
       ],

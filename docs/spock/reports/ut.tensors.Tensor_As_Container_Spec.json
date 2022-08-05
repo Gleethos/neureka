@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.016 seconds"
+    "duration":"0.057 seconds"
   },
 
   "title":"Why not have a tensor of words?",
@@ -16,7 +16,7 @@
     {
       "id":"Plus operator on String tensors works element-wise.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"Tensor operations translate to custom data type \"ComplexNumber\".",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.014 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -48,7 +48,7 @@
     {
       "id":"More tensor operations translate to custom data type \"ComplexNumber\".",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,7 +62,7 @@
     {
       "id":"We can apply predicates on the values of a tensor.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.015 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

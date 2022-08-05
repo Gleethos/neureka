@@ -356,7 +356,7 @@ class Tensor_IO_Spec extends Specification
             // In practise this might be something like: Tsr.of(42, 666, 73, 64)
 
         expect : 'The resulting tensor has the expected item type class.'
-            t.itemClass == type
+            t.itemType == type
         and : 'Also the expected shape.'
             t.shape() == shape
         and : 'The tensor has the expected data array.'

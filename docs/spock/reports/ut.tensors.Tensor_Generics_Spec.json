@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.006 seconds"
+    "duration":"0.033 seconds"
   },
 
   "title":"Tensors as Generic Containers",
@@ -16,14 +16,14 @@
     {
       "id":"Anonymous tensor instance has the default datatype class as defined in Neureka settings.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Tsr<Double> t = Tsr.newInstance()"]},
         {"kind":"expect","text":"","code":["t.getRepresentativeItemClass() == Neureka.get().settings().dtype().defaultDataTypeClass"]},
-        {"kind":"and","text":"","code":["t.getItemClass() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getItemTypeClass()"]}
+        {"kind":"and","text":"","code":["t.getItemType() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getItemTypeClass()"]}
       ],
       "problems":"[]"
     },
@@ -31,13 +31,13 @@
     {
       "id":"String tensor instance discovers expected class.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Tsr t = Tsr.of([2, 4], [\"Hi\", \"I'm\", \"a\", \"String\", \"list\"])"]},
-        {"kind":"expect","text":"","code":["t.getItemClass() == String.class"]},
+        {"kind":"expect","text":"","code":["t.getItemType() == String.class"]},
         {"kind":"and","text":"","code":["t.getRepresentativeItemClass() == String.class"]},
         {"kind":"and","text":"","code":["t.toString() == \"(2x4):[Hi, I'm, a, String, list, Hi, I'm, a]\""]}
       ],
@@ -47,7 +47,7 @@
     {
       "id":"1D tensors can be created from primitive arrays.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -55,7 +55,7 @@
         {"kind":"given","text":"","code":["def t = Tsr.of(data)"]},
         {"kind":"expect","text":"","code":["t.rank() == 1"]},
         {"kind":"and","text":"","code":["t.size() == size"]},
-        {"kind":"and","text":"","code":["t.getItemClass() == expected"]},
+        {"kind":"and","text":"","code":["t.getItemType() == expected"]},
         {"kind":"where","text":"","code":[]}
       ],
       "problems":"[]"

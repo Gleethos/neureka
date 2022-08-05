@@ -202,7 +202,7 @@ public class ElemWiseUtil
 
     public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
         return newTsrLike(
-            template.itemClass(),
+            template.itemType(),
             template.getNDConf().shape(),
             template.isOutsourced(),
             template.get( Device.class ),

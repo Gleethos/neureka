@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.191 seconds"
+    "duration":"0.333 seconds"
   },
 
   "title":"Naming Tensors and their Dimensions.",
-  "narrative":"A powerful concept in the data science as well as machine learning\n world is something usually referred to as \"Data Frames\".\n These are highly flexible 2D data structures\n used to load and store CSV, CRV, etc... files for \n data exploration and further processing.\n Data frames are so powerful because\n their indices are labeled and therefore human readable.\n Neurekas tensors are general purpose data containers\n which may also stored data in 2 dimensions whose\n indices may also be something other than integers.",
+  "narrative":"A powerful concept in the data science as well as machine learning\n world is something usually referred to as \"Data Frames\".\n These are highly flexible 2D data structures\n used to load and store CSV, CRV, etc... files for \n data exploration and further processing.\n Data frames are so powerful because\n their indices are labeled and therefore human readable.\n Neureka's tensors are general purpose data containers\n which may also stored data in 2 dimensions whose\n indices may also be something other than integers.",
   "headers":["\\n <h2> Framing Behavior </h2>\\n <br> \\n <p>\\n This specification covers the behavior\\n of the classes contained in the \\\"framing\\\" package, which \\n contains logic in order to set aliases for\\n tensor indices. \\n </p>\\n"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Added labels to tensors are accessible through the \"index()\" method.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.047 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -36,13 +36,13 @@
     {
       "id":"Rank 2 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.023 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"Tensor printing is set to \"legacy\" for this test.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
-        {"kind":"and","text":"And a labeled tensor of rank 2 is being created.","code":["Tsr t = Tsr.of([3, 4], [","        1d, 2d, 3d, 4d,","        9d, 8d, 6d, 5d,","        4d, 5d, 6d, 7d","])","t.label([","        [\"1\", \"2\", \"3\"],","        [\"a\", \"b\", \"y\", \"z\"]","])"]},
+        {"kind":"and","text":"A labeled tensor of rank 2 is being created.","code":["Tsr t = Tsr.of([3, 4], [","        1d, 2d, 3d, 4d,","        9d, 8d, 6d, 5d,","        4d, 5d, 6d, 7d","])","t.label([","        [\"1\", \"2\", \"3\"],","        [\"a\", \"b\", \"y\", \"z\"]","])"]},
         {"kind":"expect","text":"","code":["t.toString({","            it.rowLimit = 15","            it.isScientific = false","            it.isMultiline = true","            it.hasGradient = false","            it.cellSize = 6","            it.hasValue = true","            it.hasRecursiveGraph = false","            it.hasDerivatives = false","            it.hasShape =  true","            it.isCellBound = false","            it.postfix = \"\"","            it.prefix = \"\"","            it.hasSlimNumbers = false","}) == \"[3x4]:(\\n\" +","      \"   [    a  ][   b  ][   y  ][   z   ]\\n\" +","      \"   (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ 1 ],\\n\" +","      \"   (   9.0 ,   8.0 ,   6.0 ,   5.0  ):[ 2 ],\\n\" +","      \"   (   4.0 ,   5.0 ,   6.0 ,   7.0  ):[ 3 ]\\n\" +","      \")\""]},
         {"kind":"when","text":"We use a label for slicing a row from the tensor (which is also a matrix in this case).","code":["Tsr x = t[\"2\", 1..2]"]},
         {"kind":"then","text":"This new slice \"x\" then will yield true when using the \"contains\" operator on t.","code":["x in t"]},
@@ -63,13 +63,13 @@
     {
       "id":"Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.",
       "result":"PASS",
-      "duration":"0.177 seconds",
+      "duration":"0.247 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"Tensor printing is set to \"legacy\" for this test.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
-        {"kind":"and","text":"And a labeled tensor of rank 3 is being created.","code":["Tsr t = Tsr.of([2, 3, 4], -7d..7d)","t.label( 'My Tensor', [","    [\"1\", \"2\"],","    [\"a\", \"b\", \"y\"],","    [\"tim\", \"tom\", \"tina\", \"tanya\"]","])"]},
+        {"kind":"and","text":"A labeled tensor of rank 3 is being created.","code":["Tsr t = Tsr.of([2, 3, 4], -7d..7d)","t.label( 'My Tensor', [","    [\"1\", \"2\"],","    [\"a\", \"b\", \"y\"],","    [\"tim\", \"tom\", \"tina\", \"tanya\"]","])"]},
         {"kind":"expect","text":"When the tensor is converted to a String then the labels will be included:","code":["t.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[2x3x4]:(\\n\" +","      \"   [ 1 ]:(\\n\" +","      \"      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\\n\" +","      \"      (  -7.0 ,  -6.0 ,  -5.0 ,  -4.0  ):[ a ],\\n\" +","      \"      (  -3.0 ,  -2.0 ,  -1.0 ,   0.0  ):[ b ],\\n\" +","      \"      (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ y ]\\n\" +","      \"   ),\\n\" +","      \"   [ 2 ]:(\\n\" +","      \"      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\\n\" +","      \"      (   5.0 ,   6.0 ,   7.0 ,  -7.0  ):[ a ],\\n\" +","      \"      (  -6.0 ,  -5.0 ,  -4.0 ,  -3.0  ):[ b ],\\n\" +","      \"      (  -2.0 ,  -1.0 ,   0.0 ,   1.0  ):[ y ]\\n\" +","      \"   )\\n\" +","      \")\""]},
         {"kind":"when","text":"Creating a slice by passing a single label, a range of labels and a range with stride...","code":["Tsr x = t[\"2\", \"b\"..\"y\", [[\"tim\",\"tanya\"]:2]]"]},
         {"kind":"then","text":"This new slice \"x\" then will yield true when using the \"contains\" operator on t.","code":["x in t"]},

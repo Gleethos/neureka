@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.094 seconds"
+    "duration":"0.648 seconds"
   },
 
   "title":"Applying Functions on Tensors",
-  "narrative":"A tensor would be nothing without being able to apply operations on them.\n However, calling operations manually in order to process your\n tensors can be a verbose and error prone task.\n This is where functions come into play.\n Neurekas functions are composed of operations forming an abstract syntax tree.\n Passing tensors to a function will route them trough this tree and apply\n all of the operations on the tensors.",
+  "narrative":"A tensor would be nothing without being able to apply operations on them.\n However, calling operations manually in order to process your\n tensors can be a verbose and error prone task.\n This is where functions come into play.\n Neureka's functions are composed of operations forming an abstract syntax tree.\n Passing tensors to a function will route them trough this tree and apply\n all of the operations on the tensors.",
   "headers":["\\n <p>\\n This specification ensures that tensors supplied\\n to functions are executed successfully and produce the expected results.\\n </p>\\n"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The optimization function for the SGD algorithm produces the expected result",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -34,7 +34,7 @@
     {
       "id":"Tensor results of various Function instances return expected results.",
       "result":"PASS",
-      "duration":"0.048 seconds",
+      "duration":"0.415 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
     {
       "id":"Reshaping on 3D tensors works by instantiate a Function instance built from a String.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -69,7 +69,7 @@
     {
       "id":"The \"DimTrim\" operation works forward as well as backward!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,14 +87,14 @@
     {
       "id":"Executed tensors are intermediate tensors.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var fun = Function.of('i0 * relu(i0) + 1')"]},
         {"kind":"and","text":"","code":["var t = Tsr.of(1f, -5f, -3f, 2f, 8f)"]},
-        {"kind":"expect","text":"","code":["t.itemClass == Float","fun.toString() == \"((I[0] * relu(I[0])) + 1.0)\""]},
+        {"kind":"expect","text":"","code":["t.itemType == Float","fun.toString() == \"((I[0] * relu(I[0])) + 1.0)\""]},
         {"kind":"when","text":"","code":["var result1 = fun.call(t)","var result2 = fun.invoke(t)","var result3 = fun.execute(t)"]},
         {"kind":"then","text":"","code":["!result1.isIntermediate()"]},
         {"kind":"and","text":"","code":["!result2.isIntermediate()"]},

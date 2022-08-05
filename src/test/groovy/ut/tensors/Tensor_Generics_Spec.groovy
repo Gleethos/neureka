@@ -54,7 +54,7 @@ class Tensor_Generics_Spec extends Specification
         expect :
             t.getRepresentativeItemClass() == Neureka.get().settings().dtype().defaultDataTypeClass
         and :
-            t.getItemClass() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getItemTypeClass()
+            t.getItemType() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getItemTypeClass()
     }
 
     def 'String tensor instance discovers expected class.'()
@@ -63,7 +63,7 @@ class Tensor_Generics_Spec extends Specification
             Tsr t = Tsr.of([2, 4], ["Hi", "I'm", "a", "String", "list"])
 
         expect :
-            t.getItemClass() == String.class
+            t.getItemType() == String.class
 
         and :
             t.getRepresentativeItemClass() == String.class
@@ -85,7 +85,7 @@ class Tensor_Generics_Spec extends Specification
         and :
             t.size() == size
         and :
-            t.getItemClass() == expected
+            t.getItemType() == expected
 
 
         where :

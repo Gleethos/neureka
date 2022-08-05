@@ -113,7 +113,7 @@ public class Call<D>
             );
         }
         if ( inputs[ i ] != null ) {
-            Class<?> tensorTypeClass = inputs[ i ].getItemClass();
+            Class<?> tensorTypeClass = inputs[ i ].getItemType();
             if ( !valueTypeClass.isAssignableFrom(tensorTypeClass) ) {
                 throw new IllegalArgumentException(
                     "The item value type of the tensor stored at parameter position '"+i+"' is " +

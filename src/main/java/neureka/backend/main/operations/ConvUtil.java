@@ -13,7 +13,6 @@ import neureka.backend.main.operations.other.Reshape;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
-import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.Device;
 import org.jetbrains.annotations.Contract;
 
@@ -46,7 +45,7 @@ public class ConvUtil {
                             tensors[ 0 ] =
                                 (call.getValOf( Arg.DerivIdx.class ) < 0)
                                         ? Tsr.of(
-                                                call.input(0).getItemClass(),
+                                                call.input(0).getItemType(),
                                                 _shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
                                                 0
                                         )

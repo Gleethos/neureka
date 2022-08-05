@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.023 seconds"
+    "duration":"0.043 seconds"
   },
 
   "title":"Parsing Expressions into Functions",
@@ -16,7 +16,7 @@
     {
       "id":"Test parsed equations when building Function instances.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -30,7 +30,7 @@
     {
       "id":"Parsed equations throw expected error messages.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

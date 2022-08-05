@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.031 seconds"
+    "duration":"0.106 seconds"
   },
 
   "title":"Tensors within Tensors",
@@ -16,7 +16,7 @@
     {
       "id":"When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"The \"at\" method and the \"from\" / \"to\" methods can be mixed when slicing a tensor.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"A tensor can be sliced by passing ranges in the form of primitive arrays.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -79,7 +79,7 @@
     {
       "id":"A tensor can be sliced by passing ranges in the form of lists (Groovy ranges).",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -100,7 +100,7 @@
     {
       "id":"The slice builder also supports slicing with custom step sizes.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -121,7 +121,7 @@
     {
       "id":"Slicing is also a Function with autograd support!",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.024 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -139,7 +139,7 @@
     {
       "id":"Normal slicing will try to do autograd.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -155,7 +155,7 @@
     {
       "id":"We can avoid autograd when slicing by using the \"detached\" instead of the \"get\" method.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -172,7 +172,7 @@
     {
       "id":"We can slice a scalar tensor from a larger tensor of rank 4.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

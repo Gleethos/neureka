@@ -60,7 +60,7 @@ public class Cat extends AbstractOperation
                         newShape.add( i == dim ? newAxisSize : call.input(0).shape(i) );
 
                     // We create the output tensor:
-                    Tsr<?> c = Tsr.of( call.input(0).getItemClass(), newShape, 0 );
+                    Tsr<?> c = Tsr.of( call.input(0).getItemType(), newShape, 0 );
 
                     // We make the axes list entries cumulative:
                     for ( int i = 0; i < axes.size(); i++ )

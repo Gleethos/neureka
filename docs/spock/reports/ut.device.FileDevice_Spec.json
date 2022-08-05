@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.079 seconds"
+    "duration":"0.339 seconds"
   },
 
   "title":"FileDevice, Storing Tensors in Files",
@@ -16,7 +16,7 @@
     {
       "id":"A file device stores tensors in idx files by default.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.028 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"A file device stores tensors in various file formats.",
       "result":"PASS",
-      "duration":"0.045 seconds",
+      "duration":"0.209 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -61,7 +61,7 @@
     {
       "id":"The file device can load known files in a directory.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.049 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

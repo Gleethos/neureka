@@ -726,10 +726,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
 
             @Override
             public <U> Tsr<U> upcast( Class<U> superType ) {
-                if ( superType.isAssignableFrom(TsrImpl.this.itemClass()) )
+                if ( superType.isAssignableFrom(TsrImpl.this.itemType()) )
                     return (Tsr<U>) TsrImpl.this;
                 else
-                    throw new IllegalArgumentException("Provided type '"+superType+"' is not a super type of '"+ TsrImpl.this.itemClass()+"'.");
+                    throw new IllegalArgumentException("Provided type '"+superType+"' is not a super type of '"+ TsrImpl.this.itemType()+"'.");
             }
 
             @Override
@@ -948,7 +948,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         Function cloner = Neureka.get().backend().getFunction().idy();
         boolean thisIsIntermediate = this.isIntermediate();
         _setIsIntermediate( false );
-        Tsr<V> clone = Tsr.of( this.getItemClass() )
+        Tsr<V> clone = Tsr.of( this.getItemType() )
                             .on(this.getDevice())
                             .withShape( this.getNDConf().shape() )
                             .all( (V) Double.valueOf(0.0) );
@@ -1071,7 +1071,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         boolean success = true;
         if ( Number.class.isAssignableFrom(value.getClass()) ) { // A virtual tensor!
             this.setIsVirtual( true );
-            value = DataConverter.get().convert( value, this.itemClass() );
+            value = DataConverter.get().convert( value, this.itemType() );
             this.getUnsafe().setDataAt( 0, (V) value );
         } else if ( value.getClass().isArray() ) {
             if ( this.isOutsourced() ) getDevice().access(this).writeFrom( value );
@@ -1198,9 +1198,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 }
             }
         }
-        if ( !dataType.isAssignableFrom(this.getItemClass()) )
+        if ( !dataType.isAssignableFrom(this.getItemType()) )
             throw new IllegalArgumentException(
-                "Cannot create image of type '" + type.name() + "' from tensor of type '" + this.getItemClass().getSimpleName() + ". " +
+                "Cannot create image of type '" + type.name() + "' from tensor of type '" + this.getItemType().getSimpleName() + ". " +
                 "Expected to receive a tensor whose type is at least a sub-type of '" + dataType.getSimpleName() + "'."
             );
     }
@@ -1253,7 +1253,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     {
         LogUtil.nullArgCheck( typeClass, "typeClass", Class.class );
         if ( typeClass == Tsr.class ) return (T) this;
-        if ( Number.class.isAssignableFrom( this.itemClass()) && Number.class.isAssignableFrom(typeClass) ) {
+        if ( Number.class.isAssignableFrom( this.itemType()) && Number.class.isAssignableFrom(typeClass) ) {
             DataConverter converter = DataConverter.get();
             return converter.convert( mean().at(0).get(), typeClass );
         }

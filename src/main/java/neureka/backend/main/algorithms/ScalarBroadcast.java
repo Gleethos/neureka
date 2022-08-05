@@ -37,7 +37,7 @@ public class ScalarBroadcast extends AbstractFunDeviceAlgorithm<ScalarBroadcast>
                     Device<Number> device = call.getDeviceFor(Number.class);
                     assert call.input( 0 ) == null;  // Creating a new tensor:
                     int[] outShape = call.input( 1 ).getNDConf().shape();
-                    Class<Object> type = (Class<Object>) call.input( 1 ).getItemClass();
+                    Class<Object> type = (Class<Object>) call.input( 1 ).getItemType();
                     Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );
                     output.setIsVirtual( false );
                     try {
@@ -84,7 +84,7 @@ public class ScalarBroadcast extends AbstractFunDeviceAlgorithm<ScalarBroadcast>
         Tsr<Number> t0_drn = call.input( Number.class, 0 );
         Tsr<Number> src    = call.input( Number.class, 1 );
 
-        Class<?> typeClass = t0_drn.getItemClass();
+        Class<?> typeClass = t0_drn.getItemType();
 
         CPU.RangeWorkload workload = null;
 

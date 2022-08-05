@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.122 seconds"
+    "duration":"3.865 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Operator implementations behave as expected.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"2.415 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"Activation implementations behave as expected.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.214 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -53,7 +53,7 @@
     {
       "id":"Convolution implementations behave as expected.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.030 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -72,13 +72,13 @@
     {
       "id":"Broadcast implementations behave as expected.",
       "result":"PASS",
-      "duration":"0.024 seconds",
+      "duration":"0.498 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"The current Neureka instance is being reset.","code":["Neureka.get().reset()"]},
-        {"kind":"and","text":"A mock Function.","code":["def function = Mock( Function )","def derivative = Mock( Tsr )","def ndConf = Mock(NDConfiguration)","function.derive(*_) >> derivative","function.executeDerive(*_) >> derivative","derivative.getNDConf() >> ndConf","ndConf.shape() >> [1, 2]","derivative.getItemClass() >> Float","derivative.itemClass() >> Float"]},
+        {"kind":"and","text":"A mock Function.","code":["def function = Mock( Function )","def derivative = Mock( Tsr )","def ndConf = Mock(NDConfiguration)","function.derive(*_) >> derivative","function.executeDerive(*_) >> derivative","derivative.getNDConf() >> ndConf","ndConf.shape() >> [1, 2]","derivative.getItemType() >> Float","derivative.itemType() >> Float"]},
         {"kind":"and","text":"A mock ExecutionCall.","code":["def call = Mock( ExecutionCall )","def arg = Mock(Arg.Derivative)","call.get(Arg.Derivative.class) >> arg","call.autogradMode() >> AutoDiffMode.FORWARD_AND_BACKWARD"]},
         {"kind":"when","text":"A new ADAgent is being instantiated by calling the given implementation with these arguments...","code":["ADAgent agent = imp.supplyADAgentFor(function, call)"]},
         {"kind":"then","text":"An exception is being thrown because implementations of type \"Broadcast\" can only perform reverse mode AD!","code":["def exception = thrown( IllegalArgumentException )","exception.message == \"Broadcast implementation does not support forward-AD!\""]},

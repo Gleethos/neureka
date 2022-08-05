@@ -58,7 +58,7 @@ class Tensor_State_Spec extends Specification
             var t = Tsr.of(type, list)
 
         expect : 'The tensor has the targeted type, shape and data array!'
-            t.itemClass == type
+            t.itemType == type
             t.shape() == shape
             t.unsafe.data == expected
 

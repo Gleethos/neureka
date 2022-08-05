@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.173 seconds"
+    "duration":"5.947 seconds"
   },
 
   "title":"Cross Device Tensor Slicing",
@@ -16,7 +16,7 @@
     {
       "id":"Slices can be created using the SliceBuilder.",
       "result":"PASS",
-      "duration":"0.049 seconds",
+      "duration":"0.597 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"Cross device sliced tensor integration test runs without errors.",
       "result":"PASS",
-      "duration":"0.117 seconds",
+      "duration":"5.114 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

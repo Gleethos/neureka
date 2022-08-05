@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.135 seconds"
+    "duration":"1.683 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Autograd works in a simple mat-mul based feed forward neural network.",
       "result":"PASS",
-      "duration":"0.018 seconds",
+      "duration":"0.351 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -32,7 +32,7 @@
     {
       "id":"Autograd works in a simple convolutional dot product based feed forward neural network.",
       "result":"PASS",
-      "duration":"0.036 seconds",
+      "duration":"0.286 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -48,7 +48,7 @@
     {
       "id":"Autograd works in a simple convolutional dot product and float based feed forward neural network.",
       "result":"PASS",
-      "duration":"0.033 seconds",
+      "duration":"0.244 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -64,14 +64,14 @@
     {
       "id":"Autograd work for simple matrix multiplications.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.023 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var a = Tsr.of([2, 3], -1f..4f).setRqsGradient(true).unsafe.toType(type)","var b = Tsr.of([3, 1], [-4d, -2d, 0d]).setRqsGradient(true).unsafe.toType(type)"]},
         {"kind":"when","text":"","code":["var c = a.matMul(b)"]},
-        {"kind":"then","text":"","code":["c.itemClass == type"]},
+        {"kind":"then","text":"","code":["c.itemType == type"]},
         {"kind":"and","text":"","code":["a.toString() == \"(2x3):[\" +","    \"-1.0, 0.0, 1.0, \" +","    \"2.0, 3.0, 4.0\" +","\"]:g:[null]\""]},
         {"kind":"and","text":"","code":["b.toString() == \"(3x1):[\" +","    \"-4.0, \" +","    \"-2.0, \" +","    \"0.0\" +","\"]:g:[null]\""]},
         {"kind":"and","text":"","code":["def cStr = c.toString()","cStr.contains \"(2x1):[4.0, -14.0]\"","cStr.contains \"->d(3x2):[-1.0, 2.0, 0.0, 3.0, 1.0, 4.0]\"","cStr.contains \"->d(1x3):[-4.0, -2.0, 0.0]\""]},
@@ -85,7 +85,7 @@
     {
       "id":"Autograd works for 2 matrix multiplications in a row.",
       "result":"PASS",
-      "duration":"0.036 seconds",
+      "duration":"0.631 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

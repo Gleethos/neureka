@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.036 seconds"
+    "duration":"0.158 seconds"
   },
 
   "title":"The NumericType and its implementations model their respective numeric data types.",
@@ -33,7 +33,7 @@
     {
       "id":"NumericType implementations behave as expected.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -49,7 +49,7 @@
     {
       "id":"Conversion goes both ways and produces expected numeric values.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -67,7 +67,7 @@
     {
       "id":"NumericType conversion to holder types yields expected results.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

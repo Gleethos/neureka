@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.047 seconds"
+    "duration":"0.534 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Function implementations ensure that internally created tensors are flagged as \"intermediate\" initially!",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.111 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"Function implementations ensure that outputs which are input members are not flagged as \"intermediate\"!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.023 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"Function implementations will ensure the \"call\" and \"invoke\" does not return tensors flagged as \"intermediate\".",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.014 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -75,7 +75,7 @@
     {
       "id":"The library context exposes a set of useful functions.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.138 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

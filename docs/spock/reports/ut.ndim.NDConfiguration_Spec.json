@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.050 seconds"
+    "duration":"0.218 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Various NDConfigurations behaviour exactly as their general purpose implementation.",
       "result":"PASS",
-      "duration":"0.022 seconds",
+      "duration":"0.117 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.581 seconds"
+    "duration":"0.718 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"The \"x\" (convolution) operator produces expected results (On the CPU).",
       "result":"PASS",
-      "duration":"0.149 seconds",
+      "duration":"0.154 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\\n The 'x' operator performs convolution on the provided operands.\\n The meaning of the operands is not defined, so one the kernel tensor\\n can be the first and second operand. \\n","\\n The 'x' operator performs convolution on the provided operands.\\n The meaning of the operands is not defined, so one the kernel tensor\\n can be the first and second operand. \\n"]
       },
@@ -36,7 +36,7 @@
     {
       "id":"Manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.072 seconds",
+      "duration":"0.116 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -51,7 +51,7 @@
     {
       "id":"Very simple manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.142 seconds",
+      "duration":"0.175 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -67,7 +67,7 @@
     {
       "id":"Autograd works with simple 2D convolution.",
       "result":"PASS",
-      "duration":"0.071 seconds",
+      "duration":"0.093 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -86,7 +86,7 @@
     {
       "id":"Sime convolution works as expected eith autograd.",
       "result":"PASS",
-      "duration":"0.071 seconds",
+      "duration":"0.084 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -105,7 +105,7 @@
     {
       "id":"Tensors have the correct layout after convolution.",
       "result":"PASS",
-      "duration":"0.067 seconds",
+      "duration":"0.085 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

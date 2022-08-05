@@ -130,7 +130,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
 
     /** {@inheritDoc} */
     @Override
-    public Class<V> getItemClass() {
+    public Class<V> getItemType() {
         _guardGet("data type class"); return ( _dataType != null ? (Class<V>) _dataType.getItemTypeClass() : null );
     }
 

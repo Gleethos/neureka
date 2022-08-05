@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.555 seconds"
+    "duration":"2.659 seconds"
   },
 
   "title":"",
@@ -44,7 +44,7 @@
     {
       "id":"First found OpenCLDevice will have realistic text properties.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"0.018 seconds",
+      "duration":"0.028 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -79,7 +79,7 @@
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"2.528 seconds",
+      "duration":"2.617 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

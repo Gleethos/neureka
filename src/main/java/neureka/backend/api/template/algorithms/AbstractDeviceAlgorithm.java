@@ -172,7 +172,7 @@ implements DeviceAlgorithm<C>
                 if ( !( src[i] instanceof FunctionConstant) ) {
                     tensors[ i ] = src[i].execute(innerCall);
                     tempShape = ( tempShape == null ? tensors[ i ].getNDConf().shape() : tempShape );
-                    tempType  = ( tempType  == null ? tensors[ i ].getItemClass()     : tempType  );
+                    tempType  = ( tempType  == null ? tensors[ i ].getItemType()     : tempType  );
                 }
             }
             int j = innerCall.getValOf( Arg.VarIdx.class );

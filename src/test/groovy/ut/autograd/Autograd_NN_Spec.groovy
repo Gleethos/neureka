@@ -424,7 +424,7 @@ class Autograd_NN_Spec extends Specification
         when :
             var c = a.matMul(b)
         then :
-            c.itemClass == type
+            c.itemType == type
         and :
             a.toString() == "(2x3):[" +
                                 "-1.0, 0.0, 1.0, " +

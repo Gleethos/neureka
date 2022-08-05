@@ -926,9 +926,16 @@ footer ul {
     }
 }
 
-/* width */
+/* Thin Scrollbar */
+:root{
+    scrollbar-color: lightgrey grey !important;
+    scrollbar-width: thin !important;
+}
+
+/* width & height */
 ::-webkit-scrollbar {
     width: 10px;
+    height: 10px;
 }
 
 /* Track */

@@ -18,7 +18,7 @@ import spock.lang.Title
     However, calling operations manually in order to process your
     tensors can be a verbose and error prone task.
     This is where functions come into play.
-    Neurekas functions are composed of operations forming an abstract syntax tree.
+    Neureka's functions are composed of operations forming an abstract syntax tree.
     Passing tensors to a function will route them trough this tree and apply
     all of the operations on the tensors.
 
@@ -184,7 +184,7 @@ class Tensor_Function_Spec extends Specification
         and :
             var t = Tsr.of(1f, -5f, -3f, 2f, 8f)
         expect :
-            t.itemClass == Float
+            t.itemType == Float
             fun.toString() == "((I[0] * relu(I[0])) + 1.0)"
 
         when :

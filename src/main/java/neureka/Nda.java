@@ -28,7 +28,70 @@ import java.util.stream.Stream;
  */
 public interface Nda<V> extends NDimensional, Iterable<V>
 {
-    static <V> WithShapeOrScalarOrVector<V> of(Class<V> type) { return new NdaBuilder<>( type ); }
+    static <V> WithShapeOrScalarOrVector<V> of( Class<V> type ) { return new NdaBuilder<>( type ); }
+
+    /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar double tensor.
+     */
+    static Nda<Double> of( double value ) { return Tsr.of( Double.class, new int[]{ 1 }, value ); }
+
+    /**
+     *  Constructs a vector of floats based on the provided array.
+     *
+     * @param value The array of floats from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of floats.
+     */
+    static Nda<Float> of( float... value ) { return Tsr.of( Float.class, new int[]{ value.length }, value ); }
+
+    /**
+     *  Constructs a vector of doubles based on the provided array.
+     *
+     * @param value The array of doubles from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of doubles.
+     */
+    static Nda<Double> of( double... value ) { return Tsr.of( Double.class, new int[]{ value.length }, value ); }
+
+    /**
+     *  Constructs a vector of bytes based on the provided array.
+     *
+     * @param value The array of bytes from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of bytes.
+     */
+    static Nda<Byte> of( byte... value ) { return Tsr.of( Byte.class, new int[]{ value.length }, value ); }
+
+    /**
+     *  Constructs a vector of ints based on the provided array.
+     *
+     * @param value The array of ints from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of ints.
+     */
+    static Nda<Integer> of( int... value ) { return Tsr.of( Integer.class, new int[]{ value.length }, value ); }
+
+    /**
+     *  Constructs a vector of longs based on the provided array.
+     *
+     * @param value The array of longs from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of longs.
+     */
+    static Nda<Long> of( long... value ) { return Tsr.of( Long.class, new int[]{ value.length }, value ); }
+
+    /**
+     *  Constructs a vector of shorts based on the provided array.
+     *
+     * @param value The array of shorts from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of shorts.
+     */
+    static Nda<Short> of( short... value ) { return Tsr.of( Short.class, new int[]{ value.length }, value ); }
+
+    /**
+     *  Constructs a vector of booleans based on the provided array.
+     *
+     * @param value The array of booleans from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of shorts.
+     */
+    static Nda<Boolean> of( boolean... value ) { return Tsr.of( Boolean.class, new int[]{ value.length }, value ); }
+
 
     /**
      *  If this nd-array is a slice of a parent nd-array then this method will yield true.
@@ -59,12 +122,12 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     /**
      * @return The type class of individual value items within this nd-array.
      */
-    Class<V> getItemClass();
+    Class<V> getItemType();
 
     /**
      * @return The type class of individual value items within this nd-array.
      */
-    default Class<V> itemClass() { return getItemClass(); }
+    default Class<V> itemType() { return getItemType(); }
 
     /*==================================================================================================================
     |
@@ -206,7 +269,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  which enables the configuration of a slice of the current nd-array via method chaining.    <br>
      *  The following code snippet slices a 3-dimensional nd-array into a nd-array of shape (2x1x3)  <br>
      * <pre>{@code
-     *  myTensor.slice()
+     *  myArray.slice()
      *          .axis(0).from(0).to(1)
      *          .axis(1).at(5) // equivalent to '.from(5).to(5)'
      *          .axis().from(0).to(2)
@@ -471,12 +534,12 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     Nda<V> map( java.util.function.Function<V,V> mapper );
 
     /**
-     *  This method creates and returns a new tensor instance
-     *  which is not only a copy of the configuration of this tensor but also a copy of
+     *  This method creates and returns a new nd-array instance
+     *  which is not only a copy of the configuration of this nd-array but also a copy of
      *  the underlying data array. <br>
      *  (Note: the underlying nd-array will not be attached to any kind of computation graph)
      *
-     * @return A new tensor instance which is a deep copy of this tensor.
+     * @return A new nd-array instance which is a deep copy of this nd-array.
      */
     Nda<V> deepCopy();
 

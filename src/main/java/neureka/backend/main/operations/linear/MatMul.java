@@ -49,7 +49,7 @@ public class MatMul extends AbstractOperation
                 .withName("simple_matmul")
                 .setIsSuitableFor(
                     call -> call.validate()
-                                .allNotNull( t -> Number.class.isAssignableFrom(t.getItemClass()) )
+                                .allNotNull( t -> Number.class.isAssignableFrom(t.getItemType()) )
                                 .getEstimator()
                                     .goodIfAnyNonNull( t -> t.getNDConf() instanceof Simple2DConfiguration)
                                     .badIfAnyNonNull( t -> !( t.getNDConf() instanceof Simple2DConfiguration) )

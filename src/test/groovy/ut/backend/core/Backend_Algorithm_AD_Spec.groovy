@@ -130,8 +130,8 @@ class Backend_Algorithm_AD_Spec extends Specification
             function.executeDerive(*_) >> derivative
             derivative.getNDConf() >> ndConf
             ndConf.shape() >> [1, 2]
-            derivative.getItemClass() >> Float
-            derivative.itemClass() >> Float
+            derivative.getItemType() >> Float
+            derivative.itemType() >> Float
 
         and : 'A mock ExecutionCall.'
             def call = Mock( ExecutionCall )

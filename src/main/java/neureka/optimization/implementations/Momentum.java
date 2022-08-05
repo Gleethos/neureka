@@ -15,7 +15,7 @@ public class Momentum<V extends Number> implements Optimizer<V>
     public Momentum( Tsr<V> target ) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
         List<Integer> shape = target.shape();
-        v = Tsr.of(target.getItemClass(), shape, 0).getUnsafe().upcast(Number.class);
+        v = Tsr.of(target.getItemType(), shape, 0).getUnsafe().upcast(Number.class);
         lr = 0.01; // Step size/learning rate is 0.01 by default!
         decay = 0.9; // Decay rate is 0.9 by default!
     }
