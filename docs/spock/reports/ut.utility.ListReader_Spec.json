@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.018 seconds"
+    "duration":"0.022 seconds"
   },
 
   "title":"The Internal ListReader turning lists into flat arrays with shape and type data",
@@ -22,8 +22,11 @@
       },
       "blocks":[
         {"kind":"given","text":"We have a nested list whose structure resembles a matrix!","code":["var data = [","        [1, 2, 3],","        [4, 5, 6]","]"]},
+
         {"kind":"when","text":"We use the reader to internally fill 2 lists representing shape and data...","code":["var result = ListReader.read(data, (o)->o)"]},
+
         {"kind":"then","text":"The shape list will have the shape of the \"matrix\".","code":["result.shape == [2, 3]"]},
+
         {"kind":"and","text":"The flattened data is as expected!","code":["result.data == [1, 2, 3, 4, 5, 6]"]}
       ],
       "problems":"[]"
@@ -32,14 +35,17 @@
     {
       "id":"The ListReader can interpret nested lists resembling a 3D tensor into a shape list and value list.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We have a nested list whose structure resembles a matrix!","code":["def data = [","    [","            [1, 2, 3, 0],","            [4, 5, 6, -1]","    ], [","            [1, 2, 3, -2],","            [4, 5, 6, -3]","    ]","]"]},
+
         {"kind":"when","text":"We use the reader to internally fill 2 lists representing shape and data...","code":["var result = ListReader.read(data, (o)->o)"]},
+
         {"kind":"then","text":"The shape list will have the shape of the \"tensor\".","code":["result.shape == [2, 2, 4]"]},
+
         {"kind":"and","text":"The flattened data is as expected!","code":["result.data == [1, 2, 3, 0, 4, 5, 6, -1, 1, 2, 3, -2, 4, 5, 6, -3]"]}
       ],
       "problems":"[]"
@@ -48,15 +54,18 @@
     {
       "id":"The ListReader can interpret nested lists into a shape list and value list.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"when","text":"We use the reader to internally fill 2 lists representing shape and data...","code":["var result = ListReader.read(data, (o)->o)"]},
+
         {"kind":"then","text":"The shape list will have the shape of the \"matrix\".","code":["result.shape == expectedShape"]},
+
         {"kind":"and","text":"The flattened data is as expected!","code":["result.data == expectedData"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"data":["[42]","[[43]]","[[-1], [1]]","[[24, 42]]","[[24, 42]]","[[true], [false]]"],"expectedShape":["[1]","[1, 1]","[2, 1]","[1, 2]","[1, 2]","[2, 1]"],"expectedData":["[42]","[43]","[-1, 1]","[24, 42]","[24, 42]","[true, false]"]}}
       ],
       "problems":"[]"
     }

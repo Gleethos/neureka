@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.009 seconds"
+    "duration":"0.008 seconds"
   },
 
   "title":"Gradients are Tensors which are Components of other Tensors",
@@ -22,8 +22,11 @@
       },
       "blocks":[
         {"kind":"given","text":"A new simple tensor.","code":["Tsr t = Tsr.of(-3)"]},
+
         {"kind":"and","text":"A second tensor viewed as gradient.","code":["Tsr g = Tsr.of(9)"]},
+
         {"kind":"when","text":"The gradient tensor is added to the prior tensor as component.","code":["t.set( g )"]},
+
         {"kind":"then","text":"The prior tensor \"hasGradient()\" but does not \"rqsGradient()\"","code":["t.has(Tsr.class)","t.hasGradient()","!t.rqsGradient()"]}
       ],
       "problems":"[]"
@@ -38,8 +41,11 @@
       },
       "blocks":[
         {"kind":"given","text":"A new simple tensor.","code":["Tsr t = Tsr.of(-3)"]},
+
         {"kind":"and","text":"A second tensor viewed as gradient.","code":["Tsr g = Tsr.of(9)"]},
+
         {"kind":"when","text":"The gradient tensor is added to the prior tensor as component.","code":["t.set( g )"]},
+
         {"kind":"then","text":"The prior tensor will also include its gradient in the \"toString()\" result.","code":["t.toString().contains(\"]:g:[\")"]}
       ],
       "problems":"[]"
@@ -54,11 +60,16 @@
       },
       "blocks":[
         {"kind":"given","text":"A new simple tensor.","code":["Tsr t = Tsr.of(-3)"]},
+
         {"kind":"and","text":"A second tensor viewed as gradient.","code":["Tsr g = Tsr.of(9)"]},
+
         {"kind":"and","text":"The gradient tensor is added to the prior tensor as component.","code":["t.set( g )"]},
+
         {"kind":"when","text":"The request to apply the gradient is being made.","code":["t.applyGradient()"]},
+
         {"kind":"then","text":"The tensor changed as expected.","code":["t.toString().contains(expected)"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"requiresGradient":["true","false"],"expected":["(1):[6.0]","(1):[6.0]"]}}
       ],
       "problems":"[]"
     }

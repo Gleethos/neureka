@@ -70,6 +70,14 @@ def stats = utils.stats( data )
     def size = 0
     features.eachFeature { name, result, blocks, iterations, params -> size++ }
     features.eachFeature { name, result, blocks, iterations, params ->
+      var dataTable = [:]
+      (0 ..< params.size()).each({ columIndex ->
+        var column = []
+        iterations.each { iteration ->
+          column << iteration.dataValues[columIndex]
+        }
+        dataTable[params[columIndex]] = column
+      })
       def feature = delegate
       def iterationTimes = iterations.collect { it.time ?: 0L }
       def totalTime = fmt.toTimeDuration( iterationTimes.sum() )
@@ -92,12 +100,20 @@ def stats = utils.stats( data )
       else writeExtraInfo( null )
       %>
       },
-      "blocks":[
-<% out << blocks.collect({ b -> '        {' +
-            '"kind":"'  + esc(b.kind.replace(':', '').toLowerCase())   + '",' +
-            '"text":"'  + esc(b.text)                                  + '",' +
-            '"code":[' + strList(b.sourceCode) + ']' + '}'
-        }).join(",\n") %>
+      "blocks":[<%
+        out << blocks.collect({ b ->
+            var kind = esc(b.kind.replace(':', '').toLowerCase())
+            var code = '['+strList(b.sourceCode)+']'
+            if ( kind == 'where' ) {
+                // We turn the data table into a json object:
+                code = '{'+dataTable.collect({ k, v -> '"'+k+'":['+strList(v)+']' }).join(",")+'}'
+            }
+            return '\n        {' +
+                  '"kind":"'  +  kind  + '",' +
+                  '"text":"'  + esc(b.text)                                  + '",' +
+                  '"code":' + code + '' + '}'
+        }).join(",\n")
+        %>
       ],<%
       def executedIterations = iterations.findAll {it.dataValues || it.errors}
       def problems = executedIterations.findAll {it.errors}

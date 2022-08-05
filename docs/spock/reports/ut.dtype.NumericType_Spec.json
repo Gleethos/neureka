@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.158 seconds"
+    "duration":"0.188 seconds"
   },
 
   "title":"The NumericType and its implementations model their respective numeric data types.",
@@ -22,10 +22,14 @@
       },
       "blocks":[
         {"kind":"expect","text":"The type instance describes the expected number of bytes.","code":["type.numberOfBytes() == bytes"]},
+
         {"kind":"and","text":"It describes the expected JVM target type.","code":["type.targetType() == target"]},
+
         {"kind":"and","text":"It also describes the expected array type of said JVM target type.","code":["type.targetArrayType() == array"]},
+
         {"kind":"and","text":"The instance knows if it is signed or not.","code":["type.signed() == signed"]},
-        {"kind":"where","text":"The following data is being used:","code":[]}
+
+        {"kind":"where","text":"The following data is being used:","code":{"type":["neureka.dtype.custom.I8@11da6a9b","neureka.dtype.custom.UI8@3bafd7ae","neureka.dtype.custom.I16@1cb1fab6","neureka.dtype.custom.UI16@ca43c14","neureka.dtype.custom.I32@4a9da989","neureka.dtype.custom.UI32@22cc14bf","neureka.dtype.custom.I64@6c611538","neureka.dtype.custom.UI64@332a3cf1","neureka.dtype.custom.F32@41287592","neureka.dtype.custom.F64@78f1103"],"bytes":["1","1","2","2","4","4","8","8","4","8"],"target":["class java.lang.Byte","class java.lang.Short","class java.lang.Short","class java.lang.Integer","class java.lang.Integer","class java.lang.Long","class java.lang.Long","class java.math.BigInteger","class java.lang.Float","class java.lang.Double"],"array":["class [B","class [S","class [S","class [I","class [I","class [J","class [J","class [Ljava.math.BigInteger;","class [F","class [D"],"signed":["true","false","true","false","true","false","true","false","true","true"]}}
       ],
       "problems":"[]"
     },
@@ -39,9 +43,12 @@
       },
       "blocks":[
         {"kind":"given","text":"","code":["def result = type.foreignHolderBytesToTarget( data as byte[] )"]},
+
         {"kind":"expect","text":"The array of bytes is being converted to a fitting JVM type.","code":["result == converted"]},
+
         {"kind":"and","text":"The original byte array can be recreated by converting with the inverse...","code":["type.targetToForeignHolderBytes(result) == ( data as byte[] )"]},
-        {"kind":"where","text":"The following NumericType instances and bytes are being used :","code":[]}
+
+        {"kind":"where","text":"The following NumericType instances and bytes are being used :","code":{"type":["neureka.dtype.custom.I8@50532eb4","neureka.dtype.custom.UI8@210ebd4f","neureka.dtype.custom.I16@52a4a7ed","neureka.dtype.custom.I16@7bf2f5fc","neureka.dtype.custom.I16@4ff37b71","neureka.dtype.custom.I16@fd5ed50","neureka.dtype.custom.UI16@5b7a7875","neureka.dtype.custom.UI16@4d1c43b","neureka.dtype.custom.UI16@5afaeeec","neureka.dtype.custom.UI16@680830e6","neureka.dtype.custom.I32@6ba51c5c","neureka.dtype.custom.I32@3601530d","neureka.dtype.custom.UI32@3b7118da","neureka.dtype.custom.UI32@26aac6fb","neureka.dtype.custom.I64@40ed3939","neureka.dtype.custom.I64@414d03a9","neureka.dtype.custom.UI64@5e8e17e1","neureka.dtype.custom.UI64@3ffaeeb0"],"data":["[-23]","[-23]","[2, 3]","[-16, -53]","[16, -53]","[-1, -1]","[2, 3]","[-16, -53]","[16, -53]","[-1, -1]","[22, -2, 3, -4]","[-22, -2, -3, -4]","[22, -2, 3, -4]","[-22, -2, -3, -4]","[99, 2, 1, 35, 2, 5, 37, 22]","[-99, 2, 1, -35, 2, 5, -37, 22]","[99, 2, 1, 35, 2, 5, 37, 22]","[-99, 2, 1, -35, 2, 5, -37, 22]"],"converted":["-23","233","515","-3893","4299","-1","515","61643","4299","65535","385745916","-352387588","385745916","3942579708","7134266009577661718","-7133136811068105962","7134266009577661718","11313607262641445654"]}}
       ],
       "problems":"[]"
     },
@@ -49,17 +56,22 @@
     {
       "id":"Conversion goes both ways and produces expected numeric values.",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.028 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"when","text":"We apply a filter in order to guarantee that the right data type is being used.","code":["original = [","        'UI8' : { o -> o as Byte },","        'UI16': { o -> o as Short },","        'UI32': { o -> o as Integer },","        'UI64': { o -> o as Long },","        'I8'  : { o -> o as Byte },","        'I16' : { o -> o as Short },","        'I32' : { o -> o as Integer },","        'I64' : { o -> o as Long },","        'F32' : { o -> o as Float },","        'F64' : { o -> o as Double }","][ num.class.simpleName ](original)"]},
+
         {"kind":"and","text":"The convert the raw type (might represent unsigned value) to a JVM compatible target type...","code":["def resultTarget = num.foreignHolderBytesToTarget( rawOriginal )"]},
+
         {"kind":"and","text":"Then convert this result to the true byte array of the value...","code":["def backToRaw = num.targetToForeignHolderBytes( resultTarget )"]},
+
         {"kind":"then","text":"This produces the expected values which express the following relationships:","code":["resultTarget == target","backToRaw == rawOriginal","num.toTarget( original ) == target","num.convertToHolder(target) == original"]},
+
         {"kind":"and","text":"The numeric type instance can perform array conversion.","code":["num.convertToTargetArray( rawOriginal as double[] ) == rawOriginal","num.convertToTargetArray( rawOriginal as float[] ) == rawOriginal","num.convertToTargetArray( rawOriginal as int[] ) == rawOriginal","num.convertToTargetArray( rawOriginal as short[] ) == rawOriginal","num.convertToTargetArray( rawOriginal as long[] ) == rawOriginal"]},
-        {"kind":"where","text":"The following \"NumericType\" implementation instances and numeric data is being used:","code":[]}
+
+        {"kind":"where","text":"The following \"NumericType\" implementation instances and numeric data is being used:","code":{"num":["neureka.dtype.custom.UI8@5b2b27b","neureka.dtype.custom.UI16@34dddf52","neureka.dtype.custom.UI32@272432f8","neureka.dtype.custom.UI64@7ce7d04a","neureka.dtype.custom.I8@5746bbe1","neureka.dtype.custom.I16@2cfde13e","neureka.dtype.custom.I32@787b9d7f","neureka.dtype.custom.I64@5f593a4","neureka.dtype.custom.F32@26b5fc93","neureka.dtype.custom.F64@25a0ac6","neureka.dtype.custom.F32@26638ab8","neureka.dtype.custom.F64@6305b260"],"original":["-3","-3","-3","-3","-3","-3","-3","-3","-0.3","-0.3","-5432.39928","-5432.39928"],"rawOriginal":["[-3]","[-1, -3]","[-1, -1, -1, -3]","[-1, -1, -1, -1, -1, -1, -1, -3]","[-3]","[-1, -3]","[-1, -1, -1, -3]","[-1, -1, -1, -1, -1, -1, -1, -3]","[-66, -103, -103, -102]","[-65, -45, 51, 51, 51, 51, 51, 51]","[-59, -87, -61, 50]","[-64, -75, 56, 102, 55, 54, -51, -14]"],"target":["253","65533","4294967293","18446744073709551613","-3","-3","-3","-3","-0.3","-0.3","-5432.3994","-5432.39928"]}}
       ],
       "problems":"[]"
     },
@@ -67,18 +79,24 @@
     {
       "id":"NumericType conversion to holder types yields expected results.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"when","text":"","code":["def result = num.convertToHolder( from )"]},
+
         {"kind":"then","text":"","code":["result == expected"]},
+
         {"kind":"and","text":"","code":["result.class == expected.class"]},
+
         {"kind":"and","text":"","code":["result.class == holderType"]},
+
         {"kind":"and","text":"","code":["num.holderType() == holderType"]},
+
         {"kind":"and","text":"","code":["num.holderArrayType() == holderArrayType"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"num":["neureka.dtype.custom.I32@de43fd3","neureka.dtype.custom.I32@481592e3","neureka.dtype.custom.I32@3f44722f","neureka.dtype.custom.I32@71b873a2","neureka.dtype.custom.I32@2c92ebdc","neureka.dtype.custom.I32@78f6ddda","neureka.dtype.custom.I16@2a24e9e9","neureka.dtype.custom.I16@22c72d15","neureka.dtype.custom.I16@279a49d2","neureka.dtype.custom.I16@5970718c","neureka.dtype.custom.I16@62d581bc","neureka.dtype.custom.I16@58cd4d11","neureka.dtype.custom.I8@256ea225","neureka.dtype.custom.I8@484b8cee","neureka.dtype.custom.I8@33038e84","neureka.dtype.custom.I8@15af2946","neureka.dtype.custom.I8@7eec5837","neureka.dtype.custom.I8@fdaaeb0"],"from":["3","8","863.834","2","9","23.422","3","8","863.834","2","9","23.422","3","8","863.834","2","9","23.422"],"expected":["3","8","863","2","9","23","3","8","863","2","9","23","3","8","95","2","9","23"],"holderType":["class java.lang.Integer","class java.lang.Integer","class java.lang.Integer","class java.lang.Integer","class java.lang.Integer","class java.lang.Integer","class java.lang.Short","class java.lang.Short","class java.lang.Short","class java.lang.Short","class java.lang.Short","class java.lang.Short","class java.lang.Byte","class java.lang.Byte","class java.lang.Byte","class java.lang.Byte","class java.lang.Byte","class java.lang.Byte"],"holderArrayType":["class [I","class [I","class [I","class [I","class [I","class [I","class [S","class [S","class [S","class [S","class [S","class [S","class [B","class [B","class [B","class [B","class [B","class [B"]}}
       ],
       "problems":"[]"
     }

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.600 seconds"
+    "duration":"2.461 seconds"
   },
 
   "title":"NN Code Golfing!",
@@ -16,12 +16,13 @@
     {
       "id":"One can write a simple neural network with custom back-prop in 11 lines of code!",
       "result":"PASS",
-      "duration":"1.365 seconds",
+      "duration":"1.246 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var X = Tsr.of(Double, [[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]])","var y = Tsr.of(Double, [[0, 1, 1, 0]]).T","var W1 = Tsr.ofRandom(Double, 3, 4)","var W2 = Tsr.ofRandom(Double, 4, 1)","60.times {","    var l1 = Tsr.of('sig(', X.matMul(W1), ')')","    var l2 = Tsr.of('sig(', l1.matMul(W2), ')')","    var l2_delta = (y - l2) * (l2 * (-l2 + 1))","    var l1_delta = l2_delta.matMul(W2.T) * (l1 * (-l1 + 1))","    W2 += l1.T.matMul(l2_delta)","    W1 += X.T.matMul(l1_delta)","}"]},
+
         {"kind":"expect","text":"","code":["W1.unsafe.data == RESULT_W1","W2.unsafe.data == RESULT_W2"]}
       ],
       "problems":"[]"
@@ -30,12 +31,13 @@
     {
       "id":"One can write a simple neural network in less than 11 lines of code!",
       "result":"PASS",
-      "duration":"0.359 seconds",
+      "duration":"0.407 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var X = Tsr.of(Double, [[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]])","var y = Tsr.of(Double, [[0, 1, 1, 0]]).T","var W1 = Tsr.ofRandom(Double, 3, 4).setRqsGradient(true)","var W2 = Tsr.ofRandom(Double, 4, 1).setRqsGradient(true)","60.times {","    var l2 = Tsr.of('sig(',Tsr.of('sig(',X.matMul(W1),')').matMul(W2),')')","    l2.backward(y - l2)","    W1.applyGradient(); W2.applyGradient()","}"]},
+
         {"kind":"expect","text":"","code":["W1.unsafe.data == RESULT_W1","W2.unsafe.data == RESULT_W2"]}
       ],
       "problems":"[]"
@@ -44,12 +46,13 @@
     {
       "id":"One can write a simple float based neural network in less than 11 lines of java like code!",
       "result":"PASS",
-      "duration":"0.520 seconds",
+      "duration":"0.446 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var X = Tsr.ofFloats().withShape(4,3).andFill(0f, 0f, 1f,  0f, 1f, 1f,  1f, 0f, 1f,  1f, 1f, 1f)","var y = Tsr.ofFloats().withShape(1,4).andFill(0f, 1f, 1f, 0f).T()","var W1 = Tsr.ofRandom(Float.class, 3,4).setRqsGradient(true)","var W2 = Tsr.ofRandom(Float.class, 4,1).setRqsGradient(true)","for ( int i = 0; i < 60; i++ ) {","    Tsr<Float> l2 = Tsr.of('sig(',Tsr.of('sig(',X.matMul(W1),')').matMul(W2),')');","    l2.backward(y.minus(l2));","    W1.applyGradient(); W2.applyGradient();","}"]},
+
         {"kind":"expect","text":"","code":["W1.unsafe.data == RESULT_W1_F32 as float[]","W2.unsafe.data == RESULT_W2_F32 as float[]"]}
       ],
       "problems":"[]"
@@ -58,12 +61,13 @@
     {
       "id":"One can write a simple double based neural network in less than 11 lines of java like code using the \"@\" operator!",
       "result":"PASS",
-      "duration":"0.293 seconds",
+      "duration":"0.315 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var X  = Tsr.ofDoubles().withShape(4,3).andFill(0d, 0d, 1d, 0d, 1d, 1d, 1d, 0d, 1d, 1d, 1d, 1d)","var y  = Tsr.ofDoubles().withShape(1,4).andFill(0d, 1d, 1d, 0d).T()","var W1 = Tsr.ofRandom(Double.class, 3, 4).setRqsGradient(true)","var W2 = Tsr.ofRandom(Double.class, 4, 1).setRqsGradient(true)","for ( int i = 0; i < 60; i++ ) {","    var l2 = Tsr.of(\"sig(\",Tsr.of(\"sig(\",X,'@' as char,W1,\")\"),\"@\",W2,\")\");","    l2.backward(Tsr.of(y,\"-\",l2)); // Back-propagating the error!","    W1.applyGradient(); W2.applyGradient();","}"]},
+
         {"kind":"expect","text":"","code":["W1.unsafe.data == RESULT_W1","W2.unsafe.data == RESULT_W2"]}
       ],
       "problems":"[]"
@@ -78,6 +82,7 @@
       },
       "blocks":[
         {"kind":"given","text":"","code":["var W1 = Tsr.ofRandom(Double, 3, 4)","var W2 = Tsr.ofRandom(Double, 4, 1)"]},
+
         {"kind":"expect","text":"","code":["W1.unsafe.data == [-0.910969595136708, -1.9627469837128895, -0.048245881734580415, -0.3554745831321771, -0.6595188311162824, 1.839723209668042, -0.7864999508162774, -1.918339420402628, 1.4035229760225527, 2.245738695936844, -0.7473176166694635, 1.9016692137691462]","W2.unsafe.data == [-0.1611330910958405, -0.9350019667613545, -0.3780200880067806, 1.4951759768158595]"]}
       ],
       "problems":"[]"

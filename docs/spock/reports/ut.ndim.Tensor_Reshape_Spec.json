@@ -22,8 +22,11 @@
       },
       "blocks":[
         {"kind":"given","text":"","code":["Tsr t = Tsr.ofFloats().withShape(3, 4).andSeed(42)"]},
+
         {"kind":"expect","text":"","code":["t.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR"]},
+
         {"kind":"when","text":"","code":["t = t.T"]},
+
         {"kind":"then","text":"","code":["t.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR"]}
       ],
       "problems":"[]"

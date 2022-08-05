@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"1",
-    "duration":"0.875 seconds"
+    "duration":"1.049 seconds"
   },
 
   "title":"",
@@ -16,15 +16,18 @@
     {
       "id":"Querying for Device implementations works as expected.",
       "result":"PASS",
-      "duration":"0.060 seconds",
+      "duration":"0.093 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+
         {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+
         {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"query":["cPu","jVm","natiVe","Threaded","first CPU","openCl","first gpu","nvidia or amd or intel","rocm or cuda or amd or nvidia","nvidia || amd or intel","cuda||rocm || gpu","first"],"type":["class neureka.devices.host.CPU","class neureka.devices.host.CPU","class neureka.devices.host.CPU","class neureka.devices.host.CPU","class neureka.devices.host.CPU","class neureka.devices.opencl.OpenCLDevice","class neureka.devices.opencl.OpenCLDevice","class neureka.devices.opencl.OpenCLDevice","class neureka.devices.opencl.OpenCLDevice","class neureka.devices.opencl.OpenCLDevice","class neureka.devices.opencl.OpenCLDevice","class neureka.devices.opencl.OpenCLDevice"]}}
       ],
       "problems":"[]"
     },
@@ -32,14 +35,16 @@
     {
       "id":"Advanced device querying methods query as expected!",
       "result":"PASS",
-      "duration":"0.019 seconds",
+      "duration":"0.069 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"Querying for a device using a device type and key works as expected.","code":["Device.get(type, key) === expected"]},
+
         {"kind":"and","text":"We can use the \"find\" method if we want the result to be wrapped in a nice and safe Optional.","code":["Device.find(type, key).isEmpty() && expected == null || Device.find(type, key).get() === expected"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"type":["interface neureka.devices.Device","interface neureka.devices.Device","interface neureka.devices.Device","class testutility.mock.DummyDevice","class testutility.mock.DummyDevice","class testutility.mock.DummyDevice","class testutility.mock.DummyDevice"],"key":["cpu","jvm","processor","first","any","cpu","gpu"],"expected":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","null","null","null","null"]}}
       ],
       "problems":"[]"
     },
@@ -47,13 +52,14 @@
     {
       "id":"The simpler device querying methods query as expected!",
       "result":"PASS",
-      "duration":"0.083 seconds",
+      "duration":"0.068 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"","code":["Device.get(key) === expected","Device.any(key) === expected || Device.any(key) === CPU.get()","Device.find(key).isEmpty() && expected == null || Device.find(key).get() === expected"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"key":["cpu","central processing","e9rt56hqfwe5f0","5638135dh90978","banana device","cupcake"],"expected":["CPU[coreCount=32]","CPU[coreCount=32]","null","null","null","null"]}}
       ],
       "problems":"[]"
     },
@@ -61,15 +67,18 @@
     {
       "id":"Passing a numeric array to a tensor should modify its content!",
       "result":"PASS",
-      "duration":"0.120 seconds",
+      "duration":"0.267 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A 2D tensor is being instantiated..","code":["Tsr t = Tsr.of(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
+
         {"kind":"when","text":"A numeric array is passed to said tensor...","code":["t.setItems(data1)","t.setItems(data2)"]},
+
         {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
-        {"kind":"where","text":"The following data is being used :","code":[]}
+
+        {"kind":"where","text":"The following data is being used :","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]"],"data1":["[]","[2.0, 3.0, 4.0, 5.0, 6.0]","[3.0, 5.0, 6.0]","[9.0, 4.0, 7.0, -12.0]","[22.0, 24.0, 35.0, 80.0]","[]","[2.0, 3.0, 4.0, 5.0, 6.0]","[3.0, 5.0, 6.0]","[9.0, 4.0, 7.0, -12.0]","[22.0, 24.0, 35.0, 80.0]"],"data2":["[]","[1.0, 1.0, 1.0, 1.0]","[4.0, 2.0, 3.0]","[-5.0, -2.0, 1.0]","[-1.0, -1.0, -1.0]","[]","[1.0, 1.0, 1.0, 1.0, 1.0]","[4.0, 2.0, 3.0]","[-5.0, -2.0, 1.0]","[-1.0, -1.0, -1.0]"],"expected":["(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]","(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]","(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]","(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]","(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]","(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]","(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]","(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
       ],
       "problems":"[]"
     },
@@ -77,19 +86,26 @@
     {
       "id":"Tensor data can be fetched from device if the tensor is stored on it...",
       "result":"PASS",
-      "duration":"0.184 seconds",
+      "duration":"0.141 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"Because in some environments OpenCL might not be available, the test will be stopped!","code":["if ( device == null ) return"]},
+
         {"kind":"when","text":"A 2D tensor is being instantiated by passing the given shape and data...","code":["Tsr t = Tsr.of(shape, data).to(device)"]},
+
         {"kind":"then","text":"The tensor values (as List) are as expected.","code":["Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))"]},
+
         {"kind":"when","text":"The same underlying data is being queried by calling the device...","code":["var result = (0..<t.size()).collect{device.access(t).readAt(it)}"]},
+
         {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
         {"kind":"when","text":"","code":["result = (0..<t.size()).collect{device.access(t).readArray(data.getClass(), it, 1)[0]}"]},
+
         {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
-        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":[]}
+
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]"],"shape":["[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]"],"data":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
       ],
       "problems":"[]"
     },
@@ -97,18 +113,24 @@
     {
       "id":"Execution calls containing null arguments will cause an exception to be thrown in device instances.",
       "result":"PASS",
-      "duration":"0.017 seconds",
+      "duration":"0.016 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A mocked ExecutionCall with mocked algorithm...","code":["var call = Mock(ExecutionCall)","var implementation = Mock(Algorithm)"]},
+
         {"kind":"and","text":"We construct a plausible mocked call by making it expose the given device.","code":["call.getDevice() >> device"]},
+
         {"kind":"when","text":"The call is being passed to the execution utility method ..","code":["AbstractDeviceAlgorithm.prepareAndExecuteRecursively( call, AbstractDeviceAlgorithm::executeDeviceAlgorithm )"]},
+
         {"kind":"then","text":"...the implementation is being accessed in order to access the mocked lambda...","code":["(1.._) * call.getAlgorithm() >> implementation"]},
+
         {"kind":"and","text":"The tensor array is being accessed to check for null. (For exception throwing)","code":["1 * call.inputs() >> new Tsr[]{ Mock(Tsr), null }"]},
+
         {"kind":"and","text":"The expected exception is being thrown alongside a descriptive message.","code":["def exception = thrown(IllegalArgumentException)","exception.message == \"Device arguments may not be null!\\n\" +","\"One or more tensor arguments within the given ExecutionCall instance is null.\""]},
-        {"kind":"where","text":"The following Device instances are being tested :","code":[]}
+
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]"]}}
       ],
       "problems":"[]"
     },
@@ -116,21 +138,30 @@
     {
       "id":"Devices store tensors which can also be restored.",
       "result":"PASS",
-      "duration":"0.055 seconds",
+      "duration":"0.079 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"The given device is available and Neureka is being reset.","code":["if ( device == null ) return"]},
+
         {"kind":"and","text":"Two tensors which will be transferred later on...","code":["int initialNumber = device.size()","Tsr a = Tsr.of([2, 3], \";)\")","Tsr b = Tsr.of([3, 4], \":P\")"]},
+
         {"kind":"expect","text":"The given device is initially empty.","code":["device.isEmpty() == ( device.size() == 0 )","!device.has( a )","!device.has( b )"]},
+
         {"kind":"when","text":"The the first tensor is being passed to the device...","code":["device.store( a )"]},
+
         {"kind":"then","text":"...tensor \"a\" is now on the device.","code":["!device.isEmpty()","device.size() == initialNumber + 1","device.has( a )","!device.has( b )"]},
+
         {"kind":"when","text":"The the second tensor is being passed to the device...","code":["device.store( b )"]},
+
         {"kind":"then","text":"...tensor \"b\" is now also on the device.","code":["!device.isEmpty()","device.size() == initialNumber + 2","device.has( a )","device.has( b )"]},
+
         {"kind":"when","text":"They are being removed again...","code":["device.free( a ).free( b )"]},
+
         {"kind":"then","text":"...the device is empty again.","code":["device.isEmpty() == ( initialNumber == 0 )","device.size() == initialNumber","!device.has( a )","!device.has( b )"]},
-        {"kind":"where","text":"The following Device instances are being tested :","code":[]}
+
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]","FileDevice[directory=build/test-can,stored={},loadable=[test2.idx],loaded=[]]"]}}
       ],
       "problems":"[]"
     },
@@ -138,20 +169,28 @@
     {
       "id":"Devices store slices which can also be restored.",
       "result":"PASS",
-      "duration":"0.045 seconds",
+      "duration":"0.041 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"The given device is available and Neureka is being reset.","code":["if ( device == null ) return"]},
+
         {"kind":"and","text":"Two tensors which will be transferred later on...","code":["int initialNumber = device.size()","Tsr a = Tsr.of([2, 3], \";)\")","Tsr b = a[1, 0..2]"]},
+
         {"kind":"expect","text":"The given device is initially empty.","code":["device.isEmpty() == ( device.size() == 0 )","!device.has( a )","!device.has( b )"]},
+
         {"kind":"when","text":"The the first tensor is being passed to the device...","code":["device.store( a )"]},
+
         {"kind":"then","text":"...tensor \"a\" is now on the device.","code":["!device.isEmpty()","device.size() == initialNumber + 1","device.has( a )"]},
+
         {"kind":"and","text":"","code":["!device.has( b )"]},
+
         {"kind":"when","text":"","code":["device.free( a )"]},
+
         {"kind":"then","text":"...the device is empty again.","code":["device.isEmpty() == ( initialNumber == 0 )","device.size() == initialNumber","!device.has( a )","!device.has( b )"]},
-        {"kind":"where","text":"The following Device instances are being tested :","code":[]}
+
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]"]}}
       ],
       "problems":"[]"
     },
@@ -165,16 +204,26 @@
       },
       "blocks":[
         {"kind":"given","text":"The given device is available and Neureka is being reset.","code":["if ( device == null ) return"]},
+
         {"kind":"and","text":"Two tensors which will be transferred later on...","code":["Tsr a = Tsr.of([2, 3], \";)\")","Tsr b = a[1, 0..2]"]},
+
         {"kind":"and","text":"","code":["var initialSize = device.size()"]},
+
         {"kind":"expect","text":"The given device is initially empty.","code":["device.isEmpty() == ( device.size() == 0 )","!device.has( a )","!device.has( b )"]},
+
         {"kind":"when","text":"The the first tensor is being passed to the device...","code":["device.store( b )"]},
+
         {"kind":"then","text":"...tensor \"a\" is now on the device.","code":["var exception = thrown(IllegalStateException)","exception.message.contains(\"Data parent is not outsourced!\")"]},
+
         {"kind":"expect","text":"The given device is initially empty.","code":["device.isEmpty() == ( device.size() == 0 )","!device.has( a )","!device.has( b )"]},
+
         {"kind":"when","text":"","code":["storageMethod(device, a)"]},
+
         {"kind":"then","text":"","code":["!device.isEmpty()","a.isOutsourced()","b.isOutsourced()"]},
+
         {"kind":"and","text":"","code":["device.has( a )","b.unsafe.data == null","device.has( b )","device.size() == initialSize"]},
-        {"kind":"where","text":"The following Device instances are being tested :","code":[]}
+
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":[],"storageMethod":[]}}
       ],
       "problems":"[:]"
     },
@@ -182,21 +231,30 @@
     {
       "id":"Virtual tensors stay virtual when outsourced.",
       "result":"PASS",
-      "duration":"0.025 seconds",
+      "duration":"0.027 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We create a homogeneously filled tensor, which is therefor \"virtual\".","code":["var t = Tsr.ofFloats().withShape(4,3).all(-0.54f)"]},
+
         {"kind":"and","text":"We also get a device for testing...","code":["var device = Device.get(deviceType)"]},
+
         {"kind":"expect","text":"We expect that the tensor is virtual, meaning its underlying data array stores only a single value...","code":["t.isVirtual()"]},
+
         {"kind":"when","text":"We send the tensor to the device...","code":["t.to(device)"]},
+
         {"kind":"then","text":"This should cause it to be \"outsourced\", (except dor a CPU device of course).","code":["t.isOutsourced() != ( device instanceof CPU )"]},
+
         {"kind":"and","text":"...we expect the tensor to stay virtual on the device!","code":["t.isVirtual()"]},
+
         {"kind":"when","text":"We restore the device...","code":["device.restore(t)"]},
+
         {"kind":"then","text":"The tensor should no longer be outsourced.","code":["!t.isOutsourced()"]},
+
         {"kind":"and","text":"It should still be virtual!","code":["t.isVirtual()"]},
-        {"kind":"where","text":"We test on the following devices:","code":[]}
+
+        {"kind":"where","text":"We test on the following devices:","code":{"deviceType":["CPU","GPU"]}}
       ],
       "problems":"[]"
     }

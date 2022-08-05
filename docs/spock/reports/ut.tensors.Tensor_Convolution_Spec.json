@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.718 seconds"
+    "duration":"0.788 seconds"
   },
 
   "title":"",
@@ -16,19 +16,26 @@
     {
       "id":"The \"x\" (convolution) operator produces expected results (On the CPU).",
       "result":"PASS",
-      "duration":"0.154 seconds",
+      "duration":"0.174 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\\n The 'x' operator performs convolution on the provided operands.\\n The meaning of the operands is not defined, so one the kernel tensor\\n can be the first and second operand. \\n","\\n The 'x' operator performs convolution on the provided operands.\\n The meaning of the operands is not defined, so one the kernel tensor\\n can be the first and second operand. \\n"]
       },
       "blocks":[
         {"kind":"given","text":"Gradient auto apply for tensors in ue is set to false.","code":["Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)"]},
+
         {"kind":"and","text":"Tensor legacy view is set to true.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
+
         {"kind":"and","text":"Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].","code":["var x = Tsr.of(new int[]{2, 3, 1},","    new double[]{","        3,  2, -1,","        -2,  2,  4","    }",")",".unsafe.toType(type)","var y = Tsr.of(new int[]{1, 3, 2},","    new double[]{","        4, -1,","        3,  2,","        3, -1","    }",")",".unsafe.toType(type)"]},
+
         {"kind":"when","text":"The x-mul result is being instantiated by passing a simple equation to the tensor constructor.","code":["var z = Tsr.of(\"I0xi1\", x, y)"]},
+
         {"kind":"then","text":"The result contains the expected String.","code":["z.toString().contains(expected)"]},
+
         {"kind":"when","text":"The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.","code":["z = Tsr.of(new Object[]{x, \"x\", y})"]},
+
         {"kind":"then","text":"The result contains the expected String.","code":["z.toString().contains(expected)"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float"],"expected":["[2x1x2]:(15.0, 2.0, 10.0, 2.0)","[2x1x2]:(15.0, 2.0, 10.0, 2.0)"]}}
       ],
       "problems":"[]"
     },
@@ -36,13 +43,15 @@
     {
       "id":"Manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.116 seconds",
+      "duration":"0.147 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)","Tsr a = Tsr.of([100, 100], 3d..19d)","Tsr x = a[1..-2,0..-1]","Tsr y = a[0..-3,0..-1]","Tsr z = a[2..-1,0..-1]"]},
+
         {"kind":"when","text":"","code":["Tsr rowconvol = x + y + z","Tsr k = rowconvol[0..-1,1..-2]","Tsr v = rowconvol[0..-1,0..-3]","Tsr j = rowconvol[0..-1,2..-1]","Tsr u = a[1..-2,1..-2]","Tsr colconvol = k + v + j - 9 * u","String xAsStr = x.toString()","String yAsStr = y.toString()","String zAsStr = z.toString()","String rcAsStr = rowconvol.toString()","String kAsStr = k.toString()","String vAsStr = v.toString()","String jAsStr = j.toString()","String uAsStr = u.toString()"]},
+
         {"kind":"then","text":"","code":["xAsStr.contains(\"(98x100):[18.0, 19.0, 3.0, 4.0, 5.0\")","yAsStr.contains(\"(98x100):[3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0\")","zAsStr.contains(\"(98x100):[16.0, 17.0, 18.0, 19.0, 3.0\")","rcAsStr.contains(\"(98x100):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0\")","kAsStr.contains(\"(98x98):[40.0, 26.0, 29.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0\")","vAsStr.contains(\"(98x98):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0, 21.0\")","jAsStr.contains(\"(98x98):[26.0, 29.0, 15.0, 18.0, 21.0, 24.0\")","uAsStr.contains(\"(98x98):[19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, \")","colconvol.toString().contains(\"(98x98):[-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, \" +","\"-34.0, -68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, -34.0, \" +","\"-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, ... + 9554 more]\")"]}
       ],
       "problems":"[]"
@@ -51,15 +60,18 @@
     {
       "id":"Very simple manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.175 seconds",
+      "duration":"0.209 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)","Tsr a = Tsr.of([4, 4], 0d..16d).to( device )","Tsr x = a[1..-2,0..-1]","Tsr y = a[0..-3,0..-1]","Tsr z = a[2..-1,0..-1]"]},
+
         {"kind":"when","text":"","code":["Tsr rowconvol = x + y + z","Tsr k = rowconvol[0..-1,1..-2]","Tsr v = rowconvol[0..-1,0..-3]","Tsr j = rowconvol[0..-1,2..-1]","Tsr u = a[1..-2,1..-2]","Tsr colconvol = k + v + j - 9 * u","String xAsStr = x.toString()","String yAsStr = y.toString()","String zAsStr = z.toString()","String rcAsStr = rowconvol.toString()","String kAsStr = k.toString()","String vAsStr = v.toString()","String jAsStr = j.toString()","String uAsStr = u.toString()"]},
+
         {"kind":"then","text":"","code":["xAsStr.contains(\"(2x4):[4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0]\")","yAsStr.contains(\"(2x4):[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]\")","zAsStr.contains(\"(2x4):[8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0]\")","rcAsStr.contains(\"(2x4):[12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0]\")","kAsStr.contains(\"(2x2):[15.0, 18.0, 27.0, 30.0]\")","vAsStr.contains(\"(2x2):[12.0, 15.0, 24.0, 27.0]\")","jAsStr.contains(\"(2x2):[18.0, 21.0, 30.0, 33.0]\")","uAsStr.contains(\"(2x2):[5.0, 6.0, 9.0, 10.0]\")","colconvol.toString().contains(\"(2x2):[0.0, 0.0, 0.0, 0.0]\")"]},
-        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":[]}
+
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x196b8f99f70],platform=OpenCLPlatform@6b05a005[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x196b120a4a0],kernels=[..46..]]]"]}}
       ],
       "problems":"[]"
     },
@@ -67,17 +79,23 @@
     {
       "id":"Autograd works with simple 2D convolution.",
       "result":"PASS",
-      "duration":"0.093 seconds",
+      "duration":"0.081 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"The following library configuration is being used.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)"]},
+
         {"kind":"when","text":"The following calculations are being executed...","code":["Tsr<Double> i_a = Tsr.of([2, 1], [","    1d,","    2d","])","Tsr<Double> w_a = Tsr.of([2, 2], [","        1d, 3d,","        4d, -1d","]).setRqsGradient(true)","Tsr<Double> o_a = Tsr.of(i_a, \"x\", w_a)","Tsr<Double> w_b = Tsr.of([2, 2], [","        -2d, 1d,  // 9, 1 -> -17","        2d, -1d   // ... -> 17","]).setRqsGradient(true)","Tsr o_b = Tsr.of(o_a, \"x\", w_b)","Tsr w_c = Tsr.of([2, 2], [","        0.5d, 3d,","        -2d, -0.5d","]).setRqsGradient(true)","Tsr o_c = Tsr.of(o_a, \"x\", w_c)","Tsr out = o_b * o_c"]},
+
         {"kind":"then","text":"The results are as expected.","code":["o_a.toString().contains(\"(9.0, 1.0)\")","out.toString().contains(\"(-127.5, -314.5)\")","o_b.toString().contains(\"(-17.0, 17.0)\")","o_c.toString().contains(\"(7.5, -18.5)\")","w_a.toString().contains(\"g:(null)\")","w_b.toString().contains(\"g:(null)\")"]},
+
         {"kind":"when","text":"The \"backward\" method is being called on the \"out\" tensor...","code":["out.backward(Tsr.of([2, 1], 1d))"]},
+
         {"kind":"then","text":"The autograd system produces the expected results.","code":["w_a.toString().contains(\"g:(null)\")","!w_b.toString().contains(\"g:(null)\")"]},
+
         {"kind":"when","text":"Neureka is being configured to apply tensors when host tensor is being used...","code":["Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","w_a * 3","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)"]},
+
         {"kind":"then","text":"The tensors change their states as expected.","code":["w_a.toString().contains(\"g:(null)\")","w_a.toString().contains(\"(-93.5, -30.5, -185.0, -68.0):g:(null)\")","!w_b.toString().contains(\"g:(null)\")","w_b.toString().contains(\"g:(67.5, 7.5, -166.5, -18.5)\")"]}
       ],
       "problems":"[]"
@@ -86,17 +104,23 @@
     {
       "id":"Sime convolution works as expected eith autograd.",
       "result":"PASS",
-      "duration":"0.084 seconds",
+      "duration":"0.082 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)"]},
+
         {"kind":"when","text":"","code":["Tsr i_a = Tsr.of([2, 1], [1d, 2d])","Tsr w_a = Tsr.of([2, 2], [1d, 3d, 4d, -1d]).setRqsGradient(true)","Tsr o_a = Tsr.of(i_a,\"x\", w_a)","Tsr w_b = Tsr.of([2, 2], [-2d, 1d, 2d, -1d]).setRqsGradient(true)","Tsr o_b = Tsr.of(o_a,\"x\", w_b)","Tsr w_c = Tsr.of([2, 2], [0.5d, 3d, -2d, -0.5d]).setRqsGradient(true)","Tsr o_c = Tsr.of(o_a, \"x\", w_c)","Tsr out = o_b*o_c"]},
+
         {"kind":"then","text":"","code":["o_a.toString().contains(\"(9.0, 1.0)\")","out.toString().contains(\"(-127.5, -314.5)\")","o_b.toString().contains(\"(-17.0, 17.0)\")","o_c.toString().contains(\"(7.5, -18.5)\")","w_a.toString().contains(\"g:(null)\")","w_b.toString().contains(\"g:(null)\")"]},
+
         {"kind":"when","text":"","code":["out.backward(Tsr.of([2, 1], 1))"]},
+
         {"kind":"then","text":"","code":["w_a.toString().contains(\"g:(null)\")","!w_b.toString().contains(\"g:(null)\")"]},
+
         {"kind":"when","text":"","code":["Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","w_a * 3","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)"]},
+
         {"kind":"then","text":"","code":["w_a.toString().contains(\"g:(null)\")","!w_a.toString().contains(\"1.0, 3.0, 4.0, -1.0\")","!w_b.toString().contains(\"g:(null)\")"]}
       ],
       "problems":"[]"
@@ -105,19 +129,27 @@
     {
       "id":"Tensors have the correct layout after convolution.",
       "result":"PASS",
-      "duration":"0.085 seconds",
+      "duration":"0.082 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Tsr<Double> t0 = Tsr.of([3, 2, 1], [","        1d, 2d,","        3d, 4d,","        5d, 6d","])","Tsr<Double> x0 = Tsr.of([1, 2, 3], [","        1d, 2d, 3d,","        4d, 5d, 6d","])"]},
+
         {"kind":"expect","text":"","code":["t0.unsafe.data == [1, 2, 3, 4, 5, 6] as double[]","x0.unsafe.data == [1, 2, 3, 4, 5, 6] as double[]","t0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR","x0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR"]},
+
         {"kind":"when","text":"","code":["Tsr<Double> out0 = Tsr.of(\"i0xi1\", [t0, x0] )"]},
+
         {"kind":"then","text":"","code":["out0.toString() == \"(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]\""]},
+
         {"kind":"when","text":"","code":["t0.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","x0.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)"]},
+
         {"kind":"then","text":"","code":["t0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR","x0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR","t0.unsafe.data == [1, 3, 5, 2, 4, 6] as double[]","x0.unsafe.data == [1, 4, 2, 5, 3, 6] as double[]"]},
+
         {"kind":"and","text":"","code":["t0.toString() == \"(3x2x1):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]\"","x0.toString() == \"(1x2x3):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]\""]},
+
         {"kind":"when","text":"","code":["out0 = Tsr.of(\"i0xi1\", [t0, x0])"]},
+
         {"kind":"then","text":"","code":["out0.toString() == \"(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]\""]}
       ],
       "problems":"[]"

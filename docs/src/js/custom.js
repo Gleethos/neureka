@@ -226,9 +226,14 @@ function createLoaderDropDownFor(specName, expandableFeature) {
 
         // Before we toggle the content we need to "untoggle" all the sibling contents:
         $('.content').each((index, current)=>{ $(current).hide(100); });
+        $('.ContentOptionSelected').each((index, current)=>{ $(current).removeClass('ContentOptionSelected'); });
 
         // We switch the content display attribute:
         if ( currentlyHidden ) content.show(100); else content.hide(100);
+        if ( currentlyHidden )
+            button.addClass('ContentOptionSelected');
+        else
+            button.removeClass('ContentOptionSelected');
     });
 
     return wrapper;
@@ -270,15 +275,22 @@ function createUIForFeature(featureData) {
     let blocks = $('<div></div>');
     // We iterate over the blocks:#
     featureData['blocks'].forEach((block)=>{
+        let kind = block['kind'];
+
         let blockDiv = $('<div></div>');
         let blockTitle = $('<div style="width:100%"></div>');
-        blockTitle.html("<i>"+uppercaseFirstLetter(block['kind'])+"</i> "+lowercaseFirstLetter(block['text']));
-        let blockCode = $('<pre style="width:100%"></pre>');
-        let codeWrapper = $('<code class="hljs language-java" style="box-shadow: inset 0 0 3px 0px #767676"></code>');
-        blockCode.append(codeWrapper);
-        codeWrapper.text(block['code'].join("\n"));
+        blockTitle.html("<i>"+uppercaseFirstLetter(kind)+"</i> "+lowercaseFirstLetter(block['text']));
         blockDiv.append(blockTitle);
-        blockDiv.append(blockCode);
+        if ( kind === 'where' ) {
+            let table = dictionaryOfHeaderNamesToColumnArraysToTable(block['code']);
+            blockDiv.append(table);
+        } else {
+            let blockCode = $('<pre style="width:100%"></pre>');
+            let codeWrapper = $('<code class="hljs language-java" style="box-shadow: inset 0 0 3px 0px #767676"></code>');
+            blockCode.append(codeWrapper);
+            codeWrapper.text(block['code'].join("\n"));
+            blockDiv.append(blockCode);
+        }
         blocks.append(blockDiv);
     });
     return wrapper.append(blocks);
@@ -286,17 +298,49 @@ function createUIForFeature(featureData) {
 
 // Takes a string and makes the first letter uppercase:
 function uppercaseFirstLetter(string) {
-    if ( string.length == 0 ) return string;
+    if ( string.length === 0 ) return string;
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 // Takes a string and makes the first letter lowercase:
 function lowercaseFirstLetter(string) {
-    if ( string.length == 0 ) return string;
+    if ( string.length === 0 ) return string;
     return string.charAt(0).toLowerCase() + string.slice(1);
 }
 
+// The following method takes a json in the format
+// {"column1":["row-value1", "row-value2", ...], "column2":["row-value1", "row-value2", ...], ...}
+// and returns a table with the specified columns and values.
+function dictionaryOfHeaderNamesToColumnArraysToTable(dataTable) {
+    console.log(dataTable)
+    let headers = [];
+    let table = $('<table class="DataTable"></table>');
+    let header = $('<tr></tr>');
+    let numberOfColumns = 0;
+    for ( let headerName in dataTable ) {
+        headers.push(headerName);
+        let columns = dataTable[headerName].length;
+        if ( columns > numberOfColumns ) numberOfColumns = columns;
+        let headerCell = $('<th></th>');
+        headerCell.text(headerName);
+        header.append(headerCell);
+    }
+    if ( headers.length === 0 ) return table;
+    table.append(header);
+    for ( let i = 0; i < numberOfColumns; i++ ) {
+        let row = $('<tr></tr>');
+        for ( let j = 0; j < headers.length; j++ ) {
+            let cell = $('<td></td>');
+            cell.text(dataTable[headers[j]][i]);
+            row.append(cell);
+        }
+        table.append(row);
+    }
+    return $('<div style="overflow: auto;"></div>').append(table);
+}
 
+
+// -----------------------------------------
 // This is for html based dynamic content:
 
 function capitalize(input) {

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.135 seconds"
+    "duration":"0.218 seconds"
   },
 
   "title":"Devices manage the states of the tensors they store!",
@@ -16,19 +16,26 @@
     {
       "id":"We can use the access device API to read from a tensor.",
       "result":"PASS",
-      "duration":"0.028 seconds",
+      "duration":"0.074 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We fetch the required device instance from its interface.","code":["var device = Device.get(deviceType)"]},
+
         {"kind":"and","text":"We fetch the array type of the tested data type!","code":["var arrayType = DataType.of(type).dataArrayType()"]},
+
         {"kind":"and","text":"A tensor filled with 4 values which we are going to store on the previously fetched device.","code":["var t = Tsr.of(type).withShape(4).andFill(fill).to(device)"]},
+
         {"kind":"and","text":"A slice from the above tensor.","code":["var s = t[1..2]"]},
+
         {"kind":"expect","text":"The device reports that both tensors have the same data array size.","code":["device.access(t).dataSize == 4","device.access(s).dataSize == 4"]},
+
         {"kind":"and","text":"Reading the underlying tensor data from the device will yield the expected result.","code":["device.access(t).readAll(false) == expected","device.access(s).readAll(false) == expected","device.access(t).readAll(true)  == expected","device.access(s).readAll(true)  == expected"]},
+
         {"kind":"and","text":"This is also true for when reading at a particular index.","code":["device.access(t).readArray(arrayType, 1, 1) == [expected[1]]","device.access(s).readArray(arrayType, 1, 1) == [expected[1]]","device.access(t).readArray(arrayType, 2, 1) == [expected[2]]","device.access(s).readArray(arrayType, 2, 1) == [expected[2]]"]},
-        {"kind":"where","text":"We use the following data:","code":[]}
+
+        {"kind":"where","text":"We use the following data:","code":{"deviceType":["CPU","CPU","CPU","CPU","CPU","CPU","GPU","CPU"],"type":["class java.lang.Integer","class java.lang.Short","class java.lang.Long","class java.lang.Byte","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Character"],"fill":["[2, 1]","[2, 7, 8]","[6, 2, 6]","[6, 2, 7]","[3.4, 3.0]","[5.7, -1.0]","[5.7, -1.0]","[6, a]"],"expected":["[2, 1, 2, 1]","[2, 7, 8, 2]","[6, 2, 6, 6]","[6, 2, 7, 6]","[3.4, 3.0, 3.4, 3.0]","[5.7, -1.0, 5.7, -1.0]","[5.7, -1.0, 5.7, -1.0]","[6, a, 6, a]"]}}
       ],
       "problems":"[]"
     },
@@ -36,18 +43,24 @@
     {
       "id":"We can use the access device API to write to a tensor",
       "result":"PASS",
-      "duration":"0.028 seconds",
+      "duration":"0.038 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We fetch the required device instance from its interface.","code":["var device = Device.get(deviceType)"]},
+
         {"kind":"and","text":"We fetch the array type of the tested data type!","code":["var arrayType = DataType.of(type).dataArrayType()"]},
+
         {"kind":"and","text":"A tensor filled with 4 values which we are going to store on the previously fetched device.","code":["var t = Tsr.of(type).withShape(4).andFill(fill).to(device)"]},
+
         {"kind":"and","text":"A slice from the above tensor.","code":["var s = t[1..2]"]},
+
         {"kind":"when","text":"We write some test data into different ranges within the 2 tensors.","code":["device.access(t).writeFrom(write, 0).intoRange(0,2)","device.access(s).writeFrom(write, 0).intoRange(2,4)"]},
+
         {"kind":"then","text":"Reading the previously written data should yield the expected result.","code":["device.access(t).readArray(arrayType, 0, 2) == [expected[0],expected[1]]","device.access(s).readArray(arrayType, 2, 2) == [expected[2],expected[3]]"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"deviceType":["CPU","CPU","CPU","CPU","CPU","CPU","GPU"],"type":["class java.lang.Integer","class java.lang.Short","class java.lang.Long","class java.lang.Byte","class java.lang.Double","class java.lang.Float","class java.lang.Float"],"fill":["[2, 1]","[2, 7, 8]","[6, 2, 6]","[6, 2, 7]","[3.4, 3.0]","[5.7, -1.0]","[5.7, -1.0]"],"write":["[5]","[7]","[1]","[8]","[3]","[4]","[8]"],"expected":["[5, 1, 5, 1]","[7, 7, 7, 2]","[1, 2, 1, 6]","[8, 2, 8, 6]","[3.0, 3.0, 3.0, 3.0]","[4.0, -1.0, 4.0, -1.0]","[8.0, -1.0, 8.0, -1.0]"]}}
       ],
       "problems":"[]"
     }

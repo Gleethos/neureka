@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"7.264 seconds"
+    "duration":"8.678 seconds"
   },
 
   "title":"The Neureka context can be used and configured as expected.",
@@ -16,14 +16,17 @@
     {
       "id":"Neureka class instance has expected behaviour.",
       "result":"PASS",
-      "duration":"0.150 seconds",
+      "duration":"0.230 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"Important settings have their expected states.","code":["!Neureka.get().settings().isLocked()","!Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads()","!Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()"]},
+
         {"kind":"when","text":"Once something is changes to false...","code":["Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = true"]},
+
         {"kind":"then","text":"This setting change applies!","code":["Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()","!Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()"]},
+
         {"kind":"and","text":"The version number is as expected!","code":["Neureka.version()==\"0.17.0\""]}
       ],
       "problems":"[]"
@@ -32,21 +35,30 @@
     {
       "id":"Neureka settings class can be locked causing its properties to be immutable.",
       "result":"PASS",
-      "duration":"1.213 seconds",
+      "duration":"1.819 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"Something used to set a property and something to get the property.","code":["def set = { it -> setter(Neureka.get().settings(), it) }","def get = { getter(Neureka.get().settings()) }"]},
+
         {"kind":"expect","text":"Initially the property has the expected value.","code":["get() == value"]},
+
         {"kind":"when","text":"We lock the settings object...","code":["Neureka.get().settings().setIsLocked(true)"]},
+
         {"kind":"and","text":"We try to set the property to another value...","code":["set(!value)"]},
+
         {"kind":"then","text":"The property is not changed!","code":["get() == value"]},
+
         {"kind":"when","text":"We unlock the settings object...","code":["Neureka.get().settings().setIsLocked(false)"]},
+
         {"kind":"and","text":"Again we try to set the property to another value...","code":["set(!value)"]},
+
         {"kind":"then","text":"The property is changed!","code":["get() != value"]},
+
         {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
-        {"kind":"where","text":"The properties used are boolean types.","code":[]}
+
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure5@62de3a8b","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure6@4f996dbd","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure7@3b2037ce","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure8@65b2e57b","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure9@1f138a9c","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure10@6309825","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure11@4d9ce295","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure12@16e10eee","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure13@23b30560","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure14@1684f3ac"],"setter":["ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure15@647856bc","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure16@440d1132","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure17@fe0e99b","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure18@7cd3ab96","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure19@4c2d419e","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure20@114fe054","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure21@3b54b936","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure22@6ad6491d","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure23@3acb52c8","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure24@288c3adc"]}}
       ],
       "problems":"[]"
     },
@@ -54,15 +66,19 @@
     {
       "id":"Every Thread instance has their own Neureka instance.",
       "result":"PASS",
-      "duration":"0.093 seconds",
+      "duration":"0.199 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A map containing entries for Neureka instances.","code":["def map = ['instance 1':null, 'instance 2':null]"]},
+
         {"kind":"when","text":"Two newly instantiated tensors store their Neureka instances in the map.","code":["def t1 = new Thread({ map['instance 1'] = Neureka.get() })","def t2 = new Thread({ map['instance 2'] = Neureka.get() })"]},
+
         {"kind":"and","text":"The tensors are being started and joined.","code":["t1.start()","t2.start()","t1.join()","t2.join()"]},
+
         {"kind":"then","text":"The map entries will no longer be filled with null.","code":["map['instance 1'] != null","map['instance 2'] != null"]},
+
         {"kind":"and","text":"The Neureka instances stored in the map will be different objects.","code":["map['instance 1'] != map['instance 2']"]}
       ],
       "problems":"[]"
@@ -71,13 +87,14 @@
     {
       "id":"Various library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"2.178 seconds",
+      "duration":"2.669 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
-        {"kind":"where","text":"The following objects are being used..","code":[]}
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU[coreCount=32]","DataType[class=String(String)]","Relation[parent=null,children=null,shapeRelations=null]","JITProp@187365581[finished=0,pending=0,isDone=false]","Neureka[settings=Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false],view=Neureka.Settings.View[ndArrayPrintSettings=neureka.view.NDPrintSettings@3b1698d4],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false],utility=neureka.Neureka$Utility@4462a008,backend=BackendContext[size=37]]","Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false],view=Neureka.Settings.View[ndArrayPrintSettings=neureka.view.NDPrintSettings@3b1698d4],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false]","Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false]","Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false]","Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true]","Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false]","Neureka.Settings.View[ndArrayPrintSettings=neureka.view.NDPrintSettings@3b1698d4]","Functions[_dimTrim=dimtrim(I[0]),_idy=(I[0] <- I[1]),_conv=(I[0] x I[1]),_plus=(I[0] + I[1]),_plusAssign=(I[0] <- (I[0] + I[1])),_minus=(I[0] - I[1]),_minusAssign=(I[0] <- (I[0] - I[1])),_div=(I[0] / I[1]),_divAssign=(I[0] <- (I[0] / I[1])),_pow=(I[0] ** I[1]),_powAssign=(I[0] <- (I[0] ** I[1])),_mul=(I[0] * I[1]),_mulAssign=(I[0] <- (I[0] * I[1])),_add=(I[0] + I[1]),_addAssign=(I[0] <- (I[0] + I[1])),_mod=(I[0] % I[1]),_modAssign=(I[0] <- (I[0] % I[1])),_neg=(-1.0 * I[0]),_matMul=(I[0] @ I[1]),_transpose2D=([1,0]:(I[0])),_random=rand(I[0]),_tanh=tanh(I[0]),_fastTanh=fast_tanh(I[0]),_softsign=softsign(I[0]),_sigmoid=sig(I[0]),_gaus=gaus(I[0]),_fastGaus=fast_gaus(I[0]),_ln=ln(I[0]),_quad=quad(I[0]),_relu=relu(I[0]),_abs=abs(I[0]),_sin=sin(I[0]),_cos=cos(I[0]),_softplus=softplus(I[0]),_silu=silu(I[0]),_gelu=gelu(I[0]),_selu=selu(I[0]),$jacocoData=[Z@3e94003f]","Functions[_dimTrim=dimtrim(I[0]),_idy=(I[0] <- I[1]),_conv=(I[0] x I[1]),_plus=(I[0] + I[1]),_plusAssign=(I[0] <- (I[0] + I[1])),_minus=(I[0] - I[1]),_minusAssign=(I[0] <- (I[0] - I[1])),_div=(I[0] / I[1]),_divAssign=(I[0] <- (I[0] / I[1])),_pow=(I[0] ** I[1]),_powAssign=(I[0] <- (I[0] ** I[1])),_mul=(I[0] * I[1]),_mulAssign=(I[0] <- (I[0] * I[1])),_add=(I[0] + I[1]),_addAssign=(I[0] <- (I[0] + I[1])),_mod=(I[0] % I[1]),_modAssign=(I[0] <- (I[0] % I[1])),_neg=(-1.0 * I[0]),_matMul=(I[0] @ I[1]),_transpose2D=([1,0]:(I[0])),_random=rand(I[0]),_tanh=tanh(I[0]),_fastTanh=fast_tanh(I[0]),_softsign=softsign(I[0]),_sigmoid=sig(I[0]),_gaus=gaus(I[0]),_fastGaus=fast_gaus(I[0]),_ln=ln(I[0]),_quad=quad(I[0]),_relu=relu(I[0]),_abs=abs(I[0]),_sin=sin(I[0]),_cos=cos(I[0]),_softplus=softplus(I[0]),_silu=silu(I[0]),_gelu=gelu(I[0]),_selu=selu(I[0]),$jacocoData=[Z@3e94003f]","BackendContext[size=37]","FunctionCache[size=164]","ExecutionCall[inputs=[..1..],device=CPU[coreCount=32],operation=Addition@14a81766[identifier='add',operator='+'],algorithm=LazyRef<>[?],arguments=[DerivIdx[-1],VarIdx[-1]]]","CustomDeviceCleaner@4fe7d171[registered=0]","GraphNode@75cc77ce[parents=[?, ?],function=(I[0] * I[1]),shape=1]","GraphLock@472f3475[owner=(I[0] * (3.0 / 2.0))]","FileDevice[directory=.,stored={},loadable=[],loaded=[]]","NDConfiguration@2096a6fe#2096a6fe[layout=ROW_MAJOR,shape=[2, 3, 8, 4],translation=[96, 32, 4, 1],indicesMap=[96, 32, 4, 1],spread=[1, 1, 1, 1],offset=[0, 0, 0, 0]]","NDConfiguration@6b2e8133#6b2e8133[layout=UNSPECIFIC,shape=[2, 3, 8, 4],translation=[96, 200, 8, 1],indicesMap=[96, 32, 4, 1],spread=[1, 1, 1, 1],offset=[0, 0, 0, 0]]","NDConfiguration@fd5ec1a#fd5ec1a[layout=UNSPECIFIC,shape=[2, 3, 8, 4],translation=[96, 32, 4, 1],indicesMap=[96, 92, 4, 1],spread=[1, 4, 1, 1],offset=[0, 0, 0, 0]]","NDConfiguration@34ec164e#34ec164e[layout=ROW_MAJOR,shape=[2, 3, 8],translation=[24, 8, 1],indicesMap=[24, 8, 1],spread=[1, 1, 1],offset=[0, 0, 0]]"]}}
       ],
       "problems":"[]"
     },
@@ -85,13 +102,14 @@
     {
       "id":"OpenCL related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"0.290 seconds",
+      "duration":"0.284 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaCLObject.toString()).matches()"]},
-        {"kind":"where","text":"The following objects are being used..","code":[]}
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaCLObject":["CLContext@1dab94bc[platforms=[OpenCLPlatform@6b05a005[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x196b120a4a0],kernels=[..46..]]]]","OpenCLPlatform@6b05a005[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x196b120a4a0],kernels=[..46..]]","OpenCLDevice[deviceId=cl_device_id[0x196b8f99f70],platform=OpenCLPlatform@6b05a005[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x196b120a4a0],kernels=[..46..]]]"]}}
       ],
       "problems":"[]"
     },
@@ -99,14 +117,16 @@
     {
       "id":"Backend related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"3.121 seconds",
+      "duration":"3.191 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
         {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
-        {"kind":"where","text":"The following operations are being used..","code":[]}
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":["Absolute@1b69b0a4[identifier='abs',operator='abs']","Cosinus@29b8462b[identifier='cos',operator='cos']","Gaussian@6b21a1bd[identifier='gaus',operator='gaus']","GaussianFast@5f77a6fd[identifier='fast_gaus',operator='fast_gaus']","Identity@115d4af2[identifier='idy',operator='idy']","Quadratic@56aa4bbc[identifier='quad',operator='quad']","ReLU@56150005[identifier='relu',operator='relu']","Sigmoid@55e74824[identifier='sig',operator='sig']","Sinus@355ece54[identifier='sin',operator='sin']","Softplus@1f396772[identifier='softplus',operator='softplus']","Tanh@2ecd3df0[identifier='tanh',operator='tanh']","TanhFast@57c11261[identifier='fast_tanh',operator='fast_tanh']","GaTU@9f9406d[identifier='gatu',operator='gatu']","GaSU@71bd1f4[identifier='gasu',operator='gasu']","Softsign@433bfee[identifier='softsign',operator='softsign']","Logarithm@28b0b76e[identifier='ln',operator='ln']","SiLU@423b742d[identifier='silu',operator='silu']","GeLU@bc5604b[identifier='gelu',operator='gelu']","SeLU@3b8c7fd[identifier='selu',operator='selu']","Summation@251bcfc2[identifier='sumJs',operator='sumJs']","Product@14b0334a[identifier='prodJs',operator='prodJs']","Power@4e76fa72[identifier='power',operator='**']","Division@23cafecb[identifier='divide',operator='/']","Multiplication@6a66a7d8[identifier='multiply',operator='*']","Modulo@4df91059[identifier='modulo',operator='%']","Subtraction@7f28f5[identifier='subtract',operator='-']","Addition@14a81766[identifier='add',operator='+']","XConv@26b1a8e8[identifier='mul_conv',operator='x']","XConvLeft@2f55ccfb[identifier='inv_convolve_mul_left',operator='«x']","XConvRight@54193715[identifier='inv_convolve_mul_right',operator='x»']","MatMul@385a96b7[identifier='matMul',operator='@']","DimTrim@5310ffd4[identifier='dimtrim',operator='dimtrim']","Reshape@320d25f3[identifier='reshape',operator=',']","AssignLeft@4e86a2f9[identifier='left_inline',operator='<']","Randomization@34f74cca[identifier='random',operator='rand']","Cat@3dc4ef0f[identifier='concat',operator='concat']","Slice@6b0ccf8e[identifier='slice',operator='slice']"]}}
       ],
       "problems":"[]"
     }

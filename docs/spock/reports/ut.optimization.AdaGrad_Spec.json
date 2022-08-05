@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.056 seconds"
+    "duration":"0.072 seconds"
   },
 
   "title":"",
@@ -16,15 +16,18 @@
     {
       "id":"AdaGrad optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.041 seconds",
+      "duration":"0.053 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tsr g = Tsr.of(expectedWeight)"]},
+
         {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tsr.of( gradient ) )","w.applyGradient()"]},
+
         {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.translation().hashCode()==g.translation().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00999","0.01707","0.01280001","0.01819","0.01481","0.01161","0.0170001","0.02075","0.02426","0.02198"]}}
       ],
       "problems":"[]"
     }

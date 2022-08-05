@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.046 seconds"
+    "duration":"0.048 seconds"
   },
 
   "title":"Tensors Exception Behavior",
@@ -22,7 +22,9 @@
       },
       "blocks":[
         {"kind":"given","text":"A new tensor instance used for exception testing.","code":["Tsr<Integer> t = Tsr.of([6, 6], -1)"]},
+
         {"kind":"when","text":"We try to inject an empty tensor whose size does of course not match...","code":["t[[1..3], [1..3]] = Tsr.newInstance() as Tsr<Integer>"]},
+
         {"kind":"then","text":"The expected message is being thrown, which tells us that","code":["def exception = thrown(IllegalArgumentException)","assert exception.message.contains(\"Provided tensor is empty! Empty tensors cannot be injected.\")"]}
       ],
       "problems":"[]"
@@ -31,16 +33,20 @@
     {
       "id":"Passing null to various methods of the tensor API will throw exceptions.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Tsr<Integer> t = Tsr.of(1, 2, 3)"]},
+
         {"kind":"when","text":"","code":["errorCode(t)"]},
+
         {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
         {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@43741543","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@2dae69c9","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@6bfe9e3f","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@6b4f4d4a","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@666d0238","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@52fe01c3","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@79a57e00","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@124c9ce7","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@27be85ef","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@2315f94d","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@3d92f5a9","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@7d001c9b","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@275748c3"]}}
       ],
       "problems":"[]"
     },
@@ -54,6 +60,7 @@
       },
       "blocks":[
         {"kind":"when","text":"A tensor is being instantiated with a nonsensical parameter.","code":["Tsr.ofRandom(Scanner.class, 2, 4)"]},
+
         {"kind":"then","text":"An exception is being thrown which tells us about it.","code":["def exception = thrown(IllegalArgumentException)","exception.message.contains(","        \"Could not create a random tensor for type 'class java.util.Scanner'!\"",")"]}
       ],
       "problems":"[]"
@@ -68,7 +75,9 @@
       },
       "blocks":[
         {"kind":"given","text":"A new test tensor is being instantiated.","code":["Tsr t = Tsr.of( [2, 3], -1..6 )"]},
+
         {"kind":"when","text":"A nonsensical object is being passed to the tensor.","code":["t[ [null] ]"]},
+
         {"kind":"then","text":"An exception is being thrown which tells us about it.","code":["def exception = thrown(IllegalArgumentException)","exception.message.contains(\"List of indices/ranges may not contain entries which are null!\")"]}
       ],
       "problems":"[]"
@@ -83,7 +92,9 @@
       },
       "blocks":[
         {"kind":"when","text":"Some more complex slicing is being performed...","code":["Tsr t = Tsr.of( [3, 3, 3, 3], 0 )","t[1..2, 1..3, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4..2 )"]},
+
         {"kind":"then","text":"The slice range 1..3 causes and exception!","code":["def exception = thrown(IllegalArgumentException)","exception.message == \"java.lang.IllegalArgumentException: \" +","\"Cannot create slice because ranges are out of the bounds of the targeted tensor.\\n\" +","\"At index '1' : offset '1' + shape '3' = '4',\\n\" +","\"which is larger than the target shape '3' at the same index!\""]},
+
         {"kind":"and","text":"The logger logs the exception message!","code":["1 * System.err.println({it.endsWith(","    \"Cannot create slice because ranges are out of the bounds of the targeted tensor.\\n\" +","    \"At index '1' : offset '1' + shape '3' = '4',\\n\" +","    \"which is larger than the target shape '3' at the same index!\")","})"]}
       ],
       "problems":"[]"
@@ -98,6 +109,7 @@
       },
       "blocks":[
         {"kind":"when","text":"","code":["var t = Tsr.ofInts().withShape().all(0)"]},
+
         {"kind":"then","text":"","code":["thrown(IllegalArgumentException)"]}
       ],
       "problems":"[]"
@@ -112,7 +124,9 @@
       },
       "blocks":[
         {"kind":"given","text":"We have a regular tensor of 2 bytes!","code":["var t = Tsr.ofBytes().withShape(2).andFill(-1, 2)"]},
+
         {"kind":"when","text":"We try to convert the tensor to an instance of type \"Random\"...","code":["t as Random"]},
+
         {"kind":"then","text":"This will obviously least to an exception being thrown.","code":["thrown(IllegalArgumentException)"]}
       ],
       "problems":"[]"
@@ -127,8 +141,11 @@
       },
       "blocks":[
         {"kind":"when","text":"","code":["Tsr.ofInts().withShape((List)null).all(0)"]},
+
         {"kind":"then","text":"","code":["thrown(IllegalArgumentException)"]},
+
         {"kind":"when","text":"","code":["Tsr.ofInts().withShape((int[])null).all(0)"]},
+
         {"kind":"then","text":"","code":["thrown(IllegalArgumentException)"]}
       ],
       "problems":"[]"

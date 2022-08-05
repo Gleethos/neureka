@@ -22,6 +22,28 @@
     <script src="src/js/popper.min.js"></script>
     <!-----------------------------------CUSTOM CSS------------------------------------------>
     <link rel="stylesheet" href="src/css/style.css">
+    <style>
+        table.DataTable {
+            width: 100%;
+            background-color: #FFFFFF;
+            border-collapse: collapse;
+            border-width: 1px;
+            border-color: #7EA8F8;
+            border-style: solid;
+            color: #000000;
+        }
+
+        table.DataTable td, table.DataTable th {
+            border-width: 1px;
+            border-color: #001E56;
+            border-style: solid;
+            padding: 2px;
+        }
+
+        table.DataTable thead {
+            background-color: #7EA8F8;
+        }
+    </style>
     <!-----------------------------------HIGHLIGHT CSS------------------------------------------>
     <link rel="stylesheet" href="src/css/lang-styles/intellij-light.min.css">
     <script src="src/js/highlight.min.js"></script>
@@ -204,6 +226,10 @@
                                 }
                                 .ContentOption:hover {
                                     background-size: 4px 100%;
+                                }
+
+                                .ContentOptionSelected {
+                                    background-size: 100% 100%;
                                 }
                             </style>
                                         <script>

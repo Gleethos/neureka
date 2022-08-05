@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.043 seconds"
+    "duration":"0.061 seconds"
   },
 
   "title":"",
@@ -16,16 +16,20 @@
     {
       "id":"DataType multi-ton instances behave as expected.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A \"DataType\" instance representing / wrapping the relevant datatype Class passed to \"instance(...).\"","code":["DataType<?> dt = DataType.of( typeClass )"]},
+
         {"kind":"expect","text":"The found instance is not null!","code":["dt != null"]},
+
         {"kind":"and","text":"It contains the Class that it represents.","code":["dt.getRepresentativeType() == targetClass"]},
+
         {"kind":"and","text":"This class either does or does not implement the \"NumericType\" interface.","code":["dt.typeClassImplements(NumericType.class) == isNumericType"]},
-        {"kind":"where","text":"The following data is being used :","code":[]}
+
+        {"kind":"where","text":"The following data is being used :","code":{"typeClass":["class neureka.dtype.custom.I16","class neureka.dtype.custom.UI8","class java.lang.Float","class java.lang.Double","class java.lang.Short","class java.lang.Byte","class java.lang.String","class java.util.Date","class java.lang.Object","class spock.lang.Specification"],"targetClass":["class neureka.dtype.custom.I16","class neureka.dtype.custom.UI8","class neureka.dtype.custom.F32","class neureka.dtype.custom.F64","class neureka.dtype.custom.I16","class neureka.dtype.custom.I8","class java.lang.String","class java.util.Date","class java.lang.Object","class spock.lang.Specification"],"isNumericType":["true","true","true","true","true","true","false","false","false","false"]}}
       ],
       "problems":"[]"
     }

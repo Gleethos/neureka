@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.838 seconds"
+    "duration":"0.969 seconds"
   },
 
   "title":"",
@@ -16,15 +16,18 @@
     {
       "id":"The simple CPU matrix multiplication implementation works as expected.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var C = new double[M*N]"]},
+
         {"kind":"when","text":"","code":["CPUMatMul.execute(true, A, B, C, M, K, N)"]},
+
         {"kind":"then","text":"","code":["C == expectedC"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"A":["[4.0, 3.0, 2.0, 1.0]","[-2.0, 1.0]","[-2.0, 1.0]"],"B":["[-0.5, 1.5, 1.0, -2.0]","[-1.0, -1.5]","[-1.0, -1.5]"],"M":["2","1","2"],"K":["2","2","1"],"N":["2","1","2"],"expectedC":["[1.0, 0.0, 0.0, 1.0]","[0.5]","[2.0, 3.0, -1.0, -1.5]"]}}
       ],
       "problems":"[]"
     },
@@ -32,7 +35,7 @@
     {
       "id":"The internal matrix multiplication test script runs!",
       "result":"PASS",
-      "duration":"0.762 seconds",
+      "duration":"0.881 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.374 seconds"
+    "duration":"2.046 seconds"
   },
 
   "title":"",
@@ -16,14 +16,17 @@
     {
       "id":"GraphNode instantiation works as expected when the context argument is a GraphLock.",
       "result":"PASS",
-      "duration":"1.139 seconds",
+      "duration":"1.422 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"Mocked arguments used to call the GraphNode constructor.","code":["Tsr           payload  = Mock( Tsr )","Supplier<Tsr> supplier = () -> Result.of(payload)","Function      function = Mock( Function )","Object        context = Mock( GraphLock )","Device        device = Mock( Device )"]},
+
         {"kind":"and","text":"We set the payload up so that it return the mocked device!","code":["payload.getDevice() >> device"]},
+
         {"kind":"when","text":"We try to instantiate a GraphNode...","code":["new GraphNode( function, context, supplier )"]},
+
         {"kind":"then","text":"The mock objects are being called as expected.","code":["1 * function.isDoingAD() >> true","1 * payload.set( _ )","1 * device.access( _ ) >> Mock(Device.Access)","(1.._) * payload.getNDConf() >> Mock(NDConfiguration)"]}
       ],
       "problems":"[]"
@@ -32,14 +35,17 @@
     {
       "id":"GraphNode instantiation works as expected when the context argument is an ExecutionCall.",
       "result":"PASS",
-      "duration":"0.228 seconds",
+      "duration":"0.614 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"Mocked arguments used to call the GraphNode constructor.","code":["Tsr payload = Mock( Tsr )","Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }","Supplier<Tsr> supplier = () -> Result.of(payload)","AbstractOperation type = Mock( AbstractOperation )","Function function = Mock( Function )","Object call = Mock( ExecutionCall )","Device device = Mock( Device )","def inputsNodeMock = Mock( GraphNode )","GraphNode result"]},
+
         {"kind":"when","text":"We try to instantiate a GraphNode...","code":["result = new GraphNode( function, call, supplier )"]},
+
         {"kind":"then","text":"The resulting GraphNode has expected properties.","code":["result.getNodeID() != 0","result.type() == \"BRANCH\"","result.getLock() != null","result.function != null","result.hasDerivatives() == false","result.usesAD()","result.size() == 0","result.usesReverseAD()"]},
+
         {"kind":"and","text":"The mock objects have been called as expected.","code":["(3.._) * call.inputs() >> inputs","(5.._) * inputsNodeMock.getLock() >> Mock( GraphLock )","(1.._) * function.isDoingAD() >> true","(1.._) * payload.getDevice() >> device","(1.._) * payload.set( _ )","(1.._) * payload.getNDConf() >> Mock(NDConfiguration)","(1.._) * device.access( _ ) >> Mock( Device.Access )","(4.._) * inputs[0].getGraphNode() >> inputsNodeMock","(3.._) * inputs[1].getGraphNode() >> inputsNodeMock","(3.._) * inputs[2].getGraphNode() >> inputsNodeMock","(1.._) * inputsNodeMock.getMode() >> -2","(1.._) * inputs[0].rqsGradient() >> true","(1.._) * inputs[1].rqsGradient() >> false","(1.._) * inputs[2].rqsGradient() >> true","(1.._) * call.autogradMode() >> AutoDiffMode.FORWARD_AND_BACKWARD","(3.._) * function.getOperation() >> type","(0.._) * type.isDifferentiable() >> true","(3.._) * type.isInline() >> false","(0.._) * type.getOperator() >> \"*\"","(0.._) * inputsNodeMock.getPayload() >> payload","(0.._) * payload.hashCode() >> 3"]}
       ],
       "problems":"[]"

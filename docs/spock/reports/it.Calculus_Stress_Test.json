@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"7.008 seconds"
+    "duration":"5.946 seconds"
   },
 
   "title":"",
@@ -16,19 +16,26 @@
     {
       "id":"Stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.573 seconds",
+      "duration":"3.205 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["def stress = ( Tsr t ) -> {","    t = t + Tsr.of( t.shape(), -3d..12d )","    t = t * Tsr.of( t.shape(),  2d..3d  )","    t = t / Tsr.of( t.shape(),  1d..2d  )","    t = t **Tsr.of( t.shape(),  2d..1d  )","    t = t - Tsr.of( t.shape(), -2d..2d  )","    return t","}"]},
+
         {"kind":"and","text":"","code":["Tsr source = Tsr.of( [3, 3, 3, 3], -1d ).to( device )"]},
+
         {"kind":"when","text":"","code":["source[1..2, 0..2, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4d..2d )","Tsr t = source[1..2, 0..2, 1..1, 0d..2d]"]},
+
         {"kind":"then","text":"","code":["t.toString() == Tsr.of( [2, 3, 1, 3], -4d..2d ).toString()"]},
+
         {"kind":"when","text":"","code":["t = stress(t)"]},
+
         {"kind":"then","text":"","code":["t.toString({it.hasSlimNumbers = true}) ==","\"(2x3x1x3):[\" +","    \"198, -6.5, \" +","    \"36, -2.5, \" +","    \"2, 6.5, \" +","    \"\" +","    \"101, 0, \" +","    \"15, 4, \" +","    \"146, 13, \" +","    \"\" +","    \"400, 17, \" +","    \"194, 15.5, \" +","    \"101, -4.5\" +","\"]\""]},
+
         {"kind":"and","text":"","code":["(device instanceof OpenCLDevice) || t.unsafe.data == [198.0, -6.5, 36.0, -2.5, 2.0, 6.5, 101.0, 0.0, 15.0, 4.0, 146.0, 13.0, 400.0, 17.0, 194.0, 15.5, 101.0, -4.5]","(device instanceof OpenCLDevice) || source.unsafe.data == [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -4.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 2.0, -4.0, -3.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 2.0, -4.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0]"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x16c730bef80],platform=OpenCLPlatform@51d4ac0a[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x16c72038520],kernels=[..46..]]]"]}}
       ],
       "problems":"[]"
     },
@@ -36,15 +43,18 @@
     {
       "id":"Dot operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.077 seconds",
+      "duration":"0.104 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Tsr<Double> t = Tsr.of( shape, -4d..2d )"]},
+
         {"kind":"when","text":"","code":["t = t.convDot( t.T() )"]},
+
         {"kind":"then","text":"","code":["t.toString() == expected"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"shape":["[2, 3]","[2, 3]","[2, 1, 3]","[2, 1, 3]"],"expected":["(2x1x2):[29.0, 2.0, 2.0, 2.0]","(2x1x2):[29.0, 2.0, 2.0, 2.0]","(2x1x1x1x2):[29.0, 2.0, 2.0, 2.0]","(2x1x1x1x2):[29.0, 2.0, 2.0, 2.0]"]}}
       ],
       "problems":"[]"
     },
@@ -52,15 +62,18 @@
     {
       "id":"The broadcast operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"4.702 seconds",
+      "duration":"0.763 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Tsr<Double> t1 = Tsr.of( shape1, -4d..2d ).to( device )","Tsr<Double> t2 = Tsr.of( shape2, -3d..5d ).to( device )"]},
+
         {"kind":"when","text":"","code":["Tsr t = Tsr.of( operation, [t1,t2] )"]},
+
         {"kind":"then","text":"","code":["t.toString() == expected"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x16c730bef80],platform=OpenCLPlatform@51d4ac0a[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x16c72038520],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x16c730bef80],platform=OpenCLPlatform@51d4ac0a[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x16c72038520],kernels=[..46..]]]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x16c730bef80],platform=OpenCLPlatform@51d4ac0a[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x16c72038520],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x16c730bef80],platform=OpenCLPlatform@51d4ac0a[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x16c72038520],kernels=[..46..]]]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x16c730bef80],platform=OpenCLPlatform@51d4ac0a[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x16c72038520],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x16c730bef80],platform=OpenCLPlatform@51d4ac0a[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x16c72038520],kernels=[..46..]]]","CPU[coreCount=32]","CPU[coreCount=32]"],"shape1":["[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]"],"shape2":["[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]"],"operation":["i0%i1","i0%i1","i0*i1","i0*i1","i0*i1","i0*i1","i0+i1","i0+i1","i0+i1","i0+i1","i0-i1","i0-i1","i0-i1","i0-i1","i0/i1","i0/i1"],"expected":["(2x2):[-1.0, -0.0, -0.0, NaN]","(2x3x2):[-1.0, -0.0, -0.0, NaN, -0.0, -0.0, -1.0, -1.0, 0.0, NaN, 0.0, 1.0]","(2x2):[12.0, 8.0, 3.0, -0.0]","(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]","(2x2):[12.0, 8.0, 3.0, -0.0]","(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]","(2x2):[-7.0, -6.0, -4.0, -3.0]","(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]","(2x2):[-7.0, -6.0, -4.0, -3.0]","(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]","(2x2):[-1.0, -2.0, -2.0, -3.0]","(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]","(2x2):[-1.0, -2.0, -2.0, -3.0]","(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]","(2x2):[1.33333, 2.0, 3.0, -∞]","(2x3x2):[1.33333, 2.0, 3.0, -∞, -2.0, -1.0, 0.33333, 0.5, -0.0, NaN, 1.0, 0.5]"]}}
       ],
       "problems":"[]"
     },
@@ -68,20 +81,28 @@
     {
       "id":"Activation functions work across types, on large prime sized 1D slices and non sliced 1D tensors.",
       "result":"PASS",
-      "duration":"0.945 seconds",
+      "duration":"0.947 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We create a function based on the provided expression.","code":["var func = Function.of(funExpression)"]},
+
         {"kind":"and","text":"We use a large prime number to size our tensors in order to stress workload divisibility.","code":["var PRIME_SIZE_1 = 7907","var PRIME_SIZE_2 = 7919"]},
+
         {"kind":"and","text":"We create 2 tensors storing the same values, one sliced and the other a normal tensor.","code":["var t1 = Tsr.of(type).withShape(PRIME_SIZE_1).andSeed(\"Tempeh\")","var t2 = Tsr.of(type).withShape(PRIME_SIZE_2).all(0)[9..7915]","t2[0..t2.size-1] = t1"]},
+
         {"kind":"expect","text":"The types of both tensors should match what was provided during instantiation.","code":["t1.dataType == DataType.of(type)","t1.itemType == type","t2.dataType == DataType.of(type)","t2.itemType == type"]},
+
         {"kind":"when","text":"We apply the function to both tensors...","code":["var result1 = func(t1)","var result2 = func(t2)"]},
+
         {"kind":"then","text":"First we ensure that both tensors have the correct value/element type.","code":["result1.itemType == type","result2.itemType == type"]},
+
         {"kind":"and","text":"The underlying data object should match the data array type as is defined by the data type!","code":["result1.unsafe.data.class == result1.dataType.dataArrayType()","result2.unsafe.data.class == result2.dataType.dataArrayType()"]},
+
         {"kind":"and","text":"The data of the first non slice tensor as well as its slice should be as expected.","code":["Arrays.hashCode(result1.unsafe.data) == expected[0]","Arrays.hashCode(result2.unsafe.data) == expected[1]"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float"],"funExpression":["gaus(i0)*100 % i0","gaus(i0)*100 % i0","gaus(i0)*100 % i0","tanh(i0)*100 % i0","tanh(i0)*100 % i0","tanh(i0)*100 % i0","fast_tanh(i0)*100 % i0","fast_tanh(i0)*100 % i0","fast_tanh(i0)*100 % i0","fast_gaus(i0)+i0","fast_gaus(i0)+i0","fast_gaus(i0)+i0","softsign(i0)*100 % i0","softsign(i0)*100 % i0","softsign(i0)*100 % i0","random(i0)","random(i0)"],"expected":["[-853255121, -853255121]","[-1410818458, -1410818458]","[566202463, 566202463]","[361719754, 361719754]","[-1213389248, -1213389248]","[-634381565, -634381565]","[-41932067, -41932067]","[1791804151, 1791804151]","[-634381565, -634381565]","[1214521048, 1214521048]","[614466683, 614466683]","[-1351535318, -1351535318]","[-1627096169, -1627096169]","[-1112662242, -1112662242]","[-634381565, -634381565]","[-2059799883, 276852681]","[-2100773274, -590726536]"]}}
       ],
       "problems":"[]"
     },
@@ -89,20 +110,28 @@
     {
       "id":"Activation functions work across types.",
       "result":"PASS",
-      "duration":"0.190 seconds",
+      "duration":"0.212 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We create a function based on the provided expression.","code":["var func = Function.of(funExpression)"]},
+
         {"kind":"and","text":"We use a large prime number to size our tensors in order to stress workload divisibility.","code":["var PRIME_SIZE_1 = 3","var PRIME_SIZE_2 = 5"]},
+
         {"kind":"and","text":"We create 2 tensors storing the same values, one sliced and the other a normal tensor.","code":["var t1 = Tsr.of(type).withShape(PRIME_SIZE_1).andSeed(\"Seitan\")","var t2 = Tsr.of(type).withShape(PRIME_SIZE_2).all(0)[1..3]","t2[0..t2.size-1] = t1"]},
+
         {"kind":"expect","text":"The types of both tensors should match what was provided during instantiation.","code":["t1.dataType   == DataType.of(type)","t1.itemType == type","t2.dataType   == DataType.of(type)","t2.itemType == type"]},
+
         {"kind":"when","text":"We apply the function to both tensors...","code":["var result1 = ( !derive ? func(t1) : func.derive([t1], 0) )","var result2 = ( !derive ? func(t2) : func.derive([t2], 0) )"]},
+
         {"kind":"then","text":"First we ensure that both tensors have the correct value/element type.","code":["result1.itemType == type","result2.itemType == type"]},
+
         {"kind":"and","text":"The underlying data object should match the data array type as is defined by the data type!","code":["result1.unsafe.data.class == result1.dataType.dataArrayType()","result2.unsafe.data.class == result2.dataType.dataArrayType()"]},
+
         {"kind":"and","text":"The data of the first non slice tensor as well as its slice should be as expected.","code":["result1.items == expected","result2.items == expected"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer"],"funExpression":["silu(i0)","silu(i0)","silu(i0)","silu(i0)","silu(i0)","silu(i0)","gelu(i0)","gelu(i0)","gelu(i0)","gelu(i0)","gelu(i0)","gelu(i0)","selu(i0)","selu(i0)","selu(i0)","selu(i0)","selu(i0)","selu(i0)","gatu(i0)","gatu(i0)","gatu(i0)","gatu(i0)","gatu(i0)","gatu(i0)","gasu(i0)","gasu(i0)","gasu(i0)","gasu(i0)","gasu(i0)","gasu(i0)"],"derive":["false","false","false","true","true","true","false","false","false","true","true","true","false","false","false","true","true","true","false","false","false","true","true","true","false","false","false","true","true","true"],"expected":["[2.1135352025452363, -0.23397468505726102, 1.0477889390530153]","[2.1135352, -0.23397468, 1.047789]","[0, 1766941311, 0]","[1.099546086132034, 0.17280584920363537, 1.0100270613327957]","[1.0995461, 0.17280586, 1.010027]","[0, 1, 0]","[2.277196975563254, -0.16328256348702017, 1.200361889401775]","[2.2771971, -0.16328256, 1.2003618]","[0, 1766941311, 0]","[1.0543057750427323, 0.016077333534953053, 1.0988343517880281]","[1.0543058, 0.01607734, 1.0988343]","[0, 1, 0]","[2.4387050838616458, -0.8935373895024364, 1.3932426393325066]","[2.4387052, -0.8935374, 1.3932426]","[-2, 1856526980, -2]","[1.0507009873554805, 0.8645619513449402, 1.0507009873554805]","[1.050701, 0.864562, 1.050701]","[0, 1, 0]","[0.9999999999724318, -0.34306006539262235, 0.9813017567906377]","[1.0, -0.34306008, 0.9813018]","[-1, 1, -1]","[8.91084539489384E-10, 1.3334362950250542, 0.19541950892083282]","[0.0, 1.3334364, 0.19541931]","[0, 0, 0]","[0.9259465197053056, -0.2633824974845539, 0.6998385035320221]","[0.92594653, -0.2633825, 0.6998385]","[-1, 1, -1]","[0.08862831427395856, 0.8200403847459871, 0.47525473491026016]","[0.0886283, 0.8200404, 0.47525474]","[0, 0, 0]"]}}
       ],
       "problems":"[]"
     }

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.659 seconds"
+    "duration":"2.552 seconds"
   },
 
   "title":"",
@@ -22,6 +22,7 @@
       },
       "blocks":[
         {"kind":"when","text":"Information about all existing OpenCL devices is being queried.","code":["String query = DeviceQuery.query()"]},
+
         {"kind":"then","text":"The query string contains expected properties.","code":["query.contains(\"DEVICE_NAME\")","query.contains(\"MAX_MEM_ALLOC_SIZE\")","query.contains(\"VENDOR\")","query.contains(\"CL_DEVICE_PREFERRED_VECTOR_WIDTH\")","query.contains(\"Info for device\")","query.contains(\"LOCAL_MEM_SIZE\")","query.contains(\"CL_DEVICE_TYPE\")"]}
       ],
       "problems":"[]"
@@ -36,6 +37,7 @@
       },
       "blocks":[
         {"kind":"when","text":"The first found Device instance is used.","code":["OpenCLDevice cld = Device.get('first') as OpenCLDevice"]},
+
         {"kind":"then","text":"The device has realistic properties.","code":["cld.globalMemSize() > 1000","cld.image2DMaxHeight() > 100","cld.image2DMaxWidth() > 100","cld.image3DMaxHeight() > 100","cld.image3DMaxDepth() > 0","cld.image3DMaxWidth() > 100","cld.maxWorkGroupSize() > 10","cld.maxClockFrequenzy() > 100","cld.maxClockFrequenzy() > 100","cld.maxConstantBufferSize() > 1000","cld.maxWriteImageArgs() > 1","cld.prefVecWidthChar() > 0","cld.prefVecWidthDouble() > 0","cld.prefVecWidthFloat() > 0","cld.prefVecWidthInt() > 0","cld.prefVecWidthLong() > 0","cld.prefVecWidthShort() > 0"]}
       ],
       "problems":"[]"
@@ -44,12 +46,13 @@
     {
       "id":"First found OpenCLDevice will have realistic text properties.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"when","text":"The first found Device instance is used.","code":["OpenCLDevice cld = Device.get('first') as OpenCLDevice"]},
+
         {"kind":"then","text":"The device has realistic properties.","code":["!cld.name().isBlank()","!cld.vendor().isBlank()","cld.type() != OpenCLDevice.Type.UNKNOWN","!cld.toString().isBlank()","!cld.version().isBlank()"]}
       ],
       "problems":"[]"
@@ -58,19 +61,27 @@
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"0.028 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"The first found OpenCLDevice instance.","code":["Device device = Device.get('first')"]},
+
         {"kind":"and","text":"A mocked tensor that is not outsourced.","code":["Tsr<?> t = Mock(Tsr)","t.isOutsourced() >> false"]},
+
         {"kind":"and","text":"Another mocked tensor that represents a slice of the prior one.","code":["Tsr<?> s = Mock(Tsr)"]},
+
         {"kind":"and","text":"A mocked relation between both tensors returned by the slice as component.","code":["Relation r = Mock(Relation)","s.has(Relation.class) >> true","s.get(Relation.class) >> r","r.findRootTensor() >> t"]},
+
         {"kind":"when","text":"We try to add the slice to the device.","code":["device.store(s)"]},
+
         {"kind":"then","text":"This will simple trigger the attempt of the device to register itself as component.","code":["1 * s.set({ it == device })"]},
+
         {"kind":"when","text":"If the tensor was not a mock it would then cause the following change request to be dispatched:","code":["device.update(new Component.OwnerChangeRequest() {","    @Override Tsr<?> getOldOwner() { return null }","    @Override Tsr<?> getNewOwner() { return s }","    @Override boolean executeChange() { return true }","})"]},
+
         {"kind":"then","text":"The device will now try to store the tensor throw an exception because the tensor has an illegal state...","code":["def exception = thrown(IllegalStateException)"]},
+
         {"kind":"and","text":"It explains what went wrong.","code":["exception.message == \"Data parent is not outsourced!\""]}
       ],
       "problems":"[]"
@@ -79,15 +90,19 @@
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"2.617 seconds",
+      "duration":"2.520 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["CLContext context","List<OpenCLDevice> devices = []","Runnable dispose = {","    context = Neureka.get().backend().get(CLContext)","    assert context.platforms.size() > 0","    context.platforms.each {","        assert it.devices.size() > 0","        devices.addAll(it.devices)","    }","    context.dispose()","}","def thread = new Thread(dispose)"]},
+
         {"kind":"when","text":"","code":["thread.start()","thread.join()"]},
+
         {"kind":"then","text":"","code":["noExceptionThrown()"]},
+
         {"kind":"and","text":"","code":["context.platforms.size() == 0"]},
+
         {"kind":"and","text":"","code":["devices.every {it.size() == 0}"]}
       ],
       "problems":"[]"

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.019 seconds"
+    "duration":"0.015 seconds"
   },
 
   "title":"Autograd - Automatic Differentiation",
@@ -16,30 +16,49 @@
     {
       "id":"Simple automatic differentiation and propagation.",
       "result":"PASS",
-      "duration":"0.013 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\\n How can I compute gradients with Neureka automatically?\\n"]
       },
       "blocks":[
         {"kind":"given","text":"\n The following flag states enable regular auto-grad (should also be the default):\n","code":["Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)"]},
+
         {"kind":"and","text":"We create a simple tensor and set rqsGradient to true in order to track dependent computation.","code":["def x = Tsr.of([2, 2], 1d).setRqsGradient(true)"]},
+
         {"kind":"expect","text":"The tensor should look as follows :","code":["x.toString().contains(\"(2x2):[1.0, 1.0, 1.0, 1.0]\")"]},
+
         {"kind":"when","text":"The following \"+\" operation is being applied...","code":["def y = x + 2"]},
+
         {"kind":"then","text":"The new tensor now contains four threes.","code":["y.toString().contains(\"(2x2):[3.0, 3.0, 3.0, 3.0]\")"]},
+
         {"kind":"and","text":"Because \"y\" was created as a result of a default operation, it now has a graph node as component.","code":["y.has( GraphNode.class )"]},
+
         {"kind":"when","text":"We do more computations on \"y\" ...","code":["def z = y * y * 3"]},
+
         {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
+
         {"kind":"when","text":"\n We call the \"mean()\" method as a simple loss function!\n This produces a scalar output tensor which is ideal as entrypoint\n for the autograd algorithm.\n","code":["def result = z.mean()"]},
+
         {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["result.toString().contains(\"(1x1):[27.0]\")"]},
+
         {"kind":"when","text":"Any new tensor is created...","code":["def someTensor = Tsr.newInstance()"]},
+
         {"kind":"then","text":"The autograd flag will always default to \"false\" :","code":["someTensor.rqsGradient() == false"]},
+
         {"kind":"when","text":"We take a look at said property of the previously created \"result\" variable...","code":["def resultRequiresGradient = z.rqsGradient()"]},
+
         {"kind":"then","text":"\n We will notice that \"result\" does NOT require gradients!\n Although one of it's \"ancestors\" does require gradients (namely: \"x\"),\n this variable itself will not hold any gradients except for when it\n propagates them ...\n","code":["resultRequiresGradient == false"]},
+
         {"kind":"when","text":"\n We now try to backpropagate! Because \"result\" contains a single scalar,\n result.backward() is equivalent to out.backward(Tsr.of(1)).\n","code":["z.backward(0.25)"]},
+
         {"kind":"then","text":"\n The tensor which requires gradients, namely \"x\" now has the expected gradients :\n","code":["x.toString().contains(\"(2x2):[1.0, 1.0, 1.0, 1.0]:g:[4.5, 4.5, 4.5, 4.5]\")"]},
+
         {"kind":"when","text":"We now try to access the gradient...","code":["def gradient = x.getGradient()"]},
+
         {"kind":"then","text":"This given gradient is as expected !","code":["gradient.toString() == \"(2x2):[4.5, 4.5, 4.5, 4.5]\""]},
+
         {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["result.unsafe.detach()"]},
+
         {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["!result.has( GraphNode.class )"]}
       ],
       "problems":"[]"

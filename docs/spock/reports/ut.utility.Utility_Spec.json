@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.031 seconds"
+    "duration":"0.036 seconds"
   },
 
   "title":"",
@@ -16,16 +16,20 @@
     {
       "id":"Object arrays can be converted to primitive arrays.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"when","text":"","code":["def result = code(input)"]},
+
         {"kind":"then","text":"","code":["result == input"]},
+
         {"kind":"and","text":"","code":["result.class != input.class"]},
+
         {"kind":"and","text":"","code":["result.class == expectedType"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"input":["[1.0, 2.0, 3.0]","[1.0, 2.0, 3.0]","[1, 2, 3]","[1, 2, 3]","[1, 2, 3]","[1, 2, 3]","[true, true, true]","[, , ]"],"code":["ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure1@77a06990","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure2@7102f3c1","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure3@64080ac4","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure4@4c56a128","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure5@48066197","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure6@773bfc34","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure7@565c6abe","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure8@2cf8eb66"],"expectedType":["class [F","class [D","class [I","class [J","class [S","class [B","class [Z","class [C"]}}
       ],
       "problems":"[]"
     }

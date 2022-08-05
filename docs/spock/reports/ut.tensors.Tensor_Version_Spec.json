@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.234 seconds"
+    "duration":"0.281 seconds"
   },
 
   "title":"Tensor (Data Array) Version",
@@ -16,17 +16,22 @@
     {
       "id":"Inline operations causes version incrementation.",
       "result":"PASS",
-      "duration":"0.076 seconds",
+      "duration":"0.107 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"2 tensors a and b.","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( safe_inline )","Tsr a = Tsr.of(4) + Tsr.of(2)","Tsr b = Tsr.of(-1) + Tsr.of(-3).setRqsGradient(true)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
+
         {"kind":"expect","text":"Initially both tensors have a version number of 0.","code":["a.getVersion() == 0","b.getVersion() == 0"]},
+
         {"kind":"when","text":"The groovy code (performing inline operations) is being evaluated.","code":["Tsr c = new GroovyShell(binding).evaluate((code))"]},
+
         {"kind":"then","text":"The resulting tensor (toString) will contain the expected sub-string.","code":["c.toString().contains(expected)","c == a"]},
+
         {"kind":"and","text":"The three tensors have the expected versions.","code":["a.getVersion() == version_of_a","b.getVersion() == version_of_b","c.getVersion() == version_of_c"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"code":[" a.plusAssign(b) "," a.minusAssign(b) "," a.timesAssign(b) "," a.divAssign(b) "," a.plusAssign(b) "," a.minusAssign(b) "," a.timesAssign(b) "," a.divAssign(b) "],"safe_inline":["true","true","true","true","false","false","false","false"],"version_of_c":["1","1","1","1","0","0","0","0"],"version_of_a":["1","1","1","1","0","0","0","0"],"version_of_b":["0","0","0","0","0","0","0","0"],"expected":["(1):[2.0]","(1):[10.0]","(1):[-24.0]","(1):[-1.5]","(1):[2.0]","(1):[10.0]","(1):[-24.0]","(1):[-1.5]"]}}
       ],
       "problems":"[]"
     },
@@ -34,19 +39,26 @@
     {
       "id":"Non-inline operations do not cause version incrementation.",
       "result":"PASS",
-      "duration":"0.088 seconds",
+      "duration":"0.102 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( no_inline )"]},
+
         {"kind":"and","text":"Two tensors, one requiring gradients and the other one not.","code":["Tsr a = Tsr.of(6).setRqsGradient(true)","Tsr b = Tsr.of(-4)"]},
+
         {"kind":"and","text":"A binding for both tensors as preparation for calling the Groovy shell.","code":["Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
+
         {"kind":"expect","text":"The versions of both tensors are 0 initially.","code":["a.getVersion() == 0","b.getVersion() == 0"]},
+
         {"kind":"when","text":"The Groovy code is being evaluated inside the Groovy shell.","code":["Tsr c = new GroovyShell(binding).evaluate((code))"]},
+
         {"kind":"then","text":"The resulting tensor (toString) will contain the expected String.","code":["c.toString().contains(expected)","c != a"]},
+
         {"kind":"and","text":"The three tensors have the expected versions.","code":["a.getVersion() == version_of_a","b.getVersion() == version_of_b","c.getVersion() == version_of_c"]},
-        {"kind":"where","text":"The following arguments are being used:","code":[]}
+
+        {"kind":"where","text":"The following arguments are being used:","code":{"code":[" a + b "," a - b "," a * b "," a / b "," a % b "," a + b "," a - b "," a * b "," a / b "," a % b "],"no_inline":["false","false","false","false","false","true","true","true","true","true"],"version_of_c":["0","0","0","0","0","0","0","0","0","0"],"version_of_a":["0","0","0","0","0","0","0","0","0","0"],"version_of_b":["0","0","0","0","0","0","0","0","0","0"],"expected":["(1):[2.0]","(1):[10.0]","(1):[-24.0]","(1):[-1.5]","(1):[2.0]","(1):[2.0]","(1):[10.0]","(1):[-24.0]","(1):[-1.5]","(1):[2.0]"]}}
       ],
       "problems":"[]"
     },
@@ -54,17 +66,22 @@
     {
       "id":"Inline operations cause illegal state exceptions.",
       "result":"PASS",
-      "duration":"0.039 seconds",
+      "duration":"0.037 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( true )","Tsr a = Tsr.of(4) + Tsr.of(2).setRqsGradient(true)","Tsr b = Tsr.of(-4)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
+
         {"kind":"expect","text":"","code":["a.getVersion() == 0","b.getVersion() == 0"]},
+
         {"kind":"when","text":"The groovy code is being evaluated.","code":["Tsr c = new GroovyShell( binding ).evaluate( code )"]},
+
         {"kind":"then","text":"An illegal state exception is being thrown.","code":["def exception = thrown(IllegalStateException)","exception.message == message"]},
+
         {"kind":"and","text":"The variable \"c\" is null!","code":["c == null"]},
-        {"kind":"where","text":"","code":[]}
+
+        {"kind":"where","text":"","code":{"code":["a.plusAssign(b) ","a.minusAssign(b)","a.timesAssign(b)","a.divAssign(b) "],"message":["Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"]}}
       ],
       "problems":"[]"
     },
@@ -72,16 +89,21 @@
     {
       "id":"Storing a tensor on a device should not change the version of a tensor (Even though its data changed technically).",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var t = Tsr.ofFloats().withShape(5, 2).andSeed(42)"]},
+
         {"kind":"expect","text":"","code":["t.version == 1"]},
+
         {"kind":"when","text":"","code":["t.to('GPU')"]},
+
         {"kind":"then","text":"","code":["t.isOutsourced()","t.version == 1"]},
+
         {"kind":"when","text":"","code":["t[0] = 1f","t[new int[]{1, 0}] = 6f","t[0, 1] = 42f","t.set(0, 3f)","t.setItemAt(3, 4f)","t.set(new int[]{1, 1}, -1f)","t.unsafe.setDataAt(3, 5f)"]},
+
         {"kind":"then","text":"","code":["t.version == 8"]}
       ],
       "problems":"[]"

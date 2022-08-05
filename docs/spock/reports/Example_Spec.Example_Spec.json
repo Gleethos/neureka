@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.051 seconds"
+    "duration":"0.181 seconds"
   },
 
   "title":"An Introduction to writing Spock Specifications",
@@ -16,7 +16,7 @@
     {
       "id":"iAmNotSoReadable",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -42,7 +42,7 @@
     {
       "id":"Call me feature not unit test!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -55,13 +55,15 @@
     {
       "id":"Should be able to remove from list",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We have a simple list!","code":[]},
+
         {"kind":"when","text":"We remove the first item...","code":[]},
+
         {"kind":"then","text":"...the following should happen:","code":[]}
       ],
       "problems":"[]"
@@ -70,13 +72,14 @@
     {
       "id":"Numbers to the power of two with a fancy data table!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"Math works!","code":[]},
-        {"kind":"where","text":"We use the following data:","code":[]}
+
+        {"kind":"where","text":"We use the following data:","code":{"a":["1","2","3"],"b":["2","2","2"],"c":["1","4","9"]}}
       ],
       "problems":"[]"
     }

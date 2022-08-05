@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.049 seconds"
+    "duration":"0.069 seconds"
   },
 
   "title":"",
@@ -16,15 +16,19 @@
     {
       "id":"Function throws exception when not enough inputs provided.",
       "result":"PASS",
-      "duration":"0.027 seconds",
+      "duration":"0.053 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var fun = Function.of('I[0] + I[1]')"]},
+
         {"kind":"and","text":"","code":["var t = Tsr.of(4d)"]},
+
         {"kind":"when","text":"","code":["fun(t)"]},
+
         {"kind":"then","text":"","code":["var exception = thrown(IllegalArgumentException)"]},
+
         {"kind":"and","text":"","code":["exception.message == \"Function input '1' not satisfied! Please supply at least 2 input tensors.\""]}
       ],
       "problems":"[]"
@@ -33,15 +37,19 @@
     {
       "id":"Function throws exception when arity does not match input number.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var fun = Function.of('I[0] @ I[1]')"]},
+
         {"kind":"and","text":"","code":["var t = Tsr.of(4d)"]},
+
         {"kind":"when","text":"","code":["fun(t)"]},
+
         {"kind":"then","text":"","code":["var exception = thrown(IllegalArgumentException)"]},
+
         {"kind":"and","text":"","code":["exception.message == \"Trying to instantiate an 'ExecutionCall' \" +","\"with an arity of 1, which is not suitable for \" +","\"the targeted operation 'MatMul' with the expected \" +","\"arity of 2.\""]}
       ],
       "problems":"[]"
