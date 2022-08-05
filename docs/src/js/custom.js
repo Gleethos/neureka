@@ -43,13 +43,12 @@ function loadReportUI(target, search) {
             // We first search for the in the specification layer:#
             specificationArray = json['specifications'];
             let scores = {};
-            let nameToFeatures = {};
+            let nameToData = {"features":[],"title":"","narrative":""};
             specificationArray.forEach((spec)=>{
                 let name = spec['className'];
                 // We make sure that the spec is not the "Example_Spec" class:
                 if ( name.indexOf("Example_Spec") == -1 ) {
                     features = spec['executedFeatures'];
-                    nameToFeatures[name] = features;
                     scores[name] = 0;
                     scores[name] += searchScore(term, spec['className'].replace(".", " ").replace("_", " ").toLowerCase());
                     scores[name] += searchScore(term, spec['title'].toLowerCase());
@@ -64,7 +63,7 @@ function loadReportUI(target, search) {
                         return featureToScore[b] - featureToScore[a];
                     });
                     // ...and we but the sorted features into a mapping between the spec name and features:
-                    nameToFeatures[name] = features;
+                    nameToData[name] = {"features":features,"title":spec['title'],"narrative":spec['narrative']};
                 }
             });
             // Now we sort the scored specifications by score:
@@ -76,7 +75,7 @@ function loadReportUI(target, search) {
             let chosen = [];
             // We then iterate over the sorted scores:
             sortedScores.forEach((specName)=>{
-                chosen.push({'name':specName, 'features':nameToFeatures[specName]});
+                chosen.push({'name':specName, 'features':nameToData[specName]['features'], 'title':nameToData[specName]['title'], 'narrative':nameToData[specName]['narrative']});
             });
             printSearchResults(results, chosen);
         });
@@ -161,16 +160,29 @@ function trimEnds(string, ends) {
 function printSearchResults(target, results) {
     results.forEach((spec)=>{
         let div = $('<div></div>');
-        let parts = spec['name'].replaceAll("_", " ").split(".");
-        let title = parts[parts.length-1];
-        title = trimEnds(title, ["spec", "specification", "test", "tests", "unit test", "unit tests", "test case", "test cases"]);
-
+        let title = spec['title'];
+        let narrative = spec['narrative'];
+        if ( title.length == 0 ) {
+            let parts = spec['name'].replaceAll("_", " ").split(".");
+            title = parts[parts.length-1];
+            title = trimEnds(title, ["spec", "specification", "test", "tests", "unit test", "unit tests", "test case", "test cases"]);
+        }
         div.append($('<h3></h3>').text(title));
+        createNarrativeParagraphs(narrative).forEach((paragraph)=>{div.append(paragraph);});
         spec['features'].forEach((feature)=>{
             div.append(createLoaderDropDownFor(spec['name'], feature));
         });
         target.append(div);
     });
+}
+
+function createNarrativeParagraphs(narrative) {
+    if ( narrative.length == 0 ) return [];
+    paragraphs = narrative.trim().split("\n\n");
+    paragraphs = paragraphs.map((paragraph)=>{
+        return $('<p style="font-size:95%"></p>').text(paragraph);
+    });
+    return paragraphs;
 }
 
 // Creates a drop down menu for the given specification feature.
@@ -180,7 +192,7 @@ function createLoaderDropDownFor(specName, expandableFeature) {
     // First we create a collapsible div and a button displaying the featur.
     // When the button is clicked the content should be loaded and then expanded.
     let wrapper = $('<div></div>');
-    let button = $('<button style="text-align:center"></button>');
+    let button = $('<button class="ContentOption" style="text-align:center"></button>');
     button.addClass('collapsible');
     button.text(expandableFeature);
     let content = $('<div></div>');
@@ -262,7 +274,7 @@ function createUIForFeature(featureData) {
         let blockTitle = $('<div style="width:100%"></div>');
         blockTitle.html("<i>"+uppercaseFirstLetter(block['kind'])+"</i> "+lowercaseFirstLetter(block['text']));
         let blockCode = $('<pre style="width:100%"></pre>');
-        let codeWrapper = $('<code class="hljs language-java"></code>');
+        let codeWrapper = $('<code class="hljs language-java" style="box-shadow: inset 0 0 3px 0px #767676"></code>');
         blockCode.append(codeWrapper);
         codeWrapper.text(block['code'].join("\n"));
         blockDiv.append(blockTitle);
@@ -282,4 +294,87 @@ function uppercaseFirstLetter(string) {
 function lowercaseFirstLetter(string) {
     if ( string.length == 0 ) return string;
     return string.charAt(0).toLowerCase() + string.slice(1);
+}
+
+
+// This is for html based dynamic content:
+
+function capitalize(input) {
+    let words = input.replaceAll('_', ' ').split(' ');
+    if ( words.length === 1 ) return words[0];
+    console.log(words);
+    let CapitalizedWords = [];
+    words.forEach(word => {
+        if ( word.length > 0 ) CapitalizedWords.push(word[0].toUpperCase() + word.slice(1, word.length));
+        else CapitalizedWords.push(' ');
+    });
+    return CapitalizedWords.join(' ');
+}
+
+function loadContent(target) {
+    $('#DynamicContent').hide("fast", function () {
+        $('#ContentTitle').hide("fast", function () {
+            const split = target.split('/');
+            let dir = capitalize(( split[0]==='..' ) ? '' : split[0]+' : ');
+            let page = capitalize(split[split.length - 1]);
+
+            if (page.indexOf("TOC") !== -1) $("#ReturnArrow").hide("fast");
+            else $('#ReturnArrow').show("fast");
+
+            page = page
+                .replace('TOC', 'Table of Content')
+                .replaceAll('_', ' ');
+
+            $('#ContentTitle').html(
+                dir + page.charAt(0).toUpperCase() + page.substring(1)
+            ).show("fast");
+        });
+        $('#DynamicContent').html("").load(
+            'src/pages/' + target + '.html',
+            function(){
+                console.log('Executing format procedure...');
+                hljs.initHighlighting.called = false;
+                hljs.initHighlighting();
+                applyMarkdown(); // After loading we apply markdown
+                setTimeout(() => {
+                        // For some weired reason the first time the dom does not find
+                        // all the things we want to markdown...
+                        applyMarkdown();
+                        applyMarkdown();// Let' markdown again to make sure everything gets formatted
+                        applyMarkdown();
+                        // Now let's show the fully formatted ajax page:
+                        $('#DynamicContent').show("fast");
+                    },
+                    200
+                );
+            }
+        );
+    });
+}
+
+function applyMarkdown() {
+    for (let item of document.getElementsByClassName("MarkdownMe")) {
+        item.innerHTML = marked(item.innerHTML)
+        item.classList.remove("MarkdownMe");
+        console.log("Converting to markdown in tag "+item.tagName);
+    }
+}
+
+$(document).ready(function () {
+    $("#ReturnArrow").hide().mouseover(function () {
+        $(this).animate({right: "4.5em"}, 100);
+    }).mouseout(function () {
+        $(this).animate({right: "3.25em",}, 400);
+    });
+    $("#ArrowIcon").attr("src", "src/img/icons/return-arrow.png")
+    loadContent('../TOC');
+});
+
+function switchTab(src, target) {
+    var TabBody = $(src.target).parent().parent().find('.TabBody');
+    TabBody.children().css("display", "none");
+    $(src.target).siblings().removeClass("selected");
+    $(src.target).parent().parent().find(target).css("display", "");
+    $(src.target).addClass("selected");
+    console.log($(src.target).html());
 }

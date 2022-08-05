@@ -149,105 +149,33 @@
                             <h1 id="ContentTitle"></h1>
                         </div>
                     </div>
-                    <div class="MainContentWrapper">
-                        <div class=container-fluid>
-                            <script src="src/js/marked.min.js"></script>
-                            <script>
-                                function capitalize(input) {
-                                    let words = input.replaceAll('_', ' ').split(' ');
-                                    if ( words.length === 1 ) return words[0];
-                                    console.log(words);
-                                    let CapitalizedWords = [];
-                                    words.forEach(word => {
-                                        if ( word.length > 0 ) CapitalizedWords.push(word[0].toUpperCase() + word.slice(1, word.length));
-                                        else CapitalizedWords.push(' ');
-                                    });
-                                    return CapitalizedWords.join(' ');
-                                }
 
-                                function loadContent(target) {
-                                    $('#DynamicContent').hide("fast", function () {
-                                        $('#ContentTitle').hide("fast", function () {
-                                            const split = target.split('/');
-                                            let dir = capitalize(( split[0]==='..' ) ? '' : split[0]+' : ');
-                                            let page = capitalize(split[split.length - 1]);
-
-                                            if (page.indexOf("TOC") !== -1) $("#ReturnArrow").hide("fast");
-                                            else $('#ReturnArrow').show("fast");
-
-                                            page = page
-                                                .replace('TOC', 'Table of Content')
-                                                .replaceAll('_', ' ');
-
-                                            $('#ContentTitle').html(
-                                                dir + page.charAt(0).toUpperCase() + page.substring(1)
-                                            ).show("fast");
-                                        });
-                                        $('#DynamicContent').html("").load(
-                                            'src/pages/' + target + '.html',
-                                            function(){
-                                                console.log('Executing format procedure...');
-                                                hljs.initHighlighting.called = false;
-                                                hljs.initHighlighting();
-                                                applyMarkdown(); // After loading we apply markdown
-                                                setTimeout(() => {
-                                                        // For some weired reason the first time the dom does not find
-                                                        // all the things we want to markdown...
-                                                        applyMarkdown();
-                                                        applyMarkdown();// Let' markdown again to make sure everything gets formatted
-                                                        applyMarkdown();
-                                                        // Now let's show the fully formatted ajax page:
-                                                        $('#DynamicContent').show("fast");
-                                                    },
-                                                    200
-                                                );
-                                            }
-                                        );
-                                    });
-                                }
-
-                                function applyMarkdown() {
-                                    for (let item of document.getElementsByClassName("MarkdownMe")) {
-                                        item.innerHTML = marked(item.innerHTML)
-                                        item.classList.remove("MarkdownMe");
-                                        console.log("Converting to markdown in tag "+item.tagName);
-                                    }
-                                }
-
-                                $(document).ready(function () {
-                                    $("#ReturnArrow").hide().mouseover(function () {
-                                        $(this).animate({right: "4.5em"}, 100);
-                                    }).mouseout(function () {
-                                        $(this).animate({right: "3.25em",}, 400);
-                                    });
-                                    $("#ArrowIcon").attr("src", "src/img/icons/return-arrow.png")
-                                    loadContent('../TOC');
-                                });
-
-                                function switchTab(src, target) {
-                                    var TabBody = $(src.target).parent().parent().find('.TabBody');
-                                    TabBody.children().css("display", "none");
-                                    $(src.target).siblings().removeClass("selected");
-                                    $(src.target).parent().parent().find(target).css("display", "");
-                                    $(src.target).addClass("selected");
-                                    console.log($(src.target).html());
-                                }
-                            </script>
-                            <!--------------------------------------------------------------------->
-                            <div id="DynamicContent" class="row g-2">
-                                <!---< This is where all the dynamically loaded content lives! >--->
-                            </div>
-                            <!--------------------------------------------------------------------->
+                    <div class="TabWrapper">
+                        <div class="TabHead" style="margin: 0em 2.5em -2.515em 2.5em;">
+                            <button onclick="switchTab(event, '.introDocTab')" class="selected">Basics</button>
+                            <button onclick="switchTab(event, '.specDocTab')">Advanced</button>
                         </div>
+                        <div class="TabBody">
+                            <div class="introDocTab">
+                                <div class="MainContentWrapper">
+                                    <div class=container-fluid>
+                                        <script src="src/js/marked.min.js"></script>
+                                        <!--------------------------------------------------------------------->
+                                        <div id="DynamicContent" class="row g-2">
+                                            <!---< This is where all the dynamically loaded content lives! >--->
+                                        </div>
+                                        <!--------------------------------------------------------------------->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="specDocTab" style="display:none">
 
-                    </div>
-
-                    <div class="MainContentWrapper">
-                        <div class=container-fluid>
-                            <h1>Living Documentation</h1><br>
-                            <input id="spec_search">
-                            <div class="ContentBox" id="TARGET"></div>
-                            <style>
+                                <div class="MainContentWrapper">
+                                    <div class=container-fluid>
+                                        <h1>Living Documentation</h1><br>
+                                        <input id="spec_search" style="width:16em;" placeholder="how to instantiate a tensor?">
+                                        <div class="ContentBox" id="TARGET"></div>
+                                        <style>
                                 .collapsible {
                                   cursor: pointer;
                                   padding: 10px;
@@ -261,11 +189,8 @@
                                   background-color: #dde6e9;
                                 }
 
-                                .NavBox button {
-                                    white-space: nowrap;
-                                    background: linear-gradient(
-                                             to bottom, rgba(1, 219, 255, 0.57) 0%, #37d9ff 100%
-                                    );
+                                .ContentOption {
+                                    background: linear-gradient(to bottom, rgba(1, 219, 255, 0.57) 0%, #37d9ff 100%);
                                     background-position: 0 100%;
                                     background-repeat: repeat-x;
                                     background-size: 4px 2px;
@@ -277,15 +202,19 @@
                                     padding: 0.25em 0.65em 0.25em 0.65em;
                                     border:none;
                                 }
-                                .NavBox button:hover {
-                                    background-size: 4px 50px;
+                                .ContentOption:hover {
+                                    background-size: 4px 100%;
                                 }
                             </style>
-                            <script>
+                                        <script>
                                 $(document).ready(()=>{
                                     loadReportUI("#TARGET", "#spec_search");
                                 });
                             </script>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
