@@ -133,7 +133,7 @@ function removeFillWords(words) {
     // We then iterate over the words:
     for (let i = 0; i < words.length; i++) {
         // We then check if the word is a fill word:
-        if (fillWords.indexOf(words[i]) == -1) {
+        if (fillWords.indexOf(words[i]) === -1) {
             // If it is not, we add it to the new array:
             newWords.push(words[i]);
         }
