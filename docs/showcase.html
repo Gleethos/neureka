@@ -194,8 +194,17 @@
 
                                 <div class="MainContentWrapper">
                                     <div class=container-fluid>
-                                        <h1>Living Documentation</h1><br>
+                                        <script>
+                                            function clearDiv(div) {
+                                                $(div).find(".NavBox").html("")
+                                            }
+                                        </script>
+                                        <p>
+                                            Use the search bar below to query the test suite of Neureka.
+                                        </p>
+                                        <br>
                                         <input id="spec_search" style="width:16em;" placeholder="how to instantiate a tensor?">
+                                        <button onclick="clearDiv('#TARGET')">clear</button>
                                         <div class="ContentBox" id="TARGET"></div>
                                         <style>
                                 .collapsible {
@@ -232,10 +241,8 @@
                                     background-size: 100% 100%;
                                 }
                             </style>
-                                        <script>
-                                $(document).ready(()=>{
-                                    loadReportUI("#TARGET", "#spec_search");
-                                });
+                            <script>
+                                $(document).ready(()=>{ loadReportUI("#TARGET", "#spec_search"); });
                             </script>
                                     </div>
                                 </div>
