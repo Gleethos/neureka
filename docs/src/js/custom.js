@@ -156,7 +156,7 @@ function printSearchResults(target, results) {
         let div = $('<div></div>');
         let title = spec['title'];
         let narrative = spec['narrative'];
-        if ( title.length == 0 ) {
+        if ( title.length === 0 ) {
             let parts = spec['name'].replaceAll("_", " ").split(".");
             title = parts[parts.length-1];
             title = trimEnds(title, ["spec", "specification", "test", "tests", "unit test", "unit tests", "test case", "test cases"]);
@@ -171,7 +171,7 @@ function printSearchResults(target, results) {
 }
 
 function createNarrativeParagraphs(narrative) {
-    if ( narrative.length == 0 ) return [];
+    if ( narrative.length === 0 ) return [];
     paragraphs = narrative.trim().split("\n\n");
     paragraphs = paragraphs.map((paragraph)=>{
         return $('<p style="font-size:95%"></p>').text(paragraph);
@@ -198,11 +198,11 @@ function createLoaderDropDownFor(specName, expandableFeature) {
     // We register an on click event for the button:
     button.click(()=>{
         // We check if the content is already loaded:
-        if ( content.children().length == 0 ) {
+        if ( content.children().length === 0 ) {
             // If not, we load the content:
             $.getJSON("spock/reports/"+specName+".json", (data)=>{
                 data['features'].forEach((feature)=>{
-                    if ( feature['id'] == expandableFeature ) {
+                    if ( feature['id'] === expandableFeature ) {
                         content.append(createUIForFeature(feature));
                     }
                 });
@@ -219,7 +219,7 @@ function createLoaderDropDownFor(specName, expandableFeature) {
         }
 
         // We then check if the content is expanded:
-        currentlyHidden = content.css('display') == 'none';
+        currentlyHidden = content.css('display') === 'none';
 
         // Before we toggle the content we need to "untoggle" all the sibling contents:
         $('.content').each((index, current)=>{ $(current).hide(100); });
