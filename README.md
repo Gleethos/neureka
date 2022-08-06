@@ -66,7 +66,7 @@
 </td>
 <td>
 
-- [living<br>documentation](https://gleethos.github.io/neureka/spock/reports/index.html)
+- [living<br>documentation](https://gleethos.github.io/neureka/showcase.html)
 - [Javadocs](https://gleethos.github.io/neureka/jdocs/index.html) :book:
 
 </td>
@@ -201,10 +201,10 @@ Min-jar file:
 
 ## :book: Documentation ###
 
-- [By example](https://gleethos.github.io/neureka/showcase.html)
+- [Living Documentation](https://gleethos.github.io/neureka/showcase.html)
 - [Java-Docs](https://gleethos.github.io/neureka/jdocs/index.html)
-- [Living Documentation](https://gleethos.github.io/neureka/spock/reports/index.html)!
 - [GitHub Wiki](https://github.com/Gleethos/neureka/wiki)
+- [Test Reports](https://gleethos.github.io/neureka/spock/reports/index.html)
 
 ---
 
