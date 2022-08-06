@@ -47,7 +47,7 @@ function loadReportUI(target, search) {
             specificationArray.forEach((spec)=>{
                 let name = spec['className'];
                 // We make sure that the spec is not the "Example_Spec" class:
-                if ( name.indexOf("Example_Spec") == -1 ) {
+                if ( name.indexOf("Example_Spec") === -1 ) {
                     features = spec['executedFeatures'];
                     scores[name] = 0;
                     scores[name] += searchScore(term, spec['className'].replace(".", " ").replace("_", " ").toLowerCase());
@@ -91,11 +91,11 @@ function searchScore(searchWord, sentence) {
     searchWord = searchWord.trim().toLowerCase();
     // First we create a score to be incremented!
     let score = 0.0;
-    if ( searchWord.length == 0 ) return score;
+    if ( searchWord.length === 0 ) return score;
     // If "sentence" is a string, we split it into words:
     if ( typeof sentence === "string" ) {
         sentence = sentence.trim().toLowerCase();
-        if ( sentence.length == 0 ) return score;
+        if ( sentence.length === 0 ) return score;
 
         // We check if the sentence contains the search word:
         if ( sentence.indexOf(searchWord) !== -1 ) score += 1.0;
