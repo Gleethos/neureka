@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.563 seconds"
+    "duration":"0.416 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"GEMM matrix multiplication reference implementation can be set as custom OperationType and works as expected.",
       "result":"PASS",
-      "duration":"0.438 seconds",
+      "duration":"0.286 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -45,7 +45,7 @@
     {
       "id":"Test context mock for opencl reference implementations.",
       "result":"PASS",
-      "duration":"0.014 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,7 +62,7 @@
     {
       "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.015 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

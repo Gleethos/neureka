@@ -163,6 +163,8 @@ import java.util.List;
                 public double calculate( double[] inputs, int j, int d, Function[] src ) {
 <span class="nc" id="L164">                    return src[ 0 ].call( inputs, j );</span>
                 }
+
+<span class="nc" id="L167">                @Override protected String operationName() { return &quot;OptimizedOperation&quot;; }</span>
             };
     }
 }

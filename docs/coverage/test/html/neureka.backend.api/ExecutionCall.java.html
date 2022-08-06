@@ -43,6 +43,7 @@ import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,7 +65,7 @@ import java.util.stream.Stream;
 */
 public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt;
 {
-<span class="fc" id="L67">    private final static Logger _LOG = LoggerFactory.getLogger(ExecutionCall.class);</span>
+<span class="fc" id="L68">    private final static Logger _LOG = LoggerFactory.getLogger(ExecutionCall.class);</span>
 
     /**
      *  Use this factory method to build {@link ExecutionCall} instances in a readable fashion.
@@ -74,8 +75,8 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
      * @return A builder for an {@link ExecutionCall}.
      */
     public static &lt;D extends Device&lt;?&gt;&gt; Builder&lt;D&gt; of( Tsr&lt;?&gt;... inputs ) {
-<span class="fc" id="L77">        LogUtil.nullArgCheck( inputs, &quot;inputs&quot;, Tsr[].class );</span>
-<span class="fc" id="L78">        return new Builder&lt;D&gt;(inputs);</span>
+<span class="fc" id="L78">        LogUtil.nullArgCheck( inputs, &quot;inputs&quot;, Tsr[].class );</span>
+<span class="fc" id="L79">        return new Builder&lt;D&gt;(inputs);</span>
     }
 
 
@@ -103,36 +104,36 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
             Tsr&lt;?&gt;[] tensors,
             List&lt;Arg&gt; arguments
     ) {
-<span class="fc" id="L106">        super( tensors, device, arguments );</span>
-<span class="fc" id="L107">        _operation = operation;</span>
-<span class="fc" id="L108">        _algorithm = LazyRef.of(()-&gt;{</span>
-<span class="fc" id="L109">            Algorithm algorithm = _operation.getAlgorithmFor( this );</span>
-<span class="pc bpc" id="L110" title="1 of 2 branches missed.">            if ( algorithm == null )</span>
-<span class="nc" id="L111">                _LOG.error(</span>
-<span class="nc" id="L112">                    &quot;No suitable '&quot; + Algorithm.class.getSimpleName() + &quot;' implementation found for this '&quot; + this + &quot;'!&quot;</span>
+<span class="fc" id="L107">        super( tensors, device, arguments );</span>
+<span class="fc" id="L108">        _operation = operation;</span>
+<span class="fc" id="L109">        _algorithm = LazyRef.of(()-&gt;{</span>
+<span class="fc" id="L110">            Algorithm algorithm = _operation.getAlgorithmFor( this );</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">            if ( algorithm == null )</span>
+<span class="nc" id="L112">                _LOG.error(</span>
+<span class="nc" id="L113">                    &quot;No suitable '&quot; + Algorithm.class.getSimpleName() + &quot;' implementation found for this '&quot; + this + &quot;'!&quot;</span>
                 );
-<span class="fc" id="L114">            return algorithm;</span>
+<span class="fc" id="L115">            return algorithm;</span>
         });
-<span class="fc" id="L116">        _autogradMode = LazyRef.of(()-&gt;{</span>
-<span class="fc" id="L117">            Algorithm algorithm = getAlgorithm();</span>
-<span class="pc bpc" id="L118" title="1 of 2 branches missed.">            AutoDiffMode mode = ( algorithm == null ? AutoDiffMode.NOT_SUPPORTED : algorithm.autoDiffModeFrom(this) );</span>
-<span class="pc bpc" id="L119" title="1 of 2 branches missed.">            if ( mode == null )</span>
-<span class="nc" id="L120">                throw new IllegalStateException(&quot;Algorithm '&quot;+algorithm+&quot;' returned null instead of a valid autograd mode!&quot;);</span>
-<span class="fc" id="L121">            return mode;</span>
+<span class="fc" id="L117">        _autogradMode = LazyRef.of(()-&gt;{</span>
+<span class="fc" id="L118">            Algorithm algorithm = getAlgorithm();</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">            AutoDiffMode mode = ( algorithm == null ? AutoDiffMode.NOT_SUPPORTED : algorithm.autoDiffModeFrom(this) );</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">            if ( mode == null )</span>
+<span class="nc" id="L121">                throw new IllegalStateException(&quot;Algorithm '&quot;+algorithm+&quot;' returned null instead of a valid autograd mode!&quot;);</span>
+<span class="fc" id="L122">            return mode;</span>
         });
-<span class="fc" id="L123">    }</span>
+<span class="fc" id="L124">    }</span>
 
     public void checkArity() {
-<span class="fc" id="L126">        int thisArity = _inputs.length;</span>
-<span class="pc bpc" id="L127" title="1 of 4 branches missed.">        if ( _operation != null &amp;&amp; thisArity &lt; Math.abs(_operation.getArity()) )</span>
-<span class="fc" id="L128">            throw new IllegalArgumentException(</span>
-<span class="fc" id="L129">                &quot;Trying to instantiate an '&quot; + this.getClass().getSimpleName() + &quot;' with an arity &quot; +</span>
+<span class="fc" id="L127">        int thisArity = _inputs.length;</span>
+<span class="pc bpc" id="L128" title="1 of 4 branches missed.">        if ( _operation != null &amp;&amp; thisArity &lt; Math.abs(_operation.getArity()) )</span>
+<span class="fc" id="L129">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L130">                &quot;Trying to instantiate an '&quot; + this.getClass().getSimpleName() + &quot;' with an arity &quot; +</span>
                 &quot;of &quot; + thisArity + &quot;, which is not suitable for the targeted operation '&quot; +
-<span class="fc" id="L131">                _operation.getClass().getSimpleName() + &quot;' with &quot; +</span>
-<span class="pc bpc" id="L132" title="1 of 2 branches missed.">                ( _operation.getArity() &lt; 0 ? &quot;a minimum &quot; : &quot;the expected &quot; ) +</span>
-<span class="fc" id="L133">                &quot;arity of &quot;+Math.abs(_operation.getArity()) + &quot;.&quot;</span>
+<span class="fc" id="L132">                _operation.getClass().getSimpleName() + &quot;' with &quot; +</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">                ( _operation.getArity() &lt; 0 ? &quot;a minimum &quot; : &quot;the expected &quot; ) +</span>
+<span class="fc" id="L134">                &quot;arity of &quot;+Math.abs(_operation.getArity()) + &quot;.&quot;</span>
             );
-<span class="fc" id="L135">    }</span>
+<span class="fc" id="L136">    }</span>
 
     /**
      *  This returns the operation which will ultimately process this execution call.
@@ -141,7 +142,7 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
      *
      * @return The {@link Operation} targeted by this call for execution.
      */
-<span class="fc" id="L144">    public Operation getOperation() { return _operation; }</span>
+<span class="fc" id="L145">    public Operation getOperation() { return _operation; }</span>
 
     /**
      *  Use this to produce a clone with a new array of input tensors.
@@ -150,8 +151,20 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
      * @return A new {@link ExecutionCall} instance with the provided array of input tensors.
      */
     public ExecutionCall&lt;D&gt; withInputs( Tsr&lt;?&gt;... inputs ) {
-<span class="fc" id="L153">        LogUtil.nullArgCheck( inputs, &quot;inputs&quot;, Tsr[].class );</span>
-<span class="fc" id="L154">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs, _arguments.getAll(Arg.class) );</span>
+<span class="fc" id="L154">        LogUtil.nullArgCheck( inputs, &quot;inputs&quot;, Tsr[].class );</span>
+<span class="fc" id="L155">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs, _arguments.getAll(Arg.class) );</span>
+    }
+
+    public ExecutionCall&lt;D&gt; withAddedInputAt(int index, Tsr&lt;?&gt; added ) {
+<span class="fc" id="L159">        List&lt;Tsr&lt;?&gt;&gt; inputs = new ArrayList&lt;&gt;(Arrays.asList(_inputs));</span>
+<span class="fc" id="L160">        inputs.add(index, added);</span>
+<span class="fc" id="L161">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs.toArray(new Tsr&lt;?&gt;[0]), _arguments.getAll(Arg.class) );</span>
+    }
+
+    public ExecutionCall&lt;D&gt; withInputAt(int index, Tsr&lt;?&gt; replacement) {
+<span class="fc" id="L165">        List&lt;Tsr&lt;?&gt;&gt; inputs = new ArrayList&lt;&gt;(Arrays.asList(_inputs));</span>
+<span class="fc" id="L166">        inputs.set(index, replacement);</span>
+<span class="fc" id="L167">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs.toArray(new Tsr&lt;?&gt;[0]), _arguments.getAll(Arg.class) );</span>
     }
 
     /**
@@ -161,11 +174,11 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
      * @return A new {@link ExecutionCall} instance with the provided set of meta arguments.
      */
     public ExecutionCall&lt;D&gt; withArgs( Arg&lt;?&gt;... args ) {
-<span class="fc" id="L164">        LogUtil.nullArgCheck( args, &quot;args&quot;, Arg[].class );</span>
-<span class="fc" id="L165">        List&lt;Arg&gt; old = _arguments.getAll(Arg.class);</span>
-<span class="fc" id="L166">        old = old.stream().filter( a -&gt; Arrays.stream(args).noneMatch(b -&gt; a.getClass().isAssignableFrom(b.getClass()) )).collect(Collectors.toList());</span>
-<span class="fc" id="L167">        old.addAll(Arrays.stream(args).collect(Collectors.toList()));</span>
-<span class="fc" id="L168">        return new ExecutionCall&lt;&gt;( _device, _operation, _inputs, old );</span>
+<span class="fc" id="L177">        LogUtil.nullArgCheck( args, &quot;args&quot;, Arg[].class );</span>
+<span class="fc" id="L178">        List&lt;Arg&gt; old = _arguments.getAll(Arg.class);</span>
+<span class="fc" id="L179">        old = old.stream().filter( a -&gt; Arrays.stream(args).noneMatch(b -&gt; a.getClass().isAssignableFrom(b.getClass()) )).collect(Collectors.toList());</span>
+<span class="fc" id="L180">        old.addAll(Arrays.stream(args).collect(Collectors.toList()));</span>
+<span class="fc" id="L181">        return new ExecutionCall&lt;&gt;( _device, _operation, _inputs, old );</span>
     }
 
     /**
@@ -178,7 +191,7 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
      *
      * @return The {@link Algorithm} suitable for this {@link ExecutionCall}.
      */
-<span class="fc" id="L181">    public Algorithm getAlgorithm() { return _algorithm.get(); }</span>
+<span class="fc" id="L194">    public Algorithm getAlgorithm() { return _algorithm.get(); }</span>
 
     /**
      *  This method queries the underlying {@link Operation} for a suitable {@link Algorithm}
@@ -186,31 +199,21 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
      *
      * @return The {@link AutoDiffMode} for this call.
      */
-<span class="fc" id="L189">    public AutoDiffMode autogradMode() { return _autogradMode.get(); }</span>
-
-    /**
-     *  Warning! This is the only way to mutate the inner state of an {@link ExecutionCall}.
-     *  Only use this to set a suitable output tensor to be returned as result.
-     *
-     * @param i The index targeting the position where the provided tensor should be placed.
-     * @param t The {@link Tsr} which ought to be placed at position {@code i}.
-     */
-<span class="fc" id="L198">    public void setInput( int i, Tsr&lt;?&gt; t ) { _inputs[ i ] = t; }</span>
-
+<span class="fc" id="L202">    public AutoDiffMode autogradMode() { return _autogradMode.get(); }</span>
 
     @Override
     public String toString()
     {
-<span class="fc" id="L204">        String algorithmString = &quot;?&quot;;</span>
-<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        if ( _algorithm != null )</span>
-<span class="fc" id="L206">            algorithmString = _algorithm.toString();</span>
+<span class="fc" id="L207">        String algorithmString = &quot;?&quot;;</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">        if ( _algorithm != null )</span>
+<span class="fc" id="L209">            algorithmString = _algorithm.toString();</span>
 
-<span class="fc" id="L208">        return this.getClass().getSimpleName()+&quot;[&quot; +</span>
+<span class="fc" id="L211">        return this.getClass().getSimpleName()+&quot;[&quot; +</span>
                     &quot;inputs=&quot;         + &quot;[..&quot; + _inputs.length + &quot;..],&quot; +
                     &quot;device=&quot;          + _device + &quot;,&quot; +
                     &quot;operation=&quot;       + _operation + &quot;,&quot; +
                     &quot;algorithm=&quot;       + algorithmString + &quot;,&quot; +
-<span class="fc" id="L213">                    &quot;arguments=[&quot;         + _arguments.getAll(Arg.class).stream().map( a -&gt; a.toString() ).collect(Collectors.joining(&quot;,&quot;)) + &quot;]&quot; +</span>
+<span class="fc" id="L216">                    &quot;arguments=[&quot;         + _arguments.getAll(Arg.class).stream().map( a -&gt; a.toString() ).collect(Collectors.joining(&quot;,&quot;)) + &quot;]&quot; +</span>
                 &quot;]&quot;;
     }
 
@@ -220,38 +223,38 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
     public static class Builder&lt;D extends Device&lt;?&gt;&gt;
     {
         private final Tsr&lt;?&gt;[] _tensors;
-<span class="fc" id="L223">        private final List&lt;Arg&gt; _arguments = Stream.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1)).collect(Collectors.toList());</span>
+<span class="fc" id="L226">        private final List&lt;Arg&gt; _arguments = Stream.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1)).collect(Collectors.toList());</span>
         private Operation _operation;
         private Algorithm _algorithm;
 
-<span class="fc" id="L227">        private Builder(Tsr&lt;?&gt;[] tensors) { _tensors = tensors; }</span>
+<span class="fc" id="L230">        private Builder(Tsr&lt;?&gt;[] tensors) { _tensors = tensors; }</span>
 
         public &lt;D extends Device&lt;?&gt;&gt; ExecutionCall&lt;D&gt; on( D device ) {
-<span class="fc" id="L230">            LogUtil.nullArgCheck( device, &quot;device&quot;, Device.class );</span>
-<span class="fc" id="L231">            return new ExecutionCall&lt;&gt;( device, _operation, _tensors, _arguments );</span>
+<span class="fc" id="L233">            LogUtil.nullArgCheck( device, &quot;device&quot;, Device.class );</span>
+<span class="fc" id="L234">            return new ExecutionCall&lt;&gt;( device, _operation, _tensors, _arguments );</span>
         }
 
         public Builder&lt;D&gt; running( Operation operation ) {
-<span class="fc" id="L235">            LogUtil.nullArgCheck( operation, &quot;operation&quot;, Operation.class, &quot;Cannot build an '&quot;+ExecutionCall.class.getSimpleName()+&quot;' without operation.&quot; );</span>
-<span class="fc" id="L236">            _operation = operation;</span>
-<span class="fc" id="L237">            return this;</span>
+<span class="fc" id="L238">            LogUtil.nullArgCheck( operation, &quot;operation&quot;, Operation.class, &quot;Cannot build an '&quot;+ExecutionCall.class.getSimpleName()+&quot;' without operation.&quot; );</span>
+<span class="fc" id="L239">            _operation = operation;</span>
+<span class="fc" id="L240">            return this;</span>
         }
 
         public Builder&lt;D&gt; algorithm( Algorithm algorithm ) {
-<span class="fc" id="L241">            LogUtil.nullArgCheck( algorithm, &quot;algorithm&quot;, Algorithm.class );</span>
-<span class="fc" id="L242">            _algorithm = algorithm;</span>
-<span class="fc" id="L243">            return this;</span>
+<span class="fc" id="L244">            LogUtil.nullArgCheck( algorithm, &quot;algorithm&quot;, Algorithm.class );</span>
+<span class="fc" id="L245">            _algorithm = algorithm;</span>
+<span class="fc" id="L246">            return this;</span>
         }
 
         public Builder&lt;D&gt; andArgs( List&lt;Arg&gt; arguments ) {
-<span class="fc" id="L247">            LogUtil.nullArgCheck( arguments, &quot;arguments&quot;, List.class );</span>
-<span class="fc" id="L248">            _arguments.addAll(arguments);</span>
-<span class="fc" id="L249">            return this;</span>
+<span class="fc" id="L250">            LogUtil.nullArgCheck( arguments, &quot;arguments&quot;, List.class );</span>
+<span class="fc" id="L251">            _arguments.addAll(arguments);</span>
+<span class="fc" id="L252">            return this;</span>
         }
 
         public Builder&lt;D&gt; andArgs( Arg&lt;?&gt;... arguments ) {
-<span class="fc" id="L253">            LogUtil.nullArgCheck( arguments, &quot;arguments&quot;, Arg[].class );</span>
-<span class="fc" id="L254">            return andArgs(Arrays.stream(arguments).collect(Collectors.toList()));</span>
+<span class="fc" id="L256">            LogUtil.nullArgCheck( arguments, &quot;arguments&quot;, Arg[].class );</span>
+<span class="fc" id="L257">            return andArgs(Arrays.stream(arguments).collect(Collectors.toList()));</span>
         }
 
     }

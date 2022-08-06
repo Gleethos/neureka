@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ElemWiseUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations</a> &gt; <span class="el_source">ElemWiseUtil.java</span></div><h1>ElemWiseUtil.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations;
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Operation;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.main.internal.CallExecutor;
+import neureka.calculus.args.Arg;
+import neureka.devices.Device;
+import org.jetbrains.annotations.Contract;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ *  Methods inside this utility class execute only some {@link ExecutionCall} arguments
+ *  in groups if their total number exceeds the arity of an operation.
+ *  
+ */
+<span class="nc" id="L20">public class ElemWiseUtil</span>
+{
+<span class="fc" id="L22">    private static final Logger _LOG = LoggerFactory.getLogger( ElemWiseUtil.class );</span>
+
+    public static Tsr&lt;?&gt; forMultiplications(
+            ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
+            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
+    ) {
+<span class="fc" id="L28">        call = call.withInputs(call.inputs().clone()); // Let's make sure we prevent any side effects.</span>
+<span class="fc" id="L29">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L30">        int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="fc" id="L31">        Operation type = call.getOperation();</span>
+
+<span class="fc" id="L33">        Tsr&lt;?&gt; result = null;</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if ( call.arity() &gt; 3 ) {</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
+<span class="fc" id="L36">                Tsr&lt;?&gt;[] reduction = new Tsr[]{ call.input( 0 ), call.input( 1 ), call.input( 2 ) };</span>
+<span class="fc" id="L37">                result = recursiveExecutor.execute(</span>
+<span class="fc" id="L38">                                        ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)</span>
+                                );
+<span class="fc" id="L40">                call = call.withInputAt( 0, result );</span>
+
+<span class="fc" id="L42">                reduction = Operation.Utility.offsetted(call.inputs(), 1);</span>
+<span class="fc" id="L43">                result = recursiveExecutor.execute(</span>
+<span class="fc" id="L44">                        ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)</span>
+                );
+<span class="fc" id="L46">                call = call.withInputAt( 0, result );</span>
+<span class="fc" id="L47">            } else {</span>
+<span class="fc" id="L48">                Tsr&lt;?&gt;[] reduction = Operation.Utility.without(call.inputs(), 1+d);</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">                if ( reduction.length &gt; 2 ) {</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? call.input( 1 ).deepCopy().getUnsafe().setIsIntermediate( true ) : reduction[ 0 ];</span>
+<span class="fc" id="L51">                    result = recursiveExecutor.execute(</span>
+<span class="fc" id="L52">                            ExecutionCall.of( reduction )</span>
+<span class="fc" id="L53">                                            .andArgs( Arg.DerivIdx.of( -1 ) )</span>
+<span class="fc" id="L54">                                            .running( Neureka.get().backend().getOperation(&quot;*&quot;) )</span>
+<span class="fc" id="L55">                                            .on( device )</span>
+                    );
+<span class="fc" id="L57">                    call = call.withInputAt( 0, result );</span>
+                }
+                else
+<span class="nc" id="L60">                    call = call.withInputAt( 0, reduction[ 1 ] );</span>
+            }
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">            if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );</span>
+<span class="fc" id="L63">            return result;</span>
+        } 
+        else
+<span class="fc" id="L66">            return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );</span>
+
+    }
+
+    @Contract( pure = true )
+    public static Tsr&lt;?&gt; forDivisionsOrModuli(
+            ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
+            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
+    ) {
+<span class="fc" id="L75">        call = call.withInputs(call.inputs().clone()); // Let's make sure we prevent any side effects.</span>
+<span class="fc" id="L76">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L77">        int d = call.getValOf( Arg.DerivIdx.class );</span>
+
+<span class="fc" id="L79">        Tsr&lt;?&gt; result = null;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if ( call.arity() &gt; 3 )</span>
+        {
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
+<span class="fc" id="L83">                Tsr&lt;?&gt;[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};</span>
+<span class="fc" id="L84">                result = recursiveExecutor.execute( call.withInputs( reduction ) );</span>
+<span class="fc" id="L85">                call = call.withInputAt( 0, result );</span>
+
+<span class="fc" id="L87">                reduction = Operation.Utility.offsetted(call.inputs(), 1);</span>
+<span class="fc" id="L88">                result = recursiveExecutor.execute(</span>
+<span class="fc" id="L89">                                    call.withInputs(reduction)</span>
+                            );
+<span class="fc" id="L91">                call = call.withInputAt( 0, result );</span>
+<span class="fc" id="L92">            } else {</span>
+                Tsr&lt;?&gt; a;
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">                if ( d &gt; 1 ) {</span>
+<span class="nc" id="L95">                    Tsr&lt;?&gt;[] reduction = Operation.Utility.subset(call.inputs(), 1, 1, d+1);</span>
+<span class="nc" id="L96">                    reduction[ 0 ] = call.input( 1 ).deepCopy().getUnsafe().setIsIntermediate( true );</span>
+<span class="nc" id="L97">                    result = recursiveExecutor.execute(</span>
+<span class="nc" id="L98">                                        ExecutionCall.of( reduction )</span>
+<span class="nc" id="L99">                                                        .andArgs(Arg.DerivIdx.of(-1))</span>
+<span class="nc" id="L100">                                                        .running(Neureka.get().backend().getOperation(&quot;/&quot;))</span>
+<span class="nc" id="L101">                                                        .on(device)</span>
+                                    );
+<span class="nc" id="L103">                    a = result;</span>
+<span class="nc" id="L104">                }</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">                else if ( d == 1 ) a = call.input( 1 );</span>
+<span class="nc" id="L106">                else a = newTsrLike( call.input( 1 ), 1.0 );</span>
+                Tsr&lt;?&gt; b;
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">                if ( call.arity() -  d - 2  &gt; 1 ) {</span>
+<span class="fc" id="L109">                    Tsr&lt;?&gt;[] reduction = Operation.Utility.subset( call.inputs(), 2, d+2, call.arity()-(d+2) );</span>
+<span class="fc" id="L110">                    reduction[ 1 ] = newTsrLike( call.input( 1 ), 1.0 );</span>
+<span class="fc" id="L111">                    reduction[ 0 ] = reduction[ 1 ];</span>
+<span class="fc" id="L112">                    result = recursiveExecutor.execute(</span>
+<span class="fc" id="L113">                                        ExecutionCall.of( reduction )</span>
+<span class="fc" id="L114">                                                        .andArgs(Arg.DerivIdx.of(-1))</span>
+<span class="fc" id="L115">                                                        .running(Neureka.get().backend().getOperation(&quot;/&quot;))</span>
+<span class="fc" id="L116">                                                        .on(device)</span>
+                                );
+<span class="fc" id="L118">                    b = result;</span>
+<span class="fc" id="L119">                }</span>
+<span class="nc" id="L120">                else b = newTsrLike( call.input( 1 ), 1.0 );</span>
+
+<span class="fc" id="L122">                result = recursiveExecutor.execute(</span>
+<span class="fc" id="L123">                                        ExecutionCall.of( call.input( 0 ), a, b )</span>
+<span class="fc" id="L124">                                                        .andArgs( Arg.DerivIdx.of( -1 ) )</span>
+<span class="fc" id="L125">                                                        .running( Neureka.get().backend().getOperation(&quot;*&quot;) )</span>
+<span class="fc" id="L126">                                                        .on( device )</span>
+                                );
+<span class="fc" id="L128">                result = recursiveExecutor.execute(</span>
+<span class="fc" id="L129">                                        ExecutionCall.of( result, call.input( 0 ), call.input( d + 1 ) )</span>
+<span class="fc" id="L130">                                                        .andArgs(Arg.DerivIdx.of(1))</span>
+<span class="fc" id="L131">                                                        .running(Neureka.get().backend().getOperation(&quot;/&quot;))</span>
+<span class="fc" id="L132">                                                        .on(device)</span>
+                                );
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">                if ( d == 0 ) a.getUnsafe().delete();</span>
+<span class="fc" id="L135">                b.getUnsafe().delete();</span>
+            }
+        }
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );</span>
+<span class="fc" id="L139">        return result;</span>
+    }
+
+    @Contract( pure = true )
+    public static Tsr&lt;?&gt; forAdditions(
+            ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
+            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
+    ) {
+<span class="fc" id="L147">        return _forAdditionsOrSubtractions(call, recursiveExecutor, true);</span>
+    }
+
+    @Contract( pure = true )
+    public static Tsr&lt;?&gt; forSubtractions(
+            ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
+            CallExecutor recursiveExecutor
+    ) {
+<span class="fc" id="L155">        return _forAdditionsOrSubtractions(call, recursiveExecutor, false);</span>
+    }
+
+    @Contract( pure = true )
+    private static Tsr&lt;?&gt; _forAdditionsOrSubtractions(
+            ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
+            CallExecutor recursiveExecutor,
+            boolean thisIsForAddition
+    ) {
+<span class="fc" id="L164">        call = call.withInputs(call.inputs().clone()); // Let's make sure there are no side effects!</span>
+<span class="fc" id="L165">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L166">        int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="fc" id="L167">        Operation operation = call.getOperation();</span>
+
+<span class="fc" id="L169">        Tsr&lt;?&gt; result = null;</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        if ( call.arity() &gt; 3 ) {</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
+<span class="fc" id="L172">                Tsr&lt;?&gt;[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};</span>
+<span class="fc" id="L173">                result = recursiveExecutor.execute(</span>
+<span class="fc" id="L174">                                    ExecutionCall.of( reduction )</span>
+<span class="fc" id="L175">                                                    .andArgs(Arg.DerivIdx.of(d))</span>
+<span class="fc" id="L176">                                                    .running(operation)</span>
+<span class="fc" id="L177">                                                    .on(device)</span>
+                            );
+<span class="fc" id="L179">                call = call.withInputAt(0, result );</span>
+
+<span class="fc" id="L181">                reduction = Operation.Utility.offsetted(call.inputs(), 1);</span>
+<span class="fc" id="L182">                result = recursiveExecutor.execute(</span>
+<span class="fc" id="L183">                                        ExecutionCall.of( reduction )</span>
+<span class="fc" id="L184">                                                        .andArgs(Arg.DerivIdx.of(d))</span>
+<span class="fc" id="L185">                                                        .running(operation)</span>
+<span class="fc" id="L186">                                                        .on(device)</span>
+                                );
+<span class="fc" id="L188">                call = call.withInputAt(0, result );</span>
+<span class="fc" id="L189">            }</span>
+            else
+<span class="fc" id="L191">                call = call.withInputAt(0,</span>
+<span class="fc" id="L192">                        call.input( 1 ).deepCopy()</span>
+<span class="fc" id="L193">                           .getUnsafe()</span>
+<span class="fc" id="L194">                           .setIsIntermediate( true )</span>
+<span class="pc bpc" id="L195" title="2 of 4 branches missed.">                           .setItems( d == 0 || thisIsForAddition ? 1f : -1f )</span>
+                    );
+        }
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );</span>
+<span class="fc" id="L199">        return result;</span>
+    }
+
+
+    public static &lt;V&gt; Tsr&lt;V&gt; newTsrLike( Tsr&lt;V&gt; template, double value ) {
+<span class="fc" id="L204">        return newTsrLike(</span>
+<span class="fc" id="L205">            template.itemType(),</span>
+<span class="fc" id="L206">            template.getNDConf().shape(),</span>
+<span class="fc" id="L207">            template.isOutsourced(),</span>
+<span class="fc" id="L208">            template.get( Device.class ),</span>
+            value
+        );
+    }
+
+    public static &lt;V&gt; Tsr&lt;V&gt; newTsrLike(
+        Class&lt;V&gt; type, int[] shape, boolean isOutsourced, Device&lt;Object&gt; device, double value
+    ) {
+<span class="fc" id="L216">        Tsr&lt;V&gt; t = Tsr.of( type, shape, value )</span>
+<span class="fc" id="L217">                        .getUnsafe()</span>
+<span class="fc" id="L218">                        .setIsIntermediate( true );</span>
+<span class="fc" id="L219">        t.setIsVirtual( false );</span>
+<span class="fc" id="L220">        t.setItems( value );</span>
+        try {
+<span class="fc bfc" id="L222" title="All 2 branches covered.">            if ( isOutsourced ) device.store( t );</span>
+<span class="nc" id="L223">        } catch ( Exception exception ) {</span>
+<span class="nc" id="L224">            _LOG.error( &quot;Failed storing a newly created tensor from a template tensor to its host device.&quot;, exception );</span>
+<span class="nc" id="L225">            throw exception;</span>
+<span class="fc" id="L226">        }</span>
+<span class="fc" id="L227">        return t;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

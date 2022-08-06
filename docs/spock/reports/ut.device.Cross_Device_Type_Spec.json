@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"1",
-    "duration":"1.049 seconds"
+    "duration":"0.969 seconds"
   },
 
   "title":"",
   "narrative":"",
-  "headers":["\\n <h2> Cross Device-Type Unit Tests </h2>\\n <p>\\n Specified below are strict tests for the factory methods in the\\n Device interface as well as its various implementations \\n which should adhere to a certain set of common behaviours.\\n </p>\\n"],"tags":{},"see":[],
+  "headers":["\\u000a <h2> Cross Device-Type Unit Tests </h2>\\u000a <p>\\u000a Specified below are strict tests for the factory methods in the\\u000a Device interface as well as its various implementations \\u000a which should adhere to a certain set of common behaviours.\\u000a </p>\\u000a"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Querying for Device implementations works as expected.",
       "result":"PASS",
-      "duration":"0.093 seconds",
+      "duration":"0.082 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"Advanced device querying methods query as expected!",
       "result":"PASS",
-      "duration":"0.069 seconds",
+      "duration":"0.032 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
     {
       "id":"The simpler device querying methods query as expected!",
       "result":"PASS",
-      "duration":"0.068 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -67,7 +67,7 @@
     {
       "id":"Passing a numeric array to a tensor should modify its content!",
       "result":"PASS",
-      "duration":"0.267 seconds",
+      "duration":"0.065 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -78,7 +78,7 @@
 
         {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
 
-        {"kind":"where","text":"The following data is being used :","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]"],"data1":["[]","[2.0, 3.0, 4.0, 5.0, 6.0]","[3.0, 5.0, 6.0]","[9.0, 4.0, 7.0, -12.0]","[22.0, 24.0, 35.0, 80.0]","[]","[2.0, 3.0, 4.0, 5.0, 6.0]","[3.0, 5.0, 6.0]","[9.0, 4.0, 7.0, -12.0]","[22.0, 24.0, 35.0, 80.0]"],"data2":["[]","[1.0, 1.0, 1.0, 1.0]","[4.0, 2.0, 3.0]","[-5.0, -2.0, 1.0]","[-1.0, -1.0, -1.0]","[]","[1.0, 1.0, 1.0, 1.0, 1.0]","[4.0, 2.0, 3.0]","[-5.0, -2.0, 1.0]","[-1.0, -1.0, -1.0]"],"expected":["(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]","(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]","(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]","(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]","(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]","(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]","(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]","(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
+        {"kind":"where","text":"The following data is being used :","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2507a3f6730],platform=OpenCLPlatform@2000236c[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x2507428e620],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x2507a3f6730],platform=OpenCLPlatform@2000236c[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x2507428e620],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x2507a3f6730],platform=OpenCLPlatform@2000236c[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x2507428e620],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x2507a3f6730],platform=OpenCLPlatform@2000236c[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x2507428e620],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x2507a3f6730],platform=OpenCLPlatform@2000236c[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x2507428e620],kernels=[..46..]]]"],"data1":["[]","[2.0, 3.0, 4.0, 5.0, 6.0]","[3.0, 5.0, 6.0]","[9.0, 4.0, 7.0, -12.0]","[22.0, 24.0, 35.0, 80.0]","[]","[2.0, 3.0, 4.0, 5.0, 6.0]","[3.0, 5.0, 6.0]","[9.0, 4.0, 7.0, -12.0]","[22.0, 24.0, 35.0, 80.0]"],"data2":["[]","[1.0, 1.0, 1.0, 1.0]","[4.0, 2.0, 3.0]","[-5.0, -2.0, 1.0]","[-1.0, -1.0, -1.0]","[]","[1.0, 1.0, 1.0, 1.0, 1.0]","[4.0, 2.0, 3.0]","[-5.0, -2.0, 1.0]","[-1.0, -1.0, -1.0]"],"expected":["(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]","(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]","(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]","(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]","(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]","(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]","(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]","(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
       ],
       "problems":"[]"
     },
@@ -86,7 +86,7 @@
     {
       "id":"Tensor data can be fetched from device if the tensor is stored on it...",
       "result":"PASS",
-      "duration":"0.141 seconds",
+      "duration":"0.197 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -105,7 +105,7 @@
 
         {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
 
-        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]"],"shape":["[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]"],"data":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2507a3f6730],platform=OpenCLPlatform@2000236c[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x2507428e620],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x2507a3f6730],platform=OpenCLPlatform@2000236c[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x2507428e620],kernels=[..46..]]]"],"shape":["[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]"],"data":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
       ],
       "problems":"[]"
     },
@@ -113,7 +113,7 @@
     {
       "id":"Execution calls containing null arguments will cause an exception to be thrown in device instances.",
       "result":"PASS",
-      "duration":"0.016 seconds",
+      "duration":"0.060 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -130,7 +130,7 @@
 
         {"kind":"and","text":"The expected exception is being thrown alongside a descriptive message.","code":["def exception = thrown(IllegalArgumentException)","exception.message == \"Device arguments may not be null!\\n\" +","\"One or more tensor arguments within the given ExecutionCall instance is null.\""]},
 
-        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2507a3f6730],platform=OpenCLPlatform@2000236c[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x2507428e620],kernels=[..46..]]]"]}}
       ],
       "problems":"[]"
     },
@@ -138,7 +138,7 @@
     {
       "id":"Devices store tensors which can also be restored.",
       "result":"PASS",
-      "duration":"0.079 seconds",
+      "duration":"0.105 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -161,7 +161,7 @@
 
         {"kind":"then","text":"...the device is empty again.","code":["device.isEmpty() == ( initialNumber == 0 )","device.size() == initialNumber","!device.has( a )","!device.has( b )"]},
 
-        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]","FileDevice[directory=build/test-can,stored={},loadable=[test2.idx],loaded=[]]"]}}
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2507a3f6730],platform=OpenCLPlatform@2000236c[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x2507428e620],kernels=[..46..]]]","FileDevice[directory=build/test-can,stored={},loadable=[test2.idx],loaded=[]]"]}}
       ],
       "problems":"[]"
     },
@@ -169,7 +169,7 @@
     {
       "id":"Devices store slices which can also be restored.",
       "result":"PASS",
-      "duration":"0.041 seconds",
+      "duration":"0.040 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -190,7 +190,7 @@
 
         {"kind":"then","text":"...the device is empty again.","code":["device.isEmpty() == ( initialNumber == 0 )","device.size() == initialNumber","!device.has( a )","!device.has( b )"]},
 
-        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1fb1283ddd0],platform=OpenCLPlatform@56c27436[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1fb0e0551a0],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2507a3f6730],platform=OpenCLPlatform@2000236c[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x2507428e620],kernels=[..46..]]]"]}}
       ],
       "problems":"[]"
     },
@@ -231,7 +231,7 @@
     {
       "id":"Virtual tensors stay virtual when outsourced.",
       "result":"PASS",
-      "duration":"0.027 seconds",
+      "duration":"0.052 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

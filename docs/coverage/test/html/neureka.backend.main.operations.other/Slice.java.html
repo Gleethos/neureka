@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Slice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.other</a> &gt; <span class="el_source">Slice.java</span></div><h1>Slice.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.other;
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.backend.api.Algorithm;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Result;
+import neureka.backend.api.fun.SuitabilityPredicate;
+import neureka.backend.api.template.operations.AbstractOperation;
+import neureka.backend.api.template.operations.OperationBuilder;
+import neureka.backend.main.operations.ElemWiseUtil;
+import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
+import neureka.devices.Device;
+import neureka.framing.Relation;
+import neureka.ndim.NDConstructor;
+import org.slf4j.Logger;
+
+public class Slice extends AbstractOperation
+{
+<span class="fc" id="L21">    private static final Logger _LOG = org.slf4j.LoggerFactory.getLogger( Slice.class );</span>
+    public Slice()
+    {
+<span class="fc" id="L24">        super(</span>
+            new OperationBuilder()
+<span class="fc" id="L26">                .setIdentifier(       &quot;slice&quot;     )</span>
+<span class="fc" id="L27">                .setOperator(         &quot;slice&quot;     )</span>
+<span class="fc" id="L28">                .setArity(            1           )</span>
+<span class="fc" id="L29">                .setIsOperator(       false       )</span>
+<span class="fc" id="L30">                .setIsIndexer(        false       )</span>
+<span class="fc" id="L31">                .setIsDifferentiable( true        )</span>
+<span class="fc" id="L32">                .setIsInline(         false       )</span>
+        );
+<span class="fc" id="L34">        setAlgorithm(</span>
+<span class="fc" id="L35">            Algorithm.withName(&quot;slice&quot;)</span>
+<span class="fc" id="L36">            .setIsSuitableFor( call -&gt; SuitabilityPredicate.GOOD )</span>
+<span class="fc" id="L37">            .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
+<span class="fc" id="L38">            .setExecution(</span>
+                ( caller, call ) -&gt;
+                {
+<span class="fc" id="L41">                    int[] newShape    = call.getValOf(Arg.Shape.class);</span>
+<span class="fc" id="L42">                    int[] newOffset   = call.getValOf(Arg.Offset.class);</span>
+<span class="fc" id="L43">                    int[] newSpread   = call.getValOf(Arg.Stride.class);</span>
+<span class="fc" id="L44">                    Tsr&lt;Object&gt; input = (Tsr&lt;Object&gt;) call.input(0);</span>
+<span class="fc" id="L45">                    Tsr&lt;?&gt; subset     = _slice(newShape, newOffset, newSpread, input);</span>
+                    //---
+<span class="fc" id="L47">                    Class&lt;?&gt;       typeClass = input.itemType();</span>
+<span class="fc" id="L48">                    int[]          shape = input.getNDConf().shape();</span>
+<span class="fc" id="L49">                    boolean        isOutsourced = input.isOutsourced();</span>
+<span class="fc" id="L50">                    Device&lt;Object&gt; device = input.getDevice();</span>
+
+<span class="fc" id="L52">                    return</span>
+<span class="fc" id="L53">                        Result.of(subset.getUnsafe().setIsIntermediate(true))</span>
+<span class="fc" id="L54">                            .withADAction( t -&gt; {</span>
+<span class="fc" id="L55">                                Tsr&lt;Object&gt; newError = ElemWiseUtil.newTsrLike((Class&lt;Object&gt;) typeClass, shape, isOutsourced, device, 0);</span>
+<span class="fc" id="L56">                                boolean isIntermediate = newError.isIntermediate();</span>
+<span class="fc" id="L57">                                newError.getUnsafe().setIsIntermediate(false); // To avoid deletion!</span>
+<span class="fc" id="L58">                                Tsr&lt;Object&gt; slice = Function.of(&quot;slice(I[0])&quot;, false)</span>
+<span class="fc" id="L59">                                                    .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))</span>
+<span class="fc" id="L60">                                                    .call(newError);</span>
+
+<span class="fc" id="L62">                                newError.getUnsafe().setIsIntermediate(isIntermediate);</span>
+<span class="fc" id="L63">                                slice.getUnsafe().setIsIntermediate(false);</span>
+<span class="fc" id="L64">                                Neureka.get().backend().getFunction().idy().execute( slice, t.error().setIsVirtual(false) );</span>
+<span class="fc" id="L65">                                return newError;</span>
+                            });
+                }
+            )
+<span class="fc" id="L69">            .buildFunAlgorithm()</span>
+        );
+<span class="fc" id="L71">    }</span>
+
+    private static Tsr&lt;?&gt; _slice(
+        int[] newShape,
+        int[] newOffset,
+        int[] newSpread,
+        Tsr&lt;Object&gt; input
+    ) {
+<span class="fc" id="L79">        input.setIsVirtual( false );</span>
+<span class="fc" id="L80">        int[] newTranslation = input.getNDConf().translation();</span>
+<span class="fc" id="L81">        int[] newIndicesMap = input.getNDConf().getLayout().newTranslationFor( newShape );</span>
+
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        for ( int i = 0; i &lt; input.rank(); i++ )</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">            newSpread[ i ] = ( newSpread[i] == 0 ) ? 1 : newSpread[ i ];</span>
+
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        for ( int i = 0; i &lt; newOffset.length; i++ )</span>
+<span class="fc" id="L87">            newOffset[ i ] = newOffset[ i ] + input.getNDConf().offset( i ); // Offset is being inherited!</span>
+
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        Tsr&lt;?&gt; rootTensor   = ( input.isSlice() ? input.get( Relation.class ).findRootTensor() : input );</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        Tsr&lt;?&gt; parentTensor = ( input.isSlice() ? input.get( Relation.class ).getParent()      : input );</span>
+        /*
+            The following code check the validity of the slice shape ranges with
+            respect to the 'parentTensor' of this new slice.
+         */
+<span class="fc bfc" id="L95" title="All 4 branches covered.">        if ( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {</span>
+            // TODO! This requires some more thought about how to check this!
+            // THIS CASE HAS NOT YET BEEN THOUGHT TROUGH!
+<span class="fc" id="L98">            _LOG.warn(</span>
+                    &quot;Exceptional slice request detected. &quot; +
+                            &quot;This type of tensor cannot yet be sliced. &quot; +
+                            &quot;Please copy this tensor before slicing.&quot;
+            );
+        } else {
+            /*
+                1. We know that inside this else branch 'this' tensor is a first order slice!
+                (So it is not a slice of a slice... reason : 'rootTensor == parentTensor' )
+
+                2. There is however uncertainty about the 'true shape' of this parent tensor!
+                Meaning : It might have been reshaped and could therefore be distorted with
+                respect to the slice that is currently being prepared!
+                -&gt; This means we have to take this possible reshaping into account!
+                Like so:
+
+                The following uses an int array also called 'reshapeRelation'.
+                This is simply the 'reshape array' which has been recorded inside the 'Relation' component
+                by the 'Reshape' operation! ( Hopefully! :) ... custom shape operations need to consider this as well! )
+
+                The following would occur when : &quot;Tsr.of(...).T().getAt(...);&quot;
+                Transposing a tensor performs an inline reshaping of an identical
+                slice of the original tensor! Then again slicing this tensor
+                via the 'getAt(...)' method leads us to a situation where
+                the following variable is NOT NULL! :
+             */
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            int[] reshaped = ( input.isSlice() ) ? parentTensor.get( Relation.class ).getReshapeRelationFor( input ) : null;</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">            reshaped = ( reshaped != null ) ? Reshape.invert( reshaped ) : null;</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            for ( int i = 0; i &lt; parentTensor.rank(); i++ ) {</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">                int ii = ( reshaped != null ) ? reshaped[ i ] : i;</span>
+<span class="fc" id="L128">                int top = newOffset[ i ] + newShape[ i ];</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">                if ( top &gt; parentTensor.shape( ii ) ) {</span>
+<span class="fc" id="L130">                    String message =</span>
+                            &quot;Cannot create slice because ranges are out of the bounds of the targeted tensor.\n&quot; +
+                                    &quot;At index '&quot; + i + &quot;' : offset '&quot; + newOffset[ i ] + &quot;' + shape '&quot; + newShape[ i ] + &quot;' = '&quot; + top + &quot;',\n&quot; +
+<span class="fc" id="L133">                                    &quot;which is larger than the target shape '&quot; + parentTensor.shape( ii ) + &quot;' at the same index!&quot;;</span>
+<span class="fc" id="L134">                    Exception exception = new IllegalArgumentException( message );</span>
+<span class="fc" id="L135">                    _LOG.error( message, exception );</span>
+<span class="fc" id="L136">                    throw new IllegalArgumentException( exception );</span>
+                }
+            }
+        }
+
+<span class="fc" id="L141">        Tsr&lt;Object&gt; subset =</span>
+<span class="fc" id="L142">                Tsr.of(</span>
+<span class="fc" id="L143">                        input.getDataType(),</span>
+<span class="fc" id="L144">                        NDConstructor.of( newShape, newTranslation, newIndicesMap, newSpread, newOffset ),</span>
+<span class="fc" id="L145">                        input.getUnsafe().getData()</span>
+                );
+
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        if ( input.isOutsourced() ) {</span>
+<span class="fc" id="L149">            Device&lt;Object&gt; device = input.getDevice();</span>
+<span class="fc" id="L150">            device.store( subset, input );</span>
+<span class="fc" id="L151">            subset.setIsOutsourced( true );</span>
+        }
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        if ( input.isVirtual() ) subset.setIsVirtual( true );</span>
+<span class="fc" id="L154">        subset.set( new Relation().addParent( input ) );</span>
+<span class="fc" id="L155">        Relation&lt;Object&gt; parent = input.get( Relation.class );</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        parent = ( parent != null ) ? parent : new Relation&lt;&gt;();</span>
+<span class="fc" id="L157">        parent.addChild( subset );</span>
+<span class="fc" id="L158">        input.set( parent );</span>
+
+<span class="fc" id="L160">        return subset;</span>
+    }
+
+    @Override
+    public String stringify( String[] children ) {
+<span class="fc" id="L165">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L166" title="3 of 4 branches missed.">        if ( expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')' ) {</span>
+<span class="nc" id="L167">            return &quot;slice&quot; + expression;</span>
+        }
+<span class="fc" id="L169">        return &quot;slice&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+    }
+
+    @Override
+    public String asDerivative(Function[] children, int derivationIndex) {
+<span class="nc" id="L174">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+    }
+
+    @Override
+<span class="nc" id="L178">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

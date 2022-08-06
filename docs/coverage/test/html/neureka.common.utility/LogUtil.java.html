@@ -2,13 +2,10 @@
 
 import org.slf4j.helpers.MessageFormatter;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 /**
  *  A utility class for message formatting.
  */
-<span class="nc" id="L11">public final class LogUtil</span>
+<span class="nc" id="L8">public final class LogUtil</span>
 {
     /**
      * @param withPlaceholders The {@link String} which may or may not contain placeholder in the for of &quot;{}&quot;.
@@ -19,21 +16,21 @@ import java.util.stream.Collectors;
      *         instead of the placeholder brackets within the first argument.
      */
     public static String format( String withPlaceholders, Object... toBePutAtPlaceholders ) {
-<span class="fc" id="L22">        return MessageFormatter.arrayFormat( withPlaceholders, toBePutAtPlaceholders ).getMessage();</span>
+<span class="fc" id="L19">        return MessageFormatter.arrayFormat( withPlaceholders, toBePutAtPlaceholders ).getMessage();</span>
     }
 
     public static &lt;T&gt; void nullArgCheck( T var, String thing, Class&lt;?&gt; type, String... notes ) {
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        if ( var == null ) {</span>
-<span class="fc" id="L27">            String postfix = String.join( &quot; &quot;, notes );</span>
-<span class="pc bpc" id="L28" title="1 of 2 branches missed.">            postfix = ( postfix.trim().equals(&quot;&quot;) ? &quot;&quot; : &quot; &quot; ) + postfix;</span>
-<span class="fc" id="L29">            throw new IllegalArgumentException(</span>
-<span class="fc" id="L30">                format(</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        if ( var == null ) {</span>
+<span class="fc" id="L24">            String postfix = String.join( &quot; &quot;, notes );</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">            postfix = ( postfix.trim().equals(&quot;&quot;) ? &quot;&quot; : &quot; &quot; ) + postfix;</span>
+<span class="fc" id="L26">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L27">                format(</span>
                         &quot;Argument '{}' of type '{}' was null!{}&quot;,
-<span class="fc" id="L32">                        thing, type.getSimpleName(), postfix</span>
+<span class="fc" id="L29">                        thing, type.getSimpleName(), postfix</span>
                 )
             );
         }
-<span class="fc" id="L36">    }</span>
+<span class="fc" id="L33">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

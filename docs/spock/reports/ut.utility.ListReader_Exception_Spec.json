@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.014 seconds"
+    "duration":"0.020 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"The ListReader will detect inconsistent types in the provided data.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"The ListReader will detect inconsistent degrees of nesting in the provided data.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

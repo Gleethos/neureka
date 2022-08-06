@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.002 seconds"
+    "duration":"1.405 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"A functional algorithm cannot be used if it was not built properly!",
       "result":"PASS",
-      "duration":"0.078 seconds",
+      "duration":"0.075 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"A functional algorithm does not accept null as an answer!",
       "result":"PASS",
-      "duration":"0.040 seconds",
+      "duration":"0.044 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,7 +62,7 @@
     {
       "id":"A functional algorithm warns us when modified after it has been built!",
       "result":"PASS",
-      "duration":"0.674 seconds",
+      "duration":"1.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

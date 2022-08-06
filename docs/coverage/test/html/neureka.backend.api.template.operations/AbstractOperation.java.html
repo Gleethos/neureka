@@ -191,7 +191,7 @@ public abstract class AbstractOperation implements Operation
 <span class="fc" id="L191">        }</span>
 <span class="fc" id="L192">        float defaultSuitability = _defaultAlgorithm.isSuitableFor( call );</span>
 
-<span class="pc bpc" id="L194" title="3 of 6 branches missed.">        if ( defaultSuitability &gt; bestScore || ( bestImpl == null &amp;&amp; defaultSuitability &gt; 0f ) ) {</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        if ( defaultSuitability &gt; bestScore ) {</span>
 <span class="fc" id="L195">            _LOG.debug(&quot;Default algorithm picked for call targeting operation '&quot;+call.getOperation()+&quot;'.&quot;);</span>
 <span class="fc" id="L196">            return _defaultAlgorithm;</span>
         }
@@ -210,17 +210,17 @@ public abstract class AbstractOperation implements Operation
 <span class="fc" id="L210">        return _algorithms.containsKey( implementation );</span>
     }
 
-<span class="fc" id="L213">    @Override public boolean isOperator() { return _isOperator; }</span>
+<span class="fc" id="L213">    @Override public final boolean isOperator() { return _isOperator; }</span>
 
 <span class="fc" id="L215">    @Override public String getIdentifier() { return _function; }</span>
 
-<span class="fc" id="L217">    @Override public String getOperator() { return _operator; }</span>
+<span class="fc" id="L217">    @Override public final String getOperator() { return _operator; }</span>
 
-<span class="fc" id="L219">    @Override public int getArity() { return _arity; }</span>
+<span class="fc" id="L219">    @Override public final int getArity() { return _arity; }</span>
 
-<span class="fc" id="L221">    @Override public boolean isIndexer() { return _isIndexer; }</span>
+<span class="fc" id="L221">    @Override public final boolean isIndexer() { return _isIndexer; }</span>
 
-<span class="nc" id="L223">    @Override public boolean isDifferentiable() { return _isDifferentiable; }</span>
+<span class="nc" id="L223">    @Override public final boolean isDifferentiable() { return _isDifferentiable; }</span>
 
 <span class="fc" id="L225">    @Override public boolean isInline() { return _isInline; }</span>
 
@@ -228,9 +228,21 @@ public abstract class AbstractOperation implements Operation
 
     @Override
     public final String toString() {
-<span class="fc" id="L231">        String asString = this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode());</span>
-<span class="fc" id="L232">        asString = asString + &quot;[identifier='&quot; + _function + &quot;',operator='&quot;+_operator+&quot;']&quot;;</span>
-<span class="fc" id="L233">        return asString;</span>
+<span class="fc" id="L231">        String operationName = operationName().trim();</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        operationName = operationName.isEmpty() ? &quot;AnonymousOperation&quot; : operationName;</span>
+<span class="fc" id="L233">        String asString = operationName+&quot;@&quot;+Integer.toHexString(hashCode());</span>
+<span class="fc" id="L234">        asString = asString + &quot;[identifier='&quot; + _function + &quot;',operator='&quot;+_operator+&quot;']&quot;;</span>
+<span class="fc" id="L235">        return asString;</span>
+    }
+
+    /**
+     *  Override this if you want your operation to have a string representation
+     *  with a custom prefix which is something other than the simple class name!
+     *
+     * @return The simple class name, or something else if overridden.
+     */
+    protected String operationName() {
+<span class="fc" id="L245">        return this.getClass().getSimpleName();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

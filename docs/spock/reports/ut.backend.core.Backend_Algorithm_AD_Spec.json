@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"3.824 seconds"
+    "duration":"2.830 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Operator implementations behave as expected.",
       "result":"PASS",
-      "duration":"2.373 seconds",
+      "duration":"1.617 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"Activation implementations behave as expected.",
       "result":"PASS",
-      "duration":"0.187 seconds",
+      "duration":"0.251 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -64,7 +64,7 @@
     {
       "id":"Convolution implementations behave as expected.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
     {
       "id":"Broadcast implementations behave as expected.",
       "result":"PASS",
-      "duration":"0.441 seconds",
+      "duration":"0.377 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.046 seconds"
+    "duration":"0.047 seconds"
   },
 
   "title":"What it means to be N-Dimensional",
   "narrative":"",
-  "headers":["\\n <p>\\n Specified below are strict integration tests for tensors and\\n their behaviour with regards to the usage of implementations of the\\n NDConfiguration interface. <br>\\n For certain situations the \\\"Tsr\\\" class should use the correct \\n implementations of said interface as configuration for internal index mapping...\\n </p>\\n"],"tags":{},"see":[],
+  "headers":["\\u000a <p>\\u000a Specified below are strict integration tests for tensors and\\u000a their behaviour with regards to the usage of implementations of the\\u000a NDConfiguration interface. <br>\\u000a For certain situations the \\\"Tsr\\\" class should use the correct \\u000a implementations of said interface as configuration for internal index mapping...\\u000a </p>\\u000a"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"NDConfiguration instances of tensors have expected state.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"NDConfiguration instances of tensors have expected state and behaviour.",
       "result":"PASS",
-      "duration":"0.029 seconds",
+      "duration":"0.030 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

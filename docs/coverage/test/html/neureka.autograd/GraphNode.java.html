@@ -146,7 +146,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
         }
 
 <span class="fc" id="L148">        Result out = payloadSupplier.get();</span>
-<span class="fc bfc" id="L149" title="All 2 branches covered.">        if ( out == null ) throw new NullPointerException( &quot;The supplied payload Tsr must no be null!&quot; );</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        if ( out == null ) throw new NullPointerException( &quot;The supplied payload tensor must no be null!&quot; );</span>
 <span class="fc" id="L150">        GraphNodeAssemblyState&lt;V&gt; a = new GraphNodeAssemblyState&lt;&gt;();</span>
 <span class="fc" id="L151">        NodePayload&lt;V&gt; data = new NodePayload&lt;&gt;(null, null);</span>
 <span class="pc bpc" id="L152" title="1 of 2 branches missed.">        if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!</span>
@@ -683,7 +683,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
     /**
      * @return Checks if this node stores target / AD-action (usually derivatives) pairs.
      */
-<span class="pc bpc" id="L686" title="1 of 4 branches missed.">    public boolean hasDerivatives() { return _targetsToAgents != null &amp;&amp; _targetsToAgents.size() &gt; 0; }</span>
+<span class="fc bfc" id="L686" title="All 4 branches covered.">    public boolean hasDerivatives() { return _targetsToAgents != null &amp;&amp; _targetsToAgents.size() &gt; 0; }</span>
 
     /**
      *  This is the getter for an important {@link GraphNode} property which

@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"5.357 seconds"
+    "duration":"4.774 seconds"
   },
 
   "title":"Cross Device Tensor Slicing",
   "narrative":"",
-  "headers":["\\n <p>\\n This specification covers the behavior of tensors when being sliced\\n on multiple different device types in conjunction with \\n the autograd system.\\n Autograd should work on slices as well. \\n </p>\\n"],"tags":{},"see":[],
+  "headers":["\\u000a <p>\\u000a This specification covers the behavior of tensors when being sliced\\u000a on multiple different device types in conjunction with \\u000a the autograd system.\\u000a Autograd should work on slices as well. \\u000a </p>\\u000a"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Slices can be created using the SliceBuilder.",
       "result":"PASS",
-      "duration":"3.940 seconds",
+      "duration":"3.870 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
 
         {"kind":"then","text":"","code":["y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'"]},
 
-        {"kind":"where","text":"","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1ad4fba4370],platform=OpenCLPlatform@69e780ff[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1ad08dc51a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x24b2da49500],platform=OpenCLPlatform@69e780ff[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x24b28ed2820],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":"[]"
     },
@@ -41,7 +41,7 @@
     {
       "id":"Cross device sliced tensor integration test runs without errors.",
       "result":"PASS",
-      "duration":"1.184 seconds",
+      "duration":"0.586 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -96,7 +96,7 @@
 
         {"kind":"then","text":"","code":["x.toString().contains(\"[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)\")"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1ad4fba4370],platform=OpenCLPlatform@69e780ff[pid=cl_platform_id[0x7fffdfd2a490],context=cl_context[0x1ad08dc51a0],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x24b2da49500],platform=OpenCLPlatform@69e780ff[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x24b28ed2820],kernels=[..46..]]]"]}}
       ],
       "problems":"[]"
     }

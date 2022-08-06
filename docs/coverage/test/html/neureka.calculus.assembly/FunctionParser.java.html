@@ -147,7 +147,7 @@ import java.util.stream.IntStream;
 <span class="fc bfc" id="L147" title="All 2 branches covered.">            if ( foundOperations.contains( _context.getOperation( operationID ).getOperator() ) ) {</span>
 <span class="fc" id="L148">                String currentChain = null;</span>
 <span class="fc" id="L149">                boolean groupingOccurred = false;</span>
-<span class="fc bfc" id="L150" title="All 2 branches covered.">                boolean enoughPresent = ParseUtil.numberOfOperationsWithin( foundOperations ) &gt; 1;// Otherwise: I[j]^4 goes nuts!</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">                boolean enoughPresent = ParseUtil.numberOfOperationsWithin( foundOperations ) &gt; 1;// Otherwise: I[j]**4 goes nuts!</span>
 <span class="fc bfc" id="L151" title="All 2 branches covered.">                if ( enoughPresent ) {</span>
 <span class="fc" id="L152">                    String[] foundCompArray = foundComponents.toArray( new String[ 0 ] );</span>
 <span class="fc" id="L153">                    int length = foundCompArray.length;</span>

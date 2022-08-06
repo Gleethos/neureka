@@ -66,35 +66,37 @@ public class XConv extends AbstractOperation
 <span class="fc" id="L66">                                        .pass( call.input( Number.class, 0 ).rank() )</span>
 <span class="fc" id="L67">                                        .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
 <span class="fc" id="L68">                                        .call( gwz );</span>
-<span class="fc" id="L69">                                }</span>
+
+<span class="fc" id="L70">                                    return call.input( 0 );</span>
+                                }
                             )
-<span class="fc" id="L71">                            .build()</span>
+<span class="fc" id="L73">                            .build()</span>
                 )
         );
 
-<span class="fc" id="L75">    }</span>
+<span class="fc" id="L77">    }</span>
 
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L80">        StringBuilder reconstructed = new StringBuilder();</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
-<span class="fc" id="L82">            reconstructed.append( children[ i ] );</span>
-<span class="fc bfc" id="L83" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
-<span class="fc" id="L84">                reconstructed.append(&quot; x &quot;);</span>
+<span class="fc" id="L82">        StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
+<span class="fc" id="L84">            reconstructed.append( children[ i ] );</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
+<span class="fc" id="L86">                reconstructed.append(&quot; x &quot;);</span>
             }
         }
-<span class="fc" id="L87">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+<span class="fc" id="L89">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L92">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L94">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L97">            return src[ 0 ].call( inputs, j );</span>
+<span class="nc" id="L99">            return src[ 0 ].call( inputs, j );</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

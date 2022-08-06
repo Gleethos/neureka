@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UI8.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.dtype.custom</a> &gt; <span class="el_source">UI8.java</span></div><h1>UI8.java</h1><pre class="source lang-java linenums">package neureka.dtype.custom;
 
-import neureka.dtype.AbstractNumericType;
 import neureka.common.utility.DataConverter;
 
 import java.io.DataInput;
@@ -10,90 +9,90 @@ import java.util.Iterator;
 public final class UI8 extends AbstractNumericType&lt;Short, short[], Byte, byte[]&gt;
 {
 
-<span class="fc" id="L13">    public UI8() { super(); }</span>
+<span class="fc" id="L12">    public UI8() { super(); }</span>
 
-<span class="fc" id="L15">    @Override public boolean signed() { return false; }</span>
+<span class="fc" id="L14">    @Override public boolean signed() { return false; }</span>
 
-<span class="fc" id="L17">    @Override public int numberOfBytes() { return 1; }</span>
+<span class="fc" id="L16">    @Override public int numberOfBytes() { return 1; }</span>
 
-<span class="fc" id="L19">    @Override public Class&lt;Short&gt; targetType() { return Short.class; }</span>
+<span class="fc" id="L18">    @Override public Class&lt;Short&gt; targetType() { return Short.class; }</span>
 
-<span class="fc" id="L21">    @Override public Class&lt;short[]&gt; targetArrayType() { return short[].class; }</span>
+<span class="fc" id="L20">    @Override public Class&lt;short[]&gt; targetArrayType() { return short[].class; }</span>
 
-<span class="nc" id="L23">    @Override public Class&lt;Byte&gt; holderType() { return Byte.class; }</span>
+<span class="nc" id="L22">    @Override public Class&lt;Byte&gt; holderType() { return Byte.class; }</span>
 
-<span class="nc" id="L25">    @Override public Class&lt;byte[]&gt; holderArrayType() { return byte[].class; }</span>
+<span class="nc" id="L24">    @Override public Class&lt;byte[]&gt; holderArrayType() { return byte[].class; }</span>
 
-<span class="fc" id="L27">    @Override public Short foreignHolderBytesToTarget( byte[] bytes ) { return (short) (((int)bytes[ 0 ]) &amp; 0xFF); }</span>
+<span class="fc" id="L26">    @Override public Short foreignHolderBytesToTarget( byte[] bytes ) { return (short) (((int)bytes[ 0 ]) &amp; 0xFF); }</span>
 
 
-<span class="fc" id="L30">    @Override public Short toTarget(Byte original) { return (short) Byte.toUnsignedInt( original ); }</span>
+<span class="fc" id="L29">    @Override public Short toTarget(Byte original) { return (short) Byte.toUnsignedInt( original ); }</span>
 
-<span class="fc" id="L32">    @Override public byte[] targetToForeignHolderBytes(Short number) { return new byte[]{(byte)(number &amp; 0xFF)}; }</span>
+<span class="fc" id="L31">    @Override public byte[] targetToForeignHolderBytes(Short number) { return new byte[]{(byte)(number &amp; 0xFF)}; }</span>
 
     @Override
     public short[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="fc" id="L36">        short[] data = new short[size];</span>
-<span class="fc" id="L37">        byte[] bytes = new byte[ this.numberOfBytes() ];</span>
-<span class="fc bfc" id="L38" title="All 2 branches covered.">        for ( int i=0; i&lt;size; i++ ) {</span>
-<span class="fc" id="L39">            stream.readFully( bytes );</span>
-<span class="fc" id="L40">            data[ i ] = foreignHolderBytesToTarget( bytes );</span>
+<span class="fc" id="L35">        short[] data = new short[size];</span>
+<span class="fc" id="L36">        byte[] bytes = new byte[ this.numberOfBytes() ];</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        for ( int i=0; i&lt;size; i++ ) {</span>
+<span class="fc" id="L38">            stream.readFully( bytes );</span>
+<span class="fc" id="L39">            data[ i ] = foreignHolderBytesToTarget( bytes );</span>
         }
-<span class="fc" id="L42">        return data;</span>
+<span class="fc" id="L41">        return data;</span>
     }
 
     @Override
     public &lt;T&gt; short[] readAndConvertForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
-<span class="nc" id="L47">        return new short[0];</span>
+<span class="nc" id="L46">        return new short[0];</span>
     }
 
     @Override
     public byte[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L52">        byte[] data = new byte[ size ];</span>
-<span class="nc" id="L53">        byte[] bytes = new byte[ this.numberOfBytes() ];</span>
-<span class="nc bnc" id="L54" title="All 2 branches missed.">        for ( int i=0; i&lt;size; i++ ) {</span>
-<span class="nc" id="L55">            stream.readFully( bytes );</span>
-<span class="nc" id="L56">            data[ i ] = bytes[ 0 ];</span>
+<span class="nc" id="L51">        byte[] data = new byte[ size ];</span>
+<span class="nc" id="L52">        byte[] bytes = new byte[ this.numberOfBytes() ];</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        for ( int i=0; i&lt;size; i++ ) {</span>
+<span class="nc" id="L54">            stream.readFully( bytes );</span>
+<span class="nc" id="L55">            data[ i ] = bytes[ 0 ];</span>
         }
-<span class="nc" id="L58">        return data;</span>
+<span class="nc" id="L57">        return data;</span>
     }
 
     @Override
     public &lt;T&gt; byte[] readForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
-<span class="nc" id="L63">        return new byte[0];</span>
+<span class="nc" id="L62">        return new byte[0];</span>
     }
 
     @Override
     public Byte convertToHolder( Object from ) {
-<span class="fc" id="L68">        return DataConverter.get().convert( from, Byte.class );</span>
+<span class="fc" id="L67">        return DataConverter.get().convert( from, Byte.class );</span>
     }
 
     @Override
     public byte[] convertToHolderArray( Object from ) {
-<span class="nc" id="L73">        return new byte[0];</span>
+<span class="nc" id="L72">        return new byte[0];</span>
     }
 
     @Override
     public Short convertToTarget( Object from ) {
-<span class="nc bnc" id="L78" title="All 2 branches missed.">        if ( Byte.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L79">            return ( (Byte) from ).shortValue();</span>
-<span class="nc bnc" id="L80" title="All 2 branches missed.">        else if ( Integer.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L81">            return ( (Integer) from ).shortValue();</span>
-<span class="nc bnc" id="L82" title="All 2 branches missed.">        else if ( Double.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L83">            return ( (Double) from ).shortValue();</span>
-<span class="nc bnc" id="L84" title="All 2 branches missed.">        else if ( Short.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L85">            return ( (Short) from );</span>
-<span class="nc bnc" id="L86" title="All 2 branches missed.">        else if ( Long.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L87">            return ( (Long) from ).shortValue();</span>
-<span class="nc bnc" id="L88" title="All 2 branches missed.">        else if ( Float.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L89">            return ( (Float) from ).shortValue();</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if ( Byte.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L78">            return ( (Byte) from ).shortValue();</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        else if ( Integer.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L80">            return ( (Integer) from ).shortValue();</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        else if ( Double.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L82">            return ( (Double) from ).shortValue();</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        else if ( Short.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L84">            return ( (Short) from );</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        else if ( Long.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L86">            return ( (Long) from ).shortValue();</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        else if ( Float.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L88">            return ( (Float) from ).shortValue();</span>
         else
-<span class="nc" id="L91">            return null;</span>
+<span class="nc" id="L90">            return null;</span>
     }
 
     @Override
     public short[] convertToTargetArray( Object from ) {
-<span class="fc" id="L96">        return DataConverter.get().convert( from, short[].class );</span>
+<span class="fc" id="L95">        return DataConverter.get().convert( from, short[].class );</span>
     }
 
 }

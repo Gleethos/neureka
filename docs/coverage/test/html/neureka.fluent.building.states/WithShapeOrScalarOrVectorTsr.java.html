@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WithShapeOrScalarOrVectorTsr.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.fluent.building.states</a> &gt; <span class="el_source">WithShapeOrScalarOrVectorTsr.java</span></div><h1>WithShapeOrScalarOrVectorTsr.java</h1><pre class="source lang-java linenums">package neureka.fluent.building.states;
+
+import neureka.Tsr;
+import neureka.common.utility.LogUtil;
+
+import java.util.List;
+
+public interface WithShapeOrScalarOrVectorTsr&lt;V&gt; extends WithShapeOrScalarOrVector&lt;V&gt;
+{
+    /** {@inheritDoc} */
+    @Override IterByOrIterFromOrAllTsr&lt;V&gt; withShape( int... shape );
+
+    /** {@inheritDoc} */
+    @Override default &lt;N extends Number&gt; IterByOrIterFromOrAllTsr&lt;V&gt; withShape( List&lt;N&gt; shape ) {
+<span class="fc" id="L15">        LogUtil.nullArgCheck(shape, &quot;shape&quot;, List.class, &quot;Cannot create a tensor without shape!&quot;);</span>
+<span class="fc" id="L16">        return this.withShape(</span>
+<span class="fc" id="L17">                shape.stream().mapToInt(Number::intValue).toArray()</span>
+        );
+    }
+
+    /** {@inheritDoc} */
+    @Override Tsr&lt;V&gt; vector( V... values );
+
+    /** {@inheritDoc} */
+    @Override Tsr&lt;V&gt; scalar( V value );
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -112,8 +112,8 @@ public class Call&lt;D&gt;
                             &quot;Type safe access to the tensor parameter at index '&quot;+i+&quot;' failed.&quot;
             );
         }
-<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if ( inputs[ i ] != null ) {</span>
-<span class="fc" id="L116">            Class&lt;?&gt; tensorTypeClass = inputs[ i ].getItemClass();</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if ( inputs[ i ] != null ) {</span>
+<span class="fc" id="L116">            Class&lt;?&gt; tensorTypeClass = inputs[ i ].getItemType();</span>
 <span class="pc bpc" id="L117" title="1 of 2 branches missed.">            if ( !valueTypeClass.isAssignableFrom(tensorTypeClass) ) {</span>
 <span class="nc" id="L118">                throw new IllegalArgumentException(</span>
                     &quot;The item value type of the tensor stored at parameter position '&quot;+i+&quot;' is &quot; +
@@ -339,11 +339,11 @@ public class Call&lt;D&gt;
 
 <span class="nc bnc" id="L340" title="All 2 branches missed.">            public Estimator badIfAll( TensorCondition condition ) { if ( _allMatch( condition ) ) _mod(-0.5f); return this; }</span>
 
-<span class="pc bpc" id="L342" title="1 of 4 branches missed.">            public Estimator goodIfAnyNonNull( TensorCondition condition ) { return goodIfAny( t -&gt; t != null &amp;&amp; condition.check(t) ); }</span>
+<span class="fc bfc" id="L342" title="All 4 branches covered.">            public Estimator goodIfAnyNonNull( TensorCondition condition ) { return goodIfAny( t -&gt; t != null &amp;&amp; condition.check(t) ); }</span>
 
 <span class="fc bfc" id="L344" title="All 2 branches covered.">            public Estimator goodIfAny( TensorCondition condition ) { if ( _anyMatch( condition ) ) _mod(0.5f); return this; }</span>
 
-<span class="pc bpc" id="L346" title="1 of 4 branches missed.">            public Estimator badIfAnyNonNull( TensorCondition condition ) { return badIfAny( t -&gt; t != null &amp;&amp; condition.check(t) ); }</span>
+<span class="fc bfc" id="L346" title="All 4 branches covered.">            public Estimator badIfAnyNonNull( TensorCondition condition ) { return badIfAny( t -&gt; t != null &amp;&amp; condition.check(t) ); }</span>
 
 <span class="fc bfc" id="L348" title="All 2 branches covered.">            public Estimator badIfAny( TensorCondition condition ) { if ( _anyMatch( condition ) ) _mod(-0.5f); return this; }</span>
 

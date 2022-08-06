@@ -20,13 +20,13 @@ public abstract class Arg&lt;T&gt; implements Component&lt;Args&gt; {
 <span class="fc" id="L20">    public Arg( T arg ) { _value = arg; }</span>
 
     public T get() {
-<span class="fc bfc" id="L23" title="All 2 branches covered.">        if ( _value instanceof int[]     ) return (T) ((int[])_value).clone();</span>
-<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if ( _value instanceof float[]   ) return (T) ((float[])_value).clone();</span>
-<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        if ( _value instanceof double[]  ) return (T) ((double[])_value).clone();</span>
-<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if ( _value instanceof long[]    ) return (T) ((long[])_value).clone();</span>
-<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if ( _value instanceof short[]   ) return (T) ((short[])_value).clone();</span>
-<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if ( _value instanceof byte[]    ) return (T) ((byte[])_value).clone();</span>
-<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if ( _value instanceof char[]    ) return (T) ((char[])_value).clone();</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        if ( _value instanceof int[]     ) return (T) ((int[])    _value).clone();</span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if ( _value instanceof float[]   ) return (T) ((float[])  _value).clone();</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        if ( _value instanceof double[]  ) return (T) ((double[]) _value).clone();</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if ( _value instanceof long[]    ) return (T) ((long[])   _value).clone();</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if ( _value instanceof short[]   ) return (T) ((short[])  _value).clone();</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if ( _value instanceof byte[]    ) return (T) ((byte[])   _value).clone();</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if ( _value instanceof char[]    ) return (T) ((char[])   _value).clone();</span>
 <span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if ( _value instanceof boolean[] ) return (T) ((boolean[])_value).clone();</span>
 <span class="fc" id="L31">        return _value;</span>
     }

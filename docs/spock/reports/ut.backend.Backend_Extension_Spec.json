@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.282 seconds"
+    "duration":"0.316 seconds"
   },
 
   "title":"",
   "narrative":"",
-  "headers":["\\n This specification defines the behavior of\\n Operation instances and their ability to be extended! <br> \\n"],"tags":{},"see":[],
+  "headers":["\\u000a This specification defines the behavior of\\u000a Operation instances and their ability to be extended! <br> \\u000a"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.",
       "result":"PASS",
-      "duration":"0.224 seconds",
+      "duration":"0.257 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -49,7 +49,7 @@
     {
       "id":"Lambda properties of mock implementation interact with FunctionNode as expected.",
       "result":"PASS",
-      "duration":"0.045 seconds",
+      "duration":"0.042 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -19,21 +19,20 @@ public final class Simple1DCIterator extends Simple1DConfiguration implements ND
     /** {@inheritDoc} */
 <span class="fc" id="L20">    @Override public final void decrement() { _d1--; }</span>
 
+    /** {@inheritDoc} */
+<span class="fc" id="L23">    @Override public final int i() { return this.indexOfIndices(_d1); }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L24">    @Override public final int i() { return this.indexOfIndices(_d1); }</span>
+<span class="fc" id="L26">    @Override public final int get( int axis ) { return _d1; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L27">    @Override public final int get( int axis ) { return _d1; }</span>
+<span class="fc" id="L29">    @Override public final int[] get() { return new int[]{_d1}; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L30">    @Override public final int[] get() { return new int[]{_d1}; }</span>
+<span class="fc" id="L32">    @Override public final void set( int axis, int position ) { _d1 = position; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L33">    @Override public final void set( int axis, int position ) { _d1 = position; }</span>
-
-    /** {@inheritDoc} */
-<span class="fc" id="L36">    @Override public final void set( int[] indices) { _d1 = indices[0]; }</span>
+<span class="fc" id="L35">    @Override public final void set( int[] indices) { _d1 = indices[0]; }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

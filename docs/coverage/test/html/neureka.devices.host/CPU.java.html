@@ -139,7 +139,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 <span class="fc bfc" id="L139" title="All 2 branches covered.">        else if ( data instanceof byte[] )   return (T)Byte.valueOf( ((byte[])    data)[ index ] );</span>
 <span class="fc bfc" id="L140" title="All 2 branches covered.">        else if ( data instanceof long[] )   return (T)Long.valueOf( ((long[])    data)[ index ] );</span>
 <span class="fc bfc" id="L141" title="All 2 branches covered.">        else if ( data instanceof boolean[] )return (T)Boolean.valueOf( ((boolean[]) data)[ index ] );</span>
-<span class="pc bpc" id="L142" title="1 of 2 branches missed.">        else if ( data instanceof char[] )   return (T)Character.valueOf( ((char[])  data)[ index ] );</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        else if ( data instanceof char[] )   return (T)Character.valueOf( ((char[])  data)[ index ] );</span>
 <span class="fc" id="L143">        else return (T)( (Object[]) data)[ index ];</span>
     }
 
@@ -507,7 +507,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 
 
         /**
-         *  Takes the provided range and divides it into multi-threaded workloads.
+         *  Takes the provided range and divides it into multithreaded workloads.
          *
          * @param first The start index of the threaded workload range.
          * @param limit The limit for the workload range, which is exclusive.

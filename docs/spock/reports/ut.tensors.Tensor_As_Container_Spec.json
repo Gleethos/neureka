@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.076 seconds"
+    "duration":"0.048 seconds"
   },
 
   "title":"Why not have a tensor of words?",
-  "narrative":"Technically, tensors are merely fancy ND-arrays with some useful mathematical operations\n applicable to them...\n Therefore, there is no reason why a tensor would not also be able to store\n other kinds of objects besides numbers like strings for example.\n This specification ensures that tensors can hold and index many other things...",
-  "headers":["\\n Although you can create a tensor of almost anything, you will\\n not be able to execute operations on every kind of tensor... \\n"],"tags":{},"see":[],
+  "narrative":"Technically, tensors are merely fancy ND-arrays with some useful mathematical operations\u000a applicable to them...\u000a Therefore, there is no reason why a tensor would not also be able to store\u000a other kinds of objects besides numbers like strings for example.\u000a This specification ensures that tensors can hold and index many other things...",
+  "headers":["\\u000a Although you can create a tensor of almost anything, you will\\u000a not be able to execute operations on every kind of tensor... \\u000a"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Plus operator on String tensors works element-wise.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"Tensor operations translate to custom data type \"ComplexNumber\".",
       "result":"PASS",
-      "duration":"0.024 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -69,7 +69,7 @@
     {
       "id":"We can apply predicates on the values of a tensor.",
       "result":"PASS",
-      "duration":"0.019 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

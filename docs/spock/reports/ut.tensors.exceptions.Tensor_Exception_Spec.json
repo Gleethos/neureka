@@ -6,12 +6,12 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.048 seconds"
+    "duration":"0.044 seconds"
   },
 
   "title":"Tensors Exception Behavior",
-  "narrative":"This specification covers the behavior of the $Tsr class in\n exceptional scenarios which are contrary to its intended use.\n The purpose of this is to assert that the $Tsr class will provide\n useful feedback to a user to explain that a misuse of its API\n occurred so that the user can correct this misuse.",
-  "headers":["\\n <h2> Tensors Exception Behavior </h2>\\n <br> \\n <p>\\n This specification covers the behavior of tensors\\n in exceptional situations. \\n </p>\\n"],"tags":{},"see":[],
+  "narrative":"This specification covers the behavior of the $Tsr class in\u000a exceptional scenarios which are contrary to its intended use.\u000a The purpose of this is to assert that the $Tsr class will provide\u000a useful feedback to a user to explain that a misuse of its API\u000a occurred so that the user can correct this misuse.",
+  "headers":["\\u000a <h2> Tensors Exception Behavior </h2>\\u000a <br> \\u000a <p>\\u000a This specification covers the behavior of tensors\\u000a in exceptional situations. \\u000a </p>\\u000a"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Trying to inject an empty tensor into another causes fitting exception.",
@@ -33,7 +33,7 @@
     {
       "id":"Passing null to various methods of the tensor API will throw exceptions.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -46,7 +46,7 @@
 
         {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
 
-        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@43741543","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@2dae69c9","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@6bfe9e3f","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@6b4f4d4a","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@666d0238","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@52fe01c3","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@79a57e00","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@124c9ce7","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@27be85ef","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@2315f94d","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@3d92f5a9","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@7d001c9b","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@275748c3"]}}
+        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@6826cb4d","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@1d8efcb3","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@594d766f","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@6504dc07","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@2d96ce88","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@1a81e6d9","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@319e552c","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@eabd20b","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@fe39e31","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@58b453fb","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@55b5625d","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@4e4510ad","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@6d9b8050"]}}
       ],
       "problems":"[]"
     },
@@ -54,7 +54,7 @@
     {
       "id":"Passing an invalid object into Tsr constructor causes descriptive exception.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -86,7 +86,7 @@
     {
       "id":"Out of dimension bound causes descriptive exception!",
       "result":"PASS",
-      "duration":"0.013 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.124 seconds"
+    "duration":"2.246 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Tensor initialization lambdas produce expected tensors.",
       "result":"PASS",
-      "duration":"0.453 seconds",
+      "duration":"0.523 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"We can analyse the values of a tensor using various predicate receiving methods",
       "result":"PASS",
-      "duration":"0.664 seconds",
+      "duration":"0.598 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"Tensor mapping lambdas produce expected tensors.",
       "result":"PASS",
-      "duration":"0.589 seconds",
+      "duration":"0.559 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
     {
       "id":"The \"map\" method is a shorter convenience method for mapping to the same type.",
       "result":"PASS",
-      "duration":"0.395 seconds",
+      "duration":"0.536 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

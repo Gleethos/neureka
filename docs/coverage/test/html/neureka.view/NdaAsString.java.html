@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NdaAsString.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.view</a> &gt; <span class="el_source">NdaAsString.java</span></div><h1>NdaAsString.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      _______                   _____ _        _
+     |__   __|       /\        / ____| |      (_)
+        | |___ _ __ /  \   ___| (___ | |_ _ __ _ _ __   __ _
+        | / __| '__/ /\ \ / __|\___ \| __| '__| | '_ \ / _` |
+        | \__ \ | / ____ \\__ \____) | |_| |  | | | | | (_| |
+        |_|___/_|/_/    \_\___/_____/ \__|_|  |_|_| |_|\__, |
+                                                        __/ |
+                                                       |___/
+        A utility class for tensor stringification !
+
+*/
+
+package neureka.view;
+
+import neureka.Nda;
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.autograd.GraphNode;
+import neureka.framing.NDFrame;
+import neureka.ndim.config.NDConfiguration;
+import org.jetbrains.annotations.Contract;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Function;
+
+/**
+ *  This class is in essence a simple wrapper class for a tensor and a StringBuilder
+ *  Methods in this class use the builder in order to construct a String representation
+ *  for said tensor.
+ *  These methods perform the String building based on a set of certain
+ *  configurations provided by the {@link NDPrintSettings}!
+ */
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">public final class NdaAsString</span>
+{
+    private final int     _cellSize;
+    private final int     _rowLimit;
+    private final boolean _hasGradient;
+    private final boolean _isCompact;
+    private final boolean _isMultiline;
+    private final boolean _haveSlimNumbers;
+    private final boolean _hasValue;
+    private final boolean _hasShape;
+    private final boolean _hasRecursiveGraph;
+    private final boolean _hasDerivatives;
+    private final boolean _isCellBound;
+    private final String  _prefix;
+    private final String  _postfix;
+    private final String  _indent;
+
+    private final int[]   _shape;
+    private final Tsr&lt;?&gt;  _tensor;
+    private final boolean _legacy;
+
+    NDPrintSettings _config;
+    private StringBuilder _asStr;
+
+    /**
+     *  A builder providing multiple different configuration options for building
+     *  a {@link NdaAsString} instance in a fluent way.
+     */
+    public static Builder representing( Nda&lt;?&gt; t ) {
+<span class="fc" id="L90">        return new Builder() {</span>
+            /**
+             * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+             * @return A new {@link NdaAsString} based on the provided configuration.
+             */
+            @Override
+            public NdaAsString withConfig(NDPrintSettings configMap ) {
+<span class="fc" id="L97">                return new NdaAsString( t, configMap );</span>
+            }
+            /**
+             * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+             * @return A new {@link NdaAsString} based on the provided configuration.
+             */
+            @Override
+<span class="fc" id="L104">            public NdaAsString withConfig(String config ) { return withConfig( Neureka.get().settings().view().getNDPrintSettings().clone().with(config) ); }</span>
+            /**
+             * @return A new {@link NdaAsString} based on the default configuration.
+             */
+            @Override
+<span class="fc" id="L109">            public NdaAsString byDefaults() { return withConfig( Neureka.get().settings().view().getNDPrintSettings() ); }</span>
+        };
+    }
+
+    private NdaAsString( Nda&lt;?&gt; tensor, NDPrintSettings settings )
+<span class="fc" id="L114">    {</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if ( tensor.getNDConf() != null )</span>
+<span class="fc" id="L116">            _shape = tensor.getNDConf().shape();</span>
+        else
+<span class="nc" id="L118">            _shape = new int[0];</span>
+
+<span class="fc" id="L120">        _config = settings.clone();</span>
+<span class="fc" id="L121">        _tensor = (Tsr&lt;?&gt;) tensor; // There is only one implementation for both Tsr and Nda...</span>
+
+<span class="fc" id="L123">        _isCompact          = _config.getIsScientific() ;</span>
+<span class="fc" id="L124">        _rowLimit           = _config.getRowLimit() ;</span>
+<span class="fc" id="L125">        _cellSize           = _config.getCellSize() ;</span>
+<span class="fc" id="L126">        _hasGradient        = _config.getHasGradient() ;</span>
+<span class="fc" id="L127">        _isMultiline        = _config.getIsMultiline() ;</span>
+<span class="fc" id="L128">        _haveSlimNumbers    = _config.getHasSlimNumbers() ;</span>
+<span class="fc" id="L129">        _hasValue           = _config.getHasValue() ;</span>
+<span class="fc" id="L130">        _hasShape           = _config.getHasShape() ;</span>
+<span class="fc" id="L131">        _hasRecursiveGraph  = _config.getHasRecursiveGraph() ;</span>
+<span class="fc" id="L132">        _hasDerivatives     = _config.getHasDerivatives() ;</span>
+<span class="fc" id="L133">        _isCellBound        = _config.getIsCellBound() ;</span>
+<span class="fc" id="L134">        _postfix            = _config.getPostfix() ;</span>
+<span class="fc" id="L135">        _prefix             = _config.getPrefix() ;</span>
+<span class="fc" id="L136">        _indent             = _config.getIndent();</span>
+<span class="fc" id="L137">        _legacy             = _config.getIsLegacy();</span>
+<span class="fc" id="L138">    }</span>
+
+    /**
+     *  This method is a wrapper for the _asStr.append() call.
+     *  It thereby greatly reduces boilerplate code which
+     *  makes this class substantially more readable,
+     *  however one has to keep in mind that &quot;_$&quot; string is
+     *  a chained builder method.
+     *
+     * @param toBeAppended The String which ought to be appended to this builder.
+     * @return This very instance in order to enable method-chaining.
+     */
+    private NdaAsString _$(String toBeAppended ) {
+<span class="fc" id="L151">        _asStr.append( toBeAppended ); return this;</span>
+    }
+
+    /**
+     *  This method is a wrapper for the _asStr.append() call.
+     *  It thereby greatly reduces boilerplate code which
+     *  makes this class substantially more readable,
+     *  however one has to keep in mind that &quot;_$&quot; string is
+     *  a chained builder method.
+     *
+     * @param toBeAppended The int which ought to be appended to this builder.
+     * @return This very instance in order to enable method-chaining.
+     */
+<span class="fc" id="L164">    private NdaAsString _$(int toBeAppended ) { _asStr.append( toBeAppended ); return this; }</span>
+
+    /**
+     *  This method takes the data of a tensor and converts it into
+     *  a lambda responsible for creating formatted Strings of data entries by
+     *  taking the int index of a targeted entry and returning
+     *  a properly formatted String representation of said entry. &lt;br&gt;
+     *  &lt;br&gt;
+     *
+     * @param data The data which should be used as a basis for creating an entry stringification lambda.
+     * @return A lambda which can convert an array entry targeted by its index to a properly formatted String.
+     */
+    private ValStringifier _createValStringifierAndFormatter( Object data )
+    {
+<span class="fc" id="L178">        final ValStringifier function = _createBasicStringifierFor( data, _isCompact );</span>
+<span class="fc" id="L179">        int cellSize = _cellSize;</span>
+        final ValStringifier postProcessing;
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        if ( cellSize &gt;= 3 ) postProcessing = i -&gt; {</span>
+<span class="fc" id="L182">            String s = function.stringify( i );</span>
+<span class="fc" id="L183">            int margin = cellSize - s.length();</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">            int right = ( margin % 2 == 0 ) ? margin / 2 : ( margin-1 ) / 2;</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">            if ( margin &gt; 0 ) s = Util.pad( margin - right, Util.pad( s, right ) );</span>
+<span class="fc" id="L186">            return s;</span>
+        };
+<span class="fc" id="L188">        else postProcessing = function;</span>
+
+        final ValStringifier finalProcessing;
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        if ( _isCellBound ) finalProcessing = i -&gt; {</span>
+<span class="fc" id="L192">            String s = postProcessing.stringify( i );</span>
+<span class="fc" id="L193">            int margin =  s.length() - cellSize;</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            if ( margin &gt; 0 ) s = s.substring( 0, cellSize - 2 ) + &quot;..&quot;;</span>
+<span class="fc" id="L195">            return s;</span>
+        };
+<span class="fc" id="L197">        else finalProcessing = postProcessing;</span>
+
+<span class="fc" id="L199">        return finalProcessing;</span>
+    }
+
+    /**
+     *  @param data The data array which may be an array of primitives or reference objects.
+     *  @param isCompact A flag determining if the array items should be formatted compactly or not.
+     *  @return An {@link ValStringifier} which can return {@link String} representations of array items targeted via their index.
+     */
+    private ValStringifier _createBasicStringifierFor( Object data, boolean isCompact )
+    {
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        if ( data == null )</span>
+<span class="nc" id="L210">            throw new IllegalArgumentException(&quot;Tensor has no value data!&quot;);</span>
+
+<span class="fc" id="L212">        Function&lt;String, String&gt; slim = vStr -&gt; {</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">            if ( _haveSlimNumbers ) {</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">                if ( vStr.endsWith(&quot;E0&quot;)   ) vStr = vStr.substring( 0, vStr.length() - 2 );</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">                if ( vStr.endsWith(&quot;.0&quot;)   ) vStr = vStr.substring( 0, vStr.length() - 2 );</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">                if ( vStr.startsWith(&quot;0.&quot;) ) vStr = vStr.substring( 1 );</span>
+            }
+<span class="fc" id="L218">            return vStr;</span>
+        };
+
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        if ( data instanceof double[] )</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">            return i -&gt; ( isCompact )</span>
+<span class="fc" id="L223">                    ? slim.apply( formatFP( ( (double[]) data )[ i ]) )</span>
+<span class="fc" id="L224">                    : slim.apply( String.valueOf( ( (double[] ) data )[ i ] ) );</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        else if ( data instanceof float[] )</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">            return i -&gt; ( isCompact )</span>
+<span class="fc" id="L227">                    ? slim.apply( formatFP( ( (float[]) data )[ i ] ) )</span>
+<span class="fc" id="L228">                    : slim.apply( String.valueOf( ( (float[]) data )[ i ] ) );</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">        else if ( data instanceof short[] )</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">            return i -&gt; ( isCompact )</span>
+<span class="fc" id="L231">                    ? formatFP( ( (short[]) data )[ i ] )</span>
+<span class="fc" id="L232">                    : String.valueOf( ( (short[]) data )[ i ] );</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        else if ( data instanceof int[] )</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">            return i -&gt; ( isCompact )</span>
+<span class="fc" id="L235">                    ? formatFP( ( (int[]) data )[ i ] )</span>
+<span class="fc" id="L236">                    : String.valueOf( ( (int[]) data )[ i ] );</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">        else if ( data instanceof byte[] )</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">            return i -&gt; ( isCompact )</span>
+<span class="fc" id="L239">                    ? formatFP( ( (byte[]) data )[ i ] )</span>
+<span class="fc" id="L240">                    : String.valueOf( ( (byte[]) data )[ i ] );</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        else if ( data instanceof long[] )</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">            return i -&gt; ( isCompact )</span>
+<span class="fc" id="L243">                    ? formatFP( ( (long[]) data )[ i ] )</span>
+<span class="nc" id="L244">                    : String.valueOf( ( (long[]) data )[ i ] );</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">        else if ( data instanceof boolean[] )</span>
+<span class="fc" id="L246">            return i -&gt; String.valueOf( ( (boolean[]) data )[ i ] );</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">        else if ( data instanceof char[] )</span>
+<span class="fc" id="L248">            return i -&gt; String.valueOf( ( (char[]) data )[ i ] );</span>
+        else
+<span class="fc" id="L250">            return i -&gt; String.valueOf( ( (Object[]) data )[ i ] );</span>
+    }
+
+    public String toString() {
+<span class="pc bpc" id="L254" title="1 of 2 branches missed.">        if ( _tensor.isDeleted() ) return &quot;deleted&quot;;</span>
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">        else if ( _tensor.isEmpty() ) return &quot;empty&quot;;</span>
+<span class="pc bpc" id="L256" title="1 of 2 branches missed.">        else if ( _tensor.isUndefined() ) return &quot;undefined&quot;;</span>
+<span class="fc" id="L257">        _asStr = new StringBuilder();</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">        String base      = ( !_isMultiline ? &quot;&quot;   : _breakAndIndent() + &quot;    &quot; );</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        String delimiter = ( !_isMultiline ? &quot;&quot;   : &quot;    &quot;                     );</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        String half      = ( !_isMultiline ? &quot;&quot;   : &quot;  &quot;                       );</span>
+<span class="fc bfc" id="L261" title="All 2 branches covered.">        if ( _hasShape ) _strShape();</span>
+<span class="pc bpc" id="L262" title="1 of 2 branches missed.">        if ( !_hasValue ) return _asStr.toString();</span>
+<span class="fc" id="L263">        _$( &quot;:&quot; );</span>
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        if ( _isMultiline ) _recursiveFormatting( new int[ _tensor.rank() ], -1 );</span>
+        else {
+<span class="fc bfc" id="L266" title="All 2 branches covered.">            _$( _legacy ? &quot;(&quot; : &quot;[&quot; );</span>
+<span class="fc" id="L267">            _stringifyAllValues();</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">            _$( _legacy ? &quot;)&quot; : &quot;]&quot; );</span>
+        }
+
+<span class="fc bfc" id="L271" title="All 6 branches covered.">        if ( _hasGradient &amp;&amp; ( _tensor.rqsGradient() || _tensor.hasGradient() ) ) {</span>
+<span class="fc" id="L272">            _$( &quot;:g&quot; );</span>
+<span class="fc" id="L273">            Tsr&lt;?&gt; gradient = _tensor.getGradient();</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">            if ( gradient != null )</span>
+<span class="fc" id="L275">                _$(</span>
+<span class="fc" id="L276">                    gradient.toString(</span>
+<span class="fc" id="L277">                        t -&gt; t.with( _config )</span>
+<span class="fc" id="L278">                                .setPrefix(&quot;&quot;).setPostfix(&quot;&quot;)</span>
+<span class="fc" id="L279">                                .setHasShape( false )</span>
+<span class="fc" id="L280">                                .setIsScientific( true )</span>
+                    )
+                );
+            else
+<span class="fc bfc" id="L284" title="All 2 branches covered.">                _$( ( ( _legacy ) ? &quot;:(null)&quot; : &quot;:[null]&quot; ) );</span>
+        }
+<span class="fc bfc" id="L286" title="All 6 branches covered.">        if ( _hasRecursiveGraph &amp;&amp; _tensor.has( GraphNode.class ) &amp;&amp; _tensor.get( GraphNode.class ).size() &gt; 0 ) {</span>
+<span class="fc" id="L287">            GraphNode&lt;?&gt; node = _tensor.get( GraphNode.class );</span>
+<span class="fc" id="L288">            _$( &quot;; &quot; );</span>
+<span class="fc" id="L289">            node.forEachDerivative( ( t, agent ) -&gt; {</span>
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">                if ( !agent.partialDerivative().isPresent() ) _$( &quot;-&gt;d(null), &quot; );</span>
+<span class="fc" id="L291">                else _$(</span>
+                        base + &quot;=&gt;d|[ &quot; +
+<span class="fc" id="L293">                        base + delimiter + agent.partialDerivative().get().toString( _config.clone().setPrefix(&quot;&quot;).setPostfix(&quot;&quot;) ) + &quot; &quot; +</span>
+                        base + half + &quot;]|:t{ &quot; +
+                        base + delimiter + (
+<span class="pc bpc" id="L296" title="1 of 2 branches missed.">                            ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix(&quot;&quot;).setPostfix(&quot;&quot;) ) : t.toString()</span>
+                        ) +
+                        &quot; &quot; + base + half + &quot;}, &quot;
+                    );
+<span class="fc" id="L300">            });</span>
+        }
+<span class="fc bfc" id="L302" title="All 6 branches covered.">        if ( _hasDerivatives &amp;&amp; _tensor.has( GraphNode.class ) &amp;&amp; _tensor.get( GraphNode.class ).size() &gt; 0 ) {</span>
+<span class="fc" id="L303">            GraphNode&lt;?&gt; node = _tensor.get( GraphNode.class );</span>
+<span class="pc bpc" id="L304" title="1 of 2 branches missed.">            if ( node.getMode() != 0 ) {</span>
+<span class="fc" id="L305">                _$( &quot;; &quot; );</span>
+<span class="fc" id="L306">                node.forEachDerivative( ( t, agent ) -&gt; {</span>
+<span class="fc bfc" id="L307" title="All 2 branches covered.">                    if (!agent.partialDerivative().isPresent()) _$( &quot;-&gt;d(&quot; )._$( agent.toString() )._$( &quot;), &quot; );</span>
+<span class="fc" id="L308">                    else _$( &quot;-&gt;d&quot; )._$( agent.partialDerivative().get().toString( _config.clone().setPrefix(&quot;&quot;).setPostfix(&quot;&quot;) ) )._$( &quot;, &quot; );</span>
+<span class="fc" id="L309">                });</span>
+            }
+        }
+<span class="fc" id="L312">        return _postProcessed( _asStr.toString() );</span>
+    }
+
+    private String _postProcessed( String asString )
+    {
+<span class="fc" id="L317">        asString =  asString.trim(); // We need to get rid of line breaks</span>
+
+<span class="fc bfc" id="L319" title="All 2 branches covered.">        if ( asString.endsWith(&quot;,&quot;) )</span>
+<span class="fc" id="L320">            asString = asString.substring(0, asString.length()-1);</span>
+
+<span class="fc" id="L322">        asString = _prefix + asString + _postfix;</span>
+
+<span class="fc" id="L324">        return asString;</span>
+    }
+
+    private void _stringifyAllValues()
+    {
+<span class="fc" id="L329">        int max = _rowLimit;</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">        Object data = ( _tensor.getUnsafe().getData() == null ? _tensor.getData() : _tensor.getUnsafe().getData() );</span>
+<span class="fc" id="L331">        ValStringifier getter = _createValStringifierAndFormatter( data );</span>
+<span class="fc" id="L332">        int size = _tensor.size();</span>
+<span class="fc" id="L333">        int trim = ( size - max );</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">        size = ( trim &gt; 0 ? max : size );</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">        for ( int i = 0; i &lt; size; i++ ) {</span>
+<span class="fc bfc" id="L336" title="All 2 branches covered.">            String vStr = getter.stringify( ( _tensor.isVirtual() ) ? 0 : _tensor.indexOfIndex( i ) );</span>
+<span class="fc" id="L337">            _$( vStr );</span>
+<span class="fc bfc" id="L338" title="All 2 branches covered.">            if ( i &lt; size - 1 ) _$( &quot;, &quot; );</span>
+<span class="fc bfc" id="L339" title="All 2 branches covered.">            else if ( trim &gt; 0 ) _$( &quot;, ... + &quot; )._$( trim )._$( &quot; more&quot; );</span>
+        }
+<span class="fc" id="L341">    }</span>
+
+    /**
+     *  This method builds a single row of stringified and formatted tensor entries.
+     *  It will build this row based on incrementing the last tensor dimension. &lt;br&gt;
+     *  &lt;br&gt;
+     * @param trimStart The row index where the trimming should start (no entries).
+     * @param trimEnd The row index where the trimming should end.
+     * @param trimSize The size of the row chunk which ought to be skipped.
+     * @param indices The current index array defining the current position inside the tensor.
+     * @param stringifier A lambda responsible for stringifying a tensor entry ba passing the current index array.
+     * @param delimiter The String which ought to separate stringified entries.
+     */
+    private void _buildRow(
+            int trimStart, int trimEnd, int trimSize, int[] indices, NDValStringifier stringifier, String delimiter
+    ) {
+<span class="fc bfc" id="L357" title="All 2 branches covered.">        for ( int i = 0; i &lt; _shape[ _shape.length - 1 ]; i++ ) {</span>
+<span class="fc bfc" id="L358" title="All 4 branches covered.">            if ( i &lt;= trimStart || i &gt; trimEnd ) {</span>
+<span class="fc" id="L359">                _$( stringifier.stringify( indices ) );</span>
+<span class="fc bfc" id="L360" title="All 2 branches covered.">                if ( i &lt; _shape[ _shape.length - 1 ] - 1 ) _$( delimiter );</span>
+            }
+<span class="fc bfc" id="L362" title="All 2 branches covered.">            else if ( i == trimStart + 1 ) _$( &quot;..&quot; )._$( trimSize )._$( &quot; more.., &quot; );</span>
+
+<span class="fc" id="L364">            NDConfiguration.Utility.increment( indices, _shape );</span>
+        }
+<span class="fc" id="L366">    }</span>
+
+
+    /**
+     *  This method builds a properly indented and formatted tensor representation.
+     *  The depth of the recursion is also tracked by the current dimension which
+     *  will be incrementally passed down the recursion. &lt;br&gt;
+     *  Besides this dimension there is also the current index array
+     *  which will be incremented when tensor elements are being stringified... &lt;br&gt;
+     *  &lt;br&gt;
+     *
+     * @param indices The current index array containing the current index for all dimensions.
+     * @param dim The current dimension which is also the &quot;depth&quot; of the recursion.
+     */
+    private void _recursiveFormatting( int[] indices, int dim )
+    {
+<span class="fc" id="L382">        dim = Math.max( dim, 0 );</span>
+<span class="fc" id="L383">        int trimSize = ( _shape[ dim ] - _rowLimit );</span>
+<span class="fc" id="L384">        trimSize = Math.max( trimSize, 0 );</span>
+<span class="fc" id="L385">        int trimStart = ( _shape[ dim ] / 2 - trimSize / 2 );</span>
+<span class="fc" id="L386">        int trimEnd = ( _shape[ dim ] / 2 + trimSize / 2 );</span>
+<span class="fc" id="L387">        trimEnd += ( trimSize % 2 );</span>
+<span class="pc bpc" id="L388" title="2 of 6 branches missed.">        assert _shape[dim] &lt;= _rowLimit || (_shape[dim] - (trimEnd - trimStart)) == _rowLimit;</span>
+<span class="fc" id="L389">        NDFrame&lt;?&gt; alias = _tensor.get( NDFrame.class );</span>
+<span class="fc bfc" id="L390" title="All 2 branches covered.">        if ( dim == indices.length - 1 ) {</span>
+<span class="pc bpc" id="L391" title="1 of 4 branches missed.">            if (</span>
+                alias != null &amp;&amp;
+                indices[ indices.length - 1 ] == 0 &amp;&amp;
+<span class="fc bfc" id="L394" title="All 2 branches covered.">                indices[ Math.max( indices.length - 2, 0 ) ] == 0</span>
+            ) {
+<span class="fc" id="L396">                List&lt;Object&gt; aliases = alias.atAxis( indices.length - 1 ).getAllAliases();</span>
+<span class="pc bpc" id="L397" title="1 of 2 branches missed.">                if ( aliases != null ) {</span>
+<span class="fc" id="L398">                    _$( Util.indent( dim ) );</span>
+<span class="fc bfc" id="L399" title="All 2 branches covered.">                    _$( _legacy ? &quot;[ &quot; : &quot;( &quot; ); // The following assert has prevented many String miscarriages!</span>
+<span class="pc bpc" id="L400" title="2 of 4 branches missed.">                    assert aliases.size() - _shape[ indices.length - 1 ] == 0; // This is a basic requirement for the label size...</span>
+<span class="fc" id="L401">                    ValStringifier getter = _createValStringifierAndFormatter( aliases.toArray() );</span>
+<span class="fc" id="L402">                    _buildRow(</span>
+                            trimStart, trimEnd, trimSize,
+                            new int[ indices.length ],
+<span class="fc" id="L405">                            iarr -&gt; getter.stringify( iarr[ iarr.length -1 ] ),</span>
+<span class="fc bfc" id="L406" title="All 2 branches covered.">                            _legacy ? &quot;][&quot; : &quot;)(&quot;</span>
+                    );
+<span class="fc bfc" id="L408" title="All 2 branches covered.">                    _$( _legacy ? &quot; ]&quot; : &quot; )&quot; );</span>
+<span class="fc bfc" id="L409" title="All 2 branches covered.">                    if ( alias.getTensorName() != null )</span>
+<span class="fc bfc" id="L410" title="All 4 branches covered.">                        _$( (_legacy) ? &quot;:[ &quot; : &quot;:( &quot; )._$( alias.getTensorName() )._$( (_legacy) ? &quot; ]&quot; : &quot; )&quot; );</span>
+<span class="fc" id="L411">                    _$( _breakAndIndent() );</span>
+                }
+            }
+<span class="fc" id="L414">            _$( Util.indent( dim ) );</span>
+<span class="fc bfc" id="L415" title="All 2 branches covered.">            _$( _legacy ? &quot;( &quot; : &quot;[ &quot; );</span>
+<span class="fc" id="L416">            ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );</span>
+<span class="pc bpc" id="L417" title="1 of 2 branches missed.">            NDValStringifier fun = _tensor.isVirtual()</span>
+<span class="nc" id="L418">                                        ? iarr -&gt; getter.stringify( 0 )</span>
+<span class="fc" id="L419">                                        : iarr -&gt; getter.stringify( _tensor.indexOfIndices( iarr ) );</span>
+
+<span class="fc" id="L421">            _buildRow( trimStart, trimEnd, trimSize, indices, fun, &quot;, &quot; );</span>
+<span class="fc bfc" id="L422" title="All 2 branches covered.">            _$( _legacy ? &quot; )&quot; : &quot; ]&quot; );</span>
+
+<span class="fc bfc" id="L424" title="All 2 branches covered.">            if ( alias != null ) _$( &quot;:&quot; )._buildSingleLabel( alias, dim, indices );</span>
+<span class="fc" id="L425">        } else {</span>
+<span class="fc" id="L426">            _$( Util.indent( dim ) );</span>
+<span class="fc bfc" id="L427" title="All 4 branches covered.">            if ( dim &gt; 0 &amp;&amp; alias != null )</span>
+<span class="fc" id="L428">                _buildSingleLabel( alias, dim, indices )._$(&quot;:&quot;);</span>
+<span class="fc bfc" id="L429" title="All 2 branches covered.">            _$( ( _legacy ? &quot;(&quot; : &quot;[&quot; ) + _breakAndIndent() );</span>
+<span class="fc" id="L430">            int i = 0;</span>
+            do {
+<span class="fc bfc" id="L432" title="All 4 branches covered.">                if ( i &lt; trimStart || i &gt;= trimEnd )</span>
+<span class="fc" id="L433">                    _recursiveFormatting( indices, dim + 1 );</span>
+<span class="fc bfc" id="L434" title="All 2 branches covered.">                else if ( i == trimStart )</span>
+<span class="fc" id="L435">                    _$( Util.indent( dim + 1 ) )._$( &quot;... &quot; )._$( trimSize )._$( &quot; more ...&quot; + _breakAndIndent() );</span>
+                else
+<span class="fc" id="L437">                    indices[ dim ] = trimEnd + 1; // Jumping over trimmed entries!</span>
+<span class="fc" id="L438">                i++;</span>
+            }
+<span class="fc bfc" id="L440" title="All 2 branches covered.">            while ( indices[ dim ] != 0 );</span>
+<span class="fc bfc" id="L441" title="All 2 branches covered.">            _$( Util.indent( dim ) )._$( _legacy ? &quot;)&quot; : &quot;]&quot; );</span>
+        }
+<span class="fc" id="L443">        int i = dim - 1;</span>
+<span class="fc bfc" id="L444" title="All 4 branches covered.">        if (i &gt;= 0 &amp;&amp; indices[i] != 0) _$( &quot;,&quot; );</span>
+<span class="fc bfc" id="L445" title="All 2 branches covered.">        if ( i &gt;= 0 ) _$( _breakAndIndent() );</span>
+<span class="fc" id="L446">    }</span>
+
+    private NdaAsString _buildSingleLabel(NDFrame&lt;?&gt; alias, int dim, int[] indices ) {
+<span class="fc" id="L449">        int pos = dim - 1;</span>
+<span class="fc" id="L450">        List&lt;Object&gt; key = alias.atAxis( pos ).getAllAliases();</span>
+<span class="pc bpc" id="L451" title="2 of 4 branches missed.">        if ( pos &gt;= 0 &amp;&amp; key != null ) {</span>
+<span class="fc bfc" id="L452" title="All 2 branches covered.">            _$( _legacy ? &quot;[ &quot; : &quot;( &quot; );</span>
+<span class="fc bfc" id="L453" title="All 2 branches covered.">            int i = ( dim == indices.length - 1 )</span>
+<span class="fc" id="L454">                    ? ( _shape[ pos ] + indices[ pos ] - 1 ) % _shape[ pos ]</span>
+<span class="fc" id="L455">                    : indices[ pos ];</span>
+<span class="fc" id="L456">            _$( key.get( i ).toString() );</span>
+<span class="fc bfc" id="L457" title="All 2 branches covered.">            _$( _legacy ? &quot; ]&quot; : &quot; )&quot; );</span>
+        }
+<span class="fc" id="L459">        return this;</span>
+    }
+
+    /**
+     *  This method builds a String representation of the
+     *  shape of the targeted tensor.
+     */
+    private void _strShape()
+    {
+<span class="fc" id="L468">        boolean legacy = _legacy;</span>
+<span class="fc bfc" id="L469" title="All 2 branches covered.">        _$( legacy ? &quot;[&quot; : &quot;(&quot; );</span>
+<span class="fc bfc" id="L470" title="All 2 branches covered.">        for ( int i = 0; i &lt; _shape.length; i++ ) {</span>
+<span class="fc" id="L471">            _$( _shape[ i ] );</span>
+<span class="fc bfc" id="L472" title="All 2 branches covered.">            if ( i &lt; _shape.length - 1 ) _$( &quot;x&quot; );</span>
+        }
+<span class="fc bfc" id="L474" title="All 2 branches covered.">        _$( legacy ? &quot;]&quot; : &quot;)&quot; );</span>
+<span class="fc" id="L475">    }</span>
+
+    private String _breakAndIndent() {
+<span class="fc" id="L478">        return &quot;\n&quot; + _indent;</span>
+    }
+
+    @Contract( pure = true )
+    private static String formatFP( double v )
+    {
+<span class="fc" id="L484">        DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.UK );</span>
+<span class="fc" id="L485">        DecimalFormat formatter = new DecimalFormat(&quot;##0.0##E0&quot;, formatSymbols);</span>
+<span class="fc" id="L486">        String vStr = String.valueOf( v );</span>
+<span class="fc" id="L487">        final int offset = 0;</span>
+<span class="fc bfc" id="L488" title="All 2 branches covered.">        if ( vStr.length() &gt; ( 7 - offset ) ) {</span>
+<span class="fc bfc" id="L489" title="All 2 branches covered.">            if ( vStr.startsWith(&quot;0.&quot;) )</span>
+<span class="fc" id="L490">                vStr = vStr.substring( 0, 7 - offset ) + &quot;E0&quot;;</span>
+<span class="fc bfc" id="L491" title="All 2 branches covered.">            else if ( vStr.startsWith( &quot;-0.&quot; ) )</span>
+<span class="fc" id="L492">                vStr = vStr.substring( 0, 8 - offset ) + &quot;E0&quot;;</span>
+            else {
+<span class="fc" id="L494">                vStr = formatter.format( v );</span>
+<span class="fc bfc" id="L495" title="All 2 branches covered.">                vStr = !vStr.contains(&quot;.0E0&quot;) ? vStr : vStr.replace(&quot;.0E0&quot;,&quot;.0&quot;);</span>
+<span class="fc bfc" id="L496" title="All 2 branches covered.">                vStr =  vStr.contains(&quot;.&quot;)    ? vStr : vStr.replace(&quot;E0&quot;,&quot;.0&quot;);</span>
+            }
+        }
+<span class="fc bfc" id="L499" title="All 2 branches covered.">        if ( vStr.endsWith(&quot;E0&quot;) ) vStr = vStr.substring(0, vStr.length()-2);</span>
+<span class="fc" id="L500">        return vStr.replace(&quot;E&quot;, &quot;e&quot;);</span>
+    }
+
+    /**
+     *  A builder interface providing multiple different options for building
+     *  a {@link NdaAsString} instance in a fluent way.
+     */
+    public interface Builder {
+        /**
+         * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+         * @return A new {@link NdaAsString} based on the provided configuration.
+         */
+        NdaAsString withConfig( NDPrintSettings configMap );
+
+        /**
+         * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+         * @return A new {@link NdaAsString} based on the provided configuration.
+         */
+        NdaAsString withConfig( String config );
+
+        /**
+         * @return A new {@link NdaAsString} based on the default configuration.
+         */
+        NdaAsString byDefaults();
+    }
+
+    /**
+     *  A simple functional interface for turning something at a particular
+     *  index into a {@link String}.
+     */
+    @FunctionalInterface
+    private interface ValStringifier
+    {
+        String stringify( int i );
+    }
+
+    /**
+     *  A simple functional interface for turning something at a particular
+     *  multidimensional index into a {@link String}.
+     */
+    @FunctionalInterface
+    private interface NDValStringifier
+    {
+        String stringify( int[] idx );
+    }
+
+    /**
+     *  This class is a simple utility class which contains
+     *  a collection of static and stateless methods containing
+     *  useful functionalities for tensor stringification.
+     */
+<span class="nc" id="L551">    public static class Util</span>
+    {
+        @Contract( pure = true )
+<span class="fc" id="L554">        public static String indent( int n ) { return String.join(&quot;&quot;, Collections.nCopies( n, &quot;   &quot; )); }</span>
+
+        @Contract( pure = true )
+        public static String pad( int left, String s ) {
+<span class="fc" id="L558">            return String.join(&quot;&quot;, Collections.nCopies( left, &quot; &quot; )) + s;</span>
+        }
+
+        @Contract( pure = true )
+        public static String pad( String s, int right ) {
+<span class="fc" id="L563">            return s + String.join(&quot;&quot;, Collections.nCopies( right, &quot; &quot; ));</span>
+        }
+
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Momentum.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.optimization.implementations</a> &gt; <span class="el_source">Momentum.java</span></div><h1>Momentum.java</h1><pre class="source lang-java linenums">package neureka.optimization.implementations;
+
+import neureka.Tsr;
+import neureka.common.utility.LogUtil;
+import neureka.optimization.Optimizer;
+
+import java.util.List;
+
+public class Momentum&lt;V extends Number&gt; implements Optimizer&lt;V&gt;
+{
+    private final double lr; // learning rate
+    private final double decay; // decay rate
+    private final Tsr&lt;Number&gt; v; // velocity:
+
+<span class="fc" id="L15">    public Momentum( Tsr&lt;V&gt; target ) {</span>
+<span class="fc" id="L16">        LogUtil.nullArgCheck( target, &quot;target&quot;, Tsr.class );</span>
+<span class="fc" id="L17">        List&lt;Integer&gt; shape = target.shape();</span>
+<span class="fc" id="L18">        v = Tsr.of(target.getItemType(), shape, 0).getUnsafe().upcast(Number.class);</span>
+<span class="fc" id="L19">        lr = 0.01; // Step size/learning rate is 0.01 by default!</span>
+<span class="fc" id="L20">        decay = 0.9; // Decay rate is 0.9 by default!</span>
+<span class="fc" id="L21">    }</span>
+
+    @Override
+    public Tsr&lt;V&gt; optimize( Tsr&lt;V&gt; w ) {
+<span class="fc" id="L25">        LogUtil.nullArgCheck( w, &quot;w&quot;, Tsr.class ); // The input must not be null!</span>
+<span class="fc" id="L26">        Tsr&lt;Number&gt; g = w.getGradient().getUnsafe().upcast(Number.class);</span>
+<span class="fc" id="L27">        v.timesAssign(decay);</span>
+<span class="fc" id="L28">        v.plusAssign(g.times(1 - decay));</span>
+<span class="fc" id="L29">        return Tsr.of(&quot;-&quot; + lr + &quot; * I[0]&quot;, (Tsr&lt;V&gt;) v);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.113 seconds"
+    "duration":"0.143 seconds"
   },
 
   "title":"The Tensor Initialization and State Specification",
-  "narrative":"This specification defines the expected states of freshly instantiated\n and initialized tensors.\n After a tensor was created successfully we expect it \n to have certain properties like a shape, rank, type nnd data array\n among other things.",
-  "headers":["\\n <p>\\n This unit test specification covers the expected state of newly instantiated tensors.\\n Certain properties must have their expected default values.\\n </p>\\n"],"tags":{},"see":[],
+  "narrative":"This specification defines the expected states of freshly instantiated\u000a and initialized tensors.\u000a After a tensor was created successfully we expect it \u000a to have certain properties like a shape, rank, type nnd data array\u000a among other things.",
+  "headers":["\\u000a <p>\\u000a This unit test specification covers the expected state of newly instantiated tensors.\\u000a Certain properties must have their expected default values.\\u000a </p>\\u000a"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A tensor can be instantiated from a target type and nested lists.",
       "result":"PASS",
-      "duration":"0.019 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"Tensors as String can be formatted on an entry based level.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.015 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"Numeric tensors as String can be formatted on an entry based level.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.024 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
     {
       "id":"Tensors as String can be formatted depending on shape.",
       "result":"PASS",
-      "duration":"0.028 seconds",
+      "duration":"0.025 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -90,7 +90,7 @@
 
         {"kind":"and","text":"The fifth tensor has the expected internals and produces the correct String representation.","code":["t5.toString(settings).replace(' ','') == expected.replace('.0','  ').replace(' ','')","t5.dataType == DataType.of( Byte.class )","t5.unsafe.data instanceof byte[]"]},
 
-        {"kind":"where","text":"The print configurations codes \"mode\", a common shape and expected String representation will be supplied:","code":{"shape":["[2, 3]","[2, 3]","[3, 2]","[2, 3, 4]","[2, 2, 3, 4]","[2, 70]","[2, 100]","[70, 2]"],"mode":["fap","fa","fp","fp","fp","f","f","f"],"expected":["(2x3):[\n   [  -4.0 ,  -3.0 ,  -2.0  ],\n   [  -1.0 ,   0.0 ,   1.0  ]\n]","(2x3):[\n   [ -4.0, -3.0, -2.0 ],\n   [ -1.0, 0.0, 1.0 ]\n]","(3x2):[\n   [  -4.0 ,  -3.0  ],\n   [  -2.0 ,  -1.0  ],\n   [   0.0 ,   1.0  ]\n]","(2x3x4):[\n   [\n      [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ],\n      [   0.0 ,   1.0 ,   2.0 ,   3.0  ],\n      [   4.0 ,   5.0 ,  -4.0 ,  -3.0  ]\n   ],\n   [\n      [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ],\n      [   2.0 ,   3.0 ,   4.0 ,   5.0  ],\n      [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ]\n   ]\n]","(2x2x3x4):[\n   [\n      [\n         [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ],\n         [   0.0 ,   1.0 ,   2.0 ,   3.0  ],\n         [   4.0 ,   5.0 ,  -4.0 ,  -3.0  ]\n      ],\n      [\n         [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ],\n         [   2.0 ,   3.0 ,   4.0 ,   5.0  ],\n         [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ]\n      ]\n   ],\n   [\n      [\n         [   0.0 ,   1.0 ,   2.0 ,   3.0  ],\n         [   4.0 ,   5.0 ,  -4.0 ,  -3.0  ],\n         [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ]\n      ],\n      [\n         [   2.0 ,   3.0 ,   4.0 ,   5.0  ],\n         [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ],\n         [   0.0 ,   1.0 ,   2.0 ,   3.0  ]\n      ]\n   ]\n]","(2x70):[\n   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, ..38 more.., 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ],\n   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, ..38 more.., 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ]\n]","(2x100):[\n   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, ..68 more.., 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ],\n   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, ..68 more.., 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ]\n]","(70x2):[\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   ... 38 more ...\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ]\n]"]}}
+        {"kind":"where","text":"The print configurations codes \"mode\", a common shape and expected String representation will be supplied:","code":{"shape":["[2, 3]","[2, 3]","[3, 2]","[2, 3, 4]","[2, 2, 3, 4]","[2, 70]","[2, 100]","[70, 2]"],"mode":["fap","fa","fp","fp","fp","f","f","f"],"expected":["(2x3):[\u000a   [  -4.0 ,  -3.0 ,  -2.0  ],\u000a   [  -1.0 ,   0.0 ,   1.0  ]\u000a]","(2x3):[\u000a   [ -4.0, -3.0, -2.0 ],\u000a   [ -1.0, 0.0, 1.0 ]\u000a]","(3x2):[\u000a   [  -4.0 ,  -3.0  ],\u000a   [  -2.0 ,  -1.0  ],\u000a   [   0.0 ,   1.0  ]\u000a]","(2x3x4):[\u000a   [\u000a      [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ],\u000a      [   0.0 ,   1.0 ,   2.0 ,   3.0  ],\u000a      [   4.0 ,   5.0 ,  -4.0 ,  -3.0  ]\u000a   ],\u000a   [\u000a      [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ],\u000a      [   2.0 ,   3.0 ,   4.0 ,   5.0  ],\u000a      [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ]\u000a   ]\u000a]","(2x2x3x4):[\u000a   [\u000a      [\u000a         [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ],\u000a         [   0.0 ,   1.0 ,   2.0 ,   3.0  ],\u000a         [   4.0 ,   5.0 ,  -4.0 ,  -3.0  ]\u000a      ],\u000a      [\u000a         [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ],\u000a         [   2.0 ,   3.0 ,   4.0 ,   5.0  ],\u000a         [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ]\u000a      ]\u000a   ],\u000a   [\u000a      [\u000a         [   0.0 ,   1.0 ,   2.0 ,   3.0  ],\u000a         [   4.0 ,   5.0 ,  -4.0 ,  -3.0  ],\u000a         [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ]\u000a      ],\u000a      [\u000a         [   2.0 ,   3.0 ,   4.0 ,   5.0  ],\u000a         [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ],\u000a         [   0.0 ,   1.0 ,   2.0 ,   3.0  ]\u000a      ]\u000a   ]\u000a]","(2x70):[\u000a   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, ..38 more.., 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ],\u000a   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, ..38 more.., 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ]\u000a]","(2x100):[\u000a   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, ..68 more.., 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ],\u000a   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, ..68 more.., 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ]\u000a]","(70x2):[\u000a   [ -4.0, -3.0 ],\u000a   [ -2.0, -1.0 ],\u000a   [ 0.0, 1.0 ],\u000a   [ 2.0, 3.0 ],\u000a   [ 4.0, 5.0 ],\u000a   [ -4.0, -3.0 ],\u000a   [ -2.0, -1.0 ],\u000a   [ 0.0, 1.0 ],\u000a   [ 2.0, 3.0 ],\u000a   [ 4.0, 5.0 ],\u000a   [ -4.0, -3.0 ],\u000a   [ -2.0, -1.0 ],\u000a   [ 0.0, 1.0 ],\u000a   [ 2.0, 3.0 ],\u000a   [ 4.0, 5.0 ],\u000a   [ -4.0, -3.0 ],\u000a   ... 38 more ...\u000a   [ -4.0, -3.0 ],\u000a   [ -2.0, -1.0 ],\u000a   [ 0.0, 1.0 ],\u000a   [ 2.0, 3.0 ],\u000a   [ 4.0, 5.0 ],\u000a   [ -4.0, -3.0 ],\u000a   [ -2.0, -1.0 ],\u000a   [ 0.0, 1.0 ],\u000a   [ 2.0, 3.0 ],\u000a   [ 4.0, 5.0 ],\u000a   [ -4.0, -3.0 ],\u000a   [ -2.0, -1.0 ],\u000a   [ 0.0, 1.0 ],\u000a   [ 2.0, 3.0 ],\u000a   [ 4.0, 5.0 ]\u000a]"]}}
       ],
       "problems":"[]"
     },
@@ -98,7 +98,7 @@
     {
       "id":"Newly instantiated and unmodified scalar tensor has expected state.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -123,7 +123,7 @@
     {
       "id":"Newly instantiated and unmodified vector tensor has expected state.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -169,7 +169,7 @@
     {
       "id":"The data and the value of a tensor a 2 different things!",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

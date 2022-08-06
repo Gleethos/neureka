@@ -37,7 +37,7 @@ public interface DeviceAlgorithm&lt;C extends DeviceAlgorithm&lt;C&gt;&gt; exten
      * @param &lt;I&gt;            The type of the {@link ImplementationFor} the provided {@link Device} type.
      * @return This very {@link Algorithm} instance to allow for method chaining.
      */
-    &lt;D extends Device&lt;?&gt;, I extends ImplementationFor&lt;D&gt;&gt; C setImplementationFor( Class&lt;D&gt; deviceClass, I implementation );
+    &lt;D extends Device&lt;?&gt;, I extends ImplementationFor&lt;D&gt;&gt; C setImplementationFor(Class&lt;D&gt; deviceClass, I implementation );
 
     /**
      * An {@link ImplementationFor} a specific {@link Device} can be accessed by passing the class of
@@ -49,7 +49,7 @@ public interface DeviceAlgorithm&lt;C extends DeviceAlgorithm&lt;C&gt;&gt; exten
      * @param &lt;D&gt;         The type parameter which has to be a class extending the Device interface.
      * @return The implementation for the passed device type class.
      */
-    &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( Class&lt;D&gt; deviceClass );
+    &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor(Class&lt;D&gt; deviceClass );
 
     /**
      * An {@link ImplementationFor} a specific {@link Device} can be accessed by passing
@@ -61,7 +61,7 @@ public interface DeviceAlgorithm&lt;C extends DeviceAlgorithm&lt;C&gt;&gt; exten
      * @param &lt;D&gt;    type parameter which has to be a class extending the Device interface.
      * @return The implementation for the passed device type class.
      */
-    default &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( D device ) {
+    default &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor(D device ) {
 <span class="fc" id="L65">        return (ImplementationFor&lt;D&gt;) getImplementationFor(device.getClass());</span>
     }
 

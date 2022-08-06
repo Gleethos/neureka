@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>F32.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.dtype.custom</a> &gt; <span class="el_source">F32.java</span></div><h1>F32.java</h1><pre class="source lang-java linenums">package neureka.dtype.custom;
 
-import neureka.dtype.AbstractNumericType;
 import neureka.common.utility.DataConverter;
 
 import java.io.DataInput;
@@ -11,35 +10,35 @@ import java.util.Iterator;
 public final class F32 extends AbstractNumericType&lt;Float, float[], Float, float[]&gt;
 {
     public F32() {
-<span class="fc" id="L14">        super();</span>
-<span class="fc" id="L15">    }</span>
+<span class="fc" id="L13">        super();</span>
+<span class="fc" id="L14">    }</span>
 
-<span class="fc" id="L17">    @Override public boolean signed() { return true; }</span>
+<span class="fc" id="L16">    @Override public boolean signed() { return true; }</span>
 
-<span class="fc" id="L19">    @Override public int numberOfBytes() { return 4; }</span>
+<span class="fc" id="L18">    @Override public int numberOfBytes() { return 4; }</span>
 
-<span class="fc" id="L21">    @Override public Class&lt;Float&gt; targetType() { return Float.class; }</span>
+<span class="fc" id="L20">    @Override public Class&lt;Float&gt; targetType() { return Float.class; }</span>
 
-<span class="fc" id="L23">    @Override public Class&lt;float[]&gt; targetArrayType() { return float[].class; }</span>
+<span class="fc" id="L22">    @Override public Class&lt;float[]&gt; targetArrayType() { return float[].class; }</span>
 
-<span class="fc" id="L25">    @Override public Class&lt;Float&gt; holderType() { return Float.class; }</span>
+<span class="fc" id="L24">    @Override public Class&lt;Float&gt; holderType() { return Float.class; }</span>
 
-<span class="fc" id="L27">    @Override public Class&lt;float[]&gt; holderArrayType() { return float[].class; }</span>
+<span class="fc" id="L26">    @Override public Class&lt;float[]&gt; holderArrayType() { return float[].class; }</span>
 
     @Override
     public Float foreignHolderBytesToTarget( byte[] bytes ) {
-<span class="fc" id="L31">        return ByteBuffer.wrap(bytes).getFloat();</span>
+<span class="fc" id="L30">        return ByteBuffer.wrap(bytes).getFloat();</span>
     }
 
     @Override
     public Float toTarget(Float original) {
-<span class="fc" id="L36">        return original;</span>
+<span class="fc" id="L35">        return original;</span>
     }
 
     @Override
     public byte[] targetToForeignHolderBytes(Float number) {
-<span class="fc" id="L41">        int intBits =  Float.floatToIntBits(number);</span>
-<span class="fc" id="L42">        return new byte[] {</span>
+<span class="fc" id="L40">        int intBits =  Float.floatToIntBits(number);</span>
+<span class="fc" id="L41">        return new byte[] {</span>
                 (byte) (intBits &gt;&gt; 24),
                 (byte) (intBits &gt;&gt; 16),
                 (byte) (intBits &gt;&gt; 8),
@@ -49,59 +48,59 @@ public final class F32 extends AbstractNumericType&lt;Float, float[], Float, flo
 
     @Override
     public float[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L52">        return new float[ 0 ];</span>
+<span class="nc" id="L51">        return new float[ 0 ];</span>
     }
 
     @Override
     public &lt;T&gt; float[] readAndConvertForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
-<span class="fc" id="L57">        float[] data = new float[size];</span>
-<span class="fc bfc" id="L58" title="All 2 branches covered.">        for ( int i=0; i&lt;size; i++ ) data[ i ] = convertToHolder( iterator.next() );</span>
-<span class="fc" id="L59">        return data;</span>
+<span class="fc" id="L56">        float[] data = new float[size];</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        for ( int i=0; i&lt;size; i++ ) data[ i ] = convertToHolder( iterator.next() );</span>
+<span class="fc" id="L58">        return data;</span>
     }
 
 
     @Override
     public float[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L65">        return new float[0];</span>
+<span class="nc" id="L64">        return new float[0];</span>
     }
 
     @Override
     public &lt;T&gt; float[] readForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
-<span class="fc" id="L70">        return readAndConvertForeignDataFrom( iterator, size );</span>
+<span class="fc" id="L69">        return readAndConvertForeignDataFrom( iterator, size );</span>
     }
 
     @Override
     public Float convertToHolder( Object from )
     {
-<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        if ( Byte.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L77">            return ( (Byte) from ).floatValue();</span>
-<span class="fc bfc" id="L78" title="All 2 branches covered.">        else if ( Integer.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L79">            return ( (Integer) from ).floatValue();</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">        else if ( Double.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L81">            return ( (Double) from ).floatValue();</span>
-<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        else if ( Short.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L83">            return ( (Short) from ).floatValue();</span>
-<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        else if ( Long.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L85">            return ( (Long) from ).floatValue();</span>
-<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        else if ( Float.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L87">            return ( (Float) from );</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if ( Byte.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L76">            return ( (Byte) from ).floatValue();</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        else if ( Integer.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L78">            return ( (Integer) from ).floatValue();</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        else if ( Double.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L80">            return ( (Double) from ).floatValue();</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        else if ( Short.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L82">            return ( (Short) from ).floatValue();</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        else if ( Long.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L84">            return ( (Long) from ).floatValue();</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        else if ( Float.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L86">            return ( (Float) from );</span>
         else
-<span class="nc" id="L89">            return null;</span>
+<span class="nc" id="L88">            return null;</span>
     }
 
     @Override
     public float[] convertToHolderArray( Object from ) {
-<span class="nc" id="L94">        return new float[0];</span>
+<span class="nc" id="L93">        return new float[0];</span>
     }
 
     @Override
     public Float convertToTarget( Object from ) {
-<span class="nc" id="L99">        return convertToHolder( from );</span>
+<span class="nc" id="L98">        return convertToHolder( from );</span>
     }
 
     @Override
     public float[] convertToTargetArray( Object from ) {
-<span class="fc" id="L104">        return DataConverter.get().convert( from, float[].class );</span>
+<span class="fc" id="L103">        return DataConverter.get().convert( from, float[].class );</span>
     }
 
 

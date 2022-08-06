@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Nda.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka</a> &gt; <span class="el_source">Nda.java</span></div><h1>Nda.java</h1><pre class="source lang-java linenums">package neureka;
+
+import neureka.common.utility.DataConverter;
+import neureka.common.utility.LogUtil;
+import neureka.fluent.building.NdaBuilder;
+import neureka.fluent.building.states.WithShapeOrScalarOrVector;
+import neureka.fluent.slicing.SliceBuilder;
+import neureka.fluent.slicing.states.AxisOrGet;
+import neureka.framing.Relation;
+import neureka.ndim.NDimensional;
+import neureka.view.NDPrintSettings;
+import neureka.view.NdaAsString;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+/**
+ *  {@link Nda}, which is an abbreviation of &lt;b&gt;'N-Dimensional-Array'&lt;/b&gt;, represents
+ *  a multidimensional, homogeneously filled fixed-size array of items.
+ *
+ *  {@link Nda}s should be constructed using the fluent builder API exposed by {@link #of(Class)}.
+ *
+ * @param &lt;V&gt; The type of the items stored in the {@link Nda}.
+ */
+public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
+{
+<span class="fc" id="L31">    static &lt;V&gt; WithShapeOrScalarOrVector&lt;V&gt; of( Class&lt;V&gt; type ) { return new NdaBuilder&lt;&gt;( type ); }</span>
+
+    /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar double tensor.
+     */
+<span class="nc" id="L37">    static Nda&lt;Double&gt; of( double value ) { return Tsr.of( Double.class, new int[]{ 1 }, value ); }</span>
+
+    /**
+     *  Constructs a vector of floats based on the provided array.
+     *
+     * @param value The array of floats from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of floats.
+     */
+<span class="nc" id="L45">    static Nda&lt;Float&gt; of( float... value ) { return Tsr.of( Float.class, new int[]{ value.length }, value ); }</span>
+
+    /**
+     *  Constructs a vector of doubles based on the provided array.
+     *
+     * @param value The array of doubles from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of doubles.
+     */
+<span class="fc" id="L53">    static Nda&lt;Double&gt; of( double... value ) { return Tsr.of( Double.class, new int[]{ value.length }, value ); }</span>
+
+    /**
+     *  Constructs a vector of bytes based on the provided array.
+     *
+     * @param value The array of bytes from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of bytes.
+     */
+<span class="nc" id="L61">    static Nda&lt;Byte&gt; of( byte... value ) { return Tsr.of( Byte.class, new int[]{ value.length }, value ); }</span>
+
+    /**
+     *  Constructs a vector of ints based on the provided array.
+     *
+     * @param value The array of ints from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of ints.
+     */
+<span class="fc" id="L69">    static Nda&lt;Integer&gt; of( int... value ) { return Tsr.of( Integer.class, new int[]{ value.length }, value ); }</span>
+
+    /**
+     *  Constructs a vector of longs based on the provided array.
+     *
+     * @param value The array of longs from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of longs.
+     */
+<span class="nc" id="L77">    static Nda&lt;Long&gt; of( long... value ) { return Tsr.of( Long.class, new int[]{ value.length }, value ); }</span>
+
+    /**
+     *  Constructs a vector of shorts based on the provided array.
+     *
+     * @param value The array of shorts from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of shorts.
+     */
+<span class="nc" id="L85">    static Nda&lt;Short&gt; of( short... value ) { return Tsr.of( Short.class, new int[]{ value.length }, value ); }</span>
+
+    /**
+     *  Constructs a vector of booleans based on the provided array.
+     *
+     * @param value The array of booleans from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of shorts.
+     */
+<span class="fc" id="L93">    static Nda&lt;Boolean&gt; of( boolean... value ) { return Tsr.of( Boolean.class, new int[]{ value.length }, value ); }</span>
+
+
+    /**
+     *  If this nd-array is a slice of a parent nd-array then this method will yield true.
+     *  Slices can be created by calling the variations of the &quot;{@link Nda#getAt}&quot; method.
+     *
+     * @return The truth value determining if this nd-array is a slice of another nd-array.
+     */
+    boolean isSlice();
+
+    /**
+     *  This method returns the number of slices which have been
+     *  created from this nd-array.
+     *  It does so by accessing the {@link Relation} component if present
+     *  which internally keeps track of slices via weak references.
+     *
+     * @return The number of slices derived from this nd-array.
+     */
+    int sliceCount();
+
+    /**
+     *  If slices have been derived from this nd-array then it is a &quot;slice parent&quot;.
+     *  This is what this method will determine, in which case, it will return true.
+     *
+     * @return The truth value determining if slices have been derived from this nd-array.
+     */
+    boolean isSliceParent();
+
+    /**
+     * @return The type class of individual value items within this nd-array.
+     */
+    Class&lt;V&gt; getItemType();
+
+    /**
+     * @return The type class of individual value items within this nd-array.
+     */
+<span class="fc" id="L130">    default Class&lt;V&gt; itemType() { return getItemType(); }</span>
+
+    /*==================================================================================================================
+    |
+    |       Â§(6) : ND-ITERATOR LOGIC :
+    |   ---------------------------------------
+    */
+
+    /**
+     *  @return A {@link Stream} of the items in this {@link Nda}.
+     */
+    default Stream&lt;V&gt; stream() {
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">        boolean executeInParallel = ( this.size() &gt; 1_000 );</span>
+<span class="fc" id="L143">        IntStream indices = IntStream.range(0,size());</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::getItemAt);</span>
+    }
+
+    /**
+     * Iterates over every element of this nd-array, and checks whether all
+     * elements are &lt;code&gt;true&lt;/code&gt; according to the provided lambda.
+     * @param predicate The lambda to check each element against.
+     * @return true if every item in the nd-array matches the predicate, false otherwise.
+     */
+<span class="fc" id="L153">    default boolean every( Predicate&lt;V&gt; predicate ) { return stream().allMatch(predicate); }</span>
+
+    /**
+     * Iterates over every element of this nd-array, and checks whether any
+     * element matches the provided lambda.
+     * @param predicate The lambda to check each element against.
+     * @return true if any item in the nd-array matches the predicate, false otherwise.
+     */
+<span class="fc" id="L161">    default boolean any( Predicate&lt;V&gt; predicate ) { return stream().anyMatch(predicate); }</span>
+
+    /**
+     * Iterates over every element of this nd-array, and checks whether none
+     * of the elements match the provided lambda.
+     * @param predicate The lambda to check each element against.
+     * @return true if none of the items in the nd-array match the predicate, false otherwise.
+     */
+<span class="fc" id="L169">    default boolean none( Predicate&lt;V&gt; predicate ) { return stream().noneMatch(predicate);}</span>
+
+    /**
+     *  Iterates over every element of this nd-array, and counts the number of
+     *  times the provided lambda matches the items of this array.
+     * @param predicate The lambda to check each element against.
+     * @return The number of items in the nd-array that match the predicate.
+     */
+<span class="fc" id="L177">    default int count( Predicate&lt;V&gt; predicate ) { return (int) stream().filter(predicate).count(); }</span>
+
+    /**
+     *  This returns an unprocessed version of the underlying data of this nd-array.
+     *  If this nd-array is outsourced (stored on a device), then the data will be loaded
+     *  into an array and returned by this method.
+     *  Do not expect the returned array to be actually stored within the nd-array itself!
+     *  Contrary to the {@link #getItems()} method, this one will
+     *  return the data in an unbiased form, where for example a virtual (see {@link Tsr#isVirtual()})
+     *  nd-array will have this method return an array of length 1.
+     *
+     * @return An unbiased copy of the underlying data of this nd-array.
+     */
+    Object getData();
+
+    /**
+     *  An NDArray implementation ought to have some way to access its underlying data array.
+     *  This method simple returns an element within this data array sitting at position &quot;i&quot;.
+     * @param i The position of the targeted item within the raw data array of an NDArray implementation.
+     * @return The found object sitting at the specified index position.
+     */
+    V getDataAt( int i );
+
+    Object getItems();
+
+    /**
+     *  An NDArray implementation ought to have some way to selectively modify its underlying value.
+     *  This method simply overrides an element within this data array sitting at position &quot;i&quot;.
+     * @param i The index of the value array entry which ought to be addressed.
+     * @param o The object which ought to be placed at the requested position.
+     * @return This very nd-array in order to enable method chaining.
+     */
+    Nda&lt;V&gt; setItemAt( int i, V o );
+
+    /**
+     *  This method will receive an object an try to interpret
+     *  it or its contents to be set as value for this nd-array.
+     *  It will not necessarily replace the underlying data array object of this
+     *  nd-array itself, but also try to convert and copy the provided value
+     *  into the data array of this nd-array.
+     *
+     * @param value The value which may be a scalar or array and will be used to populate this nd-array.
+     * @return This very nd-array to enable method chaining.
+     */
+    Nda&lt;V&gt; setItems( Object value );
+
+    /**
+     *  The following method returns a raw value item within this nd-array
+     *  targeted by a scalar index.
+     *
+     * @param i The scalar index of the value item which should be returned by the method.
+     * @return The value item found at the targeted index.
+     */
+<span class="fc" id="L230">    default V getItemAt( int i ) { return getDataAt( indexOfIndex( i ) ); }</span>
+
+    /**
+     *  This method returns a raw value item within this nd-array
+     *  targeted by an index array which is expected to hold an index for
+     *  every dimension of the shape of this nd-array.
+     *  So the provided array must have the same length as the
+     *  rank of this nd-array!
+     *
+     * @param indices The index array which targets a single value item within this nd-array.
+     * @return The found raw value item targeted by the provided index array.
+     */
+    default V getItemAt( int... indices ) {
+<span class="fc" id="L243">        LogUtil.nullArgCheck( indices, &quot;indices&quot;, int[].class, &quot;Cannot find nd-array value without indices!&quot; );</span>
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">        if ( indices.length == 0 ) throw new IllegalArgumentException(&quot;Index array may not be empty!&quot;);</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">        if ( indices.length &lt; this.rank() ) {</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">            if ( indices.length == 1 ) return getDataAt( getNDConf().indexOfIndex( indices[0] ) );</span>
+            else {
+<span class="fc" id="L248">                int[] allIndices = new int[this.rank()]; // We do some 0 padding to make sure we have the correct number of indices.</span>
+<span class="fc" id="L249">                System.arraycopy( indices, 0, allIndices, 0, indices.length );</span>
+<span class="fc" id="L250">                return getDataAt( getNDConf().indexOfIndices( allIndices ) );</span>
+            }
+        }
+<span class="fc" id="L253">        return getDataAt( getNDConf().indexOfIndices( indices ) );</span>
+    }
+
+    default &lt;A&gt; A getItemsAs( Class&lt;A&gt; arrayTypeClass ) {
+<span class="fc" id="L257">        return DataConverter.get().convert( getItems(), arrayTypeClass );</span>
+    }
+
+    default  &lt;A&gt; A getDataAs( Class&lt;A&gt; arrayTypeClass ) {
+<span class="fc" id="L261">        return DataConverter.get().convert( getData(), arrayTypeClass );</span>
+    }
+
+
+    // Slicing:
+
+    /**
+     *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
+     *  which enables the configuration of a slice of the current nd-array via method chaining.    &lt;br&gt;
+     *  The following code snippet slices a 3-dimensional nd-array into a nd-array of shape (2x1x3)  &lt;br&gt;
+     * &lt;pre&gt;{@code
+     *  myArray.slice()
+     *          .axis(0).from(0).to(1)
+     *          .axis(1).at(5) // equivalent to '.from(5).to(5)'
+     *          .axis().from(0).to(2)
+     *          .get();
+     * }&lt;/pre&gt;
+     *
+     * @return An instance of the {@link SliceBuilder} class exposing a readable builder API for creating slices.
+     */
+    AxisOrGet&lt;V&gt; slice();
+
+    /**
+     *  The following method enables access to specific scalar elements within the nd-array.
+     *  The method name also translates to the subscription operator in Groovy.
+     *
+     * @param indices The index array of the element which should be returned.
+     * @return An element located at the provided index.
+     */
+    Nda&lt;V&gt; getAt( int... indices );
+
+    /**
+     *  This getter method creates and returns a slice of the original nd-array.
+     *  The returned slice is a scalar nd-array wrapping a single value element which
+     *  is being targeted by the provided integer index.
+     *
+     * @param i The index of the value item which should be returned as a nd-array instance.
+     * @return A nd-array holding a single value element which is internally still residing in the original nd-array.
+     */
+    Nda&lt;V&gt; getAt( Number i );
+
+    /**
+     *  The following method enables access to specific scalar elements within the nd-array.
+     *  The method name also translates to the subscription operator in Groovy.
+     *
+     * @param indices The index array of the element which should be returned.
+     * @return An element located at the provided index.
+     */
+    Nda&lt;V&gt; get( int... indices );
+
+    /**
+     *  The following method enables the creation of nd-array slices which access
+     *  the same underlying data (possibly from a different view).
+     *  The method name also translates to the subscription operator in Groovy.
+     *
+     * @param args An arbitrary number of arguments which can be used for slicing.
+     * @return A slice nd-array created based on the passed keys.
+     */
+    Nda&lt;V&gt; getAt( Object... args );
+
+    /**
+     *  The following method enables the creation of nd-array slices which access
+     *  the same underlying data (possibly from a different view).
+     *  The method name also translates to the subscription operator in Groovy.
+     *
+     * @param args An arbitrary number of arguments which can be used for slicing.
+     * @return A slice nd-array created based on the passed keys.
+     */
+    Nda&lt;V&gt; get( Object... args );
+
+    /**
+     *  This getter method creates and returns a slice of the original nd-array.
+     *  The returned slice is a scalar nd-array wrapping a single value element which
+     *  is being targeted by the provided integer index.
+     *
+     * @param i The index of the value item which should be returned as a nd-array instance.
+     * @return A nd-array holding a single value element which is internally still residing in the original nd-array.
+     */
+    Nda&lt;V&gt; getAt( int i );
+
+    /**
+     *  This getter method creates and returns a slice of the original nd-array.
+     *  The returned slice is a scalar nd-array wrapping a single value element which
+     *  is being targeted by the provided integer index.
+     *
+     * @param i The index of the value item which should be returned as a nd-array instance.
+     * @return A nd-array holding a single value element which is internally still residing in the original nd-array.
+     */
+    Nda&lt;V&gt; get( int i );
+
+    /**
+     *  This getter method creates and returns a slice of the original nd-array.
+     *  The returned slice is a scalar nd-array wrapping a single value element which
+     *  is being targeted by the provided integer index.
+     *
+     * @param i The index of the value item which should be returned as a nd-array instance.
+     * @return A nd-array holding a single value element which is internally still residing in the original nd-array.
+     */
+    Nda&lt;V&gt; get( Number i );
+
+    /**
+     *  This method enables nd-array slicing!
+     *  It takes a key of various types and configures a slice
+     *  nd-array which shares the same underlying data as the original nd-array.
+     *
+     * @param key This object might be a wide range of objects including maps, lists or arrays...
+     * @return A slice nd-array or scalar value.
+     */
+    Nda&lt;V&gt; get( Object key );
+
+    /**
+     *  This method is most useful when used in Groovy
+     *  where defining maps is done through square brackets,
+     *  making it possible to slice nd-arrays like so: &lt;br&gt;
+     *  &lt;pre&gt;{@code
+     *      var b = a[[[0..0]:1, [0..0]:1, [0..3]:2]]
+     *  }&lt;/pre&gt;
+     *  Here a single argument with the format '[i..j]:k' is equivalent
+     *  to Pythons 'i:j:k' syntax for indexing! (numpy)                            &lt;br&gt;
+     *  i... start indexAlias.                                                      &lt;br&gt;
+     *  j... end indexAlias. (inclusive!)                                           &lt;br&gt;
+     *  k... step size.
+     *
+     * @param rangToStrides A map where the keys define where axes should be sliced and values which define the strides for the specific axis.
+     * @return A nd-array slice with an offset based on the provided map keys and
+     *         strides based on the provided map values.
+     */
+    Nda&lt;V&gt; getAt( Map&lt;?,Integer&gt; rangToStrides );
+
+    /**
+     *  This method enables nd-array slicing!
+     *  It takes a key of various types and configures a slice
+     *  nd-array which shares the same underlying data as the original nd-array.
+     *
+     * @param key This object might be a wide range of objects including maps, lists or arrays...
+     * @return A slice nd-array or scalar value.
+     */
+    Nda&lt;V&gt; getAt( List&lt;?&gt; key );
+
+    /**
+     *  This method enables assigning a provided nd-array to be a subset/slice of this nd-array!
+     *  It takes a key which is used to configure a slice
+     *  sharing the same underlying data as the original nd-array.
+     *  This slice is then used to assign the second argument {@code value} to it.
+     *  The usage of this method is especially powerful when used in Groovy. &lt;br&gt;
+     *  The following code illustrates this very well:
+     *  &lt;pre&gt;{@code
+     *      a[[[0..0]:1, [0..0]:1, [0..3]:2]] = b
+     *  }&lt;/pre&gt;
+     *  Here a single argument with the format '[i..j]:k' is equivalent
+     *  to pythons 'i:j:k' syntax for indexing! (numpy)                            &lt;br&gt;
+     *  i... start indexAlias.                                                      &lt;br&gt;
+     *  j... end indexAlias. (inclusive!)                                           &lt;br&gt;
+     *  k... step size.                                                             &lt;br&gt;
+     *
+     * @param key This object is a map defining a stride and a targeted index or range of indices...
+     * @param value The nd-array which ought to be assigned into a slice of this nd-array.
+     * @return A slice nd-array or scalar value.
+     */
+    Nda&lt;V&gt; putAt( Map&lt;?,Integer&gt; key, Nda&lt;V&gt; value );
+
+    /**
+     *  Use this to put a single item at a particular
+     *  position within this nd-array.
+     *
+     * @param indices The indices of the nd-position where the provided item should be placed.
+     * @param value The item which should be placed at the position defined by the provided indices.
+     * @return This nd-array itself.
+     */
+    Nda&lt;V&gt; putAt( int[] indices, V value );
+
+
+    /**
+     *  Use this to place a single item at a particular position within this nd-array!
+     *
+     * @param indices An array of indices targeting a particular position in this nd-array...
+     * @param value the value which ought to be placed at the targeted position.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda&lt;V&gt; set( int[] indices, V value );
+
+    /**
+     *  Individual entries for value items in this nd-array can be set
+     *  via this method.
+     *
+     * @param index The scalar index targeting a specific value position within this nd-array
+     *          which ought to be replaced by the one provided by the second parameter
+     *          of this method.
+     *
+     * @param value The item which ought to be placed at the targeted position.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda&lt;V&gt; putAt( int index, V value );
+
+    /**
+     *  Individual entries for value items in this nd-array can be set
+     *  via this method.
+     *
+     * @param index The scalar index targeting a specific value position within this nd-array
+     *          which ought to be replaced by the one provided by the second parameter
+     *          of this method.
+     *
+     * @param value The item which ought to be placed at the targeted position.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda&lt;V&gt; set( int index, V value );
+
+    /**
+     *  This method enables injecting slices of nd-array to be assigned into this nd-array!
+     *  It takes a key of various types which is used to configure a slice
+     *  nd-array sharing the same underlying data as the original nd-array.
+     *  This slice is then used to assign the second argument to it, namely
+     *  the &quot;value&quot; argument.
+     *
+     * @param key This object is a list defining a targeted index or range of indices...
+     * @param value the nd-array which ought to be assigned to a slice of this nd-array.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda&lt;V&gt; putAt( List&lt;?&gt; key, Nda&lt;V&gt; value );
+
+    /**
+     *  Use this to place a single item at a particular position within this nd-array!
+     *
+     * @param indices A list of indices targeting a particular position in this nd-array...
+     * @param value the value which ought to be placed at the targeted position.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda&lt;V&gt; putAt( List&lt;?&gt; indices, V value );
+
+    /**
+     * &lt;p&gt;
+     *     This method is a convenience method for mapping a nd-array to a new type
+     *     based on a provided lambda expression.
+     *     Here a simple example:
+     * &lt;/p&gt;
+     * &lt;pre&gt;{@code
+     *     Nda&lt;String&gt;  a = Nda.of(String.class).vector(&quot;1&quot;, &quot;2&quot;, &quot;3&quot;);
+     *     Nda&lt;Integer&gt; b = a.mapTo(Integer.class, s -&gt; Integer.parseInt(s));
+     * }&lt;/pre&gt;
+     * &lt;p&gt;
+     *     Note: &lt;br&gt;
+     *     The provided lambda cannot be executed anywhere else but the CPU.
+     *     This is a problem if this nd-array here lives somewhere other than the JVM.
+     *     So, therefore, this method will temporally transfer this nd-array from
+     *     where ever it may reside back to the JVM!
+     * &lt;/p&gt;
+     * @param typeClass The class of the item type to which the items of this nd-array should be mapped.
+     * @param mapper The lambda which maps the items of this nd-array to a new one.
+     * @param &lt;T&gt; The type parameter of the items of the returned nd-array.
+     * @return A new nd-array of type {@code T}.
+     */
+    &lt;T&gt; Nda&lt;T&gt; mapTo(
+        Class&lt;T&gt; typeClass,
+        java.util.function.Function&lt;V,T&gt; mapper
+    );
+
+    /**
+     * &lt;p&gt;
+     *     This method is a convenience method for mapping the items of this nd-array to another
+     *     nd-array of the same type based on a provided lambda expression which will be applies
+     *     to all items individually.
+     * &lt;/p&gt;
+     *  Here a simple example:
+     *  &lt;pre&gt;{@code
+     *  Nda&lt;String&gt; a = Nda.of(String.class).vector(&quot;1&quot;, &quot;2&quot;, &quot;3&quot;);
+     *  Nda&lt;String&gt; b = a.map( s -&gt; s + &quot;!&quot; );
+     *  }&lt;/pre&gt;
+     *  Note: &lt;br&gt;
+     *  The provided lambda cannot be executed anywhere else but the CPU.
+     *
+     * @param mapper The lambda which maps the items of this nd-array to a new one.
+     * @return A new nd-array of type {@code V}.
+     */
+    Nda&lt;V&gt; map( java.util.function.Function&lt;V,V&gt; mapper );
+
+    /**
+     *  This method creates and returns a new nd-array instance
+     *  which is not only a copy of the configuration of this nd-array but also a copy of
+     *  the underlying data array. &lt;br&gt;
+     *  (Note: the underlying nd-array will not be attached to any kind of computation graph)
+     *
+     * @return A new nd-array instance which is a deep copy of this nd-array.
+     */
+    Nda&lt;V&gt; deepCopy();
+
+    /**
+     *  This creates a copy where the underlying data is still the same. &lt;br&gt;
+     *  (Note: the underlying nd-array will not be attached to any kind of computation graph)
+     *
+     * @return A shallow copy where the underlying data is shared with this nd-array.
+     */
+    Nda&lt;V&gt; shallowCopy();
+
+    /**
+     *  This method exposes the {@link Access} API which allows you to get or set
+     *  individual items within this nd-array targeted by an array of provided indices.
+     * @param indices An array of indices targeting a particular position in this nd-array...
+     * @return An object which allows you to get or set individual items within this nd-array.
+     */
+    default Access&lt;V&gt; at( int... indices ) {
+<span class="fc" id="L561">        return new Access&lt;V&gt;() {</span>
+<span class="fc" id="L562">            @Override public V    get()          { return getItemAt( indices ); }</span>
+<span class="fc" id="L563">            @Override public void set( V value ) { putAt( indices, value ); }</span>
+            @Override public boolean equals( Object o ) {
+<span class="pc bpc" id="L565" title="1 of 2 branches missed.">                if ( o == null ) return false;</span>
+<span class="pc bpc" id="L566" title="1 of 2 branches missed.">                if ( o == this ) return true;</span>
+<span class="pc bpc" id="L567" title="1 of 2 branches missed.">                if ( o.getClass() != this.getClass() ) return false;</span>
+<span class="fc" id="L568">                Access&lt;V&gt; other = (Access&lt;V&gt;) o;</span>
+<span class="fc" id="L569">                return this.get().equals( other.get() );</span>
+            }
+        };
+    }
+
+    /**
+     *  Instances of this are being returned by the {@link #at(int...)} method,
+     *  and they allow you to get or set individual nd-array items
+     * @param &lt;V&gt; The type of the items of this nd-array.
+     */
+    interface Access&lt;V&gt;
+    {
+        /**
+         *  Get the value at the targeted position.
+         * @return The value at the targeted position.
+         */
+        V get();
+        /**
+         *  Set the value at the targeted position.
+         * @param value The value to be set at the targeted position.
+         */
+        void set( V value );
+    }
+
+    default String toString( NDPrintSettings config ) {
+<span class="fc" id="L594">        return NdaAsString.representing( this ).withConfig( config ).toString();</span>
+    }
+
+    /**
+     *  This allows you to provide a lambda to configure how this nd-array should be
+     *  converted to {@link String} instances.
+     *  The provided {@link Consumer} will receive a {@link NDPrintSettings} instance
+     *  which allows you to change various settings with the help of method chaining.
+     *
+     * @param config A consumer of the {@link NDPrintSettings} ready to be configured.
+     * @return The {@link String} representation of this nd-array.
+     */
+    default String toString( Consumer&lt;NDPrintSettings&gt; config ) {
+<span class="fc" id="L607">        NDPrintSettings defaults = Neureka.get().settings().view().getNDPrintSettings().clone();</span>
+<span class="fc" id="L608">        config.accept(defaults);</span>
+<span class="fc" id="L609">        return NdaAsString.representing( this ).withConfig( defaults ).toString();</span>
+    }
+
+    String toString();
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

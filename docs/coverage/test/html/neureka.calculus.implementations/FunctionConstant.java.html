@@ -69,7 +69,7 @@ public final class FunctionConstant implements Function
 	public Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... inputs ) {
 <span class="pc bpc" id="L70" title="1 of 4 branches missed.">		if ( arguments.has(Arg.DerivIdx.class) &amp;&amp; arguments.valOf(Arg.DerivIdx.class) &gt;= 0 ) {</span>
 <span class="fc" id="L71">			return Tsr.of(</span>
-<span class="fc" id="L72">						inputs[ 0 ].getItemClass(),</span>
+<span class="fc" id="L72">						inputs[ 0 ].getItemType(),</span>
 <span class="fc" id="L73">						inputs[ 0 ].shape(),</span>
 <span class="fc" id="L74">						0.0</span>
 					)
@@ -77,7 +77,7 @@ public final class FunctionConstant implements Function
 <span class="fc" id="L77">					.setIsIntermediate( true );</span>
 		}
 <span class="fc" id="L79">		return Tsr.of(</span>
-<span class="fc" id="L80">					inputs[ 0 ].getItemClass(),</span>
+<span class="fc" id="L80">					inputs[ 0 ].getItemType(),</span>
 <span class="fc" id="L81">					inputs[ 0 ].shape(),</span>
 <span class="fc" id="L82">					_value</span>
 				)

@@ -60,7 +60,7 @@ public class Cat extends AbstractOperation
 <span class="fc bfc" id="L60" title="All 2 branches covered.">                        newShape.add( i == dim ? newAxisSize : call.input(0).shape(i) );</span>
 
                     // We create the output tensor:
-<span class="fc" id="L63">                    Tsr&lt;?&gt; c = Tsr.of( call.input(0).getItemClass(), newShape, 0 );</span>
+<span class="fc" id="L63">                    Tsr&lt;?&gt; c = Tsr.of( call.input(0).getItemType(), newShape, 0 );</span>
 
                     // We make the axes list entries cumulative:
 <span class="fc bfc" id="L66" title="All 2 branches covered.">                    for ( int i = 0; i &lt; axes.size(); i++ )</span>

@@ -6,19 +6,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.536 seconds"
+    "duration":"0.608 seconds"
   },
 
   "title":"The CPU device, an API for CPU based execution",
-  "narrative":"The CPU class, one of many implementations of the Device interface, \n is simply supposed to be an API for dispatching threaded workloads onto the CPU.\n Contrary to other types of device, the CPU will host tensor data by default, simply\n because the tensors will be stored in RAM if no device was specified.",
-  "headers":["\\n <p>\\n The thread pool of the class neureka.devices.host.CPU executor becomes\\n more active when receiving larger workloads which\\n benefit from parallelization. \\n </p>\\n"],"tags":{},"see":[],
+  "narrative":"The CPU class, one of many implementations of the Device interface, \u000a is simply supposed to be an API for dispatching threaded workloads onto the CPU.\u000a Contrary to other types of device, the CPU will host tensor data by default, simply\u000a because the tensors will be stored in RAM if no device was specified.",
+  "headers":["\\u000a <p>\\u000a The thread pool of the class neureka.devices.host.CPU executor becomes\\u000a more active when receiving larger workloads which\\u000a benefit from parallelization. \\u000a </p>\\u000a"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Thread pool executes given workload in parallel",
       "result":"PASS",
-      "duration":"0.527 seconds",
+      "duration":"0.600 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["\\n Warning! This test is flaky simply because it relies on the behaviour of threads\\n which may or may not behave as expected. \\n"]
+      "tags":{},"see":[],"extraInfo":["\\u000a Warning! This test is flaky simply because it relies on the behaviour of threads\\u000a which may or may not behave as expected. \\u000a"]
       },
       "blocks":[
         {"kind":"given","text":"Two 4 dimensional tensor instances.","code":["Tsr a = Tsr.of(new int[]{100, 60, 1, 2},  4)","Tsr b = Tsr.of(new int[]{100, 1, 60, 2}, -2)"]},
@@ -52,7 +52,7 @@
     {
       "id":"The CPU exposes a non null API for executing workloads in parallel.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

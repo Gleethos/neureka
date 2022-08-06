@@ -80,15 +80,9 @@ function loadReportUI(target, search) {
             printSearchResults(results, chosen);
         });
     })
-    .done(function() {
-      console.log( "second success" );
-    })
-    .fail(function() {
-      console.log( "error");
-    })
-    .always(function() {
-      console.log( "complete" );
- });
+    .done(function() { console.log( "summary fully loaded (second success)" ); })
+    .fail(function() { console.log( "failed to load summary!"); })
+    .always(function() { console.log( "loading attempt done." ); });
 }
 
 // A function which takes 2 strings, a search word and a string to search in, and returns a score
@@ -218,7 +212,10 @@ function createLoaderDropDownFor(specName, expandableFeature) {
                     },
                     50
                 );
-            });
+            })
+            .done(function() { console.log( "specification '"+specName+"' fully loaded (second success)" ); })
+            .fail(function() { console.log( "failed to load specification '"+specName+"'!"); })
+            .always(function() { console.log( "loading attempt done." ); });
         }
 
         // We then check if the content is expanded:
@@ -331,12 +328,38 @@ function dictionaryOfHeaderNamesToColumnArraysToTable(dataTable) {
         let row = $('<tr></tr>');
         for ( let j = 0; j < headers.length; j++ ) {
             let cell = $('<td></td>');
-            cell.text(dataTable[headers[j]][i]);
+            let text = filterTableEntryNoise(dataTable[headers[j]][i]);
+            // Now we check the length of the string and make longer text have smaller font size:
+            if ( text.length > 50 ) cell.css('font-size', '55%');
+            else if ( text.length > 45 ) cell.css('font-size', '60%');
+            else if ( text.length > 40 ) cell.css('font-size', '65%');
+            else if ( text.length > 35 ) cell.css('font-size', '70%');
+            else if ( text.length > 30 ) cell.css('font-size', '75%');
+            else if ( text.length > 25 ) cell.css('font-size', '80%');
+            else if ( text.length > 20 ) cell.css('font-size', '85%');
+            else if ( text.length > 15 ) cell.css('font-size', '90%');
+            else if ( text.length > 10 ) cell.css('font-size', '95%');
+
+            cell.text(text);
             row.append(cell);
         }
         table.append(row);
     }
     return $('<div style="overflow: auto;"></div>').append(table);
+}
+
+function filterTableEntryNoise(entry) {
+    entry = entry.toString();
+    if ( entry.startsWith("class ") ) entry = entry.substring(6);
+    if ( entry.startsWith("interface ") ) entry = entry.substring(10);
+    if ( entry.startsWith("enum ") ) entry = entry.substring(5);
+    if ( entry.startsWith("annotation ") ) entry = entry.substring(11);
+    if ( entry.startsWith("package ") ) entry = entry.substring(8);
+    if ( entry.startsWith("import ") ) entry = entry.substring(7);
+    if ( entry.startsWith("java.lang.") ) entry = entry.substring(10);
+    if ( entry.startsWith("java.util.") ) entry = entry.substring(10);
+    if ( entry.startsWith("neureka.") ) entry = entry.substring(8);
+    return entry;
 }
 
 

@@ -28,9 +28,9 @@ import java.util.function.Function;
  *  &quot;b&quot; : [&quot;one&quot;, &quot;two&quot;, &quot;three&quot;, &quot;four&quot;]                                      &lt;br&gt;
  *                                                                             &lt;br&gt;
  *
- * @param &lt;ValType&gt; The type parameter of the value type of the tensor type to whom this component should belong.
+ * @param &lt;V&gt; The type parameter of the value type of the tensor type to whom this component should belong.
  */
-public final class NDFrame&lt;ValType&gt; implements Component&lt;Tsr&lt;ValType&gt;&gt;
+public final class NDFrame&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 {
 <span class="fc" id="L35">    private final List&lt;Object&gt; _hiddenKeys = new ArrayList&lt;&gt;();</span>
     /**
@@ -65,7 +65,7 @@ public final class NDFrame&lt;ValType&gt; implements Component&lt;Tsr&lt;ValType
 <span class="fc bfc" id="L65" title="All 2 branches covered.">        for ( int i = 0; i &lt; size; i++ ) _mapping.put( i, new LinkedHashMap&lt;&gt;() );</span>
 <span class="fc" id="L66">    }</span>
 
-<span class="fc" id="L68">    public NDFrame( Map&lt;Object, List&lt;Object&gt;&gt; labels, Tsr&lt;ValType&gt; host, String tensorName ) {</span>
+<span class="fc" id="L68">    public NDFrame(Map&lt;Object, List&lt;Object&gt;&gt; labels, Tsr&lt;V&gt; host, String tensorName ) {</span>
 <span class="fc" id="L69">        _tensorName = tensorName;</span>
 <span class="fc" id="L70">        _mapping = new LinkedHashMap&lt;&gt;( labels.size() * 3 );</span>
 <span class="fc" id="L71">        int[] index = { 0 };</span>
@@ -113,9 +113,9 @@ public final class NDFrame&lt;ValType&gt; implements Component&lt;Tsr&lt;ValType
      * @param axisAlias The axis alias object which targets an {@link AxisFrame} of {@link NDFrame}.
      * @return A view of the targeted axis in the for of an{@link AxisFrame} which provides getters and setters for aliases.
      */
-    public AxisFrame&lt;Integer, ValType&gt; atAxis( Object axisAlias )
+    public AxisFrame&lt;Integer, V&gt; atAxis(Object axisAlias )
     {
-<span class="fc" id="L118">        return AxisFrame.&lt;Integer, Integer, ValType&gt;builder()</span>
+<span class="fc" id="L118">        return AxisFrame.&lt;Integer, Integer, V&gt;builder()</span>
 <span class="fc" id="L119">                .getter(</span>
 <span class="fc" id="L120">                        atKey -&gt; () -&gt;</span>
                         {
@@ -272,7 +272,7 @@ public final class NDFrame&lt;ValType&gt; implements Component&lt;Tsr&lt;ValType
 
 
     @Override
-    public boolean update( OwnerChangeRequest&lt;Tsr&lt;ValType&gt;&gt; changeRequest ) {
+    public boolean update( OwnerChangeRequest&lt;Tsr&lt;V&gt;&gt; changeRequest ) {
 <span class="fc" id="L276">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
         // This component does not have anything to do when switching owner...
 <span class="fc" id="L278">        return true;</span>

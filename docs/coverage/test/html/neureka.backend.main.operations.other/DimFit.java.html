@@ -9,7 +9,7 @@ import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.internal.CalcUtil;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import org.jetbrains.annotations.Contract;
 
 <span class="nc bnc" id="L15" title="All 2 branches missed.">public class DimFit extends AbstractOperation</span>
@@ -35,8 +35,8 @@ import org.jetbrains.annotations.Contract;
 <span class="nc" id="L35">            .setExecution(</span>
                 ( caller, call ) -&gt;
                 {
-<span class="nc" id="L38">                    Tsr&lt;?&gt;[] inputs = CalcUtil.srcActivation(call.inputs(), call.getValOf( Arg.VarIdx.class ), -1, 0, caller.getSubFunctions().toArray(new Function[0]));</span>
-<span class="nc bnc" id="L39" title="All 4 branches missed.">                    assert call.getValOf( Arg.DerivIdx.class ) &lt; 0;</span>
+<span class="nc bnc" id="L38" title="All 4 branches missed.">                    assert call.getValOf( Arg.DerivIdx.class ) &lt; 0;</span>
+<span class="nc" id="L39">                    Tsr&lt;?&gt;[] inputs = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();</span>
 
 <span class="nc" id="L41">                    int largest = -1;</span>
 <span class="nc" id="L42">                    int[] shape = null;</span>
@@ -60,8 +60,8 @@ import org.jetbrains.annotations.Contract;
 <span class="nc" id="L60">                            int padding = largest-oldShape.length;</span>
 
 <span class="nc bnc" id="L62" title="All 2 branches missed.">                            int handle = ( postfix &lt;= prefix )? padding : largest-padding;</span>
-<span class="nc bnc" id="L63" title="All 4 branches missed.">                            for ( int ii=0; ii&lt;handle; ii++) newReshape[ ii ]       = ( postfix &lt;= prefix )? -1 : ii;</span>
-<span class="nc bnc" id="L64" title="All 4 branches missed.">                            for ( int ii=handle; ii&lt;largest; ii++) newReshape[ ii ] = ( postfix &lt;= prefix )? ii-padding : -1;</span>
+<span class="nc bnc" id="L63" title="All 4 branches missed.">                            for ( int ii = 0; ii &lt; handle; ii++ ) newReshape[ ii ]      = ( postfix &lt;= prefix )? -1 : ii;</span>
+<span class="nc bnc" id="L64" title="All 4 branches missed.">                            for ( int ii = handle; ii &lt; largest; ii++) newReshape[ ii ] = ( postfix &lt;= prefix )? ii-padding : -1;</span>
 
 <span class="nc" id="L66">                            change[ i ] = newReshape;</span>
                         }

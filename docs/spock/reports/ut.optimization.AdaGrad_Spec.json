@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.072 seconds"
+    "duration":"0.063 seconds"
   },
 
   "title":"",
   "narrative":"",
-  "headers":["\\n <h2> AdaGrad Optimizer Behavior </h2>\\n <br> \\n <p>\\n This specification check the behavior of the AdaGrad class. \\n </p>\\n"],"tags":{},"see":[],
+  "headers":["\\u000a <h2> AdaGrad Optimizer Behavior </h2>\\u000a <br> \\u000a <p>\\u000a This specification check the behavior of the AdaGrad class. \\u000a </p>\\u000a"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"AdaGrad optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.053 seconds",
+      "duration":"0.046 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.040 seconds"
+    "duration":"0.036 seconds"
   },
 
   "title":"Parsing Expressions into Functions",
-  "narrative":"Neureka uses the 'Function' interface as a representation of a\n nested structure of operations.\n This means that a 'Function' is simply an abstract syntax trees made up of other 'Function' implementations\n which are assembled together by a parser receiving a string expression.\n In this specification we ensure that function expressions will be properly parsed into\n 'Function' implementations.",
-  "headers":["\\n This specification ensures that functions can be created from String expressions\\n using factory methods on the interface neureka.calculus.Function interface.\\n The implementation details as to how exactly this leads to an abstract syntax tree\\n will not be covered here.\\n This is because the parsing procedure is rather complex and the only thing we care about \\n is the result. \\n <br>\\n Within a given expression String passed to the parser, function inputs are\\n recognized by 'I[j]', 'Ij' or 'ij', where j is the input index.\\n Functions accept arrays as their inputs,\\n which is why variables must be targeted in such a way.\\n There are also many mathematical function like 'sig(..)', 'tanh(..)', 'sin(..)', 'cos(..)' \\n and many more which are recognised by the parser. \\n Other than that the syntax is rather mundane with respect to traditional\\n operations like for example plus '+', minus '-', times '*', ... etc. <br>\\n"],"tags":{},"see":[],
+  "narrative":"Neureka uses the 'Function' interface as a representation of a\u000a nested structure of operations.\u000a This means that a 'Function' is simply an abstract syntax trees made up of other 'Function' implementations\u000a which are assembled together by a parser receiving a string expression.\u000a In this specification we ensure that function expressions will be properly parsed into\u000a 'Function' implementations.",
+  "headers":["\\u000a This specification ensures that functions can be created from String expressions\\u000a using factory methods on the interface neureka.calculus.Function interface.\\u000a The implementation details as to how exactly this leads to an abstract syntax tree\\u000a will not be covered here.\\u000a This is because the parsing procedure is rather complex and the only thing we care about \\u000a is the result. \\u000a <br>\\u000a Within a given expression String passed to the parser, function inputs are\\u000a recognized by 'I[j]', 'Ij' or 'ij', where j is the input index.\\u000a Functions accept arrays as their inputs,\\u000a which is why variables must be targeted in such a way.\\u000a There are also many mathematical function like 'sig(..)', 'tanh(..)', 'sin(..)', 'cos(..)' \\u000a and many more which are recognised by the parser. \\u000a Other than that the syntax is rather mundane with respect to traditional\\u000a operations like for example plus '+', minus '-', times '*', ... etc. <br>\\u000a"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test parsed equations when building Function instances.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -40,7 +40,7 @@
 
         {"kind":"then","text":"An exception is being thrown that contains the expected message!","code":["def error = thrown(IllegalArgumentException)","assert error.message==expected"]},
 
-        {"kind":"where","text":"The following expressions and expected exception messages are being used :","code":{"equation":["softplus(I[0],I[1],I[2])","sig(I[0],I[1],I[2])","sumjs(I[0],I[1],I[2])","prodjs(I[0],I[1],I[2])"],"expected":["The function/operation 'softplus' expects 1 parameters, however 3 where given!","The function/operation 'sig' expects 1 parameters, however 3 where given!","The function/operation 'sumJs' expects 1 parameters, however 3 where given!\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration.","The function/operation 'prodJs' expects 1 parameters, however 3 where given!\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."]}}
+        {"kind":"where","text":"The following expressions and expected exception messages are being used :","code":{"equation":["softplus(I[0],I[1],I[2])","sig(I[0],I[1],I[2])","sumjs(I[0],I[1],I[2])","prodjs(I[0],I[1],I[2])"],"expected":["The function/operation 'softplus' expects 1 parameters, however 3 where given!","The function/operation 'sig' expects 1 parameters, however 3 where given!","The function/operation 'sumJs' expects 1 parameters, however 3 where given!\u000aNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration.","The function/operation 'prodJs' expects 1 parameters, however 3 where given!\u000aNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."]}}
       ],
       "problems":"[]"
     },

@@ -6,12 +6,12 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.033 seconds"
+    "duration":"0.034 seconds"
   },
 
   "title":"",
   "narrative":"",
-  "headers":["\\n <h2> Momentum Optimizer Behavior </h2>\\n <br> \\n <p>\\n This specification check the behavior of the Momentum class. \\n </p>\\n"],"tags":{},"see":[],
+  "headers":["\\u000a <h2> Momentum Optimizer Behavior </h2>\\u000a <br> \\u000a <p>\\u000a This specification check the behavior of the Momentum class. \\u000a </p>\\u000a"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Momentum optimizes according to expected inputs",

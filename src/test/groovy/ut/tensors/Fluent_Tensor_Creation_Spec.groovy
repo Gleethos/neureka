@@ -294,6 +294,4 @@ class Fluent_Tensor_Creation_Spec extends Specification
             Long.class    | 42L  as Long    || new long[]  { 42L  }
     }
 
-
-
 }

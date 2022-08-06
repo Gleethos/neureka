@@ -13,8 +13,27 @@ def noSingleBreaks = { String s ->
     }
     return sb.toString().trim();
 }
+def basicEsc = {String text ->
+    if ( text == null )  return ""
+    final StringWriter writer = new StringWriter()
+    ( 0 ..< text.length() ).each { i ->
+        final char c = text.charAt(i)
+        switch (c) {
+            case '"': writer.write("\\\""); break;
+            case '\\': writer.write("\\\\"); break;
+            default:
+                if ( c > 0x1f ) writer.write(c);
+                else {
+                    writer.write("\\u");
+                    final String hex = "000" + Integer.toHexString(c as int);
+                    writer.write(hex.substring(hex.length() - 4));
+                }
+        }
+    }
+    return writer.toString();
+}
 def trim = {it -> noSingleBreaks(it.replaceAll("\\s+", " ").replace("(\\n\\n)\\n*", "\n\n"))}
-def simpleEsc = {it.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")}
+def simpleEsc = {basicEsc(it.toString()).replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")}
 def esc = { trim(simpleEsc(it).trim()) }
 def strList = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({simpleEsc(it)}).join('","'))+'"')}
 
