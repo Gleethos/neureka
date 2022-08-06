@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.085 seconds"
+    "duration":"0.010 seconds"
   },
 
   "title":"",
   "narrative":"",
-  "headers":["\\u000a This specification tests the \\\"DataType\\\" class, which hosts a multiton\\u000a design pattern in order to guarantee uniqueness of instances of the type\\u000a which represent the same class type. <br>\\u000a Instances of this class wrap a Class variable which is the type of the data of the tensor. <br>\\u000a (The following types are usually used : UI8, I8, UI16, I16, UI32, I64, I32, F32, F64 )\\u000a"],"tags":{},"see":[],
+  "headers":["This specification tests the \"DataType\" class, which hosts a multiton design pattern in order to guarantee uniqueness of instances of the type which represent the same class type. <br> Instances of this class wrap a Class variable which is the type of the data of the tensor. <br> (The following types are usually used : UI8, I8, UI16, I16, UI32, I64, I32, F32, F64 )"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"DataType multi-ton instances behave as expected.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

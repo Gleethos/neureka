@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.038 seconds"
+    "duration":"0.012 seconds"
   },
 
   "title":"Tensors play well with other data structures!",
-  "narrative":"Tensors should have good interoperability with other JDK data structures like images.\u000a In this specification we define these interoperability requirements.",
+  "narrative":"Tensors should have good interoperability with other JDK data structures like images.\n    In this specification we define these interoperability requirements.",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensor can be converted to buffered images.",
       "result":"PASS",
-      "duration":"0.027 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

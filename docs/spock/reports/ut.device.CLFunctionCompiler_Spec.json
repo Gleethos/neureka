@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.128 seconds"
+    "duration":"0.126 seconds"
   },
 
   "title":"",
   "narrative":"",
-  "headers":["\\u000a <h2> OpenCLDevice Function Optimization Integration Tests </h2>\\u000a <p>\\u000a Specified below are strict tests for covering the ability of \\u000a OpenCL devices to be able produce optimized functions given\\u000a a normal function instance created from a String...\\u000a </p>\\u000a"],"tags":{},"see":[],
+  "headers":["<h2> OpenCLDevice Function Optimization Integration Tests </h2> <p> Specified below are strict tests for covering the ability of OpenCL devices to be able produce optimized functions given a normal function instance created from a String... </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice produces a working optimized Function (internally using the CLFunctionCompiler).",
       "result":"PASS",
-      "duration":"0.124 seconds",
+      "duration":"0.122 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

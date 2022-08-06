@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.043 seconds"
+    "duration":"0.004 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Function throws exception when not enough inputs provided.",
       "result":"PASS",
-      "duration":"0.016 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"Function throws exception when arity does not match input number.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

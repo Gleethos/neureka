@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.096 seconds"
+    "duration":"0.018 seconds"
   },
 
   "title":"",
@@ -16,9 +16,9 @@
     {
       "id":"The simple CPU matrix multiplication implementation works as expected.",
       "result":"PASS",
-      "duration":"0.045 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["\\u000a Matrix multiplication is possible between matrices of various dimensions,\\u000a data types as well as data layouts!\\u000a","\\u000a Matrix multiplication is possible between matrices of various dimensions,\\u000a data types as well as data layouts!\\u000a","\\u000a Matrix multiplication is possible between matrices of various dimensions,\\u000a data types as well as data layouts!\\u000a","\\u000a Matrix multiplication is possible between matrices of various dimensions,\\u000a data types as well as data layouts!\\u000a","\\u000a Matrix multiplication is possible between matrices of various dimensions,\\u000a data types as well as data layouts!\\u000a","\\u000a Matrix multiplication is possible between matrices of various dimensions,\\u000a data types as well as data layouts!\\u000a","\\u000a Matrix multiplication is possible between matrices of various dimensions,\\u000a data types as well as data layouts!\\u000a","\\u000a Matrix multiplication is possible between matrices of various dimensions,\\u000a data types as well as data layouts!\\u000a","\\u000a Matrix multiplication is possible between matrices of various dimensions,\\u000a data types as well as data layouts!\\u000a","\\u000a Matrix multiplication is possible between matrices of various dimensions,\\u000a data types as well as data layouts!\\u000a","\\u000a Matrix multiplication is possible between matrices of various dimensions,\\u000a data types as well as data layouts!\\u000a","\\u000a Matrix multiplication is possible between matrices of various dimensions,\\u000a data types as well as data layouts!\\u000a"]
+      "tags":{},"see":[],"extraInfo":["Matrix multiplication is possible between matrices of various dimensions, data types as well as data layouts!","Matrix multiplication is possible between matrices of various dimensions, data types as well as data layouts!","Matrix multiplication is possible between matrices of various dimensions, data types as well as data layouts!","Matrix multiplication is possible between matrices of various dimensions, data types as well as data layouts!","Matrix multiplication is possible between matrices of various dimensions, data types as well as data layouts!","Matrix multiplication is possible between matrices of various dimensions, data types as well as data layouts!","Matrix multiplication is possible between matrices of various dimensions, data types as well as data layouts!","Matrix multiplication is possible between matrices of various dimensions, data types as well as data layouts!","Matrix multiplication is possible between matrices of various dimensions, data types as well as data layouts!","Matrix multiplication is possible between matrices of various dimensions, data types as well as data layouts!","Matrix multiplication is possible between matrices of various dimensions, data types as well as data layouts!","Matrix multiplication is possible between matrices of various dimensions, data types as well as data layouts!"]
       },
       "blocks":[
         {"kind":"given","text":"We instantiate 2 matrices based on the data from the data table at the end of this method.","code":["Tsr<?> a = Tsr.of(type, [M,K] as int[], A)","Tsr<?> b = Tsr.of(type, [K,N] as int[], B)"]},

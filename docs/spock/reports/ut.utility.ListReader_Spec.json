@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.018 seconds"
+    "duration":"0.006 seconds"
   },
 
   "title":"The Internal ListReader turning lists into flat arrays with shape and type data",
-  "narrative":"This specification covers an internal class which should not be used\u000a outside this library, namely the ListReader class.\u000a This class is simply a converter which turns nested lists\u000a into flat arrays alongside the type of the elements and the shape of this \"tensor\".",
+  "narrative":"This specification covers an internal class which should not be used\n    outside this library, namely the ListReader class.\n    This class is simply a converter which turns nested lists\n    into flat arrays alongside the type of the elements and the shape of this \"tensor\".",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The ListReader can interpret nested lists resembling a matrix into a shape list and value list.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"The ListReader can interpret nested lists resembling a 3D tensor into a shape list and value list.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"The ListReader can interpret nested lists into a shape list and value list.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

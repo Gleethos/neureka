@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.046 seconds"
+    "duration":"0.006 seconds"
   },
 
   "title":"Tensors as Generic Containers",
-  "narrative":"Tensors do not just store numeric data.\u000a They can hold anything which can be stuffed into a \"Object[]\" array.\u000a You could even create a tensor of tensors!",
-  "headers":["\\u000a <p>\\u000a Here you will find out how to create a tensor of any kind of data. \\u000a </p>\\u000a"],"tags":{},"see":[],
+  "narrative":"Tensors do not just store numeric data.\n    They can hold anything which can be stuffed into a \"Object[]\" array.\n    You could even create a tensor of tensors!",
+  "headers":["<p> Here you will find out how to create a tensor of any kind of data. </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Anonymous tensor instance has the default datatype class as defined in Neureka settings.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"String tensor instance discovers expected class.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
     {
       "id":"1D tensors can be created from primitive arrays.",
       "result":"PASS",
-      "duration":"0.018 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

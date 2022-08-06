@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.042 seconds"
+    "duration":"0.008 seconds"
   },
 
   "title":"To Copy or Not to Copy",
-  "narrative":"In this specification we cover the behaviour of tensors with respect to their copy methods.\u000a There are to main ways to copy a tensor: <br>\u000a 1. .shallowCopy() <br>\u000a 2. .deepCopy() <br>\u000a <br>\u000a The first method creates a new tensor with the same underlying data array as the original tensor. <br>\u000a The second method on the other hand creates a new tensor with a new data array. <br>\u000a <br>\u000a The first method is the most efficient, but it is not as safe as the second method. <br>\u000a The second method is the most safe, but it is not as efficient. <br>\u000a <br>\u000a Besides these 2 main requirements, there are als some corner cases with respect to\u000a the components of a tensor (like for example its computation graph) which\u000a will be covered in this specification as well.",
+  "narrative":"In this specification we cover the behaviour of tensors with respect to their copy methods.\n    There are to main ways to copy a tensor: <br>\n    1. .shallowCopy() <br>\n    2. .deepCopy() <br>\n    <br>\n    The first method creates a new tensor with the same underlying data array as the original tensor. <br>\n    The second method on the other hand creates a new tensor with a new data array. <br>\n    <br>\n    The first method is the most efficient, but it is not as safe as the second method. <br>\n    The second method is the most safe, but it is not as efficient. <br>\n    <br>\n    Besides these 2 main requirements, there are als some corner cases with respect to\n    the components of a tensor (like for example its computation graph) which\n    will be covered in this specification as well.",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A deep copy of a tensor is also a deep copy of the underlying data array.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"A deep copy of a slice tensor is also a deep copy of the underlying data array.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -64,7 +64,7 @@
     {
       "id":"A shallow copy will share the same underlying data as its original tensor.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -79,7 +79,7 @@
 
         {"kind":"and","text":"We verify that they share the same ints through the \"every\" method.","code":["(0..<t.size).every({ int i -> shallow.at(i) == t.at(i) })"]},
 
-        {"kind":"where","text":"","code":{"cloner":["ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure4@266d67db","ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure5@79a63bf8"]}}
+        {"kind":"where","text":"","code":{"cloner":["ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure4@51c9528f","ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure5@67354bba"]}}
       ],
       "problems":"[]"
     }

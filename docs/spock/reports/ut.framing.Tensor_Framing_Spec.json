@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.278 seconds"
+    "duration":"0.207 seconds"
   },
 
   "title":"Naming Tensors and their Dimensions.",
-  "narrative":"A powerful concept in the data science as well as machine learning\u000a world is something usually referred to as \"Data Frames\".\u000a These are highly flexible 2D data structures\u000a used to load and store CSV, CRV, etc... files for \u000a data exploration and further processing.\u000a Data frames are so powerful because\u000a their indices are labeled and therefore human readable.\u000a Neureka's tensors are general purpose data containers\u000a which may also stored data in 2 dimensions whose\u000a indices may also be something other than integers.",
-  "headers":["\\u000a <h2> Framing Behavior </h2>\\u000a <br> \\u000a <p>\\u000a This specification covers the behavior\\u000a of the classes contained in the \\\"framing\\\" package, which \\u000a contains logic in order to set aliases for\\u000a tensor indices. \\u000a </p>\\u000a"],"tags":{},"see":[],
+  "narrative":"A powerful concept in the data science as well as machine learning\n    world is something usually referred to as \"Data Frames\".\n    These are highly flexible 2D data structures\n    used to load and store CSV, CRV, etc... files for \n    data exploration and further processing.\n    Data frames are so powerful because\n    their indices are labeled and therefore human readable.\n    Neureka's tensors are general purpose data containers\n    which may also stored data in 2 dimensions whose\n    indices may also be something other than integers.",
+  "headers":["<h2> Framing Behavior </h2> <br> <p> This specification covers the behavior of the classes contained in the \"framing\" package, which contains logic in order to set aliases for tensor indices. </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Added labels to tensors are accessible through the \"index()\" method.",
       "result":"PASS",
-      "duration":"0.033 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"Rank 2 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.",
       "result":"PASS",
-      "duration":"0.018 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -84,7 +84,7 @@
     {
       "id":"Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.",
       "result":"PASS",
-      "duration":"0.215 seconds",
+      "duration":"0.191 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

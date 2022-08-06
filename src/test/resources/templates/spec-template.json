@@ -1,10 +1,14 @@
 <%
 // A Java method which takes a string and replaces single breaks with spaces, but leaves multiple consecutive breaks in:
 def noSingleBreaks = { String s ->
+    s = s.replaceAll("\\s+", " ").replace("(\\n\\n)\\n*", "\n\n")
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < s.length(); i++) {
-        if (s.charAt(i) == '\n') {
-            if ( i > 0 && i + 1 < s.length() && s.charAt(i) == '\n' && s.charAt(i+1) != '\n' && s.charAt(i-1) != '\n')
+    boolean markDownCode = false;
+    ( 0 ..< s.length() ).each { i ->
+        if ( s.charAt(i) == '`' ) markDownCode = !markDownCode;
+        if ( !markDownCode && s.charAt(i) == '\n' ) {
+            boolean isInRange = i > 0 && i + 1 < s.length();
+            if (isInRange && s.charAt(i+1) != '\n' && s.charAt(i-1) != '\n')
                 sb.append(' ');
             else
                 sb.append('\n');
@@ -13,16 +17,21 @@ def noSingleBreaks = { String s ->
     }
     return sb.toString().trim();
 }
-def basicEsc = {String text ->
+def simpleEsc = { text ->
+    text = text.toString();
     if ( text == null )  return ""
     final StringWriter writer = new StringWriter()
     ( 0 ..< text.length() ).each { i ->
         final char c = text.charAt(i)
         switch (c) {
-            case '"': writer.write("\\\""); break;
+            case '"':  writer.write("\\\""); break;
             case '\\': writer.write("\\\\"); break;
+            case '\n': writer.write("\\n"); break;
+            case '\r': writer.write("\\r"); break;
+            case '\t': writer.write("\\t"); break;
+            case '\b': writer.write("\\b"); break;
             default:
-                if ( c > 0x1f ) writer.write(c);
+                if ( c > 0x1f || c == '`' ) writer.write(c);
                 else {
                     writer.write("\\u");
                     final String hex = "000" + Integer.toHexString(c as int);
@@ -32,10 +41,8 @@ def basicEsc = {String text ->
     }
     return writer.toString();
 }
-def trim = {it -> noSingleBreaks(it.replaceAll("\\s+", " ").replace("(\\n\\n)\\n*", "\n\n"))}
-def simpleEsc = {basicEsc(it.toString()).replace("\b", "\\b").replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")}
-def esc = { trim(simpleEsc(it).trim()) }
-def strList = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+esc(it[0])+'"') : ('"'+it.collect({simpleEsc(it)}).join('","'))+'"')}
+def esc = { simpleEsc(noSingleBreaks(it)) }
+def strList = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+simpleEsc(it[0])+'"') : ('"'+it.collect({simpleEsc(it)}).join('","'))+'"')}
 
 //----
 
@@ -56,10 +63,10 @@ def stats = utils.stats( data )
   def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
 %>
   "title":"<% if ( specTitle ) { out << esc(specTitle) } %>",
-  "narrative":"<% if ( data.info.narrative ) { out << esc(data.info.narrative) } %>",
+  "narrative":"<% if ( data.info.narrative ) { out << simpleEsc(data.info.narrative) } %>",
 <%
   def writeTagOrAttachment = {feature ->
-    def tagsByKey = feature.tags.groupBy( {t -> t.key} )
+    def tagsByKey = feature.tags.groupBy({ t -> t.key })
     out << '"tags":{'
     tagsByKey.each {key, values ->
       out << '"' << key.capitalize() << '"['
@@ -73,12 +80,12 @@ def stats = utils.stats( data )
   }
   def writeHeaders = { headers ->
     out << '  "headers":['
-    if ( headers ) out << headers.collect({v->esc(esc(v))}).collect({'"'+it+'"'}).join(",")
+    if ( headers ) out << headers.collect({v->esc(v)}).collect({'"'+it+'"'}).join(",")
     out << '],'
   }
   def writeExtraInfo = { extraInfo ->
     out << '"extraInfo":['
-    if ( extraInfo ) out << extraInfo.collect({v->esc(esc(v))}).collect({'"'+it+'"'}).join(",")
+    if ( extraInfo ) out << extraInfo.collect({v->esc(v)}).collect({'"'+it+'"'}).join(",")
     out << ']'
   }
   writeHeaders( utils.specHeaders( data ) )

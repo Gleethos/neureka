@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.754 seconds"
+    "duration":"0.632 seconds"
   },
 
   "title":"",
@@ -16,9 +16,9 @@
     {
       "id":"The \"x\" (convolution) operator produces expected results (On the CPU).",
       "result":"PASS",
-      "duration":"0.184 seconds",
+      "duration":"0.143 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["\\u000a The 'x' operator performs convolution on the provided operands.\\u000a The meaning of the operands is not defined, so one the kernel tensor\\u000a can be the first and second operand. \\u000a","\\u000a The 'x' operator performs convolution on the provided operands.\\u000a The meaning of the operands is not defined, so one the kernel tensor\\u000a can be the first and second operand. \\u000a"]
+      "tags":{},"see":[],"extraInfo":["The 'x' operator performs convolution on the provided operands. The meaning of the operands is not defined, so one the kernel tensor can be the first and second operand.","The 'x' operator performs convolution on the provided operands. The meaning of the operands is not defined, so one the kernel tensor can be the first and second operand."]
       },
       "blocks":[
         {"kind":"given","text":"Gradient auto apply for tensors in ue is set to false.","code":["Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)"]},
@@ -43,7 +43,7 @@
     {
       "id":"Manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.128 seconds",
+      "duration":"0.075 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +60,7 @@
     {
       "id":"Very simple manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.173 seconds",
+      "duration":"0.153 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
 
         {"kind":"then","text":"","code":["xAsStr.contains(\"(2x4):[4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0]\")","yAsStr.contains(\"(2x4):[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]\")","zAsStr.contains(\"(2x4):[8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0]\")","rcAsStr.contains(\"(2x4):[12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0]\")","kAsStr.contains(\"(2x2):[15.0, 18.0, 27.0, 30.0]\")","vAsStr.contains(\"(2x2):[12.0, 15.0, 24.0, 27.0]\")","jAsStr.contains(\"(2x2):[18.0, 21.0, 30.0, 33.0]\")","uAsStr.contains(\"(2x2):[5.0, 6.0, 9.0, 10.0]\")","colconvol.toString().contains(\"(2x2):[0.0, 0.0, 0.0, 0.0]\")"]},
 
-        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2966f6daa60],platform=OpenCLPlatform@15b5298c[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x2966c8892a0],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1d08abb6f50],platform=OpenCLPlatform@23aa1d40[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x1d0802252a0],kernels=[..46..]]]"]}}
       ],
       "problems":"[]"
     },
@@ -79,7 +79,7 @@
     {
       "id":"Autograd works with simple 2D convolution.",
       "result":"PASS",
-      "duration":"0.084 seconds",
+      "duration":"0.082 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -104,7 +104,7 @@
     {
       "id":"Sime convolution works as expected eith autograd.",
       "result":"PASS",
-      "duration":"0.081 seconds",
+      "duration":"0.069 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -129,7 +129,7 @@
     {
       "id":"Tensors have the correct layout after convolution.",
       "result":"PASS",
-      "duration":"0.094 seconds",
+      "duration":"0.102 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

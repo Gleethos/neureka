@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.400 seconds"
+    "duration":"0.019 seconds"
   },
 
   "title":"",
   "narrative":"",
-  "headers":["\\u000a <h2> RMSprop Optimizer Behavior </h2>\\u000a <br> \\u000a <p>\\u000a This specification check the behavior of the RMSprop class. \\u000a </p>\\u000a"],"tags":{},"see":[],
+  "headers":["<h2> RMSprop Optimizer Behavior </h2> <br> <p> This specification check the behavior of the RMSprop class. </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"RMSprop optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.376 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

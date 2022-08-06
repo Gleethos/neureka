@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.318 seconds"
+    "duration":"0.085 seconds"
   },
 
   "title":"FileDevice, Storing Tensors in Files",
-  "narrative":"The FileDevice class, one of many implementations of the Device interface, \u000a represents a file directory which should be able to store and load tensors as files (idx, jpg, png...).",
-  "headers":["\\u000a <p>\\u000a This specification covers the behavior of the \\\"FileDevice\\\"\\u000a class, which enables the persistence of tensor data. \\u000a </p>\\u000a"],"tags":{},"see":[],
+  "narrative":"The FileDevice class, one of many implementations of the Device interface, \n    represents a file directory which should be able to store and load tensors as files (idx, jpg, png...).",
+  "headers":["<p> This specification covers the behavior of the \"FileDevice\" class, which enables the persistence of tensor data. </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A file device stores tensors in idx files by default.",
       "result":"PASS",
-      "duration":"0.082 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -45,7 +45,7 @@
     {
       "id":"A file device stores tensors in various file formats.",
       "result":"PASS",
-      "duration":"0.106 seconds",
+      "duration":"0.050 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -80,7 +80,7 @@
     {
       "id":"The file device can load known files in a directory.",
       "result":"PASS",
-      "duration":"0.029 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

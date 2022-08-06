@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.204 seconds"
+    "duration":"0.215 seconds"
   },
 
   "title":"NN Code Golfing!",
-  "narrative":"This system test specification uses the following Numpy\u000a code as reference implementation for the equivalent in Neureka\u000a or similar implementations and variations.\u000a The code below is a simple neural network in only 11 lines of code.\u000a\u000a ´´´\u000a X = np.array([ [0,0,1],[0,1,1],[1,0,1],[1,1,1] ])\u000a y = np.array([[0,1,1,0]]).T\u000a W1 = 2*np.random.random((3,4)) - 1\u000a W2 = 2*np.random.random((4,1)) - 1\u000a for j in xrange(60000):\u000a l1 = 1/(1+np.exp(-(np.dot(X,W1))))\u000a l2 = 1/(1+np.exp(-(np.dot(l1,W2))))\u000a l2_delta = (y - l2)*(l2*(1-l2))\u000a l1_delta = l2_delta.dot(W2.T) * (l1 * (1-l1))\u000a W2 += l1.T.dot(l2_delta)\u000a W1 += X.T.dot(l1_delta)\u000a ´´´",
+  "narrative":"This system test specification uses the following Numpy\n    code as reference implementation for the equivalent in Neureka\n    or similar implementations and variations.\n    The code below is a simple neural network in only 11 lines of code.\n\n    ´´´\n        X = np.array([ [0,0,1],[0,1,1],[1,0,1],[1,1,1] ])\n        y = np.array([[0,1,1,0]]).T\n        W1 = 2*np.random.random((3,4)) - 1\n        W2 = 2*np.random.random((4,1)) - 1\n        for j in xrange(60000):\n            l1 = 1/(1+np.exp(-(np.dot(X,W1))))\n            l2 = 1/(1+np.exp(-(np.dot(l1,W2))))\n            l2_delta = (y - l2)*(l2*(1-l2))\n            l1_delta = l2_delta.dot(W2.T) * (l1 * (1-l1))\n            W2 += l1.T.dot(l2_delta)\n            W1 += X.T.dot(l1_delta)\n    ´´´",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"One can write a simple neural network with custom back-prop in 11 lines of code!",
       "result":"PASS",
-      "duration":"1.123 seconds",
+      "duration":"0.053 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
     {
       "id":"One can write a simple neural network in less than 11 lines of code!",
       "result":"PASS",
-      "duration":"0.426 seconds",
+      "duration":"0.056 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -46,7 +46,7 @@
     {
       "id":"One can write a simple float based neural network in less than 11 lines of java like code!",
       "result":"PASS",
-      "duration":"0.381 seconds",
+      "duration":"0.053 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -61,7 +61,7 @@
     {
       "id":"One can write a simple double based neural network in less than 11 lines of java like code using the \"@\" operator!",
       "result":"PASS",
-      "duration":"0.192 seconds",
+      "duration":"0.048 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -76,7 +76,7 @@
     {
       "id":"The pseudo random number generator works as expected for the weights used in the 11 line NN examples!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

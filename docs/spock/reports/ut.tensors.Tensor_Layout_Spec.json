@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.788 seconds"
+    "duration":"0.324 seconds"
   },
 
   "title":"Row or Column Major. Why not both?",
-  "narrative":"Although Neureka exposes tensors as row major tensors from \u000a a users point of view, it does in fact support both row major and column major \u000a based tensor layout under the hood.\u000a Here we cover how the layout of tensors can be modified\u000a and we ensure the different tensor types still work as expected...\u000a (The features in this specification involve mutating tensors, be careful when playing around with this yourself)",
+  "narrative":"Although Neureka exposes tensors as row major tensors from \n    a users point of view, it does in fact support both row major and column major \n    based tensor layout under the hood.\n    Here we cover how the layout of tensors can be modified\n    and we ensure the different tensor types still work as expected...\n    (The features in this specification involve mutating tensors, be careful when playing around with this yourself)",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A new transposed version of a given tensor will be returned by the \"T()\" method.",
       "result":"PASS",
-      "duration":"0.215 seconds",
+      "duration":"0.068 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Matrix multiplication works for both column and row major matrices across devices.",
       "result":"PASS",
-      "duration":"0.562 seconds",
+      "duration":"0.251 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.392 seconds"
+    "duration":"0.191 seconds"
   },
 
   "title":"",
   "narrative":"",
-  "headers":["\\u000a <h2>Autograd Tensor Integration Tests</h2>\\u000a <p>\\u000a This specification contains tests which\\u000a cover the autograd behavior of tensors. <br>\\u000a The classes involved in governing the tested features are\\u000a the Tsr, GraphNode and Function (& implementations) classes.\\u000a </p>\\u000a"],"tags":{},"see":[],
+  "headers":["<h2>Autograd Tensor Integration Tests</h2> <p> This specification contains tests which cover the autograd behavior of tensors. <br> The classes involved in governing the tested features are the Tsr, GraphNode and Function (& implementations) classes. </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test pending error optimization",
       "result":"PASS",
-      "duration":"0.027 seconds",
+      "duration":"0.024 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Test JIT propagation variant one.",
       "result":"PASS",
-      "duration":"0.074 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +60,7 @@
     {
       "id":"Test JIT propagation variant two.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
     {
       "id":"Gradient auto-apply kicks in when used AD uses JIT prop",
       "result":"PASS",
-      "duration":"0.051 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -110,7 +110,7 @@
     {
       "id":"Test no preemptive gradient apply when not requested and auto apply and JIT_prop",
       "result":"PASS",
-      "duration":"0.173 seconds",
+      "duration":"0.131 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -147,7 +147,7 @@
     {
       "id":"Test autograd without JIT and auto apply.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -172,7 +172,7 @@
     {
       "id":"Test in-differential and JIT with auto apply",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -193,7 +193,7 @@
     {
       "id":"Test no JIT prop when forward AD",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

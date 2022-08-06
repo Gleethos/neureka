@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.157 seconds"
+    "duration":"0.032 seconds"
   },
 
   "title":"Devices manage the states of the tensors they store!",
-  "narrative":"Tensors should not manage their states\u000a themselves, simply because the type and location\u000a of the data is dependent on the device onto which they are stored.\u000a This specification tests of various device implementations\u000a enable reading to or writing from the tensors they store.",
+  "narrative":"Tensors should not manage their states\n    themselves, simply because the type and location\n    of the data is dependent on the device onto which they are stored.\n    This specification tests of various device implementations\n    enable reading to or writing from the tensors they store.",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the access device API to read from a tensor.",
       "result":"PASS",
-      "duration":"0.036 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"We can use the access device API to write to a tensor",
       "result":"PASS",
-      "duration":"0.028 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

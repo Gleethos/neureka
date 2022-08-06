@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.146 seconds"
+    "duration":"0.576 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"The simple CPU matrix multiplication implementation works as expected.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"The internal matrix multiplication test script runs!",
       "result":"PASS",
-      "duration":"1.011 seconds",
+      "duration":"0.570 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

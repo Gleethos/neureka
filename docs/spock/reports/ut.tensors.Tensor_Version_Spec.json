@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.252 seconds"
+    "duration":"0.153 seconds"
   },
 
   "title":"Tensor (Data Array) Version",
-  "narrative":"There are two fundamental categories of operations\u000a which can be applied to tensors : \u000a Inline operations and Non-Inline operations! \u000a \u000a Inline operations are often times problematic because they produce\u000a side effects by changing passed tensors instead of producing new ones... \u000a One such bad side effect can easily occur for tensors involved in the\u000a autograd system, more specifically: the recorded computation graph. \u000a Inline operations can break the mathematically pureness of the back-propagation\u000a procedure by for example changing partial derivatives... <br>\u000a In order to prevent said errors to occur unnoticed tensors\u000a have versions which will increment when the underlying data of the tensor changes. \u000a This version will be tracked by the computation graph as well in order to\u000a match it with the ones stored inside the tensor. \u000a A mismatch would then yield an exception! \u000a \u000a This specification is responsible for defining the behaviour of this\u000a version number with respect to their wrapping tensors as well as computation graph nodes.",
-  "headers":["\\u000a <p>\\u000a Here you can find out how the version number of a tensor is\\u000a set and tracked.\\u000a </p>\\u000a"],"tags":{},"see":[],
+  "narrative":"There are two fundamental categories of operations\n    which can be applied to tensors : \n    Inline operations and Non-Inline  operations! \n    \n    Inline operations are often times problematic because they produce\n    side effects by changing passed tensors instead of producing new ones... \n    One such bad side effect can easily occur for tensors involved in the\n    autograd system, more specifically: the recorded computation graph. \n    Inline operations can break the mathematically pureness of the back-propagation\n    procedure by for example changing partial derivatives... <br>\n    In order to prevent said errors to occur unnoticed tensors\n    have versions which will increment when the underlying data of the tensor changes. \n    This version will be tracked by the computation graph as well in order to\n    match it with the ones stored inside the tensor. \n    A mismatch would then yield an exception! \n    \n    This specification is responsible for defining the behaviour of this\n    version number with respect to their wrapping tensors as well as computation graph nodes.",
+  "headers":["<p> Here you can find out how the version number of a tensor is set and tracked. </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Inline operations causes version incrementation.",
       "result":"PASS",
-      "duration":"0.088 seconds",
+      "duration":"0.044 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Non-inline operations do not cause version incrementation.",
       "result":"PASS",
-      "duration":"0.096 seconds",
+      "duration":"0.066 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"Inline operations cause illegal state exceptions.",
       "result":"PASS",
-      "duration":"0.034 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
 
         {"kind":"and","text":"The variable \"c\" is null!","code":["c == null"]},
 
-        {"kind":"where","text":"","code":{"code":["a.plusAssign(b) ","a.minusAssign(b)","a.timesAssign(b)","a.divAssign(b) "],"message":["Inline operation occurred on tensor which is part of a computation graph node with autograd support!\u000aThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\u000aThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\u000aThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\u000aThe following OperationType caused an internal version mismatch: 'left_inline'"]}}
+        {"kind":"where","text":"","code":{"code":["a.plusAssign(b) ","a.minusAssign(b)","a.timesAssign(b)","a.divAssign(b) "],"message":["Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"]}}
       ],
       "problems":"[]"
     },
@@ -89,7 +89,7 @@
     {
       "id":"Storing a tensor on a device should not change the version of a tensor (Even though its data changed technically).",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

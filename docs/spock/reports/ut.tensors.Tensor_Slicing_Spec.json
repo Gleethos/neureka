@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.193 seconds"
+    "duration":"0.038 seconds"
   },
 
   "title":"Tensors within Tensors",
-  "narrative":"ND-Array data structures can be \"sliced\" in the sense\u000a that one can create a subset view of the underlying data inside a tensor\u000a through a new tensor instance...\u000a This can be a tedious and complicated procedure.\u000a Therefore a tensor should expose a various user friendly API for slicing which\u000a are also fit for various languages.\u000a This specification covers these APIs for tensor slicing.",
-  "headers":["\\u000a <p>\\u000a This specification covers the behavior of tensors when being sliced \\u000a on multiple different device types using the SliceBuilder API. \\u000a </p>\\u000a"],"tags":{},"see":[],
+  "narrative":"ND-Array data structures can be \"sliced\" in the sense\n    that one can create a subset view of the underlying data inside a tensor\n    through a new tensor instance...\n    This can be a tedious and complicated procedure.\n    Therefore a tensor should expose a various user friendly API for slicing which\n    are also fit for various languages.\n    This specification covers these APIs for tensor slicing.",
+  "headers":["<p> This specification covers the behavior of tensors when being sliced on multiple different device types using the SliceBuilder API. </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.",
       "result":"PASS",
-      "duration":"0.082 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
 
         {"kind":"and","text":"As already shown by the printed view, the tensor as the expected shape:","code":["s.shape() == [2, 2, 3]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1877b35e390],platform=OpenCLPlatform@51d4ac0a[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x187793568a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1d08abb6f50],platform=OpenCLPlatform@23aa1d40[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x1d0802252a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":"[]"
     },
@@ -45,7 +45,7 @@
     {
       "id":"The \"at\" method and the \"from\" / \"to\" methods can be mixed when slicing a tensor.",
       "result":"PASS",
-      "duration":"0.013 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
 
         {"kind":"and","text":"The \"at\" method sliced a single axis point whereas the \"from\" & \"to\" sliced from 1 to 2.","code":["s.shape() == [1, 3, 2]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1877b35e390],platform=OpenCLPlatform@51d4ac0a[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x187793568a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1d08abb6f50],platform=OpenCLPlatform@23aa1d40[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x1d0802252a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":"[]"
     },
@@ -74,7 +74,7 @@
     {
       "id":"A tensor can be sliced by passing ranges in the form of primitive arrays.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -95,7 +95,7 @@
 
         {"kind":"and","text":"The the slice will have the following shape","code":["s.shape() == [1, 3, 2]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1877b35e390],platform=OpenCLPlatform@51d4ac0a[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x187793568a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1d08abb6f50],platform=OpenCLPlatform@23aa1d40[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x1d0802252a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":"[]"
     },
@@ -103,7 +103,7 @@
     {
       "id":"A tensor can be sliced by passing ranges in the form of lists (Groovy ranges).",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -124,7 +124,7 @@
 
         {"kind":"and","text":"The the slice will have the following shape","code":["s.shape() == [1, 3, 2]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1877b35e390],platform=OpenCLPlatform@51d4ac0a[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x187793568a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1d08abb6f50],platform=OpenCLPlatform@23aa1d40[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x1d0802252a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":"[]"
     },
@@ -132,7 +132,7 @@
     {
       "id":"The slice builder also supports slicing with custom step sizes.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -153,7 +153,7 @@
 
         {"kind":"and","text":"The the slice will have the following shape","code":["s.shape() == [1, 1, 2]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1877b35e390],platform=OpenCLPlatform@51d4ac0a[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x187793568a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1d08abb6f50],platform=OpenCLPlatform@23aa1d40[pid=cl_platform_id[0x7ffacd51a490],context=cl_context[0x1d0802252a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":"[]"
     },
@@ -161,7 +161,7 @@
     {
       "id":"Slicing is also a Function with autograd support!",
       "result":"PASS",
-      "duration":"0.033 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -184,7 +184,7 @@
     {
       "id":"Normal slicing will try to do autograd.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -195,7 +195,7 @@
 
         {"kind":"and","text":"We perform a backward pass using an \"error\" of 42.","code":["s.backward(42)"]},
 
-        {"kind":"then","text":"The gradient of the original tensor will be contain 2 times 42.","code":["t.toString() == \"(5):[ -1.0 , 7.0 , 3.0 , -1.0 , 7.0 ]:g:[ 0.0 , 0.0 , 42.0 , 42.0 , 0.0 ]\""]}
+        {"kind":"then","text":"The gradient of the original tensor will be contain 2 times 42.","code":["t.toString() == \"(5):[  -1.0 ,   7.0 ,   3.0 ,  -1.0 ,   7.0  ]:g:[   0.0 ,   0.0 ,  42.0 ,  42.0 ,   0.0  ]\""]}
       ],
       "problems":"[]"
     },
@@ -203,7 +203,7 @@
     {
       "id":"We can avoid autograd when slicing by using the \"detached\" instead of the \"get\" method.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -212,11 +212,11 @@
 
         {"kind":"when","text":"We slice the tensor through the fluent slicer, then get it detached and finally backpropagation an error of 73.","code":["t.slice()",".axis(0).from(0).to(1)",".detached()",".backward(73)"]},
 
-        {"kind":"then","text":"The gradient of the original tensor will still be null, because we performed detached slicing.","code":["t.toString() == \"(4):[ -1.0 , 7.0 , 3.0 , -1.0 ]:g:[null]\""]},
+        {"kind":"then","text":"The gradient of the original tensor will still be null, because we performed detached slicing.","code":["t.toString() == \"(4):[  -1.0 ,   7.0 ,   3.0 ,  -1.0  ]:g:[null]\""]},
 
         {"kind":"when","text":"We slice the tensor through the fluent slicer but this time use the get method and then again backpropagation an error of 73.","code":["t.slice()",".axis(0).from(0).to(1)",".get()",".backward(73)"]},
 
-        {"kind":"then","text":"This time there will be 2 times 73 in the gradient.","code":["t.toString() == \"(4):[ -1.0 , 7.0 , 3.0 , -1.0 ]:g:[ 73.0 , 73.0 , 0.0 , 0.0 ]\""]}
+        {"kind":"then","text":"This time there will be 2 times 73 in the gradient.","code":["t.toString() == \"(4):[  -1.0 ,   7.0 ,   3.0 ,  -1.0  ]:g:[  73.0 ,  73.0 ,   0.0 ,   0.0  ]\""]}
       ],
       "problems":"[]"
     },
@@ -224,7 +224,7 @@
     {
       "id":"We can slice a scalar tensor from a larger tensor of rank 4.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

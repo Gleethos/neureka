@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.614 seconds"
+    "duration":"0.099 seconds"
   },
 
   "title":"Applying Functions on Tensors",
-  "narrative":"A tensor would be nothing without being able to apply operations on them.\u000a However, calling operations manually in order to process your\u000a tensors can be a verbose and error prone task.\u000a This is where functions come into play.\u000a Neureka's functions are composed of operations forming an abstract syntax tree.\u000a Passing tensors to a function will route them trough this tree and apply\u000a all of the operations on the tensors.",
-  "headers":["\\u000a <p>\\u000a This specification ensures that tensors supplied\\u000a to functions are executed successfully and produce the expected results.\\u000a </p>\\u000a"],"tags":{},"see":[],
+  "narrative":"A tensor would be nothing without being able to apply operations on them.\n    However, calling operations manually in order to process your\n    tensors can be a verbose and error prone task.\n    This is where functions come into play.\n    Neureka's functions are composed of operations forming an abstract syntax tree.\n    Passing tensors to a function will route them trough this tree and apply\n    all of the operations on the tensors.",
+  "headers":["<p> This specification ensures that tensors supplied to functions are executed successfully and produce the expected results. </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The optimization function for the SGD algorithm produces the expected result",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Tensor results of various Function instances return expected results.",
       "result":"PASS",
-      "duration":"0.387 seconds",
+      "duration":"0.053 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,7 +62,7 @@
     {
       "id":"Reshaping on 3D tensors works by instantiate a Function instance built from a String.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -83,7 +83,7 @@
     {
       "id":"The \"DimTrim\" operation works forward as well as backward!",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -106,7 +106,7 @@
     {
       "id":"Executed tensors are intermediate tensors.",
       "result":"PASS",
-      "duration":"0.015 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
