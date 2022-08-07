@@ -1,0 +1,57 @@
+.collapsible {
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+}
+
+.content {
+    padding: 5px 18px 5px 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #dde6e9;
+}
+
+.ContentOption {
+    background: linear-gradient(to bottom, rgba(1, 219, 255, 0.57) 0%, #37d9ff 100%);
+    background-position: 0 100%;
+    background-repeat: repeat-x;
+    background-size: 4px 2px;
+    color: #000;
+    text-decoration: none;
+    transition: background-size .2s;
+    cursor: pointer;
+    border-radius: 0.1em;
+    padding: 0.25em 0.65em 0.25em 0.65em;
+    border:none;
+}
+.ContentOption:hover {
+    background-size: 4px 100%;
+}
+
+.ContentOptionSelected {
+    background-size: 100% 100%;
+    font-weight: bold;
+    font-size: 103%;
+}
+
+
+table.DataTable {
+    width: 100%;
+    background-color: #FFFFFF;
+    border-collapse: collapse;
+    border-width: 1px;
+    border-color: #7EA8F8;
+    border-style: solid;
+    color: #000000;
+}
+
+table.DataTable td, table.DataTable th {
+    border-width: 1px;
+    border-color: #001E56;
+    border-style: solid;
+    padding: 2px;
+}
+
+table.DataTable thead {
+    background-color: #7EA8F8;
+}
