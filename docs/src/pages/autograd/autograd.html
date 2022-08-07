@@ -263,7 +263,7 @@ val d : Tsr&#60;Double&#62; = Tsr.of("( relu( i0 * i1 ) + i1 ) / i2", a, b, c);
                     console.log('Executing format procedure for autograd...');
                     setTimeout(() => {
                             for (let item of document.getElementsByClassName("MarkdownMe")) {
-                                item.innerHTML = marked(item.innerHTML);
+                                item.innerHTML = marked.parse(item.innerHTML);
                                 item.classList.remove("MarkdownMe");
                             }
                         },

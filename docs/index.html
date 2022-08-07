@@ -417,7 +417,7 @@ to allow for rapid prototyping and highly readable math heavy code...
 
     function applyMarkdown() {
         for (let item of document.getElementsByClassName("MarkdownMe")) {
-            item.innerHTML = marked(item.innerHTML)
+            item.innerHTML = marked.parse(item.innerHTML)
             item.classList.remove("MarkdownMe");
             console.log("Converting to markdown in tag "+item.tagName);
         }

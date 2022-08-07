@@ -172,9 +172,10 @@ function printSearchResults(target, results) {
 
 function createNarrativeParagraphs(narrative) {
     if ( narrative.length === 0 ) return [];
-    paragraphs = narrative.trim().split("\n\n");
+    //return [$('<div style="font-size:95%"></div>').html(marked.parse(narrative.replaceAll("���", "")))]
+    paragraphs = narrative.replaceAll("\n \n", "\n\n").split("\n\n");
     paragraphs = paragraphs.map((paragraph)=>{
-        return $('<p style="font-size:95%"></p>').text(paragraph);
+        return $('<div style="font-size:95%"></div>').html(marked.parse(paragraph).replaceAll("���", ""));
     });
     return paragraphs;
 }
@@ -421,7 +422,7 @@ function loadContent(target) {
 
 function applyMarkdown() {
     for (let item of document.getElementsByClassName("MarkdownMe")) {
-        item.innerHTML = marked(item.innerHTML)
+        item.innerHTML = marked.parse(item.innerHTML)
         item.classList.remove("MarkdownMe");
         console.log("Converting to markdown in tag "+item.tagName);
     }
