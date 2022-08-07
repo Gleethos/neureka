@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.520 seconds"
+    "duration":"0.492 seconds"
   },
 
   "title":"",
@@ -16,16 +16,16 @@
     {
       "id":"Tensor initialization lambdas produce expected tensors.",
       "result":"PASS",
-      "duration":"0.076 seconds",
+      "duration":"0.085 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"Instantiating a tensor using an initializer lambda...","code":["Tsr t = Tsr.of(","DataType.of( Integer.class ),","[ 2, 3 ],","( int i, int[] indices ) -> { i - 2 }",")"]},
+        {"kind":"when","text":"Instantiating a tensor using an initializer lambda...","code":["Tsr t = Tsr.of(","    DataType.of( Integer.class ),","    [ 2, 3 ],","    ( int i, int[] indices ) -> { i - 2 }",")"]},
 
         {"kind":"then","text":"The tensor has been initialized with the expected values:","code":["t.toString() == \"(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]\""]},
 
-        {"kind":"when","text":"","code":["t = Tsr.of(","DataType.of( String.class ),","[ 2, 3 ],","( int i, int[] indices ) -> { i + ':' + indices.toString() }",")"]},
+        {"kind":"when","text":"","code":["t = Tsr.of(","    DataType.of( String.class ),","    [ 2, 3 ],","    ( int i, int[] indices ) -> { i + ':' + indices.toString() }",")"]},
 
         {"kind":"then","text":"","code":["t.toString() == \"(2x3):[0:[0, 0], 1:[0, 1], 2:[0, 2], 3:[1, 0], 4:[1, 1], 5:[1, 2]]\""]}
       ],
@@ -35,7 +35,7 @@
     {
       "id":"We can analyse the values of a tensor using various predicate receiving methods",
       "result":"PASS",
-      "duration":"0.155 seconds",
+      "duration":"0.138 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,12 +58,12 @@
     {
       "id":"Tensor mapping lambdas produce expected tensors.",
       "result":"PASS",
-      "duration":"0.147 seconds",
+      "duration":"0.134 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"Instantiating a tensor using an initializer lambda...","code":["Tsr t = Tsr.of(","DataType.of( Double.class ),","[ 2, 3 ],","( int i, int[] indices ) -> { (i - 2) as Double }",")",".to(device)"]},
+        {"kind":"when","text":"Instantiating a tensor using an initializer lambda...","code":["Tsr t = Tsr.of(","DataType.of( Double.class ),","    [ 2, 3 ],","    ( int i, int[] indices ) -> { (i - 2) as Double }",")",".to(device)"]},
 
         {"kind":"then","text":"The tensor has been initialized with the expected values:","code":["t.toString() == \"(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]\""]},
 
@@ -81,12 +81,12 @@
     {
       "id":"The \"map\" method is a shorter convenience method for mapping to the same type.",
       "result":"PASS",
-      "duration":"0.132 seconds",
+      "duration":"0.129 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a tensor with a single element.","code":["var t = Tsr.of(","DataType.of( Integer.class ),","[ 1 ],","( int i, int[] indices ) -> { 1 }",")",".to(device)"]},
+        {"kind":"given","text":"We create a tensor with a single element.","code":["var t = Tsr.of(","    DataType.of( Integer.class ),","    [ 1 ],","    ( int i, int[] indices ) -> { 1 }",")",".to(device)"]},
 
         {"kind":"when","text":"We map the tensor to a new tensor of the same type.","code":["var b = t.map((it) -> {it + 1})"]},
 

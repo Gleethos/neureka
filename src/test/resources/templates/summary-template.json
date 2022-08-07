@@ -1,25 +1,11 @@
 <%
 println("Generating summary json now!")
-// A Java method which takes a string and replaces single breaks with spaces, but leaves multiple consecutive breaks in:
+
 def noSingleBreaks = { String s ->
-    s = s.stripIndent().replaceAll("\\n+\\s+\\n+", "\n\n").replaceAll("(\\n\\n)\\n*", "\n\n")
-    StringBuilder sb = new StringBuilder();
-    boolean markDownCode = false;
-    ( 0 ..< s.length() ).each { i ->
-        if ( s.charAt(i) == '`' ) markDownCode = !markDownCode;
-        if ( !markDownCode && s.charAt(i) == '\n' ) {
-            boolean isInRange = i > 0 && i + 1 < s.length();
-            if (isInRange && s.charAt(i+1) != '\n' && s.charAt(i-1) != '\n')
-                sb.append(' ');
-            else
-                sb.append('\n');
-        }
-        else sb.append(s.charAt(i));
-    }
-    return sb.toString().trim();
+  return s.replaceAll("\\n+\\s+\\n+", "\n\n").replaceAll("(\\n\\n)\\n*", "\n\n")
 }
 def simpleEsc = { text ->
-    text = text.toString().stripIndent();
+    text = text.toString();
     if ( text == null )  return ""
     final StringWriter writer = new StringWriter()
     ( 0 ..< text.length() ).each { i ->
@@ -70,7 +56,7 @@ def stats = utils.aggregateStats( data )
     %>{
       "className":"$name",
       "title":"${esc(map.title)}",
-      "narrative":"${simpleEsc(map.narrative)}",
+      "narrative":"${esc(map.narrative.stripIndent())}",
       "featureCount":"${s.totalFeatures}",
       "failures":"${s.failures}",
       "errors":"${s.errors}",

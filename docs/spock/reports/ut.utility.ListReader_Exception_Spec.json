@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We have a nested list whose structure resembles a matrix!","code":["var data = [","[1,  2,  3],","[4, \"5\", 6]","]"]},
+        {"kind":"given","text":"We have a nested list whose structure resembles a matrix!","code":["var data = [","    [1,  2,  3],","    [4, \"5\", 6]","]"]},
 
         {"kind":"when","text":"We use the reader to internally fill 2 lists representing shape and data...","code":["var result = ListReader.read(data, (o)->o)"]},
 
@@ -38,7 +38,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We have a nested list whose structure resembles a matrix!","code":["var data = [","[1,  2,  3],","[4, 5, 6, 7]","]"]},
+        {"kind":"given","text":"We have a nested list whose structure resembles a matrix!","code":["var data = [","    [1,  2,  3],","    [4, 5, 6, 7]","]"]},
 
         {"kind":"when","text":"We use the reader to internally fill 2 lists representing shape and data...","code":["var result = ListReader.read(data, (o)->o)"]},
 

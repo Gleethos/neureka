@@ -6,32 +6,32 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.457 seconds"
+    "duration":"0.461 seconds"
   },
 
   "title":"",
   "narrative":"",
-  "headers":["This specification covers the expected functionality of various \"FileHandle\" implementations. Such implementations ought to be able to save tensors to a given directory in the file format that they represent. Functionalities like : \"store\", \"restore\" and \"free\" must behave as expected. (For more information take a look a the \"FileHandle\" & \"Storage\" interface)"],"tags":{},"see":[],
+  "headers":["\n            This specification covers the expected functionality of\n            various \"FileHandle\" implementations.\n            Such implementations ought to be able to save tensors to\n            a given directory in the file format that they represent.\n            Functionalities like : \"store\", \"restore\" and \"free\" must\n            behave as expected.\n            (For more information take a look a the \"FileHandle\" & \"Storage\" interface)\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test writing IDX file format.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","it.setIsScientific( true )","it.setIsMultiline( false )","it.setHasGradient( true )","it.setCellSize( 1 )","it.setHasValue( true )","it.setHasRecursiveGraph( false )","it.setHasDerivatives( false )","it.setHasShape( true )","it.setIsCellBound( false )","it.setPostfix(  \"\" )","it.setPrefix(  \"\"  )","it.setHasSlimNumbers(  false )","})"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","    it.setIsScientific( true )","    it.setIsMultiline( false )","    it.setHasGradient( true )","    it.setCellSize( 1 )","    it.setHasValue( true )","    it.setHasRecursiveGraph( false )","    it.setHasDerivatives( false )","    it.setHasShape( true )","    it.setIsCellBound( false )","    it.setPostfix(  \"\" )","    it.setPrefix(  \"\"  )","    it.setHasSlimNumbers(  false )","})"]},
 
         {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
 
-        {"kind":"then","text":"The file will then exist at the following path:","code":["new File(\"build/test-can/\"+filename).exists()"]},
+        {"kind":"then","text":"The file will then exist at the following path: ","code":["new File(\"build/test-can/\"+filename).exists()"]},
 
         {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tsr loaded = idx.load()"]},
 
         {"kind":"then","text":"The loaded tensor is as expected...","code":["loaded != null","loaded.toString() == expected","loaded.getDataType().getRepresentativeType() == type"]},
 
-        {"kind":"where","text":"The following paths and file names are being used for testing :","code":{"tensor":["(2x4):[\n   [       -2.0     ,       -1.0     ,       0.0      ,       1.0       ],\n   [       2.0      ,       3.0      ,       4.0      ,       -2.0      ]\n]","(2x4):[\n   [       2.0      ,       2.0      ,       2.0      ,       2.0       ],\n   [       2.0      ,       2.0      ,       2.0      ,       2.0       ]\n]"],"type":["class neureka.dtype.custom.F64","class neureka.dtype.custom.F64"],"filename":["test.idx3-ubyte","test2.idx"],"expected":["(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]","(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"]}}
+        {"kind":"where","text":"The following paths and file names are being used for testing : ","code":{"tensor":["(2x4):[\n   [       -2.0     ,       -1.0     ,       0.0      ,       1.0       ],\n   [       2.0      ,       3.0      ,       4.0      ,       -2.0      ]\n]","(2x4):[\n   [       2.0      ,       2.0      ,       2.0      ,       2.0       ],\n   [       2.0      ,       2.0      ,       2.0      ,       2.0       ]\n]"],"type":["class neureka.dtype.custom.F64","class neureka.dtype.custom.F64"],"filename":["test.idx3-ubyte","test2.idx"],"expected":["(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]","(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"]}}
       ],
       "problems":"[]"
     },
@@ -66,7 +66,7 @@
     {
       "id":"We can load image files as tensors.",
       "result":"PASS",
-      "duration":"0.424 seconds",
+      "duration":"0.429 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -111,7 +111,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Tsr t = Tsr.of(DataType.of(String.class), [2,3], [","'1', 'hi', ':)',","'2', 'hey', ';)'","]).label([","['r1', 'r2'],","['A', 'B', 'C']","])"]},
+        {"kind":"given","text":"","code":["Tsr t = Tsr.of(DataType.of(String.class), [2,3], [","        '1', 'hi', ':)',","        '2', 'hey', ';)'","]).label([","        ['r1', 'r2'],","        ['A', 'B', 'C']","])"]},
 
         {"kind":"expect","text":"","code":["t.toString() == \"(2x3):[\\n\" +","\"   (        A       )(       B       )(       C        )\\n\" +","\"   [        1       ,        hi      ,        :)       ]:( r1 ),\\n\" +","\"   [        2       ,       hey      ,        ;)       ]:( r2 )\\n\" +","\"]\"","!new File(\"build/resources/test/csv/test.csv\").exists()"]},
 
@@ -134,7 +134,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Tsr t = Tsr.of(DataType.of(String.class), [2,3], [","'1', 'hi', ':)',","'2', 'hey', ';)'","]).label([","'ROW':null,","'COL':['A', 'B', 'C']","])"]},
+        {"kind":"given","text":"","code":["Tsr t = Tsr.of(DataType.of(String.class), [2,3], [","        '1', 'hi', ':)',","        '2', 'hey', ';)'","]).label([","        'ROW':null,","        'COL':['A', 'B', 'C']","])"]},
 
         {"kind":"expect","text":"","code":["t.toString() == \"(2x3):[\\n\" +","\"   (        A       )(       B       )(       C        )\\n\" +","\"   [        1       ,        hi      ,        :)       ]:( 0 ),\\n\" +","\"   [        2       ,       hey      ,        ;)       ]:( 1 )\\n\" +","\"]\"","!new File(\"build/resources/test/csv/test.csv\").exists()"]},
 

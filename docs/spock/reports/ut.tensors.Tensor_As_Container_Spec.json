@@ -6,12 +6,12 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.014 seconds"
+    "duration":"0.013 seconds"
   },
 
   "title":"Why not have a tensor of words?",
   "narrative":"Technically, tensors are merely fancy ND-arrays with some useful mathematical operations\n    applicable to them...\n    Therefore, there is no reason why a tensor would not also be able to store\n    other kinds of objects besides numbers like strings for example.\n    This specification ensures that tensors can hold and index many other things...",
-  "headers":["Although you can create a tensor of almost anything, you will not be able to execute operations on every kind of tensor..."],"tags":{},"see":[],
+  "headers":["\n           Although you can create a tensor of almost anything, you will\n           not be able to execute operations on every kind of tensor...        \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Plus operator on String tensors works element-wise.",
@@ -37,7 +37,7 @@
     {
       "id":"Tensor operations translate to custom data type \"ComplexNumber\".",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -59,7 +59,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create 2 simple matrices of complex numbers using filler lambdas","code":["Tsr a = Tsr.of(","DataType.of(ComplexNumber.class),","[3, 2],","( int i, int[] indices ) -> new ComplexNumber(indices[0], indices[1])",")","Tsr b = Tsr.of(","DataType.of(ComplexNumber.class),","[3, 2],","( int i, int[] indices ) -> new ComplexNumber(indices[1], indices[0])",")"]},
+        {"kind":"given","text":"We create 2 simple matrices of complex numbers using filler lambdas ","code":["Tsr a = Tsr.of(","    DataType.of(ComplexNumber.class),","    [3, 2],","    ( int i, int[] indices ) -> new ComplexNumber(indices[0], indices[1])",")","Tsr b = Tsr.of(","    DataType.of(ComplexNumber.class),","    [3, 2],","    ( int i, int[] indices ) -> new ComplexNumber(indices[1], indices[0])",")"]},
 
         {"kind":"expect","text":"","code":["a.toString() == \"(3x2):[0.0+0.0i, 0.0+1.0i, 1.0+0.0i, 1.0+1.0i, 2.0+0.0i, 2.0+1.0i]\"","b.toString() == \"(3x2):[0.0+0.0i, 1.0+0.0i, 0.0+1.0i, 1.0+1.0i, 0.0+2.0i, 1.0+2.0i]\"","!a.isVirtual()","!b.isVirtual()","(a+b).toString() == \"(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]\"","(a-b).toString() == \"(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]\"","(a*b).toString() == \"(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]\""]}
       ],
@@ -69,7 +69,7 @@
     {
       "id":"We can apply predicates on the values of a tensor.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

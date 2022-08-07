@@ -1,24 +1,10 @@
 <%
-// A Java method which takes a string and replaces single breaks with spaces, but leaves multiple consecutive breaks in:
+
 def noSingleBreaks = { String s ->
-    s = s.stripIndent().replaceAll("\\n+\\s+\\n+", "\n\n").replaceAll("(\\n\\n)\\n*", "\n\n")
-    StringBuilder sb = new StringBuilder();
-    boolean markDownCode = false;
-    ( 0 ..< s.length() ).each { i ->
-        if ( s.charAt(i) == '`' ) markDownCode = !markDownCode;
-        if ( !markDownCode && s.charAt(i) == '\n' ) {
-            boolean isInRange = i > 0 && i + 1 < s.length();
-            if (isInRange && s.charAt(i+1) != '\n' && s.charAt(i-1) != '\n')
-                sb.append(' ');
-            else
-                sb.append('\n');
-        }
-        else sb.append(s.charAt(i));
-    }
-    return sb.toString().trim();
+    return s.replaceAll("\\n+\\s+\\n+", "\n\n").replaceAll("(\\n\\n)\\n*", "\n\n")
 }
 def simpleEsc = { text ->
-    text = text.toString().stripIndent();
+    text = text.toString();
     if ( text == null )  return ""
     final StringWriter writer = new StringWriter()
     ( 0 ..< text.length() ).each { i ->
@@ -42,7 +28,7 @@ def simpleEsc = { text ->
     return writer.toString();
 }
 def esc = { simpleEsc(noSingleBreaks(it)) }
-def strList = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+simpleEsc(it[0])+'"') : ('"'+it.collect({simpleEsc(it)}).join('","'))+'"')}
+def strCode = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+simpleEsc(it[0])+'"') : ('"'+it.collect({simpleEsc(it)}).join('","'))+'"')}
 
 //----
 
@@ -63,7 +49,7 @@ def stats = utils.stats( data )
   def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
 %>
   "title":"<% if ( specTitle ) { out << esc(specTitle) } %>",
-  "narrative":"<% if ( data.info.narrative ) { out << simpleEsc(data.info.narrative) } %>",
+  "narrative":"<% if ( data.info.narrative ) { out << esc(data.info.narrative.stripIndent()) } %>",
 <%
   def writeTagOrAttachment = {feature ->
     def tagsByKey = feature.tags.groupBy({ t -> t.key })
@@ -129,10 +115,10 @@ def stats = utils.stats( data )
       "blocks":[<%
         out << blocks.collect({ b ->
             var kind = esc(b.kind.replace(':', '').toLowerCase())
-            var code = '['+strList(b.sourceCode)+']'
+            var code = '['+strCode(b.sourceCode)+']'
             if ( kind == 'where' ) {
                 // We turn the data table into a json object:
-                code = '{'+dataTable.collect({ k, v -> '"'+k+'":['+strList(v)+']' }).join(",")+'}'
+                code = '{'+dataTable.collect({ k, v -> '"'+k+'":['+strCode(v)+']' }).join(",")+'}'
             }
             return '\n        {' +
                   '"kind":"'  +  kind  + '",' +

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.007 seconds"
+    "duration":"0.005 seconds"
   },
 
   "title":"The Internal ListReader turning lists into flat arrays with shape and type data",
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We have a nested list whose structure resembles a matrix!","code":["var data = [","[1, 2, 3],","[4, 5, 6]","]"]},
+        {"kind":"given","text":"We have a nested list whose structure resembles a matrix!","code":["var data = [","        [1, 2, 3],","        [4, 5, 6]","]"]},
 
         {"kind":"when","text":"We use the reader to internally fill 2 lists representing shape and data...","code":["var result = ListReader.read(data, (o)->o)"]},
 
@@ -40,7 +40,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We have a nested list whose structure resembles a matrix!","code":["def data = [","[","[1, 2, 3, 0],","[4, 5, 6, -1]","], [","[1, 2, 3, -2],","[4, 5, 6, -3]","]","]"]},
+        {"kind":"given","text":"We have a nested list whose structure resembles a matrix!","code":["def data = [","    [","            [1, 2, 3, 0],","            [4, 5, 6, -1]","    ], [","            [1, 2, 3, -2],","            [4, 5, 6, -3]","    ]","]"]},
 
         {"kind":"when","text":"We use the reader to internally fill 2 lists representing shape and data...","code":["var result = ListReader.read(data, (o)->o)"]},
 

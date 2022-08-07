@@ -6,24 +6,24 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.139 seconds"
+    "duration":"0.140 seconds"
   },
 
   "title":"Cross Device Tensor Slicing",
   "narrative":"",
-  "headers":["<p>     This specification covers the behavior of tensors when being sliced     on multiple different device types in conjunction with      the autograd system.     Autograd should work on slices as well.           </p>"],"tags":{},"see":[],
+  "headers":[" \n                <p>\n                    This specification covers the behavior of tensors when being sliced\n                    on multiple different device types in conjunction with \n                    the autograd system.\n                    Autograd should work on slices as well.          \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Slices can be created using the SliceBuilder.",
       "result":"PASS",
-      "duration":"0.040 seconds",
+      "duration":"0.039 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["if ( device == null ) return","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)","if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return"]},
 
-        {"kind":"and","text":"A tensor which ought to be sliced:","code":["Tsr a = Tsr.of([4, 6], [","1d, 2d, 3d, 4d, 5d, 6d,","7d, 8d, 9d, 1d, 2d, 3d,","4d, 5d, 6d, 7d, 8d, 9d,","1d, 2d, 3d, 4d, 5d, 6d","])","device.store(a)"]},
+        {"kind":"and","text":"A tensor which ought to be sliced:","code":["Tsr a = Tsr.of([4, 6], [","    1d, 2d, 3d, 4d, 5d, 6d,","    7d, 8d, 9d, 1d, 2d, 3d,","    4d, 5d, 6d, 7d, 8d, 9d,","    1d, 2d, 3d, 4d, 5d, 6d","])","device.store(a)"]},
 
         {"kind":"when","text":"","code":["Tsr b = a.slice() // [-1..-3, -6..-3]",".axis(0).from(-1).to(-3)",".axis(1).from(-6).to(-3)",".get()","Tsr s = a.slice() // [1, -2]",".axis(0).at(1)",".axis(1).at(-2)",".get()","s.rqsGradient = true"]},
 
@@ -33,7 +33,7 @@
 
         {"kind":"then","text":"","code":["y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'"]},
 
-        {"kind":"where","text":"","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x17831200a70],platform=OpenCLPlatform@1970596b[pid=cl_platform_id[0x7ffb0cb1a490],context=cl_context[0x178273089a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1ee34b13b00],platform=OpenCLPlatform@4d8c5cba[pid=cl_platform_id[0x7ffb0cb1a490],context=cl_context[0x1ee2ed767a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":"[]"
     },
@@ -41,7 +41,7 @@
     {
       "id":"Cross device sliced tensor integration test runs without errors.",
       "result":"PASS",
-      "duration":"0.092 seconds",
+      "duration":"0.093 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -56,7 +56,7 @@
 
         {"kind":"then","text":"","code":["y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
 
-        {"kind":"when","text":"","code":["y.backward(Tsr.of(2))","x.toString().contains(\"-32.0\")","y = b + w * x","Tsr a = Tsr.of([4, 6], [","1d, 2d, 3d, 4d, 5d, 6d,","7d, 8d, 9d, 1d, 2d, 3d,","4d, 5d, 6d, 7d, 8d, 9d,","1d, 2d, 3d, 4d, 5d, 6d","])","device.store(a)","b = a[[-1..-3, -6..-3]]","var s = a[[1, -2]]"]},
+        {"kind":"when","text":"","code":["y.backward(Tsr.of(2))","x.toString().contains(\"-32.0\")","y = b + w * x","Tsr a = Tsr.of([4, 6], [","        1d, 2d, 3d, 4d, 5d, 6d,","        7d, 8d, 9d, 1d, 2d, 3d,","        4d, 5d, 6d, 7d, 8d, 9d,","        1d, 2d, 3d, 4d, 5d, 6d","])","device.store(a)","b = a[[-1..-3, -6..-3]]","var s = a[[1, -2]]"]},
 
         {"kind":"then","text":"","code":["s.toString() == \"[1x1]:(2.0)\"","s.getItemAt(0) == 2.0","b.toString().contains(\"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0\")","b.spread() != null"]},
 
@@ -64,13 +64,13 @@
 
         {"kind":"then","text":"","code":["s.toString() == \"[1x1]:(2.0)\"","s.getItemAt(0) == 2.0","s.getDataAt(0) == 1.0","s.getDataAt(1) == 2.0","b.toString().contains(\"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0\")","b.spread() != null"]},
 
-        {"kind":"when","text":"","code":["if( device instanceof DummyDevice ) {","a.getDataAs( double[].class )[1] = a.getDataAs( double[].class )[1] * 6","a.getDataAs( double[].class )[7] = a.getDataAs( double[].class )[7] * 2","} else {","Tsr k = Tsr.of([4, 6], [","1d, 6d, 1d, 1d,","1d, 1d, 1d, 2d,","1d, 1d, 1d, 1d,","1d, 1d, 1d, 1d,","1d, 1d, 1d, 1d,","1d, 1d, 1d, 1d","])","device.store( k )","a[] = a * k","}"]},
+        {"kind":"when","text":"","code":["if( device instanceof DummyDevice ) {","    a.getDataAs( double[].class )[1] = a.getDataAs( double[].class )[1] * 6","    a.getDataAs( double[].class )[7] = a.getDataAs( double[].class )[7] * 2","} else {","    Tsr k = Tsr.of([4, 6], [","                    1d, 6d, 1d, 1d,","                    1d, 1d, 1d, 2d,","                    1d, 1d, 1d, 1d,","                    1d, 1d, 1d, 1d,","                    1d, 1d, 1d, 1d,","                    1d, 1d, 1d, 1d","                ])","    device.store( k )","    a[] = a * k","}"]},
 
         {"kind":"then","text":"","code":["b.toString().contains(\"7.0, 16.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0\")"]},
 
-        {"kind":"when","text":"","code":["Tsr c = Tsr.of([3, 4], [","-3d, 2d, 3d,","5d, 6d, 2d,","-1d, 1d, 2d,","3d, 4d, 2d,","])","Tsr d = b + c"]},
+        {"kind":"when","text":"","code":["Tsr c = Tsr.of([3, 4], [","    -3d, 2d, 3d,","     5d, 6d, 2d,","    -1d, 1d, 2d,","     3d, 4d, 2d,","])","Tsr d = b + c"]},
 
-        {"kind":"then","text":"","code":["(d.NDConf.asInlineArray() as List) == ( [3, 4, 4, 1, 4, 1, 0, 0, 1, 1] )","(b.NDConf.asInlineArray() as List) == ( [3, 4, 6, 1, 4, 1, 1, 0, 1, 1] )","(c.NDConf.asInlineArray() as List) == ( [3, 4, 4, 1, 4, 1, 0, 0, 1, 1] )","d.toString().contains(","\"4.0, 18.0, 12.0, 6.0, \"+","\"10.0, 7.0, 5.0, 8.0, \"+","\"3.0, 5.0, 7.0, 6.0\"",")"]},
+        {"kind":"then","text":"","code":["(d.NDConf.asInlineArray() as List) == ( [3, 4, 4, 1, 4, 1, 0, 0, 1, 1] )","(b.NDConf.asInlineArray() as List) == ( [3, 4, 6, 1, 4, 1, 1, 0, 1, 1] )","(c.NDConf.asInlineArray() as List) == ( [3, 4, 4, 1, 4, 1, 0, 0, 1, 1] )","d.toString().contains(","    \"4.0, 18.0, 12.0, 6.0, \"+","    \"10.0, 7.0, 5.0, 8.0, \"+","    \"3.0, 5.0, 7.0, 6.0\"",")"]},
 
         {"kind":"when","text":"","code":["b = a[1..3, 2..4]"]},
 
@@ -86,17 +86,17 @@
 
         {"kind":"when","text":"","code":["a[[[0..3]:2, [1..4]:2]] = Tsr.of([2, 2], [1d, 2d, 3d, 4d])"]},
 
-        {"kind":"then","text":"","code":["b.toString().contains(\"1.0, 2.0, 3.0, 4.0\")","a.toString().contains(","\"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, \" +","\"7.0, 16.0, 9.0, 1.0, 2.0, 3.0, \" +","\"4.0, 3.0, 6.0, 4.0, 8.0, 9.0, \" +","\"1.0, 2.0, 3.0, 4.0, 5.0, 6.0\"",")"]},
+        {"kind":"then","text":"","code":["b.toString().contains(\"1.0, 2.0, 3.0, 4.0\")","a.toString().contains(","        \"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, \" +","        \"7.0, 16.0, 9.0, 1.0, 2.0, 3.0, \" +","        \"4.0, 3.0, 6.0, 4.0, 8.0, 9.0, \" +","        \"1.0, 2.0, 3.0, 4.0, 5.0, 6.0\"",")"]},
 
         {"kind":"when","text":"","code":["a[1..2, 1..2] = Tsr.of([2, 2], [8, 8, 8, 8])"]},
 
-        {"kind":"then","text":"","code":["b.toString().contains(","\"1.0, 2.0, \"+","\"8.0, 4.0\"",")","a.toString().contains(","\"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, \" +","\"7.0, 8.0, 8.0, 1.0, 2.0, 3.0, \" +","\"4.0, 8.0, 8.0, 4.0, 8.0, 9.0, \" +","\"1.0, 2.0, 3.0, 4.0, 5.0, 6.0\"",")"]},
+        {"kind":"then","text":"","code":["b.toString().contains(","        \"1.0, 2.0, \"+","        \"8.0, 4.0\"",")","a.toString().contains(","        \"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, \" +","        \"7.0, 8.0, 8.0, 1.0, 2.0, 3.0, \" +","        \"4.0, 8.0, 8.0, 4.0, 8.0, 9.0, \" +","        \"1.0, 2.0, 3.0, 4.0, 5.0, 6.0\"",")"]},
 
-        {"kind":"when","text":"","code":["b.setRqsGradient(true)","c = Tsr.of([2, 2], [","-2, 3,//-2 + 24 + 3 + 8","1, 2,","])","device.store(b).store(c)","x = Tsr.of(b, \"x\", c)"]},
+        {"kind":"when","text":"","code":["b.setRqsGradient(true)","c = Tsr.of([2, 2], [","    -2, 3,//-2 + 24 + 3 + 8","     1, 2,","])","device.store(b).store(c)","x = Tsr.of(b, \"x\", c)"]},
 
         {"kind":"then","text":"","code":["x.toString().contains(\"[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)\")"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x17831200a70],platform=OpenCLPlatform@1970596b[pid=cl_platform_id[0x7ffb0cb1a490],context=cl_context[0x178273089a0],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1ee34b13b00],platform=OpenCLPlatform@4d8c5cba[pid=cl_platform_id[0x7ffb0cb1a490],context=cl_context[0x1ee2ed767a0],kernels=[..46..]]]"]}}
       ],
       "problems":"[]"
     }

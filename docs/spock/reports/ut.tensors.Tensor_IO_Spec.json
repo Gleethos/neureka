@@ -6,12 +6,12 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.041 seconds"
+    "duration":"0.042 seconds"
   },
 
   "title":"The Tensor state Input and Output Specification",
   "narrative":"Tensors are complicated data structures with a wide range of different possible states.\n    They can host elements of different types residing on many kinds of different devices.\n    Here we want to define some basic stuff about how a tensor can be instantiated\n    and how we can read from and write to the state of a tensor.\n    Here we also specify how a tensor can be converted to another tensor of a different data type!",
-  "headers":["<h2>Tensor Instantiation and IO Tests</h2> <p>     This specification covers some basic behaviour related to     tensor instantiation and modification.     This includes the instantiation of tensors with custom seeds, shapes and values...     Included are also tests covering static factory methods. </p>"],"tags":{},"see":[],
+  "headers":["\n            <h2>Tensor Instantiation and IO Tests</h2>\n            <p>\n                This specification covers some basic behaviour related to\n                tensor instantiation and modification.\n                This includes the instantiation of tensors with custom seeds, shapes and values...\n                Included are also tests covering static factory methods.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors can be instantiated with String seed.",
@@ -312,7 +312,7 @@
     {
       "id":"A tensor produced by the static \"Tsr.Create.newRandom(shape)\" has expected \"random\" value.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -346,7 +346,7 @@
       "blocks":[
         {"kind":"given","text":"We are using the legacy view for tensors where bracket types are swapped, just because...","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"and","text":"Two tensors which will be used for testing IO.","code":["var t = Tsr.of([2, 2], [","1.0d, 4.0d,","2.0d, 7.0d,","])","var v = Tsr.of([2, 2], [","1.0d, -1.0d,","1.0d, -1.0d","])"]},
+        {"kind":"and","text":"Two tensors which will be used for testing IO.","code":["var t = Tsr.of([2, 2], [","        1.0d, 4.0d,","        2.0d, 7.0d,","])","var v = Tsr.of([2, 2], [","        1.0d, -1.0d,","        1.0d, -1.0d","])"]},
 
         {"kind":"when","text":"","code":["t += v"]},
 

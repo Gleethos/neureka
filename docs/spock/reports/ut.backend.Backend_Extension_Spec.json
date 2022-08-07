@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.074 seconds"
+    "duration":"0.071 seconds"
   },
 
   "title":"",
   "narrative":"",
-  "headers":["This specification defines the behavior of Operation instances and their ability to be extended! <br>"],"tags":{},"see":[],
+  "headers":["\n                   This specification defines the behavior of\n                   Operation instances and their ability to be extended! <br> \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.",
       "result":"PASS",
-      "duration":"0.060 seconds",
+      "duration":"0.059 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

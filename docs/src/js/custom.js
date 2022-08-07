@@ -78,6 +78,7 @@ function loadReportUI(target, search) {
                 chosen.push({'name':specName, 'features':nameToData[specName]['features'], 'title':nameToData[specName]['title'], 'narrative':nameToData[specName]['narrative']});
             });
             printSearchResults(results, chosen);
+            hljs.highlightAll();
         });
     })
     .done(function() { console.log( "summary fully loaded (second success)" ); })
@@ -209,7 +210,7 @@ function createLoaderDropDownFor(specName, expandableFeature) {
                 });
                 setTimeout(() => {
                         hljs.initHighlighting.called = false;
-                        hljs.initHighlighting();
+                        hljs.highlightAll();
                     },
                     50
                 );
@@ -402,7 +403,7 @@ function loadContent(target) {
             function(){
                 console.log('Executing format procedure...');
                 hljs.initHighlighting.called = false;
-                hljs.initHighlighting();
+                hljs.highlightAll();
                 applyMarkdown(); // After loading we apply markdown
                 setTimeout(() => {
                         // For some weired reason the first time the dom does not find

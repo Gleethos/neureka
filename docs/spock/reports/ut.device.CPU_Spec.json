@@ -6,19 +6,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.386 seconds"
+    "duration":"0.374 seconds"
   },
 
   "title":"The CPU device, an API for CPU based execution",
   "narrative":"The CPU class, one of many implementations of the Device interface, \n    is simply supposed to be an API for dispatching threaded workloads onto the CPU.\n    Contrary to other types of device, the CPU will host tensor data by default, simply\n    because the tensors will be stored in RAM if no device was specified.",
-  "headers":["<p>     The thread pool of the class neureka.devices.host.CPU executor becomes     more active when receiving larger workloads which     benefit from parallelization.            </p>"],"tags":{},"see":[],
+  "headers":[" \n                <p>\n                    The thread pool of the class neureka.devices.host.CPU executor becomes\n                    more active when receiving larger workloads which\n                    benefit from parallelization.           \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Thread pool executes given workload in parallel",
       "result":"PASS",
-      "duration":"0.383 seconds",
+      "duration":"0.370 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["Warning! This test is flaky simply because it relies on the behaviour of threads which may or may not behave as expected."]
+      "tags":{},"see":[],"extraInfo":["\n            Warning! This test is flaky simply because it relies on the behaviour of threads\n            which may or may not behave as expected. \n        "]
       },
       "blocks":[
         {"kind":"given","text":"Two 4 dimensional tensor instances.","code":["Tsr a = Tsr.of(new int[]{100, 60, 1, 2},  4)","Tsr b = Tsr.of(new int[]{100, 1, 60, 2}, -2)"]},
@@ -31,7 +31,7 @@
 
         {"kind":"then","text":"The executor is not null as well as its internal thread pool!","code":["exec != null"]},
 
-        {"kind":"expect","text":"","code":["if ( exec.getCorePoolSize() <= 2 ) true","else {","int[] min = new int[]{ exec.getCorePoolSize() }","assert min[0] > 0 && min[0] <= Runtime.getRuntime().availableProcessors()","Thread t = new Thread(() -> {","while ( min[0] > 0 ) {","int current = exec.getCorePoolSize() - exec.getActiveThreadCount()","if ( current < min[0] ) min[0] = current","}","})","t.start()","Tsr c = ( a / b ) * 3","assert c.shape() == [100,60,60,2]","int result = min[0]","try {","min[0] = 0","t.join()","} catch (InterruptedException e) {","e.printStackTrace()","}","assert result <= (exec.getCorePoolSize() / 2)","}"]}
+        {"kind":"expect","text":"","code":["if ( exec.getCorePoolSize() <= 2 ) true","else {","    int[] min = new int[]{ exec.getCorePoolSize() }","    assert min[0] > 0 && min[0] <= Runtime.getRuntime().availableProcessors()","    Thread t = new Thread(() -> {","        while ( min[0] > 0 ) {","            int current = exec.getCorePoolSize() - exec.getActiveThreadCount()","            if ( current < min[0] ) min[0] = current","        }","    })","    t.start()","    Tsr c = ( a / b ) * 3","    assert c.shape() == [100,60,60,2]","    int result = min[0]","    try {","        min[0] = 0","        t.join()","    } catch (InterruptedException e) {","        e.printStackTrace()","    }","    assert result <= (exec.getCorePoolSize() / 2)","}"]}
       ],
       "problems":"[]"
     },

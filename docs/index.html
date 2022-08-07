@@ -400,7 +400,7 @@ to allow for rapid prototyping and highly readable math heavy code...
     $(document).ready(function() {
         console.log('Executing format procedure...');
         hljs.initHighlighting.called = false;
-        hljs.initHighlighting();
+        hljs.highlightAll();
         applyMarkdown(); // After loading we apply markdown
         setTimeout(() => {
                 // For some weired reason the first time the dom does not find
