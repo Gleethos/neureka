@@ -189,7 +189,7 @@ test {
     maxHeapSize = "5g"
 
     // Number of threads used for testing :
-    maxParallelForks = (int) Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
+    maxParallelForks = (int) 1;// Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
 }
 
 
