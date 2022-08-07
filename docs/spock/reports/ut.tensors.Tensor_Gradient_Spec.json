@@ -11,7 +11,7 @@
 
   "title":"Gradients are Tensors which are Components of other Tensors",
   "narrative":"This specification defines the gradient API on tensors.\n    So one ought to be able to check wetter or not a tensor has a gradient attached to it or not.\n    In that case one should be able to get this gradient and then work with\n    it independently of the original tensor to which it belongs to...",
-  "headers":["<h2> Tensor Gradient Unit Tests </h2> <br> <b>Why is there a difference between \"rqsGradient()\" and \"hasGradient()\" ? :</b> <br><br> <p> The latter property simply tells if a tensor has another tensor as component. This however does not necessitate it to also require gradients via the autograd system. This is what the prior property is for. </p>"],"tags":{},"see":[],
+  "headers":["<h2> Tensor Gradient Unit Tests </h2> <br> <b>Why is there a difference between \"rqsGradient()\" and \"hasGradient()\" ? :</b> <br><br> <p>     The latter property simply tells if a tensor has another tensor as component.     This however does not necessitate it to also require gradients via the autograd system.     This is what the prior property is for.             </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors can have gradients but not require them.",

@@ -6,12 +6,12 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.228 seconds"
+    "duration":"0.204 seconds"
   },
 
   "title":"OpenCLDevice Exception Handling",
   "narrative":"The OpenCLDevice class, one of many implementations of the Device interface, \n    represents physical OpenCL devices.\n    This specification defines how instances of this class deal with exceptional information.",
-  "headers":["<p> It is important that an OpenCLDevice gives insightful error messages when encountering exceptional situations. </p>"],"tags":{},"see":[],
+  "headers":["<p>     It is important that an OpenCLDevice gives insightful error messages     when encountering exceptional situations. </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
@@ -39,7 +39,7 @@
     {
       "id":"Ad hoc compilation produces expected exceptions.",
       "result":"PASS",
-      "duration":"0.102 seconds",
+      "duration":"0.103 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -48,7 +48,7 @@
 
         {"kind":"expect","text":"Initially there is no ad hoc kernel with the following name.","code":["!device.hasAdHocKernel( 'right_dummy_kernel_name' )"]},
 
-        {"kind":"when","text":"We try to compile a new ad hoc kernel named \"right_dummy_kernel_name\" containing the wrong name in source...","code":["device.compileAdHocKernel( 'right_dummy_kernel_name', \"\"\"","        __kernel void wrong_dummy_kernel_name (","                __global float* output,","                __global float* input,","                float value ","            ) { ","                unsigned int i = get_global_id( 0 );","                output[i] = input[i] + value; ","            }","        \"\"\"",")"]},
+        {"kind":"when","text":"We try to compile a new ad hoc kernel named \"right_dummy_kernel_name\" containing the wrong name in source...","code":["device.compileAdHocKernel( 'right_dummy_kernel_name', \"\"\"","__kernel void wrong_dummy_kernel_name (","__global float* output,","__global float* input,","float value ",") { ","unsigned int i = get_global_id( 0 );","output[i] = input[i] + value; ","}","\"\"\"",")"]},
 
         {"kind":"then","text":"An exception is being raised because the kernel name provided does not match the one in the source.","code":["def exception = thrown( IllegalArgumentException )","exception.message == \"Method 'clCreateKernel' failed! The name of the '__kernel' method declared inside \\n\" +","\"the source String does not match the provided name needed for kernel creation.\""]},
 
@@ -60,12 +60,12 @@
     {
       "id":"Ad hoc compilation produces expected exceptions when duplication is found.",
       "result":"PASS",
-      "duration":"0.119 seconds",
+      "duration":"0.095 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["def device = Neureka.get().backend().get(CLContext.class).getPlatforms()[0].devices[0]","def code = \"\"\"","__kernel void right_dummy_kernel_name (","        __global float* output,","        __global float* input,","        float value ","    ) { ","        unsigned int i = get_global_id( 0 );","        output[i] = input[i] + value; ","    }","\"\"\""]},
+        {"kind":"given","text":"","code":["def device = Neureka.get().backend().get(CLContext.class).getPlatforms()[0].devices[0]","def code = \"\"\"","__kernel void right_dummy_kernel_name (","__global float* output,","__global float* input,","float value ",") { ","unsigned int i = get_global_id( 0 );","output[i] = input[i] + value; ","}","\"\"\""]},
 
         {"kind":"expect","text":"Initially there is no ad hoc kernel with the following name.","code":["!device.hasAdHocKernel( 'right_dummy_kernel_name' )"]},
 
@@ -96,7 +96,7 @@
 
         {"kind":"then","text":"The previous attempt raises an illegal argument exception with an explanatory message.","code":["def exception = thrown( IllegalArgumentException )","exception.message == \"The passed tensor cannot be restored from \" +","\"this OpenCL device because the tensor is not stored on the device.\\n\""]},
 
-        {"kind":"and","text":"This message is also being logged by the internal device logger.","code":["1 * System.err.println( \"[Test worker] ERROR neureka.devices.opencl.OpenCLDevice - The passed tensor cannot be restored from \" +","        \"this OpenCL device because the tensor is not stored on the device.\\n\"",")"]}
+        {"kind":"and","text":"This message is also being logged by the internal device logger.","code":["1 * System.err.println( \"[Test worker] ERROR neureka.devices.opencl.OpenCLDevice - The passed tensor cannot be restored from \" +","\"this OpenCL device because the tensor is not stored on the device.\\n\"",")"]}
       ],
       "problems":"[]"
     }

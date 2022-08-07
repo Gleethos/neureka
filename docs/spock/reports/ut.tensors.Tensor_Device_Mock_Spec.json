@@ -11,12 +11,12 @@
 
   "title":"",
   "narrative":"",
-  "headers":["<h2>Tensor Device Mock Tests</h2> <p> This unit test specification covers the expected behavior of tensors when interacting with instances of implementations of the Device interface. </p>"],"tags":{},"see":[],
+  "headers":["<h2>Tensor Device Mock Tests</h2> <p>     This unit test specification covers      the expected behavior of tensors when interacting     with instances of implementations of the Device interface. </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors try to migrate themselves to a device that is being added to them as component.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -65,7 +65,7 @@
 
         {"kind":"when","text":"","code":["t.to(device)","t.setIsOutsourced(true)"]},
 
-        {"kind":"then","text":"","code":["1 * device.update({","    Component.OwnerChangeRequest request -> request.executeChange()","})"]},
+        {"kind":"then","text":"","code":["1 * device.update({","Component.OwnerChangeRequest request -> request.executeChange()","})"]},
 
         {"kind":"when","text":"The device is being accessed via the \"device()\" method...","code":["Device found = t.get(Device.class)"]},
 

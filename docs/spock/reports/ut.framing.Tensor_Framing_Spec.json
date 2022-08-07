@@ -6,12 +6,12 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.207 seconds"
+    "duration":"0.202 seconds"
   },
 
   "title":"Naming Tensors and their Dimensions.",
   "narrative":"A powerful concept in the data science as well as machine learning\n    world is something usually referred to as \"Data Frames\".\n    These are highly flexible 2D data structures\n    used to load and store CSV, CRV, etc... files for \n    data exploration and further processing.\n    Data frames are so powerful because\n    their indices are labeled and therefore human readable.\n    Neureka's tensors are general purpose data containers\n    which may also stored data in 2 dimensions whose\n    indices may also be something other than integers.",
-  "headers":["<h2> Framing Behavior </h2> <br> <p> This specification covers the behavior of the classes contained in the \"framing\" package, which contains logic in order to set aliases for tensor indices. </p>"],"tags":{},"see":[],
+  "headers":["<h2> Framing Behavior </h2> <br>  <p>     This specification covers the behavior     of the classes contained in the \"framing\" package, which      contains logic in order to set aliases for     tensor indices.           </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Added labels to tensors are accessible through the \"index()\" method.",
@@ -21,15 +21,15 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a 3D tensor and label its indices.","code":["Tsr t = Tsr.of([2, 3, 2], 1..100)","t.label([","        [\"1\", \"2\"],","        [\"a\", \"b\", \"c\"],","        [1, 2]","])","String asString = t.frame().toString()"]},
+        {"kind":"given","text":"We create a 3D tensor and label its indices.","code":["Tsr t = Tsr.of([2, 3, 2], 1..100)","t.label([","[\"1\", \"2\"],","[\"a\", \"b\", \"c\"],","[1, 2]","])","String asString = t.frame().toString()"]},
 
         {"kind":"expect","text":"The string representation of the tensor should include these labels.","code":["asString.contains(\"a\")","asString.contains(\"b\")","asString.contains(\"c\")","asString.contains(\"1\")","!asString.contains(\"Axis One\")","!asString.contains(\"Axis Two\")","!asString.contains(\"Axis Three\")"]},
 
-        {"kind":"when","text":"We provide a map, where the keys are axis labels...","code":["t.label([","        \"Axis One\" : [\"1\", \"2\"],","        \"Axis Two\" : [\"a\", \"b\", \"c\"],","        \"Axis Three\" : [1, 2]","])","asString = t.frame().toString()"]},
+        {"kind":"when","text":"We provide a map, where the keys are axis labels...","code":["t.label([","\"Axis One\" : [\"1\", \"2\"],","\"Axis Two\" : [\"a\", \"b\", \"c\"],","\"Axis Three\" : [1, 2]","])","asString = t.frame().toString()"]},
 
         {"kind":"then","text":"Once again, the string will mention all labels","code":["asString.contains(\"a\")","asString.contains(\"b\")","asString.contains(\"c\")","asString.contains(\"1\")","asString.contains(\"Axis One\")","asString.contains(\"Axis Two\")","asString.contains(\"Axis Three\")","asString.contains(\"|     Axis One     |     Axis Two     |    Axis Three    |\")"]},
 
-        {"kind":"when","text":"","code":["t.label([","        \"Axis One\" : [\"x\", \"y\"],","        \"Axis Two\" : null,","        \"Axis Three\" : [\"tim\", \"tina\"]","])","asString = t.frame().toString()"]},
+        {"kind":"when","text":"","code":["t.label([","\"Axis One\" : [\"x\", \"y\"],","\"Axis Two\" : null,","\"Axis Three\" : [\"tim\", \"tina\"]","])","asString = t.frame().toString()"]},
 
         {"kind":"then","text":"","code":["t.frame().atAxis(\"Axis Three\").getAllAliasesForIndex(0) == [\"tim\"]","t.frame().atAxis(\"Axis Three\").getAllAliasesForIndex(1) == [\"tina\"]","t.frame().atAxis(\"Axis One\").getAllAliases().contains(\"x\")","t.frame().atAxis(\"Axis One\").getAllAliases().contains(\"y\")","!asString.contains(\" a \")","!asString.contains(\" b \")","!asString.contains(\" c \")","asString.contains(\"x\")","asString.contains(\"tim\")","asString.contains(\"tina\")","asString.contains(\"0\")","asString.contains(\"1\")","asString.contains(\"2\")","asString.contains(\"Axis One\")","asString.contains(\"Axis Two\")","asString.contains(\"Axis Three\")","asString.contains(\"|     Axis One     |     Axis Two     |    Axis Three    |\")"]},
 
@@ -50,9 +50,9 @@
       "blocks":[
         {"kind":"given","text":"Tensor printing is set to \"legacy\" for this test.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"and","text":"A labeled tensor of rank 2 is being created.","code":["Tsr t = Tsr.of([3, 4], [","        1d, 2d, 3d, 4d,","        9d, 8d, 6d, 5d,","        4d, 5d, 6d, 7d","])","t.label([","        [\"1\", \"2\", \"3\"],","        [\"a\", \"b\", \"y\", \"z\"]","])"]},
+        {"kind":"and","text":"A labeled tensor of rank 2 is being created.","code":["Tsr t = Tsr.of([3, 4], [","1d, 2d, 3d, 4d,","9d, 8d, 6d, 5d,","4d, 5d, 6d, 7d","])","t.label([","[\"1\", \"2\", \"3\"],","[\"a\", \"b\", \"y\", \"z\"]","])"]},
 
-        {"kind":"expect","text":"","code":["t.toString({","            it.rowLimit = 15","            it.isScientific = false","            it.isMultiline = true","            it.hasGradient = false","            it.cellSize = 6","            it.hasValue = true","            it.hasRecursiveGraph = false","            it.hasDerivatives = false","            it.hasShape =  true","            it.isCellBound = false","            it.postfix = \"\"","            it.prefix = \"\"","            it.hasSlimNumbers = false","}) == \"[3x4]:(\\n\" +","      \"   [    a  ][   b  ][   y  ][   z   ]\\n\" +","      \"   (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ 1 ],\\n\" +","      \"   (   9.0 ,   8.0 ,   6.0 ,   5.0  ):[ 2 ],\\n\" +","      \"   (   4.0 ,   5.0 ,   6.0 ,   7.0  ):[ 3 ]\\n\" +","      \")\""]},
+        {"kind":"expect","text":"","code":["t.toString({","it.rowLimit = 15","it.isScientific = false","it.isMultiline = true","it.hasGradient = false","it.cellSize = 6","it.hasValue = true","it.hasRecursiveGraph = false","it.hasDerivatives = false","it.hasShape =  true","it.isCellBound = false","it.postfix = \"\"","it.prefix = \"\"","it.hasSlimNumbers = false","}) == \"[3x4]:(\\n\" +","\"   [    a  ][   b  ][   y  ][   z   ]\\n\" +","\"   (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ 1 ],\\n\" +","\"   (   9.0 ,   8.0 ,   6.0 ,   5.0  ):[ 2 ],\\n\" +","\"   (   4.0 ,   5.0 ,   6.0 ,   7.0  ):[ 3 ]\\n\" +","\")\""]},
 
         {"kind":"when","text":"We use a label for slicing a row from the tensor (which is also a matrix in this case).","code":["Tsr x = t[\"2\", 1..2]"]},
 
@@ -84,16 +84,16 @@
     {
       "id":"Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.",
       "result":"PASS",
-      "duration":"0.191 seconds",
+      "duration":"0.188 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"Tensor printing is set to \"legacy\" for this test.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"and","text":"A labeled tensor of rank 3 is being created.","code":["Tsr t = Tsr.of([2, 3, 4], -7d..7d)","t.label( 'My Tensor', [","    [\"1\", \"2\"],","    [\"a\", \"b\", \"y\"],","    [\"tim\", \"tom\", \"tina\", \"tanya\"]","])"]},
+        {"kind":"and","text":"A labeled tensor of rank 3 is being created.","code":["Tsr t = Tsr.of([2, 3, 4], -7d..7d)","t.label( 'My Tensor', [","[\"1\", \"2\"],","[\"a\", \"b\", \"y\"],","[\"tim\", \"tom\", \"tina\", \"tanya\"]","])"]},
 
-        {"kind":"expect","text":"When the tensor is converted to a String then the labels will be included:","code":["t.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[2x3x4]:(\\n\" +","      \"   [ 1 ]:(\\n\" +","      \"      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\\n\" +","      \"      (  -7.0 ,  -6.0 ,  -5.0 ,  -4.0  ):[ a ],\\n\" +","      \"      (  -3.0 ,  -2.0 ,  -1.0 ,   0.0  ):[ b ],\\n\" +","      \"      (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ y ]\\n\" +","      \"   ),\\n\" +","      \"   [ 2 ]:(\\n\" +","      \"      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\\n\" +","      \"      (   5.0 ,   6.0 ,   7.0 ,  -7.0  ):[ a ],\\n\" +","      \"      (  -6.0 ,  -5.0 ,  -4.0 ,  -3.0  ):[ b ],\\n\" +","      \"      (  -2.0 ,  -1.0 ,   0.0 ,   1.0  ):[ y ]\\n\" +","      \"   )\\n\" +","      \")\""]},
+        {"kind":"expect","text":"When the tensor is converted to a String then the labels will be included:","code":["t.toString({","it.rowLimit = 15","it.isScientific = false","it.isMultiline = true","it.hasGradient = false","it.cellSize = 6","it.hasValue = true","it.hasRecursiveGraph = false","it.hasDerivatives = false","it.hasShape =  true","it.isCellBound = false","it.postfix = \"\"","it.prefix = \"\"","it.hasSlimNumbers = false","}) == \"[2x3x4]:(\\n\" +","\"   [ 1 ]:(\\n\" +","\"      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\\n\" +","\"      (  -7.0 ,  -6.0 ,  -5.0 ,  -4.0  ):[ a ],\\n\" +","\"      (  -3.0 ,  -2.0 ,  -1.0 ,   0.0  ):[ b ],\\n\" +","\"      (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ y ]\\n\" +","\"   ),\\n\" +","\"   [ 2 ]:(\\n\" +","\"      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\\n\" +","\"      (   5.0 ,   6.0 ,   7.0 ,  -7.0  ):[ a ],\\n\" +","\"      (  -6.0 ,  -5.0 ,  -4.0 ,  -3.0  ):[ b ],\\n\" +","\"      (  -2.0 ,  -1.0 ,   0.0 ,   1.0  ):[ y ]\\n\" +","\"   )\\n\" +","\")\""]},
 
         {"kind":"when","text":"Creating a slice by passing a single label, a range of labels and a range with stride...","code":["Tsr x = t[\"2\", \"b\"..\"y\", [[\"tim\",\"tanya\"]:2]]"]},
 
@@ -101,7 +101,7 @@
 
         {"kind":"and","text":"Calling the \"contains\" method will also return true.","code":["t.contains(x)"]},
 
-        {"kind":"and","text":"The String representation is as expected.","code":["x.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","      \"   (\\n\" +","      \"      (  -6.0 ,  -4.0  ),\\n\" +","      \"      (  -2.0 ,   0.0  )\\n\" +","      \"   )\\n\" +","      \")\""]},
+        {"kind":"and","text":"The String representation is as expected.","code":["x.toString({","it.rowLimit = 15","it.isScientific = false","it.isMultiline = true","it.hasGradient = false","it.cellSize = 6","it.hasValue = true","it.hasRecursiveGraph = false","it.hasDerivatives = false","it.hasShape =  true","it.isCellBound = false","it.postfix = \"\"","it.prefix = \"\"","it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","\"   (\\n\" +","\"      (  -6.0 ,  -4.0  ),\\n\" +","\"      (  -2.0 ,   0.0  )\\n\" +","\"   )\\n\" +","\")\""]},
 
         {"kind":"and","text":"The tensor \"x\" is of course a slice:","code":["x.isSlice()"]},
 
@@ -111,15 +111,15 @@
 
         {"kind":"when","text":"","code":["x = t[\"2\", [[\"b\"..\"y\"]:1, [\"tim\",\"tanya\"]:2]]"]},
 
-        {"kind":"then","text":"","code":["x in t","t.contains(x)","x.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","      \"   (\\n\" +","      \"      (  -6.0 ,  -4.0  ),\\n\" +","      \"      (  -2.0 ,   0.0  )\\n\" +","      \"   )\\n\" +","      \")\"","!x.isVirtual()","x.isSlice()","t.isSliceParent()","t.sliceCount()==2"]},
+        {"kind":"then","text":"","code":["x in t","t.contains(x)","x.toString({","it.rowLimit = 15","it.isScientific = false","it.isMultiline = true","it.hasGradient = false","it.cellSize = 6","it.hasValue = true","it.hasRecursiveGraph = false","it.hasDerivatives = false","it.hasShape =  true","it.isCellBound = false","it.postfix = \"\"","it.prefix = \"\"","it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","\"   (\\n\" +","\"      (  -6.0 ,  -4.0  ),\\n\" +","\"      (  -2.0 ,   0.0  )\\n\" +","\"   )\\n\" +","\")\"","!x.isVirtual()","x.isSlice()","t.isSliceParent()","t.sliceCount()==2"]},
 
         {"kind":"when","text":"","code":["x = t[[[\"2\"]:1, [\"b\"..\"y\"]:1, [\"tim\",\"tanya\"]:2]]"]},
 
-        {"kind":"then","text":"","code":["x in t","t.contains(x)","x.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","      \"   (\\n\" +","      \"      (  -6.0 ,  -4.0  ),\\n\" +","      \"      (  -2.0 ,   0.0  )\\n\" +","      \"   )\\n\" +","      \")\"","!x.isVirtual()","x.isSlice()","t.isSliceParent()","t.sliceCount()==3"]},
+        {"kind":"then","text":"","code":["x in t","t.contains(x)","x.toString({","it.rowLimit = 15","it.isScientific = false","it.isMultiline = true","it.hasGradient = false","it.cellSize = 6","it.hasValue = true","it.hasRecursiveGraph = false","it.hasDerivatives = false","it.hasShape =  true","it.isCellBound = false","it.postfix = \"\"","it.prefix = \"\"","it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","\"   (\\n\" +","\"      (  -6.0 ,  -4.0  ),\\n\" +","\"      (  -2.0 ,   0.0  )\\n\" +","\"   )\\n\" +","\")\"","!x.isVirtual()","x.isSlice()","t.isSliceParent()","t.sliceCount()==3"]},
 
-        {"kind":"when","text":"","code":["t.label(","    new String[][]{","        new String[]{ \"1\", \"2\" },","        new String[]{ \"a\", \"b\", \"y\" },","        new String[]{ \"tim\", \"tom\", \"tina\", \"tanya\" }","    }",")","x = t[ [\"1\",\"2\"], \"b\"..\"y\", [[\"tim\",\"tanya\"]:2] ]"]},
+        {"kind":"when","text":"","code":["t.label(","new String[][]{","new String[]{ \"1\", \"2\" },","new String[]{ \"a\", \"b\", \"y\" },","new String[]{ \"tim\", \"tom\", \"tina\", \"tanya\" }","}",")","x = t[ [\"1\",\"2\"], \"b\"..\"y\", [[\"tim\",\"tanya\"]:2] ]"]},
 
-        {"kind":"then","text":"","code":["x in t","t.contains(x)","x.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[2x2x2]:(\\n\" +","      \"   (\\n\" +","      \"      (  -3.0 ,  -1.0  ),\\n\" +","      \"      (   1.0 ,   3.0  )\\n\" +","      \"   ),\\n\" +","      \"   (\\n\" +","      \"      (  -6.0 ,  -4.0  ),\\n\" +","      \"      (  -2.0 ,   0.0  )\\n\" +","      \"   )\\n\" +","      \")\"","!x.isVirtual()","x.isSlice()","t.isSliceParent()","t.sliceCount() == 4"]},
+        {"kind":"then","text":"","code":["x in t","t.contains(x)","x.toString({","it.rowLimit = 15","it.isScientific = false","it.isMultiline = true","it.hasGradient = false","it.cellSize = 6","it.hasValue = true","it.hasRecursiveGraph = false","it.hasDerivatives = false","it.hasShape =  true","it.isCellBound = false","it.postfix = \"\"","it.prefix = \"\"","it.hasSlimNumbers = false","}) == \"[2x2x2]:(\\n\" +","\"   (\\n\" +","\"      (  -3.0 ,  -1.0  ),\\n\" +","\"      (   1.0 ,   3.0  )\\n\" +","\"   ),\\n\" +","\"   (\\n\" +","\"      (  -6.0 ,  -4.0  ),\\n\" +","\"      (  -2.0 ,   0.0  )\\n\" +","\"   )\\n\" +","\")\"","!x.isVirtual()","x.isSlice()","t.isSliceParent()","t.sliceCount() == 4"]},
 
         {"kind":"when","text":"...we make the GC collect some garbage...","code":["WeakReference weak = new WeakReference(x)","x = null","System.gc()","Sleep.until(100, { weak.get() == null })"]},
 

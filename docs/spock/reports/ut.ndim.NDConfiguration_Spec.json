@@ -16,7 +16,7 @@
     {
       "id":"Various NDConfigurations behaviour exactly as their general purpose implementation.",
       "result":"PASS",
-      "duration":"0.025 seconds",
+      "duration":"0.024 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,15 +25,15 @@
 
         {"kind":"expect","text":"","code":["ndc2.getClass()    == expected","ndc1.rank()        == ndc2.rank()","ndc1.size()        == ndc2.size()","ndc1.shape()       == ndc2.shape()","ndc1.translation() == ndc2.translation()","ndc1.indicesMap()  == ndc2.indicesMap()","ndc1.spread()      == ndc2.spread()","ndc1.offset()      == ndc2.offset()"]},
 
-        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    ndc1.indicesOfIndex(it) == ndc2.indicesOfIndex(it)","})",".every()"]},
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","ndc1.indicesOfIndex(it) == ndc2.indicesOfIndex(it)","})",".every()"]},
 
-        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    ndc1.indexOfIndices(ndc1.indicesOfIndex(it)) == ndc2.indexOfIndices(ndc2.indicesOfIndex(it))","})",".every()"]},
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","ndc1.indexOfIndices(ndc1.indicesOfIndex(it)) == ndc2.indexOfIndices(ndc2.indicesOfIndex(it))","})",".every()"]},
 
-        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    ndc1.indexOfIndex(it) == ndc2.indexOfIndex(it)","})",".every()"]},
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","ndc1.indexOfIndex(it) == ndc2.indexOfIndex(it)","})",".every()"]},
 
-        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    boolean matches = i1.get() == i2.get()","    if ( it < ndc1.size()-1 ) { i1.increment(); i2.increment() }","    return matches","})",".every()"]},
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","boolean matches = i1.get() == i2.get()","if ( it < ndc1.size()-1 ) { i1.increment(); i2.increment() }","return matches","})",".every()"]},
 
-        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    boolean matches = i1.get() == i2.get()","    i1.decrement(); i2.decrement()","    return matches","})",".every()"]},
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","boolean matches = i1.get() == i2.get()","i1.decrement(); i2.decrement()","return matches","})",".every()"]},
 
         {"kind":"where","text":"","code":{"shape":["[2, 3, 8, 4]","[2, 3, 8, 4]","[2, 3, 8, 4]","[2, 3, 8]","[2, 3, 8]","[2, 3, 8]","[2, 3]","[2, 3]","[2, 3]","[2, 3]","[2, 3]","[2, 3]","[2, 3]","[3]","[42]","[3]","[30]","[2]"],"translation":["[96, 32, 4, 1]","[96, 200, 8, 1]","[96, 32, 4, 1]","[24, 8, 1]","[8, 24, 7]","[8, 24, 7]","[3, 1]","[1, 2]","[1, 2]","[81, 42]","[1, 2]","[3, 1]","[3, 1]","[1]","[1]","[1]","[8]","[1]"],"indicesMap":["[96, 32, 4, 1]","[96, 32, 4, 1]","[96, 92, 4, 1]","[24, 8, 1]","[1, 2, 3]","[1, 2, 3]","[3, 1]","[1, 2]","[3, 1]","[3, 99]","[2, 1]","[3, 1]","[3, 1]","[1]","[1]","[2]","[2]","[1]"],"spread":["[1, 1, 1, 1]","[1, 1, 1, 1]","[1, 4, 1, 1]","[1, 1, 1]","[1, 1, 1]","[1, 7, 1]","[1, 1]","[1, 1]","[1, 1]","[1, 1]","[7, 2]","[1, 1]","[1, 2]","[1]","[1]","[1]","[1]","[1]"],"offset":["[0, 0, 0, 0]","[0, 0, 0, 0]","[0, 0, 0, 0]","[0, 0, 0]","[0, 0, 0]","[0, 0, 0]","[0, 0]","[0, 0]","[0, 0]","[0, 0]","[1, 8]","[6, 0]","[0, 0]","[0]","[0]","[0]","[0]","[5]"],"expected":["class neureka.ndim.config.types.simple.SimpleNDConfiguration","class neureka.ndim.config.types.reshaped.ReshapedNDConfiguration","class neureka.ndim.config.types.sliced.SlicedNDConfiguration","class neureka.ndim.config.types.simple.Simple3DConfiguration","class neureka.ndim.config.types.reshaped.Reshaped3DConfiguration","class neureka.ndim.config.types.sliced.Sliced3DConfiguration","class neureka.ndim.config.types.simple.Simple2DConfiguration","class neureka.ndim.config.types.reshaped.Reshaped2DConfiguration","class neureka.ndim.config.types.reshaped.Reshaped2DConfiguration","class neureka.ndim.config.types.reshaped.Reshaped2DConfiguration","class neureka.ndim.config.types.sliced.Sliced2DConfiguration","class neureka.ndim.config.types.sliced.Sliced2DConfiguration","class neureka.ndim.config.types.sliced.Sliced2DConfiguration","class neureka.ndim.config.types.simple.Simple1DConfiguration","class neureka.ndim.config.types.simple.Simple1DConfiguration","class neureka.ndim.config.types.reshaped.Reshaped1DConfiguration","class neureka.ndim.config.types.reshaped.Reshaped1DConfiguration","class neureka.ndim.config.types.sliced.Sliced1DConfiguration"]}}
       ],

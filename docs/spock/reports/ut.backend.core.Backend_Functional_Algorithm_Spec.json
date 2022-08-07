@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.023 seconds"
+    "duration":"0.022 seconds"
   },
 
   "title":"",
@@ -29,7 +29,7 @@
 
         {"kind":"and","text":"The exception tells us this:","code":["exception.message == \"Trying use an instance of 'TestAlgorithm' with name 'test_name' which was not fully built!\""]},
 
-        {"kind":"where","text":"We call the following methods:","code":{"caller":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure1@31e2d299","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure2@20564ff6","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure3@115adba9","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure4@60d6801e"]}}
+        {"kind":"where","text":"We call the following methods:","code":{"caller":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure1@348cf011","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure2@17d85ea7","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure3@3d9b55a","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure4@65404fc7"]}}
       ],
       "problems":"[]"
     },
@@ -37,7 +37,7 @@
     {
       "id":"A functional algorithm does not accept null as an answer!",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -77,11 +77,11 @@
 
         {"kind":"when","text":"We try to modify the algorithm even if it is already built...","code":["setter(algorithm)"]},
 
-        {"kind":"then","text":"We will get a warning which wells us that mutating the state of the algorithm is discouraged!","code":["1 * System.err.println(","    \"[Test worker] WARN neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm - \" +","    \"Implementation '$type.simpleName' in algorithm '$algorithm' was modified! \" +","    \"Please consider only modifying the standard backend state of Neureka for experimental reasons.\"",")"]},
+        {"kind":"then","text":"We will get a warning which wells us that mutating the state of the algorithm is discouraged!","code":["1 * System.err.println(","\"[Test worker] WARN neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm - \" +","\"Implementation '$type.simpleName' in algorithm '$algorithm' was modified! \" +","\"Please consider only modifying the standard backend state of Neureka for experimental reasons.\"",")"]},
 
         {"kind":"cleanup","text":"","code":["System.err = oldStream"]},
 
-        {"kind":"where","text":"","code":{"type":["interface neureka.backend.api.fun.ExecutionPreparation","interface neureka.backend.api.fun.SuitabilityPredicate","interface neureka.backend.api.fun.Execution"],"setter":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure16@65404fc7","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure17@592b5342","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure18@6d3c4cc3"]}}
+        {"kind":"where","text":"","code":{"type":["interface neureka.backend.api.fun.ExecutionPreparation","interface neureka.backend.api.fun.SuitabilityPredicate","interface neureka.backend.api.fun.Execution"],"setter":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure16@3d57c2c","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure17@2ddc643b","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure18@74c8bc43"]}}
       ],
       "problems":"[]"
     }

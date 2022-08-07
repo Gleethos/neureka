@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.017 seconds"
+    "duration":"0.014 seconds"
   },
 
   "title":"The BackendContext is a cloneable context which can run Tasks.",
@@ -43,7 +43,7 @@
     {
       "id":"BackendContext instances return Runner instances for easy visiting.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -68,7 +68,7 @@
     {
       "id":"BackendContext instances return Runner instances for easy visiting with return values.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
 
         {"kind":"and","text":"The outer context is as expected simply the current context.","code":["outerContext == current"]},
 
-        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@3b67e883","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@59b12cab","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@2e81a792"]}}
+        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@187d6405","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@3fc11893","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@3fa8e530"]}}
       ],
       "problems":"[]"
     }

@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.491 seconds"
+    "duration":"0.457 seconds"
   },
 
   "title":"",
@@ -16,12 +16,12 @@
     {
       "id":"Test writing IDX file format.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","    it.setIsScientific( true )","    it.setIsMultiline( false )","    it.setHasGradient( true )","    it.setCellSize( 1 )","    it.setHasValue( true )","    it.setHasRecursiveGraph( false )","    it.setHasDerivatives( false )","    it.setHasShape( true )","    it.setIsCellBound( false )","    it.setPostfix(  \"\" )","    it.setPrefix(  \"\"  )","    it.setHasSlimNumbers(  false )","})"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","it.setIsScientific( true )","it.setIsMultiline( false )","it.setHasGradient( true )","it.setCellSize( 1 )","it.setHasValue( true )","it.setHasRecursiveGraph( false )","it.setHasDerivatives( false )","it.setHasShape( true )","it.setIsCellBound( false )","it.setPostfix(  \"\" )","it.setPrefix(  \"\"  )","it.setHasSlimNumbers(  false )","})"]},
 
         {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
 
@@ -66,7 +66,7 @@
     {
       "id":"We can load image files as tensors.",
       "result":"PASS",
-      "duration":"0.452 seconds",
+      "duration":"0.424 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,7 +87,7 @@
     {
       "id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -106,12 +106,12 @@
     {
       "id":"Fully labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Tsr t = Tsr.of(DataType.of(String.class), [2,3], [","        '1', 'hi', ':)',","        '2', 'hey', ';)'","]).label([","        ['r1', 'r2'],","        ['A', 'B', 'C']","])"]},
+        {"kind":"given","text":"","code":["Tsr t = Tsr.of(DataType.of(String.class), [2,3], [","'1', 'hi', ':)',","'2', 'hey', ';)'","]).label([","['r1', 'r2'],","['A', 'B', 'C']","])"]},
 
         {"kind":"expect","text":"","code":["t.toString() == \"(2x3):[\\n\" +","\"   (        A       )(       B       )(       C        )\\n\" +","\"   [        1       ,        hi      ,        :)       ]:( r1 ),\\n\" +","\"   [        2       ,       hey      ,        ;)       ]:( r2 )\\n\" +","\"]\"","!new File(\"build/resources/test/csv/test.csv\").exists()"]},
 
@@ -129,12 +129,12 @@
     {
       "id":"Partially labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Tsr t = Tsr.of(DataType.of(String.class), [2,3], [","        '1', 'hi', ':)',","        '2', 'hey', ';)'","]).label([","        'ROW':null,","        'COL':['A', 'B', 'C']","])"]},
+        {"kind":"given","text":"","code":["Tsr t = Tsr.of(DataType.of(String.class), [2,3], [","'1', 'hi', ':)',","'2', 'hey', ';)'","]).label([","'ROW':null,","'COL':['A', 'B', 'C']","])"]},
 
         {"kind":"expect","text":"","code":["t.toString() == \"(2x3):[\\n\" +","\"   (        A       )(       B       )(       C        )\\n\" +","\"   [        1       ,        hi      ,        :)       ]:( 0 ),\\n\" +","\"   [        2       ,       hey      ,        ;)       ]:( 1 )\\n\" +","\"]\"","!new File(\"build/resources/test/csv/test.csv\").exists()"]},
 

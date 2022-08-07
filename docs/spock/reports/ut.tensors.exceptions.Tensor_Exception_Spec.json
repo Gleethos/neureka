@@ -11,7 +11,7 @@
 
   "title":"Tensors Exception Behavior",
   "narrative":"This specification covers the behavior of the $Tsr class in\n    exceptional scenarios which are contrary to its intended use.\n    The purpose of this is to assert that the $Tsr class will provide\n    useful feedback to a user to explain that a misuse of its API\n    occurred so that the user can correct this misuse.",
-  "headers":["<h2> Tensors Exception Behavior </h2> <br> <p> This specification covers the behavior of tensors in exceptional situations. </p>"],"tags":{},"see":[],
+  "headers":["<h2> Tensors Exception Behavior </h2> <br>  <p>     This specification covers the behavior of tensors     in exceptional situations.            </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Trying to inject an empty tensor into another causes fitting exception.",
@@ -46,7 +46,7 @@
 
         {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
 
-        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@3870eb1e","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@87b2369","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@32258dee","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@648ec9ae","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@628a722d","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@3b0f9257","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@a46b77","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@19154789","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@78666a6d","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@6acbcd73","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@28eb81b4","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@4afea195","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@70624d1a"]}}
+        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@21818680","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@2f3db345","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@46ab3803","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@1a7037f5","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@7677fc45","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@1dc76e42","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@203e7a8b","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@19d6285c","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@32443a40","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@a892166","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@170959c4","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@5d397a60","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@63e56017"]}}
       ],
       "problems":"[]"
     },
@@ -61,7 +61,7 @@
       "blocks":[
         {"kind":"when","text":"A tensor is being instantiated with a nonsensical parameter.","code":["Tsr.ofRandom(Scanner.class, 2, 4)"]},
 
-        {"kind":"then","text":"An exception is being thrown which tells us about it.","code":["def exception = thrown(IllegalArgumentException)","exception.message.contains(","        \"Could not create a random tensor for type 'class java.util.Scanner'!\"",")"]}
+        {"kind":"then","text":"An exception is being thrown which tells us about it.","code":["def exception = thrown(IllegalArgumentException)","exception.message.contains(","\"Could not create a random tensor for type 'class java.util.Scanner'!\"",")"]}
       ],
       "problems":"[]"
     },
@@ -86,7 +86,7 @@
     {
       "id":"Out of dimension bound causes descriptive exception!",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -95,7 +95,7 @@
 
         {"kind":"then","text":"The slice range 1..3 causes and exception!","code":["def exception = thrown(IllegalArgumentException)","exception.message == \"java.lang.IllegalArgumentException: \" +","\"Cannot create slice because ranges are out of the bounds of the targeted tensor.\\n\" +","\"At index '1' : offset '1' + shape '3' = '4',\\n\" +","\"which is larger than the target shape '3' at the same index!\""]},
 
-        {"kind":"and","text":"The logger logs the exception message!","code":["1 * System.err.println({it.endsWith(","    \"Cannot create slice because ranges are out of the bounds of the targeted tensor.\\n\" +","    \"At index '1' : offset '1' + shape '3' = '4',\\n\" +","    \"which is larger than the target shape '3' at the same index!\")","})"]}
+        {"kind":"and","text":"The logger logs the exception message!","code":["1 * System.err.println({it.endsWith(","\"Cannot create slice because ranges are out of the bounds of the targeted tensor.\\n\" +","\"At index '1' : offset '1' + shape '3' = '4',\\n\" +","\"which is larger than the target shape '3' at the same index!\")","})"]}
       ],
       "problems":"[]"
     },

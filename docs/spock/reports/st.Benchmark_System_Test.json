@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.112 seconds"
+    "duration":"1.978 seconds"
   },
 
   "title":"",
@@ -16,7 +16,7 @@
     {
       "id":"Tensor can be constructed by passing List instances.",
       "result":"PASS",
-      "duration":"0.671 seconds",
+      "duration":"0.624 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Test benchmark script and simple tensor constructor.",
       "result":"PASS",
-      "duration":"1.437 seconds",
+      "duration":"1.350 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -50,7 +50,7 @@
 
         {"kind":"and","text":"A String instance for the result hash is being instantiated and the expected hash.","code":["String hash = \"\"","String expected = \"7084fb60f29fcce1ac96c2bee9c37b37\""]},
 
-        {"kind":"when","text":"The benchmark script is being called...","code":["Map<String,List<Double>> result = session(","        configuration, null,","        CPU.get(),","        tsr -> {","            hash = (hash+tsr.toString()).md5()","        }",")"]},
+        {"kind":"when","text":"The benchmark script is being called...","code":["Map<String,List<Double>> result = session(","configuration, null,","CPU.get(),","tsr -> {","hash = (hash+tsr.toString()).md5()","}",")"]},
 
         {"kind":"then","text":"The hash is as expected.","code":["hash == expected"]},
 
@@ -60,7 +60,7 @@
 
         {"kind":"when","text":"Only continue if testing system supports OpenCL.","code":["if ( !Neureka.get().canAccessOpenCLDevice() ) return"]},
 
-        {"kind":"and","text":"The benchmark is now being executed with the first found OpenCLDevice instance...","code":["hash = \"\"","session(","        configuration, null,","        Device.get(\"first\"),","            tsr -> {","                hash = ( hash + tsr.toString() ).md5()","            }",")"]},
+        {"kind":"and","text":"The benchmark is now being executed with the first found OpenCLDevice instance...","code":["hash = \"\"","session(","configuration, null,","Device.get(\"first\"),","tsr -> {","hash = ( hash + tsr.toString() ).md5()","}",")"]},
 
         {"kind":"then","text":"The calculated hash is as expected.","code":["hash == expected"]}
       ],

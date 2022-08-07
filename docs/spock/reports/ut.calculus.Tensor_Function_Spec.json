@@ -6,17 +6,17 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.099 seconds"
+    "duration":"0.090 seconds"
   },
 
   "title":"Applying Functions on Tensors",
   "narrative":"A tensor would be nothing without being able to apply operations on them.\n    However, calling operations manually in order to process your\n    tensors can be a verbose and error prone task.\n    This is where functions come into play.\n    Neureka's functions are composed of operations forming an abstract syntax tree.\n    Passing tensors to a function will route them trough this tree and apply\n    all of the operations on the tensors.",
-  "headers":["<p> This specification ensures that tensors supplied to functions are executed successfully and produce the expected results. </p>"],"tags":{},"see":[],
+  "headers":["<p>     This specification ensures that tensors supplied     to functions are executed successfully and produce the expected results. </p>"],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The optimization function for the SGD algorithm produces the expected result",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Tensor results of various Function instances return expected results.",
       "result":"PASS",
-      "duration":"0.053 seconds",
+      "duration":"0.047 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

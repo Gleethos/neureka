@@ -79,7 +79,7 @@
 
         {"kind":"and","text":"We verify that they share the same ints through the \"every\" method.","code":["(0..<t.size).every({ int i -> shallow.at(i) == t.at(i) })"]},
 
-        {"kind":"where","text":"","code":{"cloner":["ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure4@51c9528f","ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure5@67354bba"]}}
+        {"kind":"where","text":"","code":{"cloner":["ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure4@334f36bb","ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure5@3fe7a821"]}}
       ],
       "problems":"[]"
     }

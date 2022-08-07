@@ -6,7 +6,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"1",
-    "duration":"0"
+    "duration":"0.001 seconds"
   },
 
   "title":"",
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["def data = Tsr.of([8, 4], [ // a-b*c","      1d,  2d,  2d, -3d,","      3d, -1d, -1d,  4d,","     -1d, -2d, -3d, -7d,","     -2d, -3d,  4d,  10d,","      4d,  5d, -1d,  9d,","      6d,  2d,  3d,  0d,","      7d,  3d,  2d,  1d,","     -4d, -4d,  2d,  4d","])","var X = data[0..-1, 0..2].T()"]},
+        {"kind":"given","text":"","code":["def data = Tsr.of([8, 4], [ // a-b*c","1d,  2d,  2d, -3d,","3d, -1d, -1d,  4d,","-1d, -2d, -3d, -7d,","-2d, -3d,  4d,  10d,","4d,  5d, -1d,  9d,","6d,  2d,  3d,  0d,","7d,  3d,  2d,  1d,","-4d, -4d,  2d,  4d","])","var X = data[0..-1, 0..2].T()"]},
 
         {"kind":"and","text":"","code":["var w1 = Tsr.of([8, 3], \":-)\").setRqsGradient(true)","var w2 = Tsr.of([7, 8], \"O.o\").setRqsGradient(true)","var w3 = Tsr.of([1, 7], \":P\").setRqsGradient(true)"]},
 
