@@ -1,10 +1,36 @@
-.collapsible {
+/*Media Querys:*/
+@media (min-width: 0px) {
+    .FancyLivingDocHeader { font-size:65%; margin: 0em 2.5em -3.2em 2.5em; }
+}
+@media (min-width: 300px) {
+    .FancyLivingDocHeader { font-size:80%; margin: 0em 2.5em -2.5em 2.5em; }
+}
+@media (min-width: 420px) {
+    .FancyLivingDocHeader { font-size:90%; margin: 0em 2.5em -2.3em 2.5em; }
+}
+@media (min-width: 600px) {
+    .FancyLivingDocHeader { font-size:100%; margin: 0em 2.5em -2em 2.5em; }
+}
+@media (min-width: 840px) {
+    .FancyLivingDocHeader { font-size:105%; margin: 0em 2.5em -2em 2.5em; }
+}
+@media (min-width: 1041px) {
+    .FancyLivingDocHeader { font-size:110%; margin: 0em 2.5em -1.85em 2.5em; }
+}
+@media (min-width: 1440px) {
+    .FancyLivingDocHeader { font-size:115%; margin: 0em 2.5em -1.8em 2.5em; }
+}
+@media (min-width: 2000px) {
+    .FancyLivingDocHeader { font-size:120%; margin: 0em 2.5em -1.7em 2.5em; }
+}
+
+.CollapsibleField {
     cursor: pointer;
     padding: 10px;
     width: 100%;
 }
 
-.content {
+.CollapsibleContent {
     padding: 5px 18px 5px 18px;
     display: none;
     overflow: hidden;

@@ -397,10 +397,13 @@ header p {
 .TabWrapper {
 }
 
-.TabWrapper .TabHead{
-    overflow: hidden;
+.BasicTabHeader {
     margin: 0.44em 0.33em 0em 0.33em;
     font-size: 80%;
+}
+
+.TabWrapper .TabHead{
+    overflow: hidden;
     border-bottom: 0.2em solid #00e6ff;
 }
 

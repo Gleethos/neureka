@@ -169,10 +169,10 @@ function createLoaderDropDownFor(specName, expandableFeature) {
     // When the button is clicked the content should be loaded and then expanded.
     let wrapper = $('<div></div>');
     let button = $('<button class="ContentOption" style="text-align:center"></button>');
-    button.addClass('collapsible');
+    button.addClass('CollapsibleField');
     button.text(expandableFeature);
     let content = $('<div></div>');
-    content.addClass('content');
+    content.addClass('CollapsibleContent');
 
     wrapper.append(button);
     wrapper.append(content);
