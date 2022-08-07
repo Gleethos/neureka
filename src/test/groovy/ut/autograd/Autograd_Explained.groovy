@@ -11,24 +11,22 @@ import spock.lang.Title
 @Title("Autograd - Automatic Differentiation")
 @Narrative('''
 
-     Central to all neural networks in Neureka is the autograd package.                                      <br>
-     The autograd package provides automatic differentiation for all default operations on Tensors.          <br>
-     Neureka is a define-by-run library, which means that your backpropagation is defined by how             <br>
-     your code is run, and that every single iteration can be different.                                     <br>
-                                                                                                             <br>
-     The class neureka.Tsr is the central class of the main package.                                         <br>
-     If you set its attribute 'rqsGradient' to True, Neureka starts to track all operations on it.           <br>
-     When you finish the forward pass of your network                                                        <br>
-     you can call .backward() and have all the gradients computed                                            <br>
-     and distributed to the tensors requiring them automatically.                                            <br>
-                                                                                                             <br>
-     <br>                                                                                                    <br>
-     The gradient for a tensor will be accumulated into a child tensor (component) which                     <br>
-     can be accessed via the '.getGradient()' method.                                                        <br>
-                                                                                                             <br>
-     To stop a tensor from tracking history, you can call '.detach()' to detach it from the                  <br>
-     computation history, and to prevent future computation from being tracked.                              <br>
-     <br>   
+    Central to all neural networks in Neureka is the autograd package.                                      
+    The autograd package provides automatic differentiation for all default operations on Tensors.          
+    Neureka is a define-by-run library, which means that your backpropagation is defined by how             
+    your code is run, and that every single iteration can be different.                                     
+                                                                                                            
+    The class neureka.Tsr is the central class of the main package.                                         
+    If you set its attribute 'rqsGradient' to True, Neureka starts to track all operations on it.           
+    When you finish the forward pass of your network                                                        
+    you can call .backward() and have all the gradients computed                                            
+    and distributed to the tensors requiring them automatically.                                            
+                                                                                                            
+    The gradient for a tensor will be accumulated into a child tensor (component) which                     
+    can be accessed via the '.getGradient()' method.                                                        
+                                                                                                            
+    To stop a tensor from tracking history, you can call '.detach()' to detach it from the                  
+    computation history, and to prevent future computation from being tracked.     
             
 ''')
 class Autograd_Explained extends Specification
@@ -36,19 +34,19 @@ class Autograd_Explained extends Specification
     def setupSpec()
     {
         reportHeader """
-            There’s one more class which is very important for autograd implementation : the 'GraphNode class'!     <br>
-            Tsr and GraphNode instances are interconnected and build up an acyclic graph,                           <br>       
-            that encodes a complete history of computation.                                                         <br>                   
-            Each tensor has a .getGraphNode() attribute that references the GraphNode                               <br>             
-            that has created a given Tsr instance.                                                                  <br>
-            (except for Tsr created by the user or created by a "detached" Function instance... ).                  <br>
-            <br>
+            There’s one more class which is very important for autograd implementation : the 'GraphNode class'!     
+            Tsr and GraphNode instances are interconnected and build up an acyclic graph,                              
+            that encodes a complete history of computation.                                                                        
+            Each tensor has a .getGraphNode() attribute that references the GraphNode                                        
+            that has created a given Tsr instance.                                                                  
+            (except for Tsr created by the user or created by a "detached" Function instance... ).                  
+           
         """
         reportHeader """
-            If you want to compute the derivatives, you can call .backward() on a Tensor.                           <br>
-            If the given Tsr is a scalar (i.e. it holds one element and has shape "(1)"), you do not need to        <br>
-            specify any arguments to backward(), however if it has more elements,                                   <br>
-            you should specify a gradient argument that is a tensor of matching shape.                              <br>
+            If you want to compute the derivatives, you can call .backward() on a Tensor.                           
+            If the given Tsr is a scalar (i.e. it holds one element and has shape "(1)"), you do not need to        
+            specify any arguments to backward(), however if it has more elements,                                   
+            you should specify a gradient argument that is a tensor of matching shape.                              
         """
     }
 

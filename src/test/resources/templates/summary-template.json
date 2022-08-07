@@ -2,7 +2,7 @@
 println("Generating summary json now!")
 // A Java method which takes a string and replaces single breaks with spaces, but leaves multiple consecutive breaks in:
 def noSingleBreaks = { String s ->
-    s = s.replaceAll("\\s+", " ").replace("(\\n\\n)\\n*", "\n\n")
+    s = s.stripIndent().replaceAll("\\n+\\s+\\n+", "\n\n").replaceAll("(\\n\\n)\\n*", "\n\n")
     StringBuilder sb = new StringBuilder();
     boolean markDownCode = false;
     ( 0 ..< s.length() ).each { i ->
@@ -19,7 +19,7 @@ def noSingleBreaks = { String s ->
     return sb.toString().trim();
 }
 def simpleEsc = { text ->
-    text = text.toString();
+    text = text.toString().stripIndent();
     if ( text == null )  return ""
     final StringWriter writer = new StringWriter()
     ( 0 ..< text.length() ).each { i ->
@@ -44,9 +44,7 @@ def simpleEsc = { text ->
 }
 def esc = { simpleEsc(noSingleBreaks(it)) }
 def strFeatures = { features ->
-    features = features.collect({ feature ->
-      '{"id":"'+esc(feature)+'","extraInfo":[]}'
-    })
+    features = features.collect({ feature -> '{"id":"'+esc(feature)+'","extraInfo":[]}' })
     if ( features.size() == 0 ) out << ""
     if ( features.size() == 1 ) out << features[0]
     if ( features.size() > 1 ) out << features.collect({ it }).join(",")
