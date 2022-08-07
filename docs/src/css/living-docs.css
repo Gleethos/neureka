@@ -84,3 +84,45 @@ table.DataTable td, table.DataTable th {
 table.DataTable thead {
     background-color: #7EA8F8;
 }
+
+
+.arrow {
+    margin: -0.45em;
+}
+
+.arrow::before {
+    display: inline-block;
+    content: '';
+    width: 0;
+    height: 1em;
+    border: .75em solid transparent;
+    border-left-color: #989bd3;
+    transform-origin: -10px -10px;
+    transition: transform .25s;
+}
+
+.arrow.down::before {
+    transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    transition: transform .25s;
+}
+
+
+.arrow.right::before {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    transition: transform .25s;
+}
+
+.arrow.arrow.left::before {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+    transition: transform .25s;
+}
+
+.arrow.up::before {
+    transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    transition: transform .25s;
+    transform-origin: 40% 10%;
+}

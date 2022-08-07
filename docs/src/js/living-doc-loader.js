@@ -133,8 +133,10 @@ function trimEnds(string, ends) {
 
 // Takes an array of specifications ({"name":"...", "features":[...]}) and adds them to tha targeted html.
 function printSearchResults(target, results) {
+    let counter = 0;
     results.forEach((spec)=>{
         let div = $('<div></div>');
+        let specContent = $('<div></div>');
         let title = spec['title'];
         let narrative = spec['narrative'];
         if ( title.length === 0 ) {
@@ -142,12 +144,36 @@ function printSearchResults(target, results) {
             title = parts[parts.length-1];
             title = trimEnds(title, ["spec", "specification", "test", "tests", "unit test", "unit tests", "test case", "test cases"]);
         }
-        div.append($('<h3></h3>').text(title));
-        createNarrativeParagraphs(narrative).forEach((paragraph)=>{div.append(paragraph);});
+        let h3 = $('<h3></h3>');
+        let arrow = $('<div class="arrow up"></div>');
+        div.append(
+            $('<div></div>').append(h3.text(title))
+            .append(arrow)
+        );
+        createNarrativeParagraphs(narrative).forEach((paragraph)=>{specContent.append(paragraph);});
         spec['features'].forEach((feature)=>{
-            div.append(createLoaderDropDownFor(spec['name'], feature));
+            specContent.append(createLoaderDropDownFor(spec['name'], feature));
         });
+        div.append(specContent);
+
+        // Initially we hide the spec content:
+        if (counter !== 0){
+            specContent.toggle();
+            arrow.toggle()
+        }
+
+        // Now we register a click event on the h3 title
+        // which switches the arrow between up and down class:
+        h3.click(function() {
+            //arrow.toggleClass('down');
+            //arrow.toggleClass('up');
+            arrow.toggle()
+            // And it toggles the visibility of the content:
+            specContent.toggle();
+        });
+
         target.append(div);
+        counter++;
     });
 }
 
