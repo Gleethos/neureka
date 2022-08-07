@@ -332,15 +332,16 @@ function dictionaryOfHeaderNamesToColumnArraysToTable(dataTable) {
             let cell = $('<td></td>');
             let text = filterTableEntryNoise(dataTable[headers[j]][i]);
             // Now we check the length of the string and make longer text have smaller font size:
-            if ( text.length > 50 ) cell.css('font-size', '55%');
-            else if ( text.length > 45 ) cell.css('font-size', '60%');
-            else if ( text.length > 40 ) cell.css('font-size', '65%');
-            else if ( text.length > 35 ) cell.css('font-size', '70%');
-            else if ( text.length > 30 ) cell.css('font-size', '75%');
-            else if ( text.length > 25 ) cell.css('font-size', '80%');
-            else if ( text.length > 20 ) cell.css('font-size', '85%');
-            else if ( text.length > 15 ) cell.css('font-size', '90%');
-            else if ( text.length > 10 ) cell.css('font-size', '95%');
+            let size = text.length - 10 * ( 3 - headers.length );
+            if      ( size > 50 ) cell.css('font-size', '55%');
+            else if ( size > 45 ) cell.css('font-size', '60%');
+            else if ( size > 40 ) cell.css('font-size', '65%');
+            else if ( size > 35 ) cell.css('font-size', '70%');
+            else if ( size > 30 ) cell.css('font-size', '75%');
+            else if ( size > 25 ) cell.css('font-size', '80%');
+            else if ( size > 20 ) cell.css('font-size', '85%');
+            else if ( size > 15 ) cell.css('font-size', '90%');
+            else if ( size > 10 ) cell.css('font-size', '95%');
 
             cell.text(text);
             row.append(cell);
