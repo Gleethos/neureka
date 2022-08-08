@@ -219,7 +219,7 @@ Min-jar file:
 
 Want to contribute? Don't worry:
 
-> **There is plenty of developer friendly highly readable [living documentation](https://gleethos.github.io/neureka/spock/reports/index.html) 
+> **There is plenty of developer friendly highly readable [living documentation](https://gleethos.github.io/neureka/showcase.html) 
 > to go through which explains the inner and outer workings of this project very well!**
 
 
