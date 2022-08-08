@@ -1,4 +1,4 @@
-let currentTop = 0;
+
 let topMode = 'large';
 
 function updateTopBar( event ) {
@@ -10,14 +10,6 @@ function updateTopBar( event ) {
         animateTop( 0.0 )
         topMode = 'large';
     }
-}
-
-function setImageOpacity( imageid, opacity ) {
-    var s= document.getElementById(imageid).style;
-    s.opacity = ( opacity / 100 );
-    s.MozOpacity = ( opacity / 100 );
-    s.KhtmlOpacity = ( opacity / 100 );
-    s.filter = 'alpha(opacity=' + opacity + ')';
 }
 
 function animateTop( modifier ) {
