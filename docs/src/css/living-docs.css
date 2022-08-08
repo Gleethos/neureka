@@ -87,42 +87,52 @@ table.DataTable thead {
 
 
 .arrow {
-    margin: -0.45em;
+    display: inline-block;
+    position: relative;
+    top:0px;
+    right: -45%;
+    padding: 0px;
+    content: '';
+    width: 0;
+    height: 0.45em;
+    border: .75em solid transparent;
+    border-left-color: #989bd3;
+    margin: -0em;
+}
+
+.right {
+    transform: rotate(0deg);
+}
+
+.left {
+    transform: rotate(180deg);
+}
+
+.up {
+    transform: rotate(-90deg);
+}
+
+.down {
+    transform: rotate(90deg);
 }
 
 .arrow::before {
-    display: inline-block;
-    content: '';
-    width: 0;
-    height: 1em;
-    border: .75em solid transparent;
-    border-left-color: #989bd3;
-    transform-origin: -10px -10px;
     transition: transform .25s;
 }
 
 .arrow.down::before {
-    transform: rotate(90deg);
-    -webkit-transform: rotate(90deg);
     transition: transform .25s;
 }
 
 
 .arrow.right::before {
-    transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg);
     transition: transform .25s;
 }
 
 .arrow.arrow.left::before {
-    transform: rotate(135deg);
-    -webkit-transform: rotate(135deg);
     transition: transform .25s;
 }
 
 .arrow.up::before {
-    transform: rotate(-90deg);
-    -webkit-transform: rotate(-90deg);
     transition: transform .25s;
-    transform-origin: 40% 10%;
 }

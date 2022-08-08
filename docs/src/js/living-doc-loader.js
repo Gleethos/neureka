@@ -144,10 +144,11 @@ function printSearchResults(target, results) {
             title = parts[parts.length-1];
             title = trimEnds(title, ["spec", "specification", "test", "tests", "unit test", "unit tests", "test case", "test cases"]);
         }
-        let h3 = $('<h3></h3>');
-        let arrow = $('<div class="arrow up"></div>');
+        let h3 = $('<h3 class="ContentOption"></h3>');
+        let arrow = $('<div class="arrow down"></div>');
+        let titleWrapper = $('<div style="cursor: pointer;"></div>');
         div.append(
-            $('<div></div>').append(h3.text(title))
+            titleWrapper.append(h3.text(title))
             .append(arrow)
         );
         createNarrativeParagraphs(narrative).forEach((paragraph)=>{specContent.append(paragraph);});
@@ -156,21 +157,26 @@ function printSearchResults(target, results) {
         });
         div.append(specContent);
 
-        // Initially we hide the spec content:
-        if (counter !== 0){
-            specContent.toggle();
+        let toggler = () => {
             arrow.toggle()
+            specContent.toggle();
+            // We check if the spec has display set to none:
+            if ( specContent.css('display') !== 'none' )
+                titleWrapper.css("margin"," 0em 0em -1em 0em")
+            else
+                titleWrapper.css("margin"," 0em")
+        };
+
+        // Initially we hide the spec content:
+        if (counter !== 0) toggler();
+        else {
+            toggler(); toggler();
+            // We do this twice to make sure the margins are set!
         }
 
         // Now we register a click event on the h3 title
         // which switches the arrow between up and down class:
-        h3.click(function() {
-            //arrow.toggleClass('down');
-            //arrow.toggleClass('up');
-            arrow.toggle()
-            // And it toggles the visibility of the content:
-            specContent.toggle();
-        });
+        titleWrapper.click(toggler);
 
         target.append(div);
         counter++;
