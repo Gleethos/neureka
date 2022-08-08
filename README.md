@@ -202,9 +202,8 @@ Min-jar file:
 ## :book: Documentation ###
 
 - [Living Documentation](https://gleethos.github.io/neureka/showcase.html)
-- [Java-Docs](https://gleethos.github.io/neureka/jdocs/index.html)
 - [GitHub Wiki](https://github.com/Gleethos/neureka/wiki)
-- [Test Reports](https://gleethos.github.io/neureka/spock/reports/index.html)
+- [Java-Docs](https://gleethos.github.io/neureka/jdocs/index.html)
 
 ---
 
