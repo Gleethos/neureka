@@ -1,16 +1,16 @@
 {
   "className":"ut.utility.Utility_Spec",
+  "title":"",
+  "narrative":"",
+  "subjects":[],
   "statistics":{
     "runs":"1",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.007 seconds"
+    "duration":"0.008 seconds"
   },
-
-  "title":"",
-  "narrative":"",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
@@ -29,7 +29,7 @@
 
         {"kind":"and","text":"","code":["result.class == expectedType"]},
 
-        {"kind":"where","text":"","code":{"input":["[1.0, 2.0, 3.0]","[1.0, 2.0, 3.0]","[1, 2, 3]","[1, 2, 3]","[1, 2, 3]","[1, 2, 3]","[true, true, true]","[\u0001, \u0002, \u0003]"],"code":["ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure1@56c10a51","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure2@5524e236","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure3@9c0ba0f","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure4@37083410","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure5@10a9f3e8","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure6@7aca9d89","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure7@552d8847","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure8@8ac27b3"],"expectedType":["class [F","class [D","class [I","class [J","class [S","class [B","class [Z","class [C"]}}
+        {"kind":"where","text":"","code":{"input":["[1.0, 2.0, 3.0]","[1.0, 2.0, 3.0]","[1, 2, 3]","[1, 2, 3]","[1, 2, 3]","[1, 2, 3]","[true, true, true]","[\u0001, \u0002, \u0003]"],"code":["ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure1@44e5d15e","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure2@55921e08","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure3@1dd52aaa","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure4@5764b145","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure5@6a82043c","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure6@161f7abd","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure7@6c2b6346","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure8@578dd4f6"],"expectedType":["class [F","class [D","class [I","class [J","class [S","class [B","class [Z","class [C"]}}
       ],
       "problems":"[]"
     }

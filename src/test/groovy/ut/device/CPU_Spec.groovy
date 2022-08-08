@@ -7,6 +7,7 @@ import neureka.devices.host.CPU
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Title
 
 @Title("The CPU device, an API for CPU based execution")
@@ -18,6 +19,7 @@ import spock.lang.Title
     because the tensors will be stored in RAM if no device was specified.
 
 ''')
+@Subject([CPU, Device])
 class CPU_Spec extends Specification
 {
     def setupSpec()

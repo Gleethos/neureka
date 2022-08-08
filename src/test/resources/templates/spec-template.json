@@ -35,8 +35,14 @@ def strCode = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+simpleEsc(it[0])+'"')
 println("Generating json for '"+utils.getSpecClassName( data )+"' now!")
 
 def stats = utils.stats( data )
+def subjects = utils.specAnnotation( data, spock.lang.Subject )?.value()
+if ( subjects == null ) subjects = []
+def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
 %>{
   "className":"${utils.getSpecClassName( data )}",
+  "title":"<% if ( specTitle ) { out << esc(specTitle) } %>",
+  "narrative":"<% if ( data.info.narrative ) { out << esc(data.info.narrative.stripIndent()) } %>",
+  "subjects":[<% out << subjects.collect({'"'+it.getName()+'"'}).join(',') %>],
   "statistics":{
     "runs":"${stats.totalRuns}",
     "successRate":"${fmt.toPercentage(stats.successRate)}",
@@ -45,11 +51,6 @@ def stats = utils.stats( data )
     "skipped":"${stats.skipped}",
     "duration":"${fmt.toTimeDuration(stats.time)}"
   },
-<%
-  def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
-%>
-  "title":"<% if ( specTitle ) { out << esc(specTitle) } %>",
-  "narrative":"<% if ( data.info.narrative ) { out << esc(data.info.narrative.stripIndent()) } %>",
 <%
   def writeTagOrAttachment = {feature ->
     def tagsByKey = feature.tags.groupBy({ t -> t.key })

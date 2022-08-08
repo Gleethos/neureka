@@ -1,5 +1,8 @@
 {
   "className":"ut.optimization.RMSprop_Spec",
+  "title":"",
+  "narrative":"",
+  "subjects":["neureka.optimization.Optimizer"],
   "statistics":{
     "runs":"1",
     "successRate":"100.0%",
@@ -8,9 +11,6 @@
     "skipped":"0",
     "duration":"0.017 seconds"
   },
-
-  "title":"",
-  "narrative":"",
   "headers":["\n                <h2> RMSprop Optimizer Behavior </h2>\n                <br> \n                <p>\n                    This specification check the behavior of the RMSprop class.        \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {

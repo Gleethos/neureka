@@ -3,6 +3,7 @@ package ut.tensors
 import neureka.Tsr
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Title
 
 @Title("To Copy or Not to Copy")
@@ -24,6 +25,7 @@ import spock.lang.Title
     will be covered in this specification as well.
 
 ''')
+@Subject([Tsr])
 class Copy_Spec extends Specification
 {
 

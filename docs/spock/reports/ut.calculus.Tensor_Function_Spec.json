@@ -1,5 +1,8 @@
 {
   "className":"ut.calculus.Tensor_Function_Spec",
+  "title":"Applying Functions on Tensors",
+  "narrative":"A tensor would be nothing without being able to apply operations on them.\n    However, calling operations manually in order to process your\n    tensors can be a verbose and error prone task.\n    This is where functions come into play.\n    Neureka's functions are composed of operations forming an abstract syntax tree.\n    Passing tensors to a function will route them trough this tree and apply\n    all of the operations on the tensors.",
+  "subjects":["neureka.Tsr","neureka.calculus.Function"],
   "statistics":{
     "runs":"5",
     "successRate":"100.0%",
@@ -8,15 +11,12 @@
     "skipped":"0",
     "duration":"0.089 seconds"
   },
-
-  "title":"Applying Functions on Tensors",
-  "narrative":"A tensor would be nothing without being able to apply operations on them.\n    However, calling operations manually in order to process your\n    tensors can be a verbose and error prone task.\n    This is where functions come into play.\n    Neureka's functions are composed of operations forming an abstract syntax tree.\n    Passing tensors to a function will route them trough this tree and apply\n    all of the operations on the tensors.",
   "headers":[" \n            <p>\n                This specification ensures that tensors supplied\n                to functions are executed successfully and produce the expected results.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The optimization function for the SGD algorithm produces the expected result",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Tensor results of various Function instances return expected results.",
       "result":"PASS",
-      "duration":"0.043 seconds",
+      "duration":"0.045 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,7 +62,7 @@
     {
       "id":"Reshaping on 3D tensors works by instantiate a Function instance built from a String.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

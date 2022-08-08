@@ -1,5 +1,8 @@
 {
   "className":"ut.utility.ListReader_Spec",
+  "title":"The Internal ListReader turning lists into flat arrays with shape and type data",
+  "narrative":"This specification covers an internal class which should not be used\n    outside this library, namely the ListReader class.\n    This class is simply a converter which turns nested lists\n    into flat arrays alongside the type of the elements and the shape of this \"tensor\".",
+  "subjects":[],
   "statistics":{
     "runs":"3",
     "successRate":"100.0%",
@@ -8,9 +11,6 @@
     "skipped":"0",
     "duration":"0.005 seconds"
   },
-
-  "title":"The Internal ListReader turning lists into flat arrays with shape and type data",
-  "narrative":"This specification covers an internal class which should not be used\n    outside this library, namely the ListReader class.\n    This class is simply a converter which turns nested lists\n    into flat arrays alongside the type of the elements and the shape of this \"tensor\".",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {

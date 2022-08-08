@@ -1,6 +1,6 @@
 package ut.ndim
 
-import neureka.ndim.config.AbstractNDC
+
 import neureka.ndim.config.NDConfiguration
 import neureka.ndim.config.types.reshaped.Reshaped1DConfiguration
 import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration
@@ -16,7 +16,9 @@ import neureka.ndim.config.types.sliced.Sliced3DConfiguration
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration
 import neureka.ndim.iterator.NDIterator
 import spock.lang.Specification
+import spock.lang.Subject
 
+@Subject([NDConfiguration])
 class NDConfiguration_Spec extends Specification {
 
 

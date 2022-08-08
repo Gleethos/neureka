@@ -1,16 +1,16 @@
 {
   "className":"ut.tensors.Tensor_Generics_Spec",
+  "title":"Tensors as Generic Containers",
+  "narrative":"Tensors do not just store numeric data.\n    They can hold anything which can be stuffed into a \"Object[]\" array.\n    You could even create a tensor of tensors!",
+  "subjects":[],
   "statistics":{
     "runs":"3",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.007 seconds"
+    "duration":"0.006 seconds"
   },
-
-  "title":"Tensors as Generic Containers",
-  "narrative":"Tensors do not just store numeric data.\n    They can hold anything which can be stuffed into a \"Object[]\" array.\n    You could even create a tensor of tensors!",
   "headers":["\n                <p>\n                    Here you will find out how to create a tensor of any kind of data.          \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {

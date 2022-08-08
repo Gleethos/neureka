@@ -1,22 +1,22 @@
 {
   "className":"ut.tensors.Tensor_Slicing_Spec",
+  "title":"Tensors within Tensors",
+  "narrative":"ND-Array data structures can be \"sliced\" in the sense\n    that one can create a subset view of the underlying data inside a tensor\n    through a new tensor instance...\n    This can be a tedious and complicated procedure.\n    Therefore a tensor should expose a various user friendly API for slicing which\n    are also fit for various languages.\n    This specification covers these APIs for tensor slicing.",
+  "subjects":["neureka.Tsr"],
   "statistics":{
     "runs":"9",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.029 seconds"
+    "duration":"0.033 seconds"
   },
-
-  "title":"Tensors within Tensors",
-  "narrative":"ND-Array data structures can be \"sliced\" in the sense\n    that one can create a subset view of the underlying data inside a tensor\n    through a new tensor instance...\n    This can be a tedious and complicated procedure.\n    Therefore a tensor should expose a various user friendly API for slicing which\n    are also fit for various languages.\n    This specification covers these APIs for tensor slicing.",
-  "headers":["\n                <p>\n                    This specification covers the behavior of tensors when being sliced \n                    on multiple different device types using the SliceBuilder API.           \n                </p>\n            "],"tags":{},"see":[],
+  "headers":["\n                This specification covers the behavior of tensors when being sliced\n                on multiple different device types using the SliceBuilder API.           \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
 
         {"kind":"and","text":"As already shown by the printed view, the tensor as the expected shape:","code":["s.shape() == [2, 2, 3]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1ee34b13b00],platform=OpenCLPlatform@4d8c5cba[pid=cl_platform_id[0x7ffb0cb1a490],context=cl_context[0x1ee2ed767a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":"[]"
     },
@@ -66,7 +66,7 @@
 
         {"kind":"and","text":"The \"at\" method sliced a single axis point whereas the \"from\" & \"to\" sliced from 1 to 2.","code":["s.shape() == [1, 3, 2]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1ee34b13b00],platform=OpenCLPlatform@4d8c5cba[pid=cl_platform_id[0x7ffb0cb1a490],context=cl_context[0x1ee2ed767a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":"[]"
     },
@@ -95,7 +95,7 @@
 
         {"kind":"and","text":"The the slice will have the following shape","code":["s.shape() == [1, 3, 2]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1ee34b13b00],platform=OpenCLPlatform@4d8c5cba[pid=cl_platform_id[0x7ffb0cb1a490],context=cl_context[0x1ee2ed767a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":"[]"
     },
@@ -124,7 +124,7 @@
 
         {"kind":"and","text":"The the slice will have the following shape","code":["s.shape() == [1, 3, 2]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1ee34b13b00],platform=OpenCLPlatform@4d8c5cba[pid=cl_platform_id[0x7ffb0cb1a490],context=cl_context[0x1ee2ed767a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":"[]"
     },
@@ -153,7 +153,7 @@
 
         {"kind":"and","text":"The the slice will have the following shape","code":["s.shape() == [1, 1, 2]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1ee34b13b00],platform=OpenCLPlatform@4d8c5cba[pid=cl_platform_id[0x7ffb0cb1a490],context=cl_context[0x1ee2ed767a0],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":"[]"
     },
@@ -161,7 +161,7 @@
     {
       "id":"Slicing is also a Function with autograd support!",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -203,7 +203,7 @@
     {
       "id":"We can avoid autograd when slicing by using the \"detached\" instead of the \"get\" method.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

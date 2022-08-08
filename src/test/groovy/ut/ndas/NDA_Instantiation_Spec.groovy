@@ -3,6 +3,7 @@ package ut.ndas
 import neureka.Nda
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Title
 
 import java.util.function.Predicate
@@ -13,6 +14,7 @@ import java.util.function.Predicate
     In this specification we cover how ND-arrays can be instantiated.
     
 ''')
+@Subject([Nda])
 class NDA_Instantiation_Spec extends Specification
 {
     def 'A vector can be created from an array of values through the "of" method.'()

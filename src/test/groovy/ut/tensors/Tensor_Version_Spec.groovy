@@ -6,6 +6,7 @@ import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Title
 
 @Title("Tensor (Data Array) Version")
@@ -32,6 +33,7 @@ import spock.lang.Title
                 
 
 ''')
+@Subject([Tsr])
 class Tensor_Version_Spec extends Specification
 {
     def setupSpec() {

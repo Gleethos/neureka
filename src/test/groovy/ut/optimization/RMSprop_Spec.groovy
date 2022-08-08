@@ -7,7 +7,9 @@ import neureka.optimization.implementations.RMSprop
 import neureka.view.NDPrintSettings
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Subject
 
+@Subject([Optimizer])
 class RMSprop_Spec extends Specification
 {
     @Shared Tsr<?> w = Tsr.of(0)

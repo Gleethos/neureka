@@ -1,22 +1,22 @@
 {
   "className":"st.Broad_System_Test",
+  "title":"",
+  "narrative":"",
+  "subjects":[],
   "statistics":{
     "runs":"1",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.036 seconds"
+    "duration":"0.035 seconds"
   },
-
-  "title":"",
-  "narrative":"",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test integration broadly.",
       "result":"PASS",
-      "duration":"0.033 seconds",
+      "duration":"0.031 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

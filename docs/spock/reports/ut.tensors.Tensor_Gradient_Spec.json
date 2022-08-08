@@ -1,16 +1,16 @@
 {
   "className":"ut.tensors.Tensor_Gradient_Spec",
+  "title":"Gradients are Tensors which are Components of other Tensors",
+  "narrative":"This specification defines the gradient API on tensors.\n    So one ought to be able to check wetter or not a tensor has a gradient attached to it or not.\n    In that case one should be able to get this gradient and then work with\n    it independently of the original tensor to which it belongs to...",
+  "subjects":[],
   "statistics":{
     "runs":"3",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.003 seconds"
+    "duration":"0.004 seconds"
   },
-
-  "title":"Gradients are Tensors which are Components of other Tensors",
-  "narrative":"This specification defines the gradient API on tensors.\n    So one ought to be able to check wetter or not a tensor has a gradient attached to it or not.\n    In that case one should be able to get this gradient and then work with\n    it independently of the original tensor to which it belongs to...",
   "headers":["\n                <h2> Tensor Gradient Unit Tests </h2>\n                <br>\n                <b>Why is there a difference between \"rqsGradient()\" and \"hasGradient()\" ? :</b>\n                <br><br>\n                <p>\n                    The latter property simply tells if a tensor has another tensor as component.\n                    This however does not necessitate it to also require gradients via the autograd system.\n                    This is what the prior property is for.            \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {

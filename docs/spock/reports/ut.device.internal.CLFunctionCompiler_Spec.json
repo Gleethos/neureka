@@ -1,22 +1,22 @@
 {
   "className":"ut.device.internal.CLFunctionCompiler_Spec",
+  "title":"Turning functions into kernels.",
+  "narrative":"Neureka parses mathematical expressions into an AST representation\n    hidden behind the Function interface...\n    This feature does not exist without reason, we can use\n    this abstract syntax tree to compile to OpenCL kernels\n    for optimal execution speed!",
+  "subjects":[],
   "statistics":{
     "runs":"2",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.016 seconds"
+    "duration":"0.014 seconds"
   },
-
-  "title":"Turning functions into kernels.",
-  "narrative":"Neureka parses mathematical expressions into an AST representation\n    hidden behind the Function interface...\n    This feature does not exist without reason, we can use\n    this abstract syntax tree to compile to OpenCL kernels\n    for optimal execution speed!",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

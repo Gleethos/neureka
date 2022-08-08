@@ -1,16 +1,16 @@
 {
   "className":"ut.device.internal.OpenCL_Data_Spec",
+  "title":"",
+  "narrative":"",
+  "subjects":[],
   "statistics":{
     "runs":"2",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.027 seconds"
+    "duration":"0.026 seconds"
   },
-
-  "title":"",
-  "narrative":"",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {

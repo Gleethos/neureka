@@ -1,22 +1,22 @@
 {
   "className":"Example_Spec.Example_Spec",
+  "title":"An Introduction to writing Spock Specifications",
+  "narrative":"Hello and welcome to the example / template specification of this project.\n    This is a simple introduction as to how to get started writing Spock specifications.\n\n    Spock works on top of Groovy which is in essence a syntactic super-set of Java.\n    That means that one can write Java code in Groovy, and 99% of the time it will \n    work the exact same way.",
+  "subjects":[],
   "statistics":{
     "runs":"5",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.053 seconds"
+    "duration":"0.054 seconds"
   },
-
-  "title":"An Introduction to writing Spock Specifications",
-  "narrative":"Hello and welcome to the example / template specification of this project.\n    This is a simple introduction as to how to get started writing Spock specifications.\n\n    Spock works on top of Groovy which is in essence a syntactic super-set of Java.\n    That means that one can write Java code in Groovy, and 99% of the time it will \n    work the exact same way.",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"iAmNotSoReadable",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -55,7 +55,7 @@
     {
       "id":"Should be able to remove from list",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

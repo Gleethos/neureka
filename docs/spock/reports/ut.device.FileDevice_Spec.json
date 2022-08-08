@@ -1,16 +1,16 @@
 {
   "className":"ut.device.FileDevice_Spec",
+  "title":"FileDevice, Storing Tensors in Files",
+  "narrative":"The FileDevice class, one of many implementations of the Device interface, \n    represents a file directory which should be able to store and load tensors as files (idx, jpg, png...).",
+  "subjects":["neureka.devices.file.FileDevice","neureka.devices.Device"],
   "statistics":{
     "runs":"3",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.076 seconds"
+    "duration":"0.082 seconds"
   },
-
-  "title":"FileDevice, Storing Tensors in Files",
-  "narrative":"The FileDevice class, one of many implementations of the Device interface, \n    represents a file directory which should be able to store and load tensors as files (idx, jpg, png...).",
   "headers":["\n                <p>\n                    This specification covers the behavior of the \"FileDevice\"\n                    class, which enables the persistence of tensor data.           \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
@@ -45,7 +45,7 @@
     {
       "id":"A file device stores tensors in various file formats.",
       "result":"PASS",
-      "duration":"0.043 seconds",
+      "duration":"0.047 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -80,7 +80,7 @@
     {
       "id":"The file device can load known files in a directory.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

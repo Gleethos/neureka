@@ -2,13 +2,11 @@ package ut.dtype
 
 import neureka.dtype.DataType
 import neureka.dtype.NumericType
-import neureka.dtype.custom.F32
-import neureka.dtype.custom.F64
-import neureka.dtype.custom.I16
-import neureka.dtype.custom.I8
-import neureka.dtype.custom.UI8
+import neureka.dtype.custom.*
 import spock.lang.Specification
+import spock.lang.Subject
 
+@Subject([DataType])
 class DataType_Spec extends Specification
 {
 

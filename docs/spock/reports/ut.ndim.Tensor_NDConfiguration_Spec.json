@@ -1,16 +1,16 @@
 {
   "className":"ut.ndim.Tensor_NDConfiguration_Spec",
+  "title":"What it means to be N-Dimensional",
+  "narrative":"",
+  "subjects":[],
   "statistics":{
     "runs":"2",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.008 seconds"
+    "duration":"0.007 seconds"
   },
-
-  "title":"What it means to be N-Dimensional",
-  "narrative":"",
   "headers":["\n            <p>\n                Specified below are strict integration tests for tensors and\n                their behaviour with regards to the usage of implementations of the\n                NDConfiguration interface. <br>\n                For certain situations the \"Tsr\" class should use the correct \n                implementations of said interface as configuration for internal index mapping...\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {

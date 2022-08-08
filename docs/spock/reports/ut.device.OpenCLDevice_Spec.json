@@ -1,16 +1,16 @@
 {
   "className":"ut.device.OpenCLDevice_Spec",
+  "title":"The OpenCLDevice Specification",
+  "narrative":"Tensors need devices for execution!\n    By default we use the CPU as a default device, but sometimes we want to\n    use something more suitable for large amounts of data an a high degree of parallelization.\n    This is were the OpenCLDevice comes into play!\n    It is a Device implementation built on top of the JOCL library, a thin OpenCL API!\n    We expect the OpenCLDevice to stored tensors while still being able to read and write\n    data from and to stored tensors.\n    Also, an OpenCLDevice should allows us to compile OpenCL kernel code on the fly...",
+  "subjects":[],
   "statistics":{
     "runs":"8",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"3.891 seconds"
+    "duration":"3.940 seconds"
   },
-
-  "title":"The OpenCLDevice Specification",
-  "narrative":"Tensors need devices for execution!\n    By default we use the CPU as a default device, but sometimes we want to\n    use something more suitable for large amounts of data an a high degree of parallelization.\n    This is were the OpenCLDevice comes into play!\n    It is a Device implementation built on top of the JOCL library, a thin OpenCL API!\n    We expect the OpenCLDevice to stored tensors while still being able to read and write\n    data from and to stored tensors.\n    Also, an OpenCLDevice should allows us to compile OpenCL kernel code on the fly...",
   "headers":["\n            <h2> OpenCLDevice Integration Tests </h2>\n            <p>\n                Specified below are strict tests covering the behavior\n                of the OpenCLDevice when hosting tensors and executing \n                operations on them.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
@@ -85,7 +85,7 @@
     {
       "id":"Ad hoc compilation produces executable kernel.",
       "result":"PASS",
-      "duration":"0.101 seconds",
+      "duration":"0.110 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -110,7 +110,7 @@
     {
       "id":"Ad hoc compilation works for WIP general purpose matrix multiplication.",
       "result":"PASS",
-      "duration":"0.560 seconds",
+      "duration":"0.597 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -137,7 +137,7 @@
     {
       "id":"Ad hoc matrix multiplication works for multiple of 16 matrices.",
       "result":"PASS",
-      "duration":"0.345 seconds",
+      "duration":"0.354 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -164,7 +164,7 @@
     {
       "id":"Ad hoc compilation works for custom simple row major based matrix multiplication.",
       "result":"PASS",
-      "duration":"0.821 seconds",
+      "duration":"0.832 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -191,7 +191,7 @@
     {
       "id":"Ad hoc compilation works for custom column major based tiled matrix multiplication.",
       "result":"PASS",
-      "duration":"2.030 seconds",
+      "duration":"2.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

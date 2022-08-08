@@ -1,16 +1,16 @@
 {
   "className":"ut.tensors.Tensor_As_Container_Spec",
+  "title":"Why not have a tensor of words?",
+  "narrative":"Technically, tensors are merely fancy ND-arrays with some useful mathematical operations\n    applicable to them...\n    Therefore, there is no reason why a tensor would not also be able to store\n    other kinds of objects besides numbers like strings for example.\n    This specification ensures that tensors can hold and index many other things...",
+  "subjects":[],
   "statistics":{
     "runs":"4",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.013 seconds"
+    "duration":"0.014 seconds"
   },
-
-  "title":"Why not have a tensor of words?",
-  "narrative":"Technically, tensors are merely fancy ND-arrays with some useful mathematical operations\n    applicable to them...\n    Therefore, there is no reason why a tensor would not also be able to store\n    other kinds of objects besides numbers like strings for example.\n    This specification ensures that tensors can hold and index many other things...",
   "headers":["\n           Although you can create a tensor of almost anything, you will\n           not be able to execute operations on every kind of tensor...        \n        "],"tags":{},"see":[],
   "features":[ 
     {
@@ -37,7 +37,7 @@
     {
       "id":"Tensor operations translate to custom data type \"ComplexNumber\".",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -69,7 +69,7 @@
     {
       "id":"We can apply predicates on the values of a tensor.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

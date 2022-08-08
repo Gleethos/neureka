@@ -6,6 +6,7 @@ import neureka.autograd.GraphNode
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Title
 
 @Title("Autograd - Automatic Differentiation")
@@ -29,6 +30,7 @@ import spock.lang.Title
     computation history, and to prevent future computation from being tracked.     
             
 ''')
+@Subject([Tsr, GraphNode])
 class Autograd_Explained extends Specification
 {
     def setupSpec()

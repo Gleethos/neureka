@@ -1,22 +1,22 @@
 {
   "className":"ut.device.CLFunctionCompiler_Spec",
+  "title":"OpenCLDevice Function Optimization Integration Tests",
+  "narrative":"",
+  "subjects":[],
   "statistics":{
     "runs":"1",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.124 seconds"
+    "duration":"0.129 seconds"
   },
-
-  "title":"",
-  "narrative":"",
-  "headers":["\n            <h2> OpenCLDevice Function Optimization Integration Tests </h2>\n            <p>\n                Specified below are strict tests for covering the ability of \n                OpenCL devices to be able produce optimized functions given\n                a normal function instance created from a String...\n            </p>\n        "],"tags":{},"see":[],
+  "headers":["\n            Specified below are strict tests for covering the ability of \n            OpenCL devices to be able produce optimized functions given\n            a normal function instance created from a String...\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice produces a working optimized Function (internally using the CLFunctionCompiler).",
       "result":"PASS",
-      "duration":"0.120 seconds",
+      "duration":"0.127 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

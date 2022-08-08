@@ -1,10 +1,11 @@
 package ut.calculus
 
 import neureka.Neureka
-import neureka.backend.api.Operation
 import neureka.backend.api.BackendContext
+import neureka.backend.api.Operation
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Title
 
 import java.util.function.Function
@@ -19,6 +20,7 @@ import java.util.function.Function
     during library startup but also throughout the runtime.
     
 ''')
+@Subject([Operation, BackendContext])
 class BackendContext_Spec extends Specification
 {
     def 'BackendContext instances can be created by cloning from Singleton instance.'()

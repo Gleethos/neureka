@@ -1,16 +1,16 @@
 {
   "className":"ut.tensors.Tensor_State_Spec",
+  "title":"The Tensor Initialization and State Specification",
+  "narrative":"This specification defines the expected states of freshly instantiated\n    and initialized tensors.\n    After a tensor was created successfully we expect it \n    to have certain properties like a shape, rank, type nnd data array\n    among other things.",
+  "subjects":[],
   "statistics":{
     "runs":"8",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.025 seconds"
+    "duration":"0.024 seconds"
   },
-
-  "title":"The Tensor Initialization and State Specification",
-  "narrative":"This specification defines the expected states of freshly instantiated\n    and initialized tensors.\n    After a tensor was created successfully we expect it \n    to have certain properties like a shape, rank, type nnd data array\n    among other things.",
   "headers":["    \n            <p>\n                This unit test specification covers the expected state of newly instantiated tensors.\n                Certain properties must have their expected default values.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
@@ -71,7 +71,7 @@
     {
       "id":"Tensors as String can be formatted depending on shape.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -98,7 +98,7 @@
     {
       "id":"Newly instantiated and unmodified scalar tensor has expected state.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

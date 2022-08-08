@@ -52,7 +52,7 @@ def stats = utils.aggregateStats( data )
   "specifications": [<%
     def i = 0
     data.each { name, map ->
-    def s = map.stats
+      def s = map.stats
     %>{
       "className":"$name",
       "title":"${esc(map.title)}",

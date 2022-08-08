@@ -5,17 +5,16 @@ import neureka.Tsr
 import neureka.autograd.ADAgent
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
-import neureka.backend.api.Algorithm
-import neureka.backend.api.Operation
+import neureka.backend.api.*
 import neureka.backend.api.fun.ADAgentSupplier
-import neureka.backend.api.AutoDiffMode
-import neureka.backend.api.Result
 import neureka.calculus.implementations.FunctionInput
 import neureka.calculus.implementations.FunctionNode
 import neureka.devices.Device
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
+import spock.lang.Subject
 
+@Subject([Operation, BackendContext])
 class Backend_Extension_Spec extends Specification
 {
     def setupSpec()

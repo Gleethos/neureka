@@ -1,8 +1,8 @@
 package ut.device
 
-import neureka.common.composition.Component
 import neureka.Neureka
 import neureka.Tsr
+import neureka.common.composition.Component
 import neureka.devices.Device
 import neureka.devices.opencl.CLContext
 import neureka.devices.opencl.OpenCLDevice
@@ -10,7 +10,9 @@ import neureka.devices.opencl.utility.DeviceQuery
 import neureka.framing.Relation
 import spock.lang.IgnoreIf
 import spock.lang.Specification
+import spock.lang.Subject
 
+@Subject([OpenCLDevice, DeviceQuery, Device])
 class OpenCL_Spec extends Specification
 {
 

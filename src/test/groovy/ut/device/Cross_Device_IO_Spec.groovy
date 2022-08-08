@@ -3,13 +3,8 @@ package ut.device
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
-import neureka.devices.opencl.CLContext
-import neureka.devices.opencl.Data
 import neureka.dtype.DataType
-import spock.lang.IgnoreIf
-import spock.lang.Narrative
-import spock.lang.Specification
-import spock.lang.Title
+import spock.lang.*
 
 @Title("Devices manage the states of the tensors they store!")
 @Narrative('''
@@ -21,6 +16,7 @@ import spock.lang.Title
     enable reading to or writing from the tensors they store.
 
 ''')
+@Subject([Device])
 class Cross_Device_IO_Spec extends Specification
 {
 

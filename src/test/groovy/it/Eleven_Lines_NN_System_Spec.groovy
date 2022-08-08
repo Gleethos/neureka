@@ -4,6 +4,7 @@ import groovy.transform.CompileDynamic
 import neureka.Tsr
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Title
 
 @Title("NN Code Golfing!")
@@ -30,6 +31,7 @@ import spock.lang.Title
 
 ''')
 @CompileDynamic
+@Subject([Tsr])
 class Eleven_Lines_NN_System_Spec extends Specification {
 
     private static var RESULT_W1 = [-0.9115492136933212, -2.8053196189337415, -0.25180106006850766, -1.3116921909681862, -0.6594293130862794, 2.5123812135829557, -1.0514473377002078, -1.2928097640444747, 1.3971567790475048, 2.2039099308398966, -0.6782812239543351, 2.7385438350643065]

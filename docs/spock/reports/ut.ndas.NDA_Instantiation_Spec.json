@@ -1,16 +1,16 @@
 {
   "className":"ut.ndas.NDA_Instantiation_Spec",
+  "title":"ND-Array Instantiation",
+  "narrative":"In this specification we cover how ND-arrays can be instantiated.",
+  "subjects":["neureka.Nda"],
   "statistics":{
     "runs":"2",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.010 seconds"
+    "duration":"0.009 seconds"
   },
-
-  "title":"ND-Array Instantiation",
-  "narrative":"In this specification we cover how ND-arrays can be instantiated.",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {

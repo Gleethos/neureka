@@ -1,16 +1,16 @@
 {
   "className":"ut.autograd.internal.GraphNode_Tensor_Exception_Unit_Tests",
+  "title":"",
+  "narrative":"",
+  "subjects":[],
   "statistics":{
     "runs":"1",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.004 seconds"
+    "duration":"0.005 seconds"
   },
-
-  "title":"",
-  "narrative":"",
   "headers":["\n            <h2> GraphNode Tensor Exceptions </h2>\n            <p>\n                Specified below are strict tests covering the exception behavior\n                of the GraphNode class interacting with Tsr instances.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {

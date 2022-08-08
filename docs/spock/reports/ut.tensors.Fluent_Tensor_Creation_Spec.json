@@ -1,5 +1,8 @@
 {
   "className":"ut.tensors.Fluent_Tensor_Creation_Spec",
+  "title":"",
+  "narrative":"",
+  "subjects":["neureka.Tsr"],
   "statistics":{
     "runs":"7",
     "successRate":"100.0%",
@@ -8,9 +11,6 @@
     "skipped":"0",
     "duration":"0.026 seconds"
   },
-
-  "title":"",
-  "narrative":"",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
@@ -135,7 +135,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@75a07279","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@23a7e08","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@22e5a180","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@4854370d","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@1da0264e","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@7213bc2f","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@fb8e63","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@75691eac"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@265a75a","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@5ee67f2b","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@5abeb2c9","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@26a82315","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@1b3406cb","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@353c563b","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@4fa29457","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@44f95a86"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
       ],
       "problems":"[]"
     },
@@ -168,7 +168,7 @@
     {
       "id":"Scalars can be created fluently.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -7,10 +7,7 @@ import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
 import neureka.view.NDPrintSettings
-import spock.lang.IgnoreIf
-import spock.lang.Narrative
-import spock.lang.Specification
-import spock.lang.Title
+import spock.lang.*
 import st.tests.CrossDeviceSystemTest
 import st.tests.SimpleNNSystemTest
 import testutility.mock.DummyDevice
@@ -26,6 +23,7 @@ import java.util.function.Function
                     
 ''')
 @CompileDynamic
+@Subject([Device])
 class Cross_Device_Spec extends Specification
 {
     def setup() {

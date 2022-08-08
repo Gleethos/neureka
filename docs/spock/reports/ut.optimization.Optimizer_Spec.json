@@ -1,5 +1,8 @@
 {
   "className":"ut.optimization.Optimizer_Spec",
+  "title":"",
+  "narrative":"",
+  "subjects":["neureka.optimization.Optimizer"],
   "statistics":{
     "runs":"0",
     "successRate":"100.0%",
@@ -8,9 +11,6 @@
     "skipped":"1",
     "duration":"0"
   },
-
-  "title":"",
-  "narrative":"",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {

@@ -1,18 +1,11 @@
 package ut.dtype
 
-import neureka.dtype.custom.F32
-import neureka.dtype.custom.F64
-import neureka.dtype.custom.I16
-import neureka.dtype.custom.I32
-import neureka.dtype.custom.I64
-import neureka.dtype.custom.I8
+
 import neureka.dtype.NumericType
-import neureka.dtype.custom.UI16
-import neureka.dtype.custom.UI32
-import neureka.dtype.custom.UI64
-import neureka.dtype.custom.UI8
+import neureka.dtype.custom.*
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Title
 
 @Title("The NumericType and its implementations model their respective numeric data types.")
@@ -25,6 +18,7 @@ import spock.lang.Title
     these numeric data types using JVM types.
 
 ''')
+@Subject([NumericType])
 class NumericType_Spec extends Specification
 {
 

@@ -1,16 +1,16 @@
 {
   "className":"ut.calculus.BackendContext_Spec",
+  "title":"The BackendContext is a cloneable context which can run Tasks.",
+  "narrative":"This specification defines the expected behaviour of the backend context\n    which should expose a convenient API to work with.\n    This API should allow for tasks to be running on a given context\n    which is important for testing and modularity not only\n    during library startup but also throughout the runtime.",
+  "subjects":["neureka.backend.api.Operation","neureka.backend.api.BackendContext"],
   "statistics":{
     "runs":"3",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.014 seconds"
+    "duration":"0.017 seconds"
   },
-
-  "title":"The BackendContext is a cloneable context which can run Tasks.",
-  "narrative":"This specification defines the expected behaviour of the backend context\n    which should expose a convenient API to work with.\n    This API should allow for tasks to be running on a given context\n    which is important for testing and modularity not only\n    during library startup but also throughout the runtime.",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
@@ -43,7 +43,7 @@
     {
       "id":"BackendContext instances return Runner instances for easy visiting.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -68,7 +68,7 @@
     {
       "id":"BackendContext instances return Runner instances for easy visiting with return values.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
 
         {"kind":"and","text":"The outer context is as expected simply the current context.","code":["outerContext == current"]},
 
-        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@7558f455","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@423d45bc","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@7274cd95"]}}
+        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@2cdf91e5","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@44bf561a","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@dae6dd0"]}}
       ],
       "problems":"[]"
     }

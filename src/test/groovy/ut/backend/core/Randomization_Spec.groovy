@@ -1,8 +1,11 @@
 package ut.backend.core
 
+
 import neureka.backend.main.operations.other.Randomization
 import spock.lang.Specification
+import spock.lang.Subject
 
+@Subject([Randomization])
 class Randomization_Spec extends Specification {
 
     def 'Randomization is in essence the same algorithm as JDKs "Random".'()

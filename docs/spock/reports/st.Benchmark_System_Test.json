@@ -1,22 +1,22 @@
 {
   "className":"st.Benchmark_System_Test",
+  "title":"",
+  "narrative":"",
+  "subjects":[],
   "statistics":{
     "runs":"2",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.999 seconds"
+    "duration":"1.964 seconds"
   },
-
-  "title":"",
-  "narrative":"",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensor can be constructed by passing List instances.",
       "result":"PASS",
-      "duration":"0.638 seconds",
+      "duration":"0.618 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Test benchmark script and simple tensor constructor.",
       "result":"PASS",
-      "duration":"1.356 seconds",
+      "duration":"1.342 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

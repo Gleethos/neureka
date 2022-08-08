@@ -2,15 +2,20 @@ package ut.device
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.devices.Device
 import neureka.devices.file.FileDevice
 import neureka.devices.file.FileHandle
-import neureka.devices.file.handles.*
+import neureka.devices.file.handles.CSVHandle
+import neureka.devices.file.handles.IDXHandle
+import neureka.devices.file.handles.JPEGHandle
+import neureka.devices.file.handles.PNGHandle
 import neureka.dtype.DataType
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.I16
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Title
 
 @Title("FileDevice, Storing Tensors in Files")
@@ -18,6 +23,7 @@ import spock.lang.Title
     The FileDevice class, one of many implementations of the Device interface, 
     represents a file directory which should be able to store and load tensors as files (idx, jpg, png...).
 ''')
+@Subject([FileDevice, Device])
 class FileDevice_Spec extends Specification
 {
     def setupSpec()

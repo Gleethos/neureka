@@ -5,9 +5,11 @@ import neureka.Tsr
 import neureka.autograd.GraphNode
 import neureka.view.NDPrintSettings
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Unroll
 
 
+@Subject([Neureka, Neureka.Settings, Neureka.Settings.AutoGrad])
 class Autograd_Flags_Explained extends Specification
 {
     def setupSpec()

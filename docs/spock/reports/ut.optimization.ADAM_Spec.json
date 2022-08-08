@@ -1,22 +1,22 @@
 {
   "className":"ut.optimization.ADAM_Spec",
+  "title":"",
+  "narrative":"",
+  "subjects":["neureka.optimization.Optimizer"],
   "statistics":{
     "runs":"3",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.049 seconds"
+    "duration":"0.051 seconds"
   },
-
-  "title":"",
-  "narrative":"",
   "headers":["\n                <h2> ADAM Optimizer Behavior </h2>\n                <br> \n                <p>\n                    This specification check the behavior of the ADAM class.        \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"ADAM optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.023 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
     {
       "id":"Equations \"I[0]*I[1]+(1-I[2])*I[3]\" and \"(1-I[0])*I[1]\" used within ADAM return expected results.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

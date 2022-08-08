@@ -7,18 +7,17 @@ import neureka.devices.opencl.CLContext
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("OpenCLDevice Function Optimization Integration Tests")
 class CLFunctionCompiler_Spec extends Specification {
 
     def setupSpec()
     {
         reportHeader """
-            <h2> OpenCLDevice Function Optimization Integration Tests </h2>
-            <p>
-                Specified below are strict tests for covering the ability of 
-                OpenCL devices to be able produce optimized functions given
-                a normal function instance created from a String...
-            </p>
+            Specified below are strict tests for covering the ability of 
+            OpenCL devices to be able produce optimized functions given
+            a normal function instance created from a String...
         """
     }
 

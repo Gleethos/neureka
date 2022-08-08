@@ -7,7 +7,9 @@ import neureka.optimization.implementations.AdaGrad
 import neureka.view.NDPrintSettings
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Subject
 
+@Subject([Optimizer])
 class AdaGrad_Spec extends Specification
 {
     @Shared Tsr<?> w = Tsr.of(0)

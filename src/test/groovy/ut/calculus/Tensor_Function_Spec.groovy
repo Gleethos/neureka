@@ -6,10 +6,7 @@ import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionParser
 import neureka.devices.Device
 import neureka.view.NDPrintSettings
-import spock.lang.IgnoreIf
-import spock.lang.Narrative
-import spock.lang.Specification
-import spock.lang.Title
+import spock.lang.*
 
 @Title("Applying Functions on Tensors")
 @Narrative('''
@@ -23,6 +20,7 @@ import spock.lang.Title
     all of the operations on the tensors.
 
 ''')
+@Subject([Tsr, Function])
 class Tensor_Function_Spec extends Specification
 {
     def setupSpec()

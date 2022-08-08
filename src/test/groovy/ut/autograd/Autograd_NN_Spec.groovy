@@ -8,22 +8,29 @@ import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
+import spock.lang.Title
 
+@Title("Simple Neural Network autograd integration test")
+@Narrative('''
+
+    The integration test below has been implemented by using
+    the following code and the result it produces as reference : 
+    https://medium.com/dair-ai/a-simple-neural-network-from-scratch-with-pytorch-and-google-colab-c7f3830618e0 
+    
+    The following seed has been used to assure reproducibility :
+    'torch.manual_seed(503672689411)'
+
+''')
+@Subject([Tsr, GraphNode])
 class Autograd_NN_Spec extends Specification
 {
     def setupSpec()
     {
         reportHeader """
-            <h2>Simple Neural Network autograd integration test.</h2>
-            <p>
-                The integration test below has been implemented by using
-                the following code and the result it produces as reference : <br>
-                https://medium.com/dair-ai/a-simple-neural-network-from-scratch-with-pytorch-and-google-colab-c7f3830618e0 <br>
-                <br>
-                The following seed has been used to assure reproducibility : <br>
-                'torch.manual_seed(503672689411)'
-            </p>
+
             """
     }
 

@@ -4,7 +4,9 @@ import neureka.Tsr
 import neureka.dtype.DataType
 import neureka.ndim.Filler
 import spock.lang.Specification
+import spock.lang.Subject
 
+@Subject([Tsr])
 class Fluent_Tensor_Creation_Spec extends Specification
 {
     def 'Tensors can be created fluently.'(

@@ -14,21 +14,22 @@ import neureka.view.NDPrintSettings
 import spock.lang.Ignore
 import spock.lang.IgnoreIf
 import spock.lang.Specification
+import spock.lang.Subject
+import spock.lang.Title
 import testutility.mock.DummyDevice
 
 import java.util.function.BiConsumer
 
+@Title("Cross Device-Type Unit Tests")
+@Subject([Device])
 class Cross_Device_Type_Spec extends Specification
 {
     def setupSpec()
     {
         reportHeader """
-            <h2> Cross Device-Type Unit Tests </h2>
-            <p>
                 Specified below are strict tests for the factory methods in the
                 Device interface as well as its various implementations 
                 which should adhere to a certain set of common behaviours.
-            </p>
         """
     }
 

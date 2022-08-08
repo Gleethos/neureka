@@ -30,6 +30,7 @@ import java.util.regex.Pattern
     This specification also exists to cover standards for the Neureka library in general.
 
 ''')
+@Subject([Neureka])
 class Neureka_Spec extends Specification
 {
     /**

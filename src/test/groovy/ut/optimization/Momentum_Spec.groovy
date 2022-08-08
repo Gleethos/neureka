@@ -7,7 +7,9 @@ import neureka.optimization.implementations.Momentum
 import neureka.view.NDPrintSettings
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Subject
 
+@Subject([Optimizer])
 class Momentum_Spec extends Specification
 {
     @Shared Tsr<Double> w = Tsr.of(0)

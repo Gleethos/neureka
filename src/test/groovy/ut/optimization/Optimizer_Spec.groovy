@@ -5,14 +5,15 @@ import neureka.Tsr
 import neureka.calculus.Function
 import neureka.calculus.assembly.ParseUtil
 import neureka.ndim.config.types.views.SimpleReshapeView
+import neureka.optimization.Optimizer
 import neureka.optimization.implementations.ADAM
 import neureka.optimization.implementations.SGD
 import neureka.view.NDPrintSettings
 import spock.lang.Ignore
 import spock.lang.Specification
+import spock.lang.Subject
 
-//import org.junit.Test
-
+@Subject([Optimizer])
 class Optimizer_Spec extends Specification
 {
     def setup() {

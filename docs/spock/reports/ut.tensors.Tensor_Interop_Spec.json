@@ -1,16 +1,16 @@
 {
   "className":"ut.tensors.Tensor_Interop_Spec",
+  "title":"Tensors play well with other data structures!",
+  "narrative":"Tensors should have good interoperability with other JDK data structures like images.\n    In this specification we define these interoperability requirements.",
+  "subjects":[],
   "statistics":{
     "runs":"2",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.011 seconds"
+    "duration":"0.010 seconds"
   },
-
-  "title":"Tensors play well with other data structures!",
-  "narrative":"Tensors should have good interoperability with other JDK data structures like images.\n    In this specification we define these interoperability requirements.",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {

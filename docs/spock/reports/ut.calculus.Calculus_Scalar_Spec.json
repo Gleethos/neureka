@@ -1,16 +1,16 @@
 {
   "className":"ut.calculus.Calculus_Scalar_Spec",
+  "title":"A Function as such!",
+  "narrative":"This specification defines the expected behaviour of the Function API\n    with respect to receiving simple scalar values as arguments.\n    Functions don't have to be used alongside tensors / nd-arrays,\n    they can also be fed standalone scalar values.",
+  "subjects":[],
   "statistics":{
     "runs":"6",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.028 seconds"
+    "duration":"0.027 seconds"
   },
-
-  "title":"A Function as such!",
-  "narrative":"This specification defines the expected behaviour of the Function API\n    with respect to receiving simple scalar values as arguments.\n    Functions don't have to be used alongside tensors / nd-arrays,\n    they can also be fed standalone scalar values.",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {

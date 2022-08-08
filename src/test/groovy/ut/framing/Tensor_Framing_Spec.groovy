@@ -1,11 +1,14 @@
 package ut.framing
 
+
 import neureka.Neureka
 import neureka.Tsr
+import neureka.framing.NDFrame
 import neureka.view.NDPrintSettings
-import spock.lang.Specification
-import spock.lang.Title
 import spock.lang.Narrative
+import spock.lang.Specification
+import spock.lang.Subject
+import spock.lang.Title
 import testutility.Sleep
 
 import java.lang.ref.WeakReference
@@ -25,6 +28,7 @@ import java.lang.ref.WeakReference
     indices may also be something other than integers.
 
 ''')
+@Subject([Tsr, NDFrame])
 class Tensor_Framing_Spec extends Specification
 {
     def setupSpec() {

@@ -1,5 +1,8 @@
 {
   "className":"ut.utility.DataConverter_Spec",
+  "title":"",
+  "narrative":"",
+  "subjects":[],
   "statistics":{
     "runs":"2",
     "successRate":"100.0%",
@@ -8,9 +11,6 @@
     "skipped":"0",
     "duration":"0.004 seconds"
   },
-
-  "title":"",
-  "narrative":"",
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
