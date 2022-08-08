@@ -9,6 +9,7 @@ import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Title
 
 @Title("Tensors within Tensors")
@@ -23,14 +24,13 @@ import spock.lang.Title
     This specification covers these APIs for tensor slicing.
                     
 ''')
+@Subject([Tsr])
 class Tensor_Slicing_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """
-                <p>
-                    This specification covers the behavior of tensors when being sliced 
-                    on multiple different device types using the SliceBuilder API.           
-                </p>
+                This specification covers the behavior of tensors when being sliced
+                on multiple different device types using the SliceBuilder API.           
             """
     }
 
@@ -39,7 +39,7 @@ class Tensor_Slicing_Spec extends Specification
         Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
     }
 
-    def 'When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.' (
+    def 'When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.'(
             Device device
     ) {
         given : 'A device could be found.'
