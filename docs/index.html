@@ -389,14 +389,6 @@ to allow for rapid prototyping and highly readable math heavy code...
 </div>
 <script src="src/js/marked.min.js"></script>
 <script>
-    function switchTab(src, target) {
-        var TabBody = $(src.target).parent().parent().find('.TabBody');
-        TabBody.children().css("display", "none");
-        $(src.target).siblings().removeClass("selected");
-        $(src.target).parent().parent().find(target).css("display", "");
-        $(src.target).addClass("selected");
-        console.log($(src.target).html());
-    }
     $(document).ready(function() {
         console.log('Executing format procedure...');
         hljs.initHighlighting.called = false;

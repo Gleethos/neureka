@@ -103,8 +103,12 @@ $(document).ready(function () {
 });
 
 function switchTab(src, target) {
-    var TabBody = $(src.target).parent().parent().find('.TabBody');
-    TabBody.children().css("display", "none");
+    const tabsWrapper = $(src.target).parent().parent();
+    // Now we need to find the '.TabBody' element:
+    // (but only the first child! because we don't want to traverse the whole tree
+    // in order to avoid messing up nested tabs)
+    const tabBody = tabsWrapper.children('.TabBody').first();
+    tabBody.children().css("display", "none");
     $(src.target).siblings().removeClass("selected");
     $(src.target).parent().parent().find(target).css("display", "");
     $(src.target).addClass("selected");
