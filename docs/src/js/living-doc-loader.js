@@ -241,7 +241,7 @@ function createLoaderDropDownFor(specName, expandableFeature) {
         let currentlyHidden = content.css('display') === 'none';
 
         // Before we toggle the content we need to "untoggle" all the sibling contents:
-        $('.content').each((index, current)=>{ $(current).hide(100); });
+        $('.CollapsibleContent').each((index, current)=>{ $(current).hide(100); });
         $('.ContentOptionSelected').each((index, current)=>{ $(current).removeClass('ContentOptionSelected'); });
 
         // We switch the content display attribute:
