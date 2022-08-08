@@ -79,7 +79,12 @@ function searchScore(searchWord, sentence) {
         if ( sentence.length === 0 ) return score;
 
         // We check if the sentence contains the search word:
-        if ( sentence.indexOf(searchWord) !== -1 ) score += 1.0;
+        let matches = sentence.split(searchWord).length;
+        if ( matches > 0 ) {
+            let numberOfTokensInSearchWord = searchWord.split(" ").length;
+            if ( numberOfTokensInSearchWord === 0 ) numberOfTokensInSearchWord = 1;
+            score += ( matches * searchWord.length / sentence.length ) * numberOfTokensInSearchWord;
+        }
         sentence = removeFillWords(sentence.split(' ')); // And we remove fill words.
     }
     // We check if the search word can be split into a sentence:
@@ -108,7 +113,13 @@ function searchScore(searchWord, sentence) {
 // A function which remove fill words (like "the", "a", "from", "is"...) from an array of words:
 function removeFillWords(words) {
     // We define an array of things to remove ("noisy words"):
-    let fillWords = ["the", "a", "of", "and", "or", "in", "on", "at", "to", "with", "by", "as", "from", "is", "of", "and", "in", "on", "at", "with", "by", "for", "an"];
+    let fillWords = [
+        "the", "a", "and", "or", "to", "as", "from", "is",
+        "of", "in", "on", "at", "with", "by", "for", "an",
+        "if", "then", "else", "when", "where", "how", "why",
+        "what", "who", "which", "whose", "whom", "whose",
+        "about", "above", "across", "after", "against"
+    ];
     // We create a new array:
     let newWords = [];
     // We then iterate over the words:
