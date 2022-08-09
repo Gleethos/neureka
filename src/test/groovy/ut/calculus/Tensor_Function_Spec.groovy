@@ -8,7 +8,7 @@ import neureka.devices.Device
 import neureka.view.NDPrintSettings
 import spock.lang.*
 
-@Title("Applying Functions on Tensors")
+@Title("Applying Functions to Tensors")
 @Narrative('''
 
     A tensor would be nothing without being able to apply operations on them.
@@ -17,7 +17,7 @@ import spock.lang.*
     This is where functions come into play.
     Neureka's functions are composed of operations forming an abstract syntax tree.
     Passing tensors to a function will route them trough this tree and apply
-    all of the operations on the tensors.
+    all of the operations on the tensors for you.
 
 ''')
 @Subject([Tsr, Function])
@@ -26,10 +26,8 @@ class Tensor_Function_Spec extends Specification
     def setupSpec()
     {
         reportHeader """ 
-            <p>
                 This specification ensures that tensors supplied
                 to functions are executed successfully and produce the expected results.
-            </p>
         """
     }
 

@@ -7,13 +7,13 @@ import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
 
-@Title("A Function as such!")
+@Title("Functions for Scalars")
 @Narrative('''
     
-    This specification defines the expected behaviour of the Function API
-    with respect to receiving simple scalar values as arguments.
+    The Function API and it's implementations 
+    receive and process arrays of scalars as arguments.
     Functions don't have to be used alongside tensors / nd-arrays,
-    they can also be fed standalone scalar values.
+    they can also compute derivatives based on scalar values.
     
 ''')
 class Calculus_Scalar_Spec extends Specification

@@ -1,8 +1,10 @@
 package ut.calculus
 
 import neureka.calculus.Function
+import neureka.calculus.assembly.FunctionParser
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Title
 
 @Title("Parsing Expressions into Functions")
@@ -16,6 +18,7 @@ import spock.lang.Title
     'Function' implementations.
 
 ''')
+@Subject([Function, FunctionParser])
 class Calculus_Parsing_Spec extends Specification
 {
     def setupSpec()

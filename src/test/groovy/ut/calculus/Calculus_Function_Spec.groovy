@@ -4,12 +4,24 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Functions
 import neureka.calculus.args.Args
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
+import spock.lang.Title
 
 import java.util.function.Function
 import java.util.function.Supplier
 
-class Calculus_Function_Spec extends Specification {
+@Title("Testing Default Methods on Functions")
+@Narrative('''
+
+    This specification tests the default methods on functions
+    through a simple dummy implementation of the Function interface.
+
+''')
+@Subject([Function])
+class Calculus_Function_Spec extends Specification
+{
 
     def 'Function implementations ensure that internally created tensors are flagged as "intermediate" initially!'()
     {

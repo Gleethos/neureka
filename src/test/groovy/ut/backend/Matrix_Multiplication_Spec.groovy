@@ -2,8 +2,20 @@ package ut.backend
 
 import neureka.Tsr
 import neureka.ndim.config.NDConfiguration
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("Matrix Multiplication")
+@Narrative('''
+    
+    The tensor API exposes a useful method for Matrix Multiplication.
+    This specification not only demonstrates how to use this method
+    but also shows how matrix multiplication work 
+    for tensors with both row and column major layouts.
+    (typically, column major is faster)
+    
+''')
 class Matrix_Multiplication_Spec extends Specification
 {
     def 'The simple CPU matrix multiplication implementation works as expected.'(
