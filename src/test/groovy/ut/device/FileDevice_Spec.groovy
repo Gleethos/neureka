@@ -29,10 +29,8 @@ class FileDevice_Spec extends Specification
     def setupSpec()
     {
         reportHeader """
-                <p>
                     This specification covers the behavior of the "FileDevice"
-                    class, which enables the persistence of tensor data.           
-                </p>
+                    class, which enables the persistence of tensor data.      
             """
     }
 

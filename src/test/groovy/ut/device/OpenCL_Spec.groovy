@@ -9,10 +9,22 @@ import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.DeviceQuery
 import neureka.framing.Relation
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Title
 
-@Subject([OpenCLDevice, DeviceQuery, Device])
+@Title("Working with OpenCL")
+@Narrative('''
+
+    Neureka models the OpenCL API through various types of classes.
+    The most fundamental of these is the OpenCLDevice class which
+    represents a single OpenCL device.
+    Besides that, there is also the OpenCLContext class which
+    represents a OpenCL context, representing OpenCL platforms and multiple devices...
+
+''')
+@Subject([CLContext, OpenCLDevice, DeviceQuery, Device])
 class OpenCL_Spec extends Specification
 {
 
