@@ -203,6 +203,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                     FileHandle.FACTORY.getSaver(extension).save( _directory + "/" + fullFileName, tensor, configurations )
             );
             tensor.setIsOutsourced(true);
+            tensor.getUnsafe().setData(null);
         }
         return this;
     }

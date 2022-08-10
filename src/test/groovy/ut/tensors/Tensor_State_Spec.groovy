@@ -213,6 +213,7 @@ class Tensor_State_Spec extends Specification
 
         when: 'The flag "isOutsourced" is being set to false...'
             t.setIsOutsourced( true )
+            t.unsafe.setData(null)
         then: 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
             !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
@@ -243,6 +244,7 @@ class Tensor_State_Spec extends Specification
             !t.isOutsourced()
         when : 'The flag "isOutsourced" is being set to false...'
             t.setIsOutsourced( true )
+            t.unsafe.setData(null)
         then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
             !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
@@ -275,6 +277,7 @@ class Tensor_State_Spec extends Specification
             t.isVirtual()
         when : 'The flag "isOutsourced" is being set to false...'
             t.setIsOutsourced( true )
+            t.unsafe.setData(null)
         then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
             !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])

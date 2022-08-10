@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"9.007 seconds"
+    "duration":"8.344 seconds"
   },
   "headers":["\n            <h2> OpenCLDevice Integration Tests </h2>\n            <p>\n                Specified below are strict tests covering the behavior\n                of the OpenCLDevice when hosting tensors and executing \n                operations on them.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"An OpenCLDevice loads tensors in a provided lambda temporarily.",
       "result":"PASS",
-      "duration":"0.016 seconds",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -41,7 +41,7 @@
     {
       "id":"The \"getValue()\" method of an outsourced tensor will return the expected array type.",
       "result":"PASS",
-      "duration":"0.025 seconds",
+      "duration":"0.028 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,13 +71,13 @@
       "blocks":[
         {"kind":"given","text":"A new tensor belonging to the first found OpenCLDevice instance.","code":["Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)"]},
 
-        {"kind":"expect","text":"The tensor start with having data stored within.","code":["t.unsafe.data != null"]},
+        {"kind":"and","text":"The tensor value is being fetched...","code":["def data = t.unsafe.data"]},
+
+        {"kind":"expect","text":"The tensor start with having data stored within.","code":["data != null"]},
 
         {"kind":"when","text":"The tensor is being stored on the device...","code":["t.to(Device.get('first'))"]},
 
-        {"kind":"and","text":"The tensor value is being fetched...","code":["def data = t.unsafe.data"]},
-
-        {"kind":"then","text":"The value variable is null.","code":["data == null"]}
+        {"kind":"then","text":"The value variable is still not null.","code":["t.unsafe.data != null","t.unsafe.data !== data"]}
       ],
       "problems":"[]"
     },
@@ -85,7 +85,7 @@
     {
       "id":"Ad hoc compilation produces executable kernel.",
       "result":"PASS",
-      "duration":"0.347 seconds",
+      "duration":"0.479 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -110,7 +110,7 @@
     {
       "id":"Ad hoc compilation works for WIP general purpose matrix multiplication.",
       "result":"PASS",
-      "duration":"1.886 seconds",
+      "duration":"1.723 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -137,7 +137,7 @@
     {
       "id":"Ad hoc matrix multiplication works for multiple of 16 matrices.",
       "result":"PASS",
-      "duration":"1.383 seconds",
+      "duration":"1.065 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -164,7 +164,7 @@
     {
       "id":"Ad hoc compilation works for custom simple row major based matrix multiplication.",
       "result":"PASS",
-      "duration":"2.151 seconds",
+      "duration":"2.139 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -191,7 +191,7 @@
     {
       "id":"Ad hoc compilation works for custom column major based tiled matrix multiplication.",
       "result":"PASS",
-      "duration":"3.129 seconds",
+      "duration":"2.820 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

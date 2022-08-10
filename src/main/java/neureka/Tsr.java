@@ -2133,7 +2133,11 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
          *
          * @return The raw data object underlying this tensor.
          */
-        Object getData();
+        default Object getData() {
+            return getData(Object.class);
+        }
+
+        <D> D getData( Class<D> dataType );
 
         <A> A getDataAs( Class<A> arrayTypeClass );
 
@@ -2146,7 +2150,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
          */
         Tsr<T> setDataAt( int i, T o );
 
-        Tsr<T> setData(Object data);
+        Tsr<T> setData( Object data );
 
         /**
          *  Use this to access the underlying writable data of this tensor if

@@ -311,10 +311,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     @Override
     public Tsr<V> setIsOutsourced( boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
-        if ( isOutsourced )
-            _setData( null );
-        else if (
-            !forComponent(
+        if ( !isOutsourced && !forComponent(
                 Device.class,
                 device -> {
                     try {
@@ -744,7 +741,12 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             @Override
             public Tsr<V> setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
             @Override public Tsr<V> delete() { return TsrImpl.this._delete(); }
-            @Override public Object getData() { return _getData(); }
+            @Override public <D> D getData(Class<D> dataType) {
+                Object data = _getData();
+                if ( data != null && !dataType.isAssignableFrom(data.getClass()) )
+                    throw new IllegalArgumentException("Provided data type '"+dataType+"' is not assignable from '"+data.getClass()+"'.");
+                return (D) data;
+            }
             @Override
             public <A> A getDataAs( Class<A> arrayTypeClass ) {
                 return DataConverter.get().convert( _getData(false), arrayTypeClass );
@@ -1127,7 +1129,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             }
         }
         if ( this.isVirtual() ) {
-            if ( _getData() == null ) return null;
+            if ( this.isOutsourced() ) return null;
             else return getDevice().access(this).actualize();
         }
         else if ( this.getNDConf().isSimple() && !this.isSlice() )
