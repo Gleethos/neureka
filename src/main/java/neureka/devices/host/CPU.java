@@ -233,6 +233,10 @@ public class CPU extends AbstractDevice<Object>
     @Override
     protected final <T> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int size) {
         Object data = tensor.getUnsafe().getData();
+        if ( data == null ) {
+            tensor.getUnsafe().setData(array);
+            return;
+        }
         Class<?> arrayType = data.getClass();
         if ( arrayType == float[].class ) {
             float[] source = DataConverter.get().convert(array, float[].class);

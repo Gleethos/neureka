@@ -755,6 +755,13 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 _setDataAt( i, o );
                 return TsrImpl.this;
             }
+
+            @Override
+            public Tsr<V> setData(Object data) {
+                TsrImpl.this._setData( data );
+                return TsrImpl.this;
+            }
+
             @Override public Tsr<V> detach() { TsrImpl.this.remove( GraphNode.class ); return TsrImpl.this; }
         };
     }
@@ -1076,15 +1083,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         } else if ( value.getClass().isArray() ) {
             if ( this.isOutsourced() ) getDevice().access(this).writeFrom( value );
             else {
-                if ( _getData() == null ) {
-                    // This usually happens when a tensor was just freed from a device.
-                    // We need to set its data again so that it is no longer empty...
-                    _setData( value );
-                    return this;
-                } else {
-                    getDevice().access(this).writeFrom(value);
-                    setIsVirtual(false);
-                }
+                // This usually happens when a tensor was just freed from a device.
+                getDevice().access(this).writeFrom(value);
+                if ( this.isOutsourced() ) setIsVirtual(false);
             }
         }
         else success = false;

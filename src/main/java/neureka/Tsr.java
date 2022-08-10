@@ -2146,6 +2146,8 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
          */
         Tsr<T> setDataAt( int i, T o );
 
+        Tsr<T> setData(Object data);
+
         /**
          *  Use this to access the underlying writable data of this tensor if
          *  you want to modify it.
