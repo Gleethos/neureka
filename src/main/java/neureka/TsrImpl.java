@@ -309,7 +309,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setIsOutsourced(boolean isOutsourced ) {
+    public Tsr<V> setIsOutsourced( boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
         if ( isOutsourced )
             _setData( null );
@@ -347,7 +347,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                                 })
                     );
                 }
-            ) && _getData() == null
+            )
         ) {
             _setIsVirtual( true );
             _allocate( 1 ); // Only a single value representing the rest.
@@ -395,10 +395,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 );
                 throw exception;
             }
-            if ( isVirtual ) {
-                if ( _getData() != null ) _virtualize();
-            }
-            else _actualize();
+            if ( isVirtual )
+                _virtualize();
+            else
+                _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
             createConstructionAPI().configureFromNewShape( NDConstructor.of(getNDConf().shape()), isVirtual, _getData() == null );
@@ -426,7 +426,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 throw new IllegalStateException( message );
             }
         }
-        else if ( isVirtual && _getData() == null ) _allocate( 1 ); //> Only a single value representing the rest.
+        else if ( isVirtual ) _allocate( 1 ); //> Only a single value representing the rest.
         return this;
     }
 
