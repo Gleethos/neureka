@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.211 seconds"
+    "duration":"1.895 seconds"
   },
   "headers":["\n            <p>\n                It is important that an OpenCLDevice gives insightful error messages\n                when encountering exceptional situations.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"1.262 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Ad hoc compilation produces expected exceptions.",
       "result":"PASS",
-      "duration":"0.111 seconds",
+      "duration":"0.268 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +60,7 @@
     {
       "id":"Ad hoc compilation produces expected exceptions when duplication is found.",
       "result":"PASS",
-      "duration":"0.093 seconds",
+      "duration":"0.318 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -85,7 +85,7 @@
     {
       "id":"Trying to restore a tensor which is not on a device raises exception.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.030 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

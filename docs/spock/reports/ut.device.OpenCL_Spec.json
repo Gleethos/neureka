@@ -1,15 +1,15 @@
 {
   "className":"ut.device.OpenCL_Spec",
-  "title":"",
-  "narrative":"",
-  "subjects":["neureka.devices.opencl.OpenCLDevice","neureka.devices.opencl.utility.DeviceQuery","neureka.devices.Device"],
+  "title":"Working with OpenCL",
+  "narrative":"Neureka models the OpenCL API through various types of classes.\n    The most fundamental of these is the OpenCLDevice class which\n    represents a single OpenCL device.\n    Besides that, there is also the OpenCLContext class which\n    represents a OpenCL context, representing OpenCL platforms and multiple devices...",
+  "subjects":["neureka.devices.opencl.CLContext","neureka.devices.opencl.OpenCLDevice","neureka.devices.opencl.utility.DeviceQuery","neureka.devices.Device"],
   "statistics":{
     "runs":"5",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.401 seconds"
+    "duration":"2.646 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -46,7 +46,7 @@
     {
       "id":"First found OpenCLDevice will have realistic text properties.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -61,7 +61,7 @@
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"0.019 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -90,7 +90,7 @@
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"2.375 seconds",
+      "duration":"2.615 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

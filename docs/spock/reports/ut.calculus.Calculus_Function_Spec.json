@@ -1,22 +1,22 @@
 {
   "className":"ut.calculus.Calculus_Function_Spec",
-  "title":"",
-  "narrative":"",
-  "subjects":[],
+  "title":"Testing Default Methods on Functions",
+  "narrative":"This specification tests the default methods on functions\n    through a simple dummy implementation of the Function interface.",
+  "subjects":["java.util.function.Function"],
   "statistics":{
     "runs":"4",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.038 seconds"
+    "duration":"0.403 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Function implementations ensure that internally created tensors are flagged as \"intermediate\" initially!",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.053 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
 
         {"kind":"then","text":"","code":["noExceptionThrown()"]},
 
-        {"kind":"where","text":"","code":{"caller":["ut.calculus.Calculus_Function_Spec$__spock_feature_0_0prov0_closure3@6457490e","ut.calculus.Calculus_Function_Spec$__spock_feature_0_0prov0_closure4@2706dac5","ut.calculus.Calculus_Function_Spec$__spock_feature_0_0prov0_closure5@b989dec"]}}
+        {"kind":"where","text":"","code":{"caller":["ut.calculus.Calculus_Function_Spec$__spock_feature_0_0prov0_closure3@530b9505","ut.calculus.Calculus_Function_Spec$__spock_feature_0_0prov0_closure4@424fd1d1","ut.calculus.Calculus_Function_Spec$__spock_feature_0_0prov0_closure5@92fdc4"]}}
       ],
       "problems":"[]"
     },
@@ -45,7 +45,7 @@
     {
       "id":"Function implementations ensure that outputs which are input members are not flagged as \"intermediate\"!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.023 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
 
         {"kind":"then","text":"","code":["thrown(IllegalStateException)"]},
 
-        {"kind":"where","text":"","code":{"caller":["ut.calculus.Calculus_Function_Spec$__spock_feature_0_1prov0_closure8@61c1fe5e","ut.calculus.Calculus_Function_Spec$__spock_feature_0_1prov0_closure9@2a2d9057","ut.calculus.Calculus_Function_Spec$__spock_feature_0_1prov0_closure10@29a1cfea"]}}
+        {"kind":"where","text":"","code":{"caller":["ut.calculus.Calculus_Function_Spec$__spock_feature_0_1prov0_closure8@63d7cce2","ut.calculus.Calculus_Function_Spec$__spock_feature_0_1prov0_closure9@4d74c01d","ut.calculus.Calculus_Function_Spec$__spock_feature_0_1prov0_closure10@76be20b"]}}
       ],
       "problems":"[]"
     },
@@ -74,7 +74,7 @@
     {
       "id":"Function implementations will ensure the \"call\" and \"invoke\" does not return tensors flagged as \"intermediate\".",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -95,7 +95,7 @@
     {
       "id":"The library context exposes a set of useful functions.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.069 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -104,7 +104,7 @@
 
         {"kind":"and","text":"","code":["fun.apply(Neureka.get().backend.autogradFunction).toString() == expected","fun.apply(Neureka.get().backend.autogradFunction).isDoingAD()"]},
 
-        {"kind":"where","text":"","code":{"expected":["ln(I[0])","ln(I[0])","gaus(I[0])","gaus(I[0])","fast_gaus(I[0])","fast_gaus(I[0])","sig(I[0])","sig(I[0])","tanh(I[0])","tanh(I[0])","fast_tanh(I[0])","fast_tanh(I[0])","softsign(I[0])","softsign(I[0])","softsign(I[0])","quad(I[0])","quad(I[0])","relu(I[0])","relu(I[0])","abs(I[0])","abs(I[0])","sin(I[0])","sin(I[0])","cos(I[0])","cos(I[0])","softplus(I[0])","softplus(I[0])","silu(I[0])","silu(I[0])","gelu(I[0])","gelu(I[0])","selu(I[0])","selu(I[0])"],"fun":["ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure12@6043c99","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure13@5a15279","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure14@1ed5dc32","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure15@46f85de6","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure16@7f4a218a","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure17@2d384619","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure18@9b3df93","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure19@34d3e575","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure20@21f9bbcb","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure21@5ef4d316","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure22@7903fffb","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure23@240173ab","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure24@378d2fa3","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure25@4a200417","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure26@6a6f1662","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure27@25833bec","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure28@5679281f","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure29@33a45bfa","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure30@45c5d807","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure31@522440a6","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure32@5b39da87","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure33@6618abc7","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure34@4a5462c7","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure35@12f1ebb","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure36@5884306a","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure37@4f33d529","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure38@1f18e72","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure39@7dec5655","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure40@324c9f1","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure41@7702b14d","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure42@676c5e55","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure43@27cd4085","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure44@12f6b29c"]}}
+        {"kind":"where","text":"","code":{"expected":["ln(I[0])","ln(I[0])","gaus(I[0])","gaus(I[0])","fast_gaus(I[0])","fast_gaus(I[0])","sig(I[0])","sig(I[0])","tanh(I[0])","tanh(I[0])","fast_tanh(I[0])","fast_tanh(I[0])","softsign(I[0])","softsign(I[0])","softsign(I[0])","quad(I[0])","quad(I[0])","relu(I[0])","relu(I[0])","abs(I[0])","abs(I[0])","sin(I[0])","sin(I[0])","cos(I[0])","cos(I[0])","softplus(I[0])","softplus(I[0])","silu(I[0])","silu(I[0])","gelu(I[0])","gelu(I[0])","selu(I[0])","selu(I[0])"],"fun":["ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure12@c0fad23","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure13@1195e3b5","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure14@31476944","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure15@5536a40d","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure16@21bbe8eb","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure17@5e6c9912","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure18@65e718e6","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure19@56a35d92","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure20@53b7fc67","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure21@7930ac6c","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure22@258b7c49","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure23@79ce971e","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure24@194904a4","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure25@e1d21f5","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure26@33e3a1a9","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure27@7a37901f","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure28@1a848531","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure29@346e9fc","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure30@73c42d73","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure31@2d37ebc","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure32@7df7fef2","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure33@4424fb39","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure34@7793dcdf","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure35@49951c5f","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure36@7f37f587","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure37@2a4bf6dc","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure38@59a101ad","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure39@7b87e89d","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure40@7b0453f4","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure41@2dafdfe9","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure42@41643fec","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure43@7ba24428","ut.calculus.Calculus_Function_Spec$__spock_feature_0_3prov1_closure44@6adfbf61"]}}
       ],
       "problems":"[]"
     }
