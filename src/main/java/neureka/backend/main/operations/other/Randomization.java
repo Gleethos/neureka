@@ -241,35 +241,15 @@ public class Randomization extends AbstractOperation
             long[] t0_value = dataProvider.get(long[].class);
             if ( isSimple )
                 return (i, end) -> {
-                    long[] longs = {0, 0};
-                    if ( i % 2 == 1 ) {
-                        longFrom(seed + i - 1, longs);
-                        t0_value[i] = longs[1];
-                        i++;
-                    }
-                    for ( ; i < end; i += 2 ) // increment on drain accordingly:
-                    {
-                        longFrom(seed + i, longs);
-                        t0_value[i + 0] = longs[0];
-                        if ( i + 1 < end ) t0_value[i + 1] = longs[1];
-                    }
-                };
+                            for ( ; i < end; i ++ ) // increment on drain accordingly:
+                                t0_value[i] = longFrom(seed + (long) Math.pow(32,1+i) + i);
+                        };
             else
                 return (i, end) -> {
-                    NDIterator t0Idx = iteratorProvider.get(i);
-                    long[] longs = {0, 0};
-                    if ( i % 2 == 1 ) {
-                        longFrom(seed + i - 1, longs);
-                        t0_value[t0Idx.getIndexAndIncrement()] = longs[1];
-                        i++;
-                    }
-                    for ( ; i < end; i += 2 ) // increment on drain accordingly:
-                    {
-                        longFrom(seed + i, longs);
-                        t0_value[t0Idx.getIndexAndIncrement()] = longs[0];
-                        if ( i + 1 < end ) t0_value[t0Idx.getIndexAndIncrement()] = longs[1];
-                    }
-                };
+                            NDIterator t0Idx = iteratorProvider.get(i);
+                            for ( ; i < end; i ++ ) // increment on drain accordingly:
+                                t0_value[t0Idx.getIndexAndIncrement()] = longFrom(seed + (long) Math.pow(32,1+i) + i);
+                        };
         } else if (type == Integer.class) {
             int[] t0_value = dataProvider.get(int[].class);
             if ( isSimple )
@@ -343,7 +323,7 @@ public class Randomization extends AbstractOperation
         out[1] = v2 * multiplier;
     }
 
-    public static long longFrom( long seed, long[] out ) {
+    public static long longFrom( long seed ) {
         long seed1 = _next(seed);
         long seed2 = _next(seed1);
         return ((long)(_intFrom(32, seed1)) << 32) + _intFrom(32, seed2);
