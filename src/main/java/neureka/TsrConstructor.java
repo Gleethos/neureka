@@ -1,5 +1,6 @@
 package neureka;
 
+import neureka.backend.main.operations.other.Randomization;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.host.CPU;
@@ -190,17 +191,17 @@ final class TsrConstructor
 
         Object data;
         if ( valueType == Double.class )
-            data = DataConverter.Utility.seededDoubleArray( new double[size], seed.toString() );
+            data = Randomization.fillRandomly( new double[size], seed.toString() );
         else if ( valueType == Float.class )
-            data = DataConverter.Utility.seededFloatArray( new float[size], seed.toString() );
+            data = Randomization.fillRandomly( new float[size], seed.toString() );
         else if ( valueType == Integer.class )
-            data = DataConverter.Utility.seededIntArray( new int[size], seed.toString() );
+            data = Randomization.fillRandomly( new int[size], seed.toString() );
         else if ( valueType == Short.class )
             data = DataConverter.Utility.seededShortArray( new short[size], seed.toString() );
         else if ( valueType == Byte.class )
-            data = DataConverter.Utility.seededByteArray( new byte[size], seed.toString() );
+            data = Randomization.fillRandomly( new byte[size], seed.toString() );
         else if ( valueType == Long.class )
-            data = DataConverter.Utility.seededLongArray( new long[size], seed.toString() );
+            data = Randomization.fillRandomly( new long[size], seed.toString() );
         else if ( valueType == Boolean.class )
             data = DataConverter.Utility.seededBooleanArray( new boolean[size], seed.toString() );
         else if ( valueType == Character.class )

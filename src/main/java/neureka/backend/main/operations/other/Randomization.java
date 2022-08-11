@@ -13,6 +13,7 @@ import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.iterator.NDIterator;
+import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
 
@@ -91,7 +92,12 @@ public class Randomization extends AbstractOperation
 
     }
 
-    public static void fillRandomly(Object data, long seed)
+
+    public static <T> T fillRandomly(T data, String seed) {
+        return fillRandomly(data, _longStringHash(seed));
+    }
+
+    public static <T> T fillRandomly(T data, long seed)
     {
         int size = 0;
         Class<?> type = null;
@@ -102,6 +108,7 @@ public class Randomization extends AbstractOperation
         if ( data instanceof byte[]   ) { type = Byte.class; size = ((byte[]   )data).length; }
         if ( type == null )
             throw new IllegalArgumentException("Type '"+data.getClass()+"' not supported for randomization.");
+
         CPU.RangeWorkload workload = _newWorkloadFor(
                 seed, type, null,
                 new DataProvider() {
@@ -112,6 +119,18 @@ public class Randomization extends AbstractOperation
                 }
         );
         CPU.get().getExecutor().threaded( size, workload );
+        return data;
+    }
+
+
+
+    @Contract( pure = true )
+    private static long _longStringHash( String string )
+    {
+        long h = 1125899906842597L; // prime
+        int len = string.length();
+        for ( int i = 0; i < len; i++ ) h = 31 * h + string.charAt( i );
+        return h;
     }
 
 

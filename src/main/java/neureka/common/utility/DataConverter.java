@@ -36,7 +36,6 @@ SOFTWARE.
 package neureka.common.utility;
 
 import neureka.Tsr;
-import neureka.backend.main.operations.other.Randomization;
 import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -45,7 +44,10 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -453,59 +455,6 @@ public final class DataConverter
         }
 
         @Contract( pure = true )
-        public static double[] newSeededDoubleArray( String seed, int size ) {
-            return newSeededDoubleArray( _longStringHash( seed ), size );
-        }
-
-        @Contract( pure = true )
-        public static double[] newSeededDoubleArray( long seed, int size ) {
-            return seededDoubleArray( new double[size], seed );
-        }
-
-        @Contract( pure = true )
-        public static double[] seededDoubleArray( double[] array, String seed ) {
-            return seededDoubleArray(array, _longStringHash( seed ));
-        }
-
-        @Contract( pure = true )
-        public static double[] seededDoubleArray( double[] array, long seed ) {
-            Randomization.fillRandomly(array, seed);
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static float[] newSeededFloatArray( String seed, int size ) {
-            return newSeededFloatArray( _longStringHash( seed ), size );
-        }
-
-        @Contract( pure = true )
-        public static float[] newSeededFloatArray( long seed, int size ) {
-            return seededFloatArray( new float[size], seed );
-        }
-
-        @Contract( pure = true )
-        public static float[] seededFloatArray( float[] array, String seed ) {
-            return seededFloatArray( array, _longStringHash( seed ) );
-        }
-
-        @Contract( pure = true )
-        public static float[] seededFloatArray( float[] array, long seed ) {
-            Randomization.fillRandomly(array, seed);
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static int[] seededIntArray( int[] array, String seed ) {
-            return seededIntArray(array, _longStringHash( seed ));
-        }
-
-        @Contract( pure = true )
-        public static int[] seededIntArray( int[] array, long seed ) {
-            Randomization.fillRandomly(array, seed);
-            return array;
-        }
-
-        @Contract( pure = true )
         public static short[] seededShortArray( short[] array, String seed ) {
             return seededShortArray(array, _longStringHash( seed ));
         }
@@ -515,30 +464,6 @@ public final class DataConverter
             Random dice = new Random();
             dice.setSeed( seed );
             for ( int i = 0; i < array.length; i++ ) array[ i ] = (short) dice.nextInt();
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static byte[] seededByteArray( byte[] array, String seed ) {
-            return seededByteArray(array, _longStringHash( seed ));
-        }
-
-        @Contract( pure = true )
-        public static byte[] seededByteArray( byte[] array, long seed ) {
-            Randomization.fillRandomly(array, seed);
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static long[] seededLongArray( long[] array, String seed ) {
-            return seededLongArray( array, _longStringHash( seed ) );
-        }
-
-        @Contract( pure = true )
-        public static long[] seededLongArray( long[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextLong();
             return array;
         }
 

@@ -1,5 +1,6 @@
 package ut.utility
 
+import neureka.backend.main.operations.other.Randomization
 import neureka.common.utility.DataConverter
 import spock.lang.Specification
 
@@ -17,15 +18,15 @@ class DataConverter_Spec extends Specification
             converter.convert( [-50, 2, 190] as byte[], int[].class ) == [-50, 2, -66] as int[]
             converter.convert( [-50, 2, 190] as byte[], long[].class ) == [-50, 2, -66] as long[]
         and :
-            DataConverter.Utility.seededFloatArray( f32Array, 42 ) == [-0.48528543, -1.4547276] as float[]
-            DataConverter.Utility.newSeededFloatArray( 42, 2 ) == f32Array
-            DataConverter.Utility.seededFloatArray( f32Array, "I'm a seed!") == [-0.36105144, 0.09591457] as float[]
-            DataConverter.Utility.newSeededFloatArray( "I'm a seed!", 2 ) == f32Array
+            Randomization.fillRandomly( f32Array, 42 ) == [-0.48528543, -1.4547276] as float[]
+            Randomization.fillRandomly( new float[2], 42 ) == f32Array
+            Randomization.fillRandomly( f32Array, "I'm a seed!") == [-0.36105144, 0.09591457] as float[]
+            Randomization.fillRandomly( new float[2], "I'm a seed!" ) == f32Array
         and :
-            DataConverter.Utility.seededDoubleArray( f64Array, 42 ) == [-0.485285426832534, -1.454727674701364] as double[]
-            DataConverter.Utility.newSeededDoubleArray( 42, 2 ) == f64Array
-            DataConverter.Utility.seededDoubleArray( f64Array, "I'm a seed!") == [-0.36105142873347185, 0.09591457295459412] as double[]
-            DataConverter.Utility.newSeededDoubleArray( "I'm a seed!", 2 ) == f64Array
+            Randomization.fillRandomly( f64Array, 42 ) == [-0.485285426832534, -1.454727674701364] as double[]
+            Randomization.fillRandomly( new double[2], 42 ) == f64Array
+            Randomization.fillRandomly( f64Array, "I'm a seed!") == [-0.36105142873347185, 0.09591457295459412] as double[]
+            Randomization.fillRandomly( new double[2], "I'm a seed!" ) == f64Array
 
     }
 
