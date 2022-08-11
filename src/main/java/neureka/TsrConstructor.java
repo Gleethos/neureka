@@ -53,7 +53,7 @@ final class TsrConstructor
      * @param makeVirtual A flag determining if the tensor should be actual or virtual (not fully allocated).
      * @param autoAllocate Determines if the underlying data array should be allocated or not.
      */
-    public void configureFromNewShape(NDConstructor ndConstructor, boolean makeVirtual, boolean autoAllocate )
+    public void configureFromNewShape( NDConstructor ndConstructor, boolean makeVirtual, boolean autoAllocate )
     { 
         _API.setIsVirtual( makeVirtual ); 
         if ( _API.getData() == null && autoAllocate ) _API.allocate( makeVirtual ? 1 : ndConstructor.getSize() );
