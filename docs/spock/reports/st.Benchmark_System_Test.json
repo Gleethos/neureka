@@ -4,19 +4,19 @@
   "narrative":"",
   "subjects":[],
   "statistics":{
-    "runs":"2",
+    "runs":"1",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"27.374 seconds"
+    "duration":"8.876 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensor can be constructed by passing List instances.",
-      "result":"PASS",
-      "duration":"8.372 seconds",
+      "result":"IGNORED",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,18 +39,18 @@
     {
       "id":"Test benchmark script and simple tensor constructor.",
       "result":"PASS",
-      "duration":"18.870 seconds",
+      "duration":"8.855 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["def configuration = [ \"iterations\":1, \"sample_size\":20, \"difficulty\":15, \"intensifier\":0 ]"]},
+        {"kind":"given","text":"","code":["var configuration = [ \"iterations\":1, \"sample_size\":20, \"difficulty\":15, \"intensifier\":0 ]","var strSettings = (Consumer<NDPrintSettings>) { NDPrintSettings it ->","    it.cellSize = 7; it.isCellBound = true;","}"]},
 
-        {"kind":"and","text":"The benchmark script is being loaded into a GroovyShell instance.","code":["def session = new GroovyShell().evaluate(Load.resourceAt(\"benchmark.groovy\", this))"]},
+        {"kind":"and","text":"The benchmark script is being loaded into a GroovyShell instance.","code":["var session = new GroovyShell().evaluate(Load.resourceAt(\"benchmark.groovy\", this))"]},
 
-        {"kind":"and","text":"A String instance for the result hash is being instantiated and the expected hash.","code":["String hash = \"\"","String expected = \"7084fb60f29fcce1ac96c2bee9c37b37\""]},
+        {"kind":"and","text":"A String instance for the result hash is being instantiated and the expected hash.","code":["String hash = \"\"","String expected = \"58ed847a16ddc3bf7847f64091ff5d4d\"","var rec = []"]},
 
-        {"kind":"when","text":"The benchmark script is being called...","code":["Map<String,List<Double>> result = session(","        configuration, null,","        CPU.get(),","        tsr -> {","            hash = (hash+tsr.toString()).md5()","        }",")"]},
+        {"kind":"when","text":"The benchmark script is being called...","code":["Map<String,List<Double>> result = session(","        configuration, null,","        CPU.get(),","        tsr -> {","            var str = tsr.toString(strSettings)","            rec << str","            hash = (hash+str).md5()","        }",")"]},
 
         {"kind":"then","text":"The hash is as expected.","code":["hash == expected"]},
 
@@ -60,7 +60,7 @@
 
         {"kind":"when","text":"Only continue if testing system supports OpenCL.","code":["if ( !Neureka.get().canAccessOpenCLDevice() ) return"]},
 
-        {"kind":"and","text":"The benchmark is now being executed with the first found OpenCLDevice instance...","code":["hash = \"\"","session(","        configuration, null,","        Device.get(\"first\"),","            tsr -> {","                hash = ( hash + tsr.toString() ).md5()","            }",")"]},
+        {"kind":"and","text":"The benchmark is now being executed with the first found OpenCLDevice instance...","code":["hash = \"\"","var i = 0","session(","        configuration, null,","        Device.get(\"first\"),","            tsr -> {","                var str = tsr.toString(strSettings)","                if ( rec[i] != str ) println \"Mismatch at index $i:\\n${rec[i]}\\n$str\\n\"","                hash = ( hash + str ).md5()","                i++","            }",")"]},
 
         {"kind":"then","text":"The calculated hash is as expected.","code":["hash == expected"]}
       ],

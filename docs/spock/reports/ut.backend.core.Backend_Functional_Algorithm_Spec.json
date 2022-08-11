@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.217 seconds"
+    "duration":"0.547 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A functional algorithm cannot be used if it was not built properly!",
       "result":"PASS",
-      "duration":"0.043 seconds",
+      "duration":"0.028 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -29,7 +29,7 @@
 
         {"kind":"and","text":"The exception tells us this:","code":["exception.message == \"Trying use an instance of 'TestAlgorithm' with name 'test_name' which was not fully built!\""]},
 
-        {"kind":"where","text":"We call the following methods:","code":{"caller":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure1@2daf0236","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure2@6b4f285b","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure3@3b7e0f11","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure4@1ab10e04"]}}
+        {"kind":"where","text":"We call the following methods:","code":{"caller":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure1@a1eecfc","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure2@76497134","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure3@5435123d","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure4@7bdc31bc"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -37,7 +37,7 @@
     {
       "id":"A functional algorithm does not accept null as an answer!",
       "result":"PASS",
-      "duration":"0.026 seconds",
+      "duration":"0.077 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,7 +62,7 @@
     {
       "id":"A functional algorithm warns us when modified after it has been built!",
       "result":"PASS",
-      "duration":"0.047 seconds",
+      "duration":"0.370 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
 
         {"kind":"cleanup","text":"","code":["System.err = oldStream"]},
 
-        {"kind":"where","text":"","code":{"type":["interface neureka.backend.api.fun.ExecutionPreparation","interface neureka.backend.api.fun.SuitabilityPredicate","interface neureka.backend.api.fun.Execution"],"setter":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure16@2189655d","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure17@38f1aa6f","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure18@6ae401b4"]}}
+        {"kind":"where","text":"","code":{"type":["interface neureka.backend.api.fun.ExecutionPreparation","interface neureka.backend.api.fun.SuitabilityPredicate","interface neureka.backend.api.fun.Execution"],"setter":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure16@55e49e54","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure17@55dc8d6c","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure18@24f1c586"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

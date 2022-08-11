@@ -16,7 +16,7 @@
     {
       "id":"Thread pool executes given workload in parallel",
       "result":"PASS",
-      "duration":"0.017 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Warning! This test is flaky simply because it relies on the behaviour of threads\n            which may or may not behave as expected. \n        "]
       },
@@ -39,7 +39,7 @@
     {
       "id":"CPU knows the current number of available processor cores!",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

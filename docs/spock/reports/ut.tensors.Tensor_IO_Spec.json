@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.234 seconds"
+    "duration":"0.230 seconds"
   },
   "headers":["\n            <h2>Tensor Instantiation and IO Tests</h2>\n            <p>\n                This specification covers some basic behaviour related to\n                tensor instantiation and modification.\n                This includes the instantiation of tensors with custom seeds, shapes and values...\n                Included are also tests covering static factory methods.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -31,7 +31,7 @@
     {
       "id":"Smart tensor constructors yield expected results.",
       "result":"PASS",
-      "duration":"0.013 seconds",
+      "duration":"0.014 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -114,7 +114,7 @@
       "blocks":[
         {"kind":"when","text":"","code":["Tsr r = Tsr.of([2, 2], \"jnrejn\")"]},
 
-        {"kind":"then","text":"","code":["r.toString().contains(\"0.02600, -2.06129, -0.48373, 0.94884\")"]},
+        {"kind":"then","text":"","code":["r.toString().contains(\"0.02847, -0.69068, 0.15386, 1.81382\")"]},
 
         {"kind":"when","text":"","code":["r = Tsr.of([2, 2], \"jnrejn2\")"]},
 
@@ -126,7 +126,7 @@
     {
       "id":"Tensor value type can not be changed by passing float or double arrays to it.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -157,7 +157,7 @@
     {
       "id":"We turn a tensor into a scalar value or string through the \"as\" operator!",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -174,7 +174,7 @@
     {
       "id":"We can re-populate a tensor of shorts from a single scalar value!",
       "result":"PASS",
-      "duration":"0.020 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -197,7 +197,7 @@
     {
       "id":"We can manipulate the underlying data array of a tensor through the unsafe API.",
       "result":"PASS",
-      "duration":"0.023 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -249,7 +249,7 @@
     {
       "id":"Tensors value type can be changed by calling \"toType(...)\".",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -270,7 +270,7 @@
     {
       "id":"Vector tensors can be instantiated via factory methods.",
       "result":"PASS",
-      "duration":"0.015 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -293,7 +293,7 @@
     {
       "id":"A tensor produced by a function has expected properties.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -312,7 +312,7 @@
     {
       "id":"A tensor produced by the static \"Tsr.Create.newRandom(shape)\" has expected \"random\" value.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -339,7 +339,7 @@
     {
       "id":"Tensor values can be manipulated via static method calls within the \"Tsr.IO\" class.",
       "result":"PASS",
-      "duration":"0.014 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -396,7 +396,7 @@
     {
       "id":"The tensor data array can be modified by targeting them with an index.",
       "result":"PASS",
-      "duration":"0.014 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

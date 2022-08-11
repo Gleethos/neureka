@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.041 seconds"
+    "duration":"0.046 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A slice of a tensor changes as expected when reshaping it.",
       "result":"PASS",
-      "duration":"0.018 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -45,7 +45,7 @@
     {
       "id":"Two slices of one big tensor perform matrix multiplication flawless.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

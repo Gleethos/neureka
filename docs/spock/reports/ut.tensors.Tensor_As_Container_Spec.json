@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.086 seconds"
+    "duration":"0.069 seconds"
   },
   "headers":["\n           Although you can create a tensor of almost anything, you will\n           not be able to execute operations on every kind of tensor...        \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Plus operator on String tensors works element-wise.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"Tensor operations translate to custom data type \"ComplexNumber\".",
       "result":"PASS",
-      "duration":"0.018 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"More tensor operations translate to custom data type \"ComplexNumber\".",
       "result":"PASS",
-      "duration":"0.013 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -69,7 +69,7 @@
     {
       "id":"We can apply predicates on the values of a tensor.",
       "result":"PASS",
-      "duration":"0.027 seconds",
+      "duration":"0.025 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
