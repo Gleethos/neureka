@@ -38,7 +38,7 @@ public class KernelCaller
      * This method passes 2 arguments to the kernel.
      * One for the data of the tensor and one for the configuration data!
      * @param tensor The tensor whose data and configuration ought to be passed to the kernel.
-     * @return This very KernelCaller instance (factory patter).
+     * @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller passAllOf( @NotNull Tsr<Number> tensor ) {
         _inputs.add( tensor );
@@ -54,7 +54,7 @@ public class KernelCaller
      *  slices of other tensors.
      *
      *  @param tensor The tensor whose ND configuration ought to be passed to the kernel.
-     *  @return This very KernelCaller instance (factory patter).
+     *  @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller passConfOf( @NotNull Tsr<Number> tensor ) {
         clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).config.data ) );
@@ -66,7 +66,7 @@ public class KernelCaller
      * This method passes 1 argument to the kernel.
      * Namely, the data of the tensor!
      * @param tensor The tensor whose data ought to be passed to the kernel.
-     * @return This very KernelCaller instance (factory patter).
+     * @return This very KernelCaller instance (factory pattern).
      */
     public <T extends Number> KernelCaller pass( @NotNull Tsr<T> tensor ) {
         _inputs.add( tensor.getUnsafe().upcast(Number.class) );
@@ -78,10 +78,20 @@ public class KernelCaller
     /**
      *
      * @param value An int value which ought to be passed to the kernel.
-     * @return This very KernelCaller instance (factory patter).
+     * @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller pass( int value ) {
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_int, Pointer.to( new int[]{ value } ) );
+        return this.pass( new int[]{ value } );
+    }
+
+    /**
+     *  Use this to pass an array of int values to the kernel.
+     *
+     * @param values An array of int values which ought to be passed to the kernel.
+     * @return This very KernelCaller instance (factory pattern).
+     */
+    public KernelCaller pass( int... values ) {
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_int * (long) values.length, Pointer.to( values ) );
         _argId++;
         return this;
     }
@@ -89,7 +99,7 @@ public class KernelCaller
     /**
      *
      * @param value A float value which ought to be passed to the kernel.
-     * @return This very KernelCaller instance (factory patter).
+     * @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller pass( float value ) {
         clSetKernelArg( _kernel, _argId, Sizeof.cl_float, Pointer.to( new float[]{ value } ) );
