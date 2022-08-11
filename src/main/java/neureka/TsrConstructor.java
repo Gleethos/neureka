@@ -41,7 +41,7 @@ final class TsrConstructor
 
     private final API _API;
 
-    public TsrConstructor(API API ) { _API = API; }
+    public TsrConstructor( API API ) { _API = API; }
 
     /**
      *  This method is responsible for instantiating and setting the _conf variable.
@@ -114,7 +114,7 @@ final class TsrConstructor
             for ( int i = 0; i < ( data ).length; i++ )
                 ( data )[i] = DataConverter.get().convert( ( (Object[]) data )[i], dataType.getItemTypeClass() );
 
-        return _optimizeObjectArray(dataType, data, size);
+        return _optimizeObjectArray( dataType, data, size );
     }
 
     public boolean constructAllFromOne( NDConstructor ndConstructor, Object data ) {
