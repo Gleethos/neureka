@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.265 seconds"
+    "duration":"1.702 seconds"
   },
   "headers":["\n                   This specification defines the behavior of\n                   Operation instances and their ability to be extended! <br> \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.",
       "result":"PASS",
-      "duration":"0.217 seconds",
+      "duration":"1.071 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,13 +43,13 @@
 
         {"kind":"and","text":"The result is the same as the mock tensor returned by the custom call hook.","code":["result == output"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Lambda properties of mock implementation interact with FunctionNode as expected.",
       "result":"PASS",
-      "duration":"0.037 seconds",
+      "duration":"0.614 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -82,7 +82,7 @@
 
         {"kind":"and","text":"The result is the same as the mock tensor returned by the custom call hook.","code":["result == output"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

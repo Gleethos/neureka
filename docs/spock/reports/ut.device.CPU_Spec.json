@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.443 seconds"
+    "duration":"0.032 seconds"
   },
   "headers":[" \n                <p>\n                    The thread pool of the class neureka.devices.host.CPU executor becomes\n                    more active when receiving larger workloads which\n                    benefit from parallelization.           \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Thread pool executes given workload in parallel",
       "result":"PASS",
-      "duration":"0.432 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Warning! This test is flaky simply because it relies on the behaviour of threads\n            which may or may not behave as expected. \n        "]
       },
@@ -33,26 +33,26 @@
 
         {"kind":"expect","text":"","code":["if ( exec.getCorePoolSize() <= 2 ) true","else {","    int[] min = new int[]{ exec.getCorePoolSize() }","    assert min[0] > 0 && min[0] <= Runtime.getRuntime().availableProcessors()","    Thread t = new Thread(() -> {","        while ( min[0] > 0 ) {","            int current = exec.getCorePoolSize() - exec.getActiveThreadCount()","            if ( current < min[0] ) min[0] = current","        }","    })","    t.start()","    Tsr c = ( a / b ) * 3","    assert c.shape() == [100,60,60,2]","    int result = min[0]","    try {","        min[0] = 0","        t.join()","    } catch (InterruptedException e) {","        e.printStackTrace()","    }","    assert result <= (exec.getCorePoolSize() / 2)","}"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"CPU knows the current number of available processor cores!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"","code":["CPU.get().coreCount == Runtime.getRuntime().availableProcessors()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The CPU exposes a non null API for executing workloads in parallel.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -61,7 +61,7 @@
 
         {"kind":"and","text":"","code":["CPU.get().executor.activeThreadCount >= 0","CPU.get().executor.corePoolSize >= 0","CPU.get().executor.completedTaskCount >= 0"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.328 seconds"
+    "duration":"0.489 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The default DeviceCleaner works",
       "result":"PASS",
-      "duration":"0.321 seconds",
+      "duration":"0.484 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
 
         {"kind":"then","text":"","code":["refCount == 6","cleaner._registered == 6"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

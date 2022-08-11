@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.801 seconds"
+    "duration":"1.634 seconds"
   },
   "headers":["\n            This specification covers the expected functionality of\n            various \"FileHandle\" implementations.\n            Such implementations ought to be able to save tensors to\n            a given directory in the file format that they represent.\n            Functionalities like : \"store\", \"restore\" and \"free\" must\n            behave as expected.\n            (For more information take a look a the \"FileHandle\" & \"Storage\" interface)\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test writing IDX file format.",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,13 +33,13 @@
 
         {"kind":"where","text":"The following paths and file names are being used for testing : ","code":{"tensor":["(2x4):[\n   [       -2.0     ,       -1.0     ,       0.0      ,       1.0       ],\n   [       2.0      ,       3.0      ,       4.0      ,       -2.0      ]\n]","(2x4):[\n   [       2.0      ,       2.0      ,       2.0      ,       2.0       ],\n   [       2.0      ,       2.0      ,       2.0      ,       2.0       ]\n]"],"type":["class neureka.dtype.custom.F64","class neureka.dtype.custom.F64"],"filename":["test.idx3-ubyte","test2.idx"],"expected":["(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]","(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Test reading IDX file format.",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.061 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,13 +60,13 @@
 
         {"kind":"where","text":"The following files and the expected hashes of their data were used :","code":{"filename":["MNIST-sample-1.idx","MNIST-sample-2.idx","MNIST-sample-3.idx"],"expected":["c74e87c7a93605e7a1660ec9e17dcf9f","4a57297981456a467a302c8738b3ac50","87eade8bb5659d324030f4e84f6745e7"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"We can load image files as tensors.",
       "result":"PASS",
-      "duration":"0.703 seconds",
+      "duration":"1.491 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,13 +81,13 @@
 
         {"kind":"where","text":"The following jpg files with their expected shape and hash were used.","code":{"filename":["small.JPG","tiny.JPG","super-tiny.JPG","tiny.png"],"shape":["[260, 410, 3]","[10, 46, 3]","[3, 4, 3]","[90, 183, 4]"],"expected":["b0e336b03f2ead7297e56b8ca050f34d","79bf5dd367b5ec05603e395c41dafaa7","a834038d8ddc53f170fa426c76d45df2","63bcd21a7580242a1b562bb49cb53e74"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors.",
       "result":"PASS",
-      "duration":"0.015 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -100,13 +100,13 @@
 
         {"kind":"where","text":"The following jpg files with their expected shape and hash were used.","code":{"filename":["biostats.csv","biostats.csv","biostats.csv","biostats.csv"],"params":["[:]","[firstRowIsLabels:true]","[firstColIsIndex:true]","[firstColIsIndex:true, firstRowIsLabels:true]"],"byteSize":["753","702","639","594"],"shape":["[19, 5]","[18, 5]","[19, 4]","[18, 4]"],"expected":["a3dc4ede7814b5d35d20a8c9310cd63c","baac406a366a51cb6d69e97a90711050","90c5d3a4b1ea87901879993bb79e9bc1","61d75f3dccc8d6987e686d151a423310"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Fully labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -123,13 +123,13 @@
 
         {"kind":"then","text":"","code":["!new File(\"build/resources/test/csv/test.csv\").exists()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Partially labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -146,7 +146,7 @@
 
         {"kind":"then","text":"","code":["!new File(\"build/resources/test/csv/test.csv\").exists()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

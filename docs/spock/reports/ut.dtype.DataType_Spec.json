@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.072 seconds"
+    "duration":"0.045 seconds"
   },
   "headers":["\n            This specification tests the \"DataType\" class, which hosts a multiton\n            design pattern in order to guarantee uniqueness of instances of the type\n            which represent the same class type. <br>\n            Instances of this class wrap a Class variable which is the type of the data of the tensor. <br>\n            (The following types are usually used : UI8, I8, UI16, I16, UI32, I64, I32, F32, F64 )\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"DataType multi-ton instances behave as expected.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
 
         {"kind":"where","text":"The following data is being used :","code":{"typeClass":["class neureka.dtype.custom.I16","class neureka.dtype.custom.UI8","class java.lang.Float","class java.lang.Double","class java.lang.Short","class java.lang.Byte","class java.lang.String","class java.util.Date","class java.lang.Object","class spock.lang.Specification"],"targetClass":["class neureka.dtype.custom.I16","class neureka.dtype.custom.UI8","class neureka.dtype.custom.F32","class neureka.dtype.custom.F64","class neureka.dtype.custom.I16","class neureka.dtype.custom.I8","class java.lang.String","class java.util.Date","class java.lang.Object","class spock.lang.Specification"],"isNumericType":["true","true","true","true","true","true","false","false","false","false"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

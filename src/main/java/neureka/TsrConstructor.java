@@ -2,6 +2,7 @@ package neureka;
 
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
+import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
 import neureka.ndim.NDConstructor;
@@ -34,7 +35,6 @@ final class TsrConstructor
         void   setType( DataType<?> type );
         void   setConf( NDConfiguration conf );
         void   setData( Object o );
-        void   allocate( int size );
         Object getData();
         void   setIsVirtual(  boolean isVirtual );
     }
@@ -53,10 +53,14 @@ final class TsrConstructor
      * @param makeVirtual A flag determining if the tensor should be actual or virtual (not fully allocated).
      * @param autoAllocate Determines if the underlying data array should be allocated or not.
      */
-    public void configureFromNewShape( NDConstructor ndConstructor, boolean makeVirtual, boolean autoAllocate )
-    { 
-        _API.setIsVirtual( makeVirtual ); 
-        if ( _API.getData() == null && autoAllocate ) _API.allocate( makeVirtual ? 1 : ndConstructor.getSize() );
+    public void configureFromNewShape(
+            NDConstructor ndConstructor, boolean makeVirtual, boolean autoAllocate, DataType<?> type
+    ) {
+        _API.setType( type );
+        _API.setIsVirtual( makeVirtual );
+        if ( _API.getData() == null && autoAllocate )
+            _API.setData( CPU.get().allocate( type, makeVirtual ? 1 : ndConstructor.getSize() ) );
+
         _API.setConf( ndConstructor.produceNDC( makeVirtual ) );
     }
 
@@ -103,8 +107,7 @@ final class TsrConstructor
         else if ( data instanceof boolean[] ) _constructForBooleans(ndConstructor, (boolean[]) data );
         else if ( data instanceof long[]    ) _constructForLongs(ndConstructor, (long[]) data );
         else {
-            _API.setType(dataType);
-            configureFromNewShape( ndConstructor, false, false);
+            configureFromNewShape( ndConstructor, false, false, dataType);
             _API.setData(data);
         }
     }
@@ -181,90 +184,102 @@ final class TsrConstructor
 
     private void _constructAll( NDConstructor ndConstructor, Class<?> typeClass ) {
         int size = ndConstructor.getSize();
-        _API.setType( DataType.of( typeClass ) );
-        configureFromNewShape( ndConstructor, size > 1, true );
+        configureFromNewShape( ndConstructor, size > 1, true, DataType.of( typeClass ) );
     }
 
     private void _constructForDoubles( NDConstructor ndConstructor, double[] value )
     {
         int size = ndConstructor.getSize();
-        _API.setType( DataType.of( F64.class ) );
+        DataType<?> type = DataType.of( F64.class );
+        Object data = value;
         if ( size != value.length ) {
-            _API.allocate( size );
-            for ( int i = 0; i < size; i++ ) ( (double[]) _API.getData())[ i ]  = value[ i % value.length ];
+            data = CPU.get().allocate( type, size );
+            for ( int i = 0; i < size; i++ ) ( (double[]) data )[ i ]  = value[ i % value.length ];
         }
-        else _API.setData( value );
-        configureFromNewShape( ndConstructor, false, false );
+        configureFromNewShape( ndConstructor, false, false, type );
+        _API.setData( data );
     }
 
     private void _constructForFloats( NDConstructor ndConstructor, float[] value )
     {
         int size = ndConstructor.getSize();
-        _API.setType( DataType.of( F32.class ) );
+        DataType<?> type = DataType.of( F32.class );
+        Object data = value;
         if ( size != value.length ) {
-            _API.allocate( size );
-            for ( int i = 0; i < size; i++ ) ( (float[]) _API.getData())[ i ]  = value[ i % value.length ];
-        } else _API.setData( value );
-        configureFromNewShape( ndConstructor, false, false );
+            data = CPU.get().allocate( type, size );
+            for ( int i = 0; i < size; i++ ) ( (float[]) data )[ i ]  = value[ i % value.length ];
+        }
+        configureFromNewShape( ndConstructor, false, false, type );
+        _API.setData( data );
     }
 
     private void _constructForInts( NDConstructor ndConstructor, int[] value )
     {
         int size = ndConstructor.getSize();
-        _API.setType( DataType.of( I32.class ) );
+        DataType<?> type = DataType.of( I32.class );
+        Object data = value;
         if ( size != value.length ) {
-            _API.allocate( size );
-            for ( int i = 0; i < size; i++ ) ( (int[]) _API.getData())[ i ]  = value[ i % value.length ];
-        } else _API.setData( value );
-        configureFromNewShape( ndConstructor, false, false );
+            data = CPU.get().allocate( type, size );
+            for ( int i = 0; i < size; i++ ) ( (int[]) data )[ i ]  = value[ i % value.length ];
+        }
+        configureFromNewShape( ndConstructor, false, false, type );
+        _API.setData( data );
     }
 
     private void _constructForShorts( NDConstructor ndConstructor, short[] value )
     {
         int size = ndConstructor.getSize();
-        _API.setType( DataType.of( I16.class ) );
+        DataType<?> type = DataType.of( I16.class );
+        Object data = value;
         if ( size != value.length ) {
-            _API.allocate( size );
-            for ( int i = 0; i < size; i++ ) ( (short[]) _API.getData())[ i ]  = value[ i % value.length ];
-        } else _API.setData( value );
-        configureFromNewShape( ndConstructor, false, false );
+            data = CPU.get().allocate( type, size );
+            for ( int i = 0; i < size; i++ ) ( (short[]) data )[ i ]  = value[ i % value.length ];
+        }
+        configureFromNewShape( ndConstructor, false, false, type );
+        _API.setData( data );
     }
 
     private void _constructForBooleans( NDConstructor ndConstructor, boolean[] value )
     {
         int size = ndConstructor.getSize();
-        _API.setType( DataType.of( Boolean.class ) );
+        DataType<?> type = DataType.of( Boolean.class );
+        Object data = value;
         if ( size != value.length ) {
-            _API.allocate( size );
-            for ( int i = 0; i < size; i++ ) ( (boolean[]) _API.getData())[ i ]  = value[ i % value.length ];
-        } else _API.setData( value );
-        configureFromNewShape( ndConstructor, false, false );
+            data = CPU.get().allocate( type, size );
+            for ( int i = 0; i < size; i++ ) ( (boolean[]) data )[ i ]  = value[ i % value.length ];
+        }
+        configureFromNewShape( ndConstructor, false, false, type );
+        _API.setData( data );
     }
 
     private void _constructForBytes( NDConstructor ndConstructor, byte[] value )
     {
         int size = ndConstructor.getSize();
-        _API.setType( DataType.of( I8.class ) );
+        DataType<?> type = DataType.of( I8.class );
+        Object data = value;
         if ( size != value.length ) {
-            _API.allocate( size );
-            for ( int i = 0; i < size; i++ ) ( (byte[]) _API.getData())[ i ]  = value[ i % value.length ];
-        } else _API.setData( value );
-        configureFromNewShape( ndConstructor, false, false );
+            data = CPU.get().allocate( type, size );
+            for ( int i = 0; i < size; i++ ) ( (byte[]) data )[ i ]  = value[ i % value.length ];
+        }
+        configureFromNewShape( ndConstructor, false, false, type );
+        _API.setData( data );
     }
 
     private void _constructForLongs( NDConstructor ndConstructor, long[] value )
     {
         int size = ndConstructor.getSize();
-        _API.setType( DataType.of( I64.class ) );
+        DataType<?> type = DataType.of( I64.class );
+        Object data = value;
         if ( size != value.length ) {
-            _API.allocate( size );
-            for ( int i = 0; i < size; i++ ) ( (long[]) _API.getData())[ i ]  = value[ i % value.length ];
-        } else _API.setData( value );
-        configureFromNewShape( ndConstructor, false, false );
+            data = CPU.get().allocate( type, size );
+            for ( int i = 0; i < size; i++ ) ( (long[]) data )[ i ]  = value[ i % value.length ];
+        }
+        configureFromNewShape( ndConstructor, false, false, type );
+        _API.setData( data );
     }
 
-    public <V> void constructSeeded( Class<V> valueType, NDConstructor ndConstructor, Object seed ) {
-        _API.setType( DataType.of(valueType) );
+    public <V> void constructSeeded( Class<V> valueType, NDConstructor ndConstructor, Object seed )
+    {
         int size = ndConstructor.getSize();
 
         Object data;
@@ -287,8 +302,8 @@ final class TsrConstructor
         else
             throw new IllegalArgumentException("Seeding not supported for value type '"+valueType.getSimpleName()+"'!");
 
+        configureFromNewShape( ndConstructor, false, false, DataType.of(valueType) );
         _API.setData( data );
-        configureFromNewShape( ndConstructor, false, false  );
     }
 
     /**

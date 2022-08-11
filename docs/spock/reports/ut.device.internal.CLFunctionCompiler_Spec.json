@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.470 seconds"
+    "duration":"0.098 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
       "result":"PASS",
-      "duration":"0.408 seconds",
+      "duration":"0.065 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -69,13 +69,13 @@
 
         {"kind":"then","text":"\n                We will register that the Operation created by the CLFunctionCompiler managed to \n                integrate well with the Function backend (calculus package) and eventually\n                dispatch an execution call to our mocked OpenCLDevice.\n        ","code":["1 * mockDevice.approve({ ExecutionCall<OpenCLDevice> call ->","    call.device == mockDevice &&","    call.operation == resultOperation","})"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.",
       "result":"PASS",
-      "duration":"0.052 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -108,7 +108,7 @@
 
         {"kind":"and","text":"Finally the caller will receive a dispatch call with a work size of 1 (because the tensors are scalars). ","code":["1 * mockCaller.call(1)"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

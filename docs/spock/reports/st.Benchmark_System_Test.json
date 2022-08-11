@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"8.845 seconds"
+    "duration":"27.374 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensor can be constructed by passing List instances.",
       "result":"PASS",
-      "duration":"2.706 seconds",
+      "duration":"8.372 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,13 +33,13 @@
 
         {"kind":"then","text":"","code":["assert !t.toString().contains(\"empty\")","assert t.toString().contains(\"(3):[1.0, 3.3, 6.0]\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Test benchmark script and simple tensor constructor.",
       "result":"PASS",
-      "duration":"6.032 seconds",
+      "duration":"18.870 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -64,7 +64,7 @@
 
         {"kind":"then","text":"The calculated hash is as expected.","code":["hash == expected"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

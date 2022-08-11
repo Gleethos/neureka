@@ -9,21 +9,21 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.258 seconds"
+    "duration":"0.179 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test integration broadly.",
       "result":"PASS",
-      "duration":"0.226 seconds",
+      "duration":"0.168 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"The integration test runs without exceptions or assertion errors.","code":["BroadSystemTest.on()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

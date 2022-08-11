@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.053 seconds"
+    "duration":"0.086 seconds"
   },
   "headers":["\n           Although you can create a tensor of almost anything, you will\n           not be able to execute operations on every kind of tensor...        \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Plus operator on String tensors works element-wise.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,13 +31,13 @@
 
         {"kind":"then","text":"This translates to the individual elements :","code":["c.toString() == '(2x3):[af, bg, ch, di, ej, ak]'"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Tensor operations translate to custom data type \"ComplexNumber\".",
       "result":"PASS",
-      "duration":"0.013 seconds",
+      "duration":"0.018 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -48,13 +48,13 @@
 
         {"kind":"expect","text":"","code":["a.toString() == \"(3x2):[2.3-1.54i, 2.3-1.54i, 2.3-1.54i, 2.3-1.54i, 2.3-1.54i, 2.3-1.54i]\"","b.toString() == \"(3x2):[1.0+0.5i, 1.0+0.5i, 1.0+0.5i, 1.0+0.5i, 1.0+0.5i, 1.0+0.5i]\"","a.isVirtual()","b.isVirtual()","(a+b).toString() == \"(3x2):[3.3-1.04i, 3.3-1.04i, 3.3-1.04i, 3.3-1.04i, 3.3-1.04i, 3.3-1.04i]\"","(a-b).toString() == \"(3x2):[1.2999999999999998-2.04i, 1.2999999999999998-2.04i, 1.2999999999999998-2.04i, 1.2999999999999998-2.04i, 1.2999999999999998-2.04i, 1.2999999999999998-2.04i]\"","(a*b).toString() == \"(3x2):[3.07-0.3900000000000001i, 3.07-0.3900000000000001i, 3.07-0.3900000000000001i, 3.07-0.3900000000000001i, 3.07-0.3900000000000001i, 3.07-0.3900000000000001i]\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"More tensor operations translate to custom data type \"ComplexNumber\".",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -63,13 +63,13 @@
 
         {"kind":"expect","text":"","code":["a.toString() == \"(3x2):[0.0+0.0i, 0.0+1.0i, 1.0+0.0i, 1.0+1.0i, 2.0+0.0i, 2.0+1.0i]\"","b.toString() == \"(3x2):[0.0+0.0i, 1.0+0.0i, 0.0+1.0i, 1.0+1.0i, 0.0+2.0i, 1.0+2.0i]\"","!a.isVirtual()","!b.isVirtual()","(a+b).toString() == \"(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]\"","(a-b).toString() == \"(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]\"","(a*b).toString() == \"(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"We can apply predicates on the values of a tensor.",
       "result":"PASS",
-      "duration":"0.015 seconds",
+      "duration":"0.027 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -84,7 +84,7 @@
 
         {"kind":"and","text":"As expected the negation will ensure that there is no item matching the provided condition.","code":["!a.any( item -> item == '?' as char )","!b.any( item -> item == \"is\" )","!c.any( item -> item == 666 )"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

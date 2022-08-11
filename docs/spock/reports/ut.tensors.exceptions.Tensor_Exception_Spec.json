@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.045 seconds"
+    "duration":"0.270 seconds"
   },
   "headers":["\n                <h2> Tensors Exception Behavior </h2>\n                <br> \n                <p>\n                    This specification covers the behavior of tensors\n                    in exceptional situations.           \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Trying to inject an empty tensor into another causes fitting exception.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -27,13 +27,13 @@
 
         {"kind":"then","text":"The expected message is being thrown, which tells us that ","code":["def exception = thrown(IllegalArgumentException)","assert exception.message.contains(\"Provided tensor is empty! Empty tensors cannot be injected.\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Passing null to various methods of the tensor API will throw exceptions.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.040 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -46,15 +46,15 @@
 
         {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
 
-        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@4d0d3b8d","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@3a537884","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@2f4d8378","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@67cb47c9","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@6f2bfd55","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@1349427e","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@552677ad","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@12bb010b","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@54346564","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@68529a5","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@3ed3afd","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@36104516","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@3190f1ea"]}}
+        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@7494905e","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@1122ff04","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@718ba895","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@73e73d8a","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@1504a278","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@2af5ea4e","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@6b90b077","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@600e4216","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@6462c066","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@705fd0f8","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@3091ee2","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@6dfcc2aa","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@55d811da"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Passing an invalid object into Tsr constructor causes descriptive exception.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -63,13 +63,13 @@
 
         {"kind":"then","text":"An exception is being thrown which tells us about it.","code":["def exception = thrown(IllegalArgumentException)","exception.message.contains(","        \"Could not create a random tensor for type 'class java.util.Scanner'!\"",")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Passing an invalid key object into the \"getAt\" method causes a descriptive exception.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -80,13 +80,13 @@
 
         {"kind":"then","text":"An exception is being thrown which tells us about it.","code":["def exception = thrown(IllegalArgumentException)","exception.message.contains(\"List of indices/ranges may not contain entries which are null!\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Out of dimension bound causes descriptive exception!",
       "result":"PASS",
-      "duration":"0.013 seconds",
+      "duration":"0.109 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -97,13 +97,13 @@
 
         {"kind":"and","text":"The logger logs the exception message!","code":["1 * System.err.println({it.endsWith(","    \"Cannot create slice because ranges are out of the bounds of the targeted tensor.\\n\" +","    \"At index '1' : offset '1' + shape '3' = '4',\\n\" +","    \"which is larger than the target shape '3' at the same index!\")","})"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Building a tensor with 0 shape arguments throws an exception.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -112,13 +112,13 @@
 
         {"kind":"then","text":"","code":["thrown(IllegalArgumentException)"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Casting a tensor as something unusual will cuas an exception to be thrown.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -129,13 +129,13 @@
 
         {"kind":"then","text":"This will obviously least to an exception being thrown.","code":["thrown(IllegalArgumentException)"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Building a tensor with \"null\" as shape argument throws an exception.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -148,7 +148,7 @@
 
         {"kind":"then","text":"","code":["thrown(IllegalArgumentException)"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

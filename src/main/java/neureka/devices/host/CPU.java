@@ -279,7 +279,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected final Object _allocate( DataType<?> dataType, int size ) {
+    public final Object allocate(DataType<?> dataType, int size ) {
         Class<?> typeClass = dataType.getRepresentativeType();
         if ( typeClass == F64.class )
             return new double[ size ];

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.610 seconds"
+    "duration":"8.677 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"First found OpenCLDevice will have realistic properties inside summary query.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,13 +25,13 @@
 
         {"kind":"then","text":"The query string contains expected properties.","code":["query.contains(\"DEVICE_NAME\")","query.contains(\"MAX_MEM_ALLOC_SIZE\")","query.contains(\"VENDOR\")","query.contains(\"CL_DEVICE_PREFERRED_VECTOR_WIDTH\")","query.contains(\"Info for device\")","query.contains(\"LOCAL_MEM_SIZE\")","query.contains(\"CL_DEVICE_TYPE\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"First found OpenCLDevice will have realistic numeric properties.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -40,13 +40,13 @@
 
         {"kind":"then","text":"The device has realistic properties.","code":["cld.globalMemSize() > 1000","cld.image2DMaxHeight() > 100","cld.image2DMaxWidth() > 100","cld.image3DMaxHeight() > 100","cld.image3DMaxDepth() > 0","cld.image3DMaxWidth() > 100","cld.maxWorkGroupSize() > 10","cld.maxClockFrequenzy() > 100","cld.maxClockFrequenzy() > 100","cld.maxConstantBufferSize() > 1000","cld.maxWriteImageArgs() > 1","cld.prefVecWidthChar() > 0","cld.prefVecWidthDouble() > 0","cld.prefVecWidthFloat() > 0","cld.prefVecWidthInt() > 0","cld.prefVecWidthLong() > 0","cld.prefVecWidthShort() > 0"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"First found OpenCLDevice will have realistic text properties.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -55,13 +55,13 @@
 
         {"kind":"then","text":"The device has realistic properties.","code":["!cld.name().isBlank()","!cld.vendor().isBlank()","cld.type() != OpenCLDevice.Type.UNKNOWN","!cld.toString().isBlank()","!cld.version().isBlank()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"0.024 seconds",
+      "duration":"0.098 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -84,13 +84,13 @@
 
         {"kind":"and","text":"It explains what went wrong.","code":["exception.message == \"Data parent is not outsourced!\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"2.575 seconds",
+      "duration":"8.547 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -105,7 +105,7 @@
 
         {"kind":"and","text":"","code":["devices.every {it.size() == 0}"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

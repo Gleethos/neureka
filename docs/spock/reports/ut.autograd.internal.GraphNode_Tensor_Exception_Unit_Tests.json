@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.603 seconds"
+    "duration":"4.082 seconds"
   },
   "headers":["\n            <h2> GraphNode Tensor Exceptions </h2>\n            <p>\n                Specified below are strict tests covering the exception behavior\n                of the GraphNode class interacting with Tsr instances.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A tensor cannot be deleted if it is part of a graph and the tensor is used as derivative.",
       "result":"PASS",
-      "duration":"0.601 seconds",
+      "duration":"4.074 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
 
         {"kind":"and","text":"The exception message is also being thrown.","code":["1 * System.err.println({it.endsWith(\"Cannot delete a tensor which is used as derivative by the AD computation graph!\")})"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

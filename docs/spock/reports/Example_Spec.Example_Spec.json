@@ -9,21 +9,21 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.212 seconds"
+    "duration":"0.271 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"iAmNotSoReadable",
       "result":"PASS",
-      "duration":"0.029 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"----","code":[]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
@@ -36,7 +36,7 @@
       "blocks":[
         {"kind":"expect","text":"----","code":[]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
@@ -49,13 +49,13 @@
       "blocks":[
         {"kind":"expect","text":"----","code":[]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Should be able to remove from list",
       "result":"PASS",
-      "duration":"0.063 seconds",
+      "duration":"0.018 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,13 +66,13 @@
 
         {"kind":"then","text":"...the following should happen:","code":[]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Numbers to the power of two with a fancy data table!",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
 
         {"kind":"where","text":"We use the following data:","code":{"a":["1","2","3"],"b":["2","2","2"],"c":["1","4","9"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

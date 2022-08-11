@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.164 seconds"
+    "duration":"0.091 seconds"
   },
   "headers":["\n                This specification covers the behavior of tensors when being sliced\n                on multiple different device types using the SliceBuilder API.           \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.",
       "result":"PASS",
-      "duration":"0.031 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,15 +37,15 @@
 
         {"kind":"and","text":"As already shown by the printed view, the tensor as the expected shape:","code":["s.shape() == [2, 2, 3]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1afcd751900],platform=OpenCLPlatform@43e6bfb7[pid=cl_platform_id[0x7ffaff1da490],context=cl_context[0x1afca11af20],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1d1d0377070],platform=OpenCLPlatform@14a689a[pid=cl_platform_id[0x1d1d0376ee0],context=cl_context[0x1d1d1eebb90],kernels=[..46..]]]","CPU[coreCount=12]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The \"at\" method and the \"from\" / \"to\" methods can be mixed when slicing a tensor.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,15 +66,15 @@
 
         {"kind":"and","text":"The \"at\" method sliced a single axis point whereas the \"from\" & \"to\" sliced from 1 to 2.","code":["s.shape() == [1, 3, 2]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1afcd751900],platform=OpenCLPlatform@43e6bfb7[pid=cl_platform_id[0x7ffaff1da490],context=cl_context[0x1afca11af20],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1d1d0377070],platform=OpenCLPlatform@14a689a[pid=cl_platform_id[0x1d1d0376ee0],context=cl_context[0x1d1d1eebb90],kernels=[..46..]]]","CPU[coreCount=12]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"A tensor can be sliced by passing ranges in the form of primitive arrays.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -95,15 +95,15 @@
 
         {"kind":"and","text":"The the slice will have the following shape","code":["s.shape() == [1, 3, 2]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1afcd751900],platform=OpenCLPlatform@43e6bfb7[pid=cl_platform_id[0x7ffaff1da490],context=cl_context[0x1afca11af20],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1d1d0377070],platform=OpenCLPlatform@14a689a[pid=cl_platform_id[0x1d1d0376ee0],context=cl_context[0x1d1d1eebb90],kernels=[..46..]]]","CPU[coreCount=12]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"A tensor can be sliced by passing ranges in the form of lists (Groovy ranges).",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -124,15 +124,15 @@
 
         {"kind":"and","text":"The the slice will have the following shape","code":["s.shape() == [1, 3, 2]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1afcd751900],platform=OpenCLPlatform@43e6bfb7[pid=cl_platform_id[0x7ffaff1da490],context=cl_context[0x1afca11af20],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1d1d0377070],platform=OpenCLPlatform@14a689a[pid=cl_platform_id[0x1d1d0376ee0],context=cl_context[0x1d1d1eebb90],kernels=[..46..]]]","CPU[coreCount=12]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The slice builder also supports slicing with custom step sizes.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -153,15 +153,15 @@
 
         {"kind":"and","text":"The the slice will have the following shape","code":["s.shape() == [1, 1, 2]"]},
 
-        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1afcd751900],platform=OpenCLPlatform@43e6bfb7[pid=cl_platform_id[0x7ffaff1da490],context=cl_context[0x1afca11af20],kernels=[..46..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"This works both on the GPU as well as CPU of course.","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x1d1d0377070],platform=OpenCLPlatform@14a689a[pid=cl_platform_id[0x1d1d0376ee0],context=cl_context[0x1d1d1eebb90],kernels=[..46..]]]","CPU[coreCount=12]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Slicing is also a Function with autograd support!",
       "result":"PASS",
-      "duration":"0.037 seconds",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -178,7 +178,7 @@
 
         {"kind":"then","text":"The gradient of the original tensor will be contain 4 times -8.","code":["t.toString() == \"(4x4):[\\n\" +","\"   [  -1.0 ,   7.0 ,   3.0 ,  -1.0  ],\\n\" +","\"   [   7.0 ,   3.0 ,  -1.0 ,   7.0  ],\\n\" +","\"   [   3.0 ,  -1.0 ,   7.0 ,   3.0  ],\\n\" +","\"   [  -1.0 ,   7.0 ,   3.0 ,  -1.0  ]\\n\" +","\"]:g:[\\n\" +","\"   [   0.0 ,   0.0 ,   0.0 ,   0.0  ],\\n\" +","\"   [   0.0 ,  -8.0 ,  -8.0 ,   0.0  ],\\n\" +","\"   [   0.0 ,  -8.0 ,  -8.0 ,   0.0  ],\\n\" +","\"   [   0.0 ,   0.0 ,   0.0 ,   0.0  ]\\n\" +","\"]\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
@@ -197,13 +197,13 @@
 
         {"kind":"then","text":"The gradient of the original tensor will be contain 2 times 42.","code":["t.toString() == \"(5):[  -1.0 ,   7.0 ,   3.0 ,  -1.0 ,   7.0  ]:g:[   0.0 ,   0.0 ,  42.0 ,  42.0 ,   0.0  ]\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"We can avoid autograd when slicing by using the \"detached\" instead of the \"get\" method.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -218,13 +218,13 @@
 
         {"kind":"then","text":"This time there will be 2 times 73 in the gradient.","code":["t.toString() == \"(4):[  -1.0 ,   7.0 ,   3.0 ,  -1.0  ]:g:[  73.0 ,  73.0 ,   0.0 ,   0.0  ]\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"We can slice a scalar tensor from a larger tensor of rank 4.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -239,7 +239,7 @@
 
         {"kind":"and","text":"A variation of the previous verification (here we test 0 padding of getItemAt).","code":["s.items == [t.getItemAt(1, 1, 2)]"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

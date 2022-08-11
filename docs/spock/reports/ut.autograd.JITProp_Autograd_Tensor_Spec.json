@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.295 seconds"
+    "duration":"1.063 seconds"
   },
   "headers":["\n            <h2>Autograd Tensor Integration Tests</h2>\n            <p>\n                This specification contains tests which\n                cover the autograd behavior of tensors. <br>\n                The classes involved in governing the tested features are\n                the Tsr, GraphNode and Function (& implementations) classes.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test pending error optimization",
       "result":"PASS",
-      "duration":"0.029 seconds",
+      "duration":"0.081 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,13 +33,13 @@
 
         {"kind":"then","text":"","code":["c.toString().contains(\"(3.0):g:(-6.0)\")","a.toString().contains(\"(2.0):g:(36.0)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Test JIT propagation variant one.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.561 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,13 +54,13 @@
 
         {"kind":"then","text":"","code":["c.toString().contains(\"g:(-6.0)\")","a.toString().contains(\"(38.0):g:(null)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Test JIT propagation variant two.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -75,13 +75,13 @@
 
         {"kind":"then","text":"","code":["y.toString().contains(\"(41.0)\")","c.toString().contains(\"g:(-6.0)\")","a.toString().contains(\"(38.0):g:(null)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Gradient auto-apply kicks in when used AD uses JIT prop",
       "result":"PASS",
-      "duration":"0.038 seconds",
+      "duration":"0.079 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -104,13 +104,13 @@
 
         {"kind":"then","text":"","code":["result.toString().contains(\"d[1]:(7.25)\")","result.toString().contains(\"d[1]:(1.5)\")","a.toString().contains(\"(7.25):g:(null)\")","c.toString().contains(\"(1.5):g:(null)\")","x.toString().contains(\"(-4.5)\")","!c.has(JITProp.class)","!b.has(JITProp.class)","!s.getGraphNode().isReliesOnJustInTimeProp()","!a.getGraphNode().isReliesOnJustInTimeProp()","!b.getGraphNode().isReliesOnJustInTimeProp()","!c.getGraphNode().isReliesOnJustInTimeProp()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Test no preemptive gradient apply when not requested and auto apply and JIT_prop",
       "result":"PASS",
-      "duration":"0.153 seconds",
+      "duration":"0.181 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -141,13 +141,13 @@
 
         {"kind":"then","text":"","code":["result.toString().contains(\"d[1]:(7.25)\")","result.toString().contains(\"d[1]:(3.0)\")","a.toString().contains(\"(7.25):g:(null)\")","c.toString().contains(\"(3.0):g:(-1.5)\")","x.toString().contains(\"(-4.5)\")","!a.has(JITProp.class)","!c.has(JITProp.class)","!s.getGraphNode().isReliesOnJustInTimeProp()","!a.getGraphNode().isReliesOnJustInTimeProp()","!b.getGraphNode().isReliesOnJustInTimeProp()","!c.getGraphNode().isReliesOnJustInTimeProp()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Test autograd without JIT and auto apply.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.045 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -166,13 +166,13 @@
 
         {"kind":"then","text":"","code":["a.toString().contains(\"(7.25):g:(null)\")","c.toString().contains(\"(1.5):g:(null)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Test in-differential and JIT with auto apply",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.016 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -187,13 +187,13 @@
 
         {"kind":"then","text":"","code":["a.has(JITProp.class)","!b.has(JITProp.class)","c.has(JITProp.class)","a.toString().contains(\"g:(NaN)\")","c.toString().contains(\"g:(null)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Test no JIT prop when forward AD",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.035 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -208,7 +208,7 @@
 
         {"kind":"then","text":"","code":["!a.has(JITProp.class)","!b.has(JITProp.class)","!c.has(JITProp.class)","a.toString().contains(\"g:(-99.0)\")","c.toString().contains(\"g:(66.0)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

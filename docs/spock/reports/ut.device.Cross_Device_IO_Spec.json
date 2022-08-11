@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.239 seconds"
+    "duration":"0.327 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the access device API to read from a tensor.",
       "result":"PASS",
-      "duration":"0.075 seconds",
+      "duration":"0.190 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,13 +37,13 @@
 
         {"kind":"where","text":"We use the following data:","code":{"deviceType":["CPU","CPU","CPU","CPU","CPU","CPU","GPU","CPU"],"type":["class java.lang.Integer","class java.lang.Short","class java.lang.Long","class java.lang.Byte","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Character"],"fill":["[2, 1]","[2, 7, 8]","[6, 2, 6]","[6, 2, 7]","[3.4, 3.0]","[5.7, -1.0]","[5.7, -1.0]","[6, a]"],"expected":["[2, 1, 2, 1]","[2, 7, 8, 2]","[6, 2, 6, 6]","[6, 2, 7, 6]","[3.4, 3.0, 3.4, 3.0]","[5.7, -1.0, 5.7, -1.0]","[5.7, -1.0, 5.7, -1.0]","[6, a, 6, a]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"We can use the access device API to write to a tensor",
       "result":"PASS",
-      "duration":"0.035 seconds",
+      "duration":"0.033 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,7 +62,7 @@
 
         {"kind":"where","text":"","code":{"deviceType":["CPU","CPU","CPU","CPU","CPU","CPU","GPU"],"type":["class java.lang.Integer","class java.lang.Short","class java.lang.Long","class java.lang.Byte","class java.lang.Double","class java.lang.Float","class java.lang.Float"],"fill":["[2, 1]","[2, 7, 8]","[6, 2, 6]","[6, 2, 7]","[3.4, 3.0]","[5.7, -1.0]","[5.7, -1.0]"],"write":["[5]","[7]","[1]","[8]","[3]","[4]","[8]"],"expected":["[5, 1, 5, 1]","[7, 7, 7, 2]","[1, 2, 1, 6]","[8, 2, 8, 6]","[3.0, 3.0, 3.0, 3.0]","[4.0, -1.0, 4.0, -1.0]","[8.0, -1.0, 8.0, -1.0]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

@@ -57,7 +57,7 @@ import java.util.Arrays;
  *  {@link TsrImpl} inherits from {@link AbstractNda} which inherits from {@link AbstractComponentOwner}.
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
- *  The above mentioned classes are implementation details covered by
+ *  The above-mentioned classes are implementation details covered by
  *  the {@link Nda} and {@link Tsr} interfaces, which define various
  *  default methods spanning a rich API with good interoperability with
  *  different JVM languages...
@@ -184,9 +184,9 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
             }
         }
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
-        if ( _data != data && data != null ) {
-            boolean isProbablyDeviceTransfer = ( _data != null && _data.getClass().isArray() != data.getClass().isArray() );
-            if ( !isProbablyDeviceTransfer )
+        if ( _data != data && data != null && _data != null ) {
+            boolean isProbablyDeviceTransfer = ( _data.getClass().isArray() != data.getClass().isArray() );
+            if ( !isProbablyDeviceTransfer)
                 _version++; // Autograd must be warned!
         }
         _data = data;
@@ -253,7 +253,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *
      * @param size The size of the data array which ought to be allocated.
      */
-    protected final void _allocate( int size ) { _data = getDevice().access( this ).allocate( size ); }
+    protected final void _allocate( int size ) { _data = getDevice().allocate( this.getDataType(), size ); }
 
     /**
      *  The internal implementation handling {@link #setIsVirtual(boolean)}.
@@ -279,7 +279,6 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
                         @Override public void setType( DataType<?> type        ) { nda.getUnsafe().setDataType( type ); }
                         @Override public void setConf( NDConfiguration conf    ) { nda.getUnsafe().setNDConf( conf ); }
                         @Override public void setData( Object o                ) { nda._setData( o ); }
-                        @Override public void allocate( int size               ) { nda._allocate( size ); }
                         @Override public Object getData()                        { return nda._getData(); }
                         @Override public void setIsVirtual( boolean isVirtual )  { nda._setIsVirtual( isVirtual ); }
                     }

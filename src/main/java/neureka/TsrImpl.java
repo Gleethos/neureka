@@ -239,8 +239,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         _initData(filler);
     }
 
-    private void _constructAndAllocate(NDConstructor ndConstructor, boolean virtual ) {
-        createConstructionAPI().configureFromNewShape(ndConstructor, virtual, true );
+    private void _constructAndAllocate( NDConstructor ndConstructor, boolean virtual ) {
+        createConstructionAPI().configureFromNewShape(ndConstructor, virtual, true, getDataType() );
     }
 
     /*==================================================================================================================
@@ -398,12 +398,12 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-            createConstructionAPI().configureFromNewShape( NDConstructor.of(getNDConf().shape()), isVirtual, _getData() == null );
+            createConstructionAPI().configureFromNewShape( NDConstructor.of(getNDConf().shape()), isVirtual, _getData() == null, getDataType() );
             if ( isVirtual ) {
                 Relation<V> relation = get( Relation.class );
                 if ( relation!=null )
                     relation.foreachChild( c -> {
-                                ((TsrImpl)c)._setData( _getData());
+                                ((TsrImpl<?>)c)._setData( _getData());
                                 c.setIsVirtual( true );
                             });
             } else {
@@ -674,7 +674,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      */
     private void _incrementVersionBecauseOf( ExecutionCall<?> call ) {
         if ( Neureka.get().settings().autograd().isPreventingInlineOperations() ) {
-            _version++;
+            _version++; // Autograd must be warned!
             GraphNode<?> node = get( GraphNode.class );
             if ( node != null && node.getPayloadReferenceVersion() != _version ) {
                 if ( node.usesAD() || node.isUsedAsDerivative() ) {

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.307 seconds"
+    "duration":"0.108 seconds"
   },
   "headers":["\n            <h2> GraphNode Instantiation </h2>\n            <p>\n                Specified below are strict tests covering the behavior\n                of the GraphNode class during instantiation.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"GraphNode instantiation works as expected when the context argument is a GraphLock.",
       "result":"PASS",
-      "duration":"1.562 seconds",
+      "duration":"0.065 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -29,13 +29,13 @@
 
         {"kind":"then","text":"The mock objects are being called as expected.","code":["1 * function.isDoingAD() >> true","1 * payload.set( _ )","1 * device.access( _ ) >> Mock(Device.Access)","(1.._) * payload.getNDConf() >> Mock(NDConfiguration)"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"GraphNode instantiation works as expected when the context argument is an ExecutionCall.",
       "result":"PASS",
-      "duration":"0.731 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -48,7 +48,7 @@
 
         {"kind":"and","text":"The mock objects have been called as expected.","code":["(3.._) * call.inputs() >> inputs","(5.._) * inputsNodeMock.getLock() >> Mock( GraphLock )","(1.._) * function.isDoingAD() >> true","(1.._) * payload.getDevice() >> device","(1.._) * payload.set( _ )","(1.._) * payload.getNDConf() >> Mock(NDConfiguration)","(1.._) * device.access( _ ) >> Mock( Device.Access )","(4.._) * inputs[0].getGraphNode() >> inputsNodeMock","(3.._) * inputs[1].getGraphNode() >> inputsNodeMock","(3.._) * inputs[2].getGraphNode() >> inputsNodeMock","(1.._) * inputsNodeMock.getMode() >> -2","(1.._) * inputs[0].rqsGradient() >> true","(1.._) * inputs[1].rqsGradient() >> false","(1.._) * inputs[2].rqsGradient() >> true","(1.._) * call.autogradMode() >> AutoDiffMode.FORWARD_AND_BACKWARD","(3.._) * function.getOperation() >> type","(0.._) * type.isDifferentiable() >> true","(3.._) * type.isInline() >> false","(0.._) * type.getOperator() >> \"*\"","(0.._) * inputsNodeMock.getPayload() >> payload","(0.._) * payload.hashCode() >> 3"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

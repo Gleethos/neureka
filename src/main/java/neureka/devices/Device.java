@@ -45,6 +45,7 @@ import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.common.composition.Component;
 import neureka.devices.host.CPU;
+import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.*;
@@ -192,6 +193,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @return A {@link Collection} of all tensors stored by this device.
      */
     Collection<Tsr<V>> getTensors();
+
+    Object allocate( DataType<?> dataType, int size );
 
     /**
      *  This method tries to allow this device to produce an optimized {@link Operation}
@@ -348,13 +351,11 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          */
         void cleanup( Runnable action );
         /**
-         *  This method automatically called within the {@link AbstractNda.Unsafe#setNDConf(NDConfiguration)} method
+         *  This method automatically called within the {@link Tsr.Unsafe#setNDConf(NDConfiguration)} method
          *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
          *  given {@link Device} implementation... <br><br>
          */
         void updateNDConf();
-
-        Object allocate( int size );
 
         Object actualize();
     }

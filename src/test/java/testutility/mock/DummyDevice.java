@@ -6,6 +6,7 @@ import neureka.calculus.Function;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import neureka.backend.api.ExecutionCall;
+import neureka.dtype.DataType;
 
 import java.util.Collection;
 
@@ -41,6 +42,9 @@ public class DummyDevice extends AbstractBaseDevice<Object>
 
     @Override
     public Collection<Tsr<Object>> getTensors() { return null; }
+
+    @Override
+    public Object allocate(DataType<?> dataType, int size) { return null; }
 
     @Override
     public Operation optimizedOperationOf(Function function, String name) {

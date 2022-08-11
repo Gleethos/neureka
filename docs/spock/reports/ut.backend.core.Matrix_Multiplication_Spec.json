@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.859 seconds"
+    "duration":"3.573 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The simple CPU matrix multiplication implementation works as expected.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -29,20 +29,20 @@
 
         {"kind":"where","text":"","code":{"A":["[4.0, 3.0, 2.0, 1.0]","[-2.0, 1.0]","[-2.0, 1.0]"],"B":["[-0.5, 1.5, 1.0, -2.0]","[-1.0, -1.5]","[-1.0, -1.5]"],"M":["2","1","2"],"K":["2","2","1"],"N":["2","1","2"],"expectedC":["[1.0, 0.0, 0.0, 1.0]","[0.5]","[2.0, 3.0, -1.0, -1.5]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The internal matrix multiplication test script runs!",
       "result":"PASS",
-      "duration":"0.768 seconds",
+      "duration":"3.525 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"","code":["InternalMatMulTest.start()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

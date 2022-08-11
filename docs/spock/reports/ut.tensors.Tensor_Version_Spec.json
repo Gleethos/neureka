@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.283 seconds"
+    "duration":"0.956 seconds"
   },
   "headers":["\n                <p>\n                    Here you can find out how the version number of a tensor is\n                    set and tracked.\n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Inline operations causes version incrementation.",
       "result":"PASS",
-      "duration":"0.089 seconds",
+      "duration":"0.298 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,13 +33,13 @@
 
         {"kind":"where","text":"","code":{"code":[" a.plusAssign(b) "," a.minusAssign(b) "," a.timesAssign(b) "," a.divAssign(b) "," a.plusAssign(b) "," a.minusAssign(b) "," a.timesAssign(b) "," a.divAssign(b) "],"safe_inline":["true","true","true","true","false","false","false","false"],"version_of_c":["1","1","1","1","0","0","0","0"],"version_of_a":["1","1","1","1","0","0","0","0"],"version_of_b":["0","0","0","0","0","0","0","0"],"expected":["(1):[2.0]","(1):[10.0]","(1):[-24.0]","(1):[-1.5]","(1):[2.0]","(1):[10.0]","(1):[-24.0]","(1):[-1.5]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Non-inline operations do not cause version incrementation.",
       "result":"PASS",
-      "duration":"0.085 seconds",
+      "duration":"0.380 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,13 +60,13 @@
 
         {"kind":"where","text":"The following arguments are being used:","code":{"code":[" a + b "," a - b "," a * b "," a / b "," a % b "," a + b "," a - b "," a * b "," a / b "," a % b "],"no_inline":["false","false","false","false","false","true","true","true","true","true"],"version_of_c":["0","0","0","0","0","0","0","0","0","0"],"version_of_a":["0","0","0","0","0","0","0","0","0","0"],"version_of_b":["0","0","0","0","0","0","0","0","0","0"],"expected":["(1):[2.0]","(1):[10.0]","(1):[-24.0]","(1):[-1.5]","(1):[2.0]","(1):[2.0]","(1):[10.0]","(1):[-24.0]","(1):[-1.5]","(1):[2.0]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Inline operations cause illegal state exceptions.",
       "result":"PASS",
-      "duration":"0.074 seconds",
+      "duration":"0.173 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -83,30 +83,30 @@
 
         {"kind":"where","text":"","code":{"code":["a.plusAssign(b) ","a.minusAssign(b)","a.timesAssign(b)","a.divAssign(b) "],"message":["Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Storing a tensor on a device should not change the version of a tensor (Even though its data changed technically).",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var t = Tsr.ofFloats().withShape(5, 2).andSeed(42)"]},
 
-        {"kind":"expect","text":"","code":["t.version == 1"]},
+        {"kind":"expect","text":"","code":["t.version == 0"]},
 
         {"kind":"when","text":"","code":["t.to('GPU')"]},
 
-        {"kind":"then","text":"","code":["t.isOutsourced()","t.version == 1"]},
+        {"kind":"then","text":"","code":["t.isOutsourced()","t.version == 0"]},
 
         {"kind":"when","text":"","code":["t[0] = 1f","t[new int[]{1, 0}] = 6f","t[0, 1] = 42f","t.set(0, 3f)","t.setItemAt(3, 4f)","t.set(new int[]{1, 1}, -1f)","t.unsafe.setDataAt(3, 5f)"]},
 
-        {"kind":"then","text":"","code":["t.version == 8"]}
+        {"kind":"then","text":"","code":["t.version == 7"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

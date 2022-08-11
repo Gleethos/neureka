@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.849 seconds"
+    "duration":"5.193 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The \"x\" (convolution) operator produces expected results (On the CPU).",
       "result":"PASS",
-      "duration":"0.224 seconds",
+      "duration":"1.035 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            The 'x' operator performs convolution on the provided operands.\n            The meaning of the operands is not defined, so one the kernel tensor\n            can be the first and second operand. \n        ","\n            The 'x' operator performs convolution on the provided operands.\n            The meaning of the operands is not defined, so one the kernel tensor\n            can be the first and second operand. \n        "]
       },
@@ -37,13 +37,13 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float"],"expected":["[2x1x2]:(15.0, 2.0, 10.0, 2.0)","[2x1x2]:(15.0, 2.0, 10.0, 2.0)"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.153 seconds",
+      "duration":"1.159 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,13 +54,13 @@
 
         {"kind":"then","text":"","code":["xAsStr.contains(\"(98x100):[18.0, 19.0, 3.0, 4.0, 5.0\")","yAsStr.contains(\"(98x100):[3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0\")","zAsStr.contains(\"(98x100):[16.0, 17.0, 18.0, 19.0, 3.0\")","rcAsStr.contains(\"(98x100):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0\")","kAsStr.contains(\"(98x98):[40.0, 26.0, 29.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0\")","vAsStr.contains(\"(98x98):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0, 21.0\")","jAsStr.contains(\"(98x98):[26.0, 29.0, 15.0, 18.0, 21.0, 24.0\")","uAsStr.contains(\"(98x98):[19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, \")","colconvol.toString().contains(\"(98x98):[-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, \" +","\"-34.0, -68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, -34.0, \" +","\"-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, ... + 9554 more]\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Very simple manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.203 seconds",
+      "duration":"1.454 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,15 +71,15 @@
 
         {"kind":"then","text":"","code":["xAsStr.contains(\"(2x4):[4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0]\")","yAsStr.contains(\"(2x4):[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]\")","zAsStr.contains(\"(2x4):[8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0]\")","rcAsStr.contains(\"(2x4):[12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0]\")","kAsStr.contains(\"(2x2):[15.0, 18.0, 27.0, 30.0]\")","vAsStr.contains(\"(2x2):[12.0, 15.0, 24.0, 27.0]\")","jAsStr.contains(\"(2x2):[18.0, 21.0, 30.0, 33.0]\")","uAsStr.contains(\"(2x2):[5.0, 6.0, 9.0, 10.0]\")","colconvol.toString().contains(\"(2x2):[0.0, 0.0, 0.0, 0.0]\")"]},
 
-        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2a2fcc3bdc0],platform=OpenCLPlatform@1e4baa3f[pid=cl_platform_id[0x7ffaff1da490],context=cl_context[0x2a2f69a8b20],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=12]","OpenCLDevice[deviceId=cl_device_id[0x1f7c8fb5300],platform=OpenCLPlatform@6411cb24[pid=cl_platform_id[0x1f7c8fb59e0],context=cl_context[0x1f7ca0ca840],kernels=[..46..]]]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Autograd works with simple 2D convolution.",
       "result":"PASS",
-      "duration":"0.084 seconds",
+      "duration":"0.586 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -98,13 +98,13 @@
 
         {"kind":"then","text":"The tensors change their states as expected.","code":["w_a.toString().contains(\"g:(null)\")","w_a.toString().contains(\"(-93.5, -30.5, -185.0, -68.0):g:(null)\")","!w_b.toString().contains(\"g:(null)\")","w_b.toString().contains(\"g:(67.5, 7.5, -166.5, -18.5)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Sime convolution works as expected eith autograd.",
       "result":"PASS",
-      "duration":"0.084 seconds",
+      "duration":"0.491 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -123,13 +123,13 @@
 
         {"kind":"then","text":"","code":["w_a.toString().contains(\"g:(null)\")","!w_a.toString().contains(\"1.0, 3.0, 4.0, -1.0\")","!w_b.toString().contains(\"g:(null)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Tensors have the correct layout after convolution.",
       "result":"PASS",
-      "duration":"0.088 seconds",
+      "duration":"0.431 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -152,7 +152,7 @@
 
         {"kind":"then","text":"","code":["out0.toString() == \"(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

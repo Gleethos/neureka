@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.069 seconds"
+    "duration":"0.180 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can concatenate 2 tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.017 seconds",
+      "duration":"0.038 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,13 +35,13 @@
 
         {"kind":"then","text":"The gradient of the first tensor should look as follows!","code":["a.gradient.every( it -> it == -6 )"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"We can concatenate 2 float tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.018 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,13 +60,13 @@
 
         {"kind":"then","text":"","code":["a.gradient.every( it -> it == -10 )","b.gradient.every( it -> it == -10 )"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"We can concatenate 2 string tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.031 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,13 +81,13 @@
 
         {"kind":"and","text":"","code":["c.any( it -> it == ':P' )","c.any( it -> it == '._.' )"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"We can concatenate and then back-propagate 2 simple float tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.022 seconds",
+      "duration":"0.018 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -106,15 +106,15 @@
 
         {"kind":"then","text":"","code":["a.gradient.items == [-0.5, 0.25, -0.05] as float[]","b.gradient.items == [1.0, 1.5, 2.0] as float[]"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1bad41b0270],platform=OpenCLPlatform@7864521c[pid=cl_platform_id[0x7ffaff1da490],context=cl_context[0x1bad10dbe20],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[coreCount=12]","OpenCLDevice[deviceId=cl_device_id[0x2bbb80ed6b0],platform=OpenCLPlatform@36d41cdd[pid=cl_platform_id[0x2bbb80ecc10],context=cl_context[0x2bbb6a6c720],kernels=[..46..]]]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"We can concatenate and then back-propagate 3 simple float tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.036 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -133,9 +133,9 @@
 
         {"kind":"then","text":"","code":["a.gradient.items == [-16, -16, 7] as float[]","b.gradient.items == [30, 0.2, 16] as float[]","c.gradient.items == [0.30829078, -3.1254156, -0.52700233] as float[]"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1bad41b0270],platform=OpenCLPlatform@7864521c[pid=cl_platform_id[0x7ffaff1da490],context=cl_context[0x1bad10dbe20],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[coreCount=12]","OpenCLDevice[deviceId=cl_device_id[0x2bbb80ed6b0],platform=OpenCLPlatform@36d41cdd[pid=cl_platform_id[0x2bbb80ecc10],context=cl_context[0x2bbb6a6c720],kernels=[..46..]]]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

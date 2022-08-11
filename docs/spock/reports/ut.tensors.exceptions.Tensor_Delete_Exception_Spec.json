@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.035 seconds"
+    "duration":"0.018 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A deleted tensor will tell you that it has been deleted.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,13 +25,13 @@
 
         {"kind":"expect","text":"This tensor will tell you that it is deleted through the \"toString\" method.","code":["t.toString() == \"deleted\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"A deleted tensor will throw an exception when accessing its configuration.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -44,13 +44,13 @@
 
         {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the ND-Configuration of an already deleted tensor.\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"A deleted tensor will throw an exception when trying to set its configuration.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -63,7 +63,7 @@
 
         {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the unsafe API of an already deleted tensor.\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
@@ -82,13 +82,13 @@
 
         {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the unsafe API of an already deleted tensor.\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"A deleted tensor will throw an exception when trying to modify its data.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -101,7 +101,7 @@
 
         {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the unsafe API of an already deleted tensor.\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
@@ -120,7 +120,7 @@
 
         {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the data type of an already deleted tensor.\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
@@ -139,7 +139,7 @@
 
         {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the unsafe API of an already deleted tensor.\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

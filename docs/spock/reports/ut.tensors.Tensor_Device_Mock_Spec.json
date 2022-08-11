@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.093 seconds"
+    "duration":"0.039 seconds"
   },
   "headers":["    \n            <h2>Tensor Device Mock Tests</h2>\n            <p>\n                This unit test specification covers \n                the expected behavior of tensors when interacting\n                with instances of implementations of the Device interface.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors try to migrate themselves to a device that is being added to them as component.",
       "result":"PASS",
-      "duration":"0.028 seconds",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,13 +31,13 @@
 
         {"kind":"and","text":"It stores the device as a component.","code":["t.has(Device.class)"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Tensors try to remove themselves from their device when \"setIsOutsourced(false)\" is being called.",
       "result":"PASS",
-      "duration":"0.025 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -50,7 +50,7 @@
 
         {"kind":"and","text":"The device should not be a tensor component anymore.","code":["!t.has(Device.class)"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
@@ -75,13 +75,13 @@
 
         {"kind":"and","text":"","code":["t.isOutsourced()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"When creating slices of tensors then this should trigger a \"parent - child\" relation noticeable to the device!",
       "result":"PASS",
-      "duration":"0.018 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -98,7 +98,7 @@
 
         {"kind":"and","text":"Internally the Tsr may \"asks\" if it belongs to the Device. (before and after migration attempt)","code":["(0.._) * device.has(t)"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],
