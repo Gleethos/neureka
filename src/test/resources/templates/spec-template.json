@@ -28,7 +28,7 @@ def simpleEsc = { text ->
     return writer.toString();
 }
 def esc = { simpleEsc(noSingleBreaks(it)) }
-def strCode = { it.isEmpty() ? "" : (it.size() == 1 ? ('"'+simpleEsc(it[0])+'"') : ('"'+it.collect({simpleEsc(it)}).join('","'))+'"')}
+def strCode = { it == null || it.isEmpty() ? "" : (it.size() == 1 ? ('"'+simpleEsc(it[0])+'"') : ('"'+it.collect({simpleEsc(it)}).join('","'))+'"')}
 
 //----
 
@@ -130,8 +130,11 @@ def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
       ],<%
       def executedIterations = iterations.findAll {it.dataValues || it.errors}
       def problems = executedIterations.findAll {it.errors}
-      %>
-      "problems":"${executedIterations.findAll {it.errors}}"
+      def probValue;
+      if ( problems == [] ) probValue = '{"dataValues":[], "errors":[]}'
+      else probValue = '{"dataValues":['+strCode(problems.dataValues)+'], "errors":['+strCode(problems.errors)+']}';
+%>
+      "problems":$probValue
     }<%
     i++
     if( i < size ){ out << "," }
