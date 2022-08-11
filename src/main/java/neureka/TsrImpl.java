@@ -309,12 +309,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setIsOutsourced(boolean isOutsourced ) {
+    public Tsr<V> setIsOutsourced( boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
-        if ( isOutsourced )
-            _setData( null );
-        else if (
-            !forComponent(
+        if ( !isOutsourced && !forComponent(
                 Device.class,
                 device -> {
                     try {
@@ -347,7 +344,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                                 })
                     );
                 }
-            ) && _getData() == null
+            )
         ) {
             _setIsVirtual( true );
             _allocate( 1 ); // Only a single value representing the rest.
@@ -395,10 +392,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 );
                 throw exception;
             }
-            if ( isVirtual ) {
-                if ( _getData() != null ) _virtualize();
-            }
-            else _actualize();
+            if ( isVirtual )
+                _virtualize();
+            else
+                _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
             createConstructionAPI().configureFromNewShape( NDConstructor.of(getNDConf().shape()), isVirtual, _getData() == null );
@@ -426,7 +423,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 throw new IllegalStateException( message );
             }
         }
-        else if ( isVirtual && _getData() == null ) _allocate( 1 ); //> Only a single value representing the rest.
+        else if ( isVirtual ) _allocate( 1 ); //> Only a single value representing the rest.
         return this;
     }
 
@@ -744,7 +741,12 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             @Override
             public Tsr<V> setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
             @Override public Tsr<V> delete() { return TsrImpl.this._delete(); }
-            @Override public Object getData() { return _getData(); }
+            @Override public <D> D getData(Class<D> dataType) {
+                Object data = _getData();
+                if ( data != null && !dataType.isAssignableFrom(data.getClass()) )
+                    throw new IllegalArgumentException("Provided data type '"+dataType+"' is not assignable from '"+data.getClass()+"'.");
+                return (D) data;
+            }
             @Override
             public <A> A getDataAs( Class<A> arrayTypeClass ) {
                 return DataConverter.get().convert( _getData(false), arrayTypeClass );
@@ -755,6 +757,13 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 _setDataAt( i, o );
                 return TsrImpl.this;
             }
+
+            @Override
+            public Tsr<V> setData(Object data) {
+                TsrImpl.this._setData( data );
+                return TsrImpl.this;
+            }
+
             @Override public Tsr<V> detach() { TsrImpl.this.remove( GraphNode.class ); return TsrImpl.this; }
         };
     }
@@ -1076,15 +1085,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         } else if ( value.getClass().isArray() ) {
             if ( this.isOutsourced() ) getDevice().access(this).writeFrom( value );
             else {
-                if ( _getData() == null ) {
-                    // This usually happens when a tensor was just freed from a device.
-                    // We need to set its data again so that it is no longer empty...
-                    _setData( value );
-                    return this;
-                } else {
-                    getDevice().access(this).writeFrom(value);
-                    setIsVirtual(false);
-                }
+                // This usually happens when a tensor was just freed from a device.
+                getDevice().access(this).writeFrom(value);
+                if ( this.isOutsourced() ) setIsVirtual(false);
             }
         }
         else success = false;
@@ -1126,7 +1129,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             }
         }
         if ( this.isVirtual() ) {
-            if ( _getData() == null ) return null;
+            if ( this.isOutsourced() ) return null;
             else return getDevice().access(this).actualize();
         }
         else if ( this.getNDConf().isSimple() && !this.isSlice() )
