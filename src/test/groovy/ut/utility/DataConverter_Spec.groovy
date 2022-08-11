@@ -17,14 +17,14 @@ class DataConverter_Spec extends Specification
             converter.convert( [-50, 2, 190] as byte[], int[].class ) == [-50, 2, -66] as int[]
             converter.convert( [-50, 2, 190] as byte[], long[].class ) == [-50, 2, -66] as long[]
         and :
-            DataConverter.Utility.seededFloatArray( f32Array, 42 ) == [1.1419053, 0.91940796] as float[]
+            DataConverter.Utility.seededFloatArray( f32Array, 42 ) == [-0.48528543, -1.4547276] as float[]
             DataConverter.Utility.newSeededFloatArray( 42, 2 ) == f32Array
-            DataConverter.Utility.seededFloatArray( f32Array, "I'm a seed!") == [-0.037259135, -0.7227145] as float[]
+            DataConverter.Utility.seededFloatArray( f32Array, "I'm a seed!") == [-0.36105144, 0.09591457] as float[]
             DataConverter.Utility.newSeededFloatArray( "I'm a seed!", 2 ) == f32Array
         and :
-            DataConverter.Utility.seededDoubleArray( f64Array, 42 ) == [1.1419053154730547, 0.9194079489827879] as double[]
+            DataConverter.Utility.seededDoubleArray( f64Array, 42 ) == [-0.485285426832534, -1.454727674701364] as double[]
             DataConverter.Utility.newSeededDoubleArray( 42, 2 ) == f64Array
-            DataConverter.Utility.seededDoubleArray( f64Array, "I'm a seed!") == [-0.03725913496921719, -0.722714495437272] as double[]
+            DataConverter.Utility.seededDoubleArray( f64Array, "I'm a seed!") == [-0.36105142873347185, 0.09591457295459412] as double[]
             DataConverter.Utility.newSeededDoubleArray( "I'm a seed!", 2 ) == f64Array
 
     }

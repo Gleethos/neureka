@@ -91,18 +91,71 @@ public class Randomization extends AbstractOperation
 
     }
 
-    private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall<?> call )
+    public static void fillRandomly(Object data, long seed)
     {
+        int size = 0;
+        Class<?> type = null;
+        if ( data instanceof int[]    ) { type = Integer.class; size = ((int[]    )data).length; }
+        if ( data instanceof double[] ) { type = Double.class; size = ((double[] )data).length; }
+        if ( data instanceof float[]  ) { type = Float.class; size = ((float[]  )data).length; }
+        if ( data instanceof long[]   ) { type = Long.class; size = ((long[]   )data).length; }
+        if ( data instanceof byte[]   ) { type = Byte.class; size = ((byte[]   )data).length; }
+        if ( type == null )
+            throw new IllegalArgumentException("Type '"+data.getClass()+"' not supported for randomization.");
+        CPU.RangeWorkload workload = _newWorkloadFor(
+                seed, type, null,
+                new DataProvider() {
+                    @Override
+                    public <T> T get(Class<T> type) {
+                        return (T) data;
+                    }
+                }
+        );
+        CPU.get().getExecutor().threaded( size, workload );
+    }
+
+
+    private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall<?> call ) {
         Tsr<?> tensor = call.input( 0 );
         tensor.setIsVirtual(false);
         Class<?> type = tensor.getItemType();
         boolean isSimple = tensor.getNDConf().isSimple();
+        NDIteratorProvider iter = i -> {
+            NDIterator t0Idx = NDIterator.of(tensor);
+            t0Idx.set(tensor.indicesOfIndex(i));
+            return t0Idx;
+        };
         long seed = call.getValOf(Arg.Seed.class);
+        return _newWorkloadFor(
+                seed, type, isSimple ? null : iter,
+                new DataProvider() {
+                    @Override
+                    public <T> T get(Class<T> type) {
+                        return tensor.getUnsafe().getDataForWriting(type);
+                    }
+                }
+        );
+    }
 
+    private interface DataProvider {
+        <T> T get(Class<T> type);
+    }
+
+    private interface NDIteratorProvider {
+        NDIterator get(int i);
+    }
+
+    private static CPU.RangeWorkload _newWorkloadFor(
+            long seed,
+            Class<?> type,
+            NDIteratorProvider iteratorProvider,
+            DataProvider dataProvider
+    ) {
+        boolean isSimple = iteratorProvider == null;
         if ( type == Double.class ) {
+            double[] t0_value = dataProvider.get(double[].class);
             if ( isSimple )
                 return (i, end) -> {
-                    double[] t0_value = tensor.getUnsafe().getDataForWriting(double[].class);
                     double[] gaussian = {0, 0};
                     if ( i % 2 == 1 ) {
                         gaussianFrom(seed + i - 1, gaussian);
@@ -118,9 +171,7 @@ public class Randomization extends AbstractOperation
                 };
             else
                 return (i, end) -> {
-                    NDIterator t0Idx = NDIterator.of(tensor);
-                    t0Idx.set(tensor.indicesOfIndex(i));
-                    double[] t0_value = tensor.getUnsafe().getDataForWriting(double[].class);
+                    NDIterator t0Idx = iteratorProvider.get(i);
                     double[] gaussian = {0, 0};
                     if ( i % 2 == 1 ) {
                         gaussianFrom(seed + i - 1, gaussian);
@@ -134,10 +185,10 @@ public class Randomization extends AbstractOperation
                         if ( i + 1 < end ) t0_value[t0Idx.getIndexAndIncrement()] = gaussian[1];
                     }
                 };
-        } else {
+        } else if ( type == Float.class ) {
+            float[] t0_value = dataProvider.get(float[].class);
             if ( isSimple )
                 return (i, end) -> {
-                    float[] t0_value = tensor.getUnsafe().getDataForWriting(float[].class);
                     double[] gaussian = {0, 0};
                     if ( i % 2 == 1 ) {
                         gaussianFrom(seed + i - 1, gaussian);
@@ -153,9 +204,7 @@ public class Randomization extends AbstractOperation
                 };
             else
                 return (i, end) -> {
-                    NDIterator t0Idx = NDIterator.of(tensor);
-                    t0Idx.set(tensor.indicesOfIndex(i));
-                    float[] t0_value = tensor.getUnsafe().getDataForWriting(float[].class);
+                    NDIterator t0Idx = iteratorProvider.get(i);
                     double[] gaussian = {0, 0};
                     if ( i % 2 == 1 ) {
                         gaussianFrom(seed + i - 1, gaussian);
@@ -169,7 +218,67 @@ public class Randomization extends AbstractOperation
                         if ( i + 1 < end ) t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[1];
                     }
                 };
+        } else if (type == Long.class) {
+            long[] t0_value = dataProvider.get(long[].class);
+            if ( isSimple )
+                return (i, end) -> {
+                    long[] longs = {0, 0};
+                    if ( i % 2 == 1 ) {
+                        longFrom(seed + i - 1, longs);
+                        t0_value[i] = longs[1];
+                        i++;
+                    }
+                    for ( ; i < end; i += 2 ) // increment on drain accordingly:
+                    {
+                        longFrom(seed + i, longs);
+                        t0_value[i + 0] = longs[0];
+                        if ( i + 1 < end ) t0_value[i + 1] = longs[1];
+                    }
+                };
+            else
+                return (i, end) -> {
+                    NDIterator t0Idx = iteratorProvider.get(i);
+                    long[] longs = {0, 0};
+                    if ( i % 2 == 1 ) {
+                        longFrom(seed + i - 1, longs);
+                        t0_value[t0Idx.getIndexAndIncrement()] = longs[1];
+                        i++;
+                    }
+                    for ( ; i < end; i += 2 ) // increment on drain accordingly:
+                    {
+                        longFrom(seed + i, longs);
+                        t0_value[t0Idx.getIndexAndIncrement()] = longs[0];
+                        if ( i + 1 < end ) t0_value[t0Idx.getIndexAndIncrement()] = longs[1];
+                    }
+                };
+        } else if (type == Integer.class) {
+            int[] t0_value = dataProvider.get(int[].class);
+            if ( isSimple )
+                return (i, end) -> {
+                            for ( ; i < end; i++ )
+                                t0_value[i] = _nextInt(seed + (long) Math.pow(32,1+i) + i);
+                        };
+            else
+                return (i, end) -> {
+                            NDIterator t0Idx = iteratorProvider.get(i);
+                            for ( ; i < end; i++ )
+                                t0_value[t0Idx.getIndexAndIncrement()] = _nextInt(seed + (long) Math.pow(32,1+i) + i);
+                        };
+        } else if (type == Byte.class) {
+            byte[] t0_value = dataProvider.get(byte[].class);
+            if ( isSimple )
+                return (i, end) -> {
+                    for ( ; i < end; i++ )
+                        t0_value[i] = _nextByte(seed + (long) Math.pow(32,1+i) + i);
+                };
+            else
+                return (i, end) -> {
+                    NDIterator t0Idx = iteratorProvider.get(i);
+                    for ( ; i < end; i++ )
+                        t0_value[t0Idx.getIndexAndIncrement()] = _nextByte(seed + (long) Math.pow(32,1+i) + i);
+                };
         }
+        else throw new IllegalStateException("Unsupported type: " + type);
     }
 
     @Override
@@ -215,6 +324,17 @@ public class Randomization extends AbstractOperation
         out[1] = v2 * multiplier;
     }
 
+    public static long longFrom( long seed, long[] out ) {
+        long seed1 = _next(seed);
+        long seed2 = _next(seed1);
+        return ((long)(_intFrom(32, seed1)) << 32) + _intFrom(32, seed2);
+    }
+
+    private static byte _nextByte( long seed ) {
+        int rnd = _nextInt(seed);
+        return (byte) rnd;
+    }
+
     private static long _next( long currentSeed )
     {
         long oldseed, nextseed;
@@ -231,5 +351,9 @@ public class Randomization extends AbstractOperation
     }
 
     private static int _intFrom( int bits, long seed ) { return (int)(seed >>> (48 - bits)); }
+
+    private static int _nextInt( long seed ) {
+        return _intFrom(32, _next(seed));
+    }
 
 }

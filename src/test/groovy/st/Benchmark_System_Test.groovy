@@ -10,6 +10,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 import testutility.Load
 
+import java.util.function.Consumer
+
 class Benchmark_System_Test extends Specification
 {
     @Shared def oldStream
@@ -61,21 +63,27 @@ class Benchmark_System_Test extends Specification
     def 'Test benchmark script and simple tensor constructor.'()
     {
         given :
-            def configuration = [ "iterations":1, "sample_size":20, "difficulty":15, "intensifier":0 ]
+            var configuration = [ "iterations":1, "sample_size":20, "difficulty":15, "intensifier":0 ]
+            var strSettings = (Consumer<NDPrintSettings>) { NDPrintSettings it ->
+                                    it.cellSize = 7; it.isCellBound = true; // We use this to cap decimals to avoid rounding errors.
+                                }
 
         and : 'The benchmark script is being loaded into a GroovyShell instance.'
-            def session = new GroovyShell().evaluate(Load.resourceAt("benchmark.groovy", this))
+            var session = new GroovyShell().evaluate(Load.resourceAt("benchmark.groovy", this))
 
         and : 'A String instance for the result hash is being instantiated and the expected hash.'
             String hash = ""
-            String expected = "7084fb60f29fcce1ac96c2bee9c37b37"
+            String expected = "58ed847a16ddc3bf7847f64091ff5d4d"
+            var rec = []
 
         when : 'The benchmark script is being called...'
             Map<String,List<Double>> result = session(
                                     configuration, null,
                                     CPU.get(),
                                     tsr -> {
-                                        hash = (hash+tsr.toString()).md5()
+                                        var str = tsr.toString(strSettings)
+                                        rec << str
+                                        hash = (hash+str).md5()
                                     }
                             )
 
@@ -92,11 +100,15 @@ class Benchmark_System_Test extends Specification
 
         and : 'The benchmark is now being executed with the first found OpenCLDevice instance...'
             hash = ""
+            var i = 0
             session(
                     configuration, null,
                     Device.get("first"),
                         tsr -> {
-                            hash = ( hash + tsr.toString() ).md5()
+                            var str = tsr.toString(strSettings)
+                            if ( rec[i] != str ) println "Mismatch at index $i:\n${rec[i]}\n$str\n"
+                            hash = ( hash + str ).md5()
+                            i++
                         }
             )
 

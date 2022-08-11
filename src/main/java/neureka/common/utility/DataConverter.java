@@ -36,6 +36,7 @@ SOFTWARE.
 package neureka.common.utility;
 
 import neureka.Tsr;
+import neureka.backend.main.operations.other.Randomization;
 import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -468,9 +469,7 @@ public final class DataConverter
 
         @Contract( pure = true )
         public static double[] seededDoubleArray( double[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextGaussian();
+            Randomization.fillRandomly(array, seed);
             return array;
         }
 
@@ -491,9 +490,7 @@ public final class DataConverter
 
         @Contract( pure = true )
         public static float[] seededFloatArray( float[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = (float) dice.nextGaussian();
+            Randomization.fillRandomly(array, seed);
             return array;
         }
 
@@ -504,9 +501,7 @@ public final class DataConverter
 
         @Contract( pure = true )
         public static int[] seededIntArray( int[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextInt();
+            Randomization.fillRandomly(array, seed);
             return array;
         }
 
@@ -530,9 +525,7 @@ public final class DataConverter
 
         @Contract( pure = true )
         public static byte[] seededByteArray( byte[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = (byte) dice.nextInt();
+            Randomization.fillRandomly(array, seed);
             return array;
         }
 
