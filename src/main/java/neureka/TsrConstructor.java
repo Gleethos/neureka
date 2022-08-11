@@ -138,53 +138,60 @@ final class TsrConstructor
     }
 
     private void _constructAllF64( NDConstructor ndConstructor, double value ) {
-        _constructAll(ndConstructor, F64.class );
-        ( (double[]) _API.getData())[ 0 ] = value;
+        Object data = _constructAll( ndConstructor, F64.class );
+        ( (double[]) data )[ 0 ] = value;
     }
 
     private void _constructAllF32( NDConstructor ndConstructor, float value ) {
-        _constructAll(ndConstructor, F32.class );
-        ( (float[]) _API.getData())[ 0 ] = value;
+        Object data = _constructAll( ndConstructor, F32.class );
+        ( (float[]) data )[ 0 ] = value;
     }
 
     private void _constructAllI32( NDConstructor ndConstructor, int value ) {
-        _constructAll(ndConstructor, I32.class );
-        ( (int[]) _API.getData())[ 0 ] = value;
+        Object data = _constructAll( ndConstructor, I32.class );
+        ( (int[]) data )[ 0 ] = value;
     }
 
     private void _constructAllI16( NDConstructor ndConstructor, short value ) {
-        _constructAll(ndConstructor, I16.class );
-        ( (short[]) _API.getData())[ 0 ] = value;
+        Object data = _constructAll( ndConstructor, I16.class );
+        ( (short[]) data )[ 0 ] = value;
     }
 
     private void _constructAllI8( NDConstructor ndConstructor, byte value ) {
-        _constructAll(ndConstructor, I8.class );
-        ( (byte[]) _API.getData())[ 0 ] = value;
+        Object data = _constructAll( ndConstructor, I8.class );
+        ( (byte[]) data )[ 0 ] = value;
     }
 
     private void _constructAllI64( NDConstructor ndConstructor, long value ) {
-        _constructAll(ndConstructor, I64.class );
-        ( (long[]) _API.getData())[ 0 ] = value;
+        Object data = _constructAll( ndConstructor, I64.class );
+        ( (long[]) data )[ 0 ] = value;
     }
 
     private void _constructAllBool( NDConstructor ndConstructor, boolean value ) {
-        _constructAll(ndConstructor, Boolean.class );
-        ( (boolean[]) _API.getData())[ 0 ] = value;
+        Object data = _constructAll( ndConstructor, Boolean.class );
+        ( (boolean[]) data )[ 0 ] = value;
     }
 
     private void _constructAllChar( NDConstructor ndConstructor, char value ) {
-        _constructAll(ndConstructor, Character.class );
-        ( (char[]) _API.getData())[ 0 ] = value;
+        Object data = _constructAll( ndConstructor, Character.class );
+        ( (char[]) data )[ 0 ] = value;
     }
 
     private void _constructAll( NDConstructor ndConstructor, Object value ) {
-        _constructAll(ndConstructor, value.getClass() );
-        ( (Object[]) _API.getData())[ 0 ] = value;
+        Object data = _constructAll( ndConstructor, value.getClass() );
+        ( (Object[]) data )[ 0 ] = value;
     }
 
-    private void _constructAll( NDConstructor ndConstructor, Class<?> typeClass ) {
+    private Object _constructAll( NDConstructor ndConstructor, Class<?> typeClass ) {
+        assert ( _API.getData() == null );
+        DataType<?> dataType = DataType.of( typeClass );
         int size = ndConstructor.getSize();
-        configureFromNewShape( ndConstructor, size > 1, true, DataType.of( typeClass ) );
+        Object data = CPU.get().allocate( dataType, size > 1 ? 1 : ndConstructor.getSize() );
+        _API.setType( dataType );
+        _API.setIsVirtual( size > 1 );
+        _API.setData( data );
+        _API.setConf( ndConstructor.produceNDC( size > 1 ) );
+        return data;
     }
 
     private void _constructForDoubles( NDConstructor ndConstructor, double[] value )
