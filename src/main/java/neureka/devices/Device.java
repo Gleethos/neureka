@@ -196,6 +196,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
 
     Object allocate( DataType<?> dataType, int size );
 
+    Object allocate( Object jvmData, int desiredSize );
+
     /**
      *  This method tries to allow this device to produce an optimized {@link Operation}
      *  based on the provided function.

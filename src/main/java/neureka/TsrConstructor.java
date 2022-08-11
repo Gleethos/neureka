@@ -198,11 +198,7 @@ final class TsrConstructor
     {
         int size = ndConstructor.getSize();
         DataType<?> type = DataType.of( F64.class );
-        Object data = value;
-        if ( size != value.length ) {
-            data = CPU.get().allocate( type, size );
-            for ( int i = 0; i < size; i++ ) ( (double[]) data )[ i ]  = value[ i % value.length ];
-        }
+        Object data = CPU.get().allocate( value, size );
         configureFromNewShape( ndConstructor, false, false, type );
         _API.setData( data );
     }
@@ -211,11 +207,7 @@ final class TsrConstructor
     {
         int size = ndConstructor.getSize();
         DataType<?> type = DataType.of( F32.class );
-        Object data = value;
-        if ( size != value.length ) {
-            data = CPU.get().allocate( type, size );
-            for ( int i = 0; i < size; i++ ) ( (float[]) data )[ i ]  = value[ i % value.length ];
-        }
+        Object data = CPU.get().allocate( value, size );
         configureFromNewShape( ndConstructor, false, false, type );
         _API.setData( data );
     }
@@ -224,11 +216,7 @@ final class TsrConstructor
     {
         int size = ndConstructor.getSize();
         DataType<?> type = DataType.of( I32.class );
-        Object data = value;
-        if ( size != value.length ) {
-            data = CPU.get().allocate( type, size );
-            for ( int i = 0; i < size; i++ ) ( (int[]) data )[ i ]  = value[ i % value.length ];
-        }
+        Object data = CPU.get().allocate( value, size );
         configureFromNewShape( ndConstructor, false, false, type );
         _API.setData( data );
     }
@@ -237,11 +225,7 @@ final class TsrConstructor
     {
         int size = ndConstructor.getSize();
         DataType<?> type = DataType.of( I16.class );
-        Object data = value;
-        if ( size != value.length ) {
-            data = CPU.get().allocate( type, size );
-            for ( int i = 0; i < size; i++ ) ( (short[]) data )[ i ]  = value[ i % value.length ];
-        }
+        Object data = CPU.get().allocate( value, size );
         configureFromNewShape( ndConstructor, false, false, type );
         _API.setData( data );
     }
@@ -250,11 +234,7 @@ final class TsrConstructor
     {
         int size = ndConstructor.getSize();
         DataType<?> type = DataType.of( Boolean.class );
-        Object data = value;
-        if ( size != value.length ) {
-            data = CPU.get().allocate( type, size );
-            for ( int i = 0; i < size; i++ ) ( (boolean[]) data )[ i ]  = value[ i % value.length ];
-        }
+        Object data = CPU.get().allocate( value, size );
         configureFromNewShape( ndConstructor, false, false, type );
         _API.setData( data );
     }
@@ -263,11 +243,7 @@ final class TsrConstructor
     {
         int size = ndConstructor.getSize();
         DataType<?> type = DataType.of( I8.class );
-        Object data = value;
-        if ( size != value.length ) {
-            data = CPU.get().allocate( type, size );
-            for ( int i = 0; i < size; i++ ) ( (byte[]) data )[ i ]  = value[ i % value.length ];
-        }
+        Object data = CPU.get().allocate( value, size );
         configureFromNewShape( ndConstructor, false, false, type );
         _API.setData( data );
     }
@@ -276,11 +252,7 @@ final class TsrConstructor
     {
         int size = ndConstructor.getSize();
         DataType<?> type = DataType.of( I64.class );
-        Object data = value;
-        if ( size != value.length ) {
-            data = CPU.get().allocate( type, size );
-            for ( int i = 0; i < size; i++ ) ( (long[]) data )[ i ]  = value[ i % value.length ];
-        }
+        Object data = CPU.get().allocate( value, size );
         configureFromNewShape( ndConstructor, false, false, type );
         _API.setData( data );
     }

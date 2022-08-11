@@ -256,6 +256,11 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
+    public Object allocate(Object jvmData, int desiredSize) {
+        throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
+    }
+
+    @Override
     public Operation optimizedOperationOf( Function function, String name ) {
         throw new IllegalStateException(
                 this.getClass().getSimpleName()+" instances do not support operations!"

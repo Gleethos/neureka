@@ -47,6 +47,9 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public Object allocate(DataType<?> dataType, int size) { return null; }
 
     @Override
+    public Object allocate(Object jvmData, int desiredSize) { return null; }
+
+    @Override
     public Operation optimizedOperationOf(Function function, String name) {
         return null;
     }

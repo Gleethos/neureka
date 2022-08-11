@@ -279,7 +279,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public final Object allocate(DataType<?> dataType, int size ) {
+    public final Object allocate( DataType<?> dataType, int size ) {
         Class<?> typeClass = dataType.getRepresentativeType();
         if ( typeClass == F64.class )
             return new double[ size ];
@@ -299,6 +299,77 @@ public class CPU extends AbstractDevice<Object>
             return new char[ size ];
         else
             return new Object[ size ];
+    }
+
+    @Override
+    public Object allocate( Object jvmData, int desiredSize ) {
+        Object data = jvmData;
+        if ( jvmData instanceof int[] ) {
+            int[] array = (int[]) jvmData;
+            if ( desiredSize != array.length ) {
+                data = CPU.get().allocate( DataType.of(I32.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) ( (int[]) data )[ i ]  = array[ i % array.length ];
+            }
+            return data;
+        } else if ( jvmData instanceof float[] ) {
+            float[] array = (float[]) jvmData;
+            if ( desiredSize != array.length ) {
+                data = CPU.get().allocate( DataType.of(F32.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) ( (float[]) data )[ i ]  = array[ i % array.length ];
+            }
+            return data;
+        } else if ( jvmData instanceof double[] ) {
+            double[] array = (double[]) jvmData;
+            if ( desiredSize != array.length ) {
+                data = CPU.get().allocate( DataType.of(F64.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) ( (double[]) data )[ i ]  = array[ i % array.length ];
+            }
+            return data;
+        } else if ( jvmData instanceof long[] ) {
+            long[] array = (long[]) jvmData;
+            if ( desiredSize != array.length ) {
+                data = CPU.get().allocate( DataType.of(I64.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) ( (long[]) data )[ i ]  = array[ i % array.length ];
+            }
+            return data;
+        } else if ( jvmData instanceof short[] ) {
+            short[] array = (short[]) jvmData;
+            if ( desiredSize != array.length ) {
+                data = CPU.get().allocate( DataType.of(I16.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) ( (short[]) data )[ i ]  = array[ i % array.length ];
+            }
+            return data;
+        } else if ( jvmData instanceof byte[] ) {
+            byte[] array = (byte[]) jvmData;
+            if ( desiredSize != array.length ) {
+                data = CPU.get().allocate(DataType.of(I8.class), desiredSize);
+                for (int i = 0; i < desiredSize; i++) ((byte[]) data)[i] = array[i % array.length];
+            }
+            return data;
+        } else if ( jvmData instanceof boolean[] ) {
+            boolean[] array = (boolean[]) jvmData;
+            if ( desiredSize != array.length ) {
+                data = CPU.get().allocate(DataType.of(Boolean.class), desiredSize);
+                for (int i = 0; i < desiredSize; i++) ((boolean[]) data)[i] = array[i % array.length];
+            }
+            return data;
+        } else if ( jvmData instanceof char[] ) {
+            char[] array = (char[]) jvmData;
+            if ( desiredSize != array.length ) {
+                data = CPU.get().allocate(DataType.of(Character.class), desiredSize);
+                for (int i = 0; i < desiredSize; i++) ((char[]) data)[i] = array[i % array.length];
+            }
+            return data;
+        } else if ( jvmData instanceof Object[] ) {
+            Object[] array = (Object[]) jvmData;
+            if ( desiredSize != array.length ) {
+                data = CPU.get().allocate(DataType.of(Object.class), desiredSize);
+                for (int i = 0; i < desiredSize; i++) ((Object[]) data)[i] = array[i % array.length];
+            }
+            return data;
+        }
+        else
+            throw new IllegalArgumentException("Array type '"+jvmData.getClass().getSimpleName()+"' not supported!");
     }
 
     @Override
