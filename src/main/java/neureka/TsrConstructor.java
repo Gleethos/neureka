@@ -7,8 +7,6 @@ import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -99,17 +97,9 @@ final class TsrConstructor
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
             if ( constructAllFromOne(ndConstructor, data ) ) return;
 
-        if (      data instanceof double[]  ) _constructForDoubles(ndConstructor, (double[]) data );
-        else if ( data instanceof float[]   ) _constructForFloats(ndConstructor, (float[]) data );
-        else if ( data instanceof int[]     ) _constructForInts(ndConstructor, (int[]) data );
-        else if ( data instanceof byte[]    ) _constructForBytes(ndConstructor, (byte[]) data );
-        else if ( data instanceof short[]   ) _constructForShorts(ndConstructor, (short[]) data );
-        else if ( data instanceof boolean[] ) _constructForBooleans(ndConstructor, (boolean[]) data );
-        else if ( data instanceof long[]    ) _constructForLongs(ndConstructor, (long[]) data );
-        else {
-            configureFromNewShape( ndConstructor, false, false, dataType);
-            _API.setData(data);
-        }
+        data = CPU.get().allocate( data, size );
+        configureFromNewShape( ndConstructor, false, false, dataType );
+        _API.setData( data );
     }
 
     private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {
@@ -192,69 +182,6 @@ final class TsrConstructor
         _API.setData( data );
         _API.setConf( ndConstructor.produceNDC( size > 1 ) );
         return data;
-    }
-
-    private void _constructForDoubles( NDConstructor ndConstructor, double[] value )
-    {
-        int size = ndConstructor.getSize();
-        DataType<?> type = DataType.of( F64.class );
-        Object data = CPU.get().allocate( value, size );
-        configureFromNewShape( ndConstructor, false, false, type );
-        _API.setData( data );
-    }
-
-    private void _constructForFloats( NDConstructor ndConstructor, float[] value )
-    {
-        int size = ndConstructor.getSize();
-        DataType<?> type = DataType.of( F32.class );
-        Object data = CPU.get().allocate( value, size );
-        configureFromNewShape( ndConstructor, false, false, type );
-        _API.setData( data );
-    }
-
-    private void _constructForInts( NDConstructor ndConstructor, int[] value )
-    {
-        int size = ndConstructor.getSize();
-        DataType<?> type = DataType.of( I32.class );
-        Object data = CPU.get().allocate( value, size );
-        configureFromNewShape( ndConstructor, false, false, type );
-        _API.setData( data );
-    }
-
-    private void _constructForShorts( NDConstructor ndConstructor, short[] value )
-    {
-        int size = ndConstructor.getSize();
-        DataType<?> type = DataType.of( I16.class );
-        Object data = CPU.get().allocate( value, size );
-        configureFromNewShape( ndConstructor, false, false, type );
-        _API.setData( data );
-    }
-
-    private void _constructForBooleans( NDConstructor ndConstructor, boolean[] value )
-    {
-        int size = ndConstructor.getSize();
-        DataType<?> type = DataType.of( Boolean.class );
-        Object data = CPU.get().allocate( value, size );
-        configureFromNewShape( ndConstructor, false, false, type );
-        _API.setData( data );
-    }
-
-    private void _constructForBytes( NDConstructor ndConstructor, byte[] value )
-    {
-        int size = ndConstructor.getSize();
-        DataType<?> type = DataType.of( I8.class );
-        Object data = CPU.get().allocate( value, size );
-        configureFromNewShape( ndConstructor, false, false, type );
-        _API.setData( data );
-    }
-
-    private void _constructForLongs( NDConstructor ndConstructor, long[] value )
-    {
-        int size = ndConstructor.getSize();
-        DataType<?> type = DataType.of( I64.class );
-        Object data = CPU.get().allocate( value, size );
-        configureFromNewShape( ndConstructor, false, false, type );
-        _API.setData( data );
     }
 
     public <V> void constructSeeded( Class<V> valueType, NDConstructor ndConstructor, Object seed )
