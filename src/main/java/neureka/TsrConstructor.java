@@ -117,75 +117,75 @@ final class TsrConstructor
         return _optimizeObjectArray(dataType, data, size);
     }
 
-    public boolean constructAllFromOne(NDConstructor ndConstructor, Object data ) {
-        if ( data instanceof Double    ) { _constructAllF64(ndConstructor,  (Double)    data ); return true; }
-        if ( data instanceof Float     ) { _constructAllF32(ndConstructor,  (Float)     data ); return true; }
-        if ( data instanceof Integer   ) { _constructAllI32(ndConstructor,  (Integer)   data ); return true; }
-        if ( data instanceof Short     ) { _constructAllI16(ndConstructor,  (Short)     data ); return true; }
-        if ( data instanceof Byte      ) { _constructAllI8(ndConstructor,   (Byte)      data ); return true; }
-        if ( data instanceof Long      ) { _constructAllI64(ndConstructor,  (Long)      data ); return true; }
-        if ( data instanceof Boolean   ) { _constructAllBool(ndConstructor, (Boolean)   data ); return true; }
-        if ( data instanceof Character ) { _constructAllChar(ndConstructor, (Character) data ); return true; }
+    public boolean constructAllFromOne( NDConstructor ndConstructor, Object data ) {
+        if ( data instanceof Double    ) { _constructAllF64( ndConstructor,  (Double)    data ); return true; }
+        if ( data instanceof Float     ) { _constructAllF32( ndConstructor,  (Float)     data ); return true; }
+        if ( data instanceof Integer   ) { _constructAllI32( ndConstructor,  (Integer)   data ); return true; }
+        if ( data instanceof Short     ) { _constructAllI16( ndConstructor,  (Short)     data ); return true; }
+        if ( data instanceof Byte      ) { _constructAllI8( ndConstructor,   (Byte)      data ); return true; }
+        if ( data instanceof Long      ) { _constructAllI64( ndConstructor,  (Long)      data ); return true; }
+        if ( data instanceof Boolean   ) { _constructAllBool( ndConstructor, (Boolean)   data ); return true; }
+        if ( data instanceof Character ) { _constructAllChar( ndConstructor, (Character) data ); return true; }
         if ( Number.class.isAssignableFrom( data.getClass() ) ) {
-            _constructAllF64(ndConstructor, ((Number)data).doubleValue() ); return true;
+            _constructAllF64( ndConstructor, ((Number)data).doubleValue() ); return true;
         } else if ( !data.getClass().isArray() ) {
-            _constructAll(ndConstructor, data ); return true;
+            _constructAll( ndConstructor, data ); return true;
         }
         return false;
     }
 
-    private void _constructAllF64(NDConstructor ndConstructor, double value ) {
+    private void _constructAllF64( NDConstructor ndConstructor, double value ) {
         _constructAll(ndConstructor, F64.class );
         ( (double[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllF32(NDConstructor ndConstructor, float value ) {
+    private void _constructAllF32( NDConstructor ndConstructor, float value ) {
         _constructAll(ndConstructor, F32.class );
         ( (float[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllI32(NDConstructor ndConstructor, int value ) {
+    private void _constructAllI32( NDConstructor ndConstructor, int value ) {
         _constructAll(ndConstructor, I32.class );
         ( (int[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllI16(NDConstructor ndConstructor, short value ) {
+    private void _constructAllI16( NDConstructor ndConstructor, short value ) {
         _constructAll(ndConstructor, I16.class );
         ( (short[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllI8(NDConstructor ndConstructor, byte value ) {
+    private void _constructAllI8( NDConstructor ndConstructor, byte value ) {
         _constructAll(ndConstructor, I8.class );
         ( (byte[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllI64(NDConstructor ndConstructor, long value ) {
+    private void _constructAllI64( NDConstructor ndConstructor, long value ) {
         _constructAll(ndConstructor, I64.class );
         ( (long[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllBool(NDConstructor ndConstructor, boolean value ) {
+    private void _constructAllBool( NDConstructor ndConstructor, boolean value ) {
         _constructAll(ndConstructor, Boolean.class );
         ( (boolean[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAllChar(NDConstructor ndConstructor, char value ) {
+    private void _constructAllChar( NDConstructor ndConstructor, char value ) {
         _constructAll(ndConstructor, Character.class );
         ( (char[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAll(NDConstructor ndConstructor, Object value ) {
+    private void _constructAll( NDConstructor ndConstructor, Object value ) {
         _constructAll(ndConstructor, value.getClass() );
         ( (Object[]) _API.getData())[ 0 ] = value;
     }
 
-    private void _constructAll(NDConstructor ndConstructor, Class<?> typeClass ) {
+    private void _constructAll( NDConstructor ndConstructor, Class<?> typeClass ) {
         int size = ndConstructor.getSize();
         _API.setType( DataType.of( typeClass ) );
         configureFromNewShape(ndConstructor, size > 1, true );
     }
 
-    private void _constructForDoubles(NDConstructor ndConstructor, double[] value )
+    private void _constructForDoubles( NDConstructor ndConstructor, double[] value )
     {
         int size = ndConstructor.getSize();
         _API.setType( DataType.of( F64.class ) );
@@ -197,7 +197,7 @@ final class TsrConstructor
         configureFromNewShape(ndConstructor, false, false );
     }
 
-    private void _constructForFloats(NDConstructor ndConstructor, float[] value )
+    private void _constructForFloats( NDConstructor ndConstructor, float[] value )
     {
         int size = ndConstructor.getSize();
         _API.setType( DataType.of( F32.class ) );
@@ -208,7 +208,7 @@ final class TsrConstructor
         configureFromNewShape(ndConstructor, false, false );
     }
 
-    private void _constructForInts(NDConstructor ndConstructor, int[] value )
+    private void _constructForInts( NDConstructor ndConstructor, int[] value )
     {
         int size = ndConstructor.getSize();
         _API.setType( DataType.of( I32.class ) );
@@ -219,7 +219,7 @@ final class TsrConstructor
         configureFromNewShape(ndConstructor, false, false );
     }
 
-    private void _constructForShorts(NDConstructor ndConstructor, short[] value )
+    private void _constructForShorts( NDConstructor ndConstructor, short[] value )
     {
         int size = ndConstructor.getSize();
         _API.setType( DataType.of( I16.class ) );
@@ -230,7 +230,7 @@ final class TsrConstructor
         configureFromNewShape(ndConstructor, false, false );
     }
 
-    private void _constructForBooleans(NDConstructor ndConstructor, boolean[] value )
+    private void _constructForBooleans( NDConstructor ndConstructor, boolean[] value )
     {
         int size = ndConstructor.getSize();
         _API.setType( DataType.of( Boolean.class ) );
@@ -241,7 +241,7 @@ final class TsrConstructor
         configureFromNewShape(ndConstructor, false, false );
     }
 
-    private void _constructForBytes(NDConstructor ndConstructor, byte[] value )
+    private void _constructForBytes( NDConstructor ndConstructor, byte[] value )
     {
         int size = ndConstructor.getSize();
         _API.setType( DataType.of( I8.class ) );
@@ -252,7 +252,7 @@ final class TsrConstructor
         configureFromNewShape(ndConstructor, false, false );
     }
 
-    private void _constructForLongs(NDConstructor ndConstructor, long[] value )
+    private void _constructForLongs( NDConstructor ndConstructor, long[] value )
     {
         int size = ndConstructor.getSize();
         _API.setType( DataType.of( I64.class ) );
@@ -263,7 +263,7 @@ final class TsrConstructor
         configureFromNewShape(ndConstructor, false, false );
     }
 
-    public <V> void constructSeeded(Class<V> valueType, NDConstructor ndConstructor, Object seed ) {
+    public <V> void constructSeeded( Class<V> valueType, NDConstructor ndConstructor, Object seed ) {
         _API.setType( DataType.of(valueType) );
         int size = ndConstructor.getSize();
 
@@ -297,7 +297,7 @@ final class TsrConstructor
      * @param size The size of the optimized array of primitives.
      * @return An optimized flat array of primitives.
      */
-    private static Object _optimizeObjectArray(DataType<?> dataType, Object[] values, int size ) {
+    private static Object _optimizeObjectArray( DataType<?> dataType, Object[] values, int size ) {
         Object data = values;
         IntStream indices = IntStream.iterate( 0, i -> i + 1 ).limit(size);
         if ( size > 1_000 ) indices = indices.parallel();
@@ -323,6 +323,14 @@ final class TsrConstructor
             Object[] objects = new Object[size];
             for( int i = 0; i < size; i++ ) objects[ i ] = values[ i % values.length ];
             data = objects;
+        } else if ( dataType == DataType.of(Boolean.class) ) {
+            boolean[] booleans = new boolean[size];
+            for( int i = 0; i < size; i++ ) booleans[ i ] = (Boolean) values[ i % values.length ];
+            data = booleans;
+        } else if ( dataType == DataType.of(Character.class) ) {
+            char[] chars = new char[size];
+            for( int i = 0; i < size; i++ ) chars[ i ] = (Character) values[ i % values.length ];
+            data = chars;
         }
         return data;
     }
