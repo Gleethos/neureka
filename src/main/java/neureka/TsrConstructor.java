@@ -104,7 +104,7 @@ final class TsrConstructor
         else if ( data instanceof long[]    ) _constructForLongs(ndConstructor, (long[]) data );
         else {
             _API.setType(dataType);
-            configureFromNewShape(ndConstructor, false, false);
+            configureFromNewShape( ndConstructor, false, false);
             _API.setData(data);
         }
     }
@@ -182,7 +182,7 @@ final class TsrConstructor
     private void _constructAll( NDConstructor ndConstructor, Class<?> typeClass ) {
         int size = ndConstructor.getSize();
         _API.setType( DataType.of( typeClass ) );
-        configureFromNewShape(ndConstructor, size > 1, true );
+        configureFromNewShape( ndConstructor, size > 1, true );
     }
 
     private void _constructForDoubles( NDConstructor ndConstructor, double[] value )
@@ -194,7 +194,7 @@ final class TsrConstructor
             for ( int i = 0; i < size; i++ ) ( (double[]) _API.getData())[ i ]  = value[ i % value.length ];
         }
         else _API.setData( value );
-        configureFromNewShape(ndConstructor, false, false );
+        configureFromNewShape( ndConstructor, false, false );
     }
 
     private void _constructForFloats( NDConstructor ndConstructor, float[] value )
@@ -205,7 +205,7 @@ final class TsrConstructor
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (float[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape(ndConstructor, false, false );
+        configureFromNewShape( ndConstructor, false, false );
     }
 
     private void _constructForInts( NDConstructor ndConstructor, int[] value )
@@ -216,7 +216,7 @@ final class TsrConstructor
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (int[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape(ndConstructor, false, false );
+        configureFromNewShape( ndConstructor, false, false );
     }
 
     private void _constructForShorts( NDConstructor ndConstructor, short[] value )
@@ -227,7 +227,7 @@ final class TsrConstructor
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (short[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape(ndConstructor, false, false );
+        configureFromNewShape( ndConstructor, false, false );
     }
 
     private void _constructForBooleans( NDConstructor ndConstructor, boolean[] value )
@@ -238,7 +238,7 @@ final class TsrConstructor
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (boolean[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape(ndConstructor, false, false );
+        configureFromNewShape( ndConstructor, false, false );
     }
 
     private void _constructForBytes( NDConstructor ndConstructor, byte[] value )
@@ -249,7 +249,7 @@ final class TsrConstructor
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (byte[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape(ndConstructor, false, false );
+        configureFromNewShape( ndConstructor, false, false );
     }
 
     private void _constructForLongs( NDConstructor ndConstructor, long[] value )
@@ -260,33 +260,35 @@ final class TsrConstructor
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (long[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape(ndConstructor, false, false );
+        configureFromNewShape( ndConstructor, false, false );
     }
 
     public <V> void constructSeeded( Class<V> valueType, NDConstructor ndConstructor, Object seed ) {
         _API.setType( DataType.of(valueType) );
         int size = ndConstructor.getSize();
 
+        Object data;
         if ( valueType == Double.class )
-            _API.setData( DataConverter.Utility.seededDoubleArray( new double[size], seed.toString() ) );
+            data = DataConverter.Utility.seededDoubleArray( new double[size], seed.toString() );
         else if ( valueType == Float.class )
-            _API.setData( DataConverter.Utility.seededFloatArray( new float[size], seed.toString() ) );
+            data = DataConverter.Utility.seededFloatArray( new float[size], seed.toString() );
         else if ( valueType == Integer.class )
-            _API.setData( DataConverter.Utility.seededIntArray( new int[size], seed.toString() ) );
+            data = DataConverter.Utility.seededIntArray( new int[size], seed.toString() );
         else if ( valueType == Short.class )
-            _API.setData( DataConverter.Utility.seededShortArray( new short[size], seed.toString() ) );
+            data = DataConverter.Utility.seededShortArray( new short[size], seed.toString() );
         else if ( valueType == Byte.class )
-            _API.setData( DataConverter.Utility.seededByteArray( new byte[size], seed.toString() ) );
+            data = DataConverter.Utility.seededByteArray( new byte[size], seed.toString() );
         else if ( valueType == Long.class )
-            _API.setData( DataConverter.Utility.seededLongArray( new long[size], seed.toString() ) );
+            data = DataConverter.Utility.seededLongArray( new long[size], seed.toString() );
         else if ( valueType == Boolean.class )
-            _API.setData( DataConverter.Utility.seededBooleanArray( new boolean[size], seed.toString() ) );
+            data = DataConverter.Utility.seededBooleanArray( new boolean[size], seed.toString() );
         else if ( valueType == Character.class )
-            _API.setData( DataConverter.Utility.seededCharacterArray( new char[size], seed.toString() ) );
+            data = DataConverter.Utility.seededCharacterArray( new char[size], seed.toString() );
         else
             throw new IllegalArgumentException("Seeding not supported for value type '"+valueType.getSimpleName()+"'!");
 
-        configureFromNewShape(ndConstructor, false, false  );
+        _API.setData( data );
+        configureFromNewShape( ndConstructor, false, false  );
     }
 
     /**
