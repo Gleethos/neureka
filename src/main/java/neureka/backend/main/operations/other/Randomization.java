@@ -242,43 +242,56 @@ public class Randomization extends AbstractOperation
             if ( isSimple )
                 return (i, end) -> {
                             for ( ; i < end; i ++ ) // increment on drain accordingly:
-                                t0_value[i] = longFrom(seed + (long) Math.pow(32,1+i) + i);
+                                t0_value[i] = longFrom(seedIndexScramble( seed, i ));
                         };
             else
                 return (i, end) -> {
                             NDIterator t0Idx = iteratorProvider.get(i);
                             for ( ; i < end; i ++ ) // increment on drain accordingly:
-                                t0_value[t0Idx.getIndexAndIncrement()] = longFrom(seed + (long) Math.pow(32,1+i) + i);
+                                t0_value[t0Idx.getIndexAndIncrement()] = longFrom(seedIndexScramble( seed, i ));
                         };
         } else if (type == Integer.class) {
             int[] t0_value = dataProvider.get(int[].class);
             if ( isSimple )
                 return (i, end) -> {
                             for ( ; i < end; i++ )
-                                t0_value[i] = _nextInt(seed + (long) Math.pow(32,1+i) + i);
+                                t0_value[i] = _nextInt(seedIndexScramble( seed, i ));
                         };
             else
                 return (i, end) -> {
                             NDIterator t0Idx = iteratorProvider.get(i);
                             for ( ; i < end; i++ )
-                                t0_value[t0Idx.getIndexAndIncrement()] = _nextInt(seed + (long) Math.pow(32,1+i) + i);
+                                t0_value[t0Idx.getIndexAndIncrement()] = _nextInt(seedIndexScramble( seed, i ));
                         };
         } else if (type == Byte.class) {
             byte[] t0_value = dataProvider.get(byte[].class);
             if ( isSimple )
                 return (i, end) -> {
                     for ( ; i < end; i++ )
-                        t0_value[i] = _nextByte(seed + (long) Math.pow(32,1+i) + i);
+                        t0_value[i] = _nextByte(seedIndexScramble( seed, i ));
                 };
             else
                 return (i, end) -> {
                     NDIterator t0Idx = iteratorProvider.get(i);
                     for ( ; i < end; i++ )
-                        t0_value[t0Idx.getIndexAndIncrement()] = _nextByte(seed + (long) Math.pow(32,1+i) + i);
+                        t0_value[t0Idx.getIndexAndIncrement()] = _nextByte(seedIndexScramble( seed, i ));
                 };
         }
         else throw new IllegalStateException("Unsupported type: " + type);
     }
+
+    /**
+     *  A simple method which takes a long seed and an int (the current item index) and
+     *  does some pseudo-random number generating (~ Linear congruential generator).
+     */
+    private static long seedIndexScramble( long seed, long i ) {
+        i = ( i * 0x105139C0C031L + 0x4c0e1e9f367dL     ) ^ seed;
+        i = ( i * 0x196E6109L     + 0x6c6f72656e64616eL ) ^ seed;
+        i = ( i * 0x653L          + 0xCBC85B449DL       ) ^ seed;
+        return (i * seed) ^ 0xa785a819cd72c6fdL;
+    }
+
+
 
     @Override
     public String stringify( String[] children ) {

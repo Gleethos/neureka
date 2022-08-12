@@ -4,19 +4,19 @@
   "narrative":"",
   "subjects":[],
   "statistics":{
-    "runs":"1",
+    "runs":"2",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"8.876 seconds"
+    "duration":"10.084 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensor can be constructed by passing List instances.",
-      "result":"IGNORED",
-      "duration":"0",
+      "result":"PASS",
+      "duration":"3.525 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,12 +39,12 @@
     {
       "id":"Test benchmark script and simple tensor constructor.",
       "result":"PASS",
-      "duration":"8.855 seconds",
+      "duration":"6.461 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var configuration = [ \"iterations\":1, \"sample_size\":20, \"difficulty\":15, \"intensifier\":0 ]","var strSettings = (Consumer<NDPrintSettings>) { NDPrintSettings it ->","    it.cellSize = 7; it.isCellBound = true;","}"]},
+        {"kind":"given","text":"","code":["var configuration = [ \"iterations\":1, \"sample_size\":20, \"difficulty\":15, \"intensifier\":0 ]","var strSettings = (Consumer<NDPrintSettings>) { NDPrintSettings it ->","    it.cellSize = 7; it.isCellBound = true; // We use this to cap decimals to avoid rounding errors.","}"]},
 
         {"kind":"and","text":"The benchmark script is being loaded into a GroovyShell instance.","code":["var session = new GroovyShell().evaluate(Load.resourceAt(\"benchmark.groovy\", this))"]},
 

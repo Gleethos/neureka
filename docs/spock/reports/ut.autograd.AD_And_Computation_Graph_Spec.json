@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.458 seconds"
+    "duration":"0.354 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Reshaping produces expected computation graph and also works with reverse mode AD.",
       "result":"PASS",
-      "duration":"0.156 seconds",
+      "duration":"0.039 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"Payloads and derivatives are null after garbage collection.",
       "result":"PASS",
-      "duration":"0.292 seconds",
+      "duration":"0.306 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

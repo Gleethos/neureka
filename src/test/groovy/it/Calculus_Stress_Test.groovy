@@ -195,19 +195,19 @@ class Calculus_Stress_Test extends Specification
 
             Double | 'tanh(i0)*100 % i0'       || [-1157698679, -1157698679]
             Float  | 'tanh(i0)*100 % i0'       || [1967446493, 1967446493]
-            Integer| 'tanh(i0)*100 % i0'       || [350145035,  350145035]
+            Integer| 'tanh(i0)*100 % i0'       || [-1054395405,  -1054395405]
 
             Double | 'fast_tanh(i0)*100 % i0'  || [-465291508, -465291508]
             Float  | 'fast_tanh(i0)*100 % i0'  || [-1372925001, -1372925001]
-            Integer| 'fast_tanh(i0)*100 % i0'  || [350145035,  350145035]
+            Integer| 'fast_tanh(i0)*100 % i0'  || [-1054395405,  -1054395405]
 
             Double | 'fast_gaus(i0)+i0'        || [-662875915, -662875915]
             Float  | 'fast_gaus(i0)+i0'        || [-1211048977, -1211048977]
-            Integer| 'fast_gaus(i0)+i0'        || [1605103669, 1605103669]
+            Integer| 'fast_gaus(i0)+i0'        || [-1237330383, -1237330383]
 
             Double | 'softsign(i0)*100 % i0'   || [1967097666, 1967097666]
             Float  | 'softsign(i0)*100 % i0'   || [71072251, 71072251]
-            Integer| 'softsign(i0)*100 % i0'   || [350145035, 350145035]
+            Integer| 'softsign(i0)*100 % i0'   || [-1054395405, -1054395405]
 
             Double | 'random(i0)'              || [-2059799883, 276852681]
             Float  | 'random(i0)'              || [-2100773274, -590726536]
@@ -251,31 +251,31 @@ class Calculus_Stress_Test extends Specification
 
         Double | 'silu(i0)'       | false  || [1.0985150624263118, 2.331551300795844, 0.08745752408303246] as double[]
         Float  | 'silu(i0)'       | false  || [1.098515, 2.3315513, 0.08745752] as float[]
-        Integer| 'silu(i0)'       | false  || [0, 0, 2001998296] as int[]
+        Integer| 'silu(i0)'       | false  || [2124371342, 0, 0] as int[]
 
         Double | 'silu(i0)'       | true   || [1.0198659569612678, 1.0992238228008295, 0.5805713104936336] as double[]
         Float  | 'silu(i0)'       | true   || [1.019866, 1.0992239, 0.5805713] as float[]
-        Integer| 'silu(i0)'       | true   || [0, 0, 1] as int[]
+        Integer| 'silu(i0)'       | true   || [1, 0, 0] as int[]
 
         Double | 'gelu(i0)'       | false  || [1.2553019101258691, 2.48514859714065, 0.09199892841280806] as double[]
         Float  | 'gelu(i0)'       | false  || [1.255302, 2.4851487, 0.09199893] as float[]
-        Integer| 'gelu(i0)'       | false  || [0, 0, 2001998296] as int[]
+        Integer| 'gelu(i0)'       | false  || [2124371342, 0, 0] as int[]
 
         Double | 'gelu(i0)'       | true   || [1.09968352899801, 1.043758795430269, 0.6360091016582581] as double[]
         Float  | 'gelu(i0)'       | true   || [1.0996835, 1.0437589, 0.6360091] as float[]
-        Integer| 'gelu(i0)'       | true   || [0, 0, 1] as int[]
+        Integer| 'gelu(i0)'       | true   || [1, 0, 0] as int[]
 
         Double | 'selu(i0)'       | false  || [1.4457526798842053, 2.6470118580557593, 0.17005220305511268] as double[]
         Float  | 'selu(i0)'       | false  || [1.4457527, 2.647012, 0.1700522] as float[]
-        Integer| 'selu(i0)'       | false  || [-2, -2, 2103501586] as int[]
+        Integer| 'selu(i0)'       | false  || [-2062888229, -2, -2] as int[]
 
         Double | 'selu(i0)'       | true   || [1.0507009873554805, 1.0507009873554805, 1.0507009873554805] as double[]
         Float  | 'selu(i0)'       | true   || [1.050701, 1.050701, 1.050701] as float[]
-        Integer| 'selu(i0)'       | true   || [0, 0, 1] as int[]
+        Integer| 'selu(i0)'       | true   || [1, 0, 0] as int[]
 
         Double | 'gatu(i0)'       | false  || [0.9891407665275838, 0.9999999999999742, 0.004239423130809827] as double[]
         Float  | 'gatu(i0)'       | false  || [0.98914075, 1.0, 0.0042394227] as float[]
-        Integer| 'gatu(i0)'       | false  || [-1, -1, 1] as int[]
+        Integer| 'gatu(i0)'       | false  || [1, -1, -1] as int[]
 
         Double | 'gatu(i0)'       | true   || [0.1226918386004856, 9.805489753489383E-13, 0.07858138767615172] as double[]
         Float  | 'gatu(i0)'       | true   || [0.12269211, 0.0, 0.078581385] as float[]
@@ -283,7 +283,7 @@ class Calculus_Stress_Test extends Specification
 
         Double | 'gasu(i0)'       | false  || [0.7226245060456667, 0.9411395236107959, 0.004221551478848414] as double[]
         Float  | 'gasu(i0)'       | false  || [0.72262454, 0.9411396, 0.004221551] as float[]
-        Integer| 'gasu(i0)'       | false  || [-1, -1, 1] as int[]
+        Integer| 'gasu(i0)'       | false  || [1, -1, -1] as int[]
 
         Double | 'gasu(i0)'       | true   || [0.4370057619908791, 0.06596632547000601, 0.07792071781374522] as double[]
         Float  | 'gasu(i0)'       | true   || [0.43700573, 0.06596632, 0.07792072] as float[]

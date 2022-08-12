@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.133 seconds"
+    "duration":"0.033 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A deep copy of a tensor is also a deep copy of the underlying data array.",
       "result":"PASS",
-      "duration":"0.018 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"A deep copy of a slice tensor is also a deep copy of the underlying data array.",
       "result":"PASS",
-      "duration":"0.016 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -64,7 +64,7 @@
     {
       "id":"A shallow copy will share the same underlying data as its original tensor.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -79,7 +79,7 @@
 
         {"kind":"and","text":"We verify that they share the same ints through the \"every\" method.","code":["(0..<t.size).every({ int i -> shallow.at(i) == t.at(i) })"]},
 
-        {"kind":"where","text":"","code":{"cloner":["ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure4@65fc8119","ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure5@54871d2f"]}}
+        {"kind":"where","text":"","code":{"cloner":["ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure4@642c6148","ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure5@6e206b5c"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

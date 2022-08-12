@@ -16,7 +16,7 @@
     {
       "id":"When matrices are transpose, they will change their layout type.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
