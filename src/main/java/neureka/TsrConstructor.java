@@ -188,27 +188,8 @@ final class TsrConstructor
     public <V> void constructSeeded( Class<V> valueType, NDConstructor ndConstructor, Object seed )
     {
         int size = ndConstructor.getSize();
-
-        Object data;
-        if ( valueType == Double.class )
-            data = Randomization.fillRandomly( new double[size], seed.toString() );
-        else if ( valueType == Float.class )
-            data = Randomization.fillRandomly( new float[size], seed.toString() );
-        else if ( valueType == Integer.class )
-            data = Randomization.fillRandomly( new int[size], seed.toString() );
-        else if ( valueType == Short.class )
-            data = Randomization.fillRandomly( new short[size], seed.toString() );
-        else if ( valueType == Byte.class )
-            data = Randomization.fillRandomly( new byte[size], seed.toString() );
-        else if ( valueType == Long.class )
-            data = Randomization.fillRandomly( new long[size], seed.toString() );
-        else if ( valueType == Boolean.class )
-            data = Randomization.fillRandomly( new boolean[size], seed.toString() );
-        else if ( valueType == Character.class )
-            data = Randomization.fillRandomly( new char[size], seed.toString() );
-        else
-            throw new IllegalArgumentException("Seeding not supported for value type '"+valueType.getSimpleName()+"'!");
-
+        Object data = CPU.get().allocate( DataType.of( valueType ), size );
+        data = Randomization.fillRandomly( data, seed.toString() );
         configureFromNewShape( ndConstructor, false, false, DataType.of(valueType) );
         _API.setData( data );
     }
