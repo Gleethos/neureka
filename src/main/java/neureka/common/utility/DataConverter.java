@@ -47,7 +47,6 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -452,54 +451,6 @@ public final class DataConverter
                 array[i] = objects[i];
             }
             return array;
-        }
-
-        @Contract( pure = true )
-        public static short[] seededShortArray( short[] array, String seed ) {
-            return seededShortArray(array, _longStringHash( seed ));
-        }
-
-        @Contract( pure = true )
-        public static short[] seededShortArray( short[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = (short) dice.nextInt();
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static boolean[] seededBooleanArray( boolean[] array, String seed ) {
-            return seededBooleanArray(array, _longStringHash( seed ));
-        }
-
-        @Contract( pure = true )
-        public static boolean[] seededBooleanArray( boolean[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextBoolean();
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static char[] seededCharacterArray( char[] array, String seed) {
-            return seededCharacterArray(array, _longStringHash( seed ));
-        }
-
-        @Contract( pure = true )
-        public static char[] seededCharacterArray( char[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = (char) dice.nextInt();
-            return array;
-        }
-
-        @Contract( pure = true )
-        private static long _longStringHash( String string )
-        {
-            long h = 1125899906842597L; // prime
-            int len = string.length();
-            for ( int i = 0; i < len; i++ ) h = 31 * h + string.charAt( i );
-            return h;
         }
 
         @Contract( pure = true )

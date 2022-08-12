@@ -101,11 +101,14 @@ public class Randomization extends AbstractOperation
     {
         int size = 0;
         Class<?> type = null;
-        if ( data instanceof int[]    ) { type = Integer.class; size = ((int[]    )data).length; }
-        if ( data instanceof double[] ) { type = Double.class; size = ((double[] )data).length; }
-        if ( data instanceof float[]  ) { type = Float.class; size = ((float[]  )data).length; }
-        if ( data instanceof long[]   ) { type = Long.class; size = ((long[]   )data).length; }
-        if ( data instanceof byte[]   ) { type = Byte.class; size = ((byte[]   )data).length; }
+        if ( data instanceof int[]     ) { type = Integer.class;   size = ((int[]    )data).length; }
+        if ( data instanceof double[]  ) { type = Double.class;    size = ((double[] )data).length; }
+        if ( data instanceof float[]   ) { type = Float.class;     size = ((float[]  )data).length; }
+        if ( data instanceof short[]   ) { type = Short.class;     size = ((short[]  )data).length; }
+        if ( data instanceof long[]    ) { type = Long.class;      size = ((long[]   )data).length; }
+        if ( data instanceof byte[]    ) { type = Byte.class;      size = ((byte[]   )data).length; }
+        if ( data instanceof char[]    ) { type = Character.class; size = ((char[]   )data).length; }
+        if ( data instanceof boolean[] ) { type = Boolean.class;   size = ((boolean[] )data).length; }
         if ( type == null )
             throw new IllegalArgumentException("Type '"+data.getClass()+"' not supported for randomization.");
 
@@ -242,13 +245,13 @@ public class Randomization extends AbstractOperation
             if ( isSimple )
                 return (i, end) -> {
                             for ( ; i < end; i ++ ) // increment on drain accordingly:
-                                t0_value[i] = longFrom(seedIndexScramble( seed, i ));
+                                t0_value[i] = _nextLong(seedIndexScramble( seed, i ));
                         };
             else
                 return (i, end) -> {
                             NDIterator t0Idx = iteratorProvider.get(i);
                             for ( ; i < end; i ++ ) // increment on drain accordingly:
-                                t0_value[t0Idx.getIndexAndIncrement()] = longFrom(seedIndexScramble( seed, i ));
+                                t0_value[t0Idx.getIndexAndIncrement()] = _nextLong(seedIndexScramble( seed, i ));
                         };
         } else if (type == Integer.class) {
             int[] t0_value = dataProvider.get(int[].class);
@@ -275,6 +278,45 @@ public class Randomization extends AbstractOperation
                     NDIterator t0Idx = iteratorProvider.get(i);
                     for ( ; i < end; i++ )
                         t0_value[t0Idx.getIndexAndIncrement()] = _nextByte(seedIndexScramble( seed, i ));
+                };
+        } else if (type == Short.class) {
+            short[] t0_value = dataProvider.get(short[].class);
+            if ( isSimple )
+                return (i, end) -> {
+                    for ( ; i < end; i++ )
+                        t0_value[i] = _nextShort(seedIndexScramble( seed, i ));
+                };
+            else
+                return (i, end) -> {
+                    NDIterator t0Idx = iteratorProvider.get(i);
+                    for ( ; i < end; i++ )
+                        t0_value[t0Idx.getIndexAndIncrement()] = _nextShort(seedIndexScramble( seed, i ));
+                };
+        } else if (type == Boolean.class) {
+            boolean[] t0_value = dataProvider.get(boolean[].class);
+            if ( isSimple )
+                return (i, end) -> {
+                    for ( ; i < end; i++ )
+                        t0_value[i] = _nextBoolean(seedIndexScramble( seed, i ));
+                };
+            else
+                return (i, end) -> {
+                    NDIterator t0Idx = iteratorProvider.get(i);
+                    for ( ; i < end; i++ )
+                        t0_value[t0Idx.getIndexAndIncrement()] = _nextBoolean(seedIndexScramble( seed, i ));
+                };
+        } else if (type == Character.class) {
+            char[] t0_value = dataProvider.get(char[].class);
+            if ( isSimple )
+                return (i, end) -> {
+                    for ( ; i < end; i++ )
+                        t0_value[i] = _nextChar(seedIndexScramble( seed, i ));
+                };
+            else
+                return (i, end) -> {
+                    NDIterator t0Idx = iteratorProvider.get(i);
+                    for ( ; i < end; i++ )
+                        t0_value[t0Idx.getIndexAndIncrement()] = _nextChar(seedIndexScramble( seed, i ));
                 };
         }
         else throw new IllegalStateException("Unsupported type: " + type);
@@ -319,12 +361,12 @@ public class Randomization extends AbstractOperation
         // See Knuth, ACP, Section 3.4.1 Algorithm C.
         double v1, v2, s;
         do {
-            long seed1 = _next(seed );
-            long seed2 = _next(seed1);
-            long seed3 = _next(seed2);
-            long seed4 = _next(seed3);
-            v1 = 2 * _doubleFrom( seed1, seed2 ) - 1; // between -1 and 1
-            v2 = 2 * _doubleFrom( seed3, seed4 ) - 1; // between -1 and 1
+            long seed1 = _nextSeed(seed );
+            long seed2 = _nextSeed(seed1);
+            long seed3 = _nextSeed(seed2);
+            long seed4 = _nextSeed(seed3);
+            v1 = 2 * _nextDouble( seed1, seed2 ) - 1; // between -1 and 1
+            v2 = 2 * _nextDouble( seed3, seed4 ) - 1; // between -1 and 1
             s = v1 * v1 + v2 * v2;
             seed = seed4;
         }
@@ -336,18 +378,25 @@ public class Randomization extends AbstractOperation
         out[1] = v2 * multiplier;
     }
 
-    public static long longFrom( long seed ) {
-        long seed1 = _next(seed);
-        long seed2 = _next(seed1);
-        return ((long)(_intFrom(32, seed1)) << 32) + _intFrom(32, seed2);
+    private static long _nextLong( long seed ) {
+        long seed1 = _nextSeed(seed);
+        long seed2 = _nextSeed(seed1);
+        return ((long)(_next(32, seed1)) << 32) + _next(32, seed2);
     }
 
     private static byte _nextByte( long seed ) {
-        int rnd = _nextInt(seed);
-        return (byte) rnd;
+        return (byte) _nextInt(seed);
     }
 
-    private static long _next( long currentSeed )
+    private static boolean _nextBoolean(long seed) {
+        return _next(1, _nextSeed(seed)) != 0;
+    }
+
+    private static short _nextShort( long seed ) {
+        return (short) _nextInt(seed);
+    }
+
+    private static long _nextSeed( long currentSeed )
     {
         long oldseed, nextseed;
         do {
@@ -357,15 +406,18 @@ public class Randomization extends AbstractOperation
         return nextseed;
     }
 
-    private static double _doubleFrom( long seed1, long seed2 )
-    {
-        return (((long)(_intFrom(26, seed1)) << 27) + _intFrom(27, seed2)) * DOUBLE_UNIT;
+    private static double _nextDouble(long seed1, long seed2 ) {
+        return (((long)(_next(26, seed1)) << 27) + _next(27, seed2)) * DOUBLE_UNIT;
     }
 
-    private static int _intFrom( int bits, long seed ) { return (int)(seed >>> (48 - bits)); }
-
     private static int _nextInt( long seed ) {
-        return _intFrom(32, _next(seed));
+        return _next(32, _nextSeed(seed));
+    }
+
+    private static int _next( int bits, long seed ) { return (int)(seed >>> (48 - bits)); }
+
+    private static char _nextChar( long seed ) {
+        return (char) _nextInt(seed);
     }
 
 }

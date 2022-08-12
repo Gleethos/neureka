@@ -197,15 +197,15 @@ final class TsrConstructor
         else if ( valueType == Integer.class )
             data = Randomization.fillRandomly( new int[size], seed.toString() );
         else if ( valueType == Short.class )
-            data = DataConverter.Utility.seededShortArray( new short[size], seed.toString() );
+            data = Randomization.fillRandomly( new short[size], seed.toString() );
         else if ( valueType == Byte.class )
             data = Randomization.fillRandomly( new byte[size], seed.toString() );
         else if ( valueType == Long.class )
             data = Randomization.fillRandomly( new long[size], seed.toString() );
         else if ( valueType == Boolean.class )
-            data = DataConverter.Utility.seededBooleanArray( new boolean[size], seed.toString() );
+            data = Randomization.fillRandomly( new boolean[size], seed.toString() );
         else if ( valueType == Character.class )
-            data = DataConverter.Utility.seededCharacterArray( new char[size], seed.toString() );
+            data = Randomization.fillRandomly( new char[size], seed.toString() );
         else
             throw new IllegalArgumentException("Seeding not supported for value type '"+valueType.getSimpleName()+"'!");
 
