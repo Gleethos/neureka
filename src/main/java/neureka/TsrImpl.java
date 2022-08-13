@@ -154,6 +154,19 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             }
             return t;
         }
+
+        Class<?> commonType = _extractCommonType(args);
+        if ( commonType != null ) {
+            TsrImpl<T> t = new TsrImpl<>();
+            t.createConstructionAPI().tryConstructing(
+                      NDConstructor.of(new int[]{args.length}),
+                      DataType.of(commonType),
+                      args,
+              false
+              );
+            return t;
+        }
+
         /* EXPRESSION BASED CONSTRUCTION:
             The following allows the creation of tensors based on passing an expression
             alongside input tensors to the constructor.
@@ -185,6 +198,19 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         }
         if ( tensors.length == 0 || tensors[0] == null) return new TsrImpl<>();
         return Function.of( f.toString(), true ).call( tensors );
+    }
+
+    /**
+     * @param args The objects which should be checked.
+     * @return A common type or null if they are not all of the same type.
+     */
+    private static Class<?> _extractCommonType( Object... args ) {
+        Class<?> commonType = null;
+        for ( Object o : args ) {
+            if ( commonType == null ) commonType = o.getClass();
+            else if ( !commonType.equals( o.getClass() ) ) return null;
+        }
+        return commonType;
     }
 
     // Constructors:
@@ -957,9 +983,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         Function cloner = Neureka.get().backend().getFunction().idy();
         boolean thisIsIntermediate = this.isIntermediate();
         _setIsIntermediate( false );
-        Tsr<V> clone = Tsr.of( this.getItemType() )
-                            .on(this.getDevice())
-                            .withShape( this.getNDConf().shape() )
+        Tsr<V> clone = Tsr.like( this )
                             .all( (V) Double.valueOf(0.0) );
 
         clone = cloner.call( clone, this );

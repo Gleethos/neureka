@@ -74,7 +74,7 @@ import neureka.dtype.custom.UI16;
 import neureka.dtype.custom.UI32;
 import neureka.dtype.custom.UI8;
 import neureka.fluent.building.NdaBuilder;
-import neureka.fluent.building.states.IterByOrIterFromOrAll;
+import neureka.fluent.building.states.IterByOrIterFromOrAllTsr;
 import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 import neureka.fluent.building.states.WithShapeOrScalarOrVectorOnDevice;
 import neureka.fluent.slicing.states.AxisOrGetTsr;
@@ -717,7 +717,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <V> The type parameter defining the value type of the provided as well as returned tensor.
      * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
      */
-    static <V> IterByOrIterFromOrAll<V> like(Tsr<V> template ) {
+    static <V> IterByOrIterFromOrAllTsr<V> like(Tsr<V> template ) {
         return of( template.getDataType().getItemTypeClass() )
                 .on( template.getDevice() )
                 .withShape( template.getNDConf().shape() );

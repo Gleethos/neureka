@@ -66,6 +66,11 @@ public class Division extends AbstractOperation
                             ( a, b ) -> (int) Math.round(1d / b), // Deriving at input 0
                             ( a, b ) -> (int) Math.round( -a / Math.pow( b, 2 ) ) // deriving input 1
                         ))
+                        .with(Fun.I64I64ToI64.triple(
+                            ( a, b ) -> a / b,
+                            ( a, b ) -> Math.round(1d / b), // Deriving at input 0
+                            ( a, b ) -> Math.round( -a / Math.pow( b, 2 ) ) // deriving input 1
+                        ))
                         .get()
                 )
                 .setImplementationFor(
@@ -171,6 +176,11 @@ public class Division extends AbstractOperation
                         ( a, b ) -> a / b,
                         ( a, b ) -> (int) Math.round(1d / b), // Deriving at input 0
                         ( a, b ) -> (int) Math.round( -a / Math.pow( b, 2 ) ) // deriving input 1
+                    ))
+                    .with(Fun.I64I64ToI64.triple(
+                        ( a, b ) -> a / b,
+                        ( a, b ) -> Math.round(1d / b), // Deriving at input 0
+                        ( a, b ) -> Math.round( -a / Math.pow( b, 2 ) ) // deriving input 1
                     ))
                     .get()
             )

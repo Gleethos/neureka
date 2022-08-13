@@ -1,12 +1,39 @@
 package ut.backend.core
 
-
+import neureka.Tsr
 import neureka.backend.main.operations.other.Randomization
+import neureka.calculus.Function
+import neureka.calculus.args.Arg
 import spock.lang.Specification
 import spock.lang.Subject
 
 @Subject([Randomization])
-class Randomization_Spec extends Specification {
+class Randomization_Spec extends Specification
+{
+    def 'We can make slices of tensors random.'(
+        Object values, Object expected
+    ) {
+        given :
+            var r = Function.of("random(I[0])")
+        and :
+            var t = Tsr.of(values)[1..<(values.length-1)] //
+
+        when :
+           r.with(Arg.Seed.of(73)).call(t)
+        then :
+            t.items == expected
+
+        where :
+            values                   || expected
+            [0,0,0,0,0] as int[]     || [1682321148, -442781155, 1450818241] as int[]
+            [0,0,0,0,0] as byte[]    || [-4, 29, -63] as byte[]
+            [0,0,0,0,0] as short[]   || [12028, -19939, -17727] as short[]
+            [0,0,0,0,0] as long[]    || [7225514313620035527, -1901730580994377074, 6231216898071663791] as long[]
+            [0,0,0,0,0] as float[]   || [1.0493218, 0.96351904, 1.3803823] as float[]
+            [0,0,0,0,0] as double[]  || [1.0493217368660326, 0.9635190511757348, 1.3803823236577413] as double[]
+            [0,0,0,0,0] as char[]    || [12028, 45597, 47809] as char[]
+            [0,0,0,0,0] as boolean[] || [false, true, false] as boolean[]
+    }
 
     def 'Randomization is in essence the same algorithm as JDKs "Random".'()
     {

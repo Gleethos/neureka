@@ -12,6 +12,7 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
+import neureka.dtype.NumericType;
 import neureka.ndim.iterator.NDIterator;
 import org.jetbrains.annotations.Contract;
 
@@ -48,6 +49,17 @@ public class Randomization extends AbstractOperation
 
         setAlgorithm(
             new Activation()
+                .setIsSuitableFor(
+                    call -> call.validate()
+                            .allNotNull( t ->
+                                    t.getDataType().typeClassImplements(NumericType.class)
+                                    ||
+                                    t.itemType() == Character.class
+                                    ||
+                                    t.itemType() == Boolean.class
+                            )
+                            .basicSuitability()
+                )
                 .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
                 .setDeviceExecution( (context, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )
                 .setCallPreparation( call ->
@@ -75,7 +87,7 @@ public class Randomization extends AbstractOperation
                                 .getDevice()
                                 .getExecutor()
                                 .threaded(
-                                    call.input( Number.class, 0 ).size(),
+                                    call.input( 0 ).size(),
                                     _newWorkloadFor( call )
                                 );
                                 return call.input( 0 );

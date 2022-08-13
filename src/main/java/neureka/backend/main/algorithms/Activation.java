@@ -212,6 +212,32 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                     }
                 };
         }
+        else if ( typeClass == Long.class )
+        {
+            Fun.I64ToI64 fun = funs.get(Fun.I64ToI64.class).get(d);
+            assert fun != null;
+            long[] t0_value = (long[]) t0_drn.getUnsafe().getData();
+            long[] t1_value = t1_src.getUnsafe().getDataAs(long[].class);
+            if ( isSimple )
+                workload = (start, end) -> {
+                    for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);
+                };
+            else
+                workload = (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of( t0_drn );
+                    NDIterator t1Idx = NDIterator.of( t1_src );
+                    t0Idx.set( t0_drn.indicesOfIndex( i ) );
+                    t1Idx.set( t0_drn.indicesOfIndex( i ) );
+                    while ( i < end ) { // increment on drain accordingly:
+                        //setInto _value in drn:
+                        t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);
+                        //increment on drain:
+                        t0Idx.increment();
+                        t1Idx.increment();
+                        i++;
+                    }
+                };
+        }
         else if ( typeClass == Byte.class )
         {
             Fun.I8ToI8 fun = funs.get(Fun.I8ToI8.class).get(d);
@@ -264,12 +290,63 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                     }
                 };
         }
+        else if ( typeClass == Boolean.class )
+        {
+            Fun.BoolToBool fun = funs.get(Fun.BoolToBool.class).get(d);
+            assert fun != null;
+            boolean[] t0_value = (boolean[]) t0_drn.getUnsafe().getData();
+            boolean[] t1_value = t1_src.getUnsafe().getDataAs(boolean[].class);
+            if ( isSimple )
+                workload = (start, end) -> {
+                    for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);
+                };
+            else
+                workload = (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of( t0_drn );
+                    NDIterator t1Idx = NDIterator.of( t1_src );
+                    t0Idx.set( t0_drn.indicesOfIndex( i ) );
+                    t1Idx.set( t0_drn.indicesOfIndex( i ) );
+                    while ( i < end ) { // increment on drain accordingly:
+                        //setInto _value in drn:
+                        t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);
+                        //increment on drain:
+                        t0Idx.increment();
+                        t1Idx.increment();
+                        i++;
+                    }
+                };
+        }
+        else if ( typeClass == Character.class )
+        {
+            Fun.CharToChar fun = funs.get(Fun.CharToChar.class).get(d);
+            assert fun != null;
+            char[] t0_value = (char[]) t0_drn.getUnsafe().getData();
+            char[] t1_value = t1_src.getUnsafe().getDataAs(char[].class);
+            if ( isSimple )
+                workload = (start, end) -> {
+                    for ( int i = start; i < end; i++ ) t0_value[i] = fun.invoke(t1_value[i]);
+                };
+            else
+                workload = (i, end) -> {
+                    NDIterator t0Idx = NDIterator.of( t0_drn );
+                    NDIterator t1Idx = NDIterator.of( t1_src );
+                    t0Idx.set( t0_drn.indicesOfIndex( i ) );
+                    t1Idx.set( t0_drn.indicesOfIndex( i ) );
+                    while ( i < end ) { // increment on drain accordingly:
+                        //setInto _value in drn:
+                        t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);
+                        //increment on drain:
+                        t0Idx.increment();
+                        t1Idx.increment();
+                        i++;
+                    }
+                };
+        }
 
-        if ( workload == null ) {
+        if ( workload == null )
             throw new IllegalArgumentException(
                 "Operand types '"+typeClass.getSimpleName()+"' and '"+rightTypeClass.getSimpleName()+"' not supported."
             );
-        }
 
         return workload;
     }
