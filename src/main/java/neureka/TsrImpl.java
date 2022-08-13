@@ -126,7 +126,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         if ( args == null || args.length == 0 ) return new TsrImpl<>();
         if ( args.length == 1 ) {
             TsrImpl<T> t = new TsrImpl<>();
-            boolean success = t.createConstructionAPI().constructAllFromOne( NDConstructor.of(new int[]{ 1 }), args[ 0 ] );
+            boolean success = t.createConstructionAPI().constructAllFromOne( NDConstructor.of(new int[]{ 1 }), args[ 0 ], args[ 0 ].getClass() );
             if ( !success ) {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
                 _LOG.error( message );
@@ -146,7 +146,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             TsrImpl<T> t = new TsrImpl<>();
             if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
                 args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
-                t.createConstructionAPI().constructAllFromOne( NDConstructor.of((int[]) args[ 0 ]), args[ 1 ] );
+                t.createConstructionAPI().constructAllFromOne( NDConstructor.of((int[]) args[ 0 ]), args[ 1 ], args[ 1 ].getClass() );
             } else {
                 t._setDataType( DataType.of( args[1].getClass() ) );
                 t._constructAndAllocate( NDConstructor.of((int[]) args[0]), true );
@@ -985,6 +985,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         _setIsIntermediate( false );
         Tsr<V> clone = Tsr.like( this )
                             .all( (V) Double.valueOf(0.0) );
+
+        if ( clone.itemType() != this.itemType() )
+            throw new IllegalStateException("Item type of clone must be the same as the item type of the original!");
 
         clone = cloner.call( clone, this );
         clone.getUnsafe().setIsIntermediate( thisIsIntermediate );

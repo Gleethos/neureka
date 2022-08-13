@@ -16,7 +16,7 @@
     {
       "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
       "result":"PASS",
-      "duration":"0.327 seconds",
+      "duration":"0.334 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -75,7 +75,7 @@
     {
       "id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.",
       "result":"PASS",
-      "duration":"0.041 seconds",
+      "duration":"0.034 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

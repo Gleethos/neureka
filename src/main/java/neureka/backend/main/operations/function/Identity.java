@@ -35,4 +35,8 @@ public final class Identity extends AbstractActivationOperation
 
     @Override protected char _activate(char x) { return x; }
 
+    protected Object _activate(Object x) { return x; }
+
+    protected Object _derive(Object x) { return null; }
+
 }

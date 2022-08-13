@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"1",
-    "duration":"0.147 seconds"
+    "duration":"0.142 seconds"
   },
   "headers":["\n                Specified below are strict tests for the factory methods in the\n                Device interface as well as its various implementations \n                which should adhere to a certain set of common behaviours.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Querying for Device implementations works as expected.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -67,7 +67,7 @@
     {
       "id":"Passing a numeric array to a tensor should modify its content!",
       "result":"PASS",
-      "duration":"0.014 seconds",
+      "duration":"0.015 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -78,7 +78,7 @@
 
         {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
 
-        {"kind":"where","text":"The following data is being used :","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2b770dadcb0],platform=OpenCLPlatform@56a6a684[pid=cl_platform_id[0x7fff96f4a490],context=cl_context[0x2b76a2de920],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x2b770dadcb0],platform=OpenCLPlatform@56a6a684[pid=cl_platform_id[0x7fff96f4a490],context=cl_context[0x2b76a2de920],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x2b770dadcb0],platform=OpenCLPlatform@56a6a684[pid=cl_platform_id[0x7fff96f4a490],context=cl_context[0x2b76a2de920],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x2b770dadcb0],platform=OpenCLPlatform@56a6a684[pid=cl_platform_id[0x7fff96f4a490],context=cl_context[0x2b76a2de920],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x2b770dadcb0],platform=OpenCLPlatform@56a6a684[pid=cl_platform_id[0x7fff96f4a490],context=cl_context[0x2b76a2de920],kernels=[..46..]]]"],"data1":["[]","[2.0, 3.0, 4.0, 5.0, 6.0]","[3.0, 5.0, 6.0]","[9.0, 4.0, 7.0, -12.0]","[22.0, 24.0, 35.0, 80.0]","[]","[2.0, 3.0, 4.0, 5.0, 6.0]","[3.0, 5.0, 6.0]","[9.0, 4.0, 7.0, -12.0]","[22.0, 24.0, 35.0, 80.0]"],"data2":["[]","[1.0, 1.0, 1.0, 1.0]","[4.0, 2.0, 3.0]","[-5.0, -2.0, 1.0]","[-1.0, -1.0, -1.0]","[]","[1.0, 1.0, 1.0, 1.0, 1.0]","[4.0, 2.0, 3.0]","[-5.0, -2.0, 1.0]","[-1.0, -1.0, -1.0]"],"expected":["(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]","(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]","(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]","(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]","(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]","(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]","(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]","(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
+        {"kind":"where","text":"The following data is being used :","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x13bd5616be0],platform=OpenCLPlatform@e6266bf[pid=cl_platform_id[0x7fff7acfa490],context=cl_context[0x13bd3a6dd20],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x13bd5616be0],platform=OpenCLPlatform@e6266bf[pid=cl_platform_id[0x7fff7acfa490],context=cl_context[0x13bd3a6dd20],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x13bd5616be0],platform=OpenCLPlatform@e6266bf[pid=cl_platform_id[0x7fff7acfa490],context=cl_context[0x13bd3a6dd20],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x13bd5616be0],platform=OpenCLPlatform@e6266bf[pid=cl_platform_id[0x7fff7acfa490],context=cl_context[0x13bd3a6dd20],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x13bd5616be0],platform=OpenCLPlatform@e6266bf[pid=cl_platform_id[0x7fff7acfa490],context=cl_context[0x13bd3a6dd20],kernels=[..46..]]]"],"data1":["[]","[2.0, 3.0, 4.0, 5.0, 6.0]","[3.0, 5.0, 6.0]","[9.0, 4.0, 7.0, -12.0]","[22.0, 24.0, 35.0, 80.0]","[]","[2.0, 3.0, 4.0, 5.0, 6.0]","[3.0, 5.0, 6.0]","[9.0, 4.0, 7.0, -12.0]","[22.0, 24.0, 35.0, 80.0]"],"data2":["[]","[1.0, 1.0, 1.0, 1.0]","[4.0, 2.0, 3.0]","[-5.0, -2.0, 1.0]","[-1.0, -1.0, -1.0]","[]","[1.0, 1.0, 1.0, 1.0, 1.0]","[4.0, 2.0, 3.0]","[-5.0, -2.0, 1.0]","[-1.0, -1.0, -1.0]"],"expected":["(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]","(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]","(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]","(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]","(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]","(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]","(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]","(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -86,7 +86,7 @@
     {
       "id":"Tensor data can be fetched from device if the tensor is stored on it...",
       "result":"PASS",
-      "duration":"0.036 seconds",
+      "duration":"0.042 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -105,7 +105,7 @@
 
         {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
 
-        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2b770dadcb0],platform=OpenCLPlatform@56a6a684[pid=cl_platform_id[0x7fff96f4a490],context=cl_context[0x2b76a2de920],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x2b770dadcb0],platform=OpenCLPlatform@56a6a684[pid=cl_platform_id[0x7fff96f4a490],context=cl_context[0x2b76a2de920],kernels=[..46..]]]"],"shape":["[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]"],"data":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x13bd5616be0],platform=OpenCLPlatform@e6266bf[pid=cl_platform_id[0x7fff7acfa490],context=cl_context[0x13bd3a6dd20],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x13bd5616be0],platform=OpenCLPlatform@e6266bf[pid=cl_platform_id[0x7fff7acfa490],context=cl_context[0x13bd3a6dd20],kernels=[..46..]]]"],"shape":["[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]","[3, 2]"],"data":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -113,7 +113,7 @@
     {
       "id":"Execution calls containing null arguments will cause an exception to be thrown in device instances.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -130,7 +130,7 @@
 
         {"kind":"and","text":"The expected exception is being thrown alongside a descriptive message.","code":["def exception = thrown(IllegalArgumentException)","exception.message == \"Device arguments may not be null!\\n\" +","\"One or more tensor arguments within the given ExecutionCall instance is null.\""]},
 
-        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2b770dadcb0],platform=OpenCLPlatform@56a6a684[pid=cl_platform_id[0x7fff96f4a490],context=cl_context[0x2b76a2de920],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x13bd5616be0],platform=OpenCLPlatform@e6266bf[pid=cl_platform_id[0x7fff7acfa490],context=cl_context[0x13bd3a6dd20],kernels=[..46..]]]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -138,7 +138,7 @@
     {
       "id":"Devices store tensors which can also be restored.",
       "result":"PASS",
-      "duration":"0.013 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -161,7 +161,7 @@
 
         {"kind":"then","text":"...the device is empty again.","code":["device.isEmpty() == ( initialNumber == 0 )","device.size() == initialNumber","!device.has( a )","!device.has( b )"]},
 
-        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2b770dadcb0],platform=OpenCLPlatform@56a6a684[pid=cl_platform_id[0x7fff96f4a490],context=cl_context[0x2b76a2de920],kernels=[..46..]]]","FileDevice[directory=build/test-can,stored={},loadable=[test2.idx],loaded=[]]"]}}
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x13bd5616be0],platform=OpenCLPlatform@e6266bf[pid=cl_platform_id[0x7fff7acfa490],context=cl_context[0x13bd3a6dd20],kernels=[..46..]]]","FileDevice[directory=build/test-can,stored={},loadable=[test2.idx],loaded=[]]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -190,7 +190,7 @@
 
         {"kind":"then","text":"...the device is empty again.","code":["device.isEmpty() == ( initialNumber == 0 )","device.size() == initialNumber","!device.has( a )","!device.has( b )"]},
 
-        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2b770dadcb0],platform=OpenCLPlatform@56a6a684[pid=cl_platform_id[0x7fff96f4a490],context=cl_context[0x2b76a2de920],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x13bd5616be0],platform=OpenCLPlatform@e6266bf[pid=cl_platform_id[0x7fff7acfa490],context=cl_context[0x13bd3a6dd20],kernels=[..46..]]]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

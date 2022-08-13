@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.588 seconds"
+    "duration":"0.433 seconds"
   },
   "headers":[" \n                <p>\n                    The thread pool of the class neureka.devices.host.CPU executor becomes\n                    more active when receiving larger workloads which\n                    benefit from parallelization.           \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Thread pool executes given workload in parallel",
       "result":"PASS",
-      "duration":"0.578 seconds",
+      "duration":"0.423 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Warning! This test is flaky simply because it relies on the behaviour of threads\n            which may or may not behave as expected. \n        "]
       },
@@ -52,7 +52,7 @@
     {
       "id":"The CPU exposes a non null API for executing workloads in parallel.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

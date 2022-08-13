@@ -292,6 +292,9 @@ public final class DataConverter
                 }
         }
         if ( fromSpecific == null ) {
+            if ( to.isAssignableFrom(from.getClass()) )
+                return (T) from;
+
             String fromName = from.getClass().getSimpleName();
             String toName = to.getSimpleName();
             String message =
@@ -302,6 +305,9 @@ public final class DataConverter
         }
         Conversion<Object, Object> conversion = fromSpecific.get(to);
         if ( conversion == null ) {
+            if ( to.isAssignableFrom(from.getClass()) )
+                return (T) from;
+
             String message = "No converter found from type '"+from.getClass()+"' to '"+to+"'.";
             _LOG.error(message);
             throw new IllegalArgumentException(message);

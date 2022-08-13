@@ -96,7 +96,7 @@ final class TsrConstructor
         }
 
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
-            if ( constructAllFromOne(ndConstructor, data ) ) return;
+            if ( constructAllFromOne(ndConstructor, data, dataType.getItemTypeClass() ) ) return;
 
         data = CPU.get().allocate( data, size );
         configureFromNewShape( ndConstructor, false, false, dataType );
@@ -111,19 +111,19 @@ final class TsrConstructor
         return _optimizeObjectArray( dataType, data, size );
     }
 
-    public boolean constructAllFromOne( NDConstructor ndConstructor, Object data ) {
-        if ( data instanceof Double    ) { _constructAllF64( ndConstructor,  (Double)    data ); return true; }
-        if ( data instanceof Float     ) { _constructAllF32( ndConstructor,  (Float)     data ); return true; }
-        if ( data instanceof Integer   ) { _constructAllI32( ndConstructor,  (Integer)   data ); return true; }
-        if ( data instanceof Short     ) { _constructAllI16( ndConstructor,  (Short)     data ); return true; }
-        if ( data instanceof Byte      ) { _constructAllI8( ndConstructor,   (Byte)      data ); return true; }
-        if ( data instanceof Long      ) { _constructAllI64( ndConstructor,  (Long)      data ); return true; }
-        if ( data instanceof Boolean   ) { _constructAllBool( ndConstructor, (Boolean)   data ); return true; }
-        if ( data instanceof Character ) { _constructAllChar( ndConstructor, (Character) data ); return true; }
-        if ( Number.class.isAssignableFrom( data.getClass() ) ) {
+    public boolean constructAllFromOne( NDConstructor ndConstructor, Object data, Class<?> type ) {
+        if ( type == Double   .class ) { _constructAllF64( ndConstructor,  (Double)    data ); return true; }
+        if ( type == Float    .class ) { _constructAllF32( ndConstructor,  (Float)     data ); return true; }
+        if ( type == Integer  .class ) { _constructAllI32( ndConstructor,  (Integer)   data ); return true; }
+        if ( type == Short    .class ) { _constructAllI16( ndConstructor,  (Short)     data ); return true; }
+        if ( type == Byte     .class ) { _constructAllI8( ndConstructor,   (Byte)      data ); return true; }
+        if ( type == Long     .class ) { _constructAllI64( ndConstructor,  (Long)      data ); return true; }
+        if ( type == Boolean  .class ) { _constructAllBool( ndConstructor, (Boolean)   data ); return true; }
+        if ( type == Character.class ) { _constructAllChar( ndConstructor, (Character) data ); return true; }
+        if ( Number.class.isAssignableFrom( type ) ) {
             _constructAllF64( ndConstructor, ((Number)data).doubleValue() ); return true;
-        } else if ( !data.getClass().isArray() ) {
-            _constructAll( ndConstructor, data ); return true;
+        } else if ( !type.isArray() ) {
+            _constructAll( ndConstructor, data, type ); return true;
         }
         return false;
     }
@@ -168,8 +168,8 @@ final class TsrConstructor
         ( (char[]) data )[ 0 ] = value;
     }
 
-    private void _constructAll( NDConstructor ndConstructor, Object value ) {
-        Object data = _constructAll( ndConstructor, value.getClass() );
+    private void _constructAll( NDConstructor ndConstructor, Object value, Class<?> type ) {
+        Object data = _constructAll( ndConstructor, type );
         ( (Object[]) data )[ 0 ] = value;
     }
 

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"4.455 seconds"
+    "duration":"0.904 seconds"
   },
   "headers":[" \n                This specification ensures that tensors supplied\n                to functions are executed successfully and produce the expected results.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The optimization function for the SGD algorithm produces the expected result",
       "result":"PASS",
-      "duration":"0.155 seconds",
+      "duration":"0.095 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Tensor results of various Function instances return expected results.",
       "result":"PASS",
-      "duration":"4.050 seconds",
+      "duration":"0.552 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,7 +62,7 @@
     {
       "id":"Reshaping on 3D tensors works by instantiate a Function instance built from a String.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -83,7 +83,7 @@
     {
       "id":"The \"DimTrim\" operation works forward as well as backward!",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -106,7 +106,7 @@
     {
       "id":"Executed tensors are intermediate tensors.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.015 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

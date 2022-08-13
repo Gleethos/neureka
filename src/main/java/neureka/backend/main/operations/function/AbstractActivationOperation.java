@@ -41,6 +41,7 @@ abstract class AbstractActivationOperation extends AbstractOperation {
                         .with(Fun.I16ToI16.pair(this::_activate, this::_derive))
                         .with(Fun.BoolToBool.pair(this::_activate, this::_derive))
                         .with(Fun.CharToChar.pair(this::_activate, this::_derive))
+                        .with(Fun.ObjToObj.pair(this::_activate, this::_derive))
                         .get()
                 )
                 .setImplementationFor(
@@ -159,5 +160,9 @@ abstract class AbstractActivationOperation extends AbstractOperation {
     protected char _activate(char x) { return (char) Math.round( _activate( (int) x ) ); } // Some default behaviors, it might make sense to override this for some activations.
 
     protected char _derive(char x) { return (char) Math.round( _derive( (int) x ) ); } // Some default behaviors, it might make sense to override this for some activations.
+
+    protected Object _activate(Object x) { throw new IllegalStateException("Not implemented for operation "+getClass().getSimpleName()); }
+
+    protected Object _derive(Object x) { throw new IllegalStateException("Not implemented for operation "+getClass().getSimpleName()); }
 
 }

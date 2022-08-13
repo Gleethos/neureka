@@ -341,6 +341,34 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                         i++;
                     }
                 };
+        } else {
+            try {
+                Fun.ObjToObj fun = funs.get(Fun.ObjToObj.class).get(d);
+                assert fun != null;
+                Object[] t0_value = (Object[]) t0_drn.getUnsafe().getData();
+                Object[] t1_value = t1_src.getUnsafe().getDataAs(Object[].class);
+                if (isSimple)
+                    workload = (start, end) -> {
+                        for (int i = start; i < end; i++) t0_value[i] = fun.invoke(t1_value[i]);
+                    };
+                else
+                    workload = (i, end) -> {
+                        NDIterator t0Idx = NDIterator.of(t0_drn);
+                        NDIterator t1Idx = NDIterator.of(t1_src);
+                        t0Idx.set(t0_drn.indicesOfIndex(i));
+                        t1Idx.set(t0_drn.indicesOfIndex(i));
+                        while (i < end) { // increment on drain accordingly:
+                            //setInto _value in drn:
+                            t0_value[t0Idx.i()] = fun.invoke(t1_value[t1Idx.i()]);
+                            //increment on drain:
+                            t0Idx.increment();
+                            t1Idx.increment();
+                            i++;
+                        }
+                    };
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         if ( workload == null )

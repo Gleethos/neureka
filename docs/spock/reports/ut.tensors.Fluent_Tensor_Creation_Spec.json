@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.125 seconds"
+    "duration":"0.093 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.025 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },
@@ -41,7 +41,7 @@
     {
       "id":"Range based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -91,7 +91,7 @@
     {
       "id":"Seed based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -110,7 +110,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Boolean","class java.lang.Character"],"seed":["a","b","c","d","e","f","g","h"],"expected":["[1431614970, 345625747, -1944974668, -1560046587, -840164727, 1545421892]","[0.5099337204650233, -0.1940291796851406, 1.4457326764876133, 1.1037197321548482, 0.5318191965243577, 0.19202511115716991]","[18384, 2870, 20818, -5635, -20565, -25424]","[1.4457327, 1.1037197, 0.5318192, 0.19202511, 0.450341, -0.18904476]","[57, 26, -121, -59, -23, 90]","[7366351542344062765, -5751258536495446167, -794811082727408195, 283695574932216990, -455308978758056709, -8426760264878742120]","[false, true, true, false, true, false]","ྒ凌ﻄ낓ᾒ鼋"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Boolean","class java.lang.Character"],"seed":["a","b","c","d","e","f","g","h"],"expected":["[1431614970, 345625747, -1944974668, -1560046587, -840164727, 1545421892]","[0.5099337204650233, -0.1940291796851406, 1.4457326764876133, 1.1037197321548482, 0.5318191965243577, 0.19202511115716991]","[-14216, -20070, 24851, -22296, -9925, 31593]","[1.4457327, 1.1037197, 0.5318192, 0.19202511, 0.450341, -0.18904476]","[57, 26, -121, -59, -23, 90]","[7366351542344062765, -5751258536495446167, -794811082727408195, 283695574932216990, -455308978758056709, -8426760264878742120]","[true, false, false, false, false, true]","皜ЍꚈ寜"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -118,7 +118,7 @@
     {
       "id":"Initialization lambda based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -135,7 +135,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@18d4b010","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@4d4c127c","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@7a87a40","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@25a4c0a2","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@39ec5c80","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@19727bf1","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@153cffb8","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@4e8f752f"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@4ebea15b","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@7e78bdfb","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@19e26c18","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@1bb96155","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@690eead4","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@44837935","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@34174340","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@24d9bc9f"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
