@@ -113,26 +113,31 @@ final class TsrConstructor
 
 
     public boolean constructAllFromOne( NDConstructor ndConstructor, Object data, Class<?> type ) {
-        boolean success = _constructAllFromOne( ndConstructor, data, type );
+
+        DataType<Object> dataType = (DataType<Object>) DataType.of( type );
+        int size = ndConstructor.getSize();
+        _API.setType( dataType );
+        _API.setIsVirtual( size > 1 );
+        boolean success = _constructAllFromOne( ndConstructor.getSize(), data, type );
         _API.setConf( ndConstructor.produceNDC() );
         return success;
     }
 
-    private boolean _constructAllFromOne( NDConstructor ndConstructor, Object data, Class<?> type )
+    private boolean _constructAllFromOne( int size, Object data, Class<?> type )
     {
-        if ( type == Double   .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
-        if ( type == Float    .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
-        if ( type == Integer  .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
-        if ( type == Short    .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
-        if ( type == Byte     .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
-        if ( type == Long     .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
-        if ( type == Boolean  .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
-        if ( type == Character.class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
+        if ( type == Double   .class ) { _constructAll( size, data, type ); return true; }
+        if ( type == Float    .class ) { _constructAll( size, data, type ); return true; }
+        if ( type == Integer  .class ) { _constructAll( size, data, type ); return true; }
+        if ( type == Short    .class ) { _constructAll( size, data, type ); return true; }
+        if ( type == Byte     .class ) { _constructAll( size, data, type ); return true; }
+        if ( type == Long     .class ) { _constructAll( size, data, type ); return true; }
+        if ( type == Boolean  .class ) { _constructAll( size, data, type ); return true; }
+        if ( type == Character.class ) { _constructAll( size, data, type ); return true; }
         if ( Number.class.isAssignableFrom( type ) ) {
-            _constructAll( ndConstructor.getSize(), ((Number)data).doubleValue(), Double.class ); return true;
+            _constructAll( size, ((Number)data).doubleValue(), Double.class ); return true;
         } else
             if ( !type.isArray() ) {
-            _constructAll( ndConstructor.getSize(), data, type ); return true;
+            _constructAll( size, data, type ); return true;
         }
         return false;
     }
@@ -142,8 +147,6 @@ final class TsrConstructor
         assert ( _API.getData() == null );
         DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
         Object data = CPU.get().allocate( dataType, Math.min(size, 1), value );
-        _API.setType( dataType );
-        _API.setIsVirtual( size > 1 );
         _API.setData( data );
     }
 

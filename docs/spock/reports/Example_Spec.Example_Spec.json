@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.150 seconds"
+    "duration":"0.048 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"iAmNotSoReadable",
       "result":"PASS",
-      "duration":"0.056 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -42,7 +42,7 @@
     {
       "id":"Call me feature not unit test!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -55,7 +55,7 @@
     {
       "id":"Should be able to remove from list",
       "result":"PASS",
-      "duration":"0.027 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -72,7 +72,7 @@
     {
       "id":"Numbers to the power of two with a fancy data table!",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
