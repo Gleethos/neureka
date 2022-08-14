@@ -63,6 +63,7 @@ import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
+import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.SmartSlicer;
@@ -126,7 +127,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         if ( args == null || args.length == 0 ) return new TsrImpl<>();
         if ( args.length == 1 ) {
             TsrImpl<T> t = new TsrImpl<>();
-            boolean success = t.createConstructionAPI().constructAllFromOne( NDConstructor.of(new int[]{ 1 }), args[ 0 ], args[ 0 ].getClass() );
+            boolean success = t.createConstructionAPI(CPU.get()).constructAllFromOne( NDConstructor.of(new int[]{ 1 }), args[ 0 ], args[ 0 ].getClass() );
             if ( !success ) {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
                 _LOG.error( message );
@@ -146,7 +147,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             TsrImpl<T> t = new TsrImpl<>();
             if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
                 args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
-                t.createConstructionAPI().constructAllFromOne( NDConstructor.of((int[]) args[ 0 ]), args[ 1 ], args[ 1 ].getClass() );
+                t.createConstructionAPI(CPU.get()).constructAllFromOne( NDConstructor.of((int[]) args[ 0 ]), args[ 1 ], args[ 1 ].getClass() );
             } else {
                 t._setDataType( DataType.of( args[1].getClass() ) );
                 t._constructAndAllocate( NDConstructor.of((int[]) args[0]), true );
@@ -158,7 +159,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         Class<?> commonType = _extractCommonType(args);
         if ( commonType != null ) {
             TsrImpl<T> t = new TsrImpl<>();
-            t.createConstructionAPI().tryConstructing(
+            t.createConstructionAPI(CPU.get()).tryConstructing(
                       NDConstructor.of(new int[]{args.length}),
                       DataType.of(commonType),
                       args,
@@ -227,7 +228,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     TsrImpl() {}
 
     TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Object data, boolean trusted ) {
-        createConstructionAPI().tryConstructing( ndConstructor, dataType, data, trusted );
+        createConstructionAPI(CPU.get()).tryConstructing( ndConstructor, dataType, data, trusted );
     }
 
     /**
@@ -241,7 +242,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      *  See {@link Tsr#of(Class, int[], String)} and {@link #of(List, String)}
      */
     TsrImpl( Class<V> valueType, NDConstructor ndConstructor, String seed ) {
-        createConstructionAPI().constructSeeded( valueType, ndConstructor, seed );
+        createConstructionAPI(CPU.get()).constructSeeded( valueType, ndConstructor, seed );
     }
 
     TsrImpl( NDConstructor ndConstructor, DataType<?> type ) {
@@ -266,7 +267,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     }
 
     private void _constructAndAllocate( NDConstructor ndConstructor, boolean virtual ) {
-        createConstructionAPI().configureFromNewShape(ndConstructor, virtual, true, getDataType() );
+        createConstructionAPI(CPU.get()).configureFromNewShape(ndConstructor, virtual, true, getDataType() );
     }
 
     /*==================================================================================================================
@@ -424,7 +425,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-            createConstructionAPI().configureFromNewShape( NDConstructor.of(getNDConf().shape()), isVirtual, _getData() == null, getDataType() );
+            createConstructionAPI(CPU.get()).configureFromNewShape( NDConstructor.of(getNDConf().shape()), isVirtual, false, getDataType() );
             if ( isVirtual ) {
                 Relation<V> relation = get( Relation.class );
                 if ( relation!=null )

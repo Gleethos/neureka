@@ -3,6 +3,7 @@ package neureka;
 import neureka.backend.main.operations.other.Randomization;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
+import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
@@ -34,13 +35,16 @@ final class TsrConstructor
         void   setType( DataType<?> type );
         void   setConf( NDConfiguration conf );
         void   setData( Object o );
-        Object getData();
         void   setIsVirtual(  boolean isVirtual );
     }
 
     private final API _API;
+    private final Device<?> _targetDevice;
 
-    public TsrConstructor( API API ) { _API = API; }
+    public TsrConstructor( Device<?> targetDevice, API API ) {
+        _targetDevice = targetDevice;
+        _API = API;
+    }
 
     /**
      *  This method is responsible for instantiating and setting the _conf variable.
@@ -57,8 +61,8 @@ final class TsrConstructor
     ) {
         _API.setType( type );
         _API.setIsVirtual( makeVirtual );
-        if ( _API.getData() == null && autoAllocate )
-            _API.setData( CPU.get().allocate( type, makeVirtual ? 1 : ndConstructor.getSize() ) );
+        if ( autoAllocate )
+            _API.setData( _targetDevice.allocate( type, makeVirtual ? 1 : ndConstructor.getSize() ) );
 
         _API.setConf( ndConstructor.produceNDC( makeVirtual ) );
     }
@@ -98,7 +102,7 @@ final class TsrConstructor
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
             if ( constructAllFromOne(ndConstructor, data, dataType.getItemTypeClass() ) ) return;
 
-        data = CPU.get().allocate( data, size );
+        data = _targetDevice.allocate( data, size );
         configureFromNewShape( ndConstructor, false, false, dataType );
         _API.setData( data );
     }
@@ -145,15 +149,14 @@ final class TsrConstructor
 
     private Object _constructAll( int size, Object value, Class<?> typeClass )
     {
-        assert ( _API.getData() == null );
         DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
-        return CPU.get().allocate( dataType, Math.min(size, 1), value );
+        return _targetDevice.allocate( dataType, Math.min(size, 1), value );
     }
 
     public <V> void constructSeeded( Class<V> valueType, NDConstructor ndConstructor, Object seed )
     {
         int size = ndConstructor.getSize();
-        Object data = CPU.get().allocate( DataType.of( valueType ), size );
+        Object data = _targetDevice.allocate( DataType.of( valueType ), size );
         data = Randomization.fillRandomly( data, seed.toString() );
         configureFromNewShape( ndConstructor, false, false, DataType.of(valueType) );
         _API.setData( data );
