@@ -125,6 +125,7 @@ final class TsrConstructor
         } else if ( !type.isArray() ) {
             _constructAll( ndConstructor, data, type ); return true;
         }
+        //_API.setConf( ndConstructor.produceNDC() );
         return false;
     }
 
@@ -177,11 +178,11 @@ final class TsrConstructor
         assert ( _API.getData() == null );
         DataType<?> dataType = DataType.of( typeClass );
         int size = ndConstructor.getSize();
-        Object data = CPU.get().allocate( dataType, size > 1 ? 1 : ndConstructor.getSize() );
+        Object data = CPU.get().allocate( dataType, Math.min(size, 1));
         _API.setType( dataType );
         _API.setIsVirtual( size > 1 );
         _API.setData( data );
-        _API.setConf( ndConstructor.produceNDC( size > 1 ) );
+        _API.setConf( ndConstructor.produceNDC() );
         return data;
     }
 
