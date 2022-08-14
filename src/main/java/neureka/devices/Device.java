@@ -196,6 +196,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
 
     Object allocate( DataType<?> dataType, int size );
 
+    <V> Object allocate( DataType<V> dataType, int size, V initialValue );
+
     Object allocate( Object jvmData, int desiredSize );
 
     /**

@@ -256,6 +256,11 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
+    public <V> Object allocate(DataType<V> dataType, int size, V initialValue) {
+        throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
+    }
+
+    @Override
     public Object allocate(Object jvmData, int desiredSize) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }

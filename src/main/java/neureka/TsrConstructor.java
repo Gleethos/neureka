@@ -118,76 +118,33 @@ final class TsrConstructor
         return success;
     }
 
-    private boolean _constructAllFromOne( NDConstructor ndConstructor, Object data, Class<?> type ) {
-        if ( type == Double   .class ) { _constructAllF64(  ndConstructor.getSize(), (Double)    data ); return true; }
-        if ( type == Float    .class ) { _constructAllF32(  ndConstructor.getSize(), (Float)     data ); return true; }
-        if ( type == Integer  .class ) { _constructAllI32(  ndConstructor.getSize(), (Integer)   data ); return true; }
-        if ( type == Short    .class ) { _constructAllI16(  ndConstructor.getSize(), (Short)     data ); return true; }
-        if ( type == Byte     .class ) { _constructAllI8(   ndConstructor.getSize(), (Byte)      data ); return true; }
-        if ( type == Long     .class ) { _constructAllI64(  ndConstructor.getSize(), (Long)      data ); return true; }
-        if ( type == Boolean  .class ) { _constructAllBool( ndConstructor.getSize(), (Boolean)   data ); return true; }
-        if ( type == Character.class ) { _constructAllChar( ndConstructor.getSize(), (Character) data ); return true; }
+    private boolean _constructAllFromOne( NDConstructor ndConstructor, Object data, Class<?> type )
+    {
+        if ( type == Double   .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
+        if ( type == Float    .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
+        if ( type == Integer  .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
+        if ( type == Short    .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
+        if ( type == Byte     .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
+        if ( type == Long     .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
+        if ( type == Boolean  .class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
+        if ( type == Character.class ) { _constructAll( ndConstructor.getSize(), data, type ); return true; }
         if ( Number.class.isAssignableFrom( type ) ) {
-            _constructAllF64( ndConstructor.getSize(), ((Number)data).doubleValue() ); return true;
-        } else if ( !type.isArray() ) {
+            _constructAll( ndConstructor.getSize(), ((Number)data).doubleValue(), Double.class ); return true;
+        } else
+            if ( !type.isArray() ) {
             _constructAll( ndConstructor.getSize(), data, type ); return true;
         }
         return false;
     }
 
-    private void _constructAllF64( int size, double value ) {
-        Object data = _constructAll( size, F64.class );
-        ( (double[]) data )[ 0 ] = value;
-    }
-
-    private void _constructAllF32( int size, float value ) {
-        Object data = _constructAll( size, F32.class );
-        ( (float[]) data )[ 0 ] = value;
-    }
-
-    private void _constructAllI32( int size, int value ) {
-        Object data = _constructAll( size, I32.class );
-        ( (int[]) data )[ 0 ] = value;
-    }
-
-    private void _constructAllI16( int size, short value ) {
-        Object data = _constructAll( size, I16.class );
-        ( (short[]) data )[ 0 ] = value;
-    }
-
-    private void _constructAllI8( int size, byte value ) {
-        Object data = _constructAll( size, I8.class );
-        ( (byte[]) data )[ 0 ] = value;
-    }
-
-    private void _constructAllI64( int size, long value ) {
-        Object data = _constructAll( size, I64.class );
-        ( (long[]) data )[ 0 ] = value;
-    }
-
-    private void _constructAllBool( int size, boolean value ) {
-        Object data = _constructAll( size, Boolean.class );
-        ( (boolean[]) data )[ 0 ] = value;
-    }
-
-    private void _constructAllChar( int size, char value ) {
-        Object data = _constructAll( size, Character.class );
-        ( (char[]) data )[ 0 ] = value;
-    }
-
-    private void _constructAll( int size, Object value, Class<?> type ) {
-        Object data = _constructAll( size, type );
-        ( (Object[]) data )[ 0 ] = value;
-    }
-
-    private Object _constructAll( int size, Class<?> typeClass ) {
+    private void _constructAll( int size, Object value, Class<?> typeClass )
+    {
         assert ( _API.getData() == null );
-        DataType<?> dataType = DataType.of( typeClass );
-        Object data = CPU.get().allocate( dataType, Math.min(size, 1));
+        DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
+        Object data = CPU.get().allocate( dataType, Math.min(size, 1), value );
         _API.setType( dataType );
         _API.setIsVirtual( size > 1 );
         _API.setData( data );
-        return data;
     }
 
     public <V> void constructSeeded( Class<V> valueType, NDConstructor ndConstructor, Object seed )

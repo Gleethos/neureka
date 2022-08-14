@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 /**
  *  The CPU class, one of many implementations of the {@link Device} interface,
@@ -101,14 +102,14 @@ public class CPU extends AbstractDevice<Object>
     @Override
     protected final <T> int _sizeOccupiedBy(Tsr<T> tensor) {
         Object data = tensor.getUnsafe().getData();
-        if      ( data instanceof float[] )  return ( (float[])   data).length;
-        else if ( data instanceof double[] ) return ( (double[])  data).length;
-        else if ( data instanceof short[] )  return ( (short[])   data).length;
-        else if ( data instanceof int[] )    return ( (int[])     data).length;
-        else if ( data instanceof byte[] )   return ( (byte[])    data).length;
-        else if ( data instanceof long[] )   return ( (long[])    data).length;
-        else if ( data instanceof boolean[] )return ( (boolean[]) data).length;
-        else if ( data instanceof char[] )   return ( (char[])    data).length;
+        if      ( data instanceof float[]   ) return ( (float[])   data).length;
+        else if ( data instanceof double[]  ) return ( (double[])  data).length;
+        else if ( data instanceof short[]   ) return ( (short[])   data).length;
+        else if ( data instanceof int[]     ) return ( (int[])     data).length;
+        else if ( data instanceof byte[]    ) return ( (byte[])    data).length;
+        else if ( data instanceof long[]    ) return ( (long[])    data).length;
+        else if ( data instanceof boolean[] ) return ( (boolean[]) data).length;
+        else if ( data instanceof char[]    ) return ( (char[])    data).length;
         else return ( (Object[]) data).length;
     }
 
@@ -132,14 +133,14 @@ public class CPU extends AbstractDevice<Object>
     @Override
     protected final <T> T _readItem( Tsr<T> tensor, int index ) {
         Object data = tensor.getUnsafe().getData();
-        if      ( data instanceof float[] )  return (T)Float.valueOf( ((float[])   data)[ index ] );
-        else if ( data instanceof double[] ) return (T)Double.valueOf( ((double[])  data)[ index ] );
-        else if ( data instanceof short[] )  return (T)Short.valueOf( ((short[])   data)[ index ] );
-        else if ( data instanceof int[] )    return (T)Integer.valueOf( ((int[])     data)[ index ] );
-        else if ( data instanceof byte[] )   return (T)Byte.valueOf( ((byte[])    data)[ index ] );
-        else if ( data instanceof long[] )   return (T)Long.valueOf( ((long[])    data)[ index ] );
-        else if ( data instanceof boolean[] )return (T)Boolean.valueOf( ((boolean[]) data)[ index ] );
-        else if ( data instanceof char[] )   return (T)Character.valueOf( ((char[])  data)[ index ] );
+        if      ( data instanceof float[]   ) return (T)Float.valueOf( ((float[])   data)[ index ] );
+        else if ( data instanceof double[]  ) return (T)Double.valueOf( ((double[])  data)[ index ] );
+        else if ( data instanceof short[]   ) return (T)Short.valueOf( ((short[])   data)[ index ] );
+        else if ( data instanceof int[]     ) return (T)Integer.valueOf( ((int[])     data)[ index ] );
+        else if ( data instanceof byte[]    ) return (T)Byte.valueOf( ((byte[])    data)[ index ] );
+        else if ( data instanceof long[]    ) return (T)Long.valueOf( ((long[])    data)[ index ] );
+        else if ( data instanceof boolean[] ) return (T)Boolean.valueOf( ((boolean[]) data)[ index ] );
+        else if ( data instanceof char[]    ) return (T)Character.valueOf( ((char[])  data)[ index ] );
         else return (T)( (Object[]) data)[ index ];
     }
 
@@ -299,6 +300,22 @@ public class CPU extends AbstractDevice<Object>
             return new char[ size ];
         else
             return new Object[ size ];
+    }
+
+    @Override
+    public <V> Object allocate( DataType<V> dataType, int size, V initialValue ) {
+        Class<?> type = dataType.getItemTypeClass();
+        Object data = allocate( dataType, size );
+        if      ( type == Double   .class ) { Arrays.fill((double[])  data, (Double)   initialValue); }
+        else if ( type == Float    .class ) { Arrays.fill((float[])   data, (Float)    initialValue); }
+        else if ( type == Integer  .class ) { Arrays.fill((int[])     data, (Integer)  initialValue); }
+        else if ( type == Short    .class ) { Arrays.fill((short[])   data, (Short)    initialValue); }
+        else if ( type == Byte     .class ) { Arrays.fill((byte[])    data, (Byte)     initialValue); }
+        else if ( type == Long     .class ) { Arrays.fill((long[])    data, (Long)     initialValue); }
+        else if ( type == Boolean  .class ) { Arrays.fill((boolean[]) data, (Boolean)  initialValue); }
+        else if ( type == Character.class ) { Arrays.fill((char[])    data, (Character)initialValue); }
+        else { Arrays.fill((Object[])  data, initialValue); }
+        return data;
     }
 
     @Override

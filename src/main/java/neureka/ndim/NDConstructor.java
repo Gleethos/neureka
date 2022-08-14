@@ -1,6 +1,5 @@
 package neureka.ndim;
 
-import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.views.virtual.VirtualNDConfiguration;
 
@@ -14,6 +13,9 @@ public interface NDConstructor {
 
     NDConfiguration produceNDC(boolean makeVirtual);
 
+    default NDConfiguration produceNDC() {
+        return produceNDC(getSize() > 1 );
+    }
 
     static NDConstructor of(
             int[] shape,

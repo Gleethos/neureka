@@ -543,6 +543,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
+    public <V> Object allocate(DataType<V> dataType, int size, V initialValue) {
+        throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
+    }
+
+    @Override
     public Object allocate(Object jvmData, int desiredSize) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
