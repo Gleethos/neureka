@@ -271,7 +271,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *
      * @return An {@link TsrConstructor} exposing a simple API for configuring a new {@link Tsr} instance.
      */
-    protected TsrConstructor createConstructionAPI( Device<?> targetDevice )
+    protected TsrConstructor constructFor(Device<?> targetDevice )
     {
         AbstractNda<C, ?> nda = this;
         return

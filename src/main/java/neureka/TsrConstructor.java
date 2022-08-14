@@ -4,9 +4,7 @@ import neureka.backend.main.operations.other.Randomization;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.*;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 
@@ -56,7 +54,7 @@ final class TsrConstructor
      * @param makeVirtual A flag determining if the tensor should be actual or virtual (not fully allocated).
      * @param autoAllocate Determines if the underlying data array should be allocated or not.
      */
-    public void configureFromNewShape(
+    public void fromNewShape(
             NDConstructor ndConstructor, boolean makeVirtual, boolean autoAllocate, DataType<?> type
     ) {
         _API.setType( type );
@@ -103,7 +101,7 @@ final class TsrConstructor
             if ( constructAllFromOne(ndConstructor, data, dataType.getItemTypeClass() ) ) return;
 
         data = _targetDevice.allocate( data, size );
-        configureFromNewShape( ndConstructor, false, false, dataType );
+        fromNewShape( ndConstructor, false, false, dataType );
         _API.setData( data );
     }
 
@@ -158,7 +156,7 @@ final class TsrConstructor
         int size = ndConstructor.getSize();
         Object data = _targetDevice.allocate( DataType.of( valueType ), size );
         data = Randomization.fillRandomly( data, seed.toString() );
-        configureFromNewShape( ndConstructor, false, false, DataType.of(valueType) );
+        fromNewShape( ndConstructor, false, false, DataType.of(valueType) );
         _API.setData( data );
     }
 
