@@ -111,7 +111,14 @@ final class TsrConstructor
         return _optimizeObjectArray( dataType, data, size );
     }
 
+
     public boolean constructAllFromOne( NDConstructor ndConstructor, Object data, Class<?> type ) {
+        boolean success = _constructAllFromOne( ndConstructor, data, type );
+        _API.setConf( ndConstructor.produceNDC() );
+        return success;
+    }
+
+    private boolean _constructAllFromOne( NDConstructor ndConstructor, Object data, Class<?> type ) {
         if ( type == Double   .class ) { _constructAllF64( ndConstructor,  (Double)    data ); return true; }
         if ( type == Float    .class ) { _constructAllF32( ndConstructor,  (Float)     data ); return true; }
         if ( type == Integer  .class ) { _constructAllI32( ndConstructor,  (Integer)   data ); return true; }
@@ -125,7 +132,6 @@ final class TsrConstructor
         } else if ( !type.isArray() ) {
             _constructAll( ndConstructor, data, type ); return true;
         }
-        //_API.setConf( ndConstructor.produceNDC() );
         return false;
     }
 
@@ -182,7 +188,6 @@ final class TsrConstructor
         _API.setType( dataType );
         _API.setIsVirtual( size > 1 );
         _API.setData( data );
-        _API.setConf( ndConstructor.produceNDC() );
         return data;
     }
 
