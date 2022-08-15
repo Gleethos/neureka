@@ -38,51 +38,54 @@ final class TsrConstructor
 
     private final API _API;
     private final Device<?> _targetDevice;
+    private final NDConstructor _ndConstructor;
 
-    public TsrConstructor( Device<?> targetDevice, API API ) {
+    /**
+     *
+     * @param targetDevice The {@link Device} to be used for the construction of the {@link neureka.Tsr}
+     * @param ndConstructor A producer of the {@link NDConfiguration} interface implementation.
+     * @param API An implementation of the {@link API} interface.
+     */
+    public TsrConstructor( Device<?> targetDevice, NDConstructor ndConstructor, API API ) {
         _targetDevice = targetDevice;
+        _ndConstructor = ndConstructor;
         _API = API;
     }
 
     /**
-     *  This method is responsible for instantiating and setting the _conf variable.
-     *  The core requirement for instantiating {@link NDConfiguration} interface implementation s
-     *  is a shape array of integers which is being passed to the method... <br>
-     *  <br>
+     *  Constructs the tensor without any initial data.
      *
-     * @param ndConstructor A producer of the {@link NDConfiguration} interface implementation.
      * @param makeVirtual A flag determining if the tensor should be actual or virtual (not fully allocated).
      * @param autoAllocate Determines if the underlying data array should be allocated or not.
      */
-    public void fromNewShape(
-            NDConstructor ndConstructor, boolean makeVirtual, boolean autoAllocate, DataType<?> type
+    public void newUnpopulated(
+            boolean makeVirtual, boolean autoAllocate, DataType<?> type
     ) {
         _API.setType( type );
         _API.setIsVirtual( makeVirtual );
         if ( autoAllocate )
-            _API.setData( _targetDevice.allocate( type, makeVirtual ? 1 : ndConstructor.getSize() ) );
+            _API.setData( _targetDevice.allocate( type, makeVirtual ? 1 : _ndConstructor.getSize() ) );
 
-        _API.setConf( ndConstructor.produceNDC( makeVirtual ) );
+        _API.setConf( _ndConstructor.produceNDC( makeVirtual ) );
     }
 
     public void tryConstructing(
-        NDConstructor ndConstructor,
         DataType<?> dataType,
         Object data,
         boolean trusted
     ) {
-        LogUtil.nullArgCheck( ndConstructor, "ndConstructor", NDConstructor.class );
-        LogUtil.nullArgCheck( ndConstructor.getShape(), "shape", int[].class );
+        LogUtil.nullArgCheck( _ndConstructor, "ndConstructor", NDConstructor.class );
+        LogUtil.nullArgCheck( _ndConstructor.getShape(), "shape", int[].class );
         LogUtil.nullArgCheck( dataType, "dataType", DataType.class );
         if ( trusted ) {
             _API.setType( dataType );
             _API.setData( data );
-            _API.setConf( ndConstructor.produceNDC( false ) );
+            _API.setConf( _ndConstructor.produceNDC( false ) );
             return;
         }
         LogUtil.nullArgCheck( data, "data", Object.class );
 
-        int size = ndConstructor.getSize();
+        int size = _ndConstructor.getSize();
         if ( data instanceof List<?> ) {
             List<?> range = (List<?>) data;
             data = range.toArray();// TODO: This is probably wrong!
@@ -98,10 +101,10 @@ final class TsrConstructor
         }
 
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
-            if ( constructAllFromOne(ndConstructor, data, dataType.getItemTypeClass() ) ) return;
+            if ( newPopulatedFromOne( data, dataType.getItemTypeClass() ) ) return;
 
         data = _targetDevice.allocate( data, size );
-        fromNewShape( ndConstructor, false, false, dataType );
+        newUnpopulated( false, false, dataType );
         _API.setData( data );
     }
 
@@ -114,15 +117,15 @@ final class TsrConstructor
     }
 
 
-    public boolean constructAllFromOne( NDConstructor ndConstructor, Object data, Class<?> type ) {
+    public boolean newPopulatedFromOne( Object data, Class<?> type ) {
 
         DataType<Object> dataType = (DataType<Object>) DataType.of( type );
-        int size = ndConstructor.getSize();
+        int size = _ndConstructor.getSize();
         _API.setType( dataType );
         _API.setIsVirtual( size > 1 );
-        data = _constructAllFromOne( ndConstructor.getSize(), data, type );
+        data = _constructAllFromOne( _ndConstructor.getSize(), data, type );
         _API.setData( data );
-        _API.setConf( ndConstructor.produceNDC() );
+        _API.setConf( _ndConstructor.produceNDC() );
         return data != null;
     }
 
@@ -151,12 +154,12 @@ final class TsrConstructor
         return _targetDevice.allocate( dataType, Math.min(size, 1), value );
     }
 
-    public <V> void constructSeeded( Class<V> valueType, NDConstructor ndConstructor, Object seed )
+    public <V> void newSeeded( Class<V> valueType, Object seed )
     {
-        int size = ndConstructor.getSize();
+        int size = _ndConstructor.getSize();
         Object data = _targetDevice.allocate( DataType.of( valueType ), size );
         data = Randomization.fillRandomly( data, seed.toString() );
-        fromNewShape( ndConstructor, false, false, DataType.of(valueType) );
+        newUnpopulated( false, false, DataType.of(valueType) );
         _API.setData( data );
     }
 

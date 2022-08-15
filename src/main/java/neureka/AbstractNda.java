@@ -44,6 +44,7 @@ import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.ndim.Filler;
+import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 import org.slf4j.Logger;
 
@@ -271,12 +272,12 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *
      * @return An {@link TsrConstructor} exposing a simple API for configuring a new {@link Tsr} instance.
      */
-    protected TsrConstructor constructFor(Device<?> targetDevice )
+    protected TsrConstructor constructFor( Device<?> targetDevice, NDConstructor ndConstructor )
     {
         AbstractNda<C, ?> nda = this;
         return
             new TsrConstructor(
-                targetDevice,
+                targetDevice, ndConstructor,
                 new TsrConstructor.API() {
                     @Override public void   setType( DataType<?> type       ) { nda.getUnsafe().setDataType( type ); }
                     @Override public void   setConf( NDConfiguration conf   ) { nda.getUnsafe().setNDConf( conf ); }
