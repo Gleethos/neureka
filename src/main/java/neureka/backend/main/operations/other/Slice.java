@@ -139,11 +139,11 @@ public class Slice extends AbstractOperation
         }
 
         Tsr<Object> subset =
-                Tsr.of(
-                        input.getDataType(),
-                        NDConstructor.of( newShape, newTranslation, newIndicesMap, newSpread, newOffset ),
-                        input.getUnsafe().getData()
-                );
+                        Tsr.of(
+                            input.getDataType(),
+                            NDConstructor.of( newShape, newTranslation, newIndicesMap, newSpread, newOffset ),
+                            input.getUnsafe().getData()
+                        );
 
         if ( input.isOutsourced() ) {
             Device<Object> device = input.getDevice();

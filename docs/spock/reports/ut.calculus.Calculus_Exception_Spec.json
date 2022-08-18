@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.003 seconds"
+    "duration":"0.044 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Function throws exception when not enough inputs provided.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.015 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,13 +31,13 @@
 
         {"kind":"and","text":"","code":["exception.message == \"Function input '1' not satisfied! Please supply at least 2 input tensors.\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Function throws exception when arity does not match input number.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
 
         {"kind":"and","text":"","code":["exception.message == \"Trying to instantiate an 'ExecutionCall' \" +","\"with an arity of 1, which is not suitable for \" +","\"the targeted operation 'MatMul' with the expected \" +","\"arity of 2.\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

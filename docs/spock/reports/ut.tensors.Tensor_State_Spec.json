@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.024 seconds"
+    "duration":"0.123 seconds"
   },
   "headers":["    \n            <p>\n                This unit test specification covers the expected state of newly instantiated tensors.\n                Certain properties must have their expected default values.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A tensor can be instantiated from a target type and nested lists.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -27,13 +27,13 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float","class java.lang.Byte","class java.lang.Byte","class java.lang.String"],"list":["[1, 2, 1]","[5, -4]","[3, 4]","[[3], [4]]","[[3, 4]]"],"shape":["[3]","[2]","[2]","[2, 1]","[1, 2]"],"expected":["[1.0, 2.0, 1.0]","[5.0, -4.0]","[3, 4]","[3, 4]","[3, 4]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Tensors as String can be formatted on an entry based level.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -48,13 +48,13 @@
 
         {"kind":"and","text":"This way we can also configure a postfix and prefix as well as limit the number of entries in a row:","code":["t.toString({ NDPrintSettings it ->","                            it.setPrefix('START<|').setPostfix('|>END').setCellSize(0).setIsCellBound(false).setRowLimit(2) }",") == \"START<|(2x3):[salty Apple, sweet Tofu, ... + 4 more]|>END\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Numeric tensors as String can be formatted on an entry based level.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -65,13 +65,13 @@
 
         {"kind":"and","text":"Whe can use a map of configuration configuration enums as keys and fitting objects as values:","code":["t.toString(","{ NDPrintSettings it -> it.setHasSlimNumbers(true).setIsScientific(true).setCellSize(0) }",") == \"(2x3):[0, .33333, .66666, 1, 0, .33333]\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Tensors as String can be formatted depending on shape.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.029 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -92,13 +92,13 @@
 
         {"kind":"where","text":"The print configurations codes \"mode\", a common shape and expected String representation will be supplied:","code":{"shape":["[2, 3]","[2, 3]","[3, 2]","[2, 3, 4]","[2, 2, 3, 4]","[2, 70]","[2, 100]","[70, 2]"],"mode":["fap","fa","fp","fp","fp","f","f","f"],"expected":["(2x3):[\n   [  -4.0 ,  -3.0 ,  -2.0  ],\n   [  -1.0 ,   0.0 ,   1.0  ]\n]","(2x3):[\n   [ -4.0, -3.0, -2.0 ],\n   [ -1.0, 0.0, 1.0 ]\n]","(3x2):[\n   [  -4.0 ,  -3.0  ],\n   [  -2.0 ,  -1.0  ],\n   [   0.0 ,   1.0  ]\n]","(2x3x4):[\n   [\n      [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ],\n      [   0.0 ,   1.0 ,   2.0 ,   3.0  ],\n      [   4.0 ,   5.0 ,  -4.0 ,  -3.0  ]\n   ],\n   [\n      [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ],\n      [   2.0 ,   3.0 ,   4.0 ,   5.0  ],\n      [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ]\n   ]\n]","(2x2x3x4):[\n   [\n      [\n         [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ],\n         [   0.0 ,   1.0 ,   2.0 ,   3.0  ],\n         [   4.0 ,   5.0 ,  -4.0 ,  -3.0  ]\n      ],\n      [\n         [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ],\n         [   2.0 ,   3.0 ,   4.0 ,   5.0  ],\n         [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ]\n      ]\n   ],\n   [\n      [\n         [   0.0 ,   1.0 ,   2.0 ,   3.0  ],\n         [   4.0 ,   5.0 ,  -4.0 ,  -3.0  ],\n         [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ]\n      ],\n      [\n         [   2.0 ,   3.0 ,   4.0 ,   5.0  ],\n         [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ],\n         [   0.0 ,   1.0 ,   2.0 ,   3.0  ]\n      ]\n   ]\n]","(2x70):[\n   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, ..38 more.., 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ],\n   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, ..38 more.., 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ]\n]","(2x100):[\n   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, ..68 more.., 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ],\n   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, ..68 more.., 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ]\n]","(70x2):[\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   ... 38 more ...\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ]\n]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Newly instantiated and unmodified scalar tensor has expected state.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -109,7 +109,7 @@
 
         {"kind":"and","text":"The tensor contains the expected data.","code":["t.getItemsAs( double[].class ) == [6] as double[]","t.getItemsAs( float[].class  ) == [6] as float[]","t.getDataAs( double[].class ) == [6] as double[]","t.getDataAs( float[].class  ) == [6] as float[]","t.unsafe.data == [6] as double[]","t.items == [6] as double[]"]},
 
-        {"kind":"when","text":"The flag \"isOutsourced\" is being set to false...","code":["t.setIsOutsourced( true )"]},
+        {"kind":"when","text":"The flag \"isOutsourced\" is being set to false...","code":["t.setIsOutsourced( true )","t.unsafe.setData(null)"]},
 
         {"kind":"then","text":"The tensor is now outsourced and its data is gone. (garbage collected)","code":["t.isOutsourced()","!(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])","t.getItemsAs( double[].class ) == null","t.getItemsAs( float[].class  ) == null","t.getDataAs( double[].class ) == null","t.getDataAs( float[].class  ) == null","t.unsafe.data == null","t.items == null"]},
 
@@ -117,13 +117,13 @@
 
         {"kind":"then","text":"Internally the tensor reallocates an array of adequate size. (dependent on \"isVirtual\")","code":["t.getItemsAs( double[].class ) == [0] as double[]","t.getItemsAs( float[].class  ) == [0] as float[]","t.getDataAs( double[].class ) == [0] as double[]","t.getDataAs( float[].class  ) == [0] as float[]","t.unsafe.data == [0] as double[]","t.items == [0] as double[]","t.isVirtual()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Newly instantiated and unmodified vector tensor has expected state.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -132,7 +132,7 @@
 
         {"kind":"expect","text":"The tensor is not stored on another device, meaning that it is not \"outsourced\".","code":["!t.isOutsourced()"]},
 
-        {"kind":"when","text":"The flag \"isOutsourced\" is being set to false...","code":["t.setIsOutsourced( true )"]},
+        {"kind":"when","text":"The flag \"isOutsourced\" is being set to false...","code":["t.setIsOutsourced( true )","t.unsafe.setData(null)"]},
 
         {"kind":"then","text":"The tensor is now outsourced and its data is gone. (garbage collected)","code":["t.isOutsourced()","!(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])","t.dataType.getRepresentativeType() == Neureka.get().settings().dtype().defaultDataTypeClass","t.getItemsAs( double[].class ) == null","t.getItemsAs( float[].class ) == null","t.unsafe.data == null","t.items == null"]},
 
@@ -140,13 +140,13 @@
 
         {"kind":"then","text":"Internally the tensor reallocates an array of adequate size. (dependent on \"isVirtual\")","code":["t.getItemsAs( double[].class ) == [0, 0] as double[]","t.getItemsAs( float[].class ) == [0, 0] as float[]","t.unsafe.data == [0] as double[]","t.items == [0, 0] as double[]","t.isVirtual()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Tensor created from shape and datatype has expected state.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -155,7 +155,7 @@
 
         {"kind":"expect","text":"The tensor is not stored on another device, meaning that it is not \"outsourced\".","code":["!t.isOutsourced()","t.getItemsAs( double[].class ) == [0, 0] as double[]","t.getItemsAs( float[].class ) == [0, 0] as float[]","t.unsafe.data == [0] as byte[]","t.items == [0, 0] as byte[]","t.isVirtual()"]},
 
-        {"kind":"when","text":"The flag \"isOutsourced\" is being set to false...","code":["t.setIsOutsourced( true )"]},
+        {"kind":"when","text":"The flag \"isOutsourced\" is being set to false...","code":["t.setIsOutsourced( true )","t.unsafe.setData(null)"]},
 
         {"kind":"then","text":"The tensor is now outsourced and its data is gone. (garbage collected)","code":["t.isOutsourced()","!(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])","t.dataType.getRepresentativeType() == I8.class","t.getItemsAs( double[].class ) == null","t.getItemsAs( float[].class ) == null","t.unsafe.data == null","t.items == null"]},
 
@@ -163,13 +163,13 @@
 
         {"kind":"then","text":"Internally the tensor reallocates an array of adequate size. (dependent on \"isVirtual\")","code":["t.getItemsAs( double[].class ) == [0, 0] as double[]","t.getItemsAs( float[].class ) == [0, 0] as float[]","t.unsafe.data == [0] as byte[]","t.items == [0, 0] as byte[]","t.isVirtual()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The data and the value of a tensor a 2 different things!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -190,7 +190,7 @@
 
         {"kind":"where","text":"We test the following devices:","code":{"device":["CPU"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

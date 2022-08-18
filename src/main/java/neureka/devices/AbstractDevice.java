@@ -41,12 +41,9 @@ import neureka.backend.api.Operation;
 import neureka.calculus.args.Arg;
 import neureka.common.composition.Component;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.*;
 import neureka.framing.Relation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
 
 /**
  *  This is the abstract precursor class providing
@@ -153,7 +150,6 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             @Override public int getDataSize() { return _sizeOccupiedBy( tensor ); }
             @Override public void cleanup( Runnable action ) { _cleaning( tensor, action ); }
             @Override public void updateNDConf() { _updateNDConf( tensor ); }
-            @Override public Object allocate( int size ) { return _allocate( tensor.getDataType(), size ); }
             @Override public Object actualize() { return _actualize( tensor ); }
         };
     }
@@ -180,8 +176,6 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     protected abstract <T extends V> void _writeItem( Tsr<T> tensor, T item, int start, int size );
 
     protected abstract <T extends V> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size );
-
-    protected abstract Object _allocate( DataType<?> dataType, int size );
 
     protected abstract Object _actualize( Tsr<?> tensor );
 }

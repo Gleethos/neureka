@@ -8,11 +8,11 @@ import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.function.Supplier;
 
-public class GEMM implements ImplementationFor<OpenCLDevice> {
-
+public class GEMM implements ImplementationFor<OpenCLDevice>
+{
     @Override
-    public Tsr<?> run(ExecutionCall<OpenCLDevice> call) {
-
+    public Tsr<?> run(ExecutionCall<OpenCLDevice> call)
+    {
             Tsr<Float> c = call.input(Float.class, 0);
             Tsr<Float> a = call.input(Float.class, 1);
             Tsr<Float> b = call.input(Float.class, 2);
@@ -86,8 +86,6 @@ public class GEMM implements ImplementationFor<OpenCLDevice> {
                     "       for ( uint n = 0; n < NW; ++n )                                                             \n" +
                     "           C[ batch * N * MT + ( nc * NW + n ) * MT + mt ] += *( (floatMW*) CT[n] );               \n" +
                     "   }}                                                                                                ";
-
-            //return new KernelCode(kernelName, code);
 
         KernelCaller caller =
              call.getDevice().hasAdHocKernel(kernelName)

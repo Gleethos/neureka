@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.016 seconds"
+    "duration":"0.154 seconds"
   },
   "headers":["\n            <h2> Autograd Tensor Behavior </h2>\n            <p>\n                Specified below is the behavior of the autograd system.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test basic autograd behaviour. (Not on device)",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.062 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -51,13 +51,13 @@
 
         {"kind":"then","text":"This will change the gradient of \"x\" accordingly.","code":["x.toString().contains(\"-16.0\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Second-Test \"x-mul\" autograd behaviour. (Not on device)",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.046 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -116,13 +116,13 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"A tensor used as derivative within a computation graph will throw exception when trying to deleting it.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -137,7 +137,7 @@
 
         {"kind":"then","text":"An exception is being thrown.","code":["def exception = thrown(IllegalStateException)","exception.message == \"Cannot delete a tensor which is used as derivative by the AD computation graph!\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

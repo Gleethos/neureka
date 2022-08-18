@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.114 seconds"
+    "duration":"1.539 seconds"
   },
   "headers":["\n\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Autograd works in a simple mat-mul based feed forward neural network.",
       "result":"PASS",
-      "duration":"0.015 seconds",
+      "duration":"0.268 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -29,13 +29,13 @@
 
         {"kind":"and","text":"","code":["graph.contains(\"\"\"","]","]    0Â»1Â» GraphNode[ sig(I[0]) => (3x1):[0.54268, 0.60176, 0.56483], type='BRANCH'] ","]       \\\\","]        0Â»2Â» GraphNode[ (I[0] @ I[1]) => (3x1):[0.17116, 0.41280, 0.26080], type='BRANCH'] ","]           \\\\","]            0Â»1Â» GraphNode[ sig(I[0]) => (3x3):[0.15178, 0.25131, 0.32789, ... + 6 more], type='BRANCH'] ","]            |  \\\\","]            |   0Â»2Â» GraphNode[ (I[0] @ I[1]) => (3x3):[-1.72064, -1.09161, -0.71770, ... + 6 more], type='BRANCH'] ","]            |      \\\\","]            |       0Â»0Â» GraphNode[ (3x2):[0.6667, 1.0, 0.3333, ... + 3 more], type='LEAVE'] ","]            |       |","]            |       1Â»0Â» GraphNode[ (2x3):[-0.88023, -0.03096, -1.67769, ... + 3 more], type='LEAVE RQS GRADIENT'] ","]            |","]            1Â»0Â» GraphNode[ (3x1):[2.14504, 0.17962, -0.43376], type='LEAVE RQS GRADIENT'] ","]","\"\"\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Autograd works in a simple convolutional dot product based feed forward neural network.",
       "result":"PASS",
-      "duration":"0.033 seconds",
+      "duration":"0.280 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -48,13 +48,13 @@
 
         {"kind":"and","text":"","code":["graph.contains(\"\"\"","]","]    0Â»1Â» GraphNode[ sig(I[0]) => (3):[0.54268, 0.60176, 0.56483], type='BRANCH'] ","]       \\\\","]        0Â»1Â» GraphNode[ dimtrim(I[0]) => (3):[0.17116, 0.41280, 0.26080], type='BRANCH'] ","]           \\\\","]            0Â»2Â» GraphNode[ (I[0] x I[1]) => (3x1x1x1):[0.17116, 0.41280, 0.26080], type='BRANCH'] ","]               \\\\","]                0Â»1Â» GraphNode[ ([0,1,2,-1]:(I[0])) => (3x1x3x1):[0.15178, 0.25131, 0.32789, ... + 6 more], type='BRANCH'] ","]                |  \\\\","]                |   0Â»1Â» GraphNode[ sig(I[0]) => (3x1x3):[0.15178, 0.25131, 0.32789, ... + 6 more], type='BRANCH'] ","]                |      \\\\","]                |       0Â»1Â» GraphNode[ dimtrim(I[0]) => (3x1x3):[-1.72064, -1.09161, -0.71770, ... + 6 more], type='BRANCH'] ","]                |          \\\\","]                |           0Â»2Â» GraphNode[ (I[0] x I[1]) => (3x1x3):[-1.72064, -1.09161, -0.71770, ... + 6 more], type='BRANCH'] ","]                |              \\\\","]                |               0Â»1Â» GraphNode[ ([0,1,-1]:(I[0])) => (3x2x1):[0.6667, 1.0, 0.3333, ... + 3 more], type='BRANCH'] ","]                |               |  \\\\","]                |               |   0Â»0Â» GraphNode[ (3x2):[0.6667, 1.0, 0.3333, ... + 3 more], type='LEAVE'] ","]                |               |","]                |               1Â»1Â» GraphNode[ ([-1,0,1]:(I[0])) => (1x2x3):[-0.88023, -0.03096, -1.67769, ... + 3 more], type='BRANCH'] ","]                |                  \\\\","]                |                   0Â»0Â» GraphNode[ (2x3):[-0.88023, -0.03096, -1.67769, ... + 3 more], type='LEAVE RQS GRADIENT'] ","]                |","]                1Â»1Â» GraphNode[ ([-1,-1,0,1]:(I[0])) => (1x1x3x1):[2.14504, 0.17962, -0.43376], type='BRANCH'] ","]                   \\\\","]                    0Â»0Â» GraphNode[ (3x1):[2.14504, 0.17962, -0.43376], type='LEAVE RQS GRADIENT'] ","]","\"\"\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Autograd works in a simple convolutional dot product and float based feed forward neural network.",
       "result":"PASS",
-      "duration":"0.028 seconds",
+      "duration":"0.374 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -67,13 +67,13 @@
 
         {"kind":"and","text":"","code":["graph.contains(\"\"\"","]","]    0Â»1Â» GraphNode[ sig(I[0]) => (3):[0.54268, 0.60176, 0.56483], type='BRANCH'] ","]       \\\\","]        0Â»1Â» GraphNode[ dimtrim(I[0]) => (3):[0.17116, 0.41280, 0.26080], type='BRANCH'] ","]           \\\\","]            0Â»2Â» GraphNode[ (I[0] x I[1]) => (3x1x1x1):[0.17116, 0.41280, 0.26080], type='BRANCH'] ","]               \\\\","]                0Â»1Â» GraphNode[ ([0,1,2,-1]:(I[0])) => (3x1x3x1):[0.15178, 0.25131, 0.32789, ... + 6 more], type='BRANCH'] ","]                |  \\\\","]                |   0Â»1Â» GraphNode[ sig(I[0]) => (3x1x3):[0.15178, 0.25131, 0.32789, ... + 6 more], type='BRANCH'] ","]                |      \\\\","]                |       0Â»1Â» GraphNode[ dimtrim(I[0]) => (3x1x3):[-1.72064, -1.09161, -0.71770, ... + 6 more], type='BRANCH'] ","]                |          \\\\","]                |           0Â»2Â» GraphNode[ (I[0] x I[1]) => (3x1x3):[-1.72064, -1.09161, -0.71770, ... + 6 more], type='BRANCH'] ","]                |              \\\\","]                |               0Â»1Â» GraphNode[ ([0,1,-1]:(I[0])) => (3x2x1):[0.66670, 1.0, 0.33329, ... + 3 more], type='BRANCH'] ","]                |               |  \\\\","]                |               |   0Â»0Â» GraphNode[ (3x2):[0.66670, 1.0, 0.33329, ... + 3 more], type='LEAVE'] ","]                |               |","]                |               1Â»1Â» GraphNode[ ([-1,0,1]:(I[0])) => (1x2x3):[-0.88023, -0.03096, -1.67769, ... + 3 more], type='BRANCH'] ","]                |                  \\\\","]                |                   0Â»0Â» GraphNode[ (2x3):[-0.88023, -0.03096, -1.67769, ... + 3 more], type='LEAVE RQS GRADIENT'] ","]                |","]                1Â»1Â» GraphNode[ ([-1,-1,0,1]:(I[0])) => (1x1x3x1):[2.14504, 0.17962, -0.43376], type='BRANCH'] ","]                   \\\\","]                    0Â»0Â» GraphNode[ (3x1):[2.14504, 0.17962, -0.43376], type='LEAVE RQS GRADIENT'] ","]","\"\"\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Autograd work for simple matrix multiplications.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.118 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -96,13 +96,13 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Autograd works for 2 matrix multiplications in a row.",
       "result":"PASS",
-      "duration":"0.026 seconds",
+      "duration":"0.443 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -121,9 +121,9 @@
 
         {"kind":"then","text":"Contrary to before, the 2 matrices now do have the expected gradients automatically generated by the aut-grad system.","code":["a.toString() == \"(2x3):[-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]:g:[-2.0, -1.0, 0.0, -2.0, -1.0, 0.0]\"","b.toString() == \"(3x1):[-4.0, -2.0, 0.0]:g:[0.5, 1.5, 2.5]\""]},
 
-        {"kind":"where","text":"We test this feature on both the CPU as well as the GPU.","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"We test this feature on both the CPU as well as the GPU.","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1c2809a5eb0],platform=OpenCLPlatform@173acfae[pid=cl_platform_id[0x7ffbdc15a490],context=cl_context[0x1c2f6b109a0],kernels=[..46..]]]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

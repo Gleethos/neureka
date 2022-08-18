@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.689 seconds"
+    "duration":"6.016 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.172 seconds",
+      "duration":"0.302 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,15 +35,15 @@
 
         {"kind":"and","text":"","code":["(device instanceof OpenCLDevice) || t.unsafe.data == [198.0, -6.5, 36.0, -2.5, 2.0, 6.5, 101.0, 0.0, 15.0, 4.0, 146.0, 13.0, 400.0, 17.0, 194.0, 15.5, 101.0, -4.5]","(device instanceof OpenCLDevice) || source.unsafe.data == [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -4.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 2.0, -4.0, -3.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 2.0, -4.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0]"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x22cf2ddf380],platform=OpenCLPlatform@7b386293[pid=cl_platform_id[0x7ffbdc15a490],context=cl_context[0x22cec9d9ea0],kernels=[..46..]]]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Dot operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.022 seconds",
+      "duration":"0.061 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -56,13 +56,13 @@
 
         {"kind":"where","text":"","code":{"shape":["[2, 3]","[2, 3]","[2, 1, 3]","[2, 1, 3]"],"expected":["(2x1x2):[29.0, 2.0, 2.0, 2.0]","(2x1x2):[29.0, 2.0, 2.0, 2.0]","(2x1x1x1x2):[29.0, 2.0, 2.0, 2.0]","(2x1x1x1x2):[29.0, 2.0, 2.0, 2.0]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The broadcast operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.037 seconds",
+      "duration":"1.211 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -73,15 +73,15 @@
 
         {"kind":"then","text":"","code":["t.toString() == expected"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]","CPU[coreCount=32]","CPU[coreCount=32]"],"shape1":["[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]"],"shape2":["[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]"],"operation":["i0%i1","i0%i1","i0*i1","i0*i1","i0*i1","i0*i1","i0+i1","i0+i1","i0+i1","i0+i1","i0-i1","i0-i1","i0-i1","i0-i1","i0/i1","i0/i1"],"expected":["(2x2):[-1.0, -0.0, -0.0, NaN]","(2x3x2):[-1.0, -0.0, -0.0, NaN, -0.0, -0.0, -1.0, -1.0, 0.0, NaN, 0.0, 1.0]","(2x2):[12.0, 8.0, 3.0, -0.0]","(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]","(2x2):[12.0, 8.0, 3.0, -0.0]","(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]","(2x2):[-7.0, -6.0, -4.0, -3.0]","(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]","(2x2):[-7.0, -6.0, -4.0, -3.0]","(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]","(2x2):[-1.0, -2.0, -2.0, -3.0]","(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]","(2x2):[-1.0, -2.0, -2.0, -3.0]","(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]","(2x2):[1.33333, 2.0, 3.0, -∞]","(2x3x2):[1.33333, 2.0, 3.0, -∞, -2.0, -1.0, 0.33333, 0.5, -0.0, NaN, 1.0, 0.5]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x22cf2ddf380],platform=OpenCLPlatform@7b386293[pid=cl_platform_id[0x7ffbdc15a490],context=cl_context[0x22cec9d9ea0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x22cf2ddf380],platform=OpenCLPlatform@7b386293[pid=cl_platform_id[0x7ffbdc15a490],context=cl_context[0x22cec9d9ea0],kernels=[..46..]]]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x22cf2ddf380],platform=OpenCLPlatform@7b386293[pid=cl_platform_id[0x7ffbdc15a490],context=cl_context[0x22cec9d9ea0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x22cf2ddf380],platform=OpenCLPlatform@7b386293[pid=cl_platform_id[0x7ffbdc15a490],context=cl_context[0x22cec9d9ea0],kernels=[..46..]]]","CPU[coreCount=32]","CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x22cf2ddf380],platform=OpenCLPlatform@7b386293[pid=cl_platform_id[0x7ffbdc15a490],context=cl_context[0x22cec9d9ea0],kernels=[..46..]]]","OpenCLDevice[deviceId=cl_device_id[0x22cf2ddf380],platform=OpenCLPlatform@7b386293[pid=cl_platform_id[0x7ffbdc15a490],context=cl_context[0x22cec9d9ea0],kernels=[..46..]]]","CPU[coreCount=32]","CPU[coreCount=32]"],"shape1":["[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]"],"shape2":["[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]"],"operation":["i0%i1","i0%i1","i0*i1","i0*i1","i0*i1","i0*i1","i0+i1","i0+i1","i0+i1","i0+i1","i0-i1","i0-i1","i0-i1","i0-i1","i0/i1","i0/i1"],"expected":["(2x2):[-1.0, -0.0, -0.0, NaN]","(2x3x2):[-1.0, -0.0, -0.0, NaN, -0.0, -0.0, -1.0, -1.0, 0.0, NaN, 0.0, 1.0]","(2x2):[12.0, 8.0, 3.0, -0.0]","(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]","(2x2):[12.0, 8.0, 3.0, -0.0]","(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]","(2x2):[-7.0, -6.0, -4.0, -3.0]","(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]","(2x2):[-7.0, -6.0, -4.0, -3.0]","(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]","(2x2):[-1.0, -2.0, -2.0, -3.0]","(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]","(2x2):[-1.0, -2.0, -2.0, -3.0]","(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]","(2x2):[1.33333, 2.0, 3.0, -∞]","(2x3x2):[1.33333, 2.0, 3.0, -∞, -2.0, -1.0, 0.33333, 0.5, -0.0, NaN, 1.0, 0.5]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Activation functions work across types, on large prime sized 1D slices and non sliced 1D tensors.",
       "result":"PASS",
-      "duration":"0.307 seconds",
+      "duration":"3.994 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -102,15 +102,15 @@
 
         {"kind":"and","text":"The data of the first non slice tensor as well as its slice should be as expected.","code":["Arrays.hashCode(result1.unsafe.data) == expected[0]","Arrays.hashCode(result2.unsafe.data) == expected[1]"]},
 
-        {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float"],"funExpression":["gaus(i0)*100 % i0","gaus(i0)*100 % i0","gaus(i0)*100 % i0","tanh(i0)*100 % i0","tanh(i0)*100 % i0","tanh(i0)*100 % i0","fast_tanh(i0)*100 % i0","fast_tanh(i0)*100 % i0","fast_tanh(i0)*100 % i0","fast_gaus(i0)+i0","fast_gaus(i0)+i0","fast_gaus(i0)+i0","softsign(i0)*100 % i0","softsign(i0)*100 % i0","softsign(i0)*100 % i0","random(i0)","random(i0)"],"expected":["[-853255121, -853255121]","[-1410818458, -1410818458]","[566202463, 566202463]","[361719754, 361719754]","[-1213389248, -1213389248]","[-634381565, -634381565]","[-41932067, -41932067]","[1791804151, 1791804151]","[-634381565, -634381565]","[1214521048, 1214521048]","[614466683, 614466683]","[-1351535318, -1351535318]","[-1627096169, -1627096169]","[-1112662242, -1112662242]","[-634381565, -634381565]","[-2059799883, 276852681]","[-2100773274, -590726536]"]}}
+        {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float"],"funExpression":["gaus(i0)*100 % i0","gaus(i0)*100 % i0","gaus(i0)*100 % i0","tanh(i0)*100 % i0","tanh(i0)*100 % i0","tanh(i0)*100 % i0","fast_tanh(i0)*100 % i0","fast_tanh(i0)*100 % i0","fast_tanh(i0)*100 % i0","fast_gaus(i0)+i0","fast_gaus(i0)+i0","fast_gaus(i0)+i0","softsign(i0)*100 % i0","softsign(i0)*100 % i0","softsign(i0)*100 % i0","random(i0)","random(i0)"],"expected":["[-341638852, -341638852]","[945052504, 945052504]","[566202463, 566202463]","[-1157698679, -1157698679]","[1967446493, 1967446493]","[-1054395405, -1054395405]","[-465291508, -465291508]","[-1372925001, -1372925001]","[-1054395405, -1054395405]","[-662875915, -662875915]","[-1211048977, -1211048977]","[-1237330383, -1237330383]","[1967097666, 1967097666]","[71072251, 71072251]","[-1054395405, -1054395405]","[-2059799883, 276852681]","[-2100773274, -590726536]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Activation functions work across types.",
       "result":"PASS",
-      "duration":"0.032 seconds",
+      "duration":"0.126 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -131,9 +131,9 @@
 
         {"kind":"and","text":"The data of the first non slice tensor as well as its slice should be as expected.","code":["result1.items == expected","result2.items == expected"]},
 
-        {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer"],"funExpression":["silu(i0)","silu(i0)","silu(i0)","silu(i0)","silu(i0)","silu(i0)","gelu(i0)","gelu(i0)","gelu(i0)","gelu(i0)","gelu(i0)","gelu(i0)","selu(i0)","selu(i0)","selu(i0)","selu(i0)","selu(i0)","selu(i0)","gatu(i0)","gatu(i0)","gatu(i0)","gatu(i0)","gatu(i0)","gatu(i0)","gasu(i0)","gasu(i0)","gasu(i0)","gasu(i0)","gasu(i0)","gasu(i0)"],"derive":["false","false","false","true","true","true","false","false","false","true","true","true","false","false","false","true","true","true","false","false","false","true","true","true","false","false","false","true","true","true"],"expected":["[2.1135352025452363, -0.23397468505726102, 1.0477889390530153]","[2.1135352, -0.23397468, 1.047789]","[0, 1766941311, 0]","[1.099546086132034, 0.17280584920363537, 1.0100270613327957]","[1.0995461, 0.17280586, 1.010027]","[0, 1, 0]","[2.277196975563254, -0.16328256348702017, 1.200361889401775]","[2.2771971, -0.16328256, 1.2003618]","[0, 1766941311, 0]","[1.0543057750427323, 0.016077333534953053, 1.0988343517880281]","[1.0543058, 0.01607734, 1.0988343]","[0, 1, 0]","[2.4387050838616458, -0.8935373895024364, 1.3932426393325066]","[2.4387052, -0.8935374, 1.3932426]","[-2, 1856526980, -2]","[1.0507009873554805, 0.8645619513449402, 1.0507009873554805]","[1.050701, 0.864562, 1.050701]","[0, 1, 0]","[0.9999999999724318, -0.34306006539262235, 0.9813017567906377]","[1.0, -0.34306008, 0.9813018]","[-1, 1, -1]","[8.91084539489384E-10, 1.3334362950250542, 0.19541950892083282]","[0.0, 1.3334364, 0.19541931]","[0, 0, 0]","[0.9259465197053056, -0.2633824974845539, 0.6998385035320221]","[0.92594653, -0.2633825, 0.6998385]","[-1, 1, -1]","[0.08862831427395856, 0.8200403847459871, 0.47525473491026016]","[0.0886283, 0.8200404, 0.47525474]","[0, 0, 0]"]}}
+        {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer"],"funExpression":["silu(i0)","silu(i0)","silu(i0)","silu(i0)","silu(i0)","silu(i0)","gelu(i0)","gelu(i0)","gelu(i0)","gelu(i0)","gelu(i0)","gelu(i0)","selu(i0)","selu(i0)","selu(i0)","selu(i0)","selu(i0)","selu(i0)","gatu(i0)","gatu(i0)","gatu(i0)","gatu(i0)","gatu(i0)","gatu(i0)","gasu(i0)","gasu(i0)","gasu(i0)","gasu(i0)","gasu(i0)","gasu(i0)"],"derive":["false","false","false","true","true","true","false","false","false","true","true","true","false","false","false","true","true","true","false","false","false","true","true","true","false","false","false","true","true","true"],"expected":["[1.0985150624263118, 2.331551300795844, 0.08745752408303246]","[1.098515, 2.3315513, 0.08745752]","[2124371342, 0, 0]","[1.0198659569612678, 1.0992238228008295, 0.5805713104936336]","[1.019866, 1.0992239, 0.5805713]","[1, 0, 0]","[1.2553019101258691, 2.48514859714065, 0.09199892841280806]","[1.255302, 2.4851487, 0.09199893]","[2124371342, 0, 0]","[1.09968352899801, 1.043758795430269, 0.6360091016582581]","[1.0996835, 1.0437589, 0.6360091]","[1, 0, 0]","[1.4457526798842053, 2.6470118580557593, 0.17005220305511268]","[1.4457527, 2.647012, 0.1700522]","[-2062888229, -2, -2]","[1.0507009873554805, 1.0507009873554805, 1.0507009873554805]","[1.050701, 1.050701, 1.050701]","[1, 0, 0]","[0.9891407665275838, 0.9999999999999742, 0.004239423130809827]","[0.98914075, 1.0, 0.0042394227]","[1, -1, -1]","[0.1226918386004856, 9.805489753489383E-13, 0.07858138767615172]","[0.12269211, 0.0, 0.078581385]","[0, 0, 0]","[0.7226245060456667, 0.9411395236107959, 0.004221551478848414]","[0.72262454, 0.9411396, 0.004221551]","[1, -1, -1]","[0.4370057619908791, 0.06596632547000601, 0.07792071781374522]","[0.43700573, 0.06596632, 0.07792072]","[0, 0, 0]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

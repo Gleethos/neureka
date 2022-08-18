@@ -62,11 +62,13 @@ public class AssignLeft extends AbstractOperation
             .setImplementationFor(
                 CPU.class,
                 Scalarization.implementationForCPU()
-                    .with(Fun.F64F64ToF64.of( ( a, b ) -> b ))
-                    .with(Fun.F32F32ToF32.of( ( a, b ) -> b ))
-                    .with(Fun.I8I8ToI8.of(    ( a, b ) -> b ))
-                    .with(Fun.I32I32ToI32.of( ( a, b ) -> b ))
-                    .with(Fun.ObjObjToObj.of( ( a, b ) -> b ))
+                    .with(Fun.F64F64ToF64.of(    ( a, b ) -> b ))
+                    .with(Fun.F32F32ToF32.of(    ( a, b ) -> b ))
+                    .with(Fun.I8I8ToI8.of(       ( a, b ) -> b ))
+                    .with(Fun.I32I32ToI32.of(    ( a, b ) -> b ))
+                    .with(Fun.BoolBoolToBool.of( ( a, b ) -> b ))
+                    .with(Fun.CharCharToChar.of( ( a, b ) -> b ))
+                    .with(Fun.ObjObjToObj.of(    ( a, b ) -> b ))
                     .get()
             )
             .setImplementationFor(

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.010 seconds"
+    "duration":"0.057 seconds"
   },
   "headers":["\n                <h2> Momentum Optimizer Behavior </h2>\n                <br> \n                <p>\n                    This specification check the behavior of the Momentum class.        \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Momentum optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.047 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -29,7 +29,7 @@
 
         {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00299","0.00869","0.01182","0.01764","0.02088","0.02179","0.02661","0.03395","0.04355","0.050200001"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

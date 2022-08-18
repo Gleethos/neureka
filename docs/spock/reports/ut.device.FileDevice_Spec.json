@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.082 seconds"
+    "duration":"0.204 seconds"
   },
-  "headers":["\n                <p>\n                    This specification covers the behavior of the \"FileDevice\"\n                    class, which enables the persistence of tensor data.           \n                </p>\n            "],"tags":{},"see":[],
+  "headers":["\n                    This specification covers the behavior of the \"FileDevice\"\n                    class, which enables the persistence of tensor data.      \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A file device stores tensors in idx files by default.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.029 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,13 +39,13 @@
 
         {"kind":"where","text":"The following parameters have been used:","code":{"path":["build/test-can"],"filename":["tensor_2x4_"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"A file device stores tensors in various file formats.",
       "result":"PASS",
-      "duration":"0.047 seconds",
+      "duration":"0.103 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -74,13 +74,13 @@
 
         {"kind":"where","text":"The following parameters are being used:","code":{"path":["build/test-can","build/test-can","build/test-can","build/test-can","build/test-can"],"filename":["tensor_2x4x3_.idx","tensor_2x4x3_.jpg","tensor_5x3x4_.png","null","tensor_4x3_.csv"],"shape":["[2, 4, 3]","[2, 4, 3]","[5, 3, 4]","[2, 4, 3]","[4, 3]"],"fileHandleClass":["class neureka.devices.file.handles.IDXHandle","class neureka.devices.file.handles.JPEGHandle","class neureka.devices.file.handles.PNGHandle","class neureka.devices.file.handles.IDXHandle","class neureka.devices.file.handles.CSVHandle"],"dataTypeClass":["class neureka.dtype.custom.F64","class neureka.dtype.custom.I16","class neureka.dtype.custom.I16","class neureka.dtype.custom.F64","class java.lang.String"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The file device can load known files in a directory.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.024 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -97,7 +97,7 @@
 
         {"kind":"then","text":"","code":["device.loadable == []","device.loaded == ['biostats-without-head.csv', 'biostats.csv']","t.toString({ NDPrintSettings it ->","    it.setHasSlimNumbers(false)","            .setIsScientific(true)","            .setIsCellBound(false)","            .setIsMultiline(true)","            .setCellSize(15)","}) == '(18x5):[\\n' +","'   (      \"Name\"    )(        \"Sex\"  )(      \"Age\"    )(  \"Height (in)\")( \"Weight (lbs)\" ):( biostats )\\n' +","'   [      \"Alex\"    ,           \"M\"  ,         41     ,           74   ,          170    ]:( 0 ),\\n' +","'   [      \"Bert\"    ,           \"M\"  ,         42     ,           68   ,          166    ]:( 1 ),\\n' +","'   [      \"Carl\"    ,           \"M\"  ,         32     ,           70   ,          155    ]:( 2 ),\\n' +","'   [      \"Dave\"    ,           \"M\"  ,         39     ,           72   ,          167    ]:( 3 ),\\n' +","'   [      \"Elly\"    ,           \"F\"  ,         30     ,           66   ,          124    ]:( 4 ),\\n' +","'   [      \"Fran\"    ,           \"F\"  ,         33     ,           66   ,          115    ]:( 5 ),\\n' +","'   [      \"Gwen\"    ,           \"F\"  ,         26     ,           64   ,          121    ]:( 6 ),\\n' +","'   [      \"Hank\"    ,           \"M\"  ,         30     ,           71   ,          158    ]:( 7 ),\\n' +","'   [      \"Ivan\"    ,           \"M\"  ,         53     ,           72   ,          175    ]:( 8 ),\\n' +","'   [      \"Jake\"    ,           \"M\"  ,         32     ,           69   ,          143    ]:( 9 ),\\n' +","'   [      \"Kate\"    ,           \"F\"  ,         47     ,           69   ,          139    ]:( 10 ),\\n' +","'   [      \"Luke\"    ,           \"M\"  ,         34     ,           72   ,          163    ]:( 11 ),\\n' +","'   [      \"Myra\"    ,           \"F\"  ,         23     ,           62   ,           98    ]:( 12 ),\\n' +","'   [      \"Neil\"    ,           \"M\"  ,         36     ,           75   ,          160    ]:( 13 ),\\n' +","'   [      \"Omar\"    ,           \"M\"  ,         38     ,           70   ,          145    ]:( 14 ),\\n' +","'   [      \"Page\"    ,           \"F\"  ,         31     ,           67   ,          135    ]:( 15 ),\\n' +","'   [      \"Quin\"    ,           \"M\"  ,         29     ,           71   ,          176    ]:( 16 ),\\n' +","'   [      \"Ruth\"    ,           \"F\"  ,         28     ,           65   ,          131    ]:( 17 )\\n' +","']'"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

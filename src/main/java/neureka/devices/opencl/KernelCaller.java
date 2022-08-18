@@ -38,11 +38,11 @@ public class KernelCaller
      * This method passes 2 arguments to the kernel.
      * One for the data of the tensor and one for the configuration data!
      * @param tensor The tensor whose data and configuration ought to be passed to the kernel.
-     * @return This very KernelCaller instance (factory patter).
+     * @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller passAllOf( @NotNull Tsr<Number> tensor ) {
         _inputs.add( tensor );
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.get( OpenCLDevice.cl_tsr.class ).value.data ) );
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
         return passConfOf( tensor );
     }
@@ -54,10 +54,10 @@ public class KernelCaller
      *  slices of other tensors.
      *
      *  @param tensor The tensor whose ND configuration ought to be passed to the kernel.
-     *  @return This very KernelCaller instance (factory patter).
+     *  @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller passConfOf( @NotNull Tsr<Number> tensor ) {
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.get( OpenCLDevice.cl_tsr.class ).config.data ) );
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).config.data ) );
         _argId++;
         return this;
     }
@@ -66,11 +66,11 @@ public class KernelCaller
      * This method passes 1 argument to the kernel.
      * Namely, the data of the tensor!
      * @param tensor The tensor whose data ought to be passed to the kernel.
-     * @return This very KernelCaller instance (factory patter).
+     * @return This very KernelCaller instance (factory pattern).
      */
     public <T extends Number> KernelCaller pass( @NotNull Tsr<T> tensor ) {
         _inputs.add( tensor.getUnsafe().upcast(Number.class) );
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.get( OpenCLDevice.cl_tsr.class ).value.data ) );
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
         return this;
     }
@@ -78,10 +78,20 @@ public class KernelCaller
     /**
      *
      * @param value An int value which ought to be passed to the kernel.
-     * @return This very KernelCaller instance (factory patter).
+     * @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller pass( int value ) {
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_int, Pointer.to( new int[]{ value } ) );
+        return this.pass( new int[]{ value } );
+    }
+
+    /**
+     *  Use this to pass an array of int values to the kernel.
+     *
+     * @param values An array of int values which ought to be passed to the kernel.
+     * @return This very KernelCaller instance (factory pattern).
+     */
+    public KernelCaller pass( int... values ) {
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_int * (long) values.length, Pointer.to( values ) );
         _argId++;
         return this;
     }
@@ -89,7 +99,7 @@ public class KernelCaller
     /**
      *
      * @param value A float value which ought to be passed to the kernel.
-     * @return This very KernelCaller instance (factory patter).
+     * @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller pass( float value ) {
         clSetKernelArg( _kernel, _argId, Sizeof.cl_float, Pointer.to( new float[]{ value } ) );
@@ -143,9 +153,9 @@ public class KernelCaller
     @Contract( pure = true )
     private void _releaseEvents( @NotNull Tsr<Number>[] tensors ) {
         for ( Tsr<Number> t : tensors ) {
-            if ( t.get( OpenCLDevice.cl_tsr.class ).value.event != null ) {
-                clReleaseEvent(t.get( OpenCLDevice.cl_tsr.class ).value.event);
-                t.get( OpenCLDevice.cl_tsr.class ).value.event = null;
+            if ( t.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).value.event != null ) {
+                clReleaseEvent(t.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).value.event);
+                t.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).value.event = null;
             }
         }
     }
@@ -154,7 +164,7 @@ public class KernelCaller
     private cl_event[] _getWaitList( @NotNull Tsr<Number>[] tensors ) {
         List<cl_event> list = new ArrayList<>();
         for ( Tsr<Number> t : tensors ) {
-            cl_event event = t.get( OpenCLDevice.cl_tsr.class ).value.event;
+            cl_event event = t.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).value.event;
             if ( event != null && !list.contains(event) ) {
                 list.add( event );
             }

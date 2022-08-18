@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.018 seconds"
+    "duration":"0.103 seconds"
   },
   "headers":["\n                <h2> AdaGrad Optimizer Behavior </h2>\n                <br> \n                <p>\n                    This specification check the behavior of the AdaGrad class.        \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"AdaGrad optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.083 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -29,7 +29,7 @@
 
         {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00999","0.01707","0.01280001","0.01819","0.01481","0.01161","0.0170001","0.02075","0.02426","0.02198"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.216 seconds"
+    "duration":"1.902 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"One can write a simple neural network with custom back-prop in 11 lines of code!",
       "result":"PASS",
-      "duration":"0.050 seconds",
+      "duration":"0.698 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,13 +25,13 @@
 
         {"kind":"expect","text":"","code":["W1.unsafe.data == RESULT_W1","W2.unsafe.data == RESULT_W2"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"One can write a simple neural network in less than 11 lines of code!",
       "result":"PASS",
-      "duration":"0.067 seconds",
+      "duration":"0.465 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -40,13 +40,13 @@
 
         {"kind":"expect","text":"","code":["W1.unsafe.data == RESULT_W1","W2.unsafe.data == RESULT_W2"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"One can write a simple float based neural network in less than 11 lines of java like code!",
       "result":"PASS",
-      "duration":"0.046 seconds",
+      "duration":"0.495 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -55,13 +55,13 @@
 
         {"kind":"expect","text":"","code":["W1.unsafe.data == RESULT_W1_F32 as float[]","W2.unsafe.data == RESULT_W2_F32 as float[]"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"One can write a simple double based neural network in less than 11 lines of java like code using the \"@\" operator!",
       "result":"PASS",
-      "duration":"0.047 seconds",
+      "duration":"0.200 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -70,13 +70,13 @@
 
         {"kind":"expect","text":"","code":["W1.unsafe.data == RESULT_W1","W2.unsafe.data == RESULT_W2"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The pseudo random number generator works as expected for the weights used in the 11 line NN examples!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -85,7 +85,7 @@
 
         {"kind":"expect","text":"","code":["W1.unsafe.data == [-0.910969595136708, -1.9627469837128895, -0.048245881734580415, -0.3554745831321771, -0.6595188311162824, 1.839723209668042, -0.7864999508162774, -1.918339420402628, 1.4035229760225527, 2.245738695936844, -0.7473176166694635, 1.9016692137691462]","W2.unsafe.data == [-0.1611330910958405, -0.9350019667613545, -0.3780200880067806, 1.4951759768158595]"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.211 seconds"
+    "duration":"1.857 seconds"
   },
   "headers":["\n            <p>\n                It is important that an OpenCLDevice gives insightful error messages\n                when encountering exceptional situations.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"1.225 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,13 +33,13 @@
 
         {"kind":"and","text":"It explains what went wrong.","code":["exception.message == \"Data parent is not outsourced!\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Ad hoc compilation produces expected exceptions.",
       "result":"PASS",
-      "duration":"0.111 seconds",
+      "duration":"0.343 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,13 +54,13 @@
 
         {"kind":"and","text":"Still the kernel does not exist because it failed to compile.","code":["!device.hasAdHocKernel( 'right_dummy_kernel_name' )"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Ad hoc compilation produces expected exceptions when duplication is found.",
       "result":"PASS",
-      "duration":"0.093 seconds",
+      "duration":"0.245 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -79,13 +79,13 @@
 
         {"kind":"and","text":"Of course the original kernel is still present.","code":["device.hasAdHocKernel( 'right_dummy_kernel_name' )"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Trying to restore a tensor which is not on a device raises exception.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -98,7 +98,7 @@
 
         {"kind":"and","text":"This message is also being logged by the internal device logger.","code":["1 * System.err.println( \"[Test worker] ERROR neureka.devices.opencl.OpenCLDevice - The passed tensor cannot be restored from \" +","        \"this OpenCL device because the tensor is not stored on the device.\\n\"",")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

@@ -139,6 +139,11 @@ public class Power extends AbstractOperation
                         ( a, b ) -> (int) Math.round(b * Math.pow( a, b - 1 )), // Deriving at input 0
                         ( a, b ) -> (int) Math.round(Math.pow( a, b ) * Math.log( a )) // deriving input 1
                     ))
+                    .with(Fun.I64I64ToI64.triple(
+                        ( a, b ) -> Math.round(Math.pow( a, b )),
+                        ( a, b ) -> Math.round(b * Math.pow( a, b - 1 )), // Deriving at input 0
+                        ( a, b ) -> Math.round(Math.pow( a, b ) * Math.log( a )) // deriving input 1
+                    ))
                     .get()
             )
             .setImplementationFor(

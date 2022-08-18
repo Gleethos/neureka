@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.317 seconds"
+    "duration":"0.663 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A new transposed version of a given tensor will be returned by the \"T()\" method.",
       "result":"PASS",
-      "duration":"0.064 seconds",
+      "duration":"0.138 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,13 +33,13 @@
 
         {"kind":"then","text":"Once again, the resulting tensor should look like this:","code":["t2.toString().contains(\"[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Matrix multiplication works for both column and row major matrices across devices.",
       "result":"PASS",
-      "duration":"0.249 seconds",
+      "duration":"0.515 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +60,7 @@
 
         {"kind":"where","text":"","code":{"device":["CPU","GPU"],"expectedString":["(2x4):[24, -8, 8, 0, -1, 28, -14, 7]","(2x4):[24, -8, 8, 0, -1, 28, -14, 7]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

@@ -32,6 +32,15 @@ public interface Fun
         }
     }
 
+    interface I64ToI64 extends Fun
+    {
+        long invoke( long x );
+
+        static FunTuple<I64ToI64> pair(I64ToI64 activation, I64ToI64 derivation ) {
+            return new FunPair<>( activation, derivation );
+        }
+    }
+
     interface I8ToI8 extends Fun
     {
         byte invoke( byte x );
@@ -46,6 +55,24 @@ public interface Fun
         short invoke( short x );
 
         static FunTuple<I16ToI16> pair(I16ToI16 activation, I16ToI16 derivation ) {
+            return new FunPair<>( activation, derivation );
+        }
+    }
+
+    interface BoolToBool extends Fun
+    {
+        boolean invoke( boolean x );
+
+        static FunTuple<BoolToBool> pair(BoolToBool activation, BoolToBool derivation ) {
+            return new FunPair<>( activation, derivation );
+        }
+    }
+
+    interface CharToChar extends Fun
+    {
+        char invoke( char x );
+
+        static FunTuple<CharToChar> pair(CharToChar activation, CharToChar derivation ) {
             return new FunPair<>( activation, derivation );
         }
     }
@@ -127,6 +154,23 @@ public interface Fun
         }
     }
 
+    interface I64I64ToI64 extends Fun
+    {
+        long invoke( long x, long y );
+
+        static FunTuple<I64I64ToI64> of(I64I64ToI64 activation ) {
+            return new Operator.FunTriple<>(activation, null, null);
+        }
+
+        static FunTuple<I64I64ToI64> triple(
+                I64I64ToI64 activation,
+                I64I64ToI64 derivation1,
+                I64I64ToI64 derivation2
+        ) {
+            return new Operator.FunTriple<>( activation, derivation1, derivation2 );
+        }
+    }
+
     interface I8I8ToI8 extends Fun
     {
         byte invoke( byte x, byte y );
@@ -139,6 +183,40 @@ public interface Fun
                 I8I8ToI8 activation,
                 I8I8ToI8 derivation1,
                 I8I8ToI8 derivation2
+        ) {
+            return new Operator.FunTriple<>( activation, derivation1, derivation2 );
+        }
+    }
+
+    interface BoolBoolToBool extends Fun
+    {
+        boolean invoke( boolean x, boolean y );
+
+        static FunTuple<BoolBoolToBool> of(BoolBoolToBool activation ) {
+            return new Operator.FunTriple<>(activation, null, null);
+        }
+
+        static FunTuple<BoolBoolToBool> triple(
+                BoolBoolToBool activation,
+                BoolBoolToBool derivation1,
+                BoolBoolToBool derivation2
+        ) {
+            return new Operator.FunTriple<>( activation, derivation1, derivation2 );
+        }
+    }
+
+    interface CharCharToChar extends Fun
+    {
+        char invoke( char x, char y );
+
+        static FunTuple<CharCharToChar> of(CharCharToChar activation ) {
+            return new Operator.FunTriple<>(activation, null, null);
+        }
+
+        static FunTuple<CharCharToChar> triple(
+                CharCharToChar activation,
+                CharCharToChar derivation1,
+                CharCharToChar derivation2
         ) {
             return new Operator.FunTriple<>( activation, derivation1, derivation2 );
         }

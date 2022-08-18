@@ -63,6 +63,7 @@ import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
+import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.SmartSlicer;
@@ -126,7 +127,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         if ( args == null || args.length == 0 ) return new TsrImpl<>();
         if ( args.length == 1 ) {
             TsrImpl<T> t = new TsrImpl<>();
-            boolean success = t.createConstructionAPI().constructAllFromOne( NDConstructor.of(new int[]{ 1 }), args[ 0 ] );
+            boolean success = t.constructFor(CPU.get(), NDConstructor.of(new int[]{ 1 })).newPopulatedFromOne( args[ 0 ], args[ 0 ].getClass() );
             if ( !success ) {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
                 _LOG.error( message );
@@ -146,7 +147,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             TsrImpl<T> t = new TsrImpl<>();
             if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
                 args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
-                t.createConstructionAPI().constructAllFromOne( NDConstructor.of((int[]) args[ 0 ]), args[ 1 ] );
+                t.constructFor(CPU.get(), NDConstructor.of((int[]) args[ 0 ])).newPopulatedFromOne( args[ 1 ], args[ 1 ].getClass() );
             } else {
                 t._setDataType( DataType.of( args[1].getClass() ) );
                 t._constructAndAllocate( NDConstructor.of((int[]) args[0]), true );
@@ -154,6 +155,19 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             }
             return t;
         }
+
+        Class<?> commonType = _extractCommonType(args);
+        if ( commonType != null ) {
+            TsrImpl<T> t = new TsrImpl<>();
+            t.constructFor(CPU.get(), NDConstructor.of(new int[]{args.length}))
+                .tryConstructing(
+                    DataType.of(commonType),
+                    args,
+                    false
+                );
+            return t;
+        }
+
         /* EXPRESSION BASED CONSTRUCTION:
             The following allows the creation of tensors based on passing an expression
             alongside input tensors to the constructor.
@@ -187,6 +201,19 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         return Function.of( f.toString(), true ).call( tensors );
     }
 
+    /**
+     * @param args The objects which should be checked.
+     * @return A common type or null if they are not all of the same type.
+     */
+    private static Class<?> _extractCommonType( Object... args ) {
+        Class<?> commonType = null;
+        for ( Object o : args ) {
+            if ( commonType == null ) commonType = o.getClass();
+            else if ( !commonType.equals( o.getClass() ) ) return null;
+        }
+        return commonType;
+    }
+
     // Constructors:
 
     /**
@@ -201,7 +228,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     TsrImpl() {}
 
     TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Object data, boolean trusted ) {
-        createConstructionAPI().tryConstructing( ndConstructor, dataType, data, trusted );
+        constructFor(CPU.get(), ndConstructor).tryConstructing( dataType, data, trusted );
     }
 
     /**
@@ -215,7 +242,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      *  See {@link Tsr#of(Class, int[], String)} and {@link #of(List, String)}
      */
     TsrImpl( Class<V> valueType, NDConstructor ndConstructor, String seed ) {
-        createConstructionAPI().constructSeeded( valueType, ndConstructor, seed );
+        constructFor(CPU.get(), ndConstructor).newSeeded( valueType, seed );
     }
 
     TsrImpl( NDConstructor ndConstructor, DataType<?> type ) {
@@ -239,8 +266,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         _initData(filler);
     }
 
-    private void _constructAndAllocate(NDConstructor ndConstructor, boolean virtual ) {
-        createConstructionAPI().configureFromNewShape(ndConstructor, virtual, true );
+    private void _constructAndAllocate( NDConstructor ndConstructor, boolean virtual ) {
+        constructFor(CPU.get(), ndConstructor).newUnpopulated( virtual, true, getDataType() );
     }
 
     /*==================================================================================================================
@@ -309,12 +336,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setIsOutsourced(boolean isOutsourced ) {
+    public Tsr<V> setIsOutsourced( boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
-        if ( isOutsourced )
-            _setData( null );
-        else if (
-            !forComponent(
+        if ( !isOutsourced && !forComponent(
                 Device.class,
                 device -> {
                     try {
@@ -347,7 +371,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                                 })
                     );
                 }
-            ) && _getData() == null
+            )
         ) {
             _setIsVirtual( true );
             _allocate( 1 ); // Only a single value representing the rest.
@@ -395,18 +419,18 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 );
                 throw exception;
             }
-            if ( isVirtual ) {
-                if ( _getData() != null ) _virtualize();
-            }
-            else _actualize();
+            if ( isVirtual )
+                _virtualize();
+            else
+                _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-            createConstructionAPI().configureFromNewShape( NDConstructor.of(getNDConf().shape()), isVirtual, _getData() == null );
+            constructFor(CPU.get(),NDConstructor.of(getNDConf().shape())).newUnpopulated( isVirtual, false, getDataType() );
             if ( isVirtual ) {
                 Relation<V> relation = get( Relation.class );
                 if ( relation!=null )
                     relation.foreachChild( c -> {
-                                ((TsrImpl)c)._setData( _getData());
+                                ((TsrImpl<?>)c)._setData( _getData());
                                 c.setIsVirtual( true );
                             });
             } else {
@@ -426,7 +450,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 throw new IllegalStateException( message );
             }
         }
-        else if ( isVirtual && _getData() == null ) _allocate( 1 ); //> Only a single value representing the rest.
+        else if ( isVirtual ) _allocate( 1 ); //> Only a single value representing the rest.
         return this;
     }
 
@@ -677,7 +701,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      */
     private void _incrementVersionBecauseOf( ExecutionCall<?> call ) {
         if ( Neureka.get().settings().autograd().isPreventingInlineOperations() ) {
-            _version++;
+            _version++; // Autograd must be warned!
             GraphNode<?> node = get( GraphNode.class );
             if ( node != null && node.getPayloadReferenceVersion() != _version ) {
                 if ( node.usesAD() || node.isUsedAsDerivative() ) {
@@ -744,7 +768,12 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             @Override
             public Tsr<V> setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
             @Override public Tsr<V> delete() { return TsrImpl.this._delete(); }
-            @Override public Object getData() { return _getData(); }
+            @Override public <D> D getData(Class<D> dataType) {
+                Object data = _getData();
+                if ( data != null && !dataType.isAssignableFrom(data.getClass()) )
+                    throw new IllegalArgumentException("Provided data type '"+dataType+"' is not assignable from '"+data.getClass()+"'.");
+                return (D) data;
+            }
             @Override
             public <A> A getDataAs( Class<A> arrayTypeClass ) {
                 return DataConverter.get().convert( _getData(false), arrayTypeClass );
@@ -755,6 +784,13 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 _setDataAt( i, o );
                 return TsrImpl.this;
             }
+
+            @Override
+            public Tsr<V> setData(Object data) {
+                TsrImpl.this._setData( data );
+                return TsrImpl.this;
+            }
+
             @Override public Tsr<V> detach() { TsrImpl.this.remove( GraphNode.class ); return TsrImpl.this; }
         };
     }
@@ -948,10 +984,11 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         Function cloner = Neureka.get().backend().getFunction().idy();
         boolean thisIsIntermediate = this.isIntermediate();
         _setIsIntermediate( false );
-        Tsr<V> clone = Tsr.of( this.getItemType() )
-                            .on(this.getDevice())
-                            .withShape( this.getNDConf().shape() )
+        Tsr<V> clone = Tsr.like( this )
                             .all( (V) Double.valueOf(0.0) );
+
+        if ( clone.itemType() != this.itemType() )
+            throw new IllegalStateException("Item type of clone must be the same as the item type of the original!");
 
         clone = cloner.call( clone, this );
         clone.getUnsafe().setIsIntermediate( thisIsIntermediate );
@@ -1076,15 +1113,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         } else if ( value.getClass().isArray() ) {
             if ( this.isOutsourced() ) getDevice().access(this).writeFrom( value );
             else {
-                if ( _getData() == null ) {
-                    // This usually happens when a tensor was just freed from a device.
-                    // We need to set its data again so that it is no longer empty...
-                    _setData( value );
-                    return this;
-                } else {
-                    getDevice().access(this).writeFrom(value);
-                    setIsVirtual(false);
-                }
+                // This usually happens when a tensor was just freed from a device.
+                getDevice().access(this).writeFrom(value);
+                if ( this.isOutsourced() ) setIsVirtual(false);
             }
         }
         else success = false;
@@ -1126,7 +1157,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             }
         }
         if ( this.isVirtual() ) {
-            if ( _getData() == null ) return null;
+            if ( this.isOutsourced() ) return null;
             else return getDevice().access(this).actualize();
         }
         else if ( this.getNDConf().isSimple() && !this.isSlice() )

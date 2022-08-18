@@ -1,5 +1,15 @@
 # Note #
+
+## 1. ##
+If you are looking at the test suite 
+in order to find out how to use Neureka,
+you might be interested in 
+[the livining documentation browser](https://gleethos.github.io/neureka/showcase.html).
+There you can query the entire test suite using a simple search bar.
  
+## 2. ##
+
+As a devoper you might be interested in knowing that
 Neureka relies on [Spock](https://github.com/spockframework/spock) as its primary testing framework.<br>
 Therefore, the vast majority of tests are located in the [groovy directory](groovy).
 

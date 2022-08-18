@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.185 seconds"
+    "duration":"2.575 seconds"
   },
   "headers":["\n            <h2> GraphNode Instantiation Tests </h2>\n            <p>\n                Specified below are strict tests covering the behavior\n                of the GraphNode class during instantiation where\n                inputs are setup to cause expected exceptions.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"GraphNode throws an exception when trying to instantiate it with the wrong context.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.115 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,13 +31,13 @@
 
         {"kind":"and","text":"The node will check if autograd is enabled upon construction...","code":["0 * function.isDoingAD()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"GraphNode throws exception when trying to instantiate it with the Function argument being null.",
       "result":"PASS",
-      "duration":"0.016 seconds",
+      "duration":"1.728 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -48,13 +48,13 @@
 
         {"kind":"then","text":"The constructor throws the expected error message.","code":["def exception = thrown(IllegalArgumentException)","exception.message == \"Passed constructor argument of type Function must not be null!\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"GraphNode throws exception when payload is null.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -65,13 +65,13 @@
 
         {"kind":"then","text":"The constructor throws the expected error message.","code":["def exception = thrown(NullPointerException)","exception.message == \"The supplied payload tensor must no be null!\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"GraphNode instantiation throws exception because tensors of ExecutionCall do not return GraphNode instances.",
       "result":"PASS",
-      "duration":"0.128 seconds",
+      "duration":"0.667 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -84,13 +84,13 @@
 
         {"kind":"and","text":"The mock objects are being called as expected.","code":["1 * context.inputs() >> inputs","2 * inputsNodeMock.getLock() >> Mock( GraphLock )","0 * function.isDoingAD() >> true","0 * payload.getDevice() >> device","0 * payload.to( _ )","0 * device.cleaning( payload, _ )","(1..2) * function.getOperation() >> type","(0.._) * type.isDifferentiable() >> true","(1.._) * type.isInline() >> true","1 * inputs[0].getGraphNode() >> inputsNodeMock","1 * inputs[1].getGraphNode() >> null","0 * inputs[2].getGraphNode() >> null","0 * context.allowsForward() >> true"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"GraphNode instantiation throws exception because GraphNode instances of input tensors do not share the same GraphLock.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -103,13 +103,13 @@
 
         {"kind":"and","text":"The mock objects are being called as expected.","code":["1 * context.inputs() >> inputs","3 * inputsNodeMock.getLock() >> Mock( GraphLock )","1 * otherInputsNodeMock.getLock() >> Mock( GraphLock )","0 * function.isDoingAD() >> true","0 * payload.getDevice() >> device","0 * payload.to( _ )","0 * device.cleaning( payload, _ )","(1.._) * function.getOperation() >> type","(0.._) * type.isDifferentiable() >> true","(1.._) * type.isInline() >> true","1 * inputs[0].getGraphNode() >> inputsNodeMock","1 * inputs[1].getGraphNode() >> inputsNodeMock","1 * inputs[2].getGraphNode() >> otherInputsNodeMock","0 * context.allowsForward() >> true"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"GraphNode throws an exception when trying to execute an inline operation on inputs with active autograd.",
       "result":"PASS",
-      "duration":"0.020 seconds",
+      "duration":"0.042 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -122,7 +122,7 @@
 
         {"kind":"and","text":"The mock objects have been called as expected.","code":["1 * context.inputs() >> inputs","2 * inputsNodeMock.getLock() >> Mock( GraphLock )","0 * function.isDoingAD() >> true","1 * type.isInline() >> true","0 * payload.getDevice() >> device","0 * payload.to( _ )","0 * device.cleaning( payload, _ )","1 * inputs[0].getGraphNode() >> inputsNodeMock","0 * inputs[1].getGraphNode() >> inputsNodeMock","0 * inputs[2].getGraphNode() >> inputsNodeMock","0 * inputsNodeMock.getMode() >> -2","1 * inputsNodeMock.usesAD() >> true","0 * inputs[0].rqsGradient() >> true","0 * inputs[1].rqsGradient() >> false","0 * inputs[2].rqsGradient() >> true","0 * context.allowsForward() >> true","0 * context.allowsBackward() >> true","(2..3) * function.getOperation() >> type","(1..3) * type.getIdentifier() >> \"SOME_TEST_FUNCTION_STRING\"","0 * type.getOperator() >> \"*\"","0 * inputsNodeMock.getPayload() >> payload","0 * payload.hashCode() >> 3"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

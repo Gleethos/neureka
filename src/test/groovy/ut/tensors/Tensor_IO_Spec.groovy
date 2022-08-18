@@ -147,7 +147,7 @@ class Tensor_IO_Spec extends Specification
     def 'Passing String seed to tensor produces expected values.'()
     {
         when : Tsr r = Tsr.of([2, 2], "jnrejn")
-        then : r.toString().contains("0.02600, -2.06129, -0.48373, 0.94884")
+        then : r.toString().contains("0.02847, -0.69068, 0.15386, 1.81382")
         when : r = Tsr.of([2, 2], "jnrejn2")
         then : !r.toString().contains("0.02600, -2.06129, -0.48373, 0.94884")
     }

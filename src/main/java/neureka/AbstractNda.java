@@ -44,6 +44,7 @@ import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.ndim.Filler;
+import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 import org.slf4j.Logger;
 
@@ -57,7 +58,7 @@ import java.util.Arrays;
  *  {@link TsrImpl} inherits from {@link AbstractNda} which inherits from {@link AbstractComponentOwner}.
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
- *  The above mentioned classes are implementation details covered by
+ *  The above-mentioned classes are implementation details covered by
  *  the {@link Nda} and {@link Tsr} interfaces, which define various
  *  default methods spanning a rich API with good interoperability with
  *  different JVM languages...
@@ -153,11 +154,11 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     protected C _setDataType( DataType<?> dataType )
     {
         _guardSet( "data type" );
-        if ( _data != null ) {
-            String message = "Data type of tensor can only be set when data attribute is null!\n" +
-                             "This is due to construction-consistency reasons.\n";
-            throw new IllegalStateException( message );
-        }
+        //if ( _data != null ) {
+        //    String message = "Data type of tensor can only be set when data attribute is null!\n" +
+        //                     "This is due to construction-consistency reasons.\n";
+        //    throw new IllegalStateException( message );
+        //}
         _dataType = dataType;
         return (C) this;
     }
@@ -176,15 +177,19 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
         }
         if ( data != null && _dataType.typeClassImplements( NumericType.class ) ) {
             NumericType<?,?,?,?> numericType = (NumericType<?,?,?,?>) _dataType.getTypeClassInstance(NumericType.class);
-            if ( numericType.targetArrayType() != data.getClass() ) {
+            if ( data.getClass().isArray() && numericType.targetArrayType() != data.getClass() ) {
                 String message = "Cannot set data whose type does not match what is defined by the DataType instance.\n" +
-                        "Current type '"+numericType.targetArrayType().getSimpleName()+"' does not match '"+ data.getClass().getSimpleName()+"'.\n";
+                                 "Current type '"+numericType.targetArrayType().getSimpleName()+"' does not match '"+ data.getClass().getSimpleName()+"'.\n";
                 _LOG.error( message );
                 throw new IllegalStateException( message );
             }
         }
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
-        if ( _data != data && data != null ) _version++; // Autograd must be warned!
+        if ( _data != data && data != null && _data != null ) {
+            boolean isProbablyDeviceTransfer = ( _data.getClass().isArray() != data.getClass().isArray() );
+            if ( !isProbablyDeviceTransfer)
+                _version++; // Autograd must be warned!
+        }
         _data = data;
     }
 
@@ -249,7 +254,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *
      * @param size The size of the data array which ought to be allocated.
      */
-    protected final void _allocate( int size ) { _data = getDevice().access( this ).allocate( size ); }
+    protected final void _allocate( int size ) { _data = getDevice().allocate( this.getDataType(), size ); }
 
     /**
      *  The internal implementation handling {@link #setIsVirtual(boolean)}.
@@ -267,19 +272,19 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *
      * @return An {@link TsrConstructor} exposing a simple API for configuring a new {@link Tsr} instance.
      */
-    protected TsrConstructor createConstructionAPI()
+    protected TsrConstructor constructFor( Device<?> targetDevice, NDConstructor ndConstructor )
     {
         AbstractNda<C, ?> nda = this;
-        return new TsrConstructor(
-                    new TsrConstructor.API() {
-                        @Override public void setType( DataType<?> type        ) { nda.getUnsafe().setDataType( type ); }
-                        @Override public void setConf( NDConfiguration conf    ) { nda.getUnsafe().setNDConf( conf ); }
-                        @Override public void setData( Object o                ) { nda._setData( o ); }
-                        @Override public void allocate( int size               ) { nda._allocate( size ); }
-                        @Override public Object getData()                        { return nda._getData(); }
-                        @Override public void setIsVirtual( boolean isVirtual )  { nda._setIsVirtual( isVirtual ); }
-                    }
-                );
+        return
+            new TsrConstructor(
+                targetDevice, ndConstructor,
+                new TsrConstructor.API() {
+                    @Override public void   setType( DataType<?> type       ) { nda.getUnsafe().setDataType( type ); }
+                    @Override public void   setConf( NDConfiguration conf   ) { nda.getUnsafe().setNDConf( conf ); }
+                    @Override public void   setData( Object o               ) { nda._setData( o ); }
+                    @Override public void   setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
+                }
+            );
     }
 
     /**
@@ -346,7 +351,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
         }
         _NDConf = ndConfiguration;
         if ( this.has( Device.class ) )
-            this.get(Device.class).access((Tsr) this).updateNDConf();
+            this.get(Device.class).access(this).updateNDConf();
 
         return (C) this;
     }

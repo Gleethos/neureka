@@ -139,7 +139,6 @@ class Fluent_Tensor_Creation_Spec extends Specification
     def 'Seed based tensors can be created fluently.'(
             Class<Object> type, Object seed, Object expected
     ) {
-
         given : 'We create a Tsr instance by passing an array of arguments which ought to be populated based on a seed.'
             Tsr<?> t = Tsr.of( type )
                             .withShape( 3, 2 )
@@ -170,14 +169,14 @@ class Fluent_Tensor_Creation_Spec extends Specification
 
         where : 'The following data is being used to populate the builder API:'
             type     | seed || expected
-            Integer  | "a"  || [1339394550, -1833393546, -856828099, -757072988, 2102900152, 1199451677] as int[]
-            Double   | "b"  || [-0.7129147576473633, -0.021739959992013475, 0.0688712696353899, -0.06398972167241564, 0.8226821091309379, 2.530713285361827] as double[]
-            Short    | "c"  || [18384, 2870, 20818, -5635, -20565, -25424] as short[]
-            Float    | "d"  || [-1.4496698, 1.0095189, -0.22373904, 0.18774746, -1.1156114, 1.4588006] as float[]
-            Byte     | "e"  || [-91, -11, -71, 103, -103, -63] as byte[]
-            Long     | "f"  || [5691513877775159445, 1358544122458653242, -7551650784545132424, -6481055261550539775, 3561520525539920014, 7097824773375655256] as long[]
-            Boolean  | "g"  || [false, true, true, false, true, false] as boolean[]
-            Character| "h"  || [3986, 63829, 65220, 45203, 8082, 40715] as char[]
+            Integer  | "a"  || [1431614970, 345625747, -1944974668, -1560046587, -840164727, 1545421892] as int[]
+            Double   | "b"  || [0.5099337204650233, -0.1940291796851406, 1.4457326764876133, 1.1037197321548482, 0.5318191965243577, 0.19202511115716991] as double[]
+            Short    | "c"  || [-14216, -20070, 24851, -22296, -9925, 31593] as short[]
+            Float    | "d"  || [1.4457327, 1.1037197, 0.5318192, 0.19202511, 0.450341, -0.18904476] as float[]
+            Byte     | "e"  || [57, 26, -121, -59, -23, 90] as byte[]
+            Long     | "f"  || [7366351542344062765, -5751258536495446167, -794811082727408195, 283695574932216990, -455308978758056709, -8426760264878742120] as long[]
+            Boolean  | "g"  || [true, false, false, false, false, true] as boolean[]
+            Character| "h"  || [-1747130645, -868747698, 1684960924, -1581710323, -1526159736, -842114084] as char[]
 
     }
 

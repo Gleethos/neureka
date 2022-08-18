@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.004 seconds"
+    "duration":"0.009 seconds"
   },
   "headers":["\n                <h2> Tensor Gradient Unit Tests </h2>\n                <br>\n                <b>Why is there a difference between \"rqsGradient()\" and \"hasGradient()\" ? :</b>\n                <br><br>\n                <p>\n                    The latter property simply tells if a tensor has another tensor as component.\n                    This however does not necessitate it to also require gradients via the autograd system.\n                    This is what the prior property is for.            \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
@@ -29,7 +29,7 @@
 
         {"kind":"then","text":"The prior tensor \"hasGradient()\" but does not \"rqsGradient()\"","code":["t.has(Tsr.class)","t.hasGradient()","!t.rqsGradient()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
@@ -48,13 +48,13 @@
 
         {"kind":"then","text":"The prior tensor will also include its gradient in the \"toString()\" result.","code":["t.toString().contains(\"]:g:[\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Gradient of tensor is being applies regardless of the tensor requiring gradient or not",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
 
         {"kind":"where","text":"","code":{"requiresGradient":["true","false"],"expected":["(1):[6.0]","(1):[6.0]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

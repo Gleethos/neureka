@@ -1,7 +1,7 @@
 {
   "className":"ut.backend.Matrix_Multiplication_Spec",
-  "title":"",
-  "narrative":"",
+  "title":"Matrix Multiplication",
+  "narrative":"The tensor API exposes a useful method for Matrix Multiplication.\n    This specification not only demonstrates how to use this method\n    but also shows how matrix multiplication work \n    for tensors with both row and column major layouts.\n    (typically, column major is faster)",
   "subjects":[],
   "statistics":{
     "runs":"1",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.017 seconds"
+    "duration":"0.374 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The simple CPU matrix multiplication implementation works as expected.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.192 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        "]
       },
@@ -37,7 +37,7 @@
 
         {"kind":"where","text":"We use the following scenario parameters:","code":{"layout":["ROW","ROW","ROW","ROW","ROW","ROW","COL","COL","COL","COL","COL","COL"],"type":["class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Float"],"M":["2","1","2","2","1","2","2","1","2","2","1","2"],"K":["2","2","1","2","2","1","2","2","1","2","2","1"],"N":["2","1","2","2","1","2","2","1","2","2","1","2"],"A":["[4.0, 3.0, 2.0, 1.0]","[-2.0, 1.0]","[-2.0, 1.0]","[4.0, 3.0, 2.0, 1.0]","[-2.0, 1.0]","[-2.0, 1.0]","[4.0, 2.0, 3.0, 1.0]","[-2.0, 1.0]","[-2.0, 1.0]","[4.0, 2.0, 3.0, 1.0]","[-2.0, 1.0]","[-2.0, 1.0]"],"B":["[-0.5, 1.5, 1.0, -2.0]","[-1.0, -1.5]","[-1.0, -1.5]","[-0.5, 1.5, 1.0, -2.0]","[-1.0, -1.5]","[-1.0, -1.5]","[-0.5, 1.0, 1.5, -2.0]","[-1.0, -1.5]","[-1.0, -1.5]","[-0.5, 1.0, 1.5, -2.0]","[-1.0, -1.5]","[-1.0, -1.5]"],"expectedC":["[1.0, 0.0, 0.0, 1.0]","[0.5]","[2.0, 3.0, -1.0, -1.5]","[1.0, 0.0, 0.0, 1.0]","[0.5]","[2.0, 3.0, -1.0, -1.5]","[1.0, 0.0, 0.0, 1.0]","[0.5]","[2.0, 3.0, -1.0, -1.5]","[1.0, 0.0, 0.0, 1.0]","[0.5]","[2.0, 3.0, -1.0, -1.5]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

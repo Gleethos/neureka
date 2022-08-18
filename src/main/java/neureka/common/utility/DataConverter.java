@@ -44,7 +44,9 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -194,6 +196,8 @@ public final class DataConverter
         _set( Double.class, Byte.class,    Double::byteValue );
         _set( Double.class, Short.class,   Double::shortValue );
         _set( Double.class, Long.class,    Double::longValue );
+        _set( Double.class, Boolean.class, d -> d != 0);
+        _set( Double.class, Character.class, d -> (char) d.doubleValue() );
 
         _set( Float.class, Double.class,  Float::doubleValue );
         _set( Float.class, Integer.class, Float::intValue );
@@ -288,6 +292,9 @@ public final class DataConverter
                 }
         }
         if ( fromSpecific == null ) {
+            if ( to.isAssignableFrom(from.getClass()) )
+                return (T) from;
+
             String fromName = from.getClass().getSimpleName();
             String toName = to.getSimpleName();
             String message =
@@ -298,6 +305,9 @@ public final class DataConverter
         }
         Conversion<Object, Object> conversion = fromSpecific.get(to);
         if ( conversion == null ) {
+            if ( to.isAssignableFrom(from.getClass()) )
+                return (T) from;
+
             String message = "No converter found from type '"+from.getClass()+"' to '"+to+"'.";
             _LOG.error(message);
             throw new IllegalArgumentException(message);
@@ -449,139 +459,6 @@ public final class DataConverter
                 array[i] = objects[i];
             }
             return array;
-        }
-
-        @Contract( pure = true )
-        public static double[] newSeededDoubleArray( String seed, int size ) {
-            return newSeededDoubleArray( _longStringHash( seed ), size );
-        }
-
-        @Contract( pure = true )
-        public static double[] newSeededDoubleArray( long seed, int size ) {
-            return seededDoubleArray( new double[size], seed );
-        }
-
-        @Contract( pure = true )
-        public static double[] seededDoubleArray( double[] array, String seed ) {
-            return seededDoubleArray(array, _longStringHash( seed ));
-        }
-
-        @Contract( pure = true )
-        public static double[] seededDoubleArray( double[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextGaussian();
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static float[] newSeededFloatArray( String seed, int size ) {
-            return newSeededFloatArray( _longStringHash( seed ), size );
-        }
-
-        @Contract( pure = true )
-        public static float[] newSeededFloatArray( long seed, int size ) {
-            return seededFloatArray( new float[size], seed );
-        }
-
-        @Contract( pure = true )
-        public static float[] seededFloatArray( float[] array, String seed ) {
-            return seededFloatArray( array, _longStringHash( seed ) );
-        }
-
-        @Contract( pure = true )
-        public static float[] seededFloatArray( float[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = (float) dice.nextGaussian();
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static int[] seededIntArray( int[] array, String seed ) {
-            return seededIntArray(array, _longStringHash( seed ));
-        }
-
-        @Contract( pure = true )
-        public static int[] seededIntArray( int[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextInt();
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static short[] seededShortArray( short[] array, String seed ) {
-            return seededShortArray(array, _longStringHash( seed ));
-        }
-
-        @Contract( pure = true )
-        public static short[] seededShortArray( short[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = (short) dice.nextInt();
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static byte[] seededByteArray( byte[] array, String seed ) {
-            return seededByteArray(array, _longStringHash( seed ));
-        }
-
-        @Contract( pure = true )
-        public static byte[] seededByteArray( byte[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = (byte) dice.nextInt();
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static long[] seededLongArray( long[] array, String seed ) {
-            return seededLongArray( array, _longStringHash( seed ) );
-        }
-
-        @Contract( pure = true )
-        public static long[] seededLongArray( long[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextLong();
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static boolean[] seededBooleanArray( boolean[] array, String seed ) {
-            return seededBooleanArray(array, _longStringHash( seed ));
-        }
-
-        @Contract( pure = true )
-        public static boolean[] seededBooleanArray( boolean[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = dice.nextBoolean();
-            return array;
-        }
-
-        @Contract( pure = true )
-        public static char[] seededCharacterArray( char[] array, String seed) {
-            return seededCharacterArray(array, _longStringHash( seed ));
-        }
-
-        @Contract( pure = true )
-        public static char[] seededCharacterArray( char[] array, long seed ) {
-            Random dice = new Random();
-            dice.setSeed( seed );
-            for ( int i = 0; i < array.length; i++ ) array[ i ] = (char) dice.nextInt();
-            return array;
-        }
-
-        @Contract( pure = true )
-        private static long _longStringHash( String string )
-        {
-            long h = 1125899906842597L; // prime
-            int len = string.length();
-            for ( int i = 0; i < len; i++ ) h = 31 * h + string.charAt( i );
-            return h;
         }
 
         @Contract( pure = true )

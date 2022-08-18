@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.006 seconds"
+    "duration":"1.325 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The GEMM implementation for the OpenCLDevice has realistic behaviour",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"1.318 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -27,7 +27,7 @@
 
         {"kind":"then","text":"","code":["(1.._) * call.input(Float, 0) >> c","(1.._) * call.input(Float, 1) >> a","(1.._) * call.input(Float, 2) >> b","(1.._) * call.getDevice() >> device","(1.._) * device.hasAdHocKernel(\"fast_CM_MM_3x4x2\") >> false","(1.._) * device.compileAdHocKernel(\"fast_CM_MM_3x4x2\", _) >> device","(1.._) * device.getAdHocKernel(\"fast_CM_MM_3x4x2\") >> kernel","(3.._) * kernel.pass(_) >> kernel"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

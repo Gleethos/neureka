@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.079 seconds"
+    "duration":"0.329 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"GEMM matrix multiplication reference implementation can be set as custom OperationType and works as expected.",
       "result":"PASS",
-      "duration":"0.065 seconds",
+      "duration":"0.275 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,13 +39,13 @@
 
         {"kind":"where","text":"","code":{"lws":["320","32"],"rws":["32","16"],"com_sze":["80","8"],"row_sze":["640","64"],"col_sze":["640","64"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Test context mock for opencl reference implementations.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -56,13 +56,13 @@
 
         {"kind":"where","text":"","code":{"lws":["32","320","738"],"rws":["16","32","84"],"com_sze":["8","80","345"],"row_sze":["64","640","848"],"col_sze":["64","640","738"],"ts_com":["4","16","23"],"ts_row":["4","16","16"],"ts_col":["4","16","18"],"wpt_row":["4","4","8"],"wpt_col":["4","4","9"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -73,7 +73,7 @@
 
         {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","16384","64","16"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4, 4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4, 4]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

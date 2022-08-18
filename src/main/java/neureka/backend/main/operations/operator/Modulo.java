@@ -66,6 +66,11 @@ public class Modulo extends AbstractOperation {
                         ( a, b ) -> 1 / b, // Deriving at input 0
                         ( a, b ) -> (int) Math.round(-a / Math.pow(b, 2)) // deriving input 1
                     ))
+                    .with(Fun.I64I64ToI64.triple(
+                        ( a, b ) -> a % b,
+                        ( a, b ) -> 1 / b, // Deriving at input 0
+                        ( a, b ) -> Math.round(-a / Math.pow(b, 2)) // deriving input 1
+                    ))
                     .get()
             )
             .setImplementationFor(
@@ -177,6 +182,11 @@ public class Modulo extends AbstractOperation {
                         ( a, b ) -> a % b,
                         ( a, b ) -> (int) Math.round(1d / b), // Deriving at input 0
                         ( a, b ) -> (int) Math.round(-a / Math.pow(b, 2)) // deriving input 1
+                    ))
+                    .with(Fun.I64I64ToI64.triple(
+                        ( a, b ) -> a % b,
+                        ( a, b ) -> Math.round(1d / b), // Deriving at input 0
+                        ( a, b ) -> Math.round(-a / Math.pow(b, 2)) // deriving input 1
                     ))
                     .get()
             )

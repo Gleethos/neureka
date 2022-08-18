@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"7.442 seconds"
+    "duration":"12.021 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The \"dot\" operation reshapes and produces valid \"x\" operation result.",
       "result":"PASS",
-      "duration":"0.126 seconds",
+      "duration":"0.534 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,13 +31,13 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The \"matMul\" operation produces the expected result.",
       "result":"PASS",
-      "duration":"0.399 seconds",
+      "duration":"1.124 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,13 +52,13 @@
 
         {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"type":["class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Float"],"A":["[4.0, 3.0, 2.0, 1.0]","[-2.0, 1.0]","[-2.0, 1.0]","[4.0, 3.0, 2.0, 1.0]","[-2.0, 1.0]","[-2.0, 1.0]"],"B":["[-0.5, 1.5, 1.0, -2.0]","[-1.0, -1.5]","[-1.0, -1.5]","[-0.5, 1.5, 1.0, -2.0]","[-1.0, -1.5]","[-1.0, -1.5]"],"M":["2","1","2","2","1","2"],"K":["2","2","1","2","2","1"],"N":["2","1","2","2","1","2"],"expectedC":["[1.0, 0.0, 0.0, 1.0]","[0.5]","[2.0, 3.0, -1.0, -1.5]","[1.0, 0.0, 0.0, 1.0]","[0.5]","[2.0, 3.0, -1.0, -1.5]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The \"random\" function/operation populates tensors randomly.",
       "result":"PASS",
-      "duration":"0.136 seconds",
+      "duration":"0.369 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -83,13 +83,13 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The values of a randomly populated tensor seems to adhere to a gaussian distribution.",
       "result":"PASS",
-      "duration":"0.138 seconds",
+      "duration":"0.286 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -106,13 +106,13 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"New method \"asFunction\" of String added at runtime is callable by groovy and also works.",
       "result":"PASS",
-      "duration":"0.545 seconds",
+      "duration":"1.121 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -131,13 +131,13 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Float","class java.lang.Float"],"code":["\"I[0]xI[1]\".asFunction()([a, b])","\"I[0]xI[1]\"[a, b]","\"i0 x i1\"%[a, b]","\"i0\"%a","\"I[0]xI[1]\".asFunction()([a, b])","\"I[0]xI[1]\"[a, b]","\"i0 x i1\"%[a, b]","\"i0\"%a"],"expected":["(2x2):[-3.0, -2.0, 12.0, 8.0]","(2x2):[-3.0, -2.0, 12.0, 8.0]","(2x2):[-3.0, -2.0, 12.0, 8.0]","(1x2):[3.0, 2.0]","(2x2):[-3.0, -2.0, 12.0, 8.0]","(2x2):[-3.0, -2.0, 12.0, 8.0]","(2x2):[-3.0, -2.0, 12.0, 8.0]","(1x2):[3.0, 2.0]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"New operator methods added to \"SDK-types\" at runtime are callable by groovy and also work.",
       "result":"PASS",
-      "duration":"1.313 seconds",
+      "duration":"2.063 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -150,13 +150,13 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Float","class java.lang.Float","class java.lang.Float","class java.lang.Float","class java.lang.Float","class java.lang.Float","class java.lang.Float","class java.lang.Float"],"code":["(2+a)","(2*b)","(6/b)","(2**b)","(4-a)","(2.0+a)","(2.0*b)","(6.0/b)","(2.0**b)","(4.0-a)","(2+a)","(2*b)","(6/b)","(2**b)","(4-a)","(2.0+a)","(2.0*b)","(6.0/b)","(2.0**b)","(4.0-a)"],"expected":["7","6","2","8","-1","7","6","2","8","-1","7","6","2","8","-1","7","6","2","8","-1"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Overloaded operation methods on tensors produce expected results when called.",
       "result":"PASS",
-      "duration":"0.073 seconds",
+      "duration":"0.136 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -165,13 +165,13 @@
 
         {"kind":"expect","text":"","code":["( a / a                      ).toString().contains(\"[1]:(1.0)\")","( c % a                      ).toString().contains(\"[1]:(1.0)\")","( ( ( b / b ) ** c % a ) * 3 ).toString().contains(\"[1]:(3.0)\")","( a *= b                     ).toString().contains(\"(-8.0)\")","( a += -c                    ).toString().contains(\"(-11.0)\")","( a -= c                     ).toString().contains(\"(-14.0)\")","( a /= Tsr.of(2d)      ).toString().contains(\"(-7.0)\")","( a %= c                     ).toString().contains(\"(-1.0)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Simple slice addition produces expected result.",
       "result":"PASS",
-      "duration":"0.129 seconds",
+      "duration":"0.221 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -182,15 +182,15 @@
 
         {"kind":"then","text":"","code":["tAsStr.contains(\"(9x11):[17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, \" +","\"26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, \" +","\"26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, ... + 49 more]\")"]},
 
-        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x165eff64b50],platform=OpenCLPlatform@2fe64dbc[pid=cl_platform_id[0x7ffbdc15a490],context=cl_context[0x165e84bc520],kernels=[..46..]]]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Auto reshaping and broadcasting works and the result can be back propagated.",
       "result":"PASS",
-      "duration":"2.469 seconds",
+      "duration":"3.496 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -221,15 +221,15 @@
 
         {"kind":"then","text":"","code":["c.toString({it.hasSlimNumbers = true}) == \"(2x2):[$cValue]\""]},
 
-        {"kind":"where","text":"","code":{"device":["CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","CPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU"],"type":["class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float"],"whichGrad":["false","false","false","false","false","false","false","false","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true"],"bShape":["[1]","[1]","[1]","[1]","[1]","[1]","[1]","[1]","[2, 1]","[2, 1]","[1]","[1]","[1]","[1]","[1, 2]","[1, 2]","[1, 2]","[1, 2]","[2]","[2]","[2]","[2]","[1, 2]","[1, 2]","[1, 2]","[1, 2]","[2]","[2]","[2]","[2]","[1, 2]","[1, 2]","[1, 2]","[1, 2]","[2]","[2]","[2]","[2]"],"operation":["ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure12@72de41fb","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure13@76851b76","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure14@3fe08aa5","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure15@12a53b7","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure16@8b49c00","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure17@8e0ed2b","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure18@754cb1cf","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure19@258fda9e","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure20@5e457352","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure21@2b06dde6","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure22@1f20038f","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure23@3c0f3a9d","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure24@5e640002","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure25@de364d","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure26@71fabd28","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure27@72463327","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure28@5b679c94","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure29@44631bb8","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure30@a5a01bc","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure31@7526f0f5","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure32@3889ecae","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure33@66b3b2f0","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure34@9aa5b78","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure35@79766eb1","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure36@2ea91a24","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure37@17cb7623","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure38@18d0c4f9","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure39@1589ef11","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure40@615572d","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure41@72a6c3f7","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure42@7a1e4c62","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure43@75296fa8","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure44@6a93c058","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure45@12a1f3e0","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure46@63602d17","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure47@183a5d30","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure48@62ecbe0a","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure49@42f6a3d6"],"cValue":["9, 10, 11, 12","9, 10, 11, 12","9, 10, 11, 12","9, 10, 11, 12","8, 16, 24, 32","8, 16, 24, 32","8, 16, 24, 32","8, 16, 24, 32","9, 10, 12, 13","9, 10, 12, 13","9, 10, 11, 12","9, 10, 11, 12","9, 10, 11, 12","9, 10, 11, 12","9, 11, 11, 13","9, 11, 11, 13","9, 11, 11, 13","9, 11, 11, 13","9, 11, 11, 13","9, 11, 11, 13","9, 11, 11, 13","9, 11, 11, 13","-7, -7, -5, -5","-7, -7, -5, -5","-7, -7, -5, -5","-7, -7, -5, -5","-7, -7, -5, -5","-7, -7, -5, -5","-7, -7, -5, -5","-7, -7, -5, -5","7, 7, 5, 5","7, 7, 5, 5","7, 7, 5, 5","7, 7, 5, 5","7, 7, 5, 5","7, 7, 5, 5","7, 7, 5, 5","7, 7, 5, 5"],"wGradient":["5, -2, 7, 3","5, -2, 7, 3","5, -2, 7, 3","5, -2, 7, 3","40, -16, 56, 24","40, -16, 56, 24","40, -16, 56, 24","40, -16, 56, 24","3, 10","3, 10","13","13","13","13","12, 1","12, 1","12, 1","12, 1","12, 1","12, 1","12, 1","12, 1","-12, -1","-12, -1","-12, -1","-12, -1","-12, -1","-12, -1","-12, -1","-12, -1","12, 1","12, 1","12, 1","12, 1","12, 1","12, 1","12, 1","12, 1"]}}
+        {"kind":"where","text":"","code":{"device":["CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","CPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU","CPU","GPU"],"type":["class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float"],"whichGrad":["false","false","false","false","false","false","false","false","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true"],"bShape":["[1]","[1]","[1]","[1]","[1]","[1]","[1]","[1]","[2, 1]","[2, 1]","[1]","[1]","[1]","[1]","[1, 2]","[1, 2]","[1, 2]","[1, 2]","[2]","[2]","[2]","[2]","[1, 2]","[1, 2]","[1, 2]","[1, 2]","[2]","[2]","[2]","[2]","[1, 2]","[1, 2]","[1, 2]","[1, 2]","[2]","[2]","[2]","[2]"],"operation":["ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure12@4fb719be","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure13@723077dc","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure14@670ac207","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure15@468e0e34","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure16@2f2b147a","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure17@1d25e2ae","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure18@4f82ab25","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure19@52ff05a3","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure20@18007582","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure21@5a60582d","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure22@6fb1488b","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure23@259fba09","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure24@272387f5","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure25@8f20b84","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure26@5c73d1ab","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure27@5676323","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure28@79920e3b","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure29@38cc8cc1","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure30@3426aacd","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure31@ed3ab22","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure32@54f0ef3","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure33@35cdab66","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure34@2dcdc06d","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure35@21a2db89","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure36@1197e1ab","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure37@6ee6cb21","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure38@6f5fad44","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure39@18d9d102","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure40@64e58ce5","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure41@215d0c3e","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure42@46548d69","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure43@2c8348f3","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure44@4ad9dfc7","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure45@4d53f92c","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure46@7616f2b","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure47@41309c07","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure48@65374bcf","ut.tensors.Tensor_Operation_Spec$__spock_feature_0_8prov4_closure49@25ed9699"],"cValue":["9, 10, 11, 12","9, 10, 11, 12","9, 10, 11, 12","9, 10, 11, 12","8, 16, 24, 32","8, 16, 24, 32","8, 16, 24, 32","8, 16, 24, 32","9, 10, 12, 13","9, 10, 12, 13","9, 10, 11, 12","9, 10, 11, 12","9, 10, 11, 12","9, 10, 11, 12","9, 11, 11, 13","9, 11, 11, 13","9, 11, 11, 13","9, 11, 11, 13","9, 11, 11, 13","9, 11, 11, 13","9, 11, 11, 13","9, 11, 11, 13","-7, -7, -5, -5","-7, -7, -5, -5","-7, -7, -5, -5","-7, -7, -5, -5","-7, -7, -5, -5","-7, -7, -5, -5","-7, -7, -5, -5","-7, -7, -5, -5","7, 7, 5, 5","7, 7, 5, 5","7, 7, 5, 5","7, 7, 5, 5","7, 7, 5, 5","7, 7, 5, 5","7, 7, 5, 5","7, 7, 5, 5"],"wGradient":["5, -2, 7, 3","5, -2, 7, 3","5, -2, 7, 3","5, -2, 7, 3","40, -16, 56, 24","40, -16, 56, 24","40, -16, 56, 24","40, -16, 56, 24","3, 10","3, 10","13","13","13","13","12, 1","12, 1","12, 1","12, 1","12, 1","12, 1","12, 1","12, 1","-12, -1","-12, -1","-12, -1","-12, -1","-12, -1","-12, -1","-12, -1","-12, -1","12, 1","12, 1","12, 1","12, 1","12, 1","12, 1","12, 1","12, 1"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Operators \"+,*,**\" produce expected results with gradients which can be accessed via a \"Ig[0]\" Function instance",
       "result":"PASS",
-      "duration":"0.063 seconds",
+      "duration":"0.085 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -272,13 +272,13 @@
 
         {"kind":"then","text":"","code":["thrown(IllegalArgumentException)"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Activation functions work across types on slices and non sliced tensors.",
       "result":"PASS",
-      "duration":"1.941 seconds",
+      "duration":"2.394 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -299,7 +299,7 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Double","class java.lang.Float"],"funExpression":["tanh(i0)","tanh(i0)","tanh(i0)","relu(i0)","relu(i0)","relu(i0)","relu(i0*i0)","relu(i0*i0)","relu(i0*i0)","relu(i0-i0)","relu(i0-i0)","relu(i0-i0)","relu(i0)-i0","relu(i0)-i0","relu(i0)-i0","relu(-i0)+i0","relu(-i0)+i0","relu(-i0)+i0","relu(-i0)/i0","relu(-i0)/i0","relu(-i0)/i0","relu(-i0-5)+i0*3","relu(-i0-5)+i0*3","relu(-i0-5)+i0*3","abs(i0*10)%3","abs(i0*10)%3","abs(i0*10)%3","gaus(i0)*100%i0","gaus(i0)*100%i0","gaus(i0)*100%i0","random(i0)","random(i0)"],"expected":["[-0.2608431635405718, -0.6400224689534015, -0.15255723053856546, 0.1566537867655921, 0.5489211983894932, -0.17031712209680225]","[-0.26084316, -0.64002246, -0.15255724, 0.15665378, 0.54892117, -0.17031713]","[-1, -1, 1, -1, 1, -1]","[-0.0027019706408068795, -0.008329762613111082, -0.001543641184315801, 0.15861207834235577, 0.6567031992927272, -0.001728424711189524]","[-0.0027019705, -0.008329763, -0.0015436412, 0.15861207, 0.6567032, -0.0017284247]","[-7156386, -18495716, 248181051, -13634228, 919305478, -15169971]","[0.07300645343782339, 0.6938494519078316, 0.023828281059158886, 0.025157791396081604, 0.43125909196130346, 0.029874519822505895]","[0.07300645, 0.6938495, 0.023828283, 0.025157789, 0.43125907, 0.02987452]","[988699588, -17870520, 141304729, 1260971300, 210951204, 1018550276]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[0, 0, 0, 0, 0, 0]","[0.26749509343988104, 0.8246464986979971, 0.1528204772472643, 0.0, 0.0, 0.17111404640776287]","[0.2674951, 0.82464653, 0.15282048, 0.0, 0.0, 0.17111404]","[708482220, 1831075919, 0, 1349788550, 0, 1501827147]","[0.0, 0.0, 0.0, 0.15702595755893223, 0.6501361672998, 0.0]","[0.0, 0.0, 0.0, 0.15702595, 0.6501361, 0.0]","[0, 0, 245699240, 0, 910112423, 0]","[-1.0, -1.0, -1.0, -0.01, -0.01, -1.0]","[-1.0, -1.0, -1.0, -0.01, -0.01, -1.0]","[-1, -1, 0, -1, 0, -1]","[-0.857889221601257, -2.540599021320214, -0.5115487141104245, 0.42425011424364373, 1.9135425658852545, -0.5667989886456676]","[-0.85788924, -2.540599, -0.51154876, 0.4242501, 1.9135424, -0.566799]","[-1431277217, 595824021, 742061342, 1568121735, -1546243917, 1260973055]","[2.7019706408068793, 2.3297626131110825, 1.5436411843158009, 1.5861207834235578, 0.5670319929272729, 1.7284247111895241]","[2.7019706, 2.3297625, 1.5436412, 1.5861207, 0.56703186, 1.7284248]","[2, 0, 1, 1, 2, 1]","[0.011693048642643422, 0.8192993419907051, 0.08721424132459399, 0.1277867634692304, 0.6121424058303924, 0.09210498892686086]","[0.011690378, 0.81929654, 0.087213635, 0.12778962, 0.6121441, 0.09210494]","[0, 0, 0, 0, 0, 0]","[r2:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.242396559265774, 0.23980663860290638, 0.4667980401594514, 0.0, 0.0, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], r1:[2.242396559265774, 0.23980663860290638, 0.4667980401594514, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283]]","[r2:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.2423966, 0.23980664, 0.46679804, 0.0, 0.0, -1.0840396, 0.43090823, 1.0381081, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], r1:[2.2423966, 0.23980664, 0.46679804, -1.0840396, 0.43090823, 1.0381081]]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

@@ -201,13 +201,13 @@ class Tensor_Version_Spec extends Specification
         given :
             var t = Tsr.ofFloats().withShape(5, 2).andSeed(42)
         expect :
-            t.version == 1
+            t.version == 0
 
         when :
             t.to('GPU')
         then :
             t.isOutsourced()
-            t.version == 1
+            t.version == 0
 
         when :
             t[0] = 1f
@@ -218,7 +218,7 @@ class Tensor_Version_Spec extends Specification
             t.set(new int[]{1, 1}, -1f)
             t.unsafe.setDataAt(3, 5f)
         then :
-            t.version == 8
+            t.version == 7
     }
 
 }

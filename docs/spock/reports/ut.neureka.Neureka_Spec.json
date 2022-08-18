@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"5.251 seconds"
+    "duration":"8.417 seconds"
   },
   "headers":["\n                <p>\n                    This specification defines what types of settings are exposed by\n                    Neureka as well as more general things like how string representations\n                    of various library types should look like...        \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Neureka class instance has expected behaviour.",
       "result":"PASS",
-      "duration":"0.091 seconds",
+      "duration":"0.176 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -29,13 +29,13 @@
 
         {"kind":"and","text":"The version number is as expected!","code":["Neureka.version()==\"0.17.0\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Neureka settings class can be locked causing its properties to be immutable.",
       "result":"PASS",
-      "duration":"0.752 seconds",
+      "duration":"1.785 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,15 +58,15 @@
 
         {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
 
-        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure5@59846a8f","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure6@7fd69970","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure7@51e06f3e","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure8@485a9a2d","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure9@6ecfdef1","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure10@275701af","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure11@10aa4a50","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure12@ae67e5d","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure13@7473be5a","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure14@612c9809"],"setter":["ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure15@4d3ccd30","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure16@676e56a3","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure17@2871cde","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure18@48f77a18","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure19@1203dee0","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure20@7647acb1","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure21@290e357","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure22@69b7f6f3","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure23@514e979b","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure24@199c656c"]}}
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure5@580975f1","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure6@357a07e5","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure7@55793d67","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure8@419a2664","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure9@4b8b9258","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure10@330a0b69","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure11@7aeccd79","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure12@30cfa5ec","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure13@6cef8686","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure14@30744ef6"],"setter":["ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure15@3e6602d","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure16@4f6267a6","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure17@36c75b67","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure18@4e54c694","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure19@5ae7c175","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure20@435eac2e","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure21@5f549033","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure22@28dbe793","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure23@52d28961","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure24@188842e2"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Every Thread instance has their own Neureka instance.",
       "result":"PASS",
-      "duration":"0.068 seconds",
+      "duration":"0.136 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,43 +81,43 @@
 
         {"kind":"and","text":"The Neureka instances stored in the map will be different objects.","code":["map['instance 1'] != map['instance 2']"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Various library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"1.568 seconds",
+      "duration":"2.568 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
 
-        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU[coreCount=32]","DataType[class=String(String)]","Relation[parent=null,children=null,shapeRelations=null]","JITProp@1954416841[finished=0,pending=0,isDone=false]","Neureka[settings=Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false],view=Neureka.Settings.View[ndArrayPrintSettings=neureka.view.NDPrintSettings@785739c2],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false],utility=neureka.Neureka$Utility@5a5cf51b,backend=BackendContext[size=38]]","Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false],view=Neureka.Settings.View[ndArrayPrintSettings=neureka.view.NDPrintSettings@785739c2],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false]","Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false]","Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false]","Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true]","Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false]","Neureka.Settings.View[ndArrayPrintSettings=neureka.view.NDPrintSettings@785739c2]","Functions[_dimTrim=dimtrim(I[0]),_idy=(I[0] <- I[1]),_conv=(I[0] x I[1]),_plus=(I[0] + I[1]),_plusAssign=(I[0] <- (I[0] + I[1])),_minus=(I[0] - I[1]),_minusAssign=(I[0] <- (I[0] - I[1])),_div=(I[0] / I[1]),_divAssign=(I[0] <- (I[0] / I[1])),_pow=(I[0] ** I[1]),_powAssign=(I[0] <- (I[0] ** I[1])),_mul=(I[0] * I[1]),_mulAssign=(I[0] <- (I[0] * I[1])),_add=(I[0] + I[1]),_addAssign=(I[0] <- (I[0] + I[1])),_mod=(I[0] % I[1]),_modAssign=(I[0] <- (I[0] % I[1])),_neg=(-1.0 * I[0]),_matMul=(I[0] @ I[1]),_transpose2D=([1,0]:(I[0])),_random=rand(I[0]),_tanh=tanh(I[0]),_fastTanh=fast_tanh(I[0]),_softsign=softsign(I[0]),_sigmoid=sig(I[0]),_gaus=gaus(I[0]),_fastGaus=fast_gaus(I[0]),_ln=ln(I[0]),_quad=quad(I[0]),_relu=relu(I[0]),_abs=abs(I[0]),_sin=sin(I[0]),_cos=cos(I[0]),_softplus=softplus(I[0]),_silu=silu(I[0]),_gelu=gelu(I[0]),_selu=selu(I[0]),$jacocoData=[Z@2b8107a8]","Functions[_dimTrim=dimtrim(I[0]),_idy=(I[0] <- I[1]),_conv=(I[0] x I[1]),_plus=(I[0] + I[1]),_plusAssign=(I[0] <- (I[0] + I[1])),_minus=(I[0] - I[1]),_minusAssign=(I[0] <- (I[0] - I[1])),_div=(I[0] / I[1]),_divAssign=(I[0] <- (I[0] / I[1])),_pow=(I[0] ** I[1]),_powAssign=(I[0] <- (I[0] ** I[1])),_mul=(I[0] * I[1]),_mulAssign=(I[0] <- (I[0] * I[1])),_add=(I[0] + I[1]),_addAssign=(I[0] <- (I[0] + I[1])),_mod=(I[0] % I[1]),_modAssign=(I[0] <- (I[0] % I[1])),_neg=(-1.0 * I[0]),_matMul=(I[0] @ I[1]),_transpose2D=([1,0]:(I[0])),_random=rand(I[0]),_tanh=tanh(I[0]),_fastTanh=fast_tanh(I[0]),_softsign=softsign(I[0]),_sigmoid=sig(I[0]),_gaus=gaus(I[0]),_fastGaus=fast_gaus(I[0]),_ln=ln(I[0]),_quad=quad(I[0]),_relu=relu(I[0]),_abs=abs(I[0]),_sin=sin(I[0]),_cos=cos(I[0]),_softplus=softplus(I[0]),_silu=silu(I[0]),_gelu=gelu(I[0]),_selu=selu(I[0]),$jacocoData=[Z@2b8107a8]","BackendContext[size=38]","FunctionCache[size=359]","ExecutionCall[inputs=[..1..],device=CPU[coreCount=32],operation=Addition@9ae2b4f[identifier='add',operator='+'],algorithm=LazyRef<>[?],arguments=[DerivIdx[-1],VarIdx[-1]]]","CustomDeviceCleaner@5ab0d09b[registered=0]","GraphNode@6d37df80[parents=[?, ?],function=(I[0] * I[1]),shape=1]","GraphLock@6df84e5f[owner=(I[0] * (3.0 / 2.0))]","FileDevice[directory=.,stored={},loadable=[],loaded=[]]","NDConfiguration@53763418#53763418[layout=ROW_MAJOR,shape=[2, 3, 8, 4],translation=[96, 32, 4, 1],indicesMap=[96, 32, 4, 1],spread=[1, 1, 1, 1],offset=[0, 0, 0, 0]]","NDConfiguration@34d17327#34d17327[layout=UNSPECIFIC,shape=[2, 3, 8, 4],translation=[96, 200, 8, 1],indicesMap=[96, 32, 4, 1],spread=[1, 1, 1, 1],offset=[0, 0, 0, 0]]","NDConfiguration@29875d93#29875d93[layout=UNSPECIFIC,shape=[2, 3, 8, 4],translation=[96, 32, 4, 1],indicesMap=[96, 92, 4, 1],spread=[1, 4, 1, 1],offset=[0, 0, 0, 0]]","NDConfiguration@445604b4#445604b4[layout=ROW_MAJOR,shape=[2, 3, 8],translation=[24, 8, 1],indicesMap=[24, 8, 1],spread=[1, 1, 1],offset=[0, 0, 0]]"]}}
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU[coreCount=32]","DataType[class=String(String)]","Relation[parent=null,children=null,shapeRelations=null]","JITProp@35452713[finished=0,pending=0,isDone=false]","Neureka[settings=Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false],view=Neureka.Settings.View[ndArrayPrintSettings=neureka.view.NDPrintSettings@3b773f12],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false],utility=neureka.Neureka$Utility@50617ef9,backend=BackendContext[size=37]]","Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false],view=Neureka.Settings.View[ndArrayPrintSettings=neureka.view.NDPrintSettings@3b773f12],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false]","Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false]","Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false]","Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true]","Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false]","Neureka.Settings.View[ndArrayPrintSettings=neureka.view.NDPrintSettings@3b773f12]","Functions[_dimTrim=dimtrim(I[0]),_idy=(I[0] <- I[1]),_conv=(I[0] x I[1]),_plus=(I[0] + I[1]),_plusAssign=(I[0] <- (I[0] + I[1])),_minus=(I[0] - I[1]),_minusAssign=(I[0] <- (I[0] - I[1])),_div=(I[0] / I[1]),_divAssign=(I[0] <- (I[0] / I[1])),_pow=(I[0] ** I[1]),_powAssign=(I[0] <- (I[0] ** I[1])),_mul=(I[0] * I[1]),_mulAssign=(I[0] <- (I[0] * I[1])),_add=(I[0] + I[1]),_addAssign=(I[0] <- (I[0] + I[1])),_mod=(I[0] % I[1]),_modAssign=(I[0] <- (I[0] % I[1])),_neg=(-1.0 * I[0]),_matMul=(I[0] @ I[1]),_transpose2D=([1,0]:(I[0])),_random=rand(I[0]),_tanh=tanh(I[0]),_fastTanh=fast_tanh(I[0]),_softsign=softsign(I[0]),_sigmoid=sig(I[0]),_gaus=gaus(I[0]),_fastGaus=fast_gaus(I[0]),_ln=ln(I[0]),_quad=quad(I[0]),_relu=relu(I[0]),_abs=abs(I[0]),_sin=sin(I[0]),_cos=cos(I[0]),_softplus=softplus(I[0]),_silu=silu(I[0]),_gelu=gelu(I[0]),_selu=selu(I[0]),$jacocoData=[Z@38360fc3]","Functions[_dimTrim=dimtrim(I[0]),_idy=(I[0] <- I[1]),_conv=(I[0] x I[1]),_plus=(I[0] + I[1]),_plusAssign=(I[0] <- (I[0] + I[1])),_minus=(I[0] - I[1]),_minusAssign=(I[0] <- (I[0] - I[1])),_div=(I[0] / I[1]),_divAssign=(I[0] <- (I[0] / I[1])),_pow=(I[0] ** I[1]),_powAssign=(I[0] <- (I[0] ** I[1])),_mul=(I[0] * I[1]),_mulAssign=(I[0] <- (I[0] * I[1])),_add=(I[0] + I[1]),_addAssign=(I[0] <- (I[0] + I[1])),_mod=(I[0] % I[1]),_modAssign=(I[0] <- (I[0] % I[1])),_neg=(-1.0 * I[0]),_matMul=(I[0] @ I[1]),_transpose2D=([1,0]:(I[0])),_random=rand(I[0]),_tanh=tanh(I[0]),_fastTanh=fast_tanh(I[0]),_softsign=softsign(I[0]),_sigmoid=sig(I[0]),_gaus=gaus(I[0]),_fastGaus=fast_gaus(I[0]),_ln=ln(I[0]),_quad=quad(I[0]),_relu=relu(I[0]),_abs=abs(I[0]),_sin=sin(I[0]),_cos=cos(I[0]),_softplus=softplus(I[0]),_silu=silu(I[0]),_gelu=gelu(I[0]),_selu=selu(I[0]),$jacocoData=[Z@38360fc3]","BackendContext[size=37]","FunctionCache[size=164]","ExecutionCall[inputs=[..1..],device=CPU[coreCount=32],operation=Addition@29b1a524[identifier='add',operator='+'],algorithm=LazyRef<>[?],arguments=[DerivIdx[-1],VarIdx[-1]]]","CustomDeviceCleaner@dc52be2[registered=0]","GraphNode@144600d3[parents=[?, ?],function=(I[0] * I[1]),shape=1]","GraphLock@5f496080[owner=(I[0] * (3.0 / 2.0))]","FileDevice[directory=.,stored={},loadable=[],loaded=[]]","NDConfiguration@63d948f6#63d948f6[layout=ROW_MAJOR,shape=[2, 3, 8, 4],translation=[96, 32, 4, 1],indicesMap=[96, 32, 4, 1],spread=[1, 1, 1, 1],offset=[0, 0, 0, 0]]","NDConfiguration@bc70e3fb#ffffffffbc70e3fb[layout=UNSPECIFIC,shape=[2, 3, 8, 4],translation=[96, 200, 8, 1],indicesMap=[96, 32, 4, 1],spread=[1, 1, 1, 1],offset=[0, 0, 0, 0]]","NDConfiguration@d841ae5b#ffffffffd841ae5b[layout=UNSPECIFIC,shape=[2, 3, 8, 4],translation=[96, 32, 4, 1],indicesMap=[96, 92, 4, 1],spread=[1, 4, 1, 1],offset=[0, 0, 0, 0]]","NDConfiguration@57d8b1f6#57d8b1f6[layout=ROW_MAJOR,shape=[2, 3, 8],translation=[24, 8, 1],indicesMap=[24, 8, 1],spread=[1, 1, 1],offset=[0, 0, 0]]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"OpenCL related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"0.189 seconds",
+      "duration":"0.254 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaCLObject.toString()).matches()"]},
 
-        {"kind":"where","text":"The following objects are being used..","code":{"neurekaCLObject":["CLContext@e538103[platforms=[OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]]","OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]","OpenCLDevice[deviceId=cl_device_id[0x27ab34b5b90],platform=OpenCLPlatform@19b05991[pid=cl_platform_id[0x7ffb0b2da490],context=cl_context[0x27aa8eb0a20],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaCLObject":["CLContext@2c61b786[platforms=[OpenCLPlatform@64828ef6[pid=cl_platform_id[0x7ffbdc15a490],context=cl_context[0x1792c3ab0a0],kernels=[..46..]]]]","OpenCLPlatform@64828ef6[pid=cl_platform_id[0x7ffbdc15a490],context=cl_context[0x1792c3ab0a0],kernels=[..46..]]","OpenCLDevice[deviceId=cl_device_id[0x1792e17f7a0],platform=OpenCLPlatform@64828ef6[pid=cl_platform_id[0x7ffbdc15a490],context=cl_context[0x1792c3ab0a0],kernels=[..46..]]]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Backend related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"2.507 seconds",
+      "duration":"3.246 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -126,9 +126,9 @@
 
         {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
 
-        {"kind":"where","text":"The following operations are being used..","code":{"operation":["Absolute@de0de84[identifier='abs',operator='abs']","Cosinus@574caaa1[identifier='cos',operator='cos']","Gaussian@68924049[identifier='gaus',operator='gaus']","GaussianFast@38204d79[identifier='fast_gaus',operator='fast_gaus']","Identity@41c93222[identifier='idy',operator='idy']","Quadratic@131af263[identifier='quad',operator='quad']","ReLU@56ef0a6[identifier='relu',operator='relu']","Sigmoid@532d0949[identifier='sig',operator='sig']","Sinus@6f11de07[identifier='sin',operator='sin']","Softplus@7b9e0cec[identifier='softplus',operator='softplus']","Tanh@19d9c4a0[identifier='tanh',operator='tanh']","TanhFast@9ee849c[identifier='fast_tanh',operator='fast_tanh']","GaTU@6c8ec6fb[identifier='gatu',operator='gatu']","GaSU@7d76090f[identifier='gasu',operator='gasu']","Softsign@78207354[identifier='softsign',operator='softsign']","Logarithm@33f26e1[identifier='ln',operator='ln']","SiLU@783725d1[identifier='silu',operator='silu']","GeLU@23cebb91[identifier='gelu',operator='gelu']","SeLU@5b1ab850[identifier='selu',operator='selu']","Summation@7be0c3f[identifier='sumJs',operator='sumJs']","Product@7882eb40[identifier='prodJs',operator='prodJs']","Power@7dcb083c[identifier='power',operator='**']","Division@375acaeb[identifier='divide',operator='/']","Multiplication@e16f27a[identifier='multiply',operator='*']","Modulo@e218aea[identifier='modulo',operator='%']","Subtraction@4214bfd0[identifier='subtract',operator='-']","Addition@9ae2b4f[identifier='add',operator='+']","XConv@469f5c2a[identifier='mul_conv',operator='x']","XConvLeft@bd383b3[identifier='inv_convolve_mul_left',operator='«x']","XConvRight@156cedc8[identifier='inv_convolve_mul_right',operator='x»']","MatMul@5788b53f[identifier='matMul',operator='@']","DimTrim@52e84de0[identifier='dimtrim',operator='dimtrim']","Reshape@22b7413d[identifier='reshape',operator=',']","AssignLeft@1f42b860[identifier='left_inline',operator='<']","Randomization@c9f08d1[identifier='random',operator='rand']","Cat@4b4531aa[identifier='concat',operator='concat']","Slice@5d450d74[identifier='slice',operator='slice']","OptimizedOperation@197502ef[identifier='my_test_fun',operator='my_test_fun']"]}}
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":["Absolute@4f62ce60[identifier='abs',operator='abs']","Cosinus@95e6d7c[identifier='cos',operator='cos']","Gaussian@5c000a09[identifier='gaus',operator='gaus']","GaussianFast@33628eb1[identifier='fast_gaus',operator='fast_gaus']","Identity@a564d4e[identifier='idy',operator='idy']","Quadratic@68ab4712[identifier='quad',operator='quad']","ReLU@e9e4baf[identifier='relu',operator='relu']","Sigmoid@552f7a23[identifier='sig',operator='sig']","Sinus@2277950b[identifier='sin',operator='sin']","Softplus@78bd43b9[identifier='softplus',operator='softplus']","Tanh@49d4a6d9[identifier='tanh',operator='tanh']","TanhFast@733a1c9a[identifier='fast_tanh',operator='fast_tanh']","GaTU@1fe68ca6[identifier='gatu',operator='gatu']","GaSU@5372a0ae[identifier='gasu',operator='gasu']","Softsign@120e8b87[identifier='softsign',operator='softsign']","Logarithm@2d2fd754[identifier='ln',operator='ln']","SiLU@67009bb[identifier='silu',operator='silu']","GeLU@54ea371b[identifier='gelu',operator='gelu']","SeLU@1a15a450[identifier='selu',operator='selu']","Summation@51456c13[identifier='sumJs',operator='sumJs']","Product@10961416[identifier='prodJs',operator='prodJs']","Power@63015a36[identifier='power',operator='**']","Division@6c323262[identifier='divide',operator='/']","Multiplication@7aa152c6[identifier='multiply',operator='*']","Modulo@205b4ba3[identifier='modulo',operator='%']","Subtraction@24b4577[identifier='subtract',operator='-']","Addition@29b1a524[identifier='add',operator='+']","XConv@196815c[identifier='mul_conv',operator='x']","XConvLeft@2dc045ce[identifier='inv_convolve_mul_left',operator='«x']","XConvRight@62986714[identifier='inv_convolve_mul_right',operator='x»']","MatMul@6b1a130d[identifier='matMul',operator='@']","DimTrim@5d35bb35[identifier='dimtrim',operator='dimtrim']","Reshape@79ba4293[identifier='reshape',operator=',']","AssignLeft@3432363e[identifier='left_inline',operator='<']","Randomization@12e40934[identifier='random',operator='rand']","Cat@a104a82[identifier='concat',operator='concat']","Slice@6d2c387d[identifier='slice',operator='slice']"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

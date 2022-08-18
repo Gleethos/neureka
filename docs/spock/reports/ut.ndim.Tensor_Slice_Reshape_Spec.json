@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.006 seconds"
+    "duration":"0.032 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A slice of a tensor changes as expected when reshaping it.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,13 +39,13 @@
 
         {"kind":"and","text":"The tensor \"b\" and the tensor \"a\" have not changed.","code":["b.toString() == \"(3x2):[-1.0, 0.0, 9.0, 0.0, 4.0, -3.0]\"","a.toString() == \"(3x2):[-1.0, 0.0, 9.0, 0.0, 4.0, -3.0]\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Two slices of one big tensor perform matrix multiplication flawless.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,13 +60,13 @@
 
         {"kind":"then","text":"This produces the following matrix: ","code":["c.toString() == \"(2x1x2):[12.0, 55.0, 44.0, 43.0]\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Reshaping a slice works as expected.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
 
         {"kind":"then","text":"","code":["a.toString() == \"(2x3):[\" +","\"-1.0, 2.0, 5.0, \" +","\"4.0, 7.0, -9.0\" +","\"]\"","b.toString() == \"(1x2x3):[\" +","\"-1.0, 2.0, 5.0, \" +","\"4.0, 7.0, -9.0\" +","\"]\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

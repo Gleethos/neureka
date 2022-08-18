@@ -10,6 +10,7 @@ import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import neureka.common.utility.Cache;
 import neureka.devices.file.handles.util.HandleFactory;
+import neureka.dtype.DataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -203,6 +204,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                     FileHandle.FACTORY.getSaver(extension).save( _directory + "/" + fullFileName, tensor, configurations )
             );
             tensor.setIsOutsourced(true);
+            tensor.getUnsafe().setData(null);
         }
         return this;
     }
@@ -247,6 +249,21 @@ public final class FileDevice extends AbstractBaseDevice<Object>
 
     @Override
     public Collection<Tsr<Object>> getTensors() { return _stored.keySet(); }
+
+    @Override
+    public Object allocate(DataType<?> dataType, int size) {
+        throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
+    }
+
+    @Override
+    public <V> Object allocate(DataType<V> dataType, int size, V initialValue) {
+        throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
+    }
+
+    @Override
+    public Object allocate(Object jvmData, int desiredSize) {
+        throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
+    }
 
     @Override
     public Operation optimizedOperationOf( Function function, String name ) {

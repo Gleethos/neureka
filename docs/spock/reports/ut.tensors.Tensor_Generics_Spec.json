@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.006 seconds"
+    "duration":"0.026 seconds"
   },
   "headers":["\n                <p>\n                    Here you will find out how to create a tensor of any kind of data.          \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Anonymous tensor instance has the default datatype class as defined in Neureka settings.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -27,13 +27,13 @@
 
         {"kind":"and","text":"","code":["t.getItemType() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getItemTypeClass()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"String tensor instance discovers expected class.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -46,13 +46,13 @@
 
         {"kind":"and","text":"","code":["t.toString() == \"(2x4):[Hi, I'm, a, String, list, Hi, I'm, a]\""]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"1D tensors can be created from primitive arrays.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -67,7 +67,7 @@
 
         {"kind":"where","text":"","code":{"size":["3","4","2","3","1"],"data":["[-1.0, 3.0, 6.0]","[1, -2, 9, 12]","[42, 73]","[-16, 54, 12]","[26]"],"expected":["class java.lang.Float","class java.lang.Integer","class java.lang.Byte","class java.lang.Long","class java.lang.Short"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.037 seconds"
+    "duration":"0.291 seconds"
   },
   "headers":["\n            <h2>Tensor Instantiation and IO Tests</h2>\n            <p>\n                This specification covers some basic behaviour related to\n                tensor instantiation and modification.\n                This includes the instantiation of tensors with custom seeds, shapes and values...\n                Included are also tests covering static factory methods.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors can be instantiated with String seed.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,13 +25,13 @@
 
         {"kind":"expect","text":"Equal seeds produce equal values.","code":["t1.toString() == t2.toString()","t1.toString() != t3.toString()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Smart tensor constructors yield expected results.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -82,13 +82,13 @@
 
         {"kind":"then","text":"","code":["t.toString().contains(\"(2):[3.0, 5.0]\")","t.getItemsAs( double[].class ).length==2"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Indexing after reshaping works as expected.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.034 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -101,32 +101,32 @@
 
         {"kind":"then","text":"These recorded values are as one would expect.","code":["t1_ioi_1 == 7","t1_ioi_2 == 5","t1_indices[0] == 1","t1_indices[1] == 2","t2_ioi_1 == 7","t2_idx[0] == 1","t2_idx[1] == 3","t1_ioi_3 == 7","t2_ioi_2 == 10","t1.toString().contains(\"[4x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0)\")","t2.toString().contains(\"[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.0, 9.0, 12.0)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Passing String seed to tensor produces expected values.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"when","text":"","code":["Tsr r = Tsr.of([2, 2], \"jnrejn\")"]},
 
-        {"kind":"then","text":"","code":["r.toString().contains(\"0.02600, -2.06129, -0.48373, 0.94884\")"]},
+        {"kind":"then","text":"","code":["r.toString().contains(\"0.02847, -0.69068, 0.15386, 1.81382\")"]},
 
         {"kind":"when","text":"","code":["r = Tsr.of([2, 2], \"jnrejn2\")"]},
 
         {"kind":"then","text":"","code":["!r.toString().contains(\"0.02600, -2.06129, -0.48373, 0.94884\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Tensor value type can not be changed by passing float or double arrays to it.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -151,13 +151,13 @@
 
         {"kind":"then","text":"","code":["!(x.getItems() instanceof double[])","!(x.unsafe.data instanceof double[])","!(x.data instanceof double[])","x.getItemsAs( float[].class )[ 0 ]==7.0f","x.getItemsAs( double[].class )[0]==7.0d"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"We turn a tensor into a scalar value or string through the \"as\" operator!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -168,13 +168,13 @@
 
         {"kind":"and","text":"Also use it instead of the \"toString\" method.","code":["(t as String) == t.toString()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"We can re-populate a tensor of shorts from a single scalar value!",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.029 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -191,13 +191,13 @@
 
         {"kind":"where","text":"","code":{"device":["CPU","CPU","CPU","CPU","CPU","CPU","GPU"],"type":["class java.lang.Byte","class java.lang.Integer","class java.lang.Long","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Float"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"We can manipulate the underlying data array of a tensor through the unsafe API.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -220,13 +220,13 @@
 
         {"kind":"where","text":"","code":{"device":["CPU","CPU","CPU","CPU"],"type":["class java.lang.Double","class java.lang.Float","class java.lang.Byte","class java.lang.Short"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"When we try to manipulate the underlying data array of a virtual tensor then it will become actual.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -243,13 +243,13 @@
 
         {"kind":"where","text":"We ensure that this works on different devices and with different data types.","code":{"device":["CPU","CPU","CPU","CPU"],"type":["class java.lang.Double","class java.lang.Float","class java.lang.Byte","class java.lang.Short"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Tensors value type can be changed by calling \"toType(...)\".",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -264,13 +264,13 @@
 
         {"kind":"then","text":"","code":["x.getItems() instanceof double[]","x.unsafe.data instanceof double[]","x.data instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==3.0f"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Vector tensors can be instantiated via factory methods.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -287,13 +287,13 @@
 
         {"kind":"where","text":"","code":{"data":["[1.1, 2.2, 3.3]","[-0.21, 543.3]","[true, false]","[1, 2, 99, -123]","[3, 8, 4, 2, 3, 0]","[66, 1, 4, 42, -40]"],"type":["class java.lang.Double","class java.lang.Float","class java.lang.Boolean","class java.lang.Short","class java.lang.Long","class java.lang.Integer"],"shape":["[3]","[2]","[2]","[4]","[6]","[5]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"A tensor produced by a function has expected properties.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -306,13 +306,13 @@
 
         {"kind":"then","text":"","code":["y.isBranch()","!y.isLeave()","y.belongsToGraph()","x.belongsToGraph()","y.toString().contains(\"[1]:(0.99932)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"A tensor produced by the static \"Tsr.Create.newRandom(shape)\" has expected \"random\" value.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -333,13 +333,13 @@
 
         {"kind":"then","text":"...the newly created variable x is as expected!","code":["x.toString().contains(\"[4]:(0.22266, 0.65678, -0.83154, 0.68019)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Tensor values can be manipulated via static method calls within the \"Tsr.IO\" class.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -390,13 +390,13 @@
 
         {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(1.0, 1.0, -3.0, -4.0)\")"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"The tensor data array can be modified by targeting them with an index.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -419,13 +419,13 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Float","class java.lang.Double","class java.lang.Byte","class java.lang.Short","class java.lang.Long","class java.lang.Integer","class java.lang.Boolean","class java.lang.Character"],"shape":["[2, 2]","[2, 2]","[2, 2]","[2, 2]","[2, 2]","[2, 2]","[2, 1]","[2, 1]"],"data":["[-42.0, 24.0, 9.0, 3.0, -34.0]","[-42.0, 24.0, 9.0, 3.0, -34.0]","[-42, 24, 9, 3, -34]","[-42, 24, 9, 3, -34]","[-42, 24, 9, 3, -34]","[-42, 24, 9, 3, -34]","[false, true, false]","abc"],"element":["0.032","0.032","1","1","1","1","false","x"],"expected":["[-42.0, 0.032, 9.0, 3.0]","[-42.0, 0.032, 9.0, 3.0]","[-42, 1, 9, 3]","[-42, 1, 9, 3]","[-42, 1, 9, 3]","[-42, 1, 9, 3]","[false, false]","ax"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"Adding OpenCL device to tensor makes tensor be \"outsourced\" and contain the Device instance as component.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -438,7 +438,7 @@
 
         {"kind":"then","text":"The now \"outsourced\" tensor has a reference to the device and vice versa!","code":["t.has(Device.class)","t.isOutsourced()","gpu.has(t)"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

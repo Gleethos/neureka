@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.010 seconds"
+    "duration":"0.059 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensor can be converted to buffered images.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.049 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -27,7 +27,7 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Byte","class java.lang.Integer","class java.lang.Byte","class java.lang.Byte"],"image":["BGR_3BYTE","ARGB_1INT","ABGR_4BYTE","ABGR_PRE_4BYTE"],"shape":["[3, 5, 3]","[7, 5, 1]","[7, 5, 4]","[7, 5, 4]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
@@ -46,7 +46,7 @@
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Byte","class java.lang.Integer","class java.lang.String","class java.lang.Byte"],"image":["BGR_3BYTE","ARGB_1INT","ARGB_1INT","ABGR_4BYTE"],"shape":["[3, 5]","[7, 5, 3]","[7, 5, 1]","[2, 9, 3]"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],

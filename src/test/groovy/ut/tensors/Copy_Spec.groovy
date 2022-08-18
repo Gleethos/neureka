@@ -97,4 +97,42 @@ class Copy_Spec extends Specification
             cloner << [{Tsr x -> x.shallowCopy()},{Tsr x -> x.shallowClone()}]
     }
 
+    def 'We can deep copy various types of tensors.'(
+        Class<?> type, Object expected
+    ) {
+        given : 'A simple vector tensor which we are going to copy.'
+            var t = Tsr.of(type).withShape(expected.length).andFill(expected)
+        and : 'A slice of the tensor, which we should also be able to deep copy.'
+            var s = t[1..<(expected.length - 1)]
+
+        when :
+            var deep = t.deepCopy()
+            var deepSlice = s.deepCopy()
+        then : 'The copy is not the same instance as the original tensor.'
+            deep !== t // It's not the same instance!
+            deepSlice !== s // It's not the same instance!
+
+        and : 'The shape and underlying data array are equal to the original tensor but the data is not identical.'
+            deep.shape == t.shape
+            deep.unsafe.data == t.unsafe.data // The tensors share the same values!
+            deep.unsafe.data !== t.unsafe.data // ...but they are not the same array!
+
+        and : 'Both the copied tensor and its slice have the expected values.'
+            deep.items == expected
+            deepSlice.items == expected[1..<(expected.length - 1)]
+
+        where : 'We can use the following types and values for the above code.'
+            type     ||  expected
+            Integer  ||  [6, 2, 0, -387, 22, 53, -92] as int[]
+            Byte     ||  [-1, 4, 2, -49, 2, -72, 235, 0, 3] as byte[]
+            Short    ||  [65, -20, -7, -8, -3, -4, -5, -6, -9] as short[]
+            Long     ||  [0, 5462, -976, -3, -42, -35, -3436, -7, -89] as long[]
+            Float    ||  [0.5076, -1.0, -2.4, -3.0, -4.0, -5.0, -6.0] as float[]
+            Double   ||  [4.26434, -4.0, 5.3, -6.6, -7.0, 9.67] as double[]
+            Boolean  ||  [true, false, true, false, true, false, true, false, true] as boolean[]
+            Character||  ['t', 'e', 's', 't', 'd', 'a', 't', 'a', '!'] as char[]
+            String   ||  ["test", "data", "!"] as String[]
+            Object   ||  ["What", 4, 'm' as char, 1] as Object[]
+    }
+
 }

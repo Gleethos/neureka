@@ -108,7 +108,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * a reference to a wrapper containing a pointer to the tensor's data (cl_data)
      * The latter two lend their identity for garbage collection!
      */
-    static class cl_tsr<V, T extends V> implements Component<Tsr<T>> {
+    static class cl_tsr<V, T extends V> {
 
         /**
          * This class is responsible for representing the
@@ -140,12 +140,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public cl_config config;
         public cl_value  value;
 
-        @Override
-        public boolean update(OwnerChangeRequest<Tsr<T>> changeRequest) {
-            // Update not needed...
-            changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
-            return true;
-        }
     }
 
     /**
@@ -377,7 +371,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private <T extends Number> void _store(Tsr<T> tensor, Tsr<T> parent, Runnable migration ) {
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
-        _add( tensor.getUnsafe().upcast(Number.class), parent.get(cl_tsr.class), migration);
+        _add( tensor.getUnsafe().upcast(Number.class), parent.getUnsafe().getData(cl_tsr.class), migration);
         _tensors.add( tensor.getUnsafe().upcast(Number.class) );
     }
 
@@ -432,7 +426,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         _tensors.add( tensor );
 
-        tensor.set( newClt );
+        tensor.getUnsafe().setData( newClt );
         migration.run(); // TODO: REMOVE
 
         tensor.setIsOutsourced( true );
@@ -515,11 +509,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public final <T extends Number> Device<Number> free( Tsr<T> tensor ) {
-        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        cl_tsr<?, ?> clt = tensor.getUnsafe().getData(cl_tsr.class);
         if (clt == null) return this;
         _tensors.remove(tensor);
         tensor.setIsOutsourced(false);
-        tensor.remove(cl_tsr.class);
+        tensor.getUnsafe().setData(null);
         return this;
     }
 
@@ -544,7 +538,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected Object _allocate( DataType<?> dataType, int size ) {
+    public Object allocate( DataType<?> dataType, int size ) {
+        throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
+    }
+
+    @Override
+    public <V> Object allocate(DataType<V> dataType, int size, V initialValue) {
+        throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
+    }
+
+    @Override
+    public Object allocate(Object jvmData, int desiredSize) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
@@ -557,7 +561,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
             Tsr<?> tensor, long offset, Data data
     ) {
         if ( data.getLength() == 0 ) return;
-        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        cl_tsr<?, ?> clt = tensor.getUnsafe().getData(cl_tsr.class);
+
         if (clt.value.event != null) clWaitForEvents(1, new cl_event[]{clt.value.event});
         clt.value.event = new cl_event();
         long start = offset * data.getItemSize();
@@ -572,9 +577,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     protected final <T extends Number> void _swap(Tsr<T> former, Tsr<T> replacement) {
-        cl_tsr<Number, T> clTsr = former.get(cl_tsr.class);
-        former.remove(cl_tsr.class);
-        replacement.set(clTsr);
+        cl_tsr<Number, T> clTsr = former.getUnsafe().getData(cl_tsr.class);
+        former.getUnsafe().setData(null);
+        replacement.getUnsafe().setData(clTsr);
         _tensors.remove(former);
         _tensors.add( replacement.getUnsafe().upcast(Number.class) );
     }
@@ -592,7 +597,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     protected <T extends Number> void _updateNDConf( Tsr<T> tensor ) {
-        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        cl_tsr<?, ?> clt = tensor.getUnsafe().getData(cl_tsr.class);
         if ( clt != null ) {
             // This will create a new cl config.
             clt.config = _writeNDConfig(tensor.getNDConf());
@@ -611,11 +616,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected <T extends Number> int _sizeOccupiedBy( Tsr<T> tensor ) { return tensor.get(cl_tsr.class).value.size; }
+    protected <T extends Number> int _sizeOccupiedBy( Tsr<T> tensor ) { return tensor.getUnsafe().getData(cl_tsr.class).value.size; }
 
     @Override
     protected <T extends Number> Object _readAll( Tsr<T> tensor, boolean clone ) {
-        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        cl_tsr<?, ?> clt = tensor.getUnsafe().getData(cl_tsr.class);
         return _readArray( tensor, float[].class, 0, clt.value.size );
     }
 
@@ -627,7 +632,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     private Data _value( Data data, Tsr<Number> tensor, int offset ) {
-        cl_tsr<?, ?> clt = tensor.get(cl_tsr.class);
+        cl_tsr<?, ?> clt = tensor.getUnsafe().getData(cl_tsr.class);
         clEnqueueReadBuffer(
                 _queue,
                 clt.value.data,

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.017 seconds"
+    "duration":"5.082 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"BackendContext instances can be created by cloning from Singleton instance.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"5.041 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,13 +37,13 @@
 
         {"kind":"and","text":"The change will be as expected.","code":["clone.size() == context.size() + 1","clone.getOperationLookupMap().size() == context.getOperationLookupMap().size() + 1","clone.getOperationLookupMap().containsKey(\"\")","clone.getOperations().size() == context.getOperations().size() + 1"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"BackendContext instances return Runner instances for easy visiting.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,13 +62,13 @@
 
         {"kind":"and","text":"The context accessible through the static \"get\" method will indeed be the current context!","code":["current == Neureka.get().backend()"]}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"BackendContext instances return Runner instances for easy visiting with return values.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,9 +89,9 @@
 
         {"kind":"and","text":"The outer context is as expected simply the current context.","code":["outerContext == current"]},
 
-        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@2cdf91e5","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@44bf561a","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@dae6dd0"]}}
+        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@561816e9","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@4af133e4","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@7f2e33d1"]}}
       ],
-      "problems":"[]"
+      "problems":{"dataValues":[], "errors":[]}
     }
   
   ],
