@@ -79,6 +79,7 @@ table.DataTable td, table.DataTable th {
     border-color: lightgrey;
     border-style: solid;
     padding: 2px;
+    text-align: center;
 }
 
 table.DataTable thead {
