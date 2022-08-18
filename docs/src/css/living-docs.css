@@ -34,10 +34,11 @@
 }
 
 .CollapsibleContent {
-    padding: 5px 18px 5px 18px;
+    padding: 5px 18px 0px 18px;
     display: none;
     overflow: hidden;
     background-color: #dde6e9;
+    margin-bottom: 0.75em;
 }
 
 .ContentOption {
