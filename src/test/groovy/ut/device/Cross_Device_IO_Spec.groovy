@@ -80,7 +80,7 @@ class Cross_Device_IO_Spec extends Specification
             device.access(t).readArray(arrayType, 0, 2) == [expected[0],expected[1]]
             device.access(s).readArray(arrayType, 2, 2) == [expected[2],expected[3]]
 
-        where :
+        where : 'The parameters in the above code can have the following states:'
             deviceType | type     | fill     | write ||  expected
             'CPU'      | Integer  | [2, 1]   | [5]   || [5, 1, 5, 1]
             'CPU'      | Short    | [2,7,8]  | [7]   || [7,7,7,2]

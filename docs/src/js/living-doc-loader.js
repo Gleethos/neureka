@@ -309,7 +309,10 @@ function createUIForFeature(featureData) {
 
         let blockDiv = $('<div></div>');
         let blockTitle = $('<div style="width:100%"></div>');
-        blockTitle.html("<i>"+uppercaseFirstLetter(kind)+"</i> "+lowercaseFirstLetter(block['text']));
+        let text = block['text'];
+        // We check if the text is empty and if so we display a universal default deqscription:
+        if ( text.length === 0 ) text = "The parameters in the above code can have the following states:";
+        blockTitle.html("<i>"+uppercaseFirstLetter(kind)+"</i> "+lowercaseFirstLetter(text));
         blockDiv.append(blockTitle);
         if ( kind === 'where' ) {
             let table = dictionaryOfHeaderNamesToColumnArraysToTable(block['code']);
