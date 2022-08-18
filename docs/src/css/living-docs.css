@@ -76,7 +76,7 @@ table.DataTable {
 
 table.DataTable td, table.DataTable th {
     border-width: 1px;
-    border-color: #001E56;
+    border-color: lightgrey;
     border-style: solid;
     padding: 2px;
 }

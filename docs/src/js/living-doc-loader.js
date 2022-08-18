@@ -352,7 +352,7 @@ function dictionaryOfHeaderNamesToColumnArraysToTable(dataTable) {
         let columns = dataTable[headerName].length;
         if ( columns > numberOfColumns ) numberOfColumns = columns;
         let headerCell = $('<th></th>');
-        headerCell.text(headerName);
+        headerCell.append($('<code>'+headerName+'</code>'));
         header.append(headerCell);
     }
     if ( headers.length === 0 ) return table;
@@ -379,7 +379,7 @@ function dictionaryOfHeaderNamesToColumnArraysToTable(dataTable) {
         }
         table.append(row);
     }
-    return $('<div style="overflow: auto;"></div>').append(table);
+    return $('<div style="overflow: auto; max-height: 16em; margin-bottom: 0.75em;"></div>').append(table);
 }
 
 function filterTableEntryNoise(entry) {
