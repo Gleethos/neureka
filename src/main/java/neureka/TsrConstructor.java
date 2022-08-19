@@ -131,11 +131,8 @@ final class TsrConstructor
     }
 
     public static DataArray dataArrayOnCPUFor( Object data ) {
-        if ( data instanceof DataArray )
-            System.out.printf("");
-        assert data == null || !(data instanceof DataArray);
         return new DataArray() {
-            @Override public Device<?> getDevice() { return CPU.get(); }
+            @Override public Device<?> owner() { return CPU.get(); }
             @Override public Object get() { return data; }
         };
     }

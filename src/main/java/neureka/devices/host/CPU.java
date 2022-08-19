@@ -443,17 +443,14 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public final <T> CPU store(Tsr<T> tensor, Tsr<T> parent ) {
+    public final <T> CPU store( Tsr<T> tensor, Tsr<T> parent ) {
         _tensors.add( (Tsr<Object>) tensor);
         _tensors.add( (Tsr<Object>) parent);
         return this;
     }
 
     @Override
-    public final <T> boolean has(Tsr<T> tensor ) { return _tensors.contains( tensor ); }
-
-    @Override
-    public <T> CPU free(Tsr<T> tensor ) {
+    public <T> CPU free( Tsr<T> tensor ) {
         _tensors.remove( tensor );
         return this;
     }

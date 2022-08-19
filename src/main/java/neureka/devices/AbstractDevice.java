@@ -130,6 +130,22 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
         return this;
     }
 
+
+    /**
+     * This method checks if the passed tensor
+     * is stored on this {@link Device} instance.
+     * "Stored" means that the data of the tensor was created by this device.
+     * This data is referenced inside the tensor...
+     *
+     * @param tensor The tensor in question.
+     * @return The truth value of the fact that the provided tensor is on this device.
+     */
+    @Override
+    public <T extends V> boolean has(Tsr<T> tensor) {
+        return tensor.getUnsafe().getDataArray().owner() == this;
+    }
+
+
     @Override
     public <T extends V> Access<T> access( Tsr<T> tensor ) {
         return new Access<T>() {
@@ -183,7 +199,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     protected DataArray _dataArrayOf( Object data ) {
         assert data == null || !(data instanceof DataArray);
         return new DataArray() {
-            @Override public Device<?> getDevice() { return AbstractDevice.this; }
+            @Override public Device<?> owner() { return AbstractDevice.this; }
             @Override public Object get() { return data; }
         };
     }

@@ -234,8 +234,8 @@ class Cross_Device_Type_Spec extends Specification
 
         expect : 'The given device is initially empty.'
             device.isEmpty() == ( device.size() == 0 )
-            !device.has( a )
-            !device.has( b )
+            !device.has( a ) || device instanceof CPU
+            !device.has( b ) || device instanceof CPU
 
         when : 'The the first tensor is being passed to the device...'
             device.store( a )
@@ -244,7 +244,7 @@ class Cross_Device_Type_Spec extends Specification
             !device.isEmpty()
             device.size() == initialNumber + 1
             device.has( a )
-            !device.has( b )
+            !device.has( b ) || device instanceof CPU
 
         when : 'The the second tensor is being passed to the device...'
             device.store( b )
@@ -261,8 +261,8 @@ class Cross_Device_Type_Spec extends Specification
         then : '...the device is empty again.'
             device.isEmpty() == ( initialNumber == 0 )
             device.size() == initialNumber
-            !device.has( a )
-            !device.has( b )
+            !device.has( a ) || device instanceof CPU
+            !device.has( b ) || device instanceof CPU
 
         where : 'The following Device instances are being tested :'
             device << [
@@ -286,8 +286,8 @@ class Cross_Device_Type_Spec extends Specification
 
         expect : 'The given device is initially empty.'
             device.isEmpty() == ( device.size() == 0 )
-            !device.has( a )
-            !device.has( b )
+            !device.has( a ) || device instanceof CPU
+            !device.has( b ) || device instanceof CPU
 
         when : 'The the first tensor is being passed to the device...'
             device.store( a )
@@ -297,7 +297,7 @@ class Cross_Device_Type_Spec extends Specification
             device.size() == initialNumber + 1
             device.has( a )
         and :
-            !device.has( b )
+            !device.has( b ) || device instanceof CPU
 
         when :
             device.free( a )
@@ -305,15 +305,14 @@ class Cross_Device_Type_Spec extends Specification
         then : '...the device is empty again.'
             device.isEmpty() == ( initialNumber == 0 )
             device.size() == initialNumber
-            !device.has( a )
-            !device.has( b )
+            !device.has( a ) || device instanceof CPU
+            !device.has( b ) || device instanceof CPU
 
         where : 'The following Device instances are being tested :'
         device << [
                 CPU.get(),
                 Device.get( "openCL" )
         ]
-
     }
 
     @Ignore
