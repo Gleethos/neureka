@@ -285,7 +285,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
                 new TsrConstructor.API() {
                     @Override public void   setType( DataType<?> type       ) { nda.getUnsafe().setDataType( type ); }
                     @Override public void   setConf( NDConfiguration conf   ) { nda.getUnsafe().setNDConf( conf ); }
-                    @Override public void   setData( DataArray o            ) { nda._setData( o ); }
+                    @Override public void   setData( DataArray o            ) { nda._setData( o ); AbstractNda.this.set((Device)o.owner()); }
                     @Override public void   setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
                 }
             );
